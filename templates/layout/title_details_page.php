@@ -1,0 +1,1 @@
+<?php	if ( ! defined( 'ABSPATH' ) ) {		exit;	}	$post_id = $post_id ?? get_the_id();?><div class="mp_title">	<h1><?php echo get_the_title( $post_id ); ?></h1></div>
