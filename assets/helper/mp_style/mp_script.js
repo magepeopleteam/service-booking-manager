@@ -307,7 +307,9 @@ function content_input_value_change(currentTarget) {
 		if ($this.is('[type="radio"]')) {
 			target.slideDown(250);
 		} else {
-			target.slideToggle(250).removeClass('mActive');
+			target.each(function (){
+				$(this).slideToggle(250).removeClass('mActive');
+			});
 		}
 		return true;
 	}

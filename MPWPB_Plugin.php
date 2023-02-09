@@ -19,7 +19,7 @@
 			public function __construct() {
 				$this->load_plugin();
 			}
-			private function load_plugin(): void {
+			private function load_plugin() {
 				include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 				if ( ! defined( 'MPWPB_PLUGIN_DIR' ) ) {
 					define( 'MPWPB_PLUGIN_DIR', dirname( __FILE__ ) );
@@ -50,7 +50,7 @@
 					exit( wp_redirect( admin_url( 'admin.php?post_type=mpwpb_item&page=mpwpb_quick_setup' ) ) );
 				}
 			}
-			public function on_activation_page_create(): void {
+			public function on_activation_page_create(){
 				if ( ! $this->get_page_by_slug( 'transport_booking' ) ) {
 					$transport_booking = array(
 						'post_type'    => 'page',

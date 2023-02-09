@@ -1,4 +1,7 @@
 /********************************************************************  ************************************************/
 @media only screen and (min-width: 10px) {
-
+	div.mp_repeat_setting_header {text-align: center;display: -webkit-flex;display: flex;background-color: var(--border_color);}
+	div.mp_settings_area .mp_repeat_setting_item{padding: 7px;}
+	div.mp_repeat_setting_content{display: -webkit-flex;display: flex;border: 1px solid var(--border_color);border-top: none;}
+	div.mp_repeat_setting_content div.mp_repeat_setting_content{border-right: none;}
 }

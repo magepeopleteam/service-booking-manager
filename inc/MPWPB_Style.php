@@ -33,7 +33,7 @@
 				<style>
 					:root {
 						/*--font-family: "Poppins", sans-serif;*/
-						--default-color: <?php echo esc_attr($default_color); ?>;
+						--d_color: <?php echo esc_attr($default_color); ?>;
 						--container-max-width: 1320px;
 						--default-mp: 20px;
 						--default-mp_negetive: -20px;
@@ -127,7 +127,7 @@
 					:root {
 						--warning_color: <?php echo esc_attr($warning_color); ?>;
 						--info-bg: #F2F2F2;
-						--success-color: #006607;
+						--success_color: #006607;
 						--danger-color: #C00;
 						--required-color: #C00;
 						--light-color: #F2F2F2;

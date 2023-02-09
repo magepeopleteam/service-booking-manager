@@ -72,11 +72,14 @@
 /******************************************************************** Image upload  ************************************************/
 @media only screen and (min-width: 10px) {
 	div.mp_multi_image { display: -webkit-flex; display: flex; -webkit-flex-wrap: wrap; flex-wrap: wrap;}
-	div.mp_multi_image_item { position: relative; width: 25%; padding: var(--default-mp-xs);min-width: 150px;}
+	div.mp_multi_image_item { position: relative; width: calc( 25% - var(--default-mp-xs)); min-width: 150px;margin: 0 var(--default-mp-xs) var(--default-mp-xs) 0;}
 	span.mp_remove_single_image,
-	div.mpStyle span.mp_remove_multi_image { cursor: pointer; position: absolute; top: 0; right: 0; background-color: var(--danger-color);margin: 0;}
+	div.mpStyle span.mp_remove_multi_image { cursor: pointer; position: absolute; top: 0; right: 0; background-color: var(--danger-color);margin: 0; opacity: 0;}
+	div.mp_single_image_item:hover span.mp_remove_single_image,
+	div.mp_single_image_item:hover span.mp_remove_single_image:hover,
+	div.mp_multi_image_item:hover span.mp_remove_multi_image{opacity: 0.9;}
 	div.mp_add_single_image {max-width: 150px;width: 100%;}
-	div.mp_single_image_item {position: relative; width: 100%; padding: var(--default-mp-xs);}
+	div.mp_single_image_item {position: relative; width: 100%;}
 }
 /********************************************************************  ************************************************/
 @media only screen and (min-width: 10px) {

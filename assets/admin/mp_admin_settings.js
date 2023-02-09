@@ -87,7 +87,7 @@ function load_sortable_datepicker(parent, item) {
 	//=========Add Setting Item==============//
 	$(document).on('click', '.mp_add_item', function () {
 		let parent = $(this).closest('.mp_settings_area');
-		let item = $(this).siblings('.mp_hidden_content').find('.mp_hidden_item').html();
+		let item = $(this).next($('.mp_hidden_content')).find(' .mp_hidden_item').html();
 		if(!item || item==="undefined" || item===" "){
 			item = parent.find('.mp_hidden_content').first().find('.mp_hidden_item').html();
 		}

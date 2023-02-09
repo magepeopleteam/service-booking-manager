@@ -54,9 +54,8 @@
 							<img src="<?php echo wp_get_attachment_image_url( $image_id, 'medium' ) ?>" alt="<?php echo esc_attr($image_id); ?>"/>
 						</div>
 					<?php }  ?>
-					<button type="button" class="_dButton_xs <?php echo esc_attr($image_id ? 'dNone' : ''); ?>">
-						<span class="fas fa-plus-square"></span>
-						<?php esc_html_e( 'Add Image', 'mpwpb_plugin' ); ?>
+					<button type="button" class="mpBtn_xs <?php echo esc_attr($image_id ? 'dNone' : ''); ?>">
+						<span class="fas fa-images mR_xs"></span><?php esc_html_e( 'Image', 'mpwpb_plugin' ); ?>
 					</button>
 				</div>
 				<?php
@@ -81,12 +80,15 @@
 							}
 						?>
 					</div>
-					<?php MPWPB_Layout::add_new_button( esc_html__( 'Add Image', 'mpwpb_plugin' ), 'add_multi_image', '_dButton_bgColor_1' ); ?>
+					<button type="button" class="mpBtn_xs add_multi_image">
+						<span class="fas fa-images"></span><?php esc_html_e( 'Image', 'mpwpb_plugin' ); ?>
+					</button>
+					<?php //MPWPB_Layout::add_new_button( esc_html__( 'Add Image', 'mpwpb_plugin' ), 'add_multi_image', '_dButton_bgColor_1' ); ?>
 				</div>
 				<?php
 			}
 			/*****************************/
-			public static function add_new_button( $button_text, $class = 'mp_add_item', $button_class = '_themeButton_xs_mt_xs', $icon_class = 'fas fa-plus-square' ) {
+			public static function add_new_button( $button_text, $class = 'mp_add_item', $button_class = '_themeButton_xs_mT_xs', $icon_class = 'fas fa-plus-square' ) {
 				?>
 				<button class="<?php echo esc_attr( $button_class . ' ' . $class ); ?>" type="button">
 					<span class="<?php echo esc_attr( $icon_class ); ?>"></span>

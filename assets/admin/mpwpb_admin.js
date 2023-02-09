@@ -1,21 +1,40 @@
 //==========Price settings=================//
 (function ($) {
 	"use strict";
-	$(document).on('change', '.mpwpb_price_settings [name="mpwpb_service_type"]', function () {
-		let service_type = $(this).val();
-		let parent = $(this).closest('.mpwpb_price_settings');
-		parent.find('[data-service-type]').slideUp('fast');
-		parent.find('[data-service-type="' + service_type + '"]').slideDown('fast');
-	});
 	$(document).on('click', '.mpwpb_add_category', function () {
 		let parent = $(this).closest('.mp_settings_area');
-		let target_item = parent.find('>.mp_hidden_content').find('.mp_hidden_item');
+		let target_item = $(this).next($('.mp_hidden_content')).find(' .mp_hidden_item');
 		let item = target_item.html();
 		load_sortable_datepicker(parent, item);
-		let unique_id = 'hidden_id_' + Math.floor((Math.random() * 9999) + 999);
-		target_item.find('[name="mpwpb_hidden_name[]"]').val(unique_id);
-		target_item.find('[name*="mpwpb_service_name"]').attr('name', 'mpwpb_service_name_' + unique_id + '[]');
-		target_item.find('[name*="mpwpb_service_price"]').attr('name', 'mpwpb_service_price_' + unique_id + '[]');
+		let unique_id = Math.floor((Math.random() * 9999) + 9999);
+		let sub_unique_id = Math.floor((Math.random() * 9999) + 99999);
+		target_item.find('[name="mpwpb_category_hidden_id[]"]').val(unique_id);
+		target_item.find('[name*="mpwpb_sub_category_hidden_id_"]').attr('name', 'mpwpb_sub_category_hidden_id_' + unique_id + '[]').val(sub_unique_id);
+		target_item.find('[name*="mpwpb_service_name_"]').attr('name', 'mpwpb_service_name_' + sub_unique_id + '[]');
+		target_item.find('[name*="mpwpb_service_img_"]').attr('name', 'mpwpb_service_img_' + sub_unique_id + '[]');
+		target_item.find('[name*="mpwpb_service_details_"]').attr('name', 'mpwpb_service_details_' + sub_unique_id + '[]');
+		target_item.find('[name*="mpwpb_service_price_"]').attr('name', 'mpwpb_service_price_' + sub_unique_id + '[]');
+	});
+	$(document).on('click', '.mpwpb_add_sub_category', function () {
+		let parent = $(this).closest('.mp_settings_area');
+		let target_item =$(this).next($('.mp_hidden_content')).find(' .mp_hidden_item');
+		let item = target_item.html();
+		load_sortable_datepicker(parent, item);
+		let unique_id = Math.floor((Math.random() * 9999) + 99999);
+		target_item.find('[name*="mpwpb_sub_category_hidden_id_"]').val(unique_id);
+		target_item.find('[name*="mpwpb_service_name_"]').attr('name', 'mpwpb_service_name_' + unique_id + '[]');
+		target_item.find('[name*="mpwpb_service_img_"]').attr('name', 'mpwpb_service_img_' + unique_id + '[]');
+		target_item.find('[name*="mpwpb_service_details_"]').attr('name', 'mpwpb_service_details_' + unique_id + '[]');
+		target_item.find('[name*="mpwpb_service_price_"]').attr('name', 'mpwpb_service_price_' + unique_id + '[]');
+	});
+	$(document).on('change', '[name="mpwpb_category_active"]', function () {
+		let parent=$(this).closest('.mpwpb_price_settings');
+		if (!$(this).is(":checked")) {
+			let target=parent.find('[name="mpwpb_sub_category_active"]');
+			if(target.is(":checked")){
+				target.next($('span')).trigger('click');
+			}
+		}
 	});
 }(jQuery));
 //==========Date time settings=================//

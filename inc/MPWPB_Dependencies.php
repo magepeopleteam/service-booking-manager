@@ -29,7 +29,7 @@
 				wp_enqueue_script( 'jquery' );
 				wp_enqueue_script( 'jquery-ui-core' );
 				wp_enqueue_script( 'jquery-ui-datepicker' );
-				wp_localize_script( 'jquery', 'mpwpb_ajax', array( 'mpwpb_ajax' => admin_url( 'Admin-ajax.php' ) ) );
+				wp_localize_script( 'jquery', 'mpwpb_ajax', array( 'mpwpb_ajax' => admin_url( 'admin-ajax.php' ) ) );
 				wp_enqueue_style( 'mp_jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/base/jquery-ui.min.css', array(), '1.12.1' );
 				wp_enqueue_style( 'mp_font_awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css', array(), '5.15.4' );
 				wp_enqueue_style( 'mp_select_2', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css', array(), '4.0.13' );
@@ -59,8 +59,8 @@
 				wp_enqueue_style( 'wp-codemirror' );
 				wp_enqueue_script( 'wp-codemirror' );
 				//**********************//
-				wp_enqueue_style( 'mp_admin_settings', MPWPB_PLUGIN_URL . '/assets/Admin/mp_admin_settings.css', array(), time() );
-				wp_enqueue_script( 'mp_admin_settings', MPWPB_PLUGIN_URL . '/assets/Admin/mp_admin_settings.js', array( 'jquery' ), time(), true );
+				wp_enqueue_style( 'mp_admin_settings', MPWPB_PLUGIN_URL . '/assets/admin/mp_admin_settings.css', array(), time() );
+				wp_enqueue_script( 'mp_admin_settings', MPWPB_PLUGIN_URL . '/assets/admin/mp_admin_settings.js', array( 'jquery' ), time(), true );
 				// custom
 				wp_enqueue_style( 'mpwpb_admin', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_admin.css', array(), time() );
 				wp_enqueue_script( 'mpwpb_admin', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_admin.js', array( 'jquery' ), time(), true );
@@ -69,7 +69,7 @@
 			public function js_constant() {
 				?>
 				<script type="text/javascript">
-							let mp_ajax_url = "<?php echo admin_url( 'Admin-ajax.php' ); ?>";
+							let mp_ajax_url = "<?php echo admin_url( 'admin-ajax.php' ); ?>";
 							let mp_currency_symbol = "<?php echo get_woocommerce_currency_symbol(); ?>";
 							let mp_currency_position = "<?php echo get_option( 'woocommerce_currency_pos' ); ?>";
 							let mp_currency_decimal = "<?php echo wc_get_price_decimal_separator(); ?>";
