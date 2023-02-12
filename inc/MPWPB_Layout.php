@@ -47,14 +47,14 @@
 			public static function single_image_button( $name, $image_id = '' ) {
 				?>
 				<div class="mp_add_single_image">
-					<input type="hidden" name="<?php echo esc_attr( $name ); ?>" value="<?php echo esc_attr($image_id); ?>"/>
+					<input type="hidden" name="<?php echo esc_attr( $name ); ?>" value="<?php echo esc_attr( $image_id ); ?>"/>
 					<?php if ( $image_id ) { ?>
-						<div class="mp_single_image_item" data-image-id="<?php echo esc_attr($image_id); ?>'">
+						<div class="mp_single_image_item" data-image-id="<?php echo esc_attr( $image_id ); ?>'">
 							<span class="fas fa-times circleIcon_xs mp_remove_single_image"></span>
-							<img src="<?php echo wp_get_attachment_image_url( $image_id, 'medium' ) ?>" alt="<?php echo esc_attr($image_id); ?>"/>
+							<img src="<?php echo wp_get_attachment_image_url( $image_id, 'medium' ) ?>" alt="<?php echo esc_attr( $image_id ); ?>"/>
 						</div>
-					<?php }  ?>
-					<button type="button" class="mpBtn_xs <?php echo esc_attr($image_id ? 'dNone' : ''); ?>">
+					<?php } ?>
+					<button type="button" class="mpBtn_xs <?php echo esc_attr( $image_id ? 'dNone' : '' ); ?>">
 						<span class="fas fa-images mR_xs"></span><?php esc_html_e( 'Image', 'mpwpb_plugin' ); ?>
 					</button>
 				</div>
@@ -100,10 +100,22 @@
 				?>
 				<div class="allCenter">
 					<div class="buttonGroup max_100">
-						<button class="_warningButton_xs mp_item_remove" type="button"><span class="fas fa-trash-alt mp_zero"></span></button>
-						<div class="_mpBtn_themeButton_xs mp_sortable_button" type=""><span class="fas fa-expand-arrows-alt mp_zero"></span></div>
+						<?php
+							self::remove_button();
+							self::move_button();
+						?>
 					</div>
 				</div>
+				<?php
+			}
+			public static function remove_button() {
+				?>
+				<button class="_warningButton_xs mp_item_remove" type="button"><span class="fas fa-trash-alt mp_zero"></span></button>
+				<?php
+			}
+			public static function move_button() {
+				?>
+				<div class="_mpBtn_themeButton_xs mp_sortable_button" type=""><span class="fas fa-expand-arrows-alt mp_zero"></span></div>
 				<?php
 			}
 		}

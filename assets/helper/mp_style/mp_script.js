@@ -219,7 +219,7 @@ function content_input_value_change(currentTarget) {
 		content_text_change($(this));
 	});
 	$(document).on('click', '[data-class-change]', function () {
-		content_text_change($(this));
+		content_class_change($(this));
 	});
 	$(document).on('click', '[data-value-change]', function () {
 		content_input_value_change($(this));
@@ -308,7 +308,7 @@ function content_input_value_change(currentTarget) {
 			target.slideDown(250);
 		} else {
 			target.each(function (){
-				$(this).slideToggle(250).removeClass('mActive');
+				$(this).slideToggle(250).toggleClass('mActive');
 			});
 		}
 		return true;
