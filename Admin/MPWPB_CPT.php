@@ -44,7 +44,7 @@
 					'public'       => true,
 					'labels'       => $labels,
 					'menu_icon'    => $icon,
-					'supports'     => [ 'title', 'thumbnail'],
+					'supports'     => [ 'title', 'thumbnail' ],
 					'rewrite'      => [ 'slug' => $slug ],
 					'show_in_rest' => true
 				];

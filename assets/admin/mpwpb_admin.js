@@ -38,6 +38,20 @@
 			}
 		}
 	});
+	//========extra service settings===============//
+	$(document).on('click', '.mpwpb_add_group_service', function () {
+		let parent = $(this).closest('.mp_settings_area');
+		let target_item = $(this).next($('.mp_hidden_content')).find(' .mp_hidden_item');
+		let item = target_item.html();
+		load_sortable_datepicker(parent, item);
+		let unique_id = Math.floor((Math.random() * 9999) + 9999);
+		target_item.find('[name="mpwpb_extra_hidden_name[]"]').val(unique_id);
+		target_item.find('[name*="mpwpb_extra_service_name_"]').attr('name', 'mpwpb_extra_service_name_' + unique_id + '[]');
+		target_item.find('[name*="mpwpb_extra_service_img_"]').attr('name', 'mpwpb_extra_service_img_' + unique_id + '[]');
+		target_item.find('[name*="mpwpb_extra_service_qty_"]').attr('name', 'mpwpb_extra_service_qty_' + unique_id + '[]');
+		target_item.find('[name*="mpwpb_extra_service_price_"]').attr('name', 'mpwpb_extra_service_price_' + unique_id + '[]');
+		target_item.find('[name*="mpwpb_extra_service_details_"]').attr('name', 'mpwpb_extra_service_details_' + unique_id + '[]');
+	});
 }(jQuery));
 //==========Date time settings=================//
 (function ($) {

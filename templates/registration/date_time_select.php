@@ -29,7 +29,7 @@
 							if ( sizeof( $all_time_slots ) > 0 ) {
 								foreach ( $all_time_slots as $slot ) {
 									?>
-									<button type="button" class="_dButton_xs bgWhite textColor_1" data-radio-check="<?php echo esc_attr( $slot ); ?>" data-icon-change data-open-icon="fas fa-check" data-close-icon="">
+									<button type="button" class="_dButton_xs bgWhite textColor_1" data-radio-check="<?php echo esc_attr( $slot ); ?>" data-open-icon="fas fa-check" data-close-icon="">
 										<span data-icon></span><?php echo date_i18n( 'h:i A', strtotime( $slot ) ); ?>
 									</button>
 									<?php

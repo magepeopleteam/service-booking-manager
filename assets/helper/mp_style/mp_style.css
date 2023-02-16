@@ -47,8 +47,8 @@
 		-o-box-shadow: var(--default-content-shadow);
 		box-shadow: var(--default-content-shadow);
 	}
+	.groupRadioCheck [data-radio-check].mpActive,
 	div.mpStyle .dShadow_1, [class*='_dShadow_1'] {
-		background-color: var(--default-bg);padding: var(--default-mp);
 		-webkit-box-shadow: 0 5px 10px rgba(0, 44, 102, 0.2);
 		-moz-box-shadow: 0 5px 10px rgba(0, 44, 102, 0.2);
 		-o-box-shadow: 0 5px 10px rgba(0, 44, 102, 0.2);
@@ -234,7 +234,8 @@
 	.mpStyle button:hover span, .mpStyle button:focus span {color: #FFF;}
 	.mpStyle .mpBtn, .mpStyle [class*="_mpBtn"] {padding: var(--default-mp-xs) var(--default-mp);color: var(--d_color);background-color: transparent;border: 1px solid var(--d_color);}
 	.mpStyle .mpBtn_xs, .mpStyle [class*="_mpBtn_xs"] {padding: var(--default-mp-xs);}
-	/***/
+	.mpStyle .mpBtn.mpActive, .mpStyle [class*="_mpBtn"].mpActive{border-color: var(--theme-color);color:var(--theme-color);}
+		/***/
 	.mpStyle [class*="dButton"] { padding: 0 var(--default-mp); min-width: var(--button-width); height: auto; min-height: var(--button-height);color: var(--button-color);background-color: var(--button-bg);}
 	.mpStyle [class*="dButton"] span {margin: 0 var(--default-mp-xs) 0 0;}
 	.mpStyle .dButton, .mpStyle [class*="_dButton"] {color: var(--button-color);background-color: var(--button-bg);}
@@ -257,7 +258,7 @@
 	/*********/
 	.mpStyle .navy_blueButton, .mpStyle [class*="_navy_blueButton"] {background-color: var(--navy-blue-color);color: var(--theme-alternate-color);padding: var(--default-mp-xs) var(--default-mp);border: 2px solid var(--navy-blue-color);}
 	.mpStyle .navy_blueButton span, .mpStyle [class*="_navy_blueButton"] span {color: var(--theme-alternate-color);}
-	/*.mpStyle .navy_blueButton:hover, .mpStyle [class*="_navy_blueButton"]:hover {background-color: var(--info-bg);color: var(--success_color);}*/
+	.mpStyle .navy_blueButton:hover, .mpStyle [class*="_navy_blueButton"]:hover {background-color: var(--theme-alternate-color);color: var(--navy-blue-color);border-color: var(--navy-blue-color);}
 	.mpStyle .navy_blueButton:hover span, .mpStyle [class*="_navy_blueButton"]:hover span {color: var(--navy-blue-color);}
 	/****/
 	.mpStyle [class*="Button_xs"] {min-width: auto;min-height: var(--button-height-xs); padding: 7px var(--default-mp-xs);font-size: var(--fs);}
@@ -271,7 +272,7 @@
 	.mpStyle .divider, .mpStyle [class*="_divider"], .mpStyle hr {margin: var(--default-mp-xs) 0;line-height: 1;border-color: var(--border_color);display: block;height: 1px;background-color: var(--border_color);width: 100%;}
 	.mpStyle .separatorRight, .mpStyle [class*="_separatorRight"] > * {border-right: 2px solid var(--border_color);}
 	.mpStyle .separatorRight, .mpStyle [class*="_separatorRight"] > :last-child {border-right: none;}
-	div.mpStyle .mage_disabled {cursor: no-drop;opacity: 0.2;}
+	div.mpStyle .mpDisabled {cursor: no-drop;opacity: 0.7; pointer-events: none;}
 	.mpStyle .strikeLine {position: relative;padding: 0 var(--default-mp-xs);color: var(--warning_color);}
 	.mpStyle .strikeLine:before {content: " ";display: block;width: 100%;border-top: 1px solid #8B0000AA;position: absolute;left: 0;right: 0;top: 11px;transform: rotate(-11deg);}
 	/**************/
@@ -356,8 +357,8 @@
 	.mpStyle .mr_5, .mpStyle [class*="_mr_5"] {margin-right: 5%;}
 	.mpStyle .mb, .mpStyle .marB, .mpStyle [class*="_mb"], .mpStyle [class*="_mB"] {margin-bottom: var(--default-mp);}
 	.mpStyle .mb_xs, .mpStyle [class*="_mb_xs"] {margin-bottom: var(--default-mp-xs);}
-	.mpStyle .ml, .mpStyle [class*="_ml"], .mpStyle [class*="_mL"] {margin-left: var(--default-mp);}
-	.mpStyle .ml_xs, .mpStyle [class*="_ml_xs"] {margin-left: var(--default-mp-xs);}
+	.mpStyle .mL, .mpStyle [class*="_mL"] {margin-left: var(--default-mp);}
+	.mpStyle .mL_xs, .mpStyle [class*="_mL_xs"] {margin-left: var(--default-mp-xs);}
 	.mpStyle .ml_20, .mpStyle [class*="_ml_20"] {margin-left: 20px;}
 	.mpStyle .ml_25, .mpStyle [class*="_ml_25"] {margin-left: 25px;}
 	.mpStyle [class*="mar_txs_b"] {margin: var(--default-mp-xs) 0 var(--default-mp) 0;}
@@ -787,6 +788,9 @@
 	.mpStyle .roundSwitchLabel input:checked + .roundSwitch:before {-ms-transform: translateX(35px);transform: translateX(35px);}
 	/*********Group radio check*******/
 	.groupRadioCheck [data-radio-check] {cursor: pointer;-webkit-justify-content: flex-start;justify-content: flex-start;}
+	.groupRadioCheck button[data-radio-check] {-webkit-justify-content: center;justify-content: center;}
+	.groupRadioCheck [data-radio-check]:hover {border-color: var(--theme-color_88);}
+	.groupRadioCheck [data-radio-check].mpActive {border-color: var(--theme-color);}
 	/*********Group Content*******/
 	.mpStyle .groupContent {
 		font-size: var(--fs);
@@ -874,7 +878,7 @@
 @media only screen and (min-width: 10px) {
 	.mpStyle .tabLists,
 	.mpStyle .leftTabs {display: -webkit-flex;display: flex;}
-	.mpStyle .tabLists {font-size: var(--font-size-h6);background-color: #2C3338;width: 100%;}
+	.mpStyle .tabLists {font-size: var(--font-size-h6);width: 100%;}
 	.mpStyle .tabLists span {margin: 0 var(--default-mp-xs) 0 0;}
 	.leftTabs > .tabLists {-webkit-flex-flow: column;flex-flow: column;min-width: 250px;max-width: 250px;}
 	div.mpStyle [data-tabs-target] {
@@ -883,10 +887,10 @@
 		-webkit-flex-wrap: nowrap;flex-wrap: nowrap;
 		position: relative;text-align: left;cursor: pointer;
 		padding: var(--default-mp-xs);
-		color: var(--theme-alternate-color);
+		color: var(--d_color);
 	}
-	.mpStyle [data-tabs-target]:hover,
-	.mpStyle [data-tabs-target].active {font-weight: var(--fw-medium); background-color: var(--theme-color);}
+	.mpStyle [data-tabs-target]:hover{font-weight: var(--fw-medium); border-color: var(--theme-color);color:var(--theme-color)}
+	.mpStyle [data-tabs-target].active {font-weight: var(--fw-medium); background-color: var(--theme-color);color: var(--theme-alternate-color);}
 	.topTabs [data-tabs-target] {border-right: 1px solid var(--border_color);-webkit-justify-content: center;justify-content: center;}
 	.topTabs [data-tabs-target]:last-child {border-right: none;}
 	.leftTabs [data-tabs-target] {border-bottom: 1px solid var(--border_color);}
@@ -1111,9 +1115,9 @@
 	.mpStyle .max_1200, .mpStyle [class*="_max_1200"] {max-width: 1200px;width: 100%;}
 	.mpStyle .max_full, .mpStyle [class*="_max_full"] {max-width: 100%;width: 100%;}
 	/************************/
-	.mpStyle .min_50 {min-width: 50px;}
-	.mpStyle .min_100 {min-width: 100px;}
-	.mpStyle .min_150 {min-width: 150px;}
+	.mpStyle .min_50,.mpStyle [class*="_min_50"] {min-width: 50px;}
+	.mpStyle .min_100 ,.mpStyle [class*="_min_100"]{min-width: 100px;}
+	.mpStyle .min_150 ,.mpStyle [class*="_min_150"]{min-width: 150px;}
 	.mpStyle .min_200, .mpStyle [class*="_min_200"] {min-width: 200px;}
 	.mpStyle .min_250 {min-width: 250px;}
 	.mpStyle .min_300 {min-width: 300px;}

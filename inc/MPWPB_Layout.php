@@ -54,7 +54,7 @@
 							<img src="<?php echo wp_get_attachment_image_url( $image_id, 'medium' ) ?>" alt="<?php echo esc_attr( $image_id ); ?>"/>
 						</div>
 					<?php } ?>
-					<button type="button" class="mpBtn_xs <?php echo esc_attr( $image_id ? 'dNone' : '' ); ?>">
+					<button type="button" class="_dButton_xs_bgColor_1_fullWidth <?php echo esc_attr( $image_id ? 'dNone' : '' ); ?>">
 						<span class="fas fa-images mR_xs"></span><?php esc_html_e( 'Image', 'mpwpb_plugin' ); ?>
 					</button>
 				</div>
@@ -80,8 +80,8 @@
 							}
 						?>
 					</div>
-					<button type="button" class="mpBtn_xs add_multi_image">
-						<span class="fas fa-images"></span><?php esc_html_e( 'Image', 'mpwpb_plugin' ); ?>
+					<button type="button" class="_dButton_bgColor_1 add_multi_image">
+						<span class="fas fa-images mR_xs"></span><?php esc_html_e( 'Image', 'mpwpb_plugin' ); ?>
 					</button>
 					<?php //MPWPB_Layout::add_new_button( esc_html__( 'Add Image', 'mpwpb_plugin' ), 'add_multi_image', '_dButton_bgColor_1' ); ?>
 				</div>
@@ -92,7 +92,7 @@
 				?>
 				<button class="<?php echo esc_attr( $button_class . ' ' . $class ); ?>" type="button">
 					<span class="<?php echo esc_attr( $icon_class ); ?>"></span>
-					<span class="ml_xs"><?php echo esc_html( $button_text ); ?></span>
+					<span class="mL_xs"><?php echo esc_html( $button_text ); ?></span>
 				</button>
 				<?php
 			}
@@ -115,8 +115,30 @@
 			}
 			public static function move_button() {
 				?>
-				<div class="_mpBtn_themeButton_xs mp_sortable_button" type=""><span class="fas fa-expand-arrows-alt mp_zero"></span></div>
+				<div class="_mpBtn_navy_blueButton_xs mp_sortable_button" type=""><span class="fas fa-expand-arrows-alt mp_zero"></span></div>
 				<?php
+			}
+			/*****************************/
+			public static function qty_input( $input_name, $price, $available_seat = 1, $default_qty = 0, $min_qty = 0, $max_qty = '' ) {
+				$min_qty = max( $default_qty, $min_qty );
+				if ( $available_seat > $min_qty ) {
+					?>
+					<div class="groupContent qtyIncDec">
+						<div class="decQty addonGroupContent"><span class="fas fa-minus"></span></div>
+						<label>
+							<input type="text"
+								 class="formControl inputIncDec"
+								 data-price="<?php echo esc_attr( $price ); ?>"
+								 name="<?php echo esc_attr( $input_name ); ?>"
+								 value="<?php echo esc_attr( max( 0, $default_qty ) ); ?>"
+								 min="<?php echo esc_attr( $min_qty ); ?>"
+								 max="<?php echo esc_attr( $max_qty > 0 ? $max_qty : $available_seat ); ?>"
+							/>
+						</label>
+						<div class="incQty addonGroupContent"><span class="fas fa-plus"></span></div>
+					</div>
+					<?php
+				}
 			}
 		}
 		new MPWPB_Layout();

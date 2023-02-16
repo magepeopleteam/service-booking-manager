@@ -1,5 +1,9 @@
 /********************************************************************************************************************/
 @media only screen and (min-width: 10px) {
+	form.mpwpb_registration .mpTabs{display: -webkit-flex;display: flex;}
+}
+/********************************************************************************************************************/
+@media only screen and (min-width: 10px) {
 	.mpwpb_date_carousel{position: relative;}
 	.mpwpb_date_carousel .owl-stage{display: -webkit-flex;display: flex;}
 	.mpwpb_date_carousel .owl-carousel .owl-item{display: -webkit-flex;display: flex;}

@@ -11,7 +11,7 @@
 		<i class="mpwpb_total_bill textTheme"><?php echo MPWPB_Function::wc_price( $post_id, 0 ); ?></i>
 	</h5>
 	<div>
-		<button class="warningButton mpwpb_book_now" type="button">
+		<button class="_warningButton_dNone mpwpb_book_now" type="button">
 			<span class="fas fa-cart-plus mR_xs"></span>
 			<?php esc_html_e( 'Add to Cart', 'mpwpb_plugin' ); ?>
 		</button>

@@ -132,6 +132,77 @@
 				$file_path     = $dir . $file_name;
 				return locate_template( array( 'mpwpb_templates/' . $file_name ) ) ? $file_path : $default_dir . $file_name;
 			}
+			//*******************************//
+			public static function get_category( $post_id) {
+				$categories   = [];
+				$all_services =MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_infos', array() );
+				$category_active     = MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_active', 'on' );
+				if ( $category_active == 'on'  && sizeof( $all_services ) > 0 ) {
+					foreach ( $all_services as $service ) {
+						$categories[] = $service['category'];
+					}
+				}
+				return array_unique( $categories );
+			}
+			public static function get_sub_category( $post_id, $all_services = array() ) {
+				$sub_category_list = [];
+				$category_active     = MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_active', 'on' );
+				$sub_category_active = MPWPB_Function::get_post_info( $post_id, 'mpwpb_sub_category_active', 'off' );
+				$category_infos      = MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_infos', array() );
+				$count               = 0;
+				if ( sizeof( $category_infos ) > 0 ) {
+					foreach ( $category_infos as $category_info ) {
+						$category_name  = array_key_exists( 'category', $category_info ) ? $category_info['category'] : '';
+						$category_name=$category_active == 'on' ? $category_name : '';
+						$sub_categories = array_key_exists( 'sub_category', $category_info ) ? $category_info['sub_category'] : array();
+						if ( $category_name && sizeof( $sub_categories ) > 0 ) {
+							foreach ( $sub_categories as $sub_category ) {
+								$sub_category_name = array_key_exists( 'name', $sub_category ) ? $sub_category['name'] : '';
+								$sub_category_name= $category_active == 'on' && $sub_category_active == 'on' ? $sub_category_name : '';
+								if($sub_category_name) {
+									$sub_category_list[ $count ]['category']     = $category_name;
+									$sub_category_list[ $count ]['sub_category'] = $sub_category_name;
+									$count++;
+								}
+							}
+						}
+					}
+				}
+				return $sub_category_list;
+				//return array_unique( $sub_categories );
+			}
+			public static function get_all_service( $post_id ) {
+				$all_services        = [];
+				$category_active     = MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_active', 'on' );
+				$sub_category_active = MPWPB_Function::get_post_info( $post_id, 'mpwpb_sub_category_active', 'off' );
+				$category_infos      = MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_infos', array() );
+				$count               = 0;
+				if ( sizeof( $category_infos ) > 0 ) {
+					foreach ( $category_infos as $category_info ) {
+						$category_name  = array_key_exists( 'category', $category_info ) ? $category_info['category'] : '';
+						$sub_categories = array_key_exists( 'sub_category', $category_info ) ? $category_info['sub_category'] : array();
+						if ( sizeof( $sub_categories ) > 0 ) {
+							foreach ( $sub_categories as $sub_category ) {
+								$sub_category_name = array_key_exists( 'name', $sub_category ) ? $sub_category['name'] : '';
+								$services          = array_key_exists( 'service', $sub_category ) ? $sub_category['service'] : array();
+								if ( sizeof( $services ) > 0 ) {
+									foreach ( $services as $service ) {
+										$all_services[ $count ]['category']     = $category_active == 'on' ? $category_name : '';
+										$all_services[ $count ]['sub_category'] = $category_active == 'on' && $sub_category_active == 'on' ? $sub_category_name : '';
+										$all_services[ $count ]['service']      = array_key_exists( 'name', $service ) ? $service['name'] : '';
+										$all_services[ $count ]['price']        = array_key_exists( 'price', $service ) ? $service['price'] : '';
+										$all_services[ $count ]['img']          = array_key_exists( 'img', $service ) ? $service['img'] : '';
+										$all_services[ $count ]['duration']     = array_key_exists( 'duration', $service ) ? $service['duration'] : '';
+										$all_services[ $count ]['details_id']   = array_key_exists( 'details_id', $service ) ? $service['details_id'] : '';
+										$count ++;
+									}
+								}
+							}
+						}
+					}
+				}
+				return $all_services;
+			}
 			//*********Date and Time**********************//
 			public static function get_all_date( $post_id ) {
 				$dates         = [];
@@ -204,7 +275,7 @@
 				}
 				return $date;
 			}
-			public static function date_format( $date, $format = 'date') {
+			public static function date_format( $date, $format = 'date' ) {
 				$date_format = get_option( 'date_format' );
 				$time_format = get_option( 'time_format' );
 				$wp_settings = $date_format . '  ' . $time_format;
@@ -216,13 +287,13 @@
 					$date = date_i18n( $time_format, $timestamp );
 				} elseif ( $format == 'full' ) {
 					$date = date_i18n( $wp_settings, $timestamp );
-				}elseif ($format=='day'){
+				} elseif ( $format == 'day' ) {
 					$date = date_i18n( 'd', $timestamp );
-				}elseif ($format=='month'){
+				} elseif ( $format == 'month' ) {
 					$date = date_i18n( 'M', $timestamp );
-				}elseif ($format=='year'){
+				} elseif ( $format == 'year' ) {
 					$date = date_i18n( 'Y', $timestamp );
-				}else{
+				} else {
 					$date = date_i18n( $format, $timestamp );
 				}
 				return $date;

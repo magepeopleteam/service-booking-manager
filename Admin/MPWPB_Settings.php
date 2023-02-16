@@ -34,7 +34,7 @@
 								<span class="fas fa-images"></span><?php esc_html_e( 'Gallery ', 'mpwpb_plugin' ); ?>
 							</li>
 						</ul>
-						<div class="tabsContent tab-content">
+						<div class="tabsContent">
 							<?php
 								do_action( 'add_mpwpb_settings_tab_content', $post_id );
 							?>

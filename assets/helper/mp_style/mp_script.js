@@ -3,7 +3,6 @@ function mp_price_format(price) {
 	let total_part = price.toString().split(".");
 	total_part[0] = total_part[0].replace(/\B(?=(\d{3})+(?!\d))/g, mp_currency_thousands_separator);
 	price = total_part.join(mp_currency_decimal);
-
 	let price_text = '';
 	if (mp_currency_position === 'right') {
 		price_text = price + mp_currency_symbol;
@@ -16,6 +15,7 @@ function mp_price_format(price) {
 	}
 	return price_text;
 }
+
 //loader
 function dLoader(target) {
 	if (target.find('div[class*="dLoader"]').length < 1) {
@@ -86,7 +86,8 @@ function pageScrollTo(target) {
 		scrollTop: target.offset().top -= 100
 	}, 1000);
 }
-function mp_load_date_picker(){
+
+function mp_load_date_picker() {
 	jQuery(".mpStyle .date_type").datepicker({
 		dateFormat: mp_date_format,
 		autoSize: true,
@@ -96,6 +97,7 @@ function mp_load_date_picker(){
 		}
 	});
 }
+
 //==========Load initial=================//
 (function ($) {
 	"use strict";
@@ -204,13 +206,18 @@ function content_input_value_change(currentTarget) {
 	});
 }
 
+function mp_all_content_change($this) {
+	loadBgImage();
+	content_class_change($this);
+	content_icon_change($this);
+	content_text_change($this);
+	content_input_value_change($this);
+}
+
 (function ($) {
 	"use strict";
 	$(document).on('click', '[data-all-change]', function () {
-		content_class_change($(this));
-		content_icon_change($(this));
-		content_text_change($(this));
-		content_input_value_change($(this));
+		mp_all_content_change($(this));
 	});
 	$(document).on('click', '[data-icon-change]', function () {
 		content_icon_change($(this));
@@ -254,14 +261,23 @@ function content_input_value_change(currentTarget) {
 		if (!$(this).hasClass('active')) {
 			let tabsTarget = $(this).data('tabs-target');
 			let parent = $(this).closest('.mpTabs');
+			parent.height(parent.height());
 			let tabLists = $(this).closest('.tabLists');
 			let tabsContent = parent.find('.tabsContent:first');
-			//dLoader(tabsContent);
-			tabLists.find('[data-tabs-target]').removeClass('active');
-			$(this).addClass('active');
-			tabsContent.children('[data-tabs].active').slideUp(250).removeClass('active').promise().done(function () {
-				tabsContent.children('[data-tabs="' + tabsTarget + '"]').slideDown(250).addClass('active').promise().done(function () {
+			tabLists.find('[data-tabs-target].active').each(function () {
+				$(this).removeClass('active').promise().done(function () {
+					mp_all_content_change($(this))
+				});
+			});
+			$(this).addClass('active').promise().done(function () {
+				mp_all_content_change($(this))
+			});
+			tabsContent.children('[data-tabs="' + tabsTarget + '"]').slideDown(350);
+			tabsContent.children('[data-tabs].active').slideUp(350).removeClass('active').promise().done(function () {
+				tabsContent.children('[data-tabs="' + tabsTarget + '"]').addClass('active').promise().done(function () {
 					//dLoaderRemove(tabsContent);
+					loadBgImage();
+					parent.height('auto');
 				});
 			});
 		}
@@ -276,10 +292,7 @@ function content_input_value_change(currentTarget) {
 		let close_id = currentTarget.data('close-target');
 		let target = $('[data-collapse="' + target_id + '"]');
 		if (target_close(close_id, target_id) && collapse_close_inside(currentTarget) && target_collapse(target, currentTarget)) {
-			content_class_change(currentTarget);
-			content_text_change(currentTarget);
-			content_icon_change(currentTarget);
-			content_input_value_change(currentTarget);
+			mp_all_content_change(currentTarget);
 		}
 		loadBgImage();
 	});
@@ -307,7 +320,7 @@ function content_input_value_change(currentTarget) {
 		if ($this.is('[type="radio"]')) {
 			target.slideDown(250);
 		} else {
-			target.each(function (){
+			target.each(function () {
 				$(this).slideToggle(250).toggleClass('mActive');
 			});
 		}
@@ -376,17 +389,14 @@ function content_input_value_change(currentTarget) {
 		//e.stopPropagation();
 		let parent = $(this).closest('.groupRadioCheck');
 		let $this = $(this);
-		if ($this.hasClass('mpActive')) {
-			content_icon_change($(this));
-		} else {
+		if (!$this.hasClass('mpActive')) {
 			let value = $this.data('radio-check');
 			parent.find('.mpActive[data-radio-check]').each(function () {
-				if ($(this).hasClass('mpActive')) {
-					$(this).removeClass('mpActive');
-					content_icon_change($(this));
-				}
+				$(this).removeClass('mpActive');
+				mp_all_content_change($(this));
 			}).promise().done(function () {
 				$this.addClass('mpActive');
+				mp_all_content_change($this);
 				parent.find('input[type="hidden"]').val(value).trigger('change');
 			});
 		}
