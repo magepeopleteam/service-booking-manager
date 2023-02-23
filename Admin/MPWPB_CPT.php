@@ -49,15 +49,6 @@
 					'show_in_rest' => true
 				];
 				register_post_type( MPWPB_Function::get_cpt_name(), $args );
-				$args_details = [
-					'public'          => true,
-					'label'           => esc_html__( 'Service Details', 'mpwpb_plugin' ),
-					'supports'        => [ 'title', 'thumbnail', 'editor' ],
-					'show_in_menu'    => 'edit.php?post_type=mpwpb_item',
-					'capability_type' => 'post',
-					'show_in_rest'    => true,
-				];
-				register_post_type( 'mpwpb_item_details', $args_details );
 			}
 		}
 		new MPWPB_CPT();

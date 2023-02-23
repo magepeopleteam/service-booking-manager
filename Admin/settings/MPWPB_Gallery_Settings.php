@@ -27,9 +27,7 @@
 							<tbody>
 							<tr>
 								<th><?php esc_html_e( 'Gallery Images ', 'mpwpb_plugin' ); ?></th>
-								<td colspan="3">
-									<?php MPWPB_Layout::add_multi_image( 'mpwpb_slider_images', $image_ids ); ?>
-								</td>
+								<td colspan="3"><?php do_action( 'mp_add_multi_image', 'mpwpb_slider_images', $image_ids ); ?></td>
 							</tr>
 							<tr>
 								<td colspan="4"><?php MPWPB_Settings::info_text( 'mpwpb_slider_images' ); ?></td>

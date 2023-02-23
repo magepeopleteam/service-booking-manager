@@ -53,14 +53,14 @@
 								?>
 								<label>
 									<span class="max_200"><?php esc_html_e( 'Service Start Date', 'mpwpb_plugin' ); ?><span class="textRequired">&nbsp;*</span></span>
-									<input type="hidden" name="mpwpb_service_start_date" value="<?php echo esc_attr( $hidden_start_date ); ?>"/>
-									<input type="text" name="" class="formControl date_type" value="<?php echo esc_attr( $visible_start_date ); ?>" placeholder="<?php echo esc_attr( $now ); ?>"/>
+									<input type="hidden" name="mpwpb_service_start_date" value="<?php echo esc_attr( $hidden_start_date ); ?>" required/>
+									<input type="text" readonly required name="" class="formControl date_type" value="<?php echo esc_attr( $visible_start_date ); ?>" placeholder="<?php echo esc_attr( $now ); ?>"/>
 								</label>
 								<div class="divider"></div>
 								<label>
 									<span class="max_200"><?php esc_html_e( 'Service end Date', 'mpwpb_plugin' ); ?><span class="textRequired">&nbsp;*</span></span>
-									<input type="hidden" name="mpwpb_service_end_date" value="<?php echo esc_attr( $hidden_end_date ); ?>"/>
-									<input type="text" name="" class="formControl date_type" value="<?php echo esc_attr( $visible_end_date ); ?>" placeholder="<?php echo esc_attr( $now ); ?>"/>
+									<input type="hidden" name="mpwpb_service_end_date" value="<?php echo esc_attr( $hidden_end_date ); ?>" required/>
+									<input type="text" readonly required name="" class="formControl date_type" value="<?php echo esc_attr( $visible_end_date ); ?>" placeholder="<?php echo esc_attr( $now ); ?>"/>
 								</label>
 								<div class="divider"></div>
 								<label>
@@ -168,9 +168,11 @@
 			}
 			public function time_slot_tr( $post_id, $day ) {
 				$start_name       = 'mpwpb_' . $day . '_start_time';
-				$start_time       = MPWPB_Function::get_post_info( $post_id, $start_name );
+				$default_start_time=$day=='default'?10:'';
+				$start_time       = MPWPB_Function::get_post_info( $post_id, $start_name ,$default_start_time);
 				$end_name         = 'mpwpb_' . $day . '_end_time';
-				$end_time         = MPWPB_Function::get_post_info( $post_id, $end_name );
+				$default_end_time=$day=='default'?18:'';
+				$end_time         = MPWPB_Function::get_post_info( $post_id, $end_name ,$default_end_time);
 				$start_name_break = 'mpwpb_' . $day . '_start_break_time';
 				$start_time_break = MPWPB_Function::get_post_info( $post_id, $start_name_break );
 				?>
@@ -203,7 +205,8 @@
 			}
 			public function end_time_slot( $post_id, $day, $start_time ) {
 				$end_name = 'mpwpb_' . $day . '_end_time';
-				$end_time = MPWPB_Function::get_post_info( $post_id, $end_name );
+				$default_end_time=$day=='default'?18:'';
+				$end_time = MPWPB_Function::get_post_info( $post_id, $end_name,$default_end_time );
 				?>
 				<label>
 					<select class="formControl " name="<?php echo $end_name; ?>">
@@ -290,10 +293,10 @@
 				if ( get_post_type( $post_id ) == MPWPB_Function::get_cpt_name() ) {
 					//************************************//
 					$service_start_date = MPWPB_Function::get_submit_info( 'mpwpb_service_start_date' );
-					$service_start_date = date( 'Y-m-d', strtotime( $service_start_date ) );
+					$service_start_date = $service_start_date?date( 'Y-m-d', strtotime( $service_start_date ) ):'';
 					update_post_meta( $post_id, 'mpwpb_service_start_date', $service_start_date );
 					$service_end_date = MPWPB_Function::get_submit_info( 'mpwpb_service_end_date' );
-					$service_end_date = date( 'Y-m-d', strtotime( $service_end_date ) );
+					$service_end_date = $service_end_date?date( 'Y-m-d', strtotime( $service_end_date ) ):'';
 					update_post_meta( $post_id, 'mpwpb_service_end_date', $service_end_date );
 					$time_slot_length = MPWPB_Function::get_submit_info( 'mpwpb_time_slot_length' );
 					update_post_meta( $post_id, 'mpwpb_time_slot_length', $time_slot_length );

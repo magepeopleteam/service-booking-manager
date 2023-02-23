@@ -14,6 +14,7 @@
 				//require_once MPWPB_PLUGIN_DIR . '/Admin/MPTBM_Dummy_Import.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Settings_Global.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Hidden_Product.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MP_Select_Icon_image.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_CPT.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Quick_Setup.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Save.php';

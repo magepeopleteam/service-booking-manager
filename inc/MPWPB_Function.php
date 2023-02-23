@@ -133,11 +133,11 @@
 				return locate_template( array( 'mpwpb_templates/' . $file_name ) ) ? $file_path : $default_dir . $file_name;
 			}
 			//*******************************//
-			public static function get_category( $post_id) {
-				$categories   = [];
-				$all_services =MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_infos', array() );
-				$category_active     = MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_active', 'on' );
-				if ( $category_active == 'on'  && sizeof( $all_services ) > 0 ) {
+			public static function get_category( $post_id ) {
+				$categories      = [];
+				$all_services    = MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_infos', array() );
+				$category_active = MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_active', 'on' );
+				if ( $category_active == 'on' && sizeof( $all_services ) > 0 ) {
 					foreach ( $all_services as $service ) {
 						$categories[] = $service['category'];
 					}
@@ -145,7 +145,7 @@
 				return array_unique( $categories );
 			}
 			public static function get_sub_category( $post_id, $all_services = array() ) {
-				$sub_category_list = [];
+				$sub_category_list   = [];
 				$category_active     = MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_active', 'on' );
 				$sub_category_active = MPWPB_Function::get_post_info( $post_id, 'mpwpb_sub_category_active', 'off' );
 				$category_infos      = MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_infos', array() );
@@ -153,16 +153,16 @@
 				if ( sizeof( $category_infos ) > 0 ) {
 					foreach ( $category_infos as $category_info ) {
 						$category_name  = array_key_exists( 'category', $category_info ) ? $category_info['category'] : '';
-						$category_name=$category_active == 'on' ? $category_name : '';
+						$category_name  = $category_active == 'on' ? $category_name : '';
 						$sub_categories = array_key_exists( 'sub_category', $category_info ) ? $category_info['sub_category'] : array();
 						if ( $category_name && sizeof( $sub_categories ) > 0 ) {
 							foreach ( $sub_categories as $sub_category ) {
 								$sub_category_name = array_key_exists( 'name', $sub_category ) ? $sub_category['name'] : '';
-								$sub_category_name= $category_active == 'on' && $sub_category_active == 'on' ? $sub_category_name : '';
-								if($sub_category_name) {
+								$sub_category_name = $category_active == 'on' && $sub_category_active == 'on' ? $sub_category_name : '';
+								if ( $sub_category_name ) {
 									$sub_category_list[ $count ]['category']     = $category_name;
 									$sub_category_list[ $count ]['sub_category'] = $sub_category_name;
-									$count++;
+									$count ++;
 								}
 							}
 						}
@@ -320,19 +320,29 @@
 				return new DatePeriod( new DateTime( $start_date ), new DateInterval( $_interval ), new DateTime( $end_date ) );
 			}
 			//*************Price*********************************//
-			public static function get_price( $post_id, $category_name, $service_name, $date = '' ) {
-				$category_infos = MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_infos', array() );
-				$price          = 0;
-				if ( sizeof( $category_infos ) > 0 ) {
-					foreach ( $category_infos as $categories ) {
+			public static function get_price( $post_id, $service_name, $category_name = '', $sub_category_name = '', $date = '' ) {
+				$all_service = MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_infos', array() );
+				$price       = 0;
+				if ( sizeof( $all_service ) > 0 ) {
+					foreach ( $all_service as $categories ) {
 						$current_category_name = array_key_exists( 'category', $categories ) ? $categories['category'] : '';
-						if ( $current_category_name == $category_name ) {
-							$service_infos = array_key_exists( 'service', $categories ) ? $categories['service'] : '';
-							if ( sizeof( $service_infos ) > 0 ) {
-								foreach ( $service_infos as $service_info ) {
-									$current_service_name = array_key_exists( 'name', $service_info ) ? $service_info['name'] : '';
-									if ( $current_service_name == $service_name ) {
-										$price = array_key_exists( 'price', $service_info ) ? $service_info['price'] : 0;
+						if ( ( $current_category_name && $category_name && $current_category_name == $category_name ) || ( ! $current_category_name && ! $category_name ) ) {
+							$sub_categories = array_key_exists( 'sub_category', $categories ) ? $categories['sub_category'] : array();
+
+							if ( sizeof( $sub_categories ) > 0 ) {
+								foreach ( $sub_categories as $sub_category ) {
+									$current_sub_category_name = array_key_exists( 'name', $sub_category ) ? $sub_category['name'] : '';
+									if ( ( $current_sub_category_name && $sub_category_name && $current_sub_category_name == $sub_category_name ) || ( ! $current_sub_category_name && ! $sub_category_name ) ) {
+										$service_infos = array_key_exists( 'service', $sub_category ) ? $sub_category['service'] : [];
+
+										if ( sizeof( $service_infos ) > 0 ) {
+											foreach ( $service_infos as $service_info ) {
+												$current_service_name = array_key_exists( 'name', $service_info ) ? $service_info['name'] : '';
+												if ( $current_service_name == $service_name ) {
+													$price = array_key_exists( 'price', $service_info ) ? $service_info['price'] : 0;
+												}
+											}
+										}
 									}
 								}
 							}

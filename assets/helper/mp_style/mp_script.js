@@ -109,6 +109,7 @@ function mp_load_date_picker() {
 
 //==========Load Bg Image=================//
 function loadBgImage() {
+
 	jQuery('body').find('[data-bg-image]:visible').each(function () {
 		let target = jQuery(this);
 		let height = target.outerWidth() * 2 / 3;
@@ -487,13 +488,13 @@ function mp_pagination_page_management(parent, pagination_page, total_item) {
 			loadBgImage();
 			return true;
 		});
-		return false;
+		$(document).on('click', 'div.mpPopup  .popupClose', function () {
+			$(this).closest('[data-popup]').removeClass('in');
+			$('body').removeClass('noScroll');
+			return true;
+		});
 	});
-	$(document).on('click', '.mpStyle .mpPopup  .popupClose', function () {
-		$(this).closest('[data-popup]').removeClass('in');
-		$('body').removeClass('noScroll');
-		return true;
-	});
+
 	$(document).click(function (e) {
 		let target = $(e.target);
 		let popup = target.closest('[data-popup]');

@@ -49,6 +49,7 @@
 }
 /******************************************************************** Meta tab settings ************************************************/
 @media only screen and (min-width: 10px) {
+	#mp_meta_box_panel .tabLists{border-right: 1px solid var(--border_color);}
 	/************************************/
 	#mp_meta_box_panel table {table-layout: fixed;border-collapse: collapse;border: 1px solid #F5F5F5;}
 	#mp_meta_box_panel table tr:nth-child(even) {background-color: #0CB32612;}
@@ -60,7 +61,6 @@
 	#mp_meta_box_panel table tbody thead th {text-align: center;}
 	/************************************/
 	#mp_meta_box_panel .mpStyle .roundSwitch { min-width: 60px;}
-	#mp_meta_box_panel .mpStyle button.mp_input_add_icon_button { min-width: inherit;}
 	#mp_meta_box_panel {margin: 15px 0;}
 	#mp_meta_box_panel .inside,
 	#mp_meta_box_panel .form-section {margin: 0;padding: 0;}
@@ -81,8 +81,70 @@
 	div.mp_add_single_image {max-width: 150px;width: 100%;}
 	div.mp_single_image_item {position: relative; width: 100%;}
 }
-/********************************************************************  ************************************************/
+/******************************************************************** add Icon image ************************************************/
 @media only screen and (min-width: 10px) {
+	div.mp_add_icon_image_area{border: 1px solid var(--theme-color);position: relative;max-width: 120px;}
+	div.mpStyle div.mp_add_icon_image_area  button{padding: 5px;font-size: 12px;}
+	div.mp_add_icon_image_area button span{margin: 0 5px 0 0;}
+	div.mpStyle div.mp_add_icon_image_area img{border-radius: 0;}
+	div.mp_add_icon_image_area div.mp_icon_item{padding: var(--default-mp-xs);background-color: var(--light-color);font-size:40px;}
+	div.mp_icon_item:hover  .mp_remove_icon,
+	div.mp_image_item:hover  .mp_remove_icon{opacity: 1;}
+	div.mp_add_icon_popup .popupHeader {
+		color: #FFF;height: 60px;
+		margin: 0 auto;width: 100%;background-color: #222;position: relative;
+		border-bottom: 1px solid #FFF;
+	}
+	div.mp_add_icon_popup .popupHeader h2 {
+		color: #FFF;text-align: center;
+		font-size: 30px !important;
+		font-weight: 500;
+	}
+	div.mp_add_icon_popup .popupBody {padding: 0;}
+	div.mp_add_icon_popup ul.popupIconMenu {
+		min-width: 270px;background-color: #222;margin: 0;
+		max-height: calc(100vh - var(--default-mp) - var(--default-mp) - 60px);
+		overflow: hidden auto;
+	}
+	div.mp_add_icon_popup .popupIconMenu li {
+		padding: 7px 15px;margin: 0;
+		border-bottom: 1px solid #DDD;
+		color: #FFF;font-size: 16px;display: block;cursor: pointer;
+		position: relative;
+		font-weight: 500;
+	}
+	div.mp_add_icon_popup .popupIconMenu li strong {color: #9F6C8A;}
+	div.mp_add_icon_popup .popupIconMenu li.active {background-color: #E3A939;}
+	div.mp_add_icon_popup .popupIconMenu li:hover {color: #E3A939;}
+	div.mp_add_icon_popup .popupIconMenu li.active:hover {color: #FFF;}
+	div.mp_add_icon_popup .popup_all_icon {
+		width: 100%;padding: 10px;background-color: #FFF;
+		max-height: calc(100vh - var(--default-mp) - var(--default-mp) - 60px);
+		overflow: hidden auto;
+	}
+	div.mp_add_icon_popup .popup_all_icon .popupTabItem {width: 100%;}
+	div.mp_add_icon_popup .popup_all_icon .itemIconArea {
+		width: 100%;
+		display: -webkit-flex;display: flex;
+		-webkit-flex-wrap: wrap;flex-wrap: wrap;
+	}
+	div.mp_add_icon_popup .iconItem {
+		width: 60px;height: 60px;font-size: 30px;margin: 7px;cursor: pointer;
+		border: 2px solid #FFF;background-color: #F2F2F2;
+		-webkit-box-shadow: 0 1px 4px 1px #DBDBDB;
+		box-shadow: 0 1px 4px 1px #DBDBDB;
+	}
+	div.mp_add_icon_popup .iconItem.active,
+	div.mp_add_icon_popup .iconItem:hover {border-color: var(--theme-color);color: var(--theme-color);border-radius: 5px;}
+	/************* font***************/
+	div.mp_add_icon_popup .iconItem,
+	div.mp_add_icon_popup .popupIconMenu li {
+		-webkit-transition: 350ms ease-in-out;
+		-moz-transition: 350ms ease-in-out;
+		-o-transition: 350ms ease-in-out;
+		transition: 350ms ease-in-out;
+	}
+
 }
 /********************************************************************  ************************************************/
 @media only screen and (min-width: 10px) {
