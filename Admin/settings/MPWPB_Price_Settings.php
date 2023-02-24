@@ -239,7 +239,7 @@
 			public function service_item( $unique_name, $active, $service_info = array() ) {
 				$image_name            = 'mpwpb_service_img_' . $unique_name . '[]';
 				$icon                  = array_key_exists( 'icon', $service_info ) ? $service_info['icon'] : '';
-				$image                 = array_key_exists( 'img', $service_info ) ? $service_info['image'] : '';
+				$image                 = array_key_exists( 'image', $service_info ) ? $service_info['image'] : '';
 				$service_name          = 'mpwpb_service_name_' . $unique_name . '[]';
 				$service               = array_key_exists( 'name', $service_info ) ? $service_info['name'] : '';
 				$details_name          = 'mpwpb_service_details_' . $unique_name . '[]';
@@ -496,7 +496,7 @@
 							if ( sizeof( $sub_category_infos ) > 0 ) {
 								if($active_category == 'on' ){
 									if($categories[ $i ]){
-										$current_categories_img_icon   = $active_category == 'on' ? $categories_img_icon[ $i ] : '';
+										$current_categories_img_icon   = $categories_img_icon[ $i ];
 										$category_infos[ $i ]['icon']  = '';
 										$category_infos[ $i ]['image'] = '';
 										if ( $current_categories_img_icon ) {
@@ -506,7 +506,7 @@
 												$category_infos[ $i ]['image'] = $current_categories_img_icon;
 											}
 										}
-										$category_infos[ $i ]['category']     = $active_category == 'on' ? $categories[ $i ] : '';
+										$category_infos[ $i ]['category']     = $categories[ $i ];
 										$category_infos[ $i ]['sub_category'] = $sub_category_infos;
 									}
 								}else{

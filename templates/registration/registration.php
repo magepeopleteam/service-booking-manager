@@ -3,11 +3,22 @@
 		exit;
 	}
 	$post_id        = $post_id ?? get_the_id();
+	$all_dates         = $all_dates ?? MPWPB_Function::get_all_date( $post_id );
 	$all_services   = $all_services ?? MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_infos', array() );
 	$extra_services = $extra_services ?? MPWPB_Function::get_post_info( $post_id, 'mpwpb_extra_service', array() );
 	//echo '<pre>'; print_r( $all_services ); echo '</pre>';
-	if ( sizeof( $all_services ) > 0 ) {
+	if ( sizeof( $all_services ) > 0 && sizeof($all_dates)>0) {
 		?>
+		<form action="" method="post" class="mpwpb_registration">
+			<div class="mpRow">
+				<div class="leftSidebar">
+					<div class="dLayout_xs">
+						
+					</div>
+				</div>
+				<div class="mainSection"></div>
+			</div>
+		</form>
 		<form action="" method="post" class="mpwpb_registration">
 			<div class="mpTabs leftTabs">
 				<div class="leftSidebar">
