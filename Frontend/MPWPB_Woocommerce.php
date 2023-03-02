@@ -236,7 +236,7 @@
 					</div>
 					<?php if ( sizeof( $extra_service ) > 0 ) { ?>
 						<div class="dLayout_xs">
-							<h5 class="mb_xs"><?php esc_html_e( 'Extra Services', 'mpwpb_plugin' ); ?></h5>
+							<h5 class="mB_xs"><?php esc_html_e( 'Extra Services', 'mpwpb_plugin' ); ?></h5>
 							<?php foreach ( $extra_service as $service ) { ?>
 								<div class="divider"></div>
 								<div class="dFlex">

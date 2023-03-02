@@ -84,6 +84,7 @@
 /******************************************************************** add Icon image ************************************************/
 @media only screen and (min-width: 10px) {
 	div.mp_add_icon_image_area{border: 1px solid var(--theme-color);position: relative;max-width: 120px;}
+	div.mp_add_icon_image_area img{max-height: 100px;}
 	div.mpStyle div.mp_add_icon_image_area  button{padding: 5px;font-size: 12px;}
 	div.mp_add_icon_image_area button span{margin: 0 5px 0 0;}
 	div.mpStyle div.mp_add_icon_image_area img{border-radius: 0;}

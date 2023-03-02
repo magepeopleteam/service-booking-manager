@@ -84,6 +84,7 @@
 											<div class="mpwpb_sub_category_content">
 												<div class="mpwpb_service_area">
 													<div class="mpwpb_service_item"><h6><?php esc_html_e( 'service', 'mpwpb_plugin' ); ?><span class="textRequired">&nbsp;*</span></h6></div>
+													<div class="mpwpb_service_content"><h6><?php esc_html_e( 'Image/Icon', 'mpwpb_plugin' ); ?></h6></div>
 													<div class="mpwpb_service_content"><h6><?php esc_html_e( 'Price', 'mpwpb_plugin' ); ?><span class="textRequired">&nbsp;*</span></h6></div>
 													<div class="mpwpb_service_content <?php echo esc_attr( $service_duration_active_class ); ?>" data-collapse="#mpwpb_service_duration_active">
 														<h6><?php esc_html_e( 'Duration', 'mpwpb_plugin' ); ?></h6>
@@ -260,7 +261,8 @@
 								<input type="text" name="<?php echo esc_attr( $service_name ); ?>" class="formControl mp_name_validation" value="<?php echo esc_attr( $service ); ?>" placeholder="<?php _e( 'Service Name', 'mpwpb_plugin' ); ?>"/>
 							</label>
 						</div>
-						<div class="divider"></div>
+					</div>
+					<div class="mpwpb_service_content">
 						<?php do_action( 'mp_add_icon_image', $image_name, $icon, $image ); ?>
 					</div>
 					<div class="mpwpb_service_content">
@@ -275,7 +277,7 @@
 					</div>
 					<div class="mpwpb_service_item <?php echo esc_attr( $details_active_class ); ?>" data-collapse="#mpwpb_service_details_active">
 						<label class="fullWidth">
-							<textarea name="<?php echo esc_attr( $details_name ); ?>" class='formControl ' placeholder="<?php esc_attr_e( 'Service details...', 'mpwpb_plugin' ); ?>"><?php echo esc_html($details); ?></textarea>
+							<textarea name="<?php echo esc_attr( $details_name ); ?>" class='formControl ' placeholder="<?php esc_attr_e( 'Service details...', 'mpwpb_plugin' ); ?>"><?php echo esc_html( $details ); ?></textarea>
 						</label>
 					</div>
 				</div>
@@ -283,10 +285,14 @@
 			}
 			/******************************** Extra Service Settings************************************/
 			public function extra_service_settings( $post_id ) {
-				$extra_services               = MPWPB_Function::get_post_info( $post_id, 'mpwpb_extra_service', array() );
-				$extra_service_active         = MPWPB_Function::get_post_info( $post_id, 'mpwpb_extra_service_active', 'off' );
-				$extra_service_active_class   = $extra_service_active == 'on' ? 'mActive' : '';
-				$extra_service_active_checked = $extra_service_active == 'on' ? 'checked' : '';
+				$extra_services                     = MPWPB_Function::get_post_info( $post_id, 'mpwpb_extra_service', array() );
+				$extra_service_active               = MPWPB_Function::get_post_info( $post_id, 'mpwpb_extra_service_active', 'off' );
+				$extra_service_active_class         = $extra_service_active == 'on' ? 'mActive' : '';
+				$extra_service_active_checked       = $extra_service_active == 'on' ? 'checked' : '';
+				$extra_service_group_active         = MPWPB_Function::get_post_info( $post_id, 'mpwpb_group_extra_service_active', 'off' );
+				$extra_service_group_active_class   = $extra_service_group_active == 'on' ? 'mActive' : '';
+				$extra_service_group_active_checked = $extra_service_group_active == 'on' ? 'checked' : '';
+				$ex_count                           = 0;
 				?>
 				<div class="mpwpb_extra_service_settings">
 					<h5 class="dFlex mT">
@@ -298,10 +304,14 @@
 							<h6><span data-icon class="fas fa-minus mR_xs"></span><?php _e( 'Extra service Settings', 'mpwpb_plugin' ); ?></h6>
 						</div>
 						<div class="mpPanelBody mActive" data-collapse="#mpwpb_extra_service_setting">
-							<div class="ovAuto">
+							<h5 class="dFlex">
+								<?php MPWPB_Layout::switch_button( 'mpwpb_group_extra_service_active', $extra_service_group_active_checked ); ?>
+								<span class="mR"><?php esc_html_e( 'Enable Group Service', 'mpwpb_plugin' ); ?></span>
+							</h5>
+							<div class="ovAuto mT_xs">
 								<div class="mp_settings_area min_1000 col_12">
 									<div class="mpwpb_category_area mpwpb_category_header">
-										<div class="mpwpb_category_item ">
+										<div class="mpwpb_category_item <?php echo esc_attr( $extra_service_group_active_class ); ?>" data-collapse="#mpwpb_group_extra_service_active">
 											<h6><?php esc_html_e( 'Group Service Name', 'mpwpb_plugin' ); ?><span class="textRequired">&nbsp;*</span></h6>
 										</div>
 										<div class="mpwpb_category_content">
@@ -318,17 +328,20 @@
 										<?php
 											if ( sizeof( $extra_services ) > 0 ) {
 												foreach ( $extra_services as $group_service ) {
-													$this->extra_service_group( $group_service );
+													$this->extra_service_group( $ex_count, $extra_service_group_active_class, $group_service );
+													$ex_count ++;
 												}
 											} else {
-												$this->extra_service_group();
+												$this->extra_service_group( 0, $extra_service_group_active_class );
 											}
 										?>
 									</div>
-									<?php MPWPB_Layout::add_new_button( esc_html__( 'Add New Group service', 'mpwpb_plugin' ), 'mpwpb_add_group_service', '_successButton_xs_mT_xs' ); ?>
-									<div class="mp_hidden_content">
-										<div class="mp_hidden_item">
-											<?php $this->extra_service_group(); ?>
+									<div class="<?php echo esc_attr( $extra_service_group_active_class ); ?>" data-collapse="#mpwpb_group_extra_service_active">
+										<?php MPWPB_Layout::add_new_button( esc_html__( 'Add New Group service', 'mpwpb_plugin' ), 'mpwpb_add_group_service', '_successButton_xs_mT_xs' ); ?>
+										<div class="mp_hidden_content">
+											<div class="mp_hidden_item">
+												<?php $this->extra_service_group( 1, $extra_service_group_active_class ); ?>
+											</div>
 										</div>
 									</div>
 								</div>
@@ -338,22 +351,24 @@
 				</div>
 				<?php
 			}
-			public function extra_service_group( $group_service = array() ) {
+			public function extra_service_group( $ex_count, $extra_service_group_active_class, $group_service = array() ) {
 				$unique_name = uniqid();
 				$services    = array_key_exists( 'group_service', $group_service ) ? $group_service['group_service'] : '';
 				?>
-				<div class="mpwpb_category_area mp_remove_area">
-					<div class="mpwpb_category_item mActive">
-						<div class="groupContent">
-							<?php MPWPB_Layout::remove_button(); ?>
-							<label class="fullWidth">
-								<input type="hidden" name="mpwpb_extra_hidden_name[]" value="<?php echo esc_attr( $unique_name ); ?>"/>
-								<input type="text" name="mpwpb_extra_group_service[]" class="formControl mp_name_validation" value="<?php echo esc_attr( $services ); ?>" placeholder="<?php esc_attr_e( 'service Group Name', 'mpwpb_plugin' ); ?>"/>
-							</label>
+				<div class="<?php echo esc_attr( $ex_count > 0 ? $extra_service_group_active_class : '' ); ?>" <?php if ( $ex_count > 0 ) { ?>  data-collapse="#mpwpb_group_extra_service_active" <?php } ?>>
+					<div class="mpwpb_category_area mp_remove_area">
+						<div class="mpwpb_category_item <?php echo esc_attr( $extra_service_group_active_class ); ?>" data-collapse="#mpwpb_group_extra_service_active">
+							<div class="groupContent">
+								<?php MPWPB_Layout::remove_button(); ?>
+								<label class="fullWidth">
+									<input type="hidden" name="mpwpb_extra_hidden_name[]" value="<?php echo esc_attr( $unique_name ); ?>"/>
+									<input type="text" name="mpwpb_extra_group_service[]" class="formControl mp_name_validation" value="<?php echo esc_attr( $services ); ?>" placeholder="<?php esc_attr_e( 'service Group Name', 'mpwpb_plugin' ); ?>"/>
+								</label>
+							</div>
 						</div>
-					</div>
-					<div class="mpwpb_category_content">
-						<?php $this->extra_service( $unique_name, $group_service ); ?>
+						<div class="mpwpb_category_content">
+							<?php $this->extra_service( $unique_name, $group_service ); ?>
+						</div>
 					</div>
 				</div>
 				<?php
@@ -384,7 +399,8 @@
 			}
 			public function extra_service_item( $unique_name, $service_info = array() ) {
 				$image_name   = 'mpwpb_extra_service_img_' . $unique_name . '[]';
-				$image        = array_key_exists( 'img', $service_info ) ? $service_info['img'] : '';
+				$image        = array_key_exists( 'image', $service_info ) ? $service_info['image'] : '';
+				$icon         = array_key_exists( 'icon', $service_info ) ? $service_info['icon'] : '';
 				$service_name = 'mpwpb_extra_service_name_' . $unique_name . '[]';
 				$service      = array_key_exists( 'name', $service_info ) ? $service_info['name'] : '';
 				$details_name = 'mpwpb_extra_service_details_' . $unique_name . '[]';
@@ -414,7 +430,7 @@
 							<input type="text" name="<?php echo esc_attr( $price_name ); ?>" class="formControl mp_price_validation" value="<?php echo esc_attr( $price ); ?>"/>
 						</label>
 					</div>
-					<div class="mpwpb_service_content"><?php do_action( 'mp_add_single_image', $image_name, $image ); ?></div>
+					<div class="mpwpb_service_content"><?php do_action( 'mp_add_icon_image', $image_name, $icon, $image ); ?></div>
 					<div class="mpwpb_service_item">
 						<label>
 							<textarea name="<?php echo esc_attr( $details_name ); ?>" class='formControl ' cols="3"><?php echo esc_attr( $details ); ?></textarea>
@@ -460,13 +476,13 @@
 									if ( sizeof( $service_names ) > 0 && sizeof( $service_price ) > 0 ) {
 										foreach ( $service_names as $key => $service_name ) {
 											if ( $service_name && $service_price[ $key ] != '' ) {
-												$service_infos[ $key ]['name']  = $service_name;
-												$service_infos[ $key ]['price'] = $service_price[ $key ];
-												$service_infos[ $key ]['details'] = array_key_exists( $key, $details ) ? $details[ $key ] : '';
-												$service_infos[ $key ]['duration']   = array_key_exists( $key, $duration ) ? $duration[ $key ] : '';
-												$current_image_icon                  = array_key_exists( $key, $images ) ? $images[ $key ] : '';
-												$service_infos[ $key ]['icon']       = '';
-												$service_infos[ $key ]['image']        = '';
+												$service_infos[ $key ]['name']     = $service_name;
+												$service_infos[ $key ]['price']    = $service_price[ $key ];
+												$service_infos[ $key ]['details']  = array_key_exists( $key, $details ) ? $details[ $key ] : '';
+												$service_infos[ $key ]['duration'] = array_key_exists( $key, $duration ) ? $duration[ $key ] : '';
+												$current_image_icon                = array_key_exists( $key, $images ) ? $images[ $key ] : '';
+												$service_infos[ $key ]['icon']     = '';
+												$service_infos[ $key ]['image']    = '';
 												if ( $current_image_icon ) {
 													if ( preg_match( '/\s/', $current_image_icon ) ) {
 														$service_infos[ $key ]['icon'] = $current_image_icon;
@@ -494,8 +510,8 @@
 								}
 							}
 							if ( sizeof( $sub_category_infos ) > 0 ) {
-								if($active_category == 'on' ){
-									if($categories[ $i ]){
+								if ( $active_category == 'on' ) {
+									if ( $categories[ $i ] ) {
 										$current_categories_img_icon   = $categories_img_icon[ $i ];
 										$category_infos[ $i ]['icon']  = '';
 										$category_infos[ $i ]['image'] = '';
@@ -509,7 +525,7 @@
 										$category_infos[ $i ]['category']     = $categories[ $i ];
 										$category_infos[ $i ]['sub_category'] = $sub_category_infos;
 									}
-								}else{
+								} else {
 									$category_infos[ $i ]['category']     = '';
 									$category_infos[ $i ]['sub_category'] = $sub_category_infos;
 								}
@@ -521,29 +537,43 @@
 					//**********************//
 					$active_extra_service = MPWPB_Function::get_submit_info( 'mpwpb_extra_service_active' ) ? 'on' : 'off';
 					update_post_meta( $post_id, 'mpwpb_extra_service_active', $active_extra_service );
-					$extra_service     = array();
-					$extra_hidden_name = MPWPB_Function::get_submit_info( 'mpwpb_extra_hidden_name', array() );
-					$group_service     = MPWPB_Function::get_submit_info( 'mpwpb_extra_group_service', array() );
-					if ( count( $group_service ) > 0 ) {
-						for ( $i = 0; $i < count( $group_service ); $i ++ ) {
-							$ex_service = MPWPB_Function::get_submit_info( 'mpwpb_extra_service_name_' . $extra_hidden_name[ $i ], array() );
-							$ex_qty     = MPWPB_Function::get_submit_info( 'mpwpb_extra_service_qty_' . $extra_hidden_name[ $i ], array() );
-							$ex_price   = MPWPB_Function::get_submit_info( 'mpwpb_extra_service_price_' . $extra_hidden_name[ $i ], array() );
-							$images     = MPWPB_Function::get_submit_info( 'mpwpb_extra_service_img_' . $extra_hidden_name[ $i ], array() );
-							$details    = MPWPB_Function::get_submit_info( 'mpwpb_extra_service_details_' . $extra_hidden_name[ $i ], array() );
-							if ( sizeof( $ex_service ) > 0 && sizeof( $ex_price ) > 0 && $group_service[ $i ] ) {
-								$extra_service[ $i ]['group_service'] = $group_service[ $i ];
-								$ex_service_info                      = array();
+					$active_group_extra_service = MPWPB_Function::get_submit_info( 'mpwpb_group_extra_service_active' ) ? 'on' : 'off';
+					update_post_meta( $post_id, 'mpwpb_group_extra_service_active', $active_group_extra_service );
+					$extra_service       = array();
+					$extra_hidden_name   = MPWPB_Function::get_submit_info( 'mpwpb_extra_hidden_name', array() );
+					$group_service       = MPWPB_Function::get_submit_info( 'mpwpb_extra_group_service', array() );
+					$count_group_service = $active_group_extra_service == 'on' ? count( $extra_hidden_name ) : 1;
+					if ( $count_group_service > 0 ) {
+						for ( $i = 0; $i < $count_group_service; $i ++ ) {
+							$ex_service      = MPWPB_Function::get_submit_info( 'mpwpb_extra_service_name_' . $extra_hidden_name[ $i ], array() );
+							$ex_qty          = MPWPB_Function::get_submit_info( 'mpwpb_extra_service_qty_' . $extra_hidden_name[ $i ], array() );
+							$ex_price        = MPWPB_Function::get_submit_info( 'mpwpb_extra_service_price_' . $extra_hidden_name[ $i ], array() );
+							$images          = MPWPB_Function::get_submit_info( 'mpwpb_extra_service_img_' . $extra_hidden_name[ $i ], array() );
+							$details         = MPWPB_Function::get_submit_info( 'mpwpb_extra_service_details_' . $extra_hidden_name[ $i ], array() );
+							$ex_service_info = array();
+							if ( sizeof( $ex_service ) > 0 && sizeof( $ex_price ) > 0 ) {
 								for ( $j = 0; $j < count( $ex_service ); $j ++ ) {
 									if ( $ex_service[ $j ] && $ex_price[ $j ] != '' ) {
 										$ex_service_info[ $j ]['name']    = $ex_service[ $j ];
 										$ex_service_info[ $j ]['qty']     = $ex_qty[ $j ];
 										$ex_service_info[ $j ]['price']   = $ex_price[ $j ];
-										$ex_service_info[ $j ]['img']     = $images[ $j ];
 										$ex_service_info[ $j ]['details'] = $details[ $j ];
+										$current_image_icon               = $images[ $j ];
+										$ex_service_info[ $j ]['icon']    = '';
+										$ex_service_info[ $j ]['image']   = '';
+										if ( $current_image_icon ) {
+											if ( preg_match( '/\s/', $current_image_icon ) ) {
+												$ex_service_info[ $j ]['icon'] = $current_image_icon;
+											} else {
+												$ex_service_info[ $j ]['image'] = $current_image_icon;
+											}
+										}
 									}
 								}
-								$extra_service[ $i ]['group_service_info'] = $ex_service_info;
+								if ( sizeof( $ex_service_info ) > 0 ) {
+									$extra_service[ $i ]['group_service']      = $active_group_extra_service == 'on' ? $group_service[ $i ] : '';
+									$extra_service[ $i ]['group_service_info'] = $ex_service_info;
+								}
 							}
 						}
 					}

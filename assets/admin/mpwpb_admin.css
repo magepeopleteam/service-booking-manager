@@ -3,16 +3,16 @@
 	div.mpwpb_category_header{text-align: center;background-color: var(--border_color);}
 	/***/
 	div.mpwpb_category_area{display: -webkit-flex;display: flex;border-right: 1px solid var(--border_color);}
-	div.mpwpb_category_item{-webkit-flex: 200%;flex: 200%;padding: 7px;border-left: 1px solid var(--border_color);border-bottom: 1px solid var(--border_color);max-width: 200px;width: 100%;}
+	div.mpwpb_category_item{-webkit-flex: 150%;flex: 150%;padding: 7px;border-left: 1px solid var(--border_color);border-bottom: 1px solid var(--border_color);max-width: 150px;width: 100%;}
 	div.mpwpb_category_content{-webkit-flex: 800%;flex: 800%;min-width: 800px;}
 	div.mpwpb_category_item.mActive~div.mpwpb_category_content{border-bottom: 1px solid var(--border_color);}
 	/*****/
 	div.mpwpb_sub_category_area{display: -webkit-flex;display: flex;}
-	div.mpwpb_sub_category_item{-webkit-flex: 200%;flex: 200%;padding: 7px;border-left: 1px solid var(--border_color);border-bottom: 1px solid var(--border_color);max-width: 200px;width: 100%;}
-	div.mpwpb_sub_category_content{-webkit-flex: 600%;flex: 600%;min-width: 600px;}
+	div.mpwpb_sub_category_item{-webkit-flex: 200%;flex: 200%;padding: 7px;border-left: 1px solid var(--border_color);border-bottom: 1px solid var(--border_color);max-width: 150px;width: 100%;}
+	div.mpwpb_sub_category_content{-webkit-flex: 900%;flex: 900%;min-width: 700px;}
 	div.mpwpb_sub_category_item.mActive~div.mpwpb_sub_category_content{border-bottom: 1px solid var(--border_color);}
 	/*************/
 	div.mpwpb_service_area{display: -webkit-flex;display: flex;}
-	div.mpwpb_service_item{-webkit-flex: 200%;flex: 200%;padding: 7px;border-left: 1px solid var(--border_color);border-bottom: 1px solid var(--border_color);min-width: 200px;}
-	div.mpwpb_service_content{-webkit-flex: 100%;flex: 100%;padding: 7px;border-left: 1px solid var(--border_color);border-bottom: 1px solid var(--border_color);min-width: 100px;}
+	div.mpwpb_service_item{-webkit-flex: 200%;flex: 200%;padding: 7px;border-left: 1px solid var(--border_color);border-bottom: 1px solid var(--border_color);min-width: 180px;}
+	div.mpwpb_service_content{-webkit-flex: 100%;flex: 100%;padding: 7px;border-left: 1px solid var(--border_color);border-bottom: 1px solid var(--border_color);min-width: 130px;}
 }

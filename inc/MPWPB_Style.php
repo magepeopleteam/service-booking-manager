@@ -90,7 +90,7 @@
 						--fw: normal;
 						--fs_small: 13px;
 						--font-size-label: <?php echo esc_attr($fs_label); ?>;
-						--font-size-h6: <?php echo esc_attr($fs_h6); ?>;
+						--fs_h6: <?php echo esc_attr($fs_h6); ?>;
 						--font-size-h5: <?php echo esc_attr($fs_h5); ?>;
 						--font-size-h4: <?php echo esc_attr($fs_h4); ?>;
 						--font-size-h3: <?php echo esc_attr($fs_h3); ?>;
@@ -168,7 +168,7 @@
 							--fs: 12px;
 							--fs_small: 10px;
 							--font-size-label: 13px;
-							--font-size-h6: 15px;
+							--fs_h6: 15px;
 							--font-size-h5: 16px;
 							--font-size-h4: 18px;
 							--font-size-h3: 20px;

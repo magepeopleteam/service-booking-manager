@@ -109,7 +109,6 @@ function mp_load_date_picker() {
 
 //==========Load Bg Image=================//
 function loadBgImage() {
-
 	jQuery('body').find('[data-bg-image]:visible').each(function () {
 		let target = jQuery(this);
 		let height = target.outerWidth() * 2 / 3;
@@ -204,6 +203,7 @@ function content_input_value_change(currentTarget) {
 		} else {
 			jQuery(this).val(jQuery(this).data('value'));
 		}
+		jQuery(this).trigger('change');
 	});
 }
 
@@ -295,7 +295,6 @@ function mp_all_content_change($this) {
 		if (target_close(close_id, target_id) && collapse_close_inside(currentTarget) && target_collapse(target, currentTarget)) {
 			mp_all_content_change(currentTarget);
 		}
-		loadBgImage();
 	});
 	$(document).on('change', 'select[data-collapse-target]', function () {
 		let currentTarget = $(this);

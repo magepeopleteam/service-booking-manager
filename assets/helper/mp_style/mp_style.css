@@ -67,7 +67,7 @@
 		-o-box-shadow: 0 2px 10px #444;
 		box-shadow: 0 2px 10px #444;
 	}
-	div.mpStyle .dShadow42, [class*='_dShadow_4'],
+	div.mpStyle .dShadow_4, [class*='_dShadow_4'],
 	div.mpStyle ul.mage_input_select_list {
 		-webkit-box-shadow: 3px 3px 10px rgba(0, 0, 0, .5);
 		-moz-box-shadow: 3px 3px 10px rgba(0, 0, 0, .5);
@@ -94,7 +94,7 @@
 	.mpStyle h3 {font-size: var(--font-size-h3);font-weight: var(--fw-bold);}
 	.mpStyle h4 {font-size: var(--font-size-h4);font-weight: var(--fw-medium);}
 	.mpStyle h5 {font-size: var(--font-size-h5);font-weight: var(--fw-medium);}
-	.mpStyle h6 {font-size: var(--font-size-h6);font-weight: var(--fw-medium);}
+	.mpStyle h6 {font-size: var(--fs_h6);font-weight: var(--fw-medium);}
 	.mpStyle label {font-size: var(--font-size-label);font-weight: var(--fw-medium);}
 }
 /******************************************************************** Flex Section ************************************************/
@@ -233,6 +233,7 @@
 	.mpStyle .mpBtn, .mpStyle [class*="_mpBtn"] {padding: var(--default-mp-xs) var(--default-mp);color: var(--d_color);background-color: transparent;border: 1px solid var(--border_color);}
 	.mpStyle .mpBtn_xs, .mpStyle [class*="_mpBtn_xs"] {padding: var(--default-mp-xs);}
 	.mpStyle .mpBtn.mpActive, .mpStyle [class*="_mpBtn"].mpActive {border-color: var(--theme-color);color: var(--theme-color);}
+	.mpStyle .mpBtn.mpActive:hover, .mpStyle [class*="_mpBtn"].mpActive:hover {background-color: var(--theme-color);color: var(--theme-alternate-color); }
 	/***/
 	.mpStyle [class*="dButton"] { padding: 0 var(--default-mp); min-width: var(--button-width); height: auto; min-height: var(--button-height);color: var(--button-color);background-color: var(--button-bg);}
 	.mpStyle [class*="dButton"] span {margin: 0 var(--default-mp-xs) 0 0;}
@@ -347,14 +348,14 @@
 	.mpStyle .marZero, .mpStyle [class*="mar_zero"], .mpStyle span[class*="_icon"] {margin: 0;}
 	.mpStyle .marAuto, .mpStyle [class*="_marAuto"] {margin: 0 auto;}
 	.mpStyle [class*="_mT"], .mpStyle .mT {margin-top: var(--default-mp);}
-	.mpStyle .mT_xs, .mpStyle [class*="_mT_xs"] {margin-top: var(--default-mp-xs) !important;}
+	.mpStyle .mT_xs, .mpStyle [class*="_mT_xs"] {margin-top: var(--default-mp-xs);}
 	.mpStyle .mt_25, .mpStyle [class*="_mt_25"] {margin-top: 25px;}
 	.mpStyle .mt_40, .mpStyle [class*="_mt_40"] {margin-top: 40px;}
 	.mpStyle .mR, .mpStyle [class*="_mR"] {margin-right: var(--default-mp);}
 	.mpStyle .mR_xs, .mpStyle [class*="_mR_xs"] {margin-right: var(--default-mp-xs);}
 	.mpStyle .mr_5, .mpStyle [class*="_mr_5"] {margin-right: 5%;}
-	.mpStyle .mb, .mpStyle .marB, .mpStyle [class*="_mb"], .mpStyle [class*="_mB"] {margin-bottom: var(--default-mp);}
-	.mpStyle .mb_xs, .mpStyle [class*="_mb_xs"] {margin-bottom: var(--default-mp-xs);}
+	.mpStyle .mB, .mpStyle [class*="_mB"] {margin-bottom: var(--default-mp);}
+	.mpStyle .mB_xs, .mpStyle [class*="_mB_xs"] {margin-bottom: var(--default-mp-xs);}
 	.mpStyle .mL, .mpStyle [class*="_mL"] {margin-left: var(--default-mp);}
 	.mpStyle .mL_xs, .mpStyle [class*="_mL_xs"] {margin-left: var(--default-mp-xs);}
 	.mpStyle .ml_20, .mpStyle [class*="_ml_20"] {margin-left: 20px;}
@@ -362,7 +363,8 @@
 	.mpStyle [class*="mar_txs_b"] {margin: var(--default-mp-xs) 0 var(--default-mp) 0;}
 	.mpStyle [class*="marXsT"] {margin-top: var(--default-mp-xs);}
 	.mpStyle .mtb, .mpStyle [class*="_mtb"] {margin: var(--default-mp) 0;}
-	.mpStyle .mTB_xs, .mpStyle [class*="_mTB_xs"] {margin: var(--default-mp-xs) 0 !important;}
+	.mpStyle .mTB_xs, .mpStyle [class*="_mTB_xs"] {margin: var(--default-mp-xs) 0;}
+	.mpStyle .mLR_xs, .mpStyle [class*="_mLR_xs"] {margin: 0 var(--default-mp-xs);}
 	/***************/
 	div.mpStyle .mp_zero {margin: 0;padding: 0;}
 	/***************/
@@ -582,7 +584,7 @@
 /******************************************************************** Layout Section ************************************************/
 @media only screen and (min-width: 10px) {
 	/***********Circular***********/
-	.mpStyle [class*="circleIcon"] {width: 40px;height: 40px;min-width: 40px;font-size: var(--font-size-h6);background-color: var(--theme-color); color: var(--theme-alternate-color);margin: 0 var(--default-mp) 0 0;}
+	.mpStyle [class*="circleIcon"] {width: 40px;height: 40px;min-width: 40px;font-size: var(--fs_h6);background-color: var(--theme-color); color: var(--theme-alternate-color);margin: 0 var(--default-mp) 0 0;}
 	.mpStyle .circleIcon_xs, .mpStyle [class*="_circleIcon_xs"] {width: 25px;height: 25px;min-width: 25px;font-size: var(--fs_small);margin: 0 var(--default-mp-xs) 0 0;}
 	/*****Remove icon******/
 	.mpStyle .mp_remove_area {position: relative}
@@ -697,7 +699,7 @@
 		background-repeat: no-repeat;
 		background-position: var(--default-mp-xs) center;
 		background-size: auto;
-		font-size: var(--font-size-h6);
+		font-size: var(--fs_h6);
 		font-weight: var(--fw-medium);
 		padding: var(--default-mp-xs) var(--default-mp-xs) var(--default-mp-xs) 50px;
 		border-radius: 0;
@@ -732,7 +734,7 @@
 	.mpStyle .inputHorizontal .mpForm {max-width: 500px;width: 100%;}
 	/*****Form Qty inc dec*******/
 	/**********Checkbox Radio*********/
-	div.mpStyle .customRadioLabel {font-size: var(--font-size-h6);font-weight: var(--fw-medium);-webkit-flex-wrap: wrap;flex-wrap: wrap;}
+	div.mpStyle .customRadioLabel {font-size: var(--fs_h6);font-weight: var(--fw-medium);-webkit-flex-wrap: wrap;flex-wrap: wrap;}
 	div.mpStyle .customRadioLabel input[type="radio"] ~ .formControl,
 	.mpStyle .customRadioLabel input[type="radio"] {display: none;}
 	.mpStyle .customRadio {padding: 0 var(--default-mp-xs) 0 30px;margin: 0 var(--default-mp-xs) var(--default-mp-xs) 0;position: relative;cursor: pointer;line-height: 1;white-space: nowrap;min-height: 20px;}
@@ -876,7 +878,7 @@
 @media only screen and (min-width: 10px) {
 	.mpStyle .tabLists,
 	.mpStyle .leftTabs {display: -webkit-flex;display: flex;}
-	.mpStyle .tabLists {font-size: var(--font-size-h6);width: 100%;}
+	.mpStyle .tabLists {font-size: var(--fs_h6);width: 100%;}
 	.mpStyle .tabLists span {margin: 0 var(--default-mp-xs) 0 0;}
 	.leftTabs > .tabLists {-webkit-flex-flow: column;flex-flow: column;min-width: 250px;max-width: 250px;}
 	div.mpStyle [data-tabs-target] {

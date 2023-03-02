@@ -107,6 +107,7 @@ function load_sortable_datepicker(parent, item) {
 			let icon_class = $(this).data('icon-class');
 			if (icon_class) {
 				parent.find('input[type="hidden"]').val(icon_class);
+				parent.find('.mp_add_icon_image_button_area').slideUp('fast');
 				parent.find('.mp_image_item').slideUp('fast');
 				parent.find('.mp_icon_item').slideDown('fast');
 				parent.find('[data-add-icon]').removeAttr('class').addClass(icon_class);
@@ -142,6 +143,7 @@ function load_sortable_datepicker(parent, item) {
 		parent.find('input[type="hidden"]').val('');
 		parent.find('[data-add-icon]').removeAttr('class');
 		parent.find('.mp_icon_item').slideUp('fast');
+		parent.find('.mp_add_icon_image_button_area').slideDown('fast');
 	});
 	//=================select Single image=========================//
 	$(document).on('click', 'button.mp_image_add', function () {
@@ -154,6 +156,7 @@ function load_sortable_datepicker(parent, item) {
 			parent.find('.mp_icon_item').slideUp('fast');
 			parent.find('img').attr('src', attachment_url);
 			parent.find('.mp_image_item').slideDown('fast');
+			parent.find('.mp_add_icon_image_button_area').slideUp('fast');
 		}
 		wp.media.editor.open($this);
 		return false;
@@ -163,5 +166,6 @@ function load_sortable_datepicker(parent, item) {
 		parent.find('input[type="hidden"]').val('');
 		parent.find('img').attr('src', '');
 		parent.find('.mp_image_item').slideUp('fast');
+		parent.find('.mp_add_icon_image_button_area').slideDown('fast');
 	});
 }(jQuery));

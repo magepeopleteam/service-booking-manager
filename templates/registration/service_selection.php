@@ -4,70 +4,60 @@
 	}
 	$post_id      = $post_id ?? get_the_id();
 	$all_services = $all_services ?? MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_infos', array() );
-	if ( sizeof( $all_services ) > 0 ) {
+	$all_service_list = $all_service_list ?? MPWPB_Function::get_all_service( $post_id);
+	if ( sizeof( $all_service_list ) > 0 ) {
 		//echo '<pre>';print_r($all_services);echo '</pre>';
 		?>
 		<div class="mpwpb_service_area mT">
 			<input type="hidden" name="mpwpb_category" value="">
 			<input type="hidden" name="mpwpb_sub_category" value="">
-			<div class="groupRadioCheck flexWrap">
-				<input type="hidden" name="mpwpb_service" value="">
+			<input type="hidden" name="mpwpb_service" value="">
+			<h5><?php esc_html_e( 'Select Service', 'mpwpb_plugin' ); ?></h5>
+			<div class="divider"></div>
+			<div class="flexWrapJustifyBetween">
 				<?php
-					foreach ( $all_services as $all_service ) {
-						$category_name  = array_key_exists( 'category', $all_service ) ? $all_service['category'] : '';
-						$sub_categories = array_key_exists( 'sub_category', $all_service ) ? $all_service['sub_category'] : array();
-						if ( sizeof( $sub_categories ) > 0 ) {
-							foreach ( $sub_categories as $sub_category ) {
-								$sub_category_name = array_key_exists( 'name', $sub_category ) ? $sub_category['name'] : '';
-								$services          = array_key_exists( 'service', $sub_category ) ? $sub_category['service'] : array();
-								?>
-								<div class="fullWidth sub_category_area" data-category="<?php echo esc_attr( $category_name ); ?>">
-									<h5><?php echo esc_html( $sub_category_name ? esc_html( $sub_category_name ) : esc_html__( 'Select Service', 'mpwpb_plugin' ) ); ?></h5>
-									<div class="divider"></div>
-									<?php
-										if ( sizeof( $services ) > 0 ) {
-											foreach ( $services as $service ) {
-												$image              = array_key_exists( 'img', $service ) ? $service['img'] : '';
-												$service_name       = array_key_exists( 'name', $service ) ? $service['name'] : '';
-												$service_price      = array_key_exists( 'price', $service ) ? $service['price'] : 0;
-												$service_price      = MPWPB_Function::wc_price( $post_id, $service_price );
-												$service_price_raw  = MPWPB_Function::price_convert_raw( $service_price );
-												$service_details_id = array_key_exists( 'details_id', $service ) ? $service['details_id'] : '';
-												?>
-												<div class="dLayout_xs mpwpb_price_calculation" data-price data-value="<?php echo esc_attr( $service_price_raw ); ?>" data-category="<?php echo esc_attr( $category_name ); ?>" data-sub-category="<?php echo esc_attr( $sub_category_name ); ?>" data-radio-check="<?php echo esc_attr( $service_name ); ?>" data-open-icon="fas fa-check" data-close-icon="">
-													<div class="flexWrap">
-														<div class="w_150 _pR">
-															<div class="bg_image_area">
-																<div data-bg-image="<?php echo esc_attr( MPWPB_Function::get_image_url( '', $image, 'medium' ) ); ?>"></div>
-																<h2 class="fullAbsolute allCenter textTheme"><span data-icon></span></h2>
-															</div>
-														</div>
-														<div class="flexAuto">
-															<div class="justifyBetween">
-																<h5><?php echo esc_html( $service_name ); ?></h5>
-																<h3 class="textTheme"><?php echo MPWPB_Function::esc_html( $service_price ); ?></h3>
-															</div>
-															<?php if ( $service_details_id ) { ?>
-																<div class="divider"></div>
-																<div class="mp_wp_editor" data-placeholder>
-																	<div>
-																		<?php echo MPWPB_Function::esc_html( get_post_field( 'post_content', $service_details_id ) ); ?>
-																	</div>
-																</div>
-															<?php } ?>
-														</div>
-													</div>
-												</div>
-												<?php
-											}
-										}
-									?>
-								</div>
-								<?php
-							}
-						}
-					}
-				?>
+				foreach ($all_service_list as $service_item){
+					$category_name  = array_key_exists( 'category', $service_item ) ? $service_item['category'] : '';
+					$sub_category_name = array_key_exists( 'sub_category', $service_item ) ? $service_item['sub_category'] : '';
+					$service_name = array_key_exists( 'service', $service_item ) ? $service_item['service'] : '';
+					$service_image = array_key_exists( 'image', $service_item ) ? $service_item['image'] : '';
+					$service_icon = array_key_exists( 'icon', $service_item ) ? $service_item['icon'] : '';
+					$service_price= array_key_exists( 'price', $service_item ) ? $service_item['price'] : 0;
+					$service_price=MPWPB_Function::get_price($post_id,$service_name,$category_name,$sub_category_name);
+					$service_details= array_key_exists( 'details', $service_item ) ? $service_item['details'] : '';
+					$service_duration= array_key_exists( 'duration', $service_item ) ? $service_item['duration'] : '';
+					?>
+					<div class="mpwpb_item_box mpwpb_service_item dShadow_4" data-price="<?php echo esc_attr( $service_price ); ?>"  data-category="<?php echo esc_attr( $category_name ); ?>" data-sub-category="<?php echo esc_attr( $sub_category_name ); ?>" data-service="<?php echo esc_attr( $service_name ); ?>" data-open-icon="far fa-check-circle" data-close-icon="">
+						<h5 class="mB_xs"><?php echo esc_html( $service_name); ?></h5>
+						<h3 class="textTheme"><?php echo wc_price($service_price); ?></h3>
+						<span><?php echo MPWPB_Function::esc_html( $service_details ); ?></span>
+						<span><?php echo MPWPB_Function::esc_html( $service_duration ); ?></span>
+						<?php if($service_image){ ?>
+							<div class="bg_image_area">
+								<div data-bg-image="<?php echo esc_attr( MPWPB_Function::get_image_url( '', $service_image, 'medium' ) ); ?>"></div>
+							</div>
+						<?php } ?>
+						<?php if($service_icon){ ?>
+							<div class="allCenter mpwpb_icon_area">
+								<span class="<?php echo esc_attr( $service_icon ); ?>"></span>
+							</div>
+						<?php } ?>
+						<span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
+					</div>
+					<?php } ?>
+			</div>
+			<div class="divider"></div>
+			<div class="justifyBetween">
+				<button class="mpBtn mpActive mpwpb_service_prev" type="button">
+					<i class="fas fa-long-arrow-alt-left _mR_xs"></i>
+					<?php
+						esc_html_e( 'Previous Sub-Category', 'mpwpb_plugin' );
+						?>
+				</button>
+				<button class="mpBtn mpActive mpwpb_service_next" type="button">
+					<?php esc_html_e( 'Next Extra-Service', 'mpwpb_plugin' ); ?>
+					<i class="fas fa-long-arrow-alt-right _mL_xs"></i>
+				</button>
 			</div>
 		</div>
 		<?php
