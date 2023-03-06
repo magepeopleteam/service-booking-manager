@@ -12,7 +12,7 @@
 		<form action="" method="post" class="mpwpb_registration">
 			<div class="mpRow">
 				<div class="leftSidebar">
-					<div class="dLayout dShadow fdColumn">
+					<div class="dLayout dShadow_7 fdColumn">
 						<div class="registration_tab_item mptbm_service_tab mpActive">
 							<img src="<?php echo esc_attr( MPWPB_PLUGIN_URL . '/assets/helper/images/service_icon.png' ); ?>" alt="<?php esc_attr_e( 'Services', 'mpwpb_plugin' ); ?>"/>
 							<span><?php esc_html_e( 'Services', 'mpwpb_plugin' ); ?></span>
@@ -35,7 +35,7 @@
 					<?php include( MPWPB_Function::template_path( 'registration/summary_left.php' ) ); ?>
 				</div>
 				<div class="mainSection">
-					<div class="dLayout dShadow fdColumn">
+					<div class="dLayout dShadow_7 fdColumn">
 						<?php include( MPWPB_Function::template_path( 'registration/category_selection.php' ) ); ?>
 						<?php include( MPWPB_Function::template_path( 'registration/sub_category_selection.php' ) ); ?>
 						<?php include( MPWPB_Function::template_path( 'registration/service_selection.php' ) ); ?>

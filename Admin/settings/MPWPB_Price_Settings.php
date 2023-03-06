@@ -19,13 +19,19 @@
 				<?php
 			}
 			public function price( $post_id ) {
-				$category_infos                  = MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_infos', array() );
-				$category_active                 = MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_active', 'on' );
-				$category_active_class           = $category_active == 'on' ? 'mActive' : '';
-				$category_active_checked         = $category_active == 'on' ? 'checked' : '';
-				$sub_category_active             = MPWPB_Function::get_post_info( $post_id, 'mpwpb_sub_category_active', 'off' );
-				$sub_category_active_class       = $category_active == 'on' && $sub_category_active == 'on' ? 'mActive' : '';
-				$sub_category_active_checked     = $category_active == 'on' && $sub_category_active == 'on' ? 'checked' : '';
+				$category_text     = MPWPB_Function::get_category_text( $post_id );
+				$sub_category_text = MPWPB_Function::get_sub_category_text( $post_id );
+				$service_text      = MPWPB_Function::get_service_text( $post_id );
+				//**************//
+				$category_infos          = MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_infos', array() );
+				$category_active         = MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_active', 'on' );
+				$category_active_class   = $category_active == 'on' ? 'mActive' : '';
+				$category_active_checked = $category_active == 'on' ? 'checked' : '';
+				//**************//
+				$sub_category_active         = MPWPB_Function::get_post_info( $post_id, 'mpwpb_sub_category_active', 'off' );
+				$sub_category_active_class   = $category_active == 'on' && $sub_category_active == 'on' ? 'mActive' : '';
+				$sub_category_active_checked = $category_active == 'on' && $sub_category_active == 'on' ? 'checked' : '';
+				//**************//
 				$service_details_active          = MPWPB_Function::get_post_info( $post_id, 'mpwpb_service_details_active', 'off' );
 				$service_details_active_class    = $service_details_active == 'on' ? 'mActive' : '';
 				$service_details_active_checked  = $service_details_active == 'on' ? 'checked' : '';
@@ -33,11 +39,14 @@
 				$service_duration_active_class   = $service_duration_active == 'on' ? 'mActive' : '';
 				$service_duration_active_checked = $service_duration_active == 'on' ? 'checked' : '';
 				//echo '<pre>';print_r($category_infos);echo '</pre>';
-				$category_count             = 0;
-				$active['category']         = $category_active_class;
-				$active['sub_category']     = $sub_category_active_class;
-				$active['service_details']  = $service_details_active_class;
-				$active['service_duration'] = $service_duration_active_class;
+				$category_count              = 0;
+				$active['category']          = $category_active_class;
+				$active['category_text']     = $category_text;
+				$active['sub_category']      = $sub_category_active_class;
+				$active['sub_category_text'] = $sub_category_text;
+				$active['service_text']      = $service_text;
+				$active['service_details']   = $service_details_active_class;
+				$active['service_duration']  = $service_duration_active_class;
 				?>
 				<div class="mpPanel mT">
 					<div class="mpPanelHeader bgTheme" data-collapse-target="#mpwpb_settings_pricing" data-open-icon="fa-minus" data-close-icon="fa-plus">
@@ -46,27 +55,27 @@
 					<div class="mpPanelBody mActive" data-collapse="#mpwpb_settings_pricing">
 						<h5 class="dFlex">
 							<?php MPWPB_Layout::switch_button( 'mpwpb_category_active', $category_active_checked ); ?>
-							<span class="mR"><?php esc_html_e( 'Enable Category Section', 'mpwpb_plugin' ); ?></span>
+							<span class="mR"><?php echo esc_html__( 'Enable', 'mpwpb_plugin' ) . ' <span data-input-change="mpwpb_category_text">' . $category_text . ' </span> ' . esc_html__( 'Section', 'mpwpb_plugin' ); ?></span>
 						</h5>
 						<?php MPWPB_Settings::info_text( 'mpwpb_category_active' ); ?>
 						<div class="divider"></div>
 						<div class="<?php echo esc_attr( $category_active_class ); ?>" data-collapse="#mpwpb_category_active">
 							<h5 class="dFlex">
 								<?php MPWPB_Layout::switch_button( 'mpwpb_sub_category_active', $sub_category_active_checked ); ?>
-								<span class="mR"><?php esc_html_e( 'Enable Sub-Category Section', 'mpwpb_plugin' ); ?></span>
+								<span class="mR"><?php echo esc_html__( 'Enable', 'mpwpb_plugin' ) . ' <span data-input-change="mpwpb_sub_category_text">' . $sub_category_text . ' </span> ' . esc_html__( 'Section', 'mpwpb_plugin' ); ?></span>
 							</h5>
 							<?php MPWPB_Settings::info_text( 'mpwpb_sub_category_active' ); ?>
 						</div>
 						<div class="divider"></div>
 						<h5 class="dFlex">
 							<?php MPWPB_Layout::switch_button( 'mpwpb_service_details_active', $service_details_active_checked ); ?>
-							<span class="mR"><?php esc_html_e( 'Enable Service Details', 'mpwpb_plugin' ); ?></span>
+							<span class="mR"><?php echo esc_html__( 'Enable', 'mpwpb_plugin' ) . ' <span data-input-change="mpwpb_service_text">' . $service_text . ' </span> ' . esc_html__( 'Details', 'mpwpb_plugin' ); ?></span>
 						</h5>
 						<?php MPWPB_Settings::info_text( 'mpwpb_service_details_active' ); ?>
 						<div class="divider"></div>
 						<h5 class="dFlex">
 							<?php MPWPB_Layout::switch_button( 'mpwpb_service_duration_active', $service_duration_active_checked ); ?>
-							<span class="mR"><?php esc_html_e( 'Enable Service Duration', 'mpwpb_plugin' ); ?></span>
+							<span class="mR"><?php echo esc_html__( 'Enable', 'mpwpb_plugin' ) . ' <span data-input-change="mpwpb_service_text">' . $service_text . ' </span> ' . esc_html__( 'Duration', 'mpwpb_plugin' ); ?></span>
 						</h5>
 						<?php MPWPB_Settings::info_text( 'mpwpb_service_duration_active' ); ?>
 						<div class="divider"></div>
@@ -74,16 +83,27 @@
 							<div class="mp_settings_area min_1000 col_12">
 								<div class="mpwpb_category_area mpwpb_category_header">
 									<div class="mpwpb_category_item  <?php echo esc_attr( $category_active_class ); ?>" data-collapse="#mpwpb_category_active">
-										<h6><?php esc_html_e( 'Category', 'mpwpb_plugin' ); ?><span class="textRequired">&nbsp;*</span></h6>
+										<label class="fullWidth">
+											<input type="text" data-input-text="mpwpb_category_text" name="mpwpb_category_text" class="formControl mp_name_validation" value="<?php echo esc_attr( $category_text ); ?>" placeholder="<?php esc_attr_e( 'Category', 'mpwpb_plugin' ); ?>"/>
+											<span class="textRequired">&nbsp;*</span>
+										</label>
 									</div>
 									<div class="mpwpb_category_content">
 										<div class="mpwpb_sub_category_area">
 											<div class="mpwpb_sub_category_item  <?php echo esc_attr( $sub_category_active_class ); ?>" data-collapse="#mpwpb_sub_category_active">
-												<h6><?php esc_html_e( 'Sub-Category', 'mpwpb_plugin' ); ?><span class="textRequired">&nbsp;*</span></h6>
+												<label class="fullWidth">
+													<input type="text" data-input-text="mpwpb_sub_category_text" name="mpwpb_sub_category_text" class="formControl mp_name_validation" value="<?php echo esc_attr( $sub_category_text ); ?>" placeholder="<?php esc_attr_e( 'Sub-Category', 'mpwpb_plugin' ); ?>"/>
+													<span class="textRequired">&nbsp;*</span>
+												</label>
 											</div>
 											<div class="mpwpb_sub_category_content">
 												<div class="mpwpb_service_area">
-													<div class="mpwpb_service_item"><h6><?php esc_html_e( 'service', 'mpwpb_plugin' ); ?><span class="textRequired">&nbsp;*</span></h6></div>
+													<div class="mpwpb_service_item">
+														<label class="fullWidth">
+															<input type="text" data-input-text="mpwpb_service_text" name="mpwpb_service_text" class="formControl mp_name_validation" value="<?php echo esc_attr( $service_text ); ?>" placeholder="<?php esc_attr_e( 'Service', 'mpwpb_plugin' ); ?>"/>
+															<span class="textRequired">&nbsp;*</span>
+														</label>
+													</div>
 													<div class="mpwpb_service_content"><h6><?php esc_html_e( 'Image/Icon', 'mpwpb_plugin' ); ?></h6></div>
 													<div class="mpwpb_service_content"><h6><?php esc_html_e( 'Price', 'mpwpb_plugin' ); ?><span class="textRequired">&nbsp;*</span></h6></div>
 													<div class="mpwpb_service_content <?php echo esc_attr( $service_duration_active_class ); ?>" data-collapse="#mpwpb_service_duration_active">
@@ -110,7 +130,7 @@
 									?>
 								</div>
 								<div class="<?php echo esc_attr( $category_active_class ); ?>" data-collapse="#mpwpb_category_active">
-									<?php MPWPB_Layout::add_new_button( esc_html__( 'Add New category', 'mpwpb_plugin' ), 'mpwpb_add_category', '_successButton_xs_mT_xs' ); ?>
+									<?php MPWPB_Layout::add_new_button( esc_html__( 'Add New ', 'mpwpb_plugin' ) . '<span data-input-change="mpwpb_category_text">' . $category_text . '</span>', 'mpwpb_add_category', '_successButton_xs_mT_xs' ); ?>
 									<div class="mp_hidden_content">
 										<div class="mp_hidden_item">
 											<?php $this->category_item( 1, $active ); ?>
@@ -152,6 +172,7 @@
 				<?php
 			}
 			public function sub_category( $unique_name, $active, $categories ) {
+				$sub_category_text         = $active['sub_category_text'];
 				$sub_category_active_class = $active['sub_category'];
 				$sub_categories            = array_key_exists( 'sub_category', $categories ) ? $categories['sub_category'] : array();
 				$sub_category_count        = 0;
@@ -170,7 +191,7 @@
 						?>
 					</div>
 					<div class="<?php echo esc_attr( $sub_category_active_class ); ?>" data-collapse="#mpwpb_sub_category_active">
-						<?php MPWPB_Layout::add_new_button( esc_html__( 'Add New Sub-Category', 'mpwpb_plugin' ), 'mpwpb_add_sub_category', '_navy_blueButton_xs_mTB_xs' ); ?>
+						<?php MPWPB_Layout::add_new_button( esc_html__( 'Add New ', 'mpwpb_plugin' ) . '<span data-input-change="mpwpb_sub_category_text">' . $sub_category_text . '</span>', 'mpwpb_add_sub_category', '_navy_blueButton_xs_mTB_xs' ); ?>
 						<div class="mp_hidden_content">
 							<div class="mp_hidden_item">
 								<?php $this->sub_category_item( 1, $unique_name, $active ); ?>
@@ -214,7 +235,8 @@
 				<?php
 			}
 			public function service( $unique_name, $active, $sub_categories = array() ) {
-				$services = array_key_exists( 'service', $sub_categories ) ? $sub_categories['service'] : array();
+				$service_text = $active['service_text'];
+				$services     = array_key_exists( 'service', $sub_categories ) ? $sub_categories['service'] : array();
 				?>
 				<div class="mp_settings_area">
 					<div class="mp_sortable_area mp_item_insert">
@@ -228,7 +250,7 @@
 							}
 						?>
 					</div>
-					<?php MPWPB_Layout::add_new_button( esc_html__( 'Add New Service', 'mpwpb_plugin' ), 'mp_add_item', '_warningButton_xs_mTB_xs' ); ?>
+					<?php MPWPB_Layout::add_new_button( esc_html__( 'Add New ', 'mpwpb_plugin' ) . '<span data-input-change="mpwpb_service_text">' . $service_text . '</span>', 'mp_add_item', '_warningButton_xs_mTB_xs' ); ?>
 					<div class="mp_hidden_content">
 						<div class="mp_hidden_item">
 							<?php $this->service_item( $unique_name, $active ); ?>
@@ -312,7 +334,7 @@
 								<div class="mp_settings_area min_1000 col_12">
 									<div class="mpwpb_category_area mpwpb_category_header">
 										<div class="mpwpb_category_item <?php echo esc_attr( $extra_service_group_active_class ); ?>" data-collapse="#mpwpb_group_extra_service_active">
-											<h6><?php esc_html_e( 'Group Service Name', 'mpwpb_plugin' ); ?><span class="textRequired">&nbsp;*</span></h6>
+											<h6><?php esc_html_e( 'Group Service', 'mpwpb_plugin' ); ?><span class="textRequired">&nbsp;*</span></h6>
 										</div>
 										<div class="mpwpb_category_content">
 											<div class="mpwpb_service_area">
@@ -450,6 +472,13 @@
 					update_post_meta( $post_id, 'mpwpb_sub_category_active', $active_sub_category );
 					$active_service_details = MPWPB_Function::get_submit_info( 'mpwpb_service_details_active' ) ? 'on' : 'off';
 					update_post_meta( $post_id, 'mpwpb_service_details_active', $active_service_details );
+					/****************************/
+					$category_text = MPWPB_Function::get_submit_info( 'mpwpb_category_text', MPWPB_Function::get_category_text( $post_id ) );
+					update_post_meta( $post_id, 'mpwpb_category_text', $category_text );
+					$sub_category_text = MPWPB_Function::get_submit_info( 'mpwpb_sub_category_text', MPWPB_Function::get_sub_category_text( $post_id ) );
+					update_post_meta( $post_id, 'mpwpb_sub_category_text', $sub_category_text );
+					$service_text = MPWPB_Function::get_submit_info( 'mpwpb_service_text', MPWPB_Function::get_service_text( $post_id ) );
+					update_post_meta( $post_id, 'mpwpb_service_text', $service_text );
 					/****************************/
 					$category_infos      = array();
 					$category_hidden_id  = MPWPB_Function::get_submit_info( 'mpwpb_category_hidden_id', array() );

@@ -138,6 +138,8 @@ function mpwpb_price_calculation($this) {
 					});
 				}
 			}
+		} else {
+			mp_alert($(this));
 		}
 	});
 	//=========sub category=============//
@@ -178,10 +180,13 @@ function mpwpb_price_calculation($this) {
 					}
 				}).promise().done(function () {
 					parent.find('.mpwpb_sub_category_area').slideUp(350);
-					target_service.slideDown(250);
-					loadBgImage();
+					target_service.slideDown(250).promise().done(function () {
+						loadBgImage();
+					});
 				});
 			}
+		} else {
+			mp_alert($(this));
 		}
 	});
 	//==========service============//
@@ -227,6 +232,8 @@ function mpwpb_price_calculation($this) {
 				parent.find('.mpwpb_date_time').addClass('mpActive').removeClass('mpDisabled').trigger('click');
 			}
 			loadBgImage();
+		} else {
+			mp_alert($(this));
 		}
 	});
 	//=========extra service=============//
@@ -257,6 +264,8 @@ function mpwpb_price_calculation($this) {
 		let date = parent.find('[name="mpwpb_date"]').val();
 		if (date) {
 			parent.find('.mptbm_summary_tab').addClass('mpActive').removeClass('mpDisabled').trigger('click');
+		} else {
+			mp_alert($(this));
 		}
 	});
 	$(document).on('click', 'form.mpwpb_registration .mpwpb_date_time_prev', function () {

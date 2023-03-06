@@ -49,7 +49,7 @@
 				?>
 				<button class="<?php echo esc_attr( $button_class . ' ' . $class ); ?>" type="button">
 					<span class="<?php echo esc_attr( $icon_class ); ?>"></span>
-					<span class="mL_xs"><?php echo esc_html( $button_text ); ?></span>
+					<span class="mL_xs"><?php echo MPWPB_Function::esc_html( $button_text ); ?></span>
 				</button>
 				<?php
 			}

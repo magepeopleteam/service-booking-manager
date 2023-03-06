@@ -11,7 +11,7 @@
 	$extra_services   = $extra_services ?? MPWPB_Function::get_post_info( $post_id, 'mpwpb_extra_service', array() );
 ?>
 	<div class="mpwpb_summary_area">
-		<h5 class="textTheme"><?php esc_html_e( 'Order Summary', 'mpwpb_plugin' ); ?></h5>
+		<h3 class="mB_xs"><?php esc_html_e( 'Order Summary', 'mpwpb_plugin' ); ?></h3>
 		<div class="divider"></div>
 		<div class="justifyBetween">
 			<div class="flexWrap">
@@ -86,8 +86,8 @@
 		<div class="divider"></div>
 		<div class="justifyBetween">
 			<div></div>
-			<div>
-				<button class="_warningButton mpwpb_book_now" type="button">
+			<div class="mT_xs">
+				<button class="_mpBtn_mT_xs_radius mActive mpwpb_book_now" type="button">
 					<span class="fas fa-cart-plus mR_xs"></span>
 					<?php esc_html_e( 'Add to Cart', 'mpwpb_plugin' ); ?>
 				</button>

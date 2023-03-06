@@ -5,11 +5,13 @@
 	$post_id           = $post_id ?? get_the_id();
 	$all_dates         = $all_dates ?? MPWPB_Function::get_all_date( $post_id );
 	$short_date_format = $short_date_format ?? MPWPB_Function::get_general_settings( 'date_format_short', 'M , Y' );
+	$extra_services    = $extra_services ?? MPWPB_Function::get_post_info( $post_id, 'mpwpb_extra_service', array() );
+	$service_text      = $service_text ?? MPWPB_Function::get_service_text( $post_id );
 ?>
 	<div class="mpwpb_date_time_area">
 		<div class="mpwpb_date_carousel groupRadioCheck">
 			<input type="hidden" name="mpwpb_date">
-			<h4 class="_textTheme_mT_xs"><?php esc_html_e( 'Choose Date & Time', 'mpwpb_plugin' ); ?></h4>
+			<h3 class="mB_xs"><?php esc_html_e( 'Choose Date & Time', 'mpwpb_plugin' ); ?></h3>
 			<?php include( MPWPB_Function::template_path( 'layout/carousel_indicator.php' ) ); ?>
 			<div class="divider"></div>
 			<div class="owl-theme owl-carousel">
@@ -19,18 +21,20 @@
 					while ( strtotime( $start_date ) <= strtotime( $end_date ) ) {
 						?>
 						<div class="fdColumn mpwpb_date_time_line">
-							<h3 class="textTheme"><?php echo date_i18n( 'd', strtotime( $start_date ) ); ?></h3>
-							<p class="textWarning"><?php echo date_i18n( $short_date_format, strtotime( $start_date ) ); ?></p>
-							<h6 class="textInfo textUppercase"><?php echo date_i18n( 'l', strtotime( $start_date ) ); ?></h6>
-							<div class="divider"></div>
+							<div class="_bgTheme_mB_xs_radius_padding fdColumn">
+								<h2 class="textWhite"><?php echo date_i18n( 'd', strtotime( $start_date ) ); ?></h2>
+								<p><?php echo date_i18n( $short_date_format, strtotime( $start_date ) ); ?></p>
+								<h6 class="textWhite textUppercase"><?php echo date_i18n( 'l', strtotime( $start_date ) ); ?></h6>
+							</div>
+
 							<?php if ( ! in_array( $start_date, $all_dates ) ) { ?>
-								<h6><?php esc_html_e( 'Closed', 'mpwpb_plugin' ); ?></h6>
+								<button type="button" class="_mpBtn_radius" ><?php esc_html_e( 'Closed', 'mpwpb_plugin' ); ?></button>
 							<?php } else {
 								$all_time_slots = MPWPB_Function::get_time_slot( $post_id, $start_date );
 								if ( sizeof( $all_time_slots ) > 0 ) {
 									foreach ( $all_time_slots as $slot ) {
 										?>
-										<button type="button" class="_dButton_xs bgWhite textColor_1" data-date="<?php echo MPWPB_Function::date_format($slot,'full') ?>" data-radio-check="<?php echo esc_attr( $slot ); ?>" data-open-icon="fas fa-check" data-close-icon="">
+										<button type="button" class="_mpBtn_radius" data-date="<?php echo MPWPB_Function::date_format( $slot, 'full' ) ?>" data-radio-check="<?php echo esc_attr( $slot ); ?>" data-open-icon="fas fa-check" data-close-icon="">
 											<span data-icon></span><?php echo date_i18n( 'h:i A', strtotime( $slot ) ); ?>
 										</button>
 										<?php
@@ -45,11 +49,17 @@
 			</div>
 			<div class="divider"></div>
 			<div class="justifyBetween">
-				<button class="mpBtn mpActive mpwpb_date_time_prev" type="button">
+				<button class="_mpBtn_mT_xs_radius mpActive mpwpb_date_time_prev" type="button">
 					<i class="fas fa-long-arrow-alt-left _mR_xs"></i>
-					<?php esc_html_e( 'Previous Extra Service', 'mpwpb_plugin' ); ?>
+					<?php
+						if ( sizeof( $extra_services ) > 0 ) {
+							esc_html_e( 'Previous Extra-Service', 'mpwpb_plugin' );
+						} else {
+							echo esc_html__( 'Previous', 'mpwpb_plugin' ) . ' ' . $service_text;
+						}
+					?>
 				</button>
-				<button class="mpBtn mpActive mpwpb_date_time_next" type="button">
+				<button class="_mpBtn_mT_xs_radius mActive mpwpb_date_time_next" type="button" data-alert="<?php esc_html_e( 'Please Select Date & Time', 'mpwpb_plugin' ); ?>">
 					<?php esc_html_e( 'Next Summary', 'mpwpb_plugin' ); ?>
 					<i class="fas fa-long-arrow-alt-right _mL_xs"></i>
 				</button>

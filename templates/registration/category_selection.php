@@ -2,12 +2,13 @@
 	if ( ! defined( 'ABSPATH' ) ) {
 		exit;
 	}
-	$post_id      = $post_id ?? get_the_id();
-	$all_category = $all_category ?? MPWPB_Function::get_category( $post_id );
+	$post_id       = $post_id ?? get_the_id();
+	$all_category  = $all_category ?? MPWPB_Function::get_category( $post_id );
+	$category_text = $category_text ?? MPWPB_Function::get_category_text( $post_id );
 	if ( sizeof( $all_category ) > 0 ) {
 		?>
 		<div class="mpwpb_category_area">
-			<h5><?php esc_html_e( 'Select category', 'mpwpb_plugin' ); ?></h5>
+			<h3 class="mB_xs"><?php echo esc_html__( 'Select', 'mpwpb_plugin' ) . ' ' . $category_text; ?></h3>
 			<div class="divider"></div>
 			<div class="flexWrapJustifyBetween">
 				<?php
@@ -16,8 +17,8 @@
 						$category_icon  = array_key_exists( 'icon', $category_item ) ? $category_item['icon'] : '';
 						$category_image = array_key_exists( 'image', $category_item ) ? $category_item['image'] : '';
 						?>
-						<div class="mpwpb_item_box mpwpb_category_item dShadow_3" data-category="<?php echo esc_attr( $category_name ); ?>">
-							<h5 class="mB_xs"><?php echo esc_html( $category_name ); ?></h5>
+						<div class="mpwpb_item_box mpwpb_category_item dShadow_8" data-category="<?php echo esc_attr( $category_name ); ?>">
+							<h4 class="mB_xs"><?php echo esc_html( $category_name ); ?></h4>
 							<?php if ( $category_image ) { ?>
 								<div class="bg_image_area">
 									<div data-bg-image="<?php echo esc_attr( MPWPB_Function::get_image_url( '', $category_image, 'medium' ) ); ?>"></div>
@@ -33,8 +34,8 @@
 					<?php } ?>
 			</div>
 			<div class="divider"></div>
-			<div class="justifyEnd">
-				<button class="mpBtn mpActive mpwpb_category_next" type="button">
+			<div class="justifyEnd ">
+				<button class="_mpBtn_mT_xs_radius mActive  mpwpb_category_next" type="button" data-alert="<?php echo esc_html__( 'Please Select', 'mpwpb_plugin' ) . ' ' . $category_text; ?>">
 					<?php esc_html_e( 'Next', 'mpwpb_plugin' ); ?>
 					<i class="fas fa-long-arrow-alt-right _mL_xs"></i>
 				</button>

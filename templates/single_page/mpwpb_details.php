@@ -14,8 +14,11 @@
 		$product_id         = MPWPB_Function::get_post_info( $post_id, 'link_wc_product' );
 		$all_services    = MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_infos', array() );
 		$all_category = MPWPB_Function::get_category($post_id,$all_services);
+		$category_text = $category_text ?? MPWPB_Function::get_category_text( $post_id );
 		$all_sub_category = MPWPB_Function::get_sub_category( $post_id,$all_services );
+		$sub_category_text = $sub_category_text ?? MPWPB_Function::get_sub_category_text( $post_id );
 		$all_service_list = MPWPB_Function::get_all_service( $post_id );
+		$service_text      = $service_text ?? MPWPB_Function::get_service_text( $post_id );
 		$extra_services = MPWPB_Function::get_post_info( $post_id, 'mpwpb_extra_service', array() );
 		$short_date_format = MPWPB_Function::get_general_settings( 'date_format_short', 'M , Y' );
 		$template_name = MPWPB_Function::get_post_info( $post_id, 'mpwpb_theme_file', 'default.php' );

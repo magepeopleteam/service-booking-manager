@@ -133,6 +133,19 @@
 				return locate_template( array( 'mpwpb_templates/' . $file_name ) ) ? $file_path : $default_dir . $file_name;
 			}
 			//*******************************//
+			public static function get_category_text( $post_id ) {
+				$text = MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_text' );
+				return $text ?: self::get_general_settings( 'category_text', esc_html__( 'Category', 'mpwpb_plugin' ) );
+			}
+			public static function get_sub_category_text( $post_id ) {
+				$text = MPWPB_Function::get_post_info( $post_id, 'mpwpb_sub_category_text' );
+				return $text ?: self::get_general_settings( 'sub_category_text', esc_html__( 'Sub-Category', 'mpwpb_plugin' ) );
+			}
+			public static function get_service_text( $post_id ) {
+				$text = MPWPB_Function::get_post_info( $post_id, 'mpwpb_service_text' );
+				return $text ?: self::get_general_settings( 'service_text', esc_html__( 'Service', 'mpwpb_plugin' ) );
+			}
+			//*******************************//
 			public static function get_category( $post_id, $all_services = array() ) {
 				$categories      = [];
 				$all_services    = $all_services ?: MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_infos', array() );
@@ -180,7 +193,7 @@
 				}
 				return $sub_category_list;
 			}
-			public static function get_all_service( $post_id) {
+			public static function get_all_service( $post_id ) {
 				$all_service_item    = [];
 				$category_active     = MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_active', 'on' );
 				$sub_category_active = MPWPB_Function::get_post_info( $post_id, 'mpwpb_sub_category_active', 'off' );
@@ -200,10 +213,10 @@
 										$all_service_item[ $count ]['sub_category'] = $category_active == 'on' && $sub_category_active == 'on' ? $sub_category_name : '';
 										$all_service_item[ $count ]['service']      = array_key_exists( 'name', $service ) ? $service['name'] : '';
 										$all_service_item[ $count ]['price']        = array_key_exists( 'price', $service ) ? $service['price'] : '';
-										$all_service_item[ $count ]['image']          = array_key_exists( 'image', $service ) ? $service['image'] : '';
-										$all_service_item[ $count ]['icon']          = array_key_exists( 'icon', $service ) ? $service['icon'] : '';
+										$all_service_item[ $count ]['image']        = array_key_exists( 'image', $service ) ? $service['image'] : '';
+										$all_service_item[ $count ]['icon']         = array_key_exists( 'icon', $service ) ? $service['icon'] : '';
 										$all_service_item[ $count ]['duration']     = array_key_exists( 'duration', $service ) ? $service['duration'] : '';
-										$all_service_item[ $count ]['details']   = array_key_exists( 'details', $service ) ? $service['details'] : '';
+										$all_service_item[ $count ]['details']      = array_key_exists( 'details', $service ) ? $service['details'] : '';
 										$count ++;
 									}
 								}
@@ -603,9 +616,10 @@
 						'data-ticket-type-name' => [],
 					],
 					'span'     => [
-						'class' => [],
-						'id'    => [],
-						'data'  => [],
+						'class'             => [],
+						'id'                => [],
+						'data'              => [],
+						'data-input-change' => [],
 					],
 					'i'        => [
 						'class' => [],

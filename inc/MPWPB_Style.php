@@ -13,8 +13,8 @@
 				add_action( 'admin_head', array( $this, 'add_global_style' ), 100 );
 			}
 			public function add_global_style() {
-				$default_color   = MPWPB_Function::get_style_settings( 'default_text_color', '#000' );
-				$theme_color     = MPWPB_Function::get_style_settings( 'theme_color', '#ef3326' );
+				$default_color   = MPWPB_Function::get_style_settings( 'default_text_color', '#303030' );
+				$theme_color     = MPWPB_Function::get_style_settings( 'theme_color', '#2F9DF4' );
 				$alternate_color = MPWPB_Function::get_style_settings( 'theme_alternate_color', '#fff' );
 				$warning_color   = MPWPB_Function::get_style_settings( 'warning_color', '#E67C30' );
 				$default_fs   = MPWPB_Function::get_style_settings( 'default_font_size', '14' ) . 'px';

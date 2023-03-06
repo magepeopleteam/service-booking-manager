@@ -15,7 +15,7 @@
 			public function global_settings_menu() {
 				$label = MPWPB_Function::get_name();
 				$cpt   = MPWPB_Function::get_cpt_name();
-				add_submenu_page( 'edit.php?post_type='.$cpt, $label . esc_html__( ' Settings', 'mpwpb_plugin' ), $label . esc_html__( ' Settings', 'mpwpb_plugin' ), 'manage_options', 'mpwpb_settings_page', array( $this, 'settings_page' ) );
+				add_submenu_page( 'edit.php?post_type=' . $cpt, $label . esc_html__( ' Settings', 'mpwpb_plugin' ), $label . esc_html__( ' Settings', 'mpwpb_plugin' ), 'manage_options', 'mpwpb_settings_page', array( $this, 'settings_page' ) );
 			}
 			public function settings_page() {
 				$plugin_data = get_plugin_data( __FILE__ );
@@ -64,7 +64,7 @@
 				$label           = MPWPB_Function::get_name();
 				$current_date    = current_time( 'Y-m-d' );
 				$settings_fields = array(
-					'mpwpb_general_settings'         => apply_filters( 'filter_mpwpb_general_settings', array(
+					'mpwpb_general_settings' => apply_filters( 'filter_mpwpb_general_settings', array(
 						array(
 							'name'    => 'disable_block_editor',
 							'label'   => esc_html__( 'Disable Block/Gutenberg Editor', 'mpwpb_plugin' ),
@@ -163,7 +163,7 @@
 							'label'   => $label . ' ' . esc_html__( 'Category Label', 'mpwpb_plugin' ),
 							'desc'    => esc_html__( 'If you want to change the ' . $label . ' category label in the dashboard menu, you can change it here.', 'mpwpb_plugin' ),
 							'type'    => 'text',
-							'default' => 'Category'
+							'default' => esc_html__( 'Category', 'mpwpb_plugin' )
 						),
 						array(
 							'name'    => 'category_slug',
@@ -186,8 +186,29 @@
 							'type'    => 'text',
 							'default' => 'service-organizer'
 						),
+						array(
+							'name'    => 'category_text',
+							'label'   => $label . ' ' . esc_html__( 'Product Category Text', 'mpwpb_plugin' ),
+							'desc'    => esc_html__( 'If you want to change the ' . $label . ' Product Category Text, you can change it here.', 'mpwpb_plugin' ),
+							'type'    => 'text',
+							'default' => esc_html__( 'Category', 'mpwpb_plugin' )
+						),
+						array(
+							'name'    => 'sub_category_text',
+							'label'   => $label . ' ' . esc_html__( 'Product Sub-Category Text', 'mpwpb_plugin' ),
+							'desc'    => esc_html__( 'If you want to change the ' . $label . ' Product Sub-Category Text, you can change it here.', 'mpwpb_plugin' ),
+							'type'    => 'text',
+							'default' => esc_html__( 'Sub-Category', 'mpwpb_plugin' )
+						),
+						array(
+							'name'    => 'service_text',
+							'label'   => $label . ' ' . esc_html__( 'Product ServiceText', 'mpwpb_plugin' ),
+							'desc'    => esc_html__( 'If you want to change the ' . $label . ' Product Service Text, you can change it here.', 'mpwpb_plugin' ),
+							'type'    => 'text',
+							'default' => esc_html__( 'Service', 'mpwpb_plugin' )
+						),
 					) ),
-					'mpwpb_style_settings'           => apply_filters( 'filter_mpwpb_style_settings', array(
+					'mpwpb_style_settings'   => apply_filters( 'filter_mpwpb_style_settings', array(
 						array(
 							'name'    => 'theme_color',
 							'label'   => esc_html__( 'Theme Color', 'mpwpb_plugin' ),
@@ -301,14 +322,14 @@
 							'default' => '#FAFCFE'
 						),
 					) ),
-					'mpwpb_custom_css'               => apply_filters( 'filter_mpwpb_custom_css', array(
-							array(
-								'name'  => 'custom_css',
-								'label' => esc_html__( 'Custom CSS', 'mpwpb_plugin' ),
-								'desc'  => esc_html__( 'Write Your Custom CSS Code Here', 'mpwpb_plugin' ),
-								'type'  => 'textarea',
-							)
-						) )
+					'mpwpb_custom_css'       => apply_filters( 'filter_mpwpb_custom_css', array(
+						array(
+							'name'  => 'custom_css',
+							'label' => esc_html__( 'Custom CSS', 'mpwpb_plugin' ),
+							'desc'  => esc_html__( 'Write Your Custom CSS Code Here', 'mpwpb_plugin' ),
+							'type'  => 'textarea',
+						)
+					) )
 				);
 				return array_merge( $default_fields, $settings_fields );
 			}

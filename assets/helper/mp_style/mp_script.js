@@ -98,6 +98,10 @@ function mp_load_date_picker() {
 	});
 }
 
+function mp_alert($this, attr = 'alert') {
+	alert($this.data(attr));
+}
+
 //==========Load initial=================//
 (function ($) {
 	"use strict";
@@ -481,19 +485,18 @@ function mp_pagination_page_management(parent, pagination_page, total_item) {
 //==========Modal / Popup==========//
 (function ($) {
 	"use strict";
-	$(document).on('click', '.mpStyle [data-target-popup]', function () {
-		let target = $(this).data('target-popup');
+	$(document).on('click', '.mpStyle [data-target-popup]', function (e) {
+		let target = $(this).attr('data-active-popup', '').data('target-popup');
 		$('body').addClass('noScroll').find('[data-popup="' + target + '"]').addClass('in').promise().done(function () {
 			loadBgImage();
 			return true;
 		});
-		$(document).on('click', 'div.mpPopup  .popupClose', function () {
-			$(this).closest('[data-popup]').removeClass('in');
-			$('body').removeClass('noScroll');
-			return true;
-		});
 	});
-
+	$(document).on('click', 'div.mpPopup  .popupClose', function () {
+		$(this).closest('[data-popup]').removeClass('in');
+		$('body').removeClass('noScroll').find('[data-active-popup]').removeAttr('data-active-popup');
+		return true;
+	});
 	$(document).click(function (e) {
 		let target = $(e.target);
 		let popup = target.closest('[data-popup]');

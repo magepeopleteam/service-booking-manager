@@ -1,5 +1,5 @@
 //*******owlCarousel***********//
-function mpwpb_active_carousel(target) {
+function mpwpb_active_carousel(target,qty) {
 	target.each(function () {
 		let current_target = jQuery(this);
 		current_target.find(".owl-carousel").owlCarousel({
@@ -8,7 +8,7 @@ function mpwpb_active_carousel(target) {
 			nav: true,
 			responsive: {
 				0: {
-					items: 7
+					items: qty
 				}
 			}
 		});
@@ -23,5 +23,5 @@ function mpwpb_active_carousel(target) {
 
 (function ($) {
 	"use strict";
-	mpwpb_active_carousel($('.mpwpb_date_carousel'));
+	mpwpb_active_carousel($('.mpwpb_date_carousel'),5);
 }(jQuery));
