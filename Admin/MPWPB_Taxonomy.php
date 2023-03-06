@@ -5,7 +5,7 @@
 	if ( ! class_exists( 'MPWPB_Taxonomy' ) ) {
 		class MPWPB_Taxonomy {
 			public function __construct() {
-				add_action( 'init', [ $this, 'taxonomy' ] );
+				//add_action( 'init', [ $this, 'taxonomy' ] );
 			}
 			public function taxonomy(){
 				$label     = MPWPB_Function::get_name();
