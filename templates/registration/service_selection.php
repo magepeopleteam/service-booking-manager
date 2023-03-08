@@ -53,7 +53,7 @@
 										<span><?php echo MPWPB_Function::esc_html( $service_details ); ?></span>
 									<?php } ?>
 									<div class="justifyBetween _mT">
-										<button class="_mpBtn_radius mpActive" type="button"><?php echo wc_price( $service_price ); ?></button>
+										<h6 class="_dLayout_xs_textTheme_bTheme"><?php echo wc_price( $service_price ); ?></h6>
 										<?php if ( $service_duration ) { ?>
 											<h5 class="textTheme alignCenter">
 												<span class="fas fa-clock mR_xs"></span>
@@ -68,6 +68,7 @@
 					<?php } ?>
 			</div>
 			<div class="divider"></div>
+			<?php include( MPWPB_Function::template_path( 'registration/extra_services.php' ) ); ?>
 			<div class="justifyBetween">
 				<?php if ( sizeof( $all_category ) > 0 ) { ?>
 					<button class="_mpBtn_mT_xs_radius mpActive mpwpb_service_prev" type="button">
@@ -84,13 +85,7 @@
 					<div></div>
 				<?php } ?>
 				<button class="_mpBtn_mT_xs_radius mActive mpwpb_service_next" type="button" data-alert="<?php echo esc_html__( 'Please Select', 'mpwpb_plugin' ) . ' ' . $service_text; ?>">
-					<?php
-						if ( sizeof( $extra_services ) > 0 ) {
-							esc_html_e( 'Next Extra-Service', 'mpwpb_plugin' );
-						} else {
-							esc_html_e( 'Next Date & Time', 'mpwpb_plugin' );
-						}
-					?>
+					<?php esc_html_e( 'Next Date & Time', 'mpwpb_plugin' ); ?>
 					<i class="fas fa-long-arrow-alt-right _mL_xs"></i>
 				</button>
 			</div>

@@ -50,28 +50,6 @@
 					exit( wp_redirect( admin_url( 'admin.php?post_type=mpwpb_item&page=mpwpb_quick_setup' ) ) );
 				}
 			}
-			public function on_activation_page_create(){
-				if ( ! $this->get_page_by_slug( 'transport_booking' ) ) {
-					$transport_booking = array(
-						'post_type'    => 'page',
-						'post_name'    => 'transport_booking',
-						'post_title'   => 'Transport Booking',
-						'post_content' => '[mptbm_booking]',
-						'post_status'  => 'publish',
-					);
-					wp_insert_post( $transport_booking );
-				}
-			}
-			public function get_page_by_slug( $slug ) {
-				if ( $pages = get_pages() ) {
-					foreach ( $pages as $page ) {
-						if ( $slug === $page->post_name ) {
-							return $page;
-						}
-					}
-				}
-				return false;
-			}
 			public static function check_woocommerce(): int {
 				include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 				$plugin_dir = ABSPATH . 'wp-content/plugins/woocommerce';

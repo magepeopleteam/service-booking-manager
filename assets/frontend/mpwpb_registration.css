@@ -24,13 +24,14 @@ div.registration_tab_item {
 	div.mpwpb_item_box:hover,
 	div.mpwpb_item_box.mpActive {border-color: var(--theme-color);color:var(--theme-color); }
 	div.mpwpb_item_box.mpActive span.mpwpb_item_check {opacity: 1;}
-	div.mpwpb_item_box  .bg_image_area{max-width: 250px;margin: 0 auto;}
+	div.mpwpb_item_box  .bg_image_area{max-width: 160px;margin: 0 auto;}
 	
 	/*************/
 	div.service_img_area{max-width: 120px;margin: 0 15px 0 0;width: 100%;}
 	div.mpwpb_icon_area{font-size: 60px;padding: var(--default-mp);}
 	/*************/
-	div.mpwpb_extra_service_area div.mpwpb_item_box{width: 100%;margin: var(--default-mp) 0;}
+	div.mpwpb_extra_service_area div.mpwpb_item_box{width: 100%;margin: var(--default-mp) 0;cursor: initial;}
+	div.mpwpb_extra_service_area div.mpwpb_item_box:hover{border-color: transparent;color:inherit;}
 	div.mpwpb_extra_service_area .mpwpb_price_calculation{color: var(--theme-color);border-color: var(--theme-color);}
 	/*************/
 	div.mpwpb_summary_area_left{display: none;}

@@ -59,7 +59,7 @@
 													<div class="mR_xs min_100" data-collapse="<?php echo esc_attr( $ex_unique_id ); ?>">
 														<?php MPWPB_Layout::qty_input( 'mpwpb_extra_service_qty[]', $ex_service_price_raw, $ex_service_info['qty'], 1, 0, $ex_service_info['qty'] ); ?>
 													</div>
-													<button type="button" class="_mpBtn_radius_min_150 mpwpb_price_calculation" data-extra-item data-collapse-target="<?php echo esc_attr( $ex_unique_id ); ?>" data-open-icon="far fa-check-circle" data-close-icon="" data-open-text="<?php esc_attr_e( 'Select', 'mpwpb_plugin' ); ?>" data-close-text="<?php esc_attr_e( 'Selected', 'mpwpb_plugin' ); ?>" data-add-class="mpActive">
+													<button type="button" class="_mpBtn_radius_min_150 mpwpb_price_calculation" data-extra-item data-collapse-target="<?php echo esc_attr( $ex_unique_id ); ?>" data-open-icon="far fa-check-circle" data-close-icon="" data-open-text="<?php esc_attr_e( 'Select', 'mpwpb_plugin' ); ?>" data-close-text="<?php esc_attr_e( 'Selected', 'mpwpb_plugin' ); ?>" data-add-class="mActive">
 														<input type="hidden" name="mpwpb_extra_service[]" data-value="<?php echo esc_attr( $group_service_name ); ?>" value=""/>
 														<input type="hidden" name="mpwpb_extra_service_type[]" data-value="<?php echo esc_attr( $ex_service_info['name'] ); ?>" value=""/>
 														<span data-text><?php esc_html_e( 'Select', 'mptbm_plugin' ); ?></span>
@@ -78,16 +78,6 @@
 				}
 			?>
 			<div class="divider"></div>
-			<div class="justifyBetween">
-				<button class="_mpBtn_mT_xs_radius mpActive mpwpb_extra_service_prev" type="button">
-					<i class="fas fa-long-arrow-alt-left _mR_xs"></i>
-					<?php echo esc_html__( 'Previous', 'mpwpb_plugin' ) . ' ' . $service_text; ?>
-				</button>
-				<button class="_mpBtn_mT_xs_radius mActive mpwpb_extra_service_next" type="button">
-					<?php esc_html_e( 'Next Date & Time', 'mpwpb_plugin' ); ?>
-					<i class="fas fa-long-arrow-alt-right _mL_xs"></i>
-				</button>
-			</div>
 		</div>
 		<?php
 	}

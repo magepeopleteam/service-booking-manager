@@ -53,15 +53,15 @@
 								<div class="justifyBetween">
 									<div class="flexWrap">
 										<h5><?php esc_html_e( 'Extra Service : ', 'mpwpb_plugin' ); ?></h5>&nbsp;
-										<h6 class="mR_xs">
 											<?php if ( $group_service_name ) { ?>
 												<div class="_dFlex_alignCenter">
 													<h6><?php echo esc_html( $group_service_name ) ?></h6>
 													<span class="fas fa-long-arrow-alt-right _mLR_xs"></span>
 												</div>
 											<?php } ?>
-											<?php echo esc_html( $ex_service_info['name'] ); ?>
-										</h6>
+										<div class="_dFlex_alignCenter">
+											<h6><?php echo esc_html( $ex_service_info['name'] ); ?></h6>
+										</div>
 									</div>
 									<h6><span class="ex_service_qty">x1</span>&nbsp;|&nbsp;<?php echo MPWPB_Function::wc_price( $post_id, $ex_service_price ); ?></h6>
 								</div>
@@ -78,10 +78,11 @@
 				<h6></h6>
 			</div>
 		</div>
+		<?php do_action('add_mpwpb_summary_section',$post_id); ?>
 		<div class="divider"></div>
 		<div class="justifyBetween">
-			<h5><?php esc_html_e( 'Total :', 'mpwpb_plugin' ); ?>&nbsp;&nbsp;</h5>
-			<h5><i class="mpwpb_total_bill textTheme"><?php echo MPWPB_Function::wc_price( $post_id, 0 ); ?></i></h5>
+			<h3><?php esc_html_e( 'Total :', 'mpwpb_plugin' ); ?>&nbsp;&nbsp;</h3>
+			<h3><i class="mpwpb_total_bill textTheme"><?php echo MPWPB_Function::wc_price( $post_id, 0 ); ?></i></h3>
 		</div>
 		<div class="divider"></div>
 		<div class="justifyBetween">

@@ -693,8 +693,8 @@
 	/***************************/
 	div.mpStyle .formControl {
 		width: 100%;height: auto;min-width: auto;max-width: inherit;min-height: 34px;
-		border: 1px solid var(--border_color) !important;padding: var(--default-mp-xs);
-		font-size: var(--fs);color: var(--d_color) !important;background-color: #FFF !important;
+		border: 1px solid var(--border_color);padding: var(--default-mp-xs);
+		font-size: var(--fs);color: var(--d_color);background-color: #FFF;
 	}
 	.mpStyle .formControl:focus {
 		outline: 0;background-color: #FFF;border-color: #80BDFF;
@@ -1208,7 +1208,7 @@
 	/*****Theme*********/
 	div.mpStyle .textTheme, div.mpStyle [class*='_textTheme'] {color: var(--theme-color);}
 	div.mpStyle .bgTheme, div.mpStyle [class*='_bgTheme'] {background-color: var(--theme-color);color: var(--theme-alternate-color);}
-	[class*='_bTheme'], .bTheme {border: 1px solid var(--theme-color);}
+	div.mpStyle [class*='_bTheme'], .bTheme {border: 1px solid var(--theme-color);}
 	/*****default*********/
 	div.mpStyle [class*='textDefault'] {color: var(--d_color);}
 	div.mpStyle [class*='bgDefault'] {background-color: var(--d_color);}
@@ -1221,12 +1221,13 @@
 	/*****danger*********/
 	div.mpStyle .textDanger, div.mpStyle [class*='_textDanger'] {color: var(--danger-color);}
 	div.mpStyle .bgDanger, div.mpStyle [class*='_bgDanger'] {background-color: var(--danger-color);}
-	/*****danger*********/
+	/*****warning*********/
 	div.mpStyle .textWarning, div.mpStyle [class*='_textWarning'] {color: var(--warning_color);}
 	div.mpStyle .bgWarning, div.mpStyle [class*='_bgWarning'] {background-color: var(--warning_color);}
 	/*****required*********/
 	div.mpStyle .textRequired, div.mpStyle [class*='_textRequired'] {color: var(--required-color);}
 	div.mpStyle .bgRequired, div.mpStyle [class*='_bgRequired'] {background-color: var(--required-color);}
+	div.mpStyle .mpRequired, div.mpStyle [class*='_mpRequired'] {border-color: var(--required-color);}
 	/*****Light*********/
 	div.mpStyle .textLight, div.mpStyle [class*='_textLight'] {color: var(--light-color);}
 	div.mpStyle .bgLight, div.mpStyle [class*='_bgLight'] {background-color: var(--light-color);}

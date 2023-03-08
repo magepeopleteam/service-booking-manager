@@ -5,7 +5,7 @@
 	if ( ! class_exists( 'MPWPB_Gallery_Settings' ) ) {
 		class MPWPB_Gallery_Settings {
 			public function __construct() {
-				add_action( 'add_mpwpb_settings_tab_content', [ $this, 'gallery_settings' ] );
+				add_action( 'add_mpwpb_settings_tab_content', [ $this, 'gallery_settings' ],10,1 );
 				add_action( 'mpwpb_settings_save', [ $this, 'save_gallery_settings' ], 10, 1 );
 			}
 			public function gallery_settings( $post_id ) {

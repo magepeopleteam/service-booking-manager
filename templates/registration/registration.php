@@ -39,7 +39,7 @@
 						<?php include( MPWPB_Function::template_path( 'registration/category_selection.php' ) ); ?>
 						<?php include( MPWPB_Function::template_path( 'registration/sub_category_selection.php' ) ); ?>
 						<?php include( MPWPB_Function::template_path( 'registration/service_selection.php' ) ); ?>
-						<?php include( MPWPB_Function::template_path( 'registration/extra_services.php' ) ); ?>
+
 						<?php include( MPWPB_Function::template_path( 'registration/date_time_select.php' ) ); ?>
 						<?php include( MPWPB_Function::template_path( 'registration/summary_section.php' ) ); ?>
 					</div>
