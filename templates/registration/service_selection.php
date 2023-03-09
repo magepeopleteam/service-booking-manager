@@ -70,20 +70,7 @@
 			<div class="divider"></div>
 			<?php include( MPWPB_Function::template_path( 'registration/extra_services.php' ) ); ?>
 			<div class="justifyBetween">
-				<?php if ( sizeof( $all_category ) > 0 ) { ?>
-					<button class="_mpBtn_mT_xs_radius mpActive mpwpb_service_prev" type="button">
-						<i class="fas fa-long-arrow-alt-left _mR_xs"></i>
-						<?php
-							if ( sizeof( $all_sub_category ) > 0 ) {
-								echo esc_html__( 'Previous', 'mpwpb_plugin' ) . ' ' . $sub_category_text;
-							} else {
-								echo esc_html__( 'Previous', 'mpwpb_plugin' ) . ' ' . $category_text;
-							}
-						?>
-					</button>
-				<?php } else { ?>
-					<div></div>
-				<?php } ?>
+				<div></div>
 				<button class="_mpBtn_mT_xs_radius mActive mpwpb_service_next" type="button" data-alert="<?php echo esc_html__( 'Please Select', 'mpwpb_plugin' ) . ' ' . $service_text; ?>">
 					<?php esc_html_e( 'Next Date & Time', 'mpwpb_plugin' ); ?>
 					<i class="fas fa-long-arrow-alt-right _mL_xs"></i>

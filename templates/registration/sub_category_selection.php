@@ -21,7 +21,6 @@
 						$sub_category_image = array_key_exists( 'image', $sub_category_item ) ? $sub_category_item['image'] : '';
 						?>
 						<div class="mpwpb_item_box mpwpb_sub_category_item dShadow_8" data-category="<?php echo esc_attr( $category_name ); ?>" data-sub-category="<?php echo esc_attr( $sub_category_name ); ?>">
-
 							<?php if ( $sub_category_image ) { ?>
 								<div class="bg_image_area">
 									<div data-bg-image="<?php echo esc_attr( MPWPB_Function::get_image_url( '', $sub_category_image, 'medium' ) ); ?>"></div>
@@ -36,17 +35,6 @@
 							<span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
 						</div>
 					<?php } ?>
-			</div>
-			<div class="divider"></div>
-			<div class="justifyBetween">
-				<button class="_mpBtn_mT_xs_radius mpActive mpwpb_sub_category_prev" type="button">
-					<i class="fas fa-long-arrow-alt-left _mR_xs"></i>
-					<?php echo esc_html__( 'Previous', 'mpwpb_plugin' ) . ' ' . $category_text; ?>
-				</button>
-				<button class="_mpBtn_mT_xs_radius mActive mpwpb_sub_category_next" type="button" data-alert="<?php echo esc_html__( 'Please Select', 'mpwpb_plugin' ) . ' ' . $sub_category_text; ?>">
-					<?php echo esc_html__( 'Next', 'mpwpb_plugin' ) . ' ' . $service_text; ?>
-					<i class="fas fa-long-arrow-alt-right _mL_xs"></i>
-				</button>
 			</div>
 		</div>
 		<?php

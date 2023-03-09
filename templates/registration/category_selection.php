@@ -33,13 +33,6 @@
 						</div>
 					<?php } ?>
 			</div>
-			<div class="divider"></div>
-			<div class="justifyEnd ">
-				<button class="_mpBtn_mT_xs_radius mActive  mpwpb_category_next" type="button" data-alert="<?php echo esc_html__( 'Please Select', 'mpwpb_plugin' ) . ' ' . $category_text; ?>">
-					<?php esc_html_e( 'Next', 'mpwpb_plugin' ); ?>
-					<i class="fas fa-long-arrow-alt-right _mL_xs"></i>
-				</button>
-			</div>
 		</div>
 		<?php
 	}
