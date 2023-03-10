@@ -83,7 +83,7 @@ function placeholderLoaderRemove(target) {
 
 function pageScrollTo(target) {
 	jQuery('html, body').animate({
-		scrollTop: target.offset().top -= 100
+		scrollTop: target.offset().top -= 150
 	}, 1000);
 }
 
@@ -115,10 +115,17 @@ function mp_alert($this, attr = 'alert') {
 function loadBgImage() {
 	jQuery('body').find('[data-bg-image]:visible').each(function () {
 		let target = jQuery(this);
-		let height = target.outerWidth() * 2 / 3;
+		//let height = target.outerWidth() * 2 / 3;
 		if (target.css('background-image') === 'none') {
-			target.css({"min-height": height});
 			let bg_url = target.data('bg-image');
+			let tmpImg = new Image();
+			tmpImg.src = bg_url;
+			jQuery(tmpImg).one('load', function () {
+				let imgWidth = tmpImg.width;
+				let imgHeight = tmpImg.height;
+				let height = target.outerWidth() * imgHeight / imgWidth;
+				target.css({"min-height": height});
+			});
 			if (!bg_url || bg_url.width === 0 || bg_url.width === 'undefined') {
 				bg_url = mp_empty_image_url;
 			}
@@ -422,6 +429,14 @@ function mp_all_content_change($this) {
 	$(document).on('keyup change', '.mpStyle .mp_name_validation', function () {
 		let n = $(this).val();
 		$(this).val(n.replace(/[@%'":;&_]/g, ''));
+		return true;
+	});
+	$(document).on('keyup change', '.mpStyle [required]', function () {
+		if ($(this).val() !== '') {
+			$(this).removeClass('mpRequired');
+		} else {
+			$(this).addClass('mpRequired');
+		}
 		return true;
 	});
 }(jQuery));

@@ -35,11 +35,13 @@
 						/*--font-family: "Poppins", sans-serif;*/
 						--d_color: <?php echo esc_attr($default_color); ?>;
 						--container-max-width: 1320px;
+						--mpL: 40px;
 						--default-mp: 20px;
 						--default-mp_negetive: -20px;
 						--default-mp-xs: 10px;
 						--default-mp-xs_negative: -10px;
-						--default-border-radious: 5px;
+						--dBRL: 10px;
+						--dBR: 5px;
 						--medium-border-radious: 10px;
 						--border_color: #DDD;
 						--active_color: #0E6BB7;
@@ -150,6 +152,7 @@
 							--font-size-h3: 22px;
 							--font-size-h2: 25px;
 							--font-size-h1: 30px;
+							--mpL: 32px;
 							--default-mp: 16px;
 							--default-mp_negetive: -16px;
 							--default-mp-xs: 8px;

@@ -14,11 +14,11 @@
 	if ( sizeof( $all_service_list ) > 0 ) {
 		//echo '<pre>';print_r($all_services);echo '</pre>';
 		?>
-		<div class="mpwpb_service_area mT">
+		<div class="mpwpb_service_area">
 			<input type="hidden" name="mpwpb_category" value="">
 			<input type="hidden" name="mpwpb_sub_category" value="">
 			<input type="hidden" name="mpwpb_service" value="">
-			<h3 class="mB_xs"><?php echo esc_html__( 'Select', 'mpwpb_plugin' ) . ' ' . $service_text; ?></h3>
+			<h3><?php echo esc_html__( 'Select', 'mpwpb_plugin' ) . ' ' . $service_text; ?></h3>
 			<div class="divider"></div>
 			<div class="flexWrapJustifyBetween">
 				<?php
@@ -35,25 +35,26 @@
 						?>
 						<div class="mpwpb_item_box mpwpb_service_item dShadow_8" data-price="<?php echo esc_attr( $service_price ); ?>" data-category="<?php echo esc_attr( $category_name ); ?>" data-sub-category="<?php echo esc_attr( $sub_category_name ); ?>" data-service="<?php echo esc_attr( $service_name ); ?>">
 							<div class="dFlex">
-								<div class="service_img_area alignCenter">
-									<?php if ( $service_image ) { ?>
+								<?php if ( $service_image ) { ?>
+									<div class="service_img_area alignCenter">
 										<div class="bg_image_area">
 											<div data-bg-image="<?php echo esc_attr( MPWPB_Function::get_image_url( '', $service_image, 'medium' ) ); ?>"></div>
 										</div>
-									<?php } ?>
-									<?php if ( $service_icon ) { ?>
-										<div class="allCenter mpwpb_icon_area">
-											<span class="<?php echo esc_attr( $service_icon ); ?>"></span>
-										</div>
-									<?php } ?>
-								</div>
+									</div>
+								<?php } ?>
 								<div class="fdColumn">
-									<h5 class="mB_xs"><?php echo esc_html( $service_name ); ?></h5>
+									<h5 class="alignCenter">
+										<?php if ( $service_icon ) { ?>
+											<span class="<?php echo esc_attr( $service_icon ); ?> mR_xs"></span>
+										<?php } ?>
+										<?php echo esc_html( $service_name ); ?>
+									</h5>
+									<div class="divider"></div>
 									<?php if ( $service_details ) { ?>
 										<span><?php echo MPWPB_Function::esc_html( $service_details ); ?></span>
 									<?php } ?>
 									<div class="justifyBetween _mT">
-										<button class="_mpBtn_radius mpActive" type="button"><?php echo wc_price( $service_price ); ?></button>
+										<h6 class="_mpBtn_xs_bRL_textTheme_bTheme_min_100"><?php echo wc_price( $service_price ); ?></h6>
 										<?php if ( $service_duration ) { ?>
 											<h5 class="textTheme alignCenter">
 												<span class="fas fa-clock mR_xs"></span>
@@ -66,33 +67,6 @@
 							<span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
 						</div>
 					<?php } ?>
-			</div>
-			<div class="divider"></div>
-			<div class="justifyBetween">
-				<?php if ( sizeof( $all_category ) > 0 ) { ?>
-					<button class="_mpBtn_mT_xs_radius mpActive mpwpb_service_prev" type="button">
-						<i class="fas fa-long-arrow-alt-left _mR_xs"></i>
-						<?php
-							if ( sizeof( $all_sub_category ) > 0 ) {
-								echo esc_html__( 'Previous', 'mpwpb_plugin' ) . ' ' . $sub_category_text;
-							} else {
-								echo esc_html__( 'Previous', 'mpwpb_plugin' ) . ' ' . $category_text;
-							}
-						?>
-					</button>
-				<?php } else { ?>
-					<div></div>
-				<?php } ?>
-				<button class="_mpBtn_mT_xs_radius mActive mpwpb_service_next" type="button" data-alert="<?php echo esc_html__( 'Please Select', 'mpwpb_plugin' ) . ' ' . $service_text; ?>">
-					<?php
-						if ( sizeof( $extra_services ) > 0 ) {
-							esc_html_e( 'Next Extra-Service', 'mpwpb_plugin' );
-						} else {
-							esc_html_e( 'Next Date & Time', 'mpwpb_plugin' );
-						}
-					?>
-					<i class="fas fa-long-arrow-alt-right _mL_xs"></i>
-				</button>
 			</div>
 		</div>
 		<?php
