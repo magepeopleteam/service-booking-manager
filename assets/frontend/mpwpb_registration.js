@@ -49,7 +49,7 @@ function mpwpb_price_calculation($this) {
 
 	//==========category============//
 	function refresh_sub_category(parent) {
-		parent.find('.mpwpb_service_area,.mpwpb_date_time_area,.mpwpb_summary_area').slideUp(350);
+		parent.find('.mpwpb_service_area,.mpwpb_extra_service_area,.next_date_time_area,.mpwpb_date_time_area,.mpwpb_summary_area').slideUp(350);
 		let target_sub_category = parent.find('.mpwpb_sub_category_area');
 		parent.find('[name="mpwpb_sub_category"]').val('');
 		if (target_sub_category.length > 0) {
@@ -69,7 +69,7 @@ function mpwpb_price_calculation($this) {
 	}
 
 	function refresh_service(parent) {
-		parent.find('.mpwpb_extra_service_area,.mpwpb_date_time_area,.mpwpb_summary_area').slideUp(350);
+		parent.find('.mpwpb_extra_service_area,.next_date_time_area,.mpwpb_date_time_area,.mpwpb_summary_area').slideUp(350);
 		let target_sub_category = parent.find('.mpwpb_sub_category_area');
 		let target_service = parent.find('.mpwpb_service_area');
 		parent.find('[name="mpwpb_service"]').val('');
@@ -158,7 +158,6 @@ function mpwpb_price_calculation($this) {
 			});
 		}
 	});
-
 	//==========service============//
 	$(document).on('click', 'form.mpwpb_registration .mpwpb_service_item', function () {
 		let current = $(this);
@@ -176,13 +175,14 @@ function mpwpb_price_calculation($this) {
 			}).promise().done(function () {
 				current.addClass('mpActive');
 				mpwpb_price_calculation(current);
-				let target_extra_service=parent.find('.mpwpb_extra_service_area');
+				let target_extra_service = parent.find('.mpwpb_extra_service_area');
 				parent.find('.mpwpb_summary_area_left').slideDown('fast');
+				parent.find('.next_date_time_area').slideDown('fast');
 				if (target_extra_service.length > 0) {
 					target_extra_service.slideDown(350);
 					loadBgImage();
 					pageScrollTo(target_extra_service);
-				}else{
+				} else {
 					parent.find('.mpwpb_service_next').trigger('click');
 				}
 			});

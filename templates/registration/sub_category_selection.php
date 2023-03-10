@@ -10,7 +10,7 @@
 	if ( sizeof( $all_sub_category ) > 0 ) {
 		?>
 		<div class="mpwpb_sub_category_area">
-			<h3 class="mB_xs"><?php echo esc_html__( 'Select', 'mpwpb_plugin' ) . ' ' . $sub_category_text; ?></h3>
+			<h3><?php echo esc_html__( 'Select', 'mpwpb_plugin' ) . ' ' . $sub_category_text; ?></h3>
 			<div class="divider"></div>
 			<div class="flexWrapJustifyBetween">
 				<?php
@@ -22,16 +22,18 @@
 						?>
 						<div class="mpwpb_item_box mpwpb_sub_category_item dShadow_8" data-category="<?php echo esc_attr( $category_name ); ?>" data-sub-category="<?php echo esc_attr( $sub_category_name ); ?>">
 							<?php if ( $sub_category_image ) { ?>
-								<div class="bg_image_area">
-									<div data-bg-image="<?php echo esc_attr( MPWPB_Function::get_image_url( '', $sub_category_image, 'medium' ) ); ?>"></div>
+								<div class="_mB_xs">
+									<div class="bg_image_area">
+										<div data-bg-image="<?php echo esc_attr( MPWPB_Function::get_image_url( '', $sub_category_image, 'medium' ) ); ?>"></div>
+									</div>
 								</div>
 							<?php } ?>
-							<?php if ( $sub_category_icon ) { ?>
-								<div class="allCenter mpwpb_icon_area">
-									<span class="<?php echo esc_attr( $sub_category_icon ); ?>"></span>
-								</div>
-							<?php } ?>
-							<h4 class="_mT_textCenter"><?php echo esc_html( $sub_category_name ); ?></h4>
+							<h4 class="allCenter">
+								<?php if ( $sub_category_icon ) { ?>
+									<span class="<?php echo esc_attr( $sub_category_icon ); ?> _mR_xs"></span>
+								<?php } ?>
+								<?php echo esc_html( $sub_category_name ); ?>
+							</h4>
 							<span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
 						</div>
 					<?php } ?>

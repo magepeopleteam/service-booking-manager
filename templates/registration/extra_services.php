@@ -2,10 +2,11 @@
 	if ( ! defined( 'ABSPATH' ) ) {
 		die;
 	}
-	$post_id        = $post_id ?? get_the_id();
-	$extra_services = $extra_services ?? MPWPB_Function::get_post_info( $post_id, 'mpwpb_extra_service', array() );
-	$service_text   = $service_text ?? MPWPB_Function::get_service_text( $post_id );
-	if ( sizeof( $extra_services ) > 0 ) {
+	$post_id              = $post_id ?? get_the_id();
+	$extra_services       = $extra_services ?? MPWPB_Function::get_post_info( $post_id, 'mpwpb_extra_service', array() );
+	$service_text         = $service_text ?? MPWPB_Function::get_service_text( $post_id );
+	$extra_service_active = $extra_service_active ?? MPWPB_Function::get_post_info( $post_id, 'mpwpb_extra_service_active', 'off' );
+	if ( sizeof( $extra_services ) > 0 && $extra_service_active == 'on' ) {
 		?>
 		<div class="mpwpb_extra_service_area">
 			<h3 class="mB_xs"><?php esc_html_e( 'Choose Extra Features (Optional)', 'mpwpb_plugin' ); ?></h3>
@@ -30,21 +31,21 @@
 							?>
 							<div class="mpwpb_item_box dShadow_8 mpwpb_extra_service_item">
 								<div class="dFlex">
-									<div class="service_img_area alignCenter">
-										<?php if ( $ex_service_image ) { ?>
+									<?php if ( $ex_service_image ) { ?>
+										<div class="service_img_area alignCenter">
 											<div class="bg_image_area">
 												<div data-bg-image="<?php echo esc_attr( MPWPB_Function::get_image_url( '', $ex_service_image, 'medium' ) ); ?>"></div>
 											</div>
-										<?php } ?>
-										<?php if ( $ex_service_icon ) { ?>
-											<div class="allCenter mpwpb_icon_area">
-												<span class="<?php echo esc_attr( $ex_service_icon ); ?>"></span>
-											</div>
-										<?php } ?>
-									</div>
+										</div>
+									<?php } ?>
 									<div class="fdColumn">
 										<h4 class="justifyBetween">
-											<span><?php echo esc_html( $ex_service_info['name'] ); ?></span>
+											<span>
+												<?php if ( $ex_service_icon ) { ?>
+													<span class="<?php echo esc_attr( $ex_service_icon ); ?> _mR_xs"></span>
+												<?php } ?>
+												<?php echo esc_html( $ex_service_info['name'] ); ?>
+											</span>
 											<span><?php echo MPWPB_Function::esc_html( $ex_service_price ); ?></span>
 										</h4>
 										<div class="divider"></div>
@@ -77,7 +78,6 @@
 					}
 				}
 			?>
-			<div class="divider"></div>
 		</div>
 		<?php
 	}
