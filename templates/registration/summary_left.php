@@ -12,7 +12,7 @@
 	<div class="mpwpb_summary_area_left dShadow ">
 		<div class="fdColumn">
 			<h5 class="mpwpb_summary_area_left_title"><?php esc_html_e( 'Selection Summary', 'mpwpb_plugin' ); ?></h5>
-			<div class="mpwpb_summary_area_left_content">
+			<div class="mpwpb_summary_area_left_content mp_sticky_on_scroll">
 				<?php if ( sizeof( $all_category ) > 0 ) { ?>
 					<div class="mpwpb_summary_item" data-category>
 						<span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>

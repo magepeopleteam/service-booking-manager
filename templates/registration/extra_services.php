@@ -50,7 +50,7 @@
 										</h4>
 										<div class="divider"></div>
 										<div class="justifyBetween">
-											<div>
+											<div class="mR_xs">
 												<?php if ( $ex_service_info['details'] ) { ?>
 													<p><?php echo esc_html( $ex_service_info['details'] ); ?></p>
 												<?php } ?>

@@ -49,7 +49,7 @@
 									$visible_end_date = $end_date ? date_i18n( $date_format, strtotime( $end_date ) ) : '';
 									/********************/
 									$time_slot = MPWPB_Function::get_post_info( $post_id, 'mpwpb_time_slot_length' );
-									$capacity  = MPWPB_Function::get_post_info( $post_id, 'mpwpb_capacity_per_session' );
+									$capacity  = MPWPB_Function::get_post_info( $post_id, 'mpwpb_capacity_per_session' ,1);
 								?>
 								<label>
 									<span class="max_200"><?php esc_html_e( 'Service Start Date', 'mpwpb_plugin' ); ?><span class="textRequired">&nbsp;*</span></span>
