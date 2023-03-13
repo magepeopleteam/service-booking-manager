@@ -42,7 +42,7 @@
 										</div>
 									</div>
 								<?php } ?>
-								<div class="fdColumn">
+								<div class="_dFlex_fdColumn_fullWidth">
 									<h5 class="alignCenter">
 										<?php if ( $service_icon ) { ?>
 											<span class="<?php echo esc_attr( $service_icon ); ?> mR_xs"></span>
@@ -53,7 +53,7 @@
 									<?php if ( $service_details ) { ?>
 										<span><?php echo MPWPB_Function::esc_html( $service_details ); ?></span>
 									<?php } ?>
-									<div class="justifyBetween _mT">
+									<div class="_dFlex_justifyBetween_mT_fullWidth">
 										<h6 class="_mpBtn_xs_bRL_textTheme_bTheme_min_100"><?php echo wc_price( $service_price ); ?></h6>
 										<?php if ( $service_duration ) { ?>
 											<h5 class="textTheme alignCenter">

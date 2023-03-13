@@ -78,12 +78,13 @@
 				<h6></h6>
 			</div>
 		</div>
-		<?php do_action('add_mpwpb_summary_section',$post_id); ?>
 		<div class="divider"></div>
 		<div class="justifyBetween">
 			<h3><?php esc_html_e( 'Total :', 'mpwpb_plugin' ); ?>&nbsp;&nbsp;</h3>
 			<h3><i class="mpwpb_total_bill textTheme"><?php echo MPWPB_Function::wc_price( $post_id, 0 ); ?></i></h3>
 		</div>
+		<?php do_action('add_mpwpb_summary_section',$post_id); ?>
+
 		<div class="divider"></div>
 		<div class="justifyBetween">
 			<div></div>

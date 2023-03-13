@@ -258,6 +258,40 @@ function mp_all_content_change($this) {
 		});
 	});
 }(jQuery));
+//===========Sticky================//
+(function ($) {
+	"use strict";
+
+	function mp_sticky_management() {
+		$('.mpStyle .mp_sticky_area').each(function () {
+			let body_width = $('body').outerWidth();
+			let scroll_top = $(window).scrollTop();
+			let current = $(this);
+			let target_scroll = current.find('.mp_sticky_on_scroll');
+			let content_top = current.parent().offset().top;
+			let parent = current.closest('.mp_sticky_section');
+			let depend_height = parent.find('.mp_sticky_depend_area').innerHeight();
+			let content_height = depend_height - Math.max(scroll_top - content_top, 0) - (target_scroll.offset().top - current.offset().top) - 100;
+			if (body_width > 800 && scroll_top + 100 >= content_top) {
+				target_scroll.css('max-height', content_height);
+				if (!current.hasClass('mpSticky')) {
+					current.addClass('mpSticky').css('top', 100);
+				}
+			} else {
+				target_scroll.css('max-height', content_height + 100);
+				current.removeClass('mpSticky');
+			}
+		});
+	}
+
+	$(document).ready(function () {
+		if ($('.mpStyle .mp_sticky_area').length > 0) {
+			window.onscroll = function () {
+				mp_sticky_management()
+			};
+		}
+	});
+}(jQuery));
 //===========Tabs================//
 (function ($) {
 	"use strict";
@@ -396,7 +430,7 @@ function mp_all_content_change($this) {
 		});
 	});
 	//Group radio like checkbox
-	$(document).on('click', '.groupRadioCheck [data-radio-check]', function (e) {
+	$(document).on('click', '.groupRadioCheck [data-radio-check]', function () {
 		//e.stopPropagation();
 		let parent = $(this).closest('.groupRadioCheck');
 		let $this = $(this);
@@ -500,7 +534,7 @@ function mp_pagination_page_management(parent, pagination_page, total_item) {
 //==========Modal / Popup==========//
 (function ($) {
 	"use strict";
-	$(document).on('click', '.mpStyle [data-target-popup]', function (e) {
+	$(document).on('click', '.mpStyle [data-target-popup]', function () {
 		let target = $(this).attr('data-active-popup', '').data('target-popup');
 		$('body').addClass('noScroll').find('[data-popup="' + target + '"]').addClass('in').promise().done(function () {
 			loadBgImage();

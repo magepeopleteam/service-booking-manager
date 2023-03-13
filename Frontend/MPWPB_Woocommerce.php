@@ -78,6 +78,7 @@
 				foreach ( $items as $values ) {
 					$post_id = array_key_exists( 'mpwpb_id', $values ) ? $values['mpwpb_id'] : 0;
 					if ( get_post_type( $post_id ) == MPWPB_Function::get_cpt_name() ) {
+						//wc_add_notice( __( "custom_notice", 'fake_error' ), 'error');
 						do_action( 'mpwpb_validate_cart_item', $values, $post_id );
 					}
 				}

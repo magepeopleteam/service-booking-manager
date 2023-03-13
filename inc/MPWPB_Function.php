@@ -461,6 +461,13 @@
 				$display_suffix = get_option( 'woocommerce_price_display_suffix' ) ? get_option( 'woocommerce_price_display_suffix' ) : '';
 				return wc_price( $return_price ) . ' ' . $display_suffix;
 			}
+			//************* seat ******************//
+			public static function get_total_available( $post_id, $date) {
+				$total     = self::get_post_info( $post_id, 'mpwpb_capacity_per_session' ,1);
+				$sold      = MPWPB_Query::query_all_sold( $post_id, $date)->post_count;
+				$available = $total - $sold;
+				return max( 0, $available );
+			}
 			//*******************************//
 			public static function get_image_url( $post_id = '', $image_id = '', $size = 'full' ) {
 				if ( $post_id ) {

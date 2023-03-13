@@ -138,7 +138,7 @@ function mpwpb_price_calculation($this) {
 		let category = parent.find('[name="mpwpb_category"]').val();
 		let sub_category = current.data('sub-category');
 		if (category && sub_category && !current.hasClass('mpActive')) {
-			let target_sub_category = parent.find('.mpwpb_sub_category_area');
+			//let target_sub_category = parent.find('.mpwpb_sub_category_area');
 			let target_service = parent.find('.mpwpb_service_area');
 			parent.find('.mpwpb_summary_area_left').slideDown('fast');
 			parent.find('.mpwpb_summary_item[data-sub-category]').slideDown('fast').find('h6').html(sub_category);

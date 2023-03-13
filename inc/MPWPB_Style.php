@@ -35,11 +35,11 @@
 						/*--font-family: "Poppins", sans-serif;*/
 						--d_color: <?php echo esc_attr($default_color); ?>;
 						--container-max-width: 1320px;
-						--mpL: 40px;
-						--default-mp: 20px;
-						--default-mp_negetive: -20px;
-						--default-mp-xs: 10px;
-						--default-mp-xs_negative: -10px;
+						--dMPL: 40px;
+						--dMP: 20px;
+						--dMP_negetive: -20px;
+						--dMP_xs: 10px;
+						--dMP_xs_negative: -10px;
 						--dBRL: 10px;
 						--dBR: 5px;
 						--medium-border-radious: 10px;
@@ -152,18 +152,18 @@
 							--font-size-h3: 22px;
 							--font-size-h2: 25px;
 							--font-size-h1: 30px;
-							--mpL: 32px;
-							--default-mp: 16px;
-							--default-mp_negetive: -16px;
-							--default-mp-xs: 8px;
-							--default-mp-xs_negative: -8px;
+							--dMPL: 32px;
+							--dMP: 16px;
+							--dMP_negetive: -16px;
+							--dMP_xs: 8px;
+							--dMP_xs_negative: -8px;
 						}
 					}
 					@media only screen and (max-width: 800px) {
 						/*:root {*/
-						/*	--default-mp: 10px;*/
-						/*	--default-mp-xs: 5px;*/
-						/*	--default-mp-xs_negative: -5px;*/
+						/*	--dMP: 10px;*/
+						/*	--dMP_xs: 5px;*/
+						/*	--dMP_xs_negative: -5px;*/
 						/*}*/
 					}
 					@media only screen and (max-width: 500px) {
