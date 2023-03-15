@@ -9,7 +9,7 @@
 				add_filter( 'single_template', array( $this, 'load_single_template' ) );
 			}
 			private function load_file(): void {
-				//require_once MPWPB_PLUGIN_DIR . '/Frontend/MPTBM_Shortcodes.php';
+				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Shortcodes.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Details_Layout.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Woocommerce.php';
 			}

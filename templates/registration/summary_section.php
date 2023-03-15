@@ -53,12 +53,12 @@
 								<div class="justifyBetween">
 									<div class="flexWrap">
 										<h5><?php esc_html_e( 'Extra Service : ', 'mpwpb_plugin' ); ?></h5>&nbsp;
-											<?php if ( $group_service_name ) { ?>
-												<div class="_dFlex_alignCenter">
-													<h6><?php echo esc_html( $group_service_name ) ?></h6>
-													<span class="fas fa-long-arrow-alt-right _mLR_xs"></span>
-												</div>
-											<?php } ?>
+										<?php if ( $group_service_name ) { ?>
+											<div class="_dFlex_alignCenter">
+												<h6><?php echo esc_html( $group_service_name ) ?></h6>
+												<span class="fas fa-long-arrow-alt-right _mLR_xs"></span>
+											</div>
+										<?php } ?>
 										<div class="_dFlex_alignCenter">
 											<h6><?php echo esc_html( $ex_service_info['name'] ); ?></h6>
 										</div>
@@ -83,20 +83,7 @@
 			<h3><?php esc_html_e( 'Total :', 'mpwpb_plugin' ); ?>&nbsp;&nbsp;</h3>
 			<h3><i class="mpwpb_total_bill textTheme"><?php echo MPWPB_Function::wc_price( $post_id, 0 ); ?></i></h3>
 		</div>
-		<?php do_action('add_mpwpb_summary_section',$post_id); ?>
-
-		<div class="divider"></div>
-		<div class="justifyBetween">
-			<div></div>
-			<div class="mT_xs">
-				<button class="_mpBtn_mT_xs_radius mActive mpwpb_book_now" type="button">
-					<span class="fas fa-cart-plus mR_xs"></span>
-					<?php esc_html_e( 'Add to Cart', 'mpwpb_plugin' ); ?>
-				</button>
-				<button type="submit" name="add-to-cart" value="<?php echo esc_html( $product_id ); ?>" class="dNone mpwpb_add_to_cart">
-					<?php esc_html_e( 'Add to Cart', 'mpwpb_plugin' ); ?>
-				</button>
-			</div>
-		</div>
+		<?php do_action( 'add_mpwpb_summary_section', $post_id ); ?>
+		<?php include( MPWPB_Function::template_path( 'registration/payment_system.php' ) ); ?>
 	</div>
 <?php
