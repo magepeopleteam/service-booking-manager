@@ -75,6 +75,20 @@
 				}
 				return $value ?? '';
 			}
+			public static function get_order_info( $order_id ): WP_Query {
+				$args = array(
+					'posts_per_page' => - 1,
+					'post_type'      => 'mpwpb_booking',
+					'meta_query'     => array(
+						array(
+							'key'     => 'mpwpb_order_id',
+							'value'   => $order_id,
+							'compare' => '=',
+						)
+					)
+				);
+				return new WP_Query( $args );
+			}
 		}
 		new MPWPB_Query();
 	}

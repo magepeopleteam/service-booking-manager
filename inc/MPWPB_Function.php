@@ -58,6 +58,13 @@
 				<?php
 			}
 			//************************************//
+			public static function wc_product_sku( $product_id ) {
+				if ( $product_id ) {
+					return new WC_Product( $product_id );
+				}
+				return null;
+			}
+			//************************************//
 			public static function get_post_info( $tour_id, $key, $default = '' ) {
 				$data = get_post_meta( $tour_id, $key, true ) ?: $default;
 				return self::data_sanitize( $data );
@@ -462,9 +469,9 @@
 				return wc_price( $return_price ) . ' ' . $display_suffix;
 			}
 			//************* seat ******************//
-			public static function get_total_available( $post_id, $date) {
-				$total     = self::get_post_info( $post_id, 'mpwpb_capacity_per_session' ,1);
-				$sold      = MPWPB_Query::query_all_sold( $post_id, $date)->post_count;
+			public static function get_total_available( $post_id, $date ) {
+				$total     = self::get_post_info( $post_id, 'mpwpb_capacity_per_session', 1 );
+				$sold      = MPWPB_Query::query_all_sold( $post_id, $date )->post_count;
 				$available = $total - $sold;
 				return max( 0, $available );
 			}
@@ -565,6 +572,24 @@
 					'saturday'  => esc_html__( 'Saturday', 'mptbm_plugin' ),
 					'sunday'    => esc_html__( 'Sunday', 'mptbm_plugin' ),
 				];
+			}
+			//***********************//
+			public static function get_order_details( $order_id ) {
+				$all_orders  = [];
+				$guest_query = MPWPB_Query::get_order_info( $order_id );
+				if ( $guest_query->found_posts > 0 ) {
+					$attendee_query = $guest_query->posts;
+					foreach ( $attendee_query as $_attendee ) {
+						$attendee_id                              = $_attendee->ID;
+						$order_id                                 = MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_order_id' );
+						$all_orders[ $order_id ]['attendee_id'][] = $attendee_id;
+						if ( ! array_key_exists( 'order_date', $all_orders[ $order_id ] ) ) {
+							$all_orders[ $order_id ]['order_date']            = $_attendee->post_date;
+							$all_orders[ $order_id ]['payment_method']        = MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_payment_method' );
+						}
+					}
+				}
+				return $all_orders;
 			}
 			//***********************//
 			public static function esc_html( $string ): string {

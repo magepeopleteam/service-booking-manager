@@ -24,6 +24,7 @@
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Super_Slider.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Admin.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Frontend.php';
+				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Order_layout.php';
 			}
 			public function global_enqueue() {
 				wp_enqueue_script( 'jquery' );

@@ -77,6 +77,22 @@
 							)
 						),
 						array(
+							'name'    => 'set_book_status',
+							'label'   => esc_html__( 'Seat Booked Status', 'mpwpb_plugin' ),
+							'desc'    => esc_html__( 'Please Select when and which order status Seat Will be Booked/Reduced.', 'mpwpb_plugin' ),
+							'type'    => 'multicheck',
+							'default' => array(
+								'processing' => 'processing',
+								'completed'  => 'completed'
+							),
+							'options' => array(
+								'on-hold'    => esc_html__( 'On Hold', 'mpwpb_plugin' ),
+								'pending'    => esc_html__( 'Pending', 'mpwpb_plugin' ),
+								'processing' => esc_html__( 'Processing', 'mpwpb_plugin' ),
+								'completed'  => esc_html__( 'Completed', 'mpwpb_plugin' ),
+							)
+						),
+						array(
 							'name'    => 'date_format',
 							'label'   => esc_html__( 'Date Picker Format', 'mpwpb_plugin' ),
 							'desc'    => esc_html__( 'If you want to change Date Picker Format, please select format. Default  is D d M , yy.', 'mpwpb_plugin' ),
@@ -122,21 +138,31 @@
 							)
 						),
 						array(
-							'name'    => 'set_book_status',
-							'label'   => esc_html__( 'Seat Booked Status', 'mpwpb_plugin' ),
-							'desc'    => esc_html__( 'Please Select when and which order status Seat Will be Booked/Reduced.', 'mpwpb_plugin' ),
+							'name'    => 'payment_system',
+							'label'   => esc_html__( 'Payment System', 'mpwpb_plugin' ),
+							'desc'    => esc_html__( 'Please Select Payment System.', 'mpwpb_plugin' ),
 							'type'    => 'multicheck',
 							'default' => array(
-								'processing' => 'processing',
-								'completed'  => 'completed'
+								'direct_order' => 'direct_order',
+								'woocommerce'  => 'woocommerce'
 							),
 							'options' => array(
-								'on-hold'    => esc_html__( 'On Hold', 'mpwpb_plugin' ),
-								'pending'    => esc_html__( 'Pending', 'mpwpb_plugin' ),
-								'processing' => esc_html__( 'Processing', 'mpwpb_plugin' ),
-								'completed'  => esc_html__( 'Completed', 'mpwpb_plugin' ),
+								'direct_order' => esc_html__( 'Pay on service', 'mpwpb_plugin' ),
+								'woocommerce'  => esc_html__( 'woocommerce Payment', 'mpwpb_plugin' ),
 							)
 						),
+						array(
+							'name'    => 'direct_book_status',
+							'label'   => esc_html__( 'Pay on service Booked Status', 'mpwpb_plugin' ),
+							'desc'    => esc_html__( 'Please Select when and which order status service Will be Booked/Reduced in Pay on service.', 'mpwpb_plugin' ),
+							'type'    => 'select',
+							'default' => 'completed',
+							'options' => array(
+								'pending' => esc_html__( 'Pending', 'mpwpb_plugin' ),
+								'completed'  => esc_html__( 'completed', 'mpwpb_plugin' )
+							)
+						),
+
 						array(
 							'name'    => 'label',
 							'label'   => $label . ' ' . esc_html__( 'Label', 'mpwpb_plugin' ),
