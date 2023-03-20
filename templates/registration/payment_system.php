@@ -31,10 +31,11 @@
 	}
 ?>
 	<input type="hidden" name="mpwpb_product_id" value="<?php echo esc_attr( $product_id ); ?>"/>
+	<input type="hidden" name="post_id" value="<?php echo esc_attr( $post_id ); ?>"/>
 	<div class="mpwpb_book_now_area">
 		<div class="divider"></div>
 		<div class="justifyCenter mT_xs">
-			<button class="_mpBtn_mT_xs_radius mActive mpwpb_book_now" data-submit-path="<?php echo esc_attr( get_home_url() . '/mpwpb-order-success/' ); ?>" type="button" data-alert="<?php esc_attr_e( 'Please select Payment Method', 'mpwpb_plugin' ); ?>">
+			<button class="_mpBtn_mT_xs_radius mActive mpwpb_book_now" data-submit-path="<?php echo esc_attr( get_home_url() . '/mpwpb-order-details/' ); ?>" type="button" data-alert="<?php esc_attr_e( 'Please select Payment Method', 'mpwpb_plugin' ); ?>">
 				<span class="fas fa-cart-plus mR_xs"></span>
 				<?php esc_html_e( 'Proceed Order', 'mpwpb_plugin' ); ?>
 			</button>

@@ -7,6 +7,7 @@
 			public function __construct() {
 				$this->load_file();
 				//add_action( 'init', [ $this, 'add_taxonomy' ] );
+				add_action( 'upgrader_process_complete', [ $this, 'flush_rewrite' ] );
 			}
 			private function load_file(): void {
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MAGE_Setting_API.php';
@@ -26,6 +27,9 @@
 			}
 			public function add_taxonomy(){
 				//new MPTBM_Dummy_Import();
+			}
+			public function flush_rewrite() {
+				flush_rewrite_rules();
 			}
 		}
 		new MPWPB_Admin();

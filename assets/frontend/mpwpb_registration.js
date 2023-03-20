@@ -299,8 +299,9 @@ function mpwpb_price_calculation($this) {
 					});
 				}
 				if (payment_system === 'direct_order') {
-					let path = current.data('submit-path');
-					parent.attr('action', path).submit();
+					//let path = current.data('submit-path');
+					//parent.attr('action', path).submit();
+					parent.submit();
 				}
 			} else {
 				mp_alert($(this));

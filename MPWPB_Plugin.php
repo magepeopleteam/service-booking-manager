@@ -28,18 +28,20 @@
 					define( 'MPWPB_PLUGIN_URL', plugins_url() . '/' . plugin_basename( dirname( __FILE__ ) ) );
 				}
 				if ( self::check_woocommerce() == 1 ) {
-					add_action( 'activated_plugin', array( $this, 'activation_redirect' ), 90, 1 );
 					register_activation_hook( __FILE__, array( $this, 'on_activation_page_create' ) );
+					add_action( 'activated_plugin', array( $this, 'activation_redirect' ), 90, 1 );
+
 					require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Dependencies.php';
 				} else {
 					require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Quick_Setup.php';
 					add_action( 'admin_notices', [ $this, 'woocommerce_not_active' ] );
 					add_action( 'activated_plugin', array( $this, 'activation_redirect_setup' ), 90, 1 );
 				}
-				flush_rewrite_rules();
+
 			}
 			public function activation_redirect( $plugin ) {
 				if ( $plugin == plugin_basename( __FILE__ ) ) {
+					flush_rewrite_rules();
 					exit( wp_redirect( admin_url( 'edit.php?post_type=mpwpb_item&page=mpwpb_quick_setup' ) ) );
 				}
 			}
@@ -60,12 +62,12 @@
 				}
 			}
 			public function on_activation_page_create() {
-				if ( ! $this->get_page_by_slug( 'mpwpb-order-success' ) ) {
+				if ( ! $this->get_page_by_slug( 'mpwpb-order-details' ) ) {
 					$add_page = array(
 						'post_type'    => 'page',
-						'post_name'    => 'mpwpb-order-success',
-						'post_title'   => esc_html__( 'Order Place Successfully', 'mpwpb_plugin' ),
-						'post_content' => '[mpwpb-order-success]',
+						'post_name'    => 'mpwpb-order-details',
+						'post_title'   => esc_html__( 'Order Details', 'mpwpb_plugin' ),
+						'post_content' => '[mpwpb-order-details]',
 						'post_status'  => 'publish',
 					);
 					wp_insert_post( $add_page );
