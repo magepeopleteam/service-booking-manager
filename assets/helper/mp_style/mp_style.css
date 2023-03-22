@@ -869,9 +869,10 @@
 	.mpStyle ul.listInline li.mage_active {background-color: var(--active_color)}
 	.mpStyle ul.listInline li.mage_active a {color: #FFF;}
 	/******list Horizontal*****/
-	ul.mage_list {margin: var(--dMP) 0 0 0;}
-	ul.mage_list li {padding: var(--dMP_xs) 0;}
-	/******All in one line*****/
+	.mpStyle ul.mp_list {margin: var(--dMP_xs) 0 0 0;}
+	.mpStyle ul.mp_list li {padding: 5px 0;border-bottom: 1px dotted var(--border_color);width: 100%;}
+	.mpStyle ul.mp_list li:last-child{border: none;}
+		/******All in one line*****/
 	.mpStyle ul.listEqual li {text-align: center;border-right: 1px solid;}
 	.mpStyle ul.listEqual li a {padding: var(--dMP_xs);display: block;}
 	.mpStyle ul.listEqual li.mage_active {background-color: var(--active_color)}

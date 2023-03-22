@@ -111,7 +111,7 @@
 					$item->add_meta_data( esc_html__( 'Time ', 'mpwpb_plugin' ), esc_html( MPWPB_Function::date_format( $date, 'time' ) ) );
 					if ( sizeof( $extra_service ) > 0 ) {
 						foreach ( $extra_service as $service ) {
-							$item->add_meta_data( esc_html__( 'Services Name ', 'mpwpb_plugin' ), $service['service_name'] . ' (' . esc_html( $service['service_category_name'] ) . ')' );
+							$item->add_meta_data( esc_html__( 'Services Name ', 'mpwpb_plugin' ), $service['service_name'] . ' (' . esc_html( $service['ex_group_name'] ) . ')' );
 							$item->add_meta_data( esc_html__( 'Quantity ', 'mpwpb_plugin' ), $service['service_qty'] );
 							$item->add_meta_data( esc_html__( 'Price ', 'mpwpb_plugin' ), ' ( ' . MPWPB_Function::wc_price( $post_id, $service['service_price'] ) . ' x ' . $service['service_qty'] . ') = ' . MPWPB_Function::wc_price( $post_id, ( $service['service_price'] * $service['service_qty'] ) ) );
 						}
@@ -127,7 +127,7 @@
 					$item->add_meta_data( '_mpwpb_service', $service );
 					$item->add_meta_data( '_mpwpb_price', $price );
 					$item->add_meta_data( '_mpwpb_user_info', $user_info );
-					$item->add_meta_data( '_mpwpb_service_info', $extra_service );
+					$item->add_meta_data( '_mpwpb_extra_service_info', $extra_service );
 					do_action( 'mpwpb_checkout_create_order_line_item', $item, $values );
 				}
 			}
@@ -193,11 +193,11 @@
 								<div class="divider"></div>
 								<div class="dFlex">
 									<h6><?php esc_html_e( 'Services Name : ', 'mpwpb_plugin' ); ?></h6>&nbsp;
-									<span><?php echo esc_html( $service['service_name'] ) . ' (' . esc_html( $service['service_category_name'] ) . ')'; ?></span>
+									<span><?php echo esc_html( $service['ex_name'] ) . ' (' . esc_html( $service['ex_group_name'] ) . ')'; ?></span>
 								</div>
 								<div class="dFlex">
 									<h6><?php esc_html_e( 'Price : ', 'mpwpb_plugin' ); ?></h6>&nbsp;
-									<span><?php echo ' ( ' . MPWPB_Function::wc_price( $post_id, $service['service_price'] ) . ' x ' . $service['service_qty'] . ' ) = ' . MPWPB_Function::wc_price( $post_id, ( $service['service_price'] * $service['service_qty'] ) ); ?></span>
+									<span><?php echo ' ( ' . MPWPB_Function::wc_price( $post_id, $service['ex_price'] ) . ' x ' . $service['ex_qty'] . ' ) = ' . MPWPB_Function::wc_price( $post_id, ( $service['ex_price'] * $service['ex_qty'] ) ); ?></span>
 								</div>
 							<?php } ?>
 						</div>
@@ -232,7 +232,7 @@
 					update_post_meta( $user_id, 'mpwpb_order_status', $order_status );
 				}
 				$args = array(
-					'post_type'      => 'mpwpb_service_booking',
+					'post_type'      => 'mpwpb_extra_service_booking',
 					'posts_per_page' => - 1,
 					'meta_query'     => array(
 						'relation' => 'AND',
@@ -269,19 +269,26 @@
 						foreach ( $order->get_items() as $item_id => $item ) {
 							$post_id = MPWPB_Query::get_order_meta( $item_id, '_mpwpb_id' );
 							if ( get_post_type( $post_id ) == MPWPB_Function::get_cpt_name() ) {
-								$date                          = self::get_order_item_meta( $item_id, '_mpwpb_date' );
-								$date                          = $date ? MPWPB_Function::data_sanitize( $date ) : '';
-								$start_category                = self::get_order_item_meta( $item_id, '_mpwpb_category' );
-								$start_category                = $start_category ? MPWPB_Function::data_sanitize( $start_category ) : '';
-								$service                       = self::get_order_item_meta( $item_id, '_mpwpb_service' );
-								$service                       = $service ? MPWPB_Function::data_sanitize( $service ) : '';
-								$price                         = self::get_order_item_meta( $item_id, '_mpwpb_price' );
-								$price                         = $price ? MPWPB_Function::data_sanitize( $price ) : '';
-								$user_info                     = self::get_order_item_meta( $item_id, '_mpwpb_user_info' );
-								$user_info                     = $user_info ? MPWPB_Function::data_sanitize( $user_info ) : [];
-								$data['mpwpb_id']              = $post_id;
-								$data['mpwpb_date']            = $date;
-								$data['mpwpb_category']        = $start_category;
+								$date               = self::get_order_item_meta( $item_id, '_mpwpb_date' );
+								$date               = $date ? MPWPB_Function::data_sanitize( $date ) : '';
+								$category           = self::get_order_item_meta( $item_id, '_mpwpb_category' );
+								$category           = $category ? MPWPB_Function::data_sanitize( $category ) : '';
+								$sub_category       = self::get_order_item_meta( $item_id, '_mpwpb_sub_category' );
+								$sub_category       = $sub_category ? MPWPB_Function::data_sanitize( $sub_category ) : '';
+								$service            = self::get_order_item_meta( $item_id, '_mpwpb_service' );
+								$service            = $service ? MPWPB_Function::data_sanitize( $service ) : '';
+								$price              = self::get_order_item_meta( $item_id, '_mpwpb_price' );
+								$price              = $price ? MPWPB_Function::data_sanitize( $price ) : '';
+								$user_info          = self::get_order_item_meta( $item_id, '_mpwpb_user_info' );
+								$user_info          = $user_info ? MPWPB_Function::data_sanitize( $user_info ) : [];
+								$data['mpwpb_id']   = $post_id;
+								$data['mpwpb_date'] = $date;
+								if ( $category ) {
+									$data['mpwpb_category'] = $category;
+									if ( $sub_category ) {
+										$data['mpwpb_sub_category'] = $sub_category;
+									}
+								}
 								$data['mpwpb_service']         = $service;
 								$data['mpwpb_price']           = $price;
 								$data['mpwpb_order_id']        = $order_id;
@@ -294,20 +301,21 @@
 								$data['mpwpb_billing_address'] = $order_meta['_billing_address_1'][0] . ' ' . $order_meta['_billing_address_2'][0];
 								$user_data                     = apply_filters( 'mpwpb_user_booking_data', $data, $post_id, $user_info );
 								self::add_cpt_data( 'mpwpb_booking', $user_data['mpwpb_billing_name'], $user_data );
-								$service      = self::get_order_item_meta( $item_id, '_mpwpb_service_info' );
-								$service_info = $service ? MPWPB_Function::data_sanitize( $service ) : [];
-								if ( sizeof( $service_info ) > 0 ) {
-									foreach ( $service_info as $service ) {
-										$ex_data['mpwpb_id']                    = $post_id;
-										$ex_data['mpwpb_date']                  = $date;
-										$ex_data['mpwpb_order_id']              = $order_id;
-										$ex_data['mpwpb_order_status']          = $order_status;
-										$ex_data['mpwpb_service_category_name'] = $service['service_category_name'];
-										$ex_data['mpwpb_service_name']          = $service['service_name'];
-										$ex_data['mpwpb_service_price']         = $service['service_price'];
-										$ex_data['mpwpb_payment_method']        = $payment_method;
-										$ex_data['mpwpb_user_id']               = $user_id;
-										self::add_cpt_data( 'mpwpb_service_booking', '#' . $order_id . $ex_data['mpwpb_service_name'], $ex_data );
+								$ex_service       = self::get_order_item_meta( $item_id, '_mpwpb_extra_service_info' );
+								$ex_service_infos = $ex_service ? MPWPB_Function::data_sanitize( $ex_service ) : [];
+								if ( sizeof( $ex_service_infos ) > 0 ) {
+									foreach ( $ex_service_infos as $ex_service_info ) {
+										$ex_data['mpwpb_id']             = $post_id;
+										$ex_data['mpwpb_date']           = $date;
+										$ex_data['mpwpb_order_id']       = $order_id;
+										$ex_data['mpwpb_order_status']   = $order_status;
+										$ex_data['mpwpb_ex_group_name']  = $ex_service_info['ex_group_name'];
+										$ex_data['mpwpb_ex_name']        = $ex_service_info['ex_name'];
+										$ex_data['mpwpb_ex_price']       = $ex_service_info['ex_price'];
+										$ex_data['mpwpb_ex_qty']         = $ex_service_info['ex_qty'];
+										$ex_data['mpwpb_payment_method'] = $payment_method;
+										$ex_data['mpwpb_user_id']        = $user_id;
+										self::add_cpt_data( 'mpwpb_extra_service_booking', '#' . $order_id . $ex_data['mpwpb_ex_name'], $ex_data );
 									}
 								}
 							}
@@ -325,12 +333,12 @@
 					$count = 0;
 					foreach ( $ex_service_categories as $key => $ex_service_category ) {
 						if ( $ex_service_category && $ex_service_types[ $key ] ) {
-							$ex_price                                         = MPWPB_Function::get_extra_price( $post_id, $ex_service_category, $ex_service_types[ $key ] );
-							$extra_service[ $count ]['service_category_name'] = $ex_service_category;
-							$extra_service[ $count ]['service_name']          = $ex_service_types[ $key ];
-							$extra_service[ $count ]['service_price']         = $ex_price;
-							$extra_service[ $count ]['service_qty']           = $ex_service_qty[ $key ];
-							$extra_service[ $count ]['mpwpb_date']            = $date ?? '';
+							$ex_price                                 = MPWPB_Function::get_extra_price( $post_id, $ex_service_category, $ex_service_types[ $key ] );
+							$extra_service[ $count ]['ex_group_name'] = $ex_service_category;
+							$extra_service[ $count ]['ex_name']       = $ex_service_types[ $key ];
+							$extra_service[ $count ]['ex_price']      = $ex_price;
+							$extra_service[ $count ]['ex_qty']        = $ex_service_qty[ $key ];
+							$extra_service[ $count ]['mpwpb_date']    = $date ?? '';
 							$count ++;
 						}
 					}

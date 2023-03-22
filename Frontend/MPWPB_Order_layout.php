@@ -17,10 +17,8 @@
 					$order_status       = MPWPB_Function::get_general_settings( 'direct_book_status', 'completed' );
 					$wc_order_status    = $order_status == 'pending' ? 'wc-pending' : 'wc-completed';
 					$wc_order_status    = $order_status == 'requested' ? 'wc-requested' : $wc_order_status;
-					$billing_name_text  = MPWPB_Function::get_post_info( $post_id, 'mpwpb_bill_name' );
-					$billing_name       = MPWPB_Function::get_submit_info( $billing_name_text, array() )[0];
-					$billing_email_text = MPWPB_Function::get_post_info( $post_id, 'mpwpb_bill_email' );
-					$billing_email      = MPWPB_Function::get_submit_info( $billing_email_text, array() )[0];
+					$billing_name       = MPWPB_Function::get_submit_info( 'mpwpb_bill_name');
+					$billing_email      = MPWPB_Function::get_submit_info( 'mpwpb_bill_email' );
 					$order_data         = array(
 						'post_name'      => 'order-' . $order_date,
 						'post_type'      => 'shop_order',
@@ -66,7 +64,7 @@
 								$sub_category   = MPWPB_Function::get_submit_info( 'mpwpb_sub_category' );
 								$service        = MPWPB_Function::get_submit_info( 'mpwpb_service' );
 								$date           = MPWPB_Function::get_submit_info( 'mpwpb_date' );
-								$price          = MPWPB_Function::get_price( $product_id, $service, $category, $sub_category, $date );
+								$price          = MPWPB_Function::get_price( $post_id, $service, $category, $sub_category, $date );
 								$attendee_info  = apply_filters( 'mpwpb_user_info', array(), $post_id );
 								$extra_services = MPWPB_Woocommerce::cart_extra_service_info( $post_id );
 								/*************************************/
@@ -81,10 +79,10 @@
 								wc_add_order_item_meta( $item_id, esc_html__( 'Time ', 'mpwpb_plugin' ), esc_html( MPWPB_Function::date_format( $date, 'time' ) ) );
 								/*************************************/
 								if ( sizeof( $extra_services ) > 0 ) {
-									foreach ( $extra_services as $service ) {
-										wc_add_order_item_meta( $item_id, MPWPB_Function::get_service_text( $post_id ), $service['service_name'] . ' (' . esc_html( $service['service_category_name'] ) . ')' );
-										wc_add_order_item_meta( $item_id, esc_html__( 'Quantity ', 'mpwpb_plugin' ), $service['service_qty'] );
-										wc_add_order_item_meta( $item_id, esc_html__( 'Price ', 'mpwpb_plugin' ), ' ( ' . MPWPB_Function::wc_price( $post_id, $service['service_price'] ) . ' x ' . $service['service_qty'] . ') = ' . MPWPB_Function::wc_price( $post_id, ( $service['service_price'] * $service['service_qty'] ) ) );
+									foreach ( $extra_services as $ex_service ) {
+										wc_add_order_item_meta( $item_id, MPWPB_Function::get_service_text( $post_id ), $ex_service['ex_name'] . ' (' . esc_html( $ex_service['ex_group_name'] ) . ')' );
+										wc_add_order_item_meta( $item_id, esc_html__( 'Quantity ', 'mpwpb_plugin' ), $ex_service['ex_qty'] );
+										wc_add_order_item_meta( $item_id, esc_html__( 'Price ', 'mpwpb_plugin' ), ' ( ' . MPWPB_Function::wc_price( $post_id, $ex_service['ex_price'] ) . ' x ' . $ex_service['ex_qty'] . ') = ' . MPWPB_Function::wc_price( $post_id, ( $ex_service['ex_price'] * $ex_service['ex_qty'] ) ) );
 									}
 								}
 								/*************************************/
@@ -99,7 +97,7 @@
 								wc_add_order_item_meta( $item_id, '_mpwpb_service', $service );
 								wc_add_order_item_meta( $item_id, '_mpwpb_price', $price );
 								wc_add_order_item_meta( $item_id, '_mpwpb_user_info', $attendee_info );
-								wc_add_order_item_meta( $item_id, '_mpwpb_service_info', $extra_services );
+								wc_add_order_item_meta( $item_id, '_mpwpb_extra_service_info', $extra_services );
 								wc_add_order_item_meta( $item_id, '_product_id', $post_id );
 								MPWPB_Woocommerce::add_billing_data( $order_id );
 							}
@@ -124,42 +122,30 @@
 					$order_info = $order_infos->posts;
 					if ( sizeof( $order_info ) > 0 ) {
 						foreach ( $order_info as $order ) {
-							$attendee_id = $order->ID;
-							$post_id     = MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_id' );
+							$attendee_id   = $order->ID;
+							$post_id       = MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_id' );
+							$attendee_info = get_post( $attendee_id );
 							//echo '<pre>';print_r($order);echo '</pre>';
+							echo '<pre>';
+							print_r( get_post( $order_id ) );
+							echo '</pre>';
 							?>
 							<div class="mpStyle">
 								<div class="divider"></div>
-								<h5><strong><?php esc_html_e( 'Order ID:', 'ttbm-pro' ); ?></strong> #<?php echo esc_html( $order_id ); ?></h5>
+								<h5><strong><?php esc_html_e( 'Order ID:', 'mpwpb_plugin' ); ?></strong> #<?php echo esc_html( $order_id ); ?></h5>
 								<div class="divider"></div>
 								<div class="flexWrap">
 									<div class="dLayout col_6 col_xs_12">
-										<h4><?php echo MPWPB_Function::get_name() . ' ' . esc_html__( 'details', 'ttbm-pro' ); ?></h4>
+										<h4><?php echo MPWPB_Function::get_name() . ' ' . esc_html__( 'details', 'mpwpb_plugin' ); ?></h4>
 										<div class="divider"></div>
 										<?php self::order_info( $attendee_id ); ?>
 									</div>
 									<div class="dLayout col_6 col_xs_12">
-										<h4><?php esc_html_e( 'Billing information', 'ttbm-pro' ); ?></h4>
+										<h4><?php esc_html_e( 'Billing information', 'mpwpb_plugin' ); ?></h4>
 										<div class="divider"></div>
-										<?php self::billing_info( $attendee_id ); ?>
+										<?php self::billing_info( $order_id ); ?>
 									</div>
 								</div>
-								<table class="mp_zero">
-									<thead>
-									<tr>
-										<th><?php esc_html_e( 'Ticket No:', 'ttbm-pro' ); ?></th>
-										<th><?php echo MPWPB_Function::get_service_text( $post_id ) . ' ' . esc_html__( 'type:', 'ttbm-pro' ) ?></th>
-										<th><?php esc_html_e( 'Price:', 'ttbm-pro' ); ?></th>
-									</tr>
-									</thead>
-									<tbody>
-									<tr>
-										<td><?php echo MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_pin' ); ?></td>
-										<td><?php echo MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_service_name' ); ?></td>
-										<td><?php echo wc_price( MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_service_price' ) ); ?></td>
-									</tr>
-									</tbody>
-								</table>
 							</div>
 							<?php
 						}
@@ -169,36 +155,52 @@
 			public static function order_info( $attendee_id ) {
 				if ( $attendee_id > 0 ) {
 					$post_id       = MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_id' );
+					$order_id       = MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_order_id' );
 					$attendee_info = get_post( $attendee_id );
 					$date          = MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_date' );
+					$category      = MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_category' );
+					$sub_category  = MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_sub_category' );
+					$service       = MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_service' );
+					$price       = MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_price' );
 					?>
-					<ul>
-						<li><strong><?php echo esc_html( MPWPB_Function::get_name() ); ?> :</strong>&nbsp;<?php echo get_the_title( $post_id ); ?></li>
-						<li><strong><?php echo MPWPB_Function::get_service_text( $post_id ) . ' ' . esc_html__( ' Date : ', 'mpwpb_plugin' ); ?></strong>&nbsp;<?php echo MPWPB_Function::date_format( $date, 'full' ); ?></li>
-						<li><strong><?php esc_attr_e( 'Booking Date : ', 'ttbm-pro' ); ?></strong>&nbsp;<?php echo MPWPB_Function::date_format( $attendee_info->post_date, 'full' ); ?></li>
+					<ul class="mp_list">
+						<li><strong class="min_150"><?php esc_html_e( 'Order ID:', 'mpwpb_plugin' ); ?> :</strong>&nbsp;#<?php echo esc_html( $order_id ); ?></li>
+						<li><strong class="min_150"><?php esc_html_e( 'Ticket No', 'mpwpb_plugin' ); ?> :</strong>&nbsp;<?php echo MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_pin' ); ?></li>
+						<li><strong class="min_150"><?php echo MPWPB_Function::get_service_text( $post_id ) . ' ' . esc_html__( ' Date : ', 'mpwpb_plugin' ); ?></strong>&nbsp;<?php echo MPWPB_Function::date_format( $date, 'full' ); ?></li>
+						<li><strong class="min_150"><?php esc_attr_e( 'Booking Date : ', 'mpwpb_plugin' ); ?></strong>&nbsp;<?php echo MPWPB_Function::date_format( $attendee_info->post_date, 'full' ); ?></li>
+						<li><strong class="min_150"><?php echo esc_html( MPWPB_Function::get_name() ); ?> :</strong>&nbsp;<?php echo get_the_title( $post_id ); ?></li>
+						<?php if ( $category ) { ?>
+							<li><strong class="min_150"><?php echo esc_html( MPWPB_Function::get_category_text( $post_id ) ); ?> :</strong>&nbsp;<?php echo esc_html( $category ); ?></li>
+						<?php } ?>
+						<?php if ( $sub_category ) { ?>
+							<li><strong class="min_150"><?php echo esc_html( MPWPB_Function::get_sub_category_text( $post_id ) ); ?> :</strong>&nbsp;<?php echo esc_html( $sub_category ); ?></li>
+						<?php } ?>
+						<li><strong class="min_150"><?php echo esc_html( MPWPB_Function::get_service_text( $post_id ) ); ?> :</strong>&nbsp;<?php echo esc_html( $service ); ?></li>
+						<li><strong class="min_150"><?php esc_html_e( 'Price', 'mpwpb_plugin' ); ?> :</strong>&nbsp;<?php echo wc_price( $price ); ?></li>
+
 						<?php do_action( 'mpwpb_after_order_info', $attendee_id ); ?>
 					</ul>
 					<?php
 				}
 			}
 			public static function billing_info( $attendee_id ) {
-				$billing_name = MPWPB_Function::get_post_info( $attendee_id, 'ttbm_billing_name' );
-				$email        = MPWPB_Function::get_post_info( $attendee_id, 'ttbm_billing_email' );
-				$phone        = MPWPB_Function::get_post_info( $attendee_id, 'ttbm_billing_phone' );
-				$address      = MPWPB_Function::get_post_info( $attendee_id, 'ttbm_billing_address' );
+				$billing_name = MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_billing_name' );
+				$email        = MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_billing_email' );
+				$phone        = MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_billing_phone' );
+				$address      = MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_billing_address' );
 				?>
 				<ul>
 					<?php if ( $billing_name ) { ?>
-						<li><strong><?php esc_html_e( 'Name', 'ttbm-pro' ); ?> : &nbsp;</strong><?php echo esc_html( $billing_name ); ?></li>
+						<li><strong><?php esc_html_e( 'Name', 'mpwpb_plugin' ); ?> : &nbsp;</strong><?php echo esc_html( $billing_name ); ?></li>
 					<?php } ?>
 					<?php if ( $email ) { ?>
-						<li><strong><?php esc_html_e( 'E-mail', 'ttbm-pro' ); ?> : &nbsp;</strong><?php echo esc_html( $email ); ?></li>
+						<li><strong><?php esc_html_e( 'E-mail', 'mpwpb_plugin' ); ?> : &nbsp;</strong><?php echo esc_html( $email ); ?></li>
 					<?php } ?>
 					<?php if ( $phone ) { ?>
-						<li><strong><?php esc_html_e( 'Phone', 'ttbm-pro' ); ?> : &nbsp;</strong><?php echo esc_html( $phone ); ?></li>
+						<li><strong><?php esc_html_e( 'Phone', 'mpwpb_plugin' ); ?> : &nbsp;</strong><?php echo esc_html( $phone ); ?></li>
 					<?php } ?>
 					<?php if ( $address ) { ?>
-						<li><strong><?php esc_html_e( 'Address', 'ttbm-pro' ); ?> : &nbsp;</strong><?php echo esc_html( $address ); ?></li>
+						<li><strong><?php esc_html_e( 'Address', 'mpwpb_plugin' ); ?> : &nbsp;</strong><?php echo esc_html( $address ); ?></li>
 					<?php } ?>
 				</ul>
 				<?php

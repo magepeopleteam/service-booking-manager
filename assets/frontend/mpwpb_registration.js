@@ -278,6 +278,21 @@ function mpwpb_price_calculation($this) {
 		target.val(value).trigger('change').trigger('input');
 	});
 	//======================//
+	$(document).on('change', 'form.mpwpb_registration [name="mpwpb_payment_system"]', function () {
+		let current = $(this);
+		let target = current.closest('form.mpwpb_registration').find('.mpwpb_direct_order_info');
+		let payment_system = current.val();
+		if (payment_system === 'direct_order') {
+			target.slideDown(350);
+			target.find('[name="mpwpb_bill_name"]').attr('required', 'required');
+			target.find('[name="mpwpb_bill_email"]').attr('required', 'required');
+		} else {
+			target.slideUp(350);
+			target.find('[name="mpwpb_bill_name"]').removeAttr('required');
+			target.find('[name="mpwpb_bill_email"]').removeAttr('required');
+		}
+	});
+	//======================//
 	$(document).on("click", "form.mpwpb_registration .mpwpb_book_now[type='button']", function () {
 		let current = $(this);
 		let parent = current.closest('form.mpwpb_registration');
@@ -286,22 +301,24 @@ function mpwpb_price_calculation($this) {
 		if (date && service) {
 			let payment_system = parent.find('[name="mpwpb_payment_system"]').val();
 			if (payment_system) {
+				let error = 0;
 				parent.find('.formControl').each(function () {
 					if ($(this).is(':required') && $(this).val() === '') {
 						$(this).addClass('mpRequired');
+						error = 1;
 					} else {
 						$(this).removeClass('mpRequired');
 					}
 				});
-				if (payment_system === 'woocommerce') {
-					parent.attr('action', '').promise().done(function () {
-						parent.find('.mpwpb_add_to_cart').trigger('click');
-					});
-				}
-				if (payment_system === 'direct_order') {
-					//let path = current.data('submit-path');
-					//parent.attr('action', path).submit();
-					parent.submit();
+				if (error < 1) {
+					if (payment_system === 'woocommerce') {
+						parent.attr('action', '').promise().done(function () {
+							parent.find('.mpwpb_add_to_cart').trigger('click');
+						});
+					}
+					if (payment_system === 'direct_order') {
+						parent.submit();
+					}
 				}
 			} else {
 				mp_alert($(this));
