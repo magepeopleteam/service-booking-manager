@@ -38,7 +38,7 @@
 											</div>
 										</div>
 									<?php } ?>
-									<div class="fdColumn">
+									<div class="fdColumn fullWidth">
 										<h4 class="justifyBetween">
 											<span>
 												<?php if ( $ex_service_icon ) { ?>

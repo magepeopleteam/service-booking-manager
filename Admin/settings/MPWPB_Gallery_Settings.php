@@ -10,7 +10,7 @@
 			}
 			public function gallery_settings( $post_id ) {
 
-				$display   = MPWPB_Function::get_post_info( $post_id, 'mpwpb_display_slider', 'on' );
+				$display   = MPWPB_Function::get_post_info( $post_id, 'mpwpb_display_slider', 'off' );
 				$active    = $display == 'off' ? '' : 'mActive';
 				$checked   = $display == 'off' ? '' : 'checked';
 				$image_ids = MPWPB_Function::get_post_info( $post_id, 'mpwpb_slider_images', array() );

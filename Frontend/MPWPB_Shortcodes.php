@@ -15,7 +15,7 @@
 					$order_status = $order_details->get_status();
 					?>
 					<div class="mpStyle">
-						<div class="justifyBetween">
+						<div class="justifyBetween mB">
 							<h3 class="textSuccess _mR"><?php esc_html_e( 'Booked Successfully', 'mpwpb_plugin' ); ?></h3>
 							<?php
 								if ( $order_status == 'completed' ) {
