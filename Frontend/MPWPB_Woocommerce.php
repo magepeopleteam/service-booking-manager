@@ -156,18 +156,18 @@
 						<ul class="cart_list">
 							<?php if ( $cart_item['mpwpb_category'] ) { ?>
 								<li>
-									<h6><?php esc_html_e( 'Category Name : ', 'mpwpb_plugin' ); ?></h6>&nbsp;
+									<h6><?php echo esc_html( MPWPB_Function::get_category_text( $post_id ) ); ?> : </h6>&nbsp;
 									<span><?php echo esc_html( $cart_item['mpwpb_category'] ); ?></span>
 								</li>
 							<?php } ?>
 							<?php if ( $cart_item['mpwpb_sub_category'] ) { ?>
 								<li>
-									<h6><?php esc_html_e( 'Sub-Category Name : ', 'mpwpb_plugin' ); ?></h6>&nbsp;
+									<h6><?php echo esc_html( MPWPB_Function::get_sub_category_text( $post_id ) );  ?> : </h6>&nbsp;
 									<span><?php echo esc_html( $cart_item['mpwpb_sub_category'] ); ?></span>
 								</li>
 							<?php } ?>
 							<li>
-								<h6><?php esc_html_e( 'Service Name : ', 'mpwpb_plugin' ); ?></h6>&nbsp;
+								<h6><?php echo esc_html( MPWPB_Function::get_service_text( $post_id ) ); ?> : </h6>&nbsp;
 								<span><?php echo esc_html( $cart_item['mpwpb_service'] ); ?></span>
 							</li>
 							<li>
@@ -309,7 +309,9 @@
 										$ex_data['mpwpb_date']           = $date;
 										$ex_data['mpwpb_order_id']       = $order_id;
 										$ex_data['mpwpb_order_status']   = $order_status;
-										$ex_data['mpwpb_ex_group_name']  = $ex_service_info['ex_group_name'];
+										if($ex_service_info['ex_group_name']) {
+											$ex_data['mpwpb_ex_group_name'] = $ex_service_info['ex_group_name'];
+										}
 										$ex_data['mpwpb_ex_name']        = $ex_service_info['ex_name'];
 										$ex_data['mpwpb_ex_price']       = $ex_service_info['ex_price'];
 										$ex_data['mpwpb_ex_qty']         = $ex_service_info['ex_qty'];

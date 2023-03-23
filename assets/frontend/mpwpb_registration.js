@@ -29,10 +29,12 @@ function mpwpb_price_calculation($this) {
 			dLoader(target);
 			if (parent.find('.mpwpb_category_area').length > 0) {
 				parent.find('.mpwpb_category_area').slideDown(350).promise().done(function () {
+					loadBgImage();
 					dLoaderRemove(target);
 				});
 			} else {
 				parent.find('.mpwpb_service_area').slideDown(350).promise().done(function () {
+					loadBgImage();
 					dLoaderRemove(target);
 				});
 			}
