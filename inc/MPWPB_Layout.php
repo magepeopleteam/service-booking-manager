@@ -76,6 +76,25 @@
 				<?php
 			}
 			/*****************************/
+			public static function load_more_text( $text, $length = 150 ) {
+				$text_length = strlen( $text );
+				if ( $text_length > $length ) {
+					?>
+					<div class="mp_load_more_text_area">
+						<span data-read-close><?php echo esc_html( substr( $text, 0, $length ) ); ?> ....</span>
+						<span data-read-open class="dNone"><?php echo esc_html( $text ); ?></span>
+						<div data-read data-open-text="<?php esc_attr_e( 'Load More', 'mpwpb_plugin' ); ?>" data-close-text="<?php esc_attr_e( 'Less More', 'mpwpb_plugin' ); ?>">
+							<span data-text><?php esc_html_e( 'Load More', 'mpwpb_plugin' ); ?></span>
+						</div>
+					</div>
+					<?php
+				} else {
+					?>
+					<span><?php echo esc_html( $text ); ?></span>
+					<?php
+				}
+			}
+			/*****************************/
 			public static function qty_input( $input_name, $price, $available_seat = 1, $default_qty = 0, $min_qty = 0, $max_qty = '' ) {
 				$min_qty = max( $default_qty, $min_qty );
 				if ( $available_seat > $min_qty ) {
@@ -98,7 +117,6 @@
 				}
 			}
 			/*****************************/
-
 		}
 		new MPWPB_Layout();
 	}

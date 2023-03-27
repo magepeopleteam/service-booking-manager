@@ -228,6 +228,15 @@ function mp_all_content_change($this) {
 
 (function ($) {
 	"use strict";
+	$(document).on('click', '.mp_load_more_text_area [data-read]', function (e) {
+		e.stopPropagation();
+		let parent = $(this).closest('.mp_load_more_text_area');
+		let open_text = parent.find('[data-read-open]').html();
+		let close_text = parent.find('[data-read-close]').html();
+		parent.find('[data-read-close]').html(open_text);
+		parent.find('[data-read-open]').html(close_text);
+		content_text_change($(this));
+	});
 	$(document).on('click', '[data-all-change]', function () {
 		mp_all_content_change($(this));
 	});

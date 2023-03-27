@@ -50,9 +50,11 @@
 										<?php echo esc_html( $service_name ); ?>
 									</h5>
 									<div class="divider"></div>
-									<?php if ( $service_details ) { ?>
-										<span><?php echo MPWPB_Function::esc_html( $service_details ); ?></span>
-									<?php } ?>
+									<?php
+										if ( $service_details ) {
+											MPWPB_Layout::load_more_text($service_details);
+										}
+										?>
 									<div class="_dFlex_justifyBetween_mT_fullWidth">
 										<h6 class="_mpBtn_xs_bRL_textTheme_bTheme_min_100"><?php echo wc_price( $service_price ); ?></h6>
 										<?php if ( $service_duration ) { ?>
