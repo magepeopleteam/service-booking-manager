@@ -714,7 +714,7 @@
 	}
 	div.mpStyle select.formControl:focus {background-color: var(--theme-color_aa);}
 	div.mpStyle .formControl.date_type,
-	div.mpStyle .formControl[type='date'] {
+	div.mpStyle .formControl[type='date']                                {
 		background-image: url('../images/calendar.png');
 		-webkit-appearance: none;
 		background-repeat: no-repeat;
@@ -1272,8 +1272,10 @@
 @media only screen and (min-width: 10px) {
 	div.mpStyle .owl-nav {display: none;}
 }
-/********************************************************************************************************************/
+/******************************************************************** Load More************************************************/
 @media only screen and (min-width: 10px) {
+	div.mpStyle .mp_load_more_text_area{color: var(--d_color);}
+	div.mpStyle [data-read]{color:var(--theme-color);}
 }
 /******************************************************************** Woocommerce cart ************************************************/
 @media only screen and (min-width: 10px) {
@@ -1315,4 +1317,7 @@
 	#ui-datepicker-div .ui-state-active {background-color: var(--theme-color);color: var(--theme-alternate-color);background-image: none;}
 	#ui-datepicker-div .ui-datepicker-title {background-color: var(--theme-color);color: var(--theme-alternate-color);background-image: none;font-size: var(--font-size-h5);}
 	#ui-datepicker-div.ui-datepicker td {background-color: floralwhite;border: 1px dotted #000;padding: 4px 6px;}
+}
+/********************************************************************************************************************/
+@media only screen and (min-width: 10px) {
 }

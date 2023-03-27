@@ -32,7 +32,6 @@
 				?>
 				<style>
 					:root {
-						/*--font-family: "Poppins", sans-serif;*/
 						--d_color: <?php echo esc_attr($default_color); ?>;
 						--container-max-width: 1320px;
 						--dMPL: 40px;
