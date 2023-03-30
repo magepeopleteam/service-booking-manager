@@ -17,7 +17,7 @@
 				$sections = array(
 					array(
 						'id'    => 'super_slider_settings',
-						'title' => __( 'Super Slider Settings', 'mpwpb_plugin' )
+						'title' => __( 'Super Slider Settings', 'bookingmaster' )
 					)
 				);
 				return array_merge( $default_sec, $sections );
@@ -27,92 +27,92 @@
 					'super_slider_settings' => array(
 						array(
 							'name'    => 'super_slider_type',
-							'label'   => esc_html__( 'Slider Type', 'mpwpb_plugin' ),
-							'desc'    => esc_html__( 'Please Select Slider Type Default Slider', 'mpwpb_plugin' ),
+							'label'   => esc_html__( 'Slider Type', 'bookingmaster' ),
+							'desc'    => esc_html__( 'Please Select Slider Type Default Slider', 'bookingmaster' ),
 							'type'    => 'select',
 							'default' => 'slider',
 							'options' => array(
-								'slider'       => esc_html__( 'Slider', 'mpwpb_plugin' ),
-								'single_image' => esc_html__( 'Post Thumbnail', 'mpwpb_plugin' )
+								'slider'       => esc_html__( 'Slider', 'bookingmaster' ),
+								'single_image' => esc_html__( 'Post Thumbnail', 'bookingmaster' )
 							)
 						),
 						array(
 							'name'    => 'super_slider_style',
-							'label'   => esc_html__( 'Slider Style', 'mpwpb_plugin' ),
-							'desc'    => esc_html__( 'Please Select Slider Style Default Style One', 'mpwpb_plugin' ),
+							'label'   => esc_html__( 'Slider Style', 'bookingmaster' ),
+							'desc'    => esc_html__( 'Please Select Slider Style Default Style One', 'bookingmaster' ),
 							'type'    => 'select',
 							'default' => 'style_1',
 							'options' => array(
-								'style_1' => esc_html__( 'Style One', 'mpwpb_plugin' ),
-								'style_2' => esc_html__( 'Style Two', 'mpwpb_plugin' ),
+								'style_1' => esc_html__( 'Style One', 'bookingmaster' ),
+								'style_2' => esc_html__( 'Style Two', 'bookingmaster' ),
 							)
 						),
 						array(
 							'name'    => 'super_slider_indicator_visible',
-							'label'   => esc_html__( 'Slider Indicator Visible?', 'mpwpb_plugin' ),
-							'desc'    => esc_html__( 'Please Select Slider Indicator Visible or Not? Default ON', 'mpwpb_plugin' ),
+							'label'   => esc_html__( 'Slider Indicator Visible?', 'bookingmaster' ),
+							'desc'    => esc_html__( 'Please Select Slider Indicator Visible or Not? Default ON', 'bookingmaster' ),
 							'type'    => 'select',
 							'default' => 'on',
 							'options' => array(
-								'on'  => esc_html__( 'ON', 'mpwpb_plugin' ),
-								'off' => esc_html__( 'Off', 'mpwpb_plugin' )
+								'on'  => esc_html__( 'ON', 'bookingmaster' ),
+								'off' => esc_html__( 'Off', 'bookingmaster' )
 							)
 						),
 						array(
 							'name'    => 'super_slider_indicator_type',
-							'label'   => esc_html__( 'Slider Indicator Type', 'mpwpb_plugin' ),
-							'desc'    => esc_html__( 'Please Select Slider Indicator Type Default Icon', 'mpwpb_plugin' ),
+							'label'   => esc_html__( 'Slider Indicator Type', 'bookingmaster' ),
+							'desc'    => esc_html__( 'Please Select Slider Indicator Type Default Icon', 'bookingmaster' ),
 							'type'    => 'select',
 							'default' => 'icon',
 							'options' => array(
-								'icon'  => esc_html__( 'Icon Indicator', 'mpwpb_plugin' ),
-								'image' => esc_html__( 'image Indicator', 'mpwpb_plugin' )
+								'icon'  => esc_html__( 'Icon Indicator', 'bookingmaster' ),
+								'image' => esc_html__( 'image Indicator', 'bookingmaster' )
 							)
 						),
 						array(
 							'name'    => 'super_slider_showcase_visible',
-							'label'   => esc_html__( 'Slider Showcase Visible?', 'mpwpb_plugin' ),
-							'desc'    => esc_html__( 'Please Select Slider Showcase Visible or Not? Default ON', 'mpwpb_plugin' ),
+							'label'   => esc_html__( 'Slider Showcase Visible?', 'bookingmaster' ),
+							'desc'    => esc_html__( 'Please Select Slider Showcase Visible or Not? Default ON', 'bookingmaster' ),
 							'type'    => 'select',
 							'default' => 'on',
 							'options' => array(
-								'on'  => esc_html__( 'ON', 'mpwpb_plugin' ),
-								'off' => esc_html__( 'Off', 'mpwpb_plugin' )
+								'on'  => esc_html__( 'ON', 'bookingmaster' ),
+								'off' => esc_html__( 'Off', 'bookingmaster' )
 							)
 						),
 						array(
 							'name'    => 'super_slider_showcase_position',
-							'label'   => esc_html__( 'Slider Showcase Position', 'mpwpb_plugin' ),
-							'desc'    => esc_html__( 'Please Select Slider Showcase Position Default Right', 'mpwpb_plugin' ),
+							'label'   => esc_html__( 'Slider Showcase Position', 'bookingmaster' ),
+							'desc'    => esc_html__( 'Please Select Slider Showcase Position Default Right', 'bookingmaster' ),
 							'type'    => 'select',
 							'default' => 'right',
 							'options' => array(
-								'top'    => esc_html__( 'At Top Position', 'mpwpb_plugin' ),
-								'right'  => esc_html__( 'At Right Position', 'mpwpb_plugin' ),
-								'bottom' => esc_html__( 'At Bottom Position', 'mpwpb_plugin' ),
-								'left'   => esc_html__( 'At Left Position', 'mpwpb_plugin' )
+								'top'    => esc_html__( 'At Top Position', 'bookingmaster' ),
+								'right'  => esc_html__( 'At Right Position', 'bookingmaster' ),
+								'bottom' => esc_html__( 'At Bottom Position', 'bookingmaster' ),
+								'left'   => esc_html__( 'At Left Position', 'bookingmaster' )
 							)
 						),
 						array(
 							'name'    => 'super_slider_popup_image_indicator',
-							'label'   => esc_html__( 'Slider Popup Image Indicator', 'mpwpb_plugin' ),
-							'desc'    => esc_html__( 'Please Select Slider Popup Indicator Image ON or Off? Default ON', 'mpwpb_plugin' ),
+							'label'   => esc_html__( 'Slider Popup Image Indicator', 'bookingmaster' ),
+							'desc'    => esc_html__( 'Please Select Slider Popup Indicator Image ON or Off? Default ON', 'bookingmaster' ),
 							'type'    => 'select',
 							'default' => 'on',
 							'options' => array(
-								'on'  => esc_html__( 'ON', 'mpwpb_plugin' ),
-								'off' => esc_html__( 'Off', 'mpwpb_plugin' )
+								'on'  => esc_html__( 'ON', 'bookingmaster' ),
+								'off' => esc_html__( 'Off', 'bookingmaster' )
 							)
 						),
 						array(
 							'name'    => 'super_slider_popup_icon_indicator',
-							'label'   => esc_html__( 'Slider Popup Icon Indicator', 'mpwpb_plugin' ),
-							'desc'    => esc_html__( 'Please Select Slider Popup Indicator Icon ON or Off? Default ON', 'mpwpb_plugin' ),
+							'label'   => esc_html__( 'Slider Popup Icon Indicator', 'bookingmaster' ),
+							'desc'    => esc_html__( 'Please Select Slider Popup Indicator Icon ON or Off? Default ON', 'bookingmaster' ),
 							'type'    => 'select',
 							'default' => 'on',
 							'options' => array(
-								'on'  => esc_html__( 'ON', 'mpwpb_plugin' ),
-								'off' => esc_html__( 'Off', 'mpwpb_plugin' )
+								'on'  => esc_html__( 'ON', 'bookingmaster' ),
+								'off' => esc_html__( 'Off', 'bookingmaster' )
 							)
 						)
 					)
@@ -162,7 +162,7 @@
 									?>
 									<div class="abTopLeft">
 										<button type="button" class="_dButton_bgWhite_textDefault" data-target-popup="superSlider" data-slide-index="1">
-											<?php echo esc_html__( 'View All', 'mpwpb_plugin' ) .' '. sizeof( $image_ids ) . ' ' . esc_html__( 'Images', 'mpwpb_plugin' ); ?>
+											<?php echo esc_html__( 'View All', 'bookingmaster' ) .' '. sizeof( $image_ids ) . ' ' . esc_html__( 'Images', 'bookingmaster' ); ?>
 										</button>
 									</div>
 									<?php

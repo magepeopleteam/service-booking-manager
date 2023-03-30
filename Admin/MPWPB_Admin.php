@@ -23,8 +23,8 @@
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/MPWPB_General_Settings.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/MPWPB_Price_Settings.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/MPWPB_Date_Time_Settings.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/MPWPB_Gallery_Settings.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/MPWPB_FAQ_Settings.php';
+				//require_once MPWPB_PLUGIN_DIR . '/Admin/settings/MPWPB_Gallery_Settings.php';
+				//require_once MPWPB_PLUGIN_DIR . '/Admin/settings/MPWPB_FAQ_Settings.php';
 			}
 			public function add_taxonomy(){
 				//new MPTBM_Dummy_Import();

@@ -83,8 +83,8 @@
 					<div class="mp_load_more_text_area">
 						<span data-read-close><?php echo esc_html( substr( $text, 0, $length ) ); ?> ....</span>
 						<span data-read-open class="dNone"><?php echo esc_html( $text ); ?></span>
-						<div data-read data-open-text="<?php esc_attr_e( 'Load More', 'mpwpb_plugin' ); ?>" data-close-text="<?php esc_attr_e( 'Less More', 'mpwpb_plugin' ); ?>">
-							<span data-text><?php esc_html_e( 'Load More', 'mpwpb_plugin' ); ?></span>
+						<div data-read data-open-text="<?php esc_attr_e( 'Load More', 'bookingmaster' ); ?>" data-close-text="<?php esc_attr_e( 'Less More', 'bookingmaster' ); ?>">
+							<span data-text><?php esc_html_e( 'Load More', 'bookingmaster' ); ?></span>
 						</div>
 					</div>
 					<?php
@@ -115,6 +115,29 @@
 					</div>
 					<?php
 				}
+			}
+			/*****************************/
+			public static function all_service_in_select() {
+				$label = MPWPB_Function::get_name();
+				?>
+				<label class="min_400 post_id_select">
+					<select name="mpwpb_id" class="formControl mp_select2" id="mpwpb_id" required>
+						<option value="0"><?php echo esc_html__( 'Select', 'bookingmaster' ) . ' ' . esc_html( $label ); ?></option>
+						<?php
+							$loop  = MPWPB_Query::query_post_type( MPWPB_Function::get_cpt_name());
+							$posts = $loop->posts;
+							foreach ( $posts as $post ) {
+								?>
+								<option value="<?php echo esc_attr($post->ID); ?>">
+									<?php echo get_the_title( $post->ID ); ?>
+								</option>
+								<?php
+							}
+							wp_reset_postdata();
+						?>
+					</select>
+				</label>
+				<?php
 			}
 			/*****************************/
 		}

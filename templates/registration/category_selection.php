@@ -8,7 +8,7 @@
 	if ( sizeof( $all_category ) > 0 ) {
 		?>
 		<div class="mpwpb_category_area">
-			<h3><?php echo esc_html__( 'Select', 'mpwpb_plugin' ) . ' ' . $category_text; ?></h3>
+			<h3><?php echo esc_html__( 'Select', 'bookingmaster' ) . ' ' . $category_text; ?></h3>
 			<div class="divider"></div>
 			<div class="flexWrapJustifyBetween">
 				<?php
