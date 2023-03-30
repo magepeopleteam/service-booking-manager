@@ -365,7 +365,7 @@
 	/**************/
 	.mpStyle .margin {margin: var(--dMP);}
 	.mpStyle .marZero, .mpStyle [class*="mar_zero"], .mpStyle span[class*="_icon"] {margin: 0;}
-	.mpStyle .marAuto, .mpStyle [class*="_marAuto"] {margin: 0 auto;}
+	.mpStyle .mAuto, .mpStyle [class*="_mAuto"] {margin: 0 auto;}
 	.mpStyle [class*="_mT"], .mpStyle .mT {margin-top: var(--dMP);}
 	.mpStyle .mT_xs, .mpStyle [class*="_mT_xs"] {margin-top: var(--dMP_xs);}
 	.mpStyle .mt_25, .mpStyle [class*="_mt_25"] {margin-top: 25px;}
@@ -381,7 +381,7 @@
 	.mpStyle .ml_25, .mpStyle [class*="_ml_25"] {margin-left: 25px;}
 	.mpStyle [class*="mar_txs_b"] {margin: var(--dMP_xs) 0 var(--dMP) 0;}
 	.mpStyle [class*="marXsT"] {margin-top: var(--dMP_xs);}
-	.mpStyle .mtb, .mpStyle [class*="_mtb"] {margin: var(--dMP) 0;}
+	.mpStyle .mTB, .mpStyle [class*="_mTB"] {margin: var(--dMP) 0;}
 	.mpStyle .mTB_xs, .mpStyle [class*="_mTB_xs"] {margin: var(--dMP_xs) 0;}
 	.mpStyle .mLR_xs, .mpStyle [class*="_mLR_xs"] {margin: 0 var(--dMP_xs);}
 	/***************/
@@ -669,9 +669,8 @@
 	/****************/
 	.mpStyle .title_on_border {
 		line-height: 1;height: 40px;position: absolute;top: -20px;left: 30px;
-		color: var(--theme-color);
-		padding: 0 var(--dMP);
-		border-radius: var(--dBR);
+		color: var(--theme-color);background-color: var(--theme-alternate-color);
+		padding: 0 var(--dMP);	border-radius: var(--dBR);
 	}
 }
 /******************************************************************** Form section ************************************************/

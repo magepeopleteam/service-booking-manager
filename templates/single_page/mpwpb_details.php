@@ -22,7 +22,7 @@
 		$extra_services = MPWPB_Function::get_post_info( $post_id, 'mpwpb_extra_service', array() );
 		$short_date_format = MPWPB_Function::get_general_settings( 'date_format_short', 'M , Y' );
 		$template_name = MPWPB_Function::get_post_info( $post_id, 'mpwpb_theme_file', 'default.php' );
-		include_once( MPWPB_Function::details_template_path() );
+		include_once( MPWPB_Function::details_template_path($post_id) );
 	}
 	do_action( 'mpwpb_single_page_after_wrapper' );
 	get_footer();

@@ -34,8 +34,8 @@
 							jQuery(document).ready(function () {
 								jQuery("<?php echo esc_attr( $selector ); ?>").datepicker({
 									dateFormat: mp_date_format,
-									minDate: new Date(<?php echo $start_year; ?>, <?php echo $start_month; ?>, <?php echo $start_day; ?>),
-									maxDate: new Date(<?php echo $end_year; ?>, <?php echo $end_month; ?>, <?php echo $end_day; ?>),
+									minDate: new Date(<?php echo esc_attr($start_year); ?>, <?php echo esc_attr($start_month); ?>, <?php echo esc_attr($start_day); ?>),
+									maxDate: new Date(<?php echo esc_attr($end_year); ?>, <?php echo esc_attr($end_month); ?>, <?php echo esc_attr($end_day); ?>),
 									autoSize: true,
 									beforeShowDay: WorkingDates,
 									onSelect: function (dateString, data) {
@@ -122,9 +122,9 @@
 				}
 				return apply_filters( 'filter_mpwpb_details_template', $name );
 			}
-			public static function details_template_path(): string {
-				$tour_id       = get_the_id();
-				$template_name = self::get_post_info( $tour_id, 'mpwpb_theme_file', 'default.php' );
+			public static function details_template_path($post_id=''): string {
+				$post_id       = $post_id??get_the_id();
+				$template_name = self::get_post_info( $post_id, 'mpwpb_theme_file', 'default.php' );
 				$file_name     = 'themes/' . $template_name;
 				$dir           = MPWPB_PLUGIN_DIR . '/templates/' . $file_name;
 				if ( ! file_exists( $dir ) ) {
@@ -142,15 +142,15 @@
 			//*******************************//
 			public static function get_category_text( $post_id ) {
 				$text = MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_text' );
-				return $text ?: self::get_general_settings( 'category_text', esc_html__( 'Category', 'mpwpb_plugin' ) );
+				return $text ?: self::get_general_settings( 'category_text', esc_html__( 'Category', 'bookingmaster' ) );
 			}
 			public static function get_sub_category_text( $post_id ) {
 				$text = MPWPB_Function::get_post_info( $post_id, 'mpwpb_sub_category_text' );
-				return $text ?: self::get_general_settings( 'sub_category_text', esc_html__( 'Sub-Category', 'mpwpb_plugin' ) );
+				return $text ?: self::get_general_settings( 'sub_category_text', esc_html__( 'Sub-Category', 'bookingmaster' ) );
 			}
 			public static function get_service_text( $post_id ) {
 				$text = MPWPB_Function::get_post_info( $post_id, 'mpwpb_service_text' );
-				return $text ?: self::get_general_settings( 'service_text', esc_html__( 'Service', 'mpwpb_plugin' ) );
+				return $text ?: self::get_general_settings( 'service_text', esc_html__( 'Service', 'bookingmaster' ) );
 			}
 			//*******************************//
 			public static function get_category( $post_id, $all_services = array() ) {
@@ -541,10 +541,10 @@
 				return 'mpwpb_item';
 			}
 			public static function get_name() {
-				return self::get_general_settings( 'label', esc_html__( 'WP Bookingly', 'mptbm_plugin' ) );
+				return self::get_general_settings( 'label', esc_html__( 'WP Easy Booking', 'mptbm_plugin' ) );
 			}
 			public static function get_slug() {
-				return self::get_general_settings( 'slug', 'wp_bookingly' );
+				return self::get_general_settings( 'slug', 'bookingmaster' );
 			}
 			public static function get_icon() {
 				return self::get_general_settings( 'icon', 'dashicons-list-view' );

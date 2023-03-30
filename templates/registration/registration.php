@@ -19,16 +19,16 @@
 						<div class="mp_sticky_area">
 							<div class="_dLayout_dShadow_7_bRL_dFlex_fdColumn">
 								<div class="registration_tab_item mptbm_service_tab mpActive">
-									<img src="<?php echo esc_attr( MPWPB_PLUGIN_URL . '/assets/helper/images/service_icon.png' ); ?>" alt="<?php esc_attr_e( 'Services', 'mpwpb_plugin' ); ?>"/>
-									<span><?php esc_html_e( 'Services', 'mpwpb_plugin' ); ?></span>
+									<img src="<?php echo esc_attr( MPWPB_PLUGIN_URL . '/assets/helper/images/service_icon.png' ); ?>" alt="<?php esc_attr_e( 'Services', 'bookingmaster' ); ?>"/>
+									<span><?php esc_html_e( 'Services', 'bookingmaster' ); ?></span>
 								</div>
 								<div class="registration_tab_item mpwpb_date_time_tab mpDisabled">
-									<img src="<?php echo esc_attr( MPWPB_PLUGIN_URL . '/assets/helper/images/date_time_icon.png' ); ?>" alt="<?php esc_attr_e( 'Date & Time', 'mpwpb_plugin' ); ?>"/>
-									<span><?php esc_html_e( 'Date & Time', 'mpwpb_plugin' ); ?></span>
+									<img src="<?php echo esc_attr( MPWPB_PLUGIN_URL . '/assets/helper/images/date_time_icon.png' ); ?>" alt="<?php esc_attr_e( 'Date & Time', 'bookingmaster' ); ?>"/>
+									<span><?php esc_html_e( 'Date & Time', 'bookingmaster' ); ?></span>
 								</div>
 								<div class="registration_tab_item mptbm_summary_tab mpDisabled">
-									<img src="<?php echo esc_attr( MPWPB_PLUGIN_URL . '/assets/helper/images/summary_icon.png' ); ?>" alt="<?php esc_attr_e( 'Summary', 'mpwpb_plugin' ); ?>"/>
-									<span><?php esc_html_e( 'Summary', 'mpwpb_plugin' ); ?></span>
+									<img src="<?php echo esc_attr( MPWPB_PLUGIN_URL . '/assets/helper/images/summary_icon.png' ); ?>" alt="<?php esc_attr_e( 'Summary', 'bookingmaster' ); ?>"/>
+									<span><?php esc_html_e( 'Summary', 'bookingmaster' ); ?></span>
 								</div>
 							</div>
 							<?php include( MPWPB_Function::template_path( 'registration/summary_left.php' ) ); ?>
@@ -44,9 +44,9 @@
 								<div class="next_date_time_area">
 									<div class="divider"></div>
 									<div class="justifyBetween">
-										<h3 class="alignCenter"><?php esc_html_e( 'Total :', 'mpwpb_plugin' ); ?>&nbsp;&nbsp;<i class="mpwpb_total_bill textTheme"><?php echo MPWPB_Function::wc_price( $post_id, 0 ); ?></i></h3>
-										<button class="_mpBtn_mT_xs_radius mActive mpwpb_service_next" type="button" data-alert="<?php echo esc_html__( 'Please Select', 'mpwpb_plugin' ) . ' ' . $service_text; ?>">
-											<?php esc_html_e( 'Next Date & Time', 'mpwpb_plugin' ); ?>
+										<h3 class="alignCenter"><?php esc_html_e( 'Total :', 'bookingmaster' ); ?>&nbsp;&nbsp;<i class="mpwpb_total_bill textTheme"><?php echo MPWPB_Function::wc_price( $post_id, 0 ); ?></i></h3>
+										<button class="_mpBtn_mT_xs_radius mActive mpwpb_service_next" type="button" data-alert="<?php echo esc_html__( 'Please Select', 'bookingmaster' ) . ' ' . $service_text; ?>">
+											<?php esc_html_e( 'Next Date & Time', 'bookingmaster' ); ?>
 											<i class="fas fa-long-arrow-alt-right _mL_xs"></i>
 										</button>
 									</div>

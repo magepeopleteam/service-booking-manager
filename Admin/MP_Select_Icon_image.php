@@ -16,14 +16,14 @@
 				<div class="mp_add_icon_area">
 					<button type="button" class="mp_add_icon dButton_xs ">
 						<input type="hidden" name="<?php echo esc_html( $name ); ?>" placeholder="" value="<?php echo esc_html( $value ); ?>"/>
-						<span class="<?php echo esc_html( $value ); ?>" data-empty-text="<?php esc_html_e( 'Add Icon', 'mpwpb_plugin' ); ?>">
+						<span class="<?php echo esc_html( $value ); ?>" data-empty-text="<?php esc_html_e( 'Add Icon', 'bookingmaster' ); ?>">
 			                    <?php
 							  if ( ! $value ) {
-								  esc_html_e( 'Add Icon', 'mpwpb_plugin' );
+								  esc_html_e( 'Add Icon', 'bookingmaster' );
 							  }
 						  ?>
 			                </span>
-						<span class="fas fa-times remove_input_icon <?php echo esc_html( $value ? 'active' : '' ); ?> " title="<?php esc_html_e( 'Remove Icon', 'mpwpb_plugin' ); ?>"></span>
+						<span class="fas fa-times remove_input_icon <?php echo esc_html( $value ? 'active' : '' ); ?> " title="<?php esc_html_e( 'Remove Icon', 'bookingmaster' ); ?>"></span>
 					</button>
 				</div>
 				<?php
@@ -36,7 +36,7 @@
 					<div class="mp_add_icon_popup mpPopup mpStyle" data-popup="#mp_add_icon_popup">
 						<div class="popupMainArea fullWidth">
 							<div class="popupHeader">
-								<h2><?php esc_html_e( 'Select Icon', 'mpwpb_plugin' ); ?></h2>
+								<h2><?php esc_html_e( 'Select Icon', 'bookingmaster' ); ?></h2>
 								<span class="fas fa-times popupClose"></span>
 							</div>
 							<div class="popupBody">
@@ -50,7 +50,7 @@
 										?>
 										<div class="dFlex">
 											<ul class="popupIconMenu">
-												<li class="active" data-icon-menu="all_item"><?php esc_html_e( 'All Icon', 'mpwpb_plugin' ); ?>&nbsp;(<strong><?php echo esc_html( $total_icon ); ?></strong>)</li>
+												<li class="active" data-icon-menu="all_item"><?php esc_html_e( 'All Icon', 'bookingmaster' ); ?>&nbsp;(<strong><?php echo esc_html( $total_icon ); ?></strong>)</li>
 												<?php
 													foreach ( $icons as $key => $icon ) {
 														?>
@@ -104,7 +104,7 @@
 						</div>
 					<?php } ?>
 					<button type="button" class="_dButton_xs_bgColor_1_fullWidth <?php echo esc_attr( $image_id ? 'dNone' : '' ); ?>">
-						<span class="fas fa-images mR_xs"></span><?php esc_html_e( 'Image', 'mpwpb_plugin' ); ?>
+						<span class="fas fa-images mR_xs"></span><?php esc_html_e( 'Image', 'bookingmaster' ); ?>
 					</button>
 				</div>
 				<?php
@@ -130,9 +130,9 @@
 						?>
 					</div>
 					<button type="button" class="_dButton_bgColor_1 add_multi_image">
-						<span class="fas fa-images mR_xs"></span><?php esc_html_e( 'Image', 'mpwpb_plugin' ); ?>
+						<span class="fas fa-images mR_xs"></span><?php esc_html_e( 'Image', 'bookingmaster' ); ?>
 					</button>
-					<?php //MPWPB_Layout::add_new_button( esc_html__( 'Add Image', 'mpwpb_plugin' ), 'add_multi_image', '_dButton_bgColor_1' ); ?>
+					<?php //MPWPB_Layout::add_new_button( esc_html__( 'Add Image', 'bookingmaster' ), 'add_multi_image', '_dButton_bgColor_1' ); ?>
 				</div>
 				<?php
 			}
@@ -149,16 +149,16 @@
 						<div class="allCenter">
 							<span class="<?php echo esc_attr( $icon ); ?>" data-add-icon></span>
 						</div>
-						<span class="fas fa-times mp_remove_icon mp_icon_remove" title="<?php esc_html_e( 'Remove Icon', 'mpwpb_plugin' ); ?>"></span>
+						<span class="fas fa-times mp_remove_icon mp_icon_remove" title="<?php esc_html_e( 'Remove Icon', 'bookingmaster' ); ?>"></span>
 					</div>
 					<div class="mp_image_item <?php echo esc_attr( $image_class ); ?>">
 						<img class="" src="<?php echo esc_attr( MPWPB_Function::get_image_url( '', $image, 'medium' ) ); ?>" alt="">
-						<span class="fas fa-times mp_remove_icon mp_image_remove" title="<?php esc_html_e( 'Remove Image', 'mpwpb_plugin' ); ?>"></span>
+						<span class="fas fa-times mp_remove_icon mp_image_remove" title="<?php esc_html_e( 'Remove Image', 'bookingmaster' ); ?>"></span>
 					</div>
 					<div class="mp_add_icon_image_button_area <?php echo esc_attr( $button_active_class ); ?>">
 						<div class="flexEqual">
-							<button class="_mpBtn_xs mp_image_add" type="button"><span class="fas fa-images"></span><?php esc_html_e( 'Image', 'mpwpb_plugin' ); ?></button>
-							<button class="_mpBtn_xs mp_icon_add" type="button" data-target-popup="#mp_add_icon_popup"><span class="fas fa-plus"></span><?php esc_html_e( 'Icon', 'mpwpb_plugin' ); ?></button>
+							<button class="_mpBtn_xs mp_image_add" type="button"><span class="fas fa-images"></span><?php esc_html_e( 'Image', 'bookingmaster' ); ?></button>
+							<button class="_mpBtn_xs mp_icon_add" type="button" data-target-popup="#mp_add_icon_popup"><span class="fas fa-plus"></span><?php esc_html_e( 'Icon', 'bookingmaster' ); ?></button>
 						</div>
 					</div>
 

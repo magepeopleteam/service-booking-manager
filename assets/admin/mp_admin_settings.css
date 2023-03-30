@@ -255,13 +255,13 @@
 	.welcome-tabs .addon-list .addon-title { margin: 10px 0; font-size: 17px;}
 	.welcome-tabs .addon-list .addon-link a { text-decoration: none;}
 	/************************************************/
-	#ttbm_quick_setup {padding: 50px;max-width: 1000px;;margin: 100px auto;background-color: #FFF;}
-	#ttbm_quick_setup .quick_tab_area h5 { padding: 10px 20px; margin: 0 30px; border: 1px solid var(--border_color); border-radius: var(--dBR);position: relative;}
-	#ttbm_quick_setup .quick_tab_area h5::after {content: ""; width: 60px; height: 2px; top: 40%; right: 0; position: absolute; transform: translate(100%, 50%);border-bottom: 2px dashed #DDD;}
-	#ttbm_quick_setup .quick_tab_area h5:last-child::after {width: 0;}
-	#ttbm_quick_setup .quick_tab_area h5.active {background: #2271B1;color: #FFF;border-bottom: 5px solid #000;}
-	#ttbm_quick_setup .quick_tab_area h5.active span {color: #FFF;}
-	#ttbm_quick_setup .quick_tab_area h5.disabled {cursor: not-allowed;opacity: 0.5;background-color: #F7E2E287;}
+	#mp_quick_setup {padding: 50px;max-width: 1000px;;margin: 100px auto;background-color: #FFF;}
+	#mp_quick_setup .quick_tab_area h5 { padding: 10px 20px; margin: 0 30px; border: 1px solid var(--border_color); border-radius: var(--dBR);position: relative;}
+	#mp_quick_setup .quick_tab_area h5::after {content: ""; width: 60px; height: 2px; top: 40%; right: 0; position: absolute; transform: translate(100%, 50%);border-bottom: 2px dashed #DDD;}
+	#mp_quick_setup .quick_tab_area h5:last-child::after {width: 0;}
+	#mp_quick_setup .quick_tab_area h5.active {background: #2271B1;color: #FFF;border-bottom: 5px solid #000;}
+	#mp_quick_setup .quick_tab_area h5.active span {color: #FFF;}
+	#mp_quick_setup .quick_tab_area h5.disabled {cursor: not-allowed;opacity: 0.5;background-color: #F7E2E287;}
 	/************************************************/
 }
 /********************************************************************  ************************************************/

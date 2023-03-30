@@ -1,12 +1,12 @@
 <?php
 	/**
-	 * Plugin Name: WP Bookingly
+	 * Plugin Name: Booking Master
 	 * Plugin URI: http://mage-people.com
-	 * Description: A complete solution for car wash service.
+	 * Description: A complete solution for Any kind of service booking.
 	 * Version: 1.0.0
 	 * Author: MagePeople Team
 	 * Author URI: http://www.mage-people.com/
-	 * Text Domain: mpwpb_plugin
+	 * Text Domain: bookingmaster
 	 * Domain Path: /languages/
 	 * WC requires at least: 3.0.9
 	 * WC tested up to: 5.0
@@ -66,7 +66,7 @@
 					$add_page = array(
 						'post_type'    => 'page',
 						'post_name'    => 'mpwpb-order-details',
-						'post_title'   => esc_html__( 'Order Details', 'mpwpb_plugin' ),
+						'post_title'   => esc_html__( 'Order Details', 'bookingmaster' ),
 						'post_content' => '[mpwpb-order-details]',
 						'post_status'  => 'publish',
 					);
@@ -85,7 +85,7 @@
 			}
 			public function woocommerce_not_active() {
 				$wc_install_url = get_admin_url() . 'plugin-install.php?s=woocommerce&tab=search&type=term';
-				printf( '<div class="error" style="background:red; color:#fff;"><p>%s</p></div>', __( 'You Must Install WooCommerce Plugin before activating WP Bookingly, Because It is dependent on Woocommerce Plugin. <a class="btn button" href=' . $wc_install_url . '>Click Here to Install</a>' ) );
+				printf( '<div class="error" style="background:red; color:#fff;"><p>%s</p></div>', __( 'You Must Install WooCommerce Plugin before activating WP Easy Booking, Because It is dependent on Woocommerce Plugin. <a class="btn button" href=' . $wc_install_url . '>Click Here to Install</a>' ) );
 			}
 		}
 		new MPWPB_Plugin();

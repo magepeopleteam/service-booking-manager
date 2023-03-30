@@ -9,7 +9,7 @@
 	if ( sizeof( $extra_services ) > 0 && $extra_service_active == 'on' ) {
 		?>
 		<div class="mpwpb_extra_service_area">
-			<h3 class="mB_xs"><?php esc_html_e( 'Choose Extra Features (Optional)', 'mpwpb_plugin' ); ?></h3>
+			<h3 class="mB_xs"><?php esc_html_e( 'Choose Extra Features (Optional)', 'bookingmaster' ); ?></h3>
 			<div class="divider"></div>
 			<?php
 				foreach ( $extra_services as $group_service ) {
@@ -39,36 +39,30 @@
 										</div>
 									<?php } ?>
 									<div class="fdColumn fullWidth">
-										<h4 class="justifyBetween">
-											<span>
+										<div class="_dFlex_justifyBetween_alignCenter">
+											<h4>
 												<?php if ( $ex_service_icon ) { ?>
 													<span class="<?php echo esc_attr( $ex_service_icon ); ?> _mR_xs"></span>
 												<?php } ?>
 												<?php echo esc_html( $ex_service_info['name'] ); ?>
-											</span>
-											<span><?php echo MPWPB_Function::esc_html( $ex_service_price ); ?></span>
-										</h4>
-										<div class="divider"></div>
-										<div class="justifyBetween">
-											<div class="mR_xs">
-												<?php if ( $ex_service_info['details'] ) { ?>
-													<p><?php echo esc_html( $ex_service_info['details'] ); ?></p>
-												<?php } ?>
-											</div>
-											<div>
-												<div class="alignCenter">
-													<div class="mR_xs min_100" data-collapse="<?php echo esc_attr( $ex_unique_id ); ?>">
-														<?php MPWPB_Layout::qty_input( 'mpwpb_extra_service_qty[]', $ex_service_price_raw, $ex_service_info['qty'], 1, 0, $ex_service_info['qty'] ); ?>
-													</div>
-													<button type="button" class="_mpBtn_radius_min_150 mpwpb_price_calculation" data-extra-item data-collapse-target="<?php echo esc_attr( $ex_unique_id ); ?>" data-open-icon="far fa-check-circle" data-close-icon="" data-open-text="<?php esc_attr_e( 'Select', 'mpwpb_plugin' ); ?>" data-close-text="<?php esc_attr_e( 'Selected', 'mpwpb_plugin' ); ?>" data-add-class="mActive">
-														<input type="hidden" name="mpwpb_extra_service[]" data-value="<?php echo esc_attr( $group_service_name ); ?>" value=""/>
-														<input type="hidden" name="mpwpb_extra_service_type[]" data-value="<?php echo esc_attr( $ex_service_info['name'] ); ?>" value=""/>
-														<span data-text><?php esc_html_e( 'Select', 'mptbm_plugin' ); ?></span>
-														<span data-icon class="mL_xs"></span>
-													</button>
+												<sub class="textTheme">&nbsp;/ &nbsp;&nbsp;<?php echo MPWPB_Function::esc_html( $ex_service_price ); ?></sub>
+											</h4>
+											<div class="alignCenter">
+												<div class="mR_xs min_100" data-collapse="<?php echo esc_attr( $ex_unique_id ); ?>">
+													<?php MPWPB_Layout::qty_input( 'mpwpb_extra_service_qty[]', $ex_service_price_raw, $ex_service_info['qty'], 1, 0, $ex_service_info['qty'] ); ?>
 												</div>
+												<button type="button" class="_mpBtn_radius_min_150 mpwpb_price_calculation" data-extra-item data-collapse-target="<?php echo esc_attr( $ex_unique_id ); ?>" data-open-icon="far fa-check-circle" data-close-icon="" data-open-text="<?php esc_attr_e( 'Select', 'bookingmaster' ); ?>" data-close-text="<?php esc_attr_e( 'Selected', 'bookingmaster' ); ?>" data-add-class="mActive">
+													<input type="hidden" name="mpwpb_extra_service[]" data-value="<?php echo esc_attr( $group_service_name ); ?>" value=""/>
+													<input type="hidden" name="mpwpb_extra_service_type[]" data-value="<?php echo esc_attr( $ex_service_info['name'] ); ?>" value=""/>
+													<span data-text><?php esc_html_e( 'Select', 'mptbm_plugin' ); ?></span>
+													<span data-icon class="mL_xs"></span>
+												</button>
 											</div>
 										</div>
+										<?php if ( $ex_service_info['details'] ) { ?>
+											<div class="divider"></div>
+											<?php MPWPB_Layout::load_more_text( $ex_service_info['details'], 200 ); ?>
+										<?php } ?>
 									</div>
 								</div>
 								<span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
