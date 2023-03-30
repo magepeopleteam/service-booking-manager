@@ -1264,8 +1264,14 @@
 	div.mpStyle .textColor_3, div.mpStyle [class*='_textColor_3'] {color: #F2FFC3;}
 	div.mpStyle .bgColor_3, div.mpStyle [class*='_bgColor_3'] {background-color: #F2FFC3;}
 }
-/********************************************************************************************************************/
+/******************************************************************** select_2 custom css************************************************/
 @media only screen and (min-width: 10px) {
+	div.mpStyle span.selection,
+	div.mpStyle span.select2-container.select2,
+	div.mpStyle span.select2-container span.select2-selection { margin: 0; min-height: var(--button-height); min-width: auto;width: 100% !important;}
+	div.mpStyle span.selection {overflow: hidden; max-width: 100%;}
+	div.mpStyle span.select2-container span.select2-selection__rendered { display: -webkit-flex;display: flex; -webkit-align-items: center;align-items: center; height: 100%;}
+	div.mpStyle span.select2-container .select2-selection__arrow { top: 2px; height: 37px;}
 }
 /******************************************************************** Owl Carousel************************************************/
 @media only screen and (min-width: 10px) {

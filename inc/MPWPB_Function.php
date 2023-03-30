@@ -381,13 +381,13 @@
 				$price = self::price_convert_raw( $price );
 				return apply_filters( 'mpwpb_price_filter', $price, $post_id, $category_name, $service_name, $date );
 			}
-			public static function get_extra_price( $post_id, $ex_service_category, $ex_service_types ) {
+			public static function get_extra_price( $post_id, $ex_service_types, $ex_service_category='' ) {
 				$ex_price       = 0;
 				$extra_services = MPWPB_Function::get_post_info( $post_id, 'mpwpb_extra_service', array() );
 				if ( sizeof( $extra_services ) > 0 ) {
 					foreach ( $extra_services as $group_service ) {
 						$group_service_name = array_key_exists( 'group_service', $group_service ) ? $group_service['group_service'] : '';
-						if ( $group_service_name == $ex_service_category ) {
+						if ( ($group_service_name && $ex_service_category && $group_service_name == $ex_service_category) || ( ! $group_service_name && ! $ex_service_category )) {
 							$service_infos = array_key_exists( 'group_service_info', $group_service ) ? $group_service['group_service_info'] : [];
 							if ( sizeof( $service_infos ) > 0 ) {
 								foreach ( $service_infos as $service_info ) {
