@@ -17,7 +17,7 @@
 				$sections = array(
 					array(
 						'id'    => 'super_slider_settings',
-						'title' => __( 'Super Slider Settings', 'bookingmaster' )
+						'title' => __( 'Super Slider Settings', 'bookingplus' )
 					)
 				);
 				return array_merge( $default_sec, $sections );
@@ -27,92 +27,92 @@
 					'super_slider_settings' => array(
 						array(
 							'name'    => 'super_slider_type',
-							'label'   => esc_html__( 'Slider Type', 'bookingmaster' ),
-							'desc'    => esc_html__( 'Please Select Slider Type Default Slider', 'bookingmaster' ),
+							'label'   => esc_html__( 'Slider Type', 'bookingplus' ),
+							'desc'    => esc_html__( 'Please Select Slider Type Default Slider', 'bookingplus' ),
 							'type'    => 'select',
 							'default' => 'slider',
 							'options' => array(
-								'slider'       => esc_html__( 'Slider', 'bookingmaster' ),
-								'single_image' => esc_html__( 'Post Thumbnail', 'bookingmaster' )
+								'slider'       => esc_html__( 'Slider', 'bookingplus' ),
+								'single_image' => esc_html__( 'Post Thumbnail', 'bookingplus' )
 							)
 						),
 						array(
 							'name'    => 'super_slider_style',
-							'label'   => esc_html__( 'Slider Style', 'bookingmaster' ),
-							'desc'    => esc_html__( 'Please Select Slider Style Default Style One', 'bookingmaster' ),
+							'label'   => esc_html__( 'Slider Style', 'bookingplus' ),
+							'desc'    => esc_html__( 'Please Select Slider Style Default Style One', 'bookingplus' ),
 							'type'    => 'select',
 							'default' => 'style_1',
 							'options' => array(
-								'style_1' => esc_html__( 'Style One', 'bookingmaster' ),
-								'style_2' => esc_html__( 'Style Two', 'bookingmaster' ),
+								'style_1' => esc_html__( 'Style One', 'bookingplus' ),
+								'style_2' => esc_html__( 'Style Two', 'bookingplus' ),
 							)
 						),
 						array(
 							'name'    => 'super_slider_indicator_visible',
-							'label'   => esc_html__( 'Slider Indicator Visible?', 'bookingmaster' ),
-							'desc'    => esc_html__( 'Please Select Slider Indicator Visible or Not? Default ON', 'bookingmaster' ),
+							'label'   => esc_html__( 'Slider Indicator Visible?', 'bookingplus' ),
+							'desc'    => esc_html__( 'Please Select Slider Indicator Visible or Not? Default ON', 'bookingplus' ),
 							'type'    => 'select',
 							'default' => 'on',
 							'options' => array(
-								'on'  => esc_html__( 'ON', 'bookingmaster' ),
-								'off' => esc_html__( 'Off', 'bookingmaster' )
+								'on'  => esc_html__( 'ON', 'bookingplus' ),
+								'off' => esc_html__( 'Off', 'bookingplus' )
 							)
 						),
 						array(
 							'name'    => 'super_slider_indicator_type',
-							'label'   => esc_html__( 'Slider Indicator Type', 'bookingmaster' ),
-							'desc'    => esc_html__( 'Please Select Slider Indicator Type Default Icon', 'bookingmaster' ),
+							'label'   => esc_html__( 'Slider Indicator Type', 'bookingplus' ),
+							'desc'    => esc_html__( 'Please Select Slider Indicator Type Default Icon', 'bookingplus' ),
 							'type'    => 'select',
 							'default' => 'icon',
 							'options' => array(
-								'icon'  => esc_html__( 'Icon Indicator', 'bookingmaster' ),
-								'image' => esc_html__( 'image Indicator', 'bookingmaster' )
+								'icon'  => esc_html__( 'Icon Indicator', 'bookingplus' ),
+								'image' => esc_html__( 'image Indicator', 'bookingplus' )
 							)
 						),
 						array(
 							'name'    => 'super_slider_showcase_visible',
-							'label'   => esc_html__( 'Slider Showcase Visible?', 'bookingmaster' ),
-							'desc'    => esc_html__( 'Please Select Slider Showcase Visible or Not? Default ON', 'bookingmaster' ),
+							'label'   => esc_html__( 'Slider Showcase Visible?', 'bookingplus' ),
+							'desc'    => esc_html__( 'Please Select Slider Showcase Visible or Not? Default ON', 'bookingplus' ),
 							'type'    => 'select',
 							'default' => 'on',
 							'options' => array(
-								'on'  => esc_html__( 'ON', 'bookingmaster' ),
-								'off' => esc_html__( 'Off', 'bookingmaster' )
+								'on'  => esc_html__( 'ON', 'bookingplus' ),
+								'off' => esc_html__( 'Off', 'bookingplus' )
 							)
 						),
 						array(
 							'name'    => 'super_slider_showcase_position',
-							'label'   => esc_html__( 'Slider Showcase Position', 'bookingmaster' ),
-							'desc'    => esc_html__( 'Please Select Slider Showcase Position Default Right', 'bookingmaster' ),
+							'label'   => esc_html__( 'Slider Showcase Position', 'bookingplus' ),
+							'desc'    => esc_html__( 'Please Select Slider Showcase Position Default Right', 'bookingplus' ),
 							'type'    => 'select',
 							'default' => 'right',
 							'options' => array(
-								'top'    => esc_html__( 'At Top Position', 'bookingmaster' ),
-								'right'  => esc_html__( 'At Right Position', 'bookingmaster' ),
-								'bottom' => esc_html__( 'At Bottom Position', 'bookingmaster' ),
-								'left'   => esc_html__( 'At Left Position', 'bookingmaster' )
+								'top'    => esc_html__( 'At Top Position', 'bookingplus' ),
+								'right'  => esc_html__( 'At Right Position', 'bookingplus' ),
+								'bottom' => esc_html__( 'At Bottom Position', 'bookingplus' ),
+								'left'   => esc_html__( 'At Left Position', 'bookingplus' )
 							)
 						),
 						array(
 							'name'    => 'super_slider_popup_image_indicator',
-							'label'   => esc_html__( 'Slider Popup Image Indicator', 'bookingmaster' ),
-							'desc'    => esc_html__( 'Please Select Slider Popup Indicator Image ON or Off? Default ON', 'bookingmaster' ),
+							'label'   => esc_html__( 'Slider Popup Image Indicator', 'bookingplus' ),
+							'desc'    => esc_html__( 'Please Select Slider Popup Indicator Image ON or Off? Default ON', 'bookingplus' ),
 							'type'    => 'select',
 							'default' => 'on',
 							'options' => array(
-								'on'  => esc_html__( 'ON', 'bookingmaster' ),
-								'off' => esc_html__( 'Off', 'bookingmaster' )
+								'on'  => esc_html__( 'ON', 'bookingplus' ),
+								'off' => esc_html__( 'Off', 'bookingplus' )
 							)
 						),
 						array(
 							'name'    => 'super_slider_popup_icon_indicator',
-							'label'   => esc_html__( 'Slider Popup Icon Indicator', 'bookingmaster' ),
-							'desc'    => esc_html__( 'Please Select Slider Popup Indicator Icon ON or Off? Default ON', 'bookingmaster' ),
+							'label'   => esc_html__( 'Slider Popup Icon Indicator', 'bookingplus' ),
+							'desc'    => esc_html__( 'Please Select Slider Popup Indicator Icon ON or Off? Default ON', 'bookingplus' ),
 							'type'    => 'select',
 							'default' => 'on',
 							'options' => array(
-								'on'  => esc_html__( 'ON', 'bookingmaster' ),
-								'off' => esc_html__( 'Off', 'bookingmaster' )
+								'on'  => esc_html__( 'ON', 'bookingplus' ),
+								'off' => esc_html__( 'Off', 'bookingplus' )
 							)
 						)
 					)
@@ -162,7 +162,7 @@
 									?>
 									<div class="abTopLeft">
 										<button type="button" class="_dButton_bgWhite_textDefault" data-target-popup="superSlider" data-slide-index="1">
-											<?php echo esc_html__( 'View All', 'bookingmaster' ) .' '. sizeof( $image_ids ) . ' ' . esc_html__( 'Images', 'bookingmaster' ); ?>
+											<?php echo esc_html__( 'View All', 'bookingplus' ) .' '. sizeof( $image_ids ) . ' ' . esc_html__( 'Images', 'bookingplus' ); ?>
 										</button>
 									</div>
 									<?php

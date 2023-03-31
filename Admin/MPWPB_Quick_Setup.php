@@ -9,9 +9,6 @@
 					add_action( 'admin_enqueue_scripts', array( $this, 'add_admin_scripts' ), 10, 1 );
 				}
 				add_action( 'admin_menu', array( $this, 'quick_setup_menu' ) );
-				add_action( 'mpwpb_quick_setup_content_start', array( $this, 'setup_welcome_content' ) );
-				add_action( 'mpwpb_quick_setup_content_general', array( $this, 'setup_general_content' ) );
-				add_action( 'mpwpb_quick_setup_content_done', array( $this, 'setup_content_done' ) );
 			}
 			public function add_admin_scripts() {
 				wp_enqueue_style( 'mp_plugin_global', MPWPB_PLUGIN_URL . '/assets/helper/mp_style/mp_style.css', array(), time() );
@@ -25,39 +22,14 @@
 			public function quick_setup_menu() {
 				$status = MPWPB_Plugin::check_woocommerce();
 				if ( $status == 1 ) {
-					add_submenu_page( 'edit.php?post_type=mpwpb_item', esc_html__( 'Quick Setup', 'bookingmaster' ), '<span style="color:#10dd10">' . esc_html__( 'Quick Setup', 'bookingmaster' ) . '</span>', 'manage_options', 'mpwpb_quick_setup', array( $this, 'quick_setup' ) );
-					add_submenu_page( 'mpwpb_item', esc_html__( 'Quick Setup', 'bookingmaster' ), '<span style="color:#10dd10">' . esc_html__( 'Quick Setup', 'bookingmaster' ) . '</span>', 'manage_options', 'mpwpb_quick_setup', array( $this, 'quick_setup' ) );
+					add_submenu_page( 'edit.php?post_type=mpwpb_item', esc_html__( 'Quick Setup', 'bookingplus' ), '<span style="color:#10dd10">' . esc_html__( 'Quick Setup', 'bookingplus' ) . '</span>', 'manage_options', 'mpwpb_quick_setup', array( $this, 'quick_setup' ) );
+					add_submenu_page( 'mpwpb_item', esc_html__( 'Quick Setup', 'bookingplus' ), '<span style="color:#10dd10">' . esc_html__( 'Quick Setup', 'bookingplus' ) . '</span>', 'manage_options', 'mpwpb_quick_setup', array( $this, 'quick_setup' ) );
 				} else {
-					add_menu_page( esc_html__( 'Easy Booking', 'bookingmaster' ), esc_html__( 'Easy Booking', 'bookingmaster' ), 'manage_options', 'transportation', array( $this, 'quick_setup' ), 'dashicons-admin-site-alt2', 6 );
-					add_submenu_page( 'mpwpb_item', esc_html__( 'Quick Setup', 'bookingmaster' ), '<span style="color:#10dd17">' . esc_html__( 'Quick Setup', 'bookingmaster' ) . '</span>', 'manage_options', 'mpwpb_quick_setup', array( $this, 'quick_setup' ) );
+					add_menu_page( esc_html__( 'Bookingplus', 'bookingplus' ), esc_html__( 'Bookingplus', 'bookingplus' ), 'manage_options', 'transportation', array( $this, 'quick_setup' ), 'dashicons-admin-site-alt2', 6 );
+					add_submenu_page( 'mpwpb_item', esc_html__( 'Quick Setup', 'bookingplus' ), '<span style="color:#10dd17">' . esc_html__( 'Quick Setup', 'bookingplus' ) . '</span>', 'manage_options', 'mpwpb_quick_setup', array( $this, 'quick_setup' ) );
 				}
 			}
 			public function quick_setup() {
-				$mep_settings_tab   = array();
-				$mep_settings_tab[] = array(
-					'id'       => 'start',
-					'title'    => '<i class="far fa-thumbs-up mR_xs"></i>' . esc_html__( 'Welcome', 'bookingmaster' ),
-					'priority' => 1,
-					'active'   => true,
-				);
-				$mep_settings_tab[] = array(
-					'id'       => 'general',
-					'title'    => '<i class="fas fa-list-ul mR_xs"></i>' . esc_html__( 'General', 'bookingmaster' ),
-					'priority' => 2,
-					'active'   => false,
-				);
-				$mep_settings_tab[] = array(
-					'id'       => 'done',
-					'title'    => '<i class="fas fa-pencil-alt mR_xs"></i>' . esc_html__( 'Done', 'bookingmaster' ),
-					'priority' => 4,
-					'active'   => false,
-				);
-				$mep_settings_tab   = apply_filters( 'qa_welcome_tabs', $mep_settings_tab );
-				$tabs_sorted        = array();
-				foreach ( $mep_settings_tab as $page_key => $tab ) {
-					$tabs_sorted[ $page_key ] = $tab['priority'] ?? 0;
-				}
-				array_multisort( $tabs_sorted, SORT_ASC, $mep_settings_tab );
 				if ( isset( $_POST['active_woo_btn'] ) ) {
 					?>
 					<script>
@@ -129,30 +101,19 @@
 						<form method="post" action="">
 							<div class="welcome-tabs">
 								<ul class="tab-navs">
-									<?php
-										foreach ( $mep_settings_tab as $tab ) {
-											$id     = $tab['id'];
-											$title  = $tab['title'];
-											$active = $tab['active'];
-											$hidden = $tab['hidden'] ?? false;
-											?>
-											<li class="tab-nav <?php echo esc_attr($active ? 'active' : ''); ?> <?php echo esc_attr($hidden ? 'hidden' : ''); ?> " data-id="<?php echo esc_attr( $id ); ?>"><?php echo esc_attr($title); ?></li>
-										<?php } ?>
+									<li class="tab-nav active" data-id="start"><i class="far fa-thumbs-up mR_xs"></i><?php esc_html_e( 'Welcome', 'bookingplus' ); ?></li>
+									<li class="tab-nav" data-id="general"><i class="fas fa-list-ul mR_xs"></i><?php esc_html_e( 'General', 'bookingplus' ); ?></li>
+									<li class="tab-nav" data-id="done"><i class="fas fa-pencil-alt mR_xs"></i><?php esc_html_e( 'Done', 'bookingplus' ); ?></li>
 								</ul>
 								<?php
-									foreach ( $mep_settings_tab as $tab ) {
-										$id     = $tab['id'];
-										$active = $tab['active'];
-										?>
-										<div class="tab-content <?php echo esc_attr($active ? 'active' : ''); ?>" id="<?php echo esc_html( $id ); ?>">
-											<?php do_action( 'mpwpb_quick_setup_content_' . $id ); ?>
-											<?php do_action( 'mpwpb_quick_setup_content_after', $tab ); ?>
-										</div>
-									<?php } ?>
-								<div class="next-prev">
-									<div class="prev"><span>&longleftarrow;<?php esc_html_e( 'Previous', 'bookingmaster' ); ?></span></div>
+									$this->setup_welcome_content();
+									$this->setup_general_content();
+									$this->setup_content_done();
+								?>
+								<div class="next-prev justifyBetween">
+									<button type="button" class="prev mpBtn"><span>&longleftarrow;<?php esc_html_e( 'Previous', 'bookingplus' ); ?></span></button>
 									<div></div>
-									<div class="next"><span><?php esc_html_e( 'Next', 'bookingmaster' ); ?>&longrightarrow;</span></div>
+									<button type="button" class="next themeButton"><span><?php esc_html_e( 'Next', 'bookingplus' ); ?>&longrightarrow;</span></button>
 								</div>
 							</div>
 						</form>
@@ -163,66 +124,71 @@
 			public function setup_welcome_content() {
 				$status = MPWPB_Plugin::check_woocommerce();
 				?>
-				<h2><?php esc_html_e( 'WP Easy Booking Manager For Woocommerce Plugin', 'bookingmaster' ); ?></h2>
-				<p class="mTB_xs"><?php esc_html_e( 'WP Easy Booking manager Plugin for WooCommerce for your site, Please go step by step and choose some options to get started.', 'bookingmaster' ); ?></p>
-				<table class="wc_status_table widefat" id="status">
-					<tr>
-						<td>
+				<div class="tab-content active" id="start">
+					<h2><?php esc_html_e( 'Bookingplus For Woocommerce Plugin', 'bookingplus' ); ?></h2>
+					<p class="mTB_xs"><?php esc_html_e( 'Bookingplus Plugin for WooCommerce for your site, Please go step by step and choose some options to get started.', 'bookingplus' ); ?></p>
+					<div class="_dLayout_mT_alignCenter justifyBetween">
+						<h5>
 							<?php if ( $status == 1 ) {
-								esc_html_e( 'Woocommerce already installed and activated', 'bookingmaster' );
+								esc_html_e( 'Woocommerce already installed and activated', 'bookingplus' );
 							} elseif ( $status == 0 ) {
-								esc_html_e( 'Woocommerce need to install and active', 'bookingmaster' );
+								esc_html_e( 'Woocommerce need to install and active', 'bookingplus' );
 							} else {
-								esc_html_e( 'Woocommerce already install , please activate it', 'bookingmaster' );
+								esc_html_e( 'Woocommerce already install , please activate it', 'bookingplus' );
 							} ?>
-						</td>
-						<td class="woo_btn_td">
-							<?php if ( $status == 1 ) { ?>
-								<span class="fas fa-check-circle"></span>
-							<?php } elseif ( $status == 0 ) { ?>
-								<button class="button" type="submit" name="install_and_active_woo_btn"><?php esc_html_e( 'Install & Active Now', 'bookingmaster' ); ?></button>
-							<?php } else { ?>
-								<button class="button" type="submit" name="active_woo_btn"><?php esc_html_e( 'Active Now', 'bookingmaster' ); ?></button>
-							<?php } ?>
-						</td>
-					</tr>
-				</table>
+						</h5>
+						<?php if ( $status == 1 ) { ?>
+							<h5><span class="fas fa-check-circle textSuccess"></span></h5>
+						<?php } elseif ( $status == 0 ) { ?>
+							<button class="warningButton" type="submit" name="install_and_active_woo_btn"><?php esc_html_e( 'Install & Active Now', 'bookingplus' ); ?></button>
+						<?php } else { ?>
+							<button class="themeButton" type="submit" name="active_woo_btn"><?php esc_html_e( 'Active Now', 'bookingplus' ); ?></button>
+						<?php } ?>
+					</div>
+				</div>
 				<?php
 			}
 			public function setup_general_content() {
 				$general_data = get_option( 'mpwpb_general_settings' );
-				$label        = $general_data['label'] ?? 'WP Easy Booking';
-				$slug         = $general_data['slug'] ?? 'service';
+				$label        = $general_data['label'] ?: 'Bookingplus';
+				$slug         = $general_data['slug'] ?: 'bookingplus';
 				?>
-				<div class="section">
-					<h2><?php esc_html_e( 'General settings', 'bookingmaster' ); ?></h2>
-					<p class="mTB_xs"><?php echo __( 'Choose some general option.', 'bookingmaster' ); ?></p>
-					<table class="wc_status_table widefat" id="status">
-						<tr>
-							<td><?php esc_html_e( 'WP Easy Booking Label:', 'bookingmaster' ); ?></td>
-							<td>
-								<label><input type="text" name="mpwpb_label" value='<?php echo esc_html( $label ); ?>'/></label>
-								<p class="info"><?php esc_html_e( 'It will change the WP Easy Booking post type label on the entire plugin.', 'bookingmaster' ); ?></p>
-							</td>
-						</tr>
-						<tr>
-							<td><?php esc_html_e( 'WP Easy Booking Slug:', 'bookingmaster' ); ?></td>
-							<td>
-								<label><input type="text" name="mpwpb_slug" value='<?php echo esc_html( $slug ); ?>'/></label>
-								<p class="info"><?php esc_html_e( 'It will change the WP Easy Booking slug on the entire plugin. Remember after changing this slug you need to flush permalinks. Just go to Settings->Permalinks hit the Save Settings button', 'bookingmaster' ); ?></p>
-							</td>
-						</tr>
-					</table>
+				<div class="tab-content" id="general">
+					<div class="section">
+						<h2><?php esc_html_e( 'General settings', 'bookingplus' ); ?></h2>
+						<p class="mTB_xs"><?php esc_html_e( 'Choose some general option.', 'bookingplus' ); ?></p>
+						<div class="_dLayout_mT">
+							<label class="fullWidth">
+								<span class="min_200"><?php esc_html_e( 'Bookingplus Label:', 'bookingplus' ); ?></span>
+								<input type="text" class="formControl" name="mpwpb_label" value='<?php echo esc_attr( $label ); ?>'/>
+							</label>
+							<i class="info_text">
+								<span class="fas fa-info-circle"></span>
+								<?php esc_html_e( 'It will change the Bookingplus post type label on the entire plugin.', 'bookingplus' ); ?>
+							</i>
+							<div class="divider"></div>
+							<label class="fullWidth">
+								<span class="min_200"><?php esc_html_e( 'Bookingplus Slug:', 'bookingplus' ); ?></span>
+								<input type="text" class="formControl" name="mpwpb_slug" value='<?php echo esc_attr( $slug ); ?>'/>
+							</label>
+							<i class="info_text">
+								<span class="fas fa-info-circle"></span>
+								<?php esc_html_e( 'It will change the Bookingplus slug on the entire plugin. Remember after changing this slug you need to flush permalinks. Just go to Settings->Permalinks hit the Save Settings button', 'bookingplus' ); ?>
+							</i>
+						</div>
+					</div>
 				</div>
 				<?php
 			}
 			public function setup_content_done() {
 				?>
-				<div class="section">
-					<h2><?php esc_html_e( 'Finalize Setup', 'bookingmaster' ); ?></h2>
-					<p class="mTB_xs"><?php esc_html_e( 'You are about to Finish & Save WP Easy Booking Manager For Woocommerce Plugin setup process', 'bookingmaster' ); ?></p>
-					<div class="setup_save_finish_area">
-						<button type="submit" name="finish_quick_setup" class="button setup_save_finish"><?php esc_html_e( 'Finish & Save', 'bookingmaster' ); ?></button>
+				<div class="tab-content" id="done">
+					<div class="section">
+						<h2><?php esc_html_e( 'Finalize Setup', 'bookingplus' ); ?></h2>
+						<p class="mTB_xs"><?php esc_html_e( 'You are about to Finish & Save Bookingplus For Woocommerce Plugin setup process', 'bookingplus' ); ?></p>
+						<div class="mT allCenter">
+							<button type="submit" name="finish_quick_setup" class="themeButton"><?php esc_html_e( 'Finish & Save', 'bookingplus' ); ?></button>
+						</div>
 					</div>
 				</div>
 				<?php

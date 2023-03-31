@@ -13,16 +13,16 @@
 				$sub_title  = MPWPB_Function::get_post_info( $post_id, 'mpwpb_shortcode_sub_title');
 				?>
 				<div class="tabsItem" data-tabs="#mpwpb_general_info">
-					<h5><?php esc_html_e( 'General Information Settings', 'bookingmaster' ); ?></h5>
+					<h5><?php esc_html_e( 'General Information Settings', 'bookingplus' ); ?></h5>
 					<div class="divider"></div>
 					<label>
-						<span class="max_200"><?php esc_html_e( 'Service Title', 'bookingmaster' ); ?></span>
-						<input type="text"  name="mpwpb_shortcode_title" class="formControl" value="<?php echo esc_attr( $title ); ?>" placeholder="<?php esc_attr_e( 'Service Title', 'bookingmaster' ); ?>"/>
+						<span class="max_200"><?php esc_html_e( 'Service Title', 'bookingplus' ); ?></span>
+						<input type="text"  name="mpwpb_shortcode_title" class="formControl" value="<?php echo esc_attr( $title ); ?>" placeholder="<?php esc_attr_e( 'Service Title', 'bookingplus' ); ?>"/>
 					</label>
 					<div class="divider"></div>
 					<label>
-						<span class="max_200"><?php esc_html_e( 'Service sub title', 'bookingmaster' ); ?></span>
-						<input type="text"  name="mpwpb_shortcode_sub_title" class="formControl" value="<?php echo esc_attr( $sub_title ); ?>" placeholder="<?php esc_attr_e( 'Service Sub Title', 'bookingmaster' ); ?>"/>
+						<span class="max_200"><?php esc_html_e( 'Service sub title', 'bookingplus' ); ?></span>
+						<input type="text"  name="mpwpb_shortcode_sub_title" class="formControl" value="<?php echo esc_attr( $sub_title ); ?>" placeholder="<?php esc_attr_e( 'Service Sub Title', 'bookingplus' ); ?>"/>
 					</label>
 				</div>
 				<?php

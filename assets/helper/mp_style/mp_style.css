@@ -1007,20 +1007,20 @@
 	.mpStyle .max_1200, .mpStyle [class*="_max_1200"] {max-width: 1200px;width: 100%;}
 	.mpStyle .max_full, .mpStyle [class*="_max_full"] {max-width: 100%;width: 100%;}
 	/************************/
-	.mpStyle .min_50, .mpStyle [class*="_min_50"] {min-width: 50px;}
-	.mpStyle .min_100, .mpStyle [class*="_min_100"] {min-width: 100px;}
-	.mpStyle .min_150, .mpStyle [class*="_min_150"] {min-width: 150px;}
-	.mpStyle .min_200, .mpStyle [class*="_min_200"] {min-width: 200px;}
-	.mpStyle .min_250 {min-width: 250px;}
-	.mpStyle .min_300 {min-width: 300px;}
-	.mpStyle .min_400 {min-width: 400px;}
-	.mpStyle .min_500 {min-width: 500px;}
-	.mpStyle .min_600 {min-width: 600px;}
-	.mpStyle .min_700 {min-width: 700px;}
-	.mpStyle .min_800 {min-width: 800px;}
-	.mpStyle .min_900 {min-width: 900px;}
-	.mpStyle .min_1000 {min-width: 1000px;}
-	.mpStyle .min_auto, .mpStyle [class*="_min_auto"] {min-width: auto;}
+	div.mpStyle .min_50, div.mpStyle [class*="_min_50"] {min-width: 50px;}
+	div.mpStyle .min_100, div.mpStyle [class*="_min_100"] {min-width: 100px;}
+	div.mpStyle .min_150, div.mpStyle [class*="_min_150"] {min-width: 150px;}
+	div.mpStyle .min_200, div.mpStyle [class*="_min_200"] {min-width: 200px;}
+	div.mpStyle .min_250, div.mpStyle [class*="_min_250"] {min-width: 250px;}
+	div.mpStyle .min_300, div.mpStyle [class*="_min_300"] {min-width: 300px;}
+	div.mpStyle .min_400, div.mpStyle [class*="_min_400"] {min-width: 400px;}
+	div.mpStyle .min_500, div.mpStyle [class*="_min_500"] {min-width: 500px;}
+	div.mpStyle .min_600, div.mpStyle [class*="_min_600"] {min-width: 600px;}
+	div.mpStyle .min_700, div.mpStyle [class*="_min_700"] {min-width: 700px;}
+	div.mpStyle .min_800, div.mpStyle [class*="_min_800"] {min-width: 800px;}
+	div.mpStyle .min_900, div.mpStyle [class*="_min_900"] {min-width: 900px;}
+	div.mpStyle .min_1000, div.mpStyle [class*="_min_1000"] {min-width: 1000px;}
+	div.mpStyle .min_auto, div.mpStyle [class*="_min_auto"] {min-width: auto;}
 	/**********************/
 	div.grid_1 {width: 100%;}
 	div.grid_2 {width: calc(50% - var(--dMP));}
@@ -1268,10 +1268,11 @@
 @media only screen and (min-width: 10px) {
 	div.mpStyle span.selection,
 	div.mpStyle span.select2-container.select2,
-	div.mpStyle span.select2-container span.select2-selection { margin: 0; min-height: var(--button-height); min-width: auto;width: 100% !important;}
+	div.mpStyle span.select2-container span.select2-selection { max-height: var(--button-height); min-width: auto;width: 100% !important;height: 100%;}
 	div.mpStyle span.selection {overflow: hidden; max-width: 100%;}
 	div.mpStyle span.select2-container span.select2-selection__rendered { display: -webkit-flex;display: flex; -webkit-align-items: center;align-items: center; height: 100%;}
 	div.mpStyle span.select2-container .select2-selection__arrow { top: 2px; height: 37px;}
+	div.mpStyle span.select2-container span{font-size: var(--fs);margin: 0;}
 }
 /******************************************************************** Owl Carousel************************************************/
 @media only screen and (min-width: 10px) {

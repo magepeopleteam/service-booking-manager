@@ -106,15 +106,15 @@
 						}
 					}
 					$item->add_meta_data( MPWPB_Function::get_service_text( $post_id ), $service );
-					$item->add_meta_data( esc_html__( 'Price ', 'bookingmaster' ), $price );
-					$item->add_meta_data( esc_html__( 'Date ', 'bookingmaster' ), esc_html( MPWPB_Function::date_format( $date ) ) );
-					$item->add_meta_data( esc_html__( 'Time ', 'bookingmaster' ), esc_html( MPWPB_Function::date_format( $date, 'time' ) ) );
+					$item->add_meta_data( esc_html__( 'Price ', 'bookingplus' ), $price );
+					$item->add_meta_data( esc_html__( 'Date ', 'bookingplus' ), esc_html( MPWPB_Function::date_format( $date ) ) );
+					$item->add_meta_data( esc_html__( 'Time ', 'bookingplus' ), esc_html( MPWPB_Function::date_format( $date, 'time' ) ) );
 					if ( sizeof( $extra_service ) > 0 ) {
 						foreach ( $extra_service as $ex_service ) {
 							$ex_text=$ex_service['ex_group_name']?$ex_service['ex_name'] . ' (' . $ex_service['ex_group_name']  . ')':$ex_service['ex_name'];
-							$item->add_meta_data( esc_html__( 'Services Name ', 'bookingmaster' ), $ex_text);
-							$item->add_meta_data( esc_html__( 'Quantity ', 'bookingmaster' ), $ex_service['ex_qty'] );
-							$item->add_meta_data( esc_html__( 'Price ', 'bookingmaster' ), ' ( ' . MPWPB_Function::wc_price( $post_id, $ex_service['ex_price'] ) . ' x ' . $ex_service['ex_qty'] . ') = ' . MPWPB_Function::wc_price( $post_id, ( $ex_service['ex_price'] * $ex_service['ex_qty'] ) ) );
+							$item->add_meta_data( esc_html__( 'Services Name ', 'bookingplus' ), $ex_text);
+							$item->add_meta_data( esc_html__( 'Quantity ', 'bookingplus' ), $ex_service['ex_qty'] );
+							$item->add_meta_data( esc_html__( 'Price ', 'bookingplus' ), ' ( ' . MPWPB_Function::wc_price( $post_id, $ex_service['ex_price'] ) . ' x ' . $ex_service['ex_qty'] . ') = ' . MPWPB_Function::wc_price( $post_id, ( $ex_service['ex_price'] * $ex_service['ex_qty'] ) ) );
 						}
 					}
 					$item->add_meta_data( '_mpwpb_id', $post_id );
@@ -172,28 +172,28 @@
 								<span><?php echo esc_html( $cart_item['mpwpb_service'] ); ?></span>
 							</li>
 							<li>
-								<h6><?php esc_html_e( 'Price : ', 'bookingmaster' ); ?></h6>&nbsp;
+								<h6><?php esc_html_e( 'Price : ', 'bookingplus' ); ?></h6>&nbsp;
 								<span><?php echo ' ( ' . MPWPB_Function::wc_price( $post_id, $cart_item['mpwpb_price'] ) . ' x 1 ) = ' . MPWPB_Function::wc_price( $post_id, ( $cart_item['mpwpb_price'] * 1 ) ); ?></span>
 							</li>
 							<li>
 								<span class="far fa-calendar-alt"></span>
-								<h6><?php esc_html_e( 'Date : ', 'bookingmaster' ); ?></h6>&nbsp;
+								<h6><?php esc_html_e( 'Date : ', 'bookingplus' ); ?></h6>&nbsp;
 								<span><?php echo esc_html( MPWPB_Function::date_format( $cart_item['mpwpb_date'] ) ); ?></span>
 							</li>
 							<li>
 								<span class="far fa-clock"></span>
-								<h6><?php esc_html_e( 'Time : ', 'bookingmaster' ); ?></h6>&nbsp;
+								<h6><?php esc_html_e( 'Time : ', 'bookingplus' ); ?></h6>&nbsp;
 								<span><?php echo esc_html( MPWPB_Function::date_format( $cart_item['mpwpb_date'], 'time' ) ); ?></span>
 							</li>
 						</ul>
 					</div>
 					<?php if ( sizeof( $extra_service ) > 0 ) { ?>
 						<div class="dLayout_xs">
-							<h5 class="mB_xs"><?php esc_html_e( 'Extra Services', 'bookingmaster' ); ?></h5>
+							<h5 class="mB_xs"><?php esc_html_e( 'Extra Services', 'bookingplus' ); ?></h5>
 							<?php foreach ( $extra_service as $service ) { ?>
 								<div class="divider"></div>
 								<div class="dFlex">
-									<h6><?php esc_html_e( 'Services Name : ', 'bookingmaster' ); ?></h6>&nbsp;
+									<h6><?php esc_html_e( 'Services Name : ', 'bookingplus' ); ?></h6>&nbsp;
 									<span>
 										<?php
 											echo esc_html( $service['ex_name'] ) ;
@@ -204,7 +204,7 @@
 									</span>
 								</div>
 								<div class="dFlex">
-									<h6><?php esc_html_e( 'Price : ', 'bookingmaster' ); ?></h6>&nbsp;
+									<h6><?php esc_html_e( 'Price : ', 'bookingplus' ); ?></h6>&nbsp;
 									<span><?php echo ' ( ' . MPWPB_Function::wc_price( $post_id, $service['ex_price'] ) . ' x ' . $service['ex_qty'] . ' ) = ' . MPWPB_Function::wc_price( $post_id, ( $service['ex_price'] * $service['ex_qty'] ) ); ?></span>
 								</div>
 							<?php } ?>

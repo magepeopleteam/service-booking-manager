@@ -142,15 +142,15 @@
 			//*******************************//
 			public static function get_category_text( $post_id ) {
 				$text = MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_text' );
-				return $text ?: self::get_general_settings( 'category_text', esc_html__( 'Category', 'bookingmaster' ) );
+				return $text ?: self::get_general_settings( 'category_text', esc_html__( 'Category', 'bookingplus' ) );
 			}
 			public static function get_sub_category_text( $post_id ) {
 				$text = MPWPB_Function::get_post_info( $post_id, 'mpwpb_sub_category_text' );
-				return $text ?: self::get_general_settings( 'sub_category_text', esc_html__( 'Sub-Category', 'bookingmaster' ) );
+				return $text ?: self::get_general_settings( 'sub_category_text', esc_html__( 'Sub-Category', 'bookingplus' ) );
 			}
 			public static function get_service_text( $post_id ) {
 				$text = MPWPB_Function::get_post_info( $post_id, 'mpwpb_service_text' );
-				return $text ?: self::get_general_settings( 'service_text', esc_html__( 'Service', 'bookingmaster' ) );
+				return $text ?: self::get_general_settings( 'service_text', esc_html__( 'Service', 'bookingplus' ) );
 			}
 			//*******************************//
 			public static function get_category( $post_id, $all_services = array() ) {
@@ -541,10 +541,10 @@
 				return 'mpwpb_item';
 			}
 			public static function get_name() {
-				return self::get_general_settings( 'label', esc_html__( 'WP Easy Booking', 'mptbm_plugin' ) );
+				return self::get_general_settings( 'label', esc_html__( 'Bookingplus', 'mptbm_plugin' ) );
 			}
 			public static function get_slug() {
-				return self::get_general_settings( 'slug', 'bookingmaster' );
+				return self::get_general_settings( 'slug', 'bookingplus' );
 			}
 			public static function get_icon() {
 				return self::get_general_settings( 'icon', 'dashicons-list-view' );
@@ -574,23 +574,23 @@
 				];
 			}
 			//***********************//
-			public static function get_order_details( $order_id ) {
-				$all_orders  = [];
-				$guest_query = MPWPB_Query::get_order_info( $order_id );
-				if ( $guest_query->found_posts > 0 ) {
-					$attendee_query = $guest_query->posts;
-					foreach ( $attendee_query as $_attendee ) {
-						$attendee_id                              = $_attendee->ID;
-						$order_id                                 = MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_order_id' );
-						$all_orders[ $order_id ]['attendee_id'][] = $attendee_id;
-						if ( ! array_key_exists( 'order_date', $all_orders[ $order_id ] ) ) {
-							$all_orders[ $order_id ]['order_date']            = $_attendee->post_date;
-							$all_orders[ $order_id ]['payment_method']        = MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_payment_method' );
-						}
-					}
-				}
-				return $all_orders;
-			}
+//			public static function get_order_details( $order_id ) {
+//				$all_orders  = [];
+//				$guest_query = MPWPB_Query::get_order_info( $order_id );
+//				if ( $guest_query->found_posts > 0 ) {
+//					$attendee_query = $guest_query->posts;
+//					foreach ( $attendee_query as $_attendee ) {
+//						$attendee_id                              = $_attendee->ID;
+//						$order_id                                 = MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_order_id' );
+//						$all_orders[ $order_id ]['attendee_id'][] = $attendee_id;
+//						if ( ! array_key_exists( 'order_date', $all_orders[ $order_id ] ) ) {
+//							$all_orders[ $order_id ]['order_date']            = $_attendee->post_date;
+//							$all_orders[ $order_id ]['payment_method']        = MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_payment_method' );
+//						}
+//					}
+//				}
+//				return $all_orders;
+//			}
 			//***********************//
 			public static function esc_html( $string ): string {
 				$allow_attr = array(
