@@ -6,7 +6,7 @@
 		class MPWPB_Shortcodes {
 			public function __construct() {
 				add_shortcode( 'mpwpb-order-details', array( $this, 'order_details' ) );
-				add_shortcode( 'bookingmaster', array( $this, 'service_booking' ) );
+				add_shortcode( 'bookingplus', array( $this, 'service_booking' ) );
 			}
 			public function order_details() {
 				ob_start();
@@ -17,7 +17,7 @@
 					?>
 					<div class="mpStyle">
 						<div class="justifyBetween mB">
-							<h3 class="textSuccess _mR"><?php esc_html_e( 'Booked Successfully', 'bookingmaster' ); ?></h3>
+							<h3 class="textSuccess _mR"><?php esc_html_e( 'Booked Successfully', 'bookingplus' ); ?></h3>
 							<?php
 								if ( $order_status == 'completed' ) {
 									do_action( 'mpwpb_pdf_button', $order_id );

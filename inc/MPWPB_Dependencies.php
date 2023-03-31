@@ -14,7 +14,7 @@
 			}
 			public function language_load(): void {
 				$plugin_dir = basename( dirname( __DIR__ ) ) . "/languages/";
-				load_plugin_textdomain( 'bookingmaster', false, $plugin_dir );
+				load_plugin_textdomain( 'bookingplus', false, $plugin_dir );
 			}
 			private function load_file(): void {
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Function.php';

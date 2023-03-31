@@ -83,8 +83,8 @@
 					<div class="mp_load_more_text_area">
 						<span data-read-close><?php echo esc_html( substr( $text, 0, $length ) ); ?> ....</span>
 						<span data-read-open class="dNone"><?php echo esc_html( $text ); ?></span>
-						<div data-read data-open-text="<?php esc_attr_e( 'Load More', 'bookingmaster' ); ?>" data-close-text="<?php esc_attr_e( 'Less More', 'bookingmaster' ); ?>">
-							<span data-text><?php esc_html_e( 'Load More', 'bookingmaster' ); ?></span>
+						<div data-read data-open-text="<?php esc_attr_e( 'Load More', 'bookingplus' ); ?>" data-close-text="<?php esc_attr_e( 'Less More', 'bookingplus' ); ?>">
+							<span data-text><?php esc_html_e( 'Load More', 'bookingplus' ); ?></span>
 						</div>
 					</div>
 					<?php
@@ -122,7 +122,7 @@
 				?>
 				<label class="min_400 post_id_select">
 					<select name="mpwpb_id" class="formControl mp_select2" id="mpwpb_id" required>
-						<option value="0"><?php echo esc_html__( 'Select', 'bookingmaster' ) . ' ' . esc_html( $label ); ?></option>
+						<option value="0"><?php echo esc_html__( 'Select', 'bookingplus' ) . ' ' . esc_html( $label ); ?></option>
 						<?php
 							$loop  = MPWPB_Query::query_post_type( MPWPB_Function::get_cpt_name());
 							$posts = $loop->posts;

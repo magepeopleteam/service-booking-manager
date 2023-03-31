@@ -74,15 +74,15 @@
 										wc_add_order_item_meta( $item_id, MPWPB_Function::get_sub_category_text( $post_id ), $sub_category );
 									}
 								}
-								wc_add_order_item_meta( $item_id, esc_html__( 'Price ', 'bookingmaster' ), $price );
-								wc_add_order_item_meta( $item_id, esc_html__( 'Date ', 'bookingmaster' ), esc_html( MPWPB_Function::date_format( $date ) ) );
-								wc_add_order_item_meta( $item_id, esc_html__( 'Time ', 'bookingmaster' ), esc_html( MPWPB_Function::date_format( $date, 'time' ) ) );
+								wc_add_order_item_meta( $item_id, esc_html__( 'Price ', 'bookingplus' ), $price );
+								wc_add_order_item_meta( $item_id, esc_html__( 'Date ', 'bookingplus' ), esc_html( MPWPB_Function::date_format( $date ) ) );
+								wc_add_order_item_meta( $item_id, esc_html__( 'Time ', 'bookingplus' ), esc_html( MPWPB_Function::date_format( $date, 'time' ) ) );
 								/*************************************/
 								if ( sizeof( $extra_services ) > 0 ) {
 									foreach ( $extra_services as $ex_service ) {
 										wc_add_order_item_meta( $item_id, MPWPB_Function::get_service_text( $post_id ), $ex_service['ex_name'] . ' (' . esc_html( $ex_service['ex_group_name'] ) . ')' );
-										wc_add_order_item_meta( $item_id, esc_html__( 'Quantity ', 'bookingmaster' ), $ex_service['ex_qty'] );
-										wc_add_order_item_meta( $item_id, esc_html__( 'Price ', 'bookingmaster' ), ' ( ' . MPWPB_Function::wc_price( $post_id, $ex_service['ex_price'] ) . ' x ' . $ex_service['ex_qty'] . ') = ' . MPWPB_Function::wc_price( $post_id, ( $ex_service['ex_price'] * $ex_service['ex_qty'] ) ) );
+										wc_add_order_item_meta( $item_id, esc_html__( 'Quantity ', 'bookingplus' ), $ex_service['ex_qty'] );
+										wc_add_order_item_meta( $item_id, esc_html__( 'Price ', 'bookingplus' ), ' ( ' . MPWPB_Function::wc_price( $post_id, $ex_service['ex_price'] ) . ' x ' . $ex_service['ex_qty'] . ') = ' . MPWPB_Function::wc_price( $post_id, ( $ex_service['ex_price'] * $ex_service['ex_qty'] ) ) );
 									}
 								}
 								/*************************************/
@@ -110,7 +110,7 @@
 							</script>
 							<?php
 						} else {
-							echo MPWPB_Function::get_service_text( $post_id ) . ' ' . esc_html__( ' not found', 'bookingmaster' );
+							echo MPWPB_Function::get_service_text( $post_id ) . ' ' . esc_html__( ' not found', 'bookingplus' );
 						}
 					}
 					// }
@@ -141,15 +141,15 @@
 												</div>
 												<div class="col_1"></div>
 												<div class="col_6 col_xs_12">
-													<h4><?php echo MPWPB_Function::get_service_text( $post_id ) . ' ' . esc_html__( 'Information', 'bookingmaster' ); ?></h4>
+													<h4><?php echo MPWPB_Function::get_service_text( $post_id ) . ' ' . esc_html__( 'Information', 'bookingplus' ); ?></h4>
 													<div class="divider"></div>
 													<?php self::service_info( $attendee_id ); ?>
-													<h4 class="mT"><?php echo esc_html__( 'Extra', 'bookingmaster' ) . ' ' . MPWPB_Function::get_service_text( $post_id ); ?></h4>
+													<h4 class="mT"><?php echo esc_html__( 'Extra', 'bookingplus' ) . ' ' . MPWPB_Function::get_service_text( $post_id ); ?></h4>
 													<div class="divider"></div>
 													<?php self::ex_service_info( $item_id ); ?>
 													<div class="divider"></div>
 													<h4 class="justifyBetween">
-														<span><?php esc_html_e( 'Total Bill : ', 'bookingmaster' ) ?></span>
+														<span><?php esc_html_e( 'Total Bill : ', 'bookingplus' ) ?></span>
 														<span class="textTheme"><?php echo wc_price( $total ); ?></span>
 													</h4>
 												</div>
@@ -170,13 +170,13 @@
 					$attendee_info = get_post( $attendee_id );
 					$date          = MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_date' );
 					?>
-					<h4><?php esc_html_e( 'Order details', 'bookingmaster' ); ?></h4>
+					<h4><?php esc_html_e( 'Order details', 'bookingplus' ); ?></h4>
 					<div class="divider"></div>
 					<ul class="mp_list">
-						<li><strong class="min_150"><?php esc_html_e( 'Order ID:', 'bookingmaster' ); ?> :</strong>&nbsp;#<?php echo esc_html( $order_id ); ?></li>
-						<li><strong class="min_150"><?php esc_html_e( 'Ticket No', 'bookingmaster' ); ?> :</strong>&nbsp;<?php echo MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_pin' ); ?></li>
-						<li><strong class="min_150"><?php echo MPWPB_Function::get_service_text( $post_id ) . ' ' . esc_html__( ' Date : ', 'bookingmaster' ); ?></strong>&nbsp;<?php echo MPWPB_Function::date_format( $date, 'full' ); ?></li>
-						<li><strong class="min_150"><?php esc_attr_e( 'Booking Date : ', 'bookingmaster' ); ?></strong>&nbsp;<?php echo MPWPB_Function::date_format( $attendee_info->post_date, 'full' ); ?></li>
+						<li><strong class="min_150"><?php esc_html_e( 'Order ID:', 'bookingplus' ); ?> :</strong>&nbsp;#<?php echo esc_html( $order_id ); ?></li>
+						<li><strong class="min_150"><?php esc_html_e( 'Ticket No', 'bookingplus' ); ?> :</strong>&nbsp;<?php echo MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_pin' ); ?></li>
+						<li><strong class="min_150"><?php echo MPWPB_Function::get_service_text( $post_id ) . ' ' . esc_html__( ' Date : ', 'bookingplus' ); ?></strong>&nbsp;<?php echo MPWPB_Function::date_format( $date, 'full' ); ?></li>
+						<li><strong class="min_150"><?php esc_attr_e( 'Booking Date : ', 'bookingplus' ); ?></strong>&nbsp;<?php echo MPWPB_Function::date_format( $attendee_info->post_date, 'full' ); ?></li>
 						<li><strong class="min_150"><?php echo esc_html( MPWPB_Function::get_name() ); ?> :</strong>&nbsp;<?php echo get_the_title( $post_id ); ?></li>
 					</ul>
 					<?php
@@ -198,7 +198,7 @@
 							<li><strong class="min_150"><?php echo esc_html( MPWPB_Function::get_sub_category_text( $post_id ) ); ?> :</strong>&nbsp;<?php echo esc_html( $sub_category ); ?></li>
 						<?php } ?>
 						<li><strong class="min_150"><?php echo esc_html( MPWPB_Function::get_service_text( $post_id ) ); ?> :</strong>&nbsp;<?php echo esc_html( $service ); ?></li>
-						<li><strong class="min_150"><?php esc_html_e( 'Price', 'bookingmaster' ); ?> :</strong>&nbsp;<?php echo wc_price( $price ); ?></li>
+						<li><strong class="min_150"><?php esc_html_e( 'Price', 'bookingplus' ); ?> :</strong>&nbsp;<?php echo wc_price( $price ); ?></li>
 						<?php do_action( 'mpwpb_after_order_info', $attendee_id ); ?>
 					</ul>
 					<?php
@@ -238,20 +238,20 @@
 				$phone        = MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_billing_phone' );
 				$address      = MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_billing_address' );
 				?>
-				<h4><?php esc_html_e( 'Billing information', 'bookingmaster' ); ?></h4>
+				<h4><?php esc_html_e( 'Billing information', 'bookingplus' ); ?></h4>
 				<div class="divider"></div>
 				<ul class="mp_list">
 					<?php if ( $billing_name ) { ?>
-						<li><strong class="min_150"><?php esc_html_e( 'Name', 'bookingmaster' ); ?> : &nbsp;</strong><?php echo esc_html( $billing_name ); ?></li>
+						<li><strong class="min_150"><?php esc_html_e( 'Name', 'bookingplus' ); ?> : &nbsp;</strong><?php echo esc_html( $billing_name ); ?></li>
 					<?php } ?>
 					<?php if ( $email ) { ?>
-						<li><strong class="min_150"><?php esc_html_e( 'E-mail', 'bookingmaster' ); ?> : &nbsp;</strong><?php echo esc_html( $email ); ?></li>
+						<li><strong class="min_150"><?php esc_html_e( 'E-mail', 'bookingplus' ); ?> : &nbsp;</strong><?php echo esc_html( $email ); ?></li>
 					<?php } ?>
 					<?php if ( $phone ) { ?>
-						<li><strong class="min_150"><?php esc_html_e( 'Phone', 'bookingmaster' ); ?> : &nbsp;</strong><?php echo esc_html( $phone ); ?></li>
+						<li><strong class="min_150"><?php esc_html_e( 'Phone', 'bookingplus' ); ?> : &nbsp;</strong><?php echo esc_html( $phone ); ?></li>
 					<?php } ?>
 					<?php if ( $address ) { ?>
-						<li><strong class="min_150"><?php esc_html_e( 'Address', 'bookingmaster' ); ?> : &nbsp;</strong><?php echo esc_html( $address ); ?></li>
+						<li><strong class="min_150"><?php esc_html_e( 'Address', 'bookingplus' ); ?> : &nbsp;</strong><?php echo esc_html( $address ); ?></li>
 					<?php } ?>
 				</ul>
 				<?php

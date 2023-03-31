@@ -11,11 +11,11 @@
 	$extra_services   = $extra_services ?? MPWPB_Function::get_post_info( $post_id, 'mpwpb_extra_service', array() );
 ?>
 	<div class="mpwpb_summary_area">
-		<h3 class="mB_xs"><?php esc_html_e( 'Order Summary', 'bookingmaster' ); ?></h3>
+		<h3 class="mB_xs"><?php esc_html_e( 'Order Summary', 'bookingplus' ); ?></h3>
 		<div class="divider"></div>
 		<div class="justifyBetween">
 			<div class="flexWrap">
-				<h5><?php esc_html_e( 'Service : ', 'bookingmaster' ); ?></h5>&nbsp;
+				<h5><?php esc_html_e( 'Service : ', 'bookingplus' ); ?></h5>&nbsp;
 				<?php if ( sizeof( $all_category ) > 0 ) { ?>
 					<div class="mpwpb_summary_item" data-category>
 						<div class="_dFlex_alignCenter">
@@ -52,7 +52,7 @@
 							<div class="mpwpb_summary_item" data-extra-service="<?php echo esc_attr( $ex_service_info['name'] ); ?>">
 								<div class="justifyBetween">
 									<div class="flexWrap">
-										<h5><?php esc_html_e( 'Extra Service : ', 'bookingmaster' ); ?></h5>&nbsp;
+										<h5><?php esc_html_e( 'Extra Service : ', 'bookingplus' ); ?></h5>&nbsp;
 										<?php if ( $group_service_name ) { ?>
 											<div class="_dFlex_alignCenter">
 												<h6><?php echo esc_html( $group_service_name ) ?></h6>
@@ -73,14 +73,14 @@
 			}
 		?>
 		<div class="dFlex">
-			<h5><?php esc_html_e( 'Date & Time : ', 'bookingmaster' ); ?></h5>&nbsp;
+			<h5><?php esc_html_e( 'Date & Time : ', 'bookingplus' ); ?></h5>&nbsp;
 			<div class="mpwpb_summary_item" data-date>
 				<h6></h6>
 			</div>
 		</div>
 		<div class="divider"></div>
 		<div class="justifyBetween">
-			<h3><?php esc_html_e( 'Total :', 'bookingmaster' ); ?>&nbsp;&nbsp;</h3>
+			<h3><?php esc_html_e( 'Total :', 'bookingplus' ); ?>&nbsp;&nbsp;</h3>
 			<h3><i class="mpwpb_total_bill textTheme"><?php echo MPWPB_Function::wc_price( $post_id, 0 ); ?></i></h3>
 		</div>
 		<?php do_action( 'add_mpwpb_summary_section', $post_id ); ?>
