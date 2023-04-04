@@ -92,11 +92,11 @@
 						--fs_small: 13px;
 						--font-size-label: <?php echo esc_attr($fs_label); ?>;
 						--fs_h6: <?php echo esc_attr($fs_h6); ?>;
-						--font-size-h5: <?php echo esc_attr($fs_h5); ?>;
-						--font-size-h4: <?php echo esc_attr($fs_h4); ?>;
-						--font-size-h3: <?php echo esc_attr($fs_h3); ?>;
-						--font-size-h2: <?php echo esc_attr($fs_h2); ?>;
-						--font-size-h1: <?php echo esc_attr($fs_h1); ?>;
+						--fs_h5: <?php echo esc_attr($fs_h5); ?>;
+						--fs_h4: <?php echo esc_attr($fs_h4); ?>;
+						--fs_h3: <?php echo esc_attr($fs_h3); ?>;
+						--fs_h2: <?php echo esc_attr($fs_h2); ?>;
+						--fs_h1: <?php echo esc_attr($fs_h1); ?>;
 						--fw-thin: 300; /*font weight medium*/
 						--fw-medium: 600; /*font weight medium*/
 						--fw-bold: bold; /*font weight bold*/
@@ -147,10 +147,10 @@
 							--fs: 14px;
 							--fs_small: 12px;
 							--font-size-label: 15px;
-							--font-size-h4: 20px;
-							--font-size-h3: 22px;
-							--font-size-h2: 25px;
-							--font-size-h1: 30px;
+							--fs_h4: 20px;
+							--fs_h3: 22px;
+							--fs_h2: 25px;
+							--fs_h1: 30px;
 							--dMPL: 32px;
 							--dMP: 16px;
 							--dMP_negetive: -16px;
@@ -171,11 +171,11 @@
 							--fs_small: 10px;
 							--font-size-label: 13px;
 							--fs_h6: 15px;
-							--font-size-h5: 16px;
-							--font-size-h4: 18px;
-							--font-size-h3: 20px;
-							--font-size-h2: 22px;
-							--font-size-h1: 24px;
+							--fs_h5: 16px;
+							--fs_h4: 18px;
+							--fs_h3: 20px;
+							--fs_h2: 22px;
+							--fs_h1: 24px;
 						}
 					}
 				</style>

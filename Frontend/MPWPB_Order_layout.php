@@ -65,7 +65,7 @@
 								$service        = MPWPB_Function::get_submit_info( 'mpwpb_service' );
 								$date           = MPWPB_Function::get_submit_info( 'mpwpb_date' );
 								$price          = MPWPB_Function::get_price( $post_id, $service, $category, $sub_category, $date );
-								$attendee_info  = apply_filters( 'mpwpb_user_info', array(), $post_id );
+								$attendee_info  = apply_filters( 'add_mpwpb_user_info_data', array(), $post_id );
 								$extra_services = MPWPB_Woocommerce::cart_extra_service_info( $post_id );
 								/*************************************/
 								if ( $category ) {
@@ -120,7 +120,6 @@
 				if ( $order_id ) {
 					$wc_order     = wc_get_order( $order_id );
 					$item_id      = current( array_keys( $wc_order->get_items() ) );
-					$post_id      = MPWPB_Query::get_order_meta( $item_id, '_mpwpb_id' );
 					$order_status = $wc_order->get_status();
 					if ( $order_status != 'failed' ) {
 						$total       = MPWPB_Function::get_post_info( $order_id, '_order_total' );
@@ -138,13 +137,12 @@
 													<?php self::order_info( $attendee_id ); ?>
 													<div class="divider"></div>
 													<?php self::billing_info( $attendee_id ); ?>
+													<div class="divider"></div>
+													<?php do_action( 'mpwpb_attendee_info', $attendee_id, $item_id ); ?>
 												</div>
 												<div class="col_1"></div>
 												<div class="col_6 col_xs_12">
-													<h4><?php echo MPWPB_Function::get_service_text( $post_id ) . ' ' . esc_html__( 'Information', 'bookingplus' ); ?></h4>
-													<div class="divider"></div>
 													<?php self::service_info( $attendee_id ); ?>
-													<h4 class="mT"><?php echo esc_html__( 'Extra', 'bookingplus' ) . ' ' . MPWPB_Function::get_service_text( $post_id ); ?></h4>
 													<div class="divider"></div>
 													<?php self::ex_service_info( $item_id ); ?>
 													<div class="divider"></div>
@@ -173,11 +171,11 @@
 					<h4><?php esc_html_e( 'Order details', 'bookingplus' ); ?></h4>
 					<div class="divider"></div>
 					<ul class="mp_list">
-						<li><strong class="min_150"><?php esc_html_e( 'Order ID:', 'bookingplus' ); ?> :</strong>&nbsp;#<?php echo esc_html( $order_id ); ?></li>
-						<li><strong class="min_150"><?php esc_html_e( 'Ticket No', 'bookingplus' ); ?> :</strong>&nbsp;<?php echo MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_pin' ); ?></li>
-						<li><strong class="min_150"><?php echo MPWPB_Function::get_service_text( $post_id ) . ' ' . esc_html__( ' Date : ', 'bookingplus' ); ?></strong>&nbsp;<?php echo MPWPB_Function::date_format( $date, 'full' ); ?></li>
-						<li><strong class="min_150"><?php esc_attr_e( 'Booking Date : ', 'bookingplus' ); ?></strong>&nbsp;<?php echo MPWPB_Function::date_format( $attendee_info->post_date, 'full' ); ?></li>
-						<li><strong class="min_150"><?php echo esc_html( MPWPB_Function::get_name() ); ?> :</strong>&nbsp;<?php echo get_the_title( $post_id ); ?></li>
+						<li><strong class="min_100"><?php esc_html_e( 'Order ID:', 'bookingplus' ); ?> :</strong>&nbsp;#<?php echo esc_html( $order_id ); ?></li>
+						<li><strong class="min_100"><?php esc_html_e( 'Ticket No', 'bookingplus' ); ?> :</strong>&nbsp;<?php echo MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_pin' ); ?></li>
+						<li><strong class="min_100"><?php echo MPWPB_Function::get_service_text( $post_id ) . ' ' . esc_html__( ' Date : ', 'bookingplus' ); ?></strong>&nbsp;<?php echo MPWPB_Function::date_format( $date, 'full' ); ?></li>
+						<li><strong class="min_100"><?php esc_attr_e( 'Booking Date : ', 'bookingplus' ); ?></strong>&nbsp;<?php echo MPWPB_Function::date_format( $attendee_info->post_date, 'full' ); ?></li>
+						<li><strong class="min_100"><?php echo esc_html( MPWPB_Function::get_name() ); ?> :</strong>&nbsp;<?php echo get_the_title( $post_id ); ?></li>
 					</ul>
 					<?php
 				}
@@ -190,46 +188,52 @@
 					$service      = MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_service' );
 					$price        = MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_price' );
 					?>
+					<h4><?php echo MPWPB_Function::get_service_text( $post_id ) . ' ' . esc_html__( 'Information', 'bookingplus' ); ?></h4>
+					<div class="divider"></div>
 					<ul class="mp_list">
 						<?php if ( $category ) { ?>
-							<li><strong class="min_150"><?php echo esc_html( MPWPB_Function::get_category_text( $post_id ) ); ?> :</strong>&nbsp;<?php echo esc_html( $category ); ?></li>
+							<li><strong class="min_100"><?php echo esc_html( MPWPB_Function::get_category_text( $post_id ) ); ?> :</strong>&nbsp;<?php echo esc_html( $category ); ?></li>
 						<?php } ?>
 						<?php if ( $sub_category ) { ?>
-							<li><strong class="min_150"><?php echo esc_html( MPWPB_Function::get_sub_category_text( $post_id ) ); ?> :</strong>&nbsp;<?php echo esc_html( $sub_category ); ?></li>
+							<li><strong class="min_100"><?php echo esc_html( MPWPB_Function::get_sub_category_text( $post_id ) ); ?> :</strong>&nbsp;<?php echo esc_html( $sub_category ); ?></li>
 						<?php } ?>
-						<li><strong class="min_150"><?php echo esc_html( MPWPB_Function::get_service_text( $post_id ) ); ?> :</strong>&nbsp;<?php echo esc_html( $service ); ?></li>
-						<li><strong class="min_150"><?php esc_html_e( 'Price', 'bookingplus' ); ?> :</strong>&nbsp;<?php echo wc_price( $price ); ?></li>
+						<li><strong class="min_100"><?php echo esc_html( MPWPB_Function::get_service_text( $post_id ) ); ?> :</strong>&nbsp;<?php echo esc_html( $service ); ?></li>
+						<li><strong class="min_100"><?php esc_html_e( 'Price', 'bookingplus' ); ?> :</strong>&nbsp;<?php echo wc_price( $price ); ?></li>
 						<?php do_action( 'mpwpb_after_order_info', $attendee_id ); ?>
 					</ul>
 					<?php
 				}
 			}
 			public static function ex_service_info( $item_id ) {
+				$post_id          = MPWPB_Query::get_order_meta( $item_id, '_mpwpb_id' );
 				$ex_service       = MPWPB_Woocommerce::get_order_item_meta( $item_id, '_mpwpb_extra_service_info' );
 				$ex_service_infos = $ex_service ? MPWPB_Function::data_sanitize( $ex_service ) : [];
 				if ( sizeof( $ex_service_infos ) > 0 ) {
-					foreach ( $ex_service_infos as $ex_service_info ) {
-						$group_name = array_key_exists( 'ex_group_name', $ex_service_info ) ? $ex_service_info['ex_group_name'] : '';
-						$name       = $ex_service_info['ex_name'];
-						$price      = $ex_service_info['ex_price'];
-						$qty        = $ex_service_info['ex_qty'];
-						?>
-						<div class="justifyBetween">
-							<div class="flexWrap">
-								<?php if ( $group_name ) { ?>
-									<div class="_dFlex_alignCenter">
-										<strong><?php echo esc_html( $group_name ) ?></strong>
-										<span class="fas fa-long-arrow-alt-right _mLR_xs"></span>
-									</div>
-								<?php } ?>
-								<div class="_dFlex_alignCenter">
-									<strong><?php echo esc_html( $name ); ?></strong>
-								</div>
-							</div>
-							<h6><span class="ex_service_qty">x<?php echo esc_html( $qty ); ?></span>&nbsp;|&nbsp;<?php echo wc_price( $price ); ?>=<?php echo wc_price( $price * $qty ); ?></h6>
-						</div>
+					?>
+					<h4><?php echo esc_html__( 'Extra', 'bookingplus' ) . ' ' . MPWPB_Function::get_service_text( $post_id ); ?></h4>
+					<div class="divider"></div>
+					<ul class="mp_list">
 						<?php
-					}
+							foreach ( $ex_service_infos as $ex_service_info ) {
+								$group_name = array_key_exists( 'ex_group_name', $ex_service_info ) ? $ex_service_info['ex_group_name'] : '';
+								$name       = $ex_service_info['ex_name'];
+								$price      = $ex_service_info['ex_price'];
+								$qty        = $ex_service_info['ex_qty'];
+								?>
+								<li class="justifyBetween">
+									<strong>
+										<?php echo esc_html( $name ); ?>
+										<?php if ( $group_name ) { ?>
+											(<span class="textTheme"><?php echo esc_html( $group_name ) ?></span>)
+										<?php } ?>
+									</strong>
+									<h6><span class="ex_service_qty">x<?php echo esc_html( $qty ); ?></span>&nbsp;|&nbsp;<?php echo wc_price( $price ); ?>=<?php echo wc_price( $price * $qty ); ?></h6>
+								</li>
+								<?php
+							}
+						?>
+					</ul>
+					<?php
 				}
 			}
 			public static function billing_info( $attendee_id ) {
@@ -242,16 +246,16 @@
 				<div class="divider"></div>
 				<ul class="mp_list">
 					<?php if ( $billing_name ) { ?>
-						<li><strong class="min_150"><?php esc_html_e( 'Name', 'bookingplus' ); ?> : &nbsp;</strong><?php echo esc_html( $billing_name ); ?></li>
+						<li><strong class="min_100"><?php esc_html_e( 'Name', 'bookingplus' ); ?> : &nbsp;</strong><?php echo esc_html( $billing_name ); ?></li>
 					<?php } ?>
 					<?php if ( $email ) { ?>
-						<li><strong class="min_150"><?php esc_html_e( 'E-mail', 'bookingplus' ); ?> : &nbsp;</strong><?php echo esc_html( $email ); ?></li>
+						<li><strong class="min_100"><?php esc_html_e( 'E-mail', 'bookingplus' ); ?> : &nbsp;</strong><?php echo esc_html( $email ); ?></li>
 					<?php } ?>
 					<?php if ( $phone ) { ?>
-						<li><strong class="min_150"><?php esc_html_e( 'Phone', 'bookingplus' ); ?> : &nbsp;</strong><?php echo esc_html( $phone ); ?></li>
+						<li><strong class="min_100"><?php esc_html_e( 'Phone', 'bookingplus' ); ?> : &nbsp;</strong><?php echo esc_html( $phone ); ?></li>
 					<?php } ?>
 					<?php if ( $address ) { ?>
-						<li><strong class="min_150"><?php esc_html_e( 'Address', 'bookingplus' ); ?> : &nbsp;</strong><?php echo esc_html( $address ); ?></li>
+						<li><strong class="min_100"><?php esc_html_e( 'Address', 'bookingplus' ); ?> : &nbsp;</strong><?php echo esc_html( $address ); ?></li>
 					<?php } ?>
 				</ul>
 				<?php

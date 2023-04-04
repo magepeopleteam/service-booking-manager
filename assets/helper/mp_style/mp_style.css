@@ -107,11 +107,11 @@
 	.mpStyle h1, .mpStyle h2, .mpStyle h3, .mpStyle h4, .mpStyle h5, .mpStyle h6 { margin: 0;padding: 0;line-height: 1.25;}
 	.mpStyle strong {font-weight: var(--fw-bold);}
 	.mpStyle .extraBold {font-weight: 900;}
-	.mpStyle h1 {font-size: var(--font-size-h1);font-weight: var(--fw-bold);}
-	.mpStyle h2 {font-size: var(--font-size-h2);font-weight: var(--fw-bold);}
-	.mpStyle h3 {font-size: var(--font-size-h3);font-weight: var(--fw-medium);}
-	.mpStyle h4 {font-size: var(--font-size-h4);font-weight: var(--fw-medium);}
-	.mpStyle h5 {font-size: var(--font-size-h5);font-weight: var(--fw-medium);}
+	.mpStyle h1 {font-size: var(--fs_h1);font-weight: var(--fw-bold);}
+	.mpStyle h2 {font-size: var(--fs_h2);font-weight: var(--fw-bold);}
+	.mpStyle h3 {font-size: var(--fs_h3);font-weight: var(--fw-medium);}
+	.mpStyle h4 {font-size: var(--fs_h4);font-weight: var(--fw-medium);}
+	.mpStyle h5 {font-size: var(--fs_h5);font-weight: var(--fw-medium);}
 	.mpStyle h6 {font-size: var(--fs_h6);font-weight: var(--fw-medium);}
 	.mpStyle label {font-size: var(--font-size-label);font-weight: var(--fw-medium);}
 }
@@ -412,10 +412,10 @@
 /******************************************************************** Loader Section ************************************************/
 @media only screen and (min-width: 10px) {
 	div[class*="dLoader"],
-	div[class*="simpleSpinner"] {position: absolute;z-index: 11111;left: 0;right: 0;top: 0;bottom: 0; font-size: var(--font-size-h1);width: 100%;height: 100%; }
+	div[class*="simpleSpinner"] {position: absolute;z-index: 11111;left: 0;right: 0;top: 0;bottom: 0; font-size: var(--fs_h1);width: 100%;height: 100%; }
 	div[class*="dLoader"] {background: #0003;color: var(--theme-color);}
 	div[class*="dLoader"].pFixed {position: fixed;max-width: 100vw;max-height: 100vh;}
-	div.dLoader_xs {font-size: var(--font-size-h5);}
+	div.dLoader_xs {font-size: var(--fs_h5);}
 	div[class*="dLoader"].border_spin_loader span {
 		border-top: 5px solid var(--theme-alternate-color);border-right: 5px solid var(--theme-color);border-bottom: 5px solid var(--theme-alternate-color);border-left: 5px solid var(--theme-color);
 		width: 60px;height: 60px; -webkit-animation: spin 1000ms linear infinite;animation: spin 1000ms linear infinite;
@@ -654,8 +654,8 @@
 /******************************************************************** position Section************************************************/
 @media only screen and (min-width: 10px) {
 	/********fixed Content********/
-	div.mpStyle .mp_sticky_area.mpSticky{position: fixed;}
-	div.mpStyle .mp_sticky_area.mpSticky .mp_sticky_on_scroll{overflow: auto;}
+	div.mpStyle .mp_sticky_area.mpSticky {position: fixed;}
+	div.mpStyle .mp_sticky_area.mpSticky .mp_sticky_on_scroll {overflow: auto;}
 	/********Absolute Content********/
 	.mpStyle [class*="fullAbsolute"] {position: absolute;left: 0;top: 0;right: 0;bottom: 0;z-index: 11;width: 100%;height: 100%;}
 	.mpStyle [class*="hoverAbsolute"] {position: absolute;right: 0;top: 100%;left: 0;display: none;padding: 7px;border: 1px solid var(--border_color);font-size: 15px;z-index: 111;}
@@ -670,7 +670,7 @@
 	.mpStyle .title_on_border {
 		line-height: 1;height: 40px;position: absolute;top: -20px;left: 30px;
 		color: var(--theme-color);background-color: var(--theme-alternate-color);
-		padding: 0 var(--dMP);	border-radius: var(--dBR);
+		padding: 0 var(--dMP); border-radius: var(--dBR);
 	}
 }
 /******************************************************************** Form section ************************************************/
@@ -713,7 +713,7 @@
 	}
 	div.mpStyle select.formControl:focus {background-color: var(--theme-color_aa);}
 	div.mpStyle .formControl.date_type,
-	div.mpStyle .formControl[type='date']                                {
+	div.mpStyle .formControl[type='date'] {
 		background-image: url('../images/calendar.png');
 		-webkit-appearance: none;
 		background-repeat: no-repeat;
@@ -870,8 +870,8 @@
 	/******list Horizontal*****/
 	.mpStyle ul.mp_list {margin: var(--dMP_xs) 0 0 0;}
 	.mpStyle ul.mp_list li {padding: 5px 0;border-bottom: 1px dotted var(--border_color);width: 100%;}
-	.mpStyle ul.mp_list li:last-child{border: none;}
-		/******All in one line*****/
+	.mpStyle ul.mp_list li:last-child {border: none;}
+	/******All in one line*****/
 	.mpStyle ul.listEqual li {text-align: center;border-right: 1px solid;}
 	.mpStyle ul.listEqual li a {padding: var(--dMP_xs);display: block;}
 	.mpStyle ul.listEqual li.mage_active {background-color: var(--active_color)}
@@ -962,7 +962,7 @@
 @media only screen and (min-width: 10px) {
 	div.pagination_area {margin: var(--dMP_xs) 0 0 0;}
 	div.pagination_area button[class*="dButton_xs"] {min-width: 50px;}
-	div.pagination_area button.active_pagination {color: var(--theme-alternate-color);background-color: var(--active_color);min-width: 75px;font-size: var(--font-size-h4);}
+	div.pagination_area button.active_pagination {color: var(--theme-alternate-color);background-color: var(--active_color);min-width: 75px;font-size: var(--fs_h4);}
 	div.pagination_area button.ellipse_left {display: none;}
 	div.pagination_area button.ellipse_left,
 	div.pagination_area button.ellipse_right {color: var(--theme-color);background-color: transparent;}
@@ -971,7 +971,7 @@
 @media only screen and (min-width: 10px) {
 	/********Sidebar Content**************/
 	.mpStyle .leftSidebar,
-	.mpStyle .leftSidebar .mp_sticky_area{width: 100%;max-width: var(--left-sidebar-width);}
+	.mpStyle .leftSidebar .mp_sticky_area {width: 100%;max-width: var(--left-sidebar-width);}
 	.mpStyle .rightSidebar {width: 100%;max-width: var(--right-sidebar-width);}
 	.mpStyle .mainSection {width: 100%;max-width: var(--main-content-width);margin: 0 0 0 var(--dMP);}
 	/*******Grid*******************************/
@@ -982,17 +982,22 @@
 	div.mpContainer {max-width: var(--container-max-width);width: 100%;margin: 0 auto;}
 	div.mpRow {min-height: 1px;}
 	/****/
-	.mpStyle .fullWidth, .mpStyle [class*='_fullWidth'] {width: 100%;max-width: 100%;}
 	.mpStyle .fullHeight {height: 100%;}
 	.mpStyle .h_100 {height: 100%;}
 	.mpStyle .h_100px {height: 100px;}
 	.mpStyle .h_200px {height: 200px;}
-	.mpStyle .w_50 {width: 50px;}
-	.mpStyle .w_100, .mpStyle [class*="_w_100"] {width: 100px;min-width: 100px;max-width: 100px;}
-	.mpStyle .w_125 {width: 125px;}
-	.mpStyle .w_150, .mpStyle [class*="_w_150"] {width: 150px;}
-	.mpStyle .w_200 {width: 200px;}
-	.mpStyle .w_300 {width: 300px;}
+	/************************/
+	.mpStyle .w_50, .mpStyle [class*="_w_50"] {width: 50px;min-width: 50px;}
+	.mpStyle .w_100, .mpStyle [class*="_w_100"] {width: 100px;min-width: 100px;}
+	.mpStyle .w_125, .mpStyle [class*="_w_125"] {width: 125px;min-width: 125px;}
+	.mpStyle .w_150, .mpStyle [class*="_w_150"] {width: 150px;min-width: 150px;}
+	.mpStyle .w_200, .mpStyle [class*="_w_200"] {width: 200px;min-width: 200px;}
+	.mpStyle .w_300, .mpStyle [class*="_w_300"] {width: 300px;min-width: 300px;}
+	.mpStyle .w_400, .mpStyle [class*="_w_400"] {width: 400px;min-width: 400px;}
+	.mpStyle .w_500, .mpStyle [class*="_w_500"] {width: 500px;min-width: 500px;}
+	.mpStyle .w_600, .mpStyle [class*="_w_600"] {width: 600px;min-width: 600px;}
+	.mpStyle .fullWidth, .mpStyle [class*='_fullWidth'] {width: 100%;max-width: 100%;}
+	/************************/
 	.mpStyle .max_100, .mpStyle [class*="_max_100"] {max-width: 100px;width: 100%;}
 	.mpStyle .max_200, .mpStyle [class*="_max_200"] {max-width: 200px;width: 100%;}
 	div.mpStyle .max_300, div.mpStyle [class*="_max_300"] {max-width: 300px;width: 100%;}
@@ -1009,6 +1014,7 @@
 	/************************/
 	div.mpStyle .min_50, div.mpStyle [class*="_min_50"] {min-width: 50px;}
 	div.mpStyle .min_100, div.mpStyle [class*="_min_100"] {min-width: 100px;}
+	div.mpStyle .min_125, div.mpStyle [class*="_min_125"] {min-width: 125px;}
 	div.mpStyle .min_150, div.mpStyle [class*="_min_150"] {min-width: 150px;}
 	div.mpStyle .min_200, div.mpStyle [class*="_min_200"] {min-width: 200px;}
 	div.mpStyle .min_250, div.mpStyle [class*="_min_250"] {min-width: 250px;}
@@ -1272,7 +1278,7 @@
 	div.mpStyle span.selection {overflow: hidden; max-width: 100%;}
 	div.mpStyle span.select2-container span.select2-selection__rendered { display: -webkit-flex;display: flex; -webkit-align-items: center;align-items: center; height: 100%;}
 	div.mpStyle span.select2-container .select2-selection__arrow { top: 2px; height: 37px;}
-	div.mpStyle span.select2-container span{font-size: var(--fs);margin: 0;}
+	div.mpStyle span.select2-container span {font-size: var(--fs);margin: 0;}
 }
 /******************************************************************** Owl Carousel************************************************/
 @media only screen and (min-width: 10px) {
@@ -1280,8 +1286,8 @@
 }
 /******************************************************************** Load More************************************************/
 @media only screen and (min-width: 10px) {
-	div.mpStyle .mp_load_more_text_area{color: var(--d_color);}
-	div.mpStyle [data-read]{color:var(--theme-color);}
+	div.mpStyle .mp_load_more_text_area {color: var(--d_color);}
+	div.mpStyle [data-read] {color: var(--theme-color);}
 }
 /******************************************************************** Woocommerce cart ************************************************/
 @media only screen and (min-width: 10px) {
@@ -1305,13 +1311,13 @@
 		background-color: var(--theme-color);background-image: none;border-color: var(--theme-color);
 		padding: var(--dMP_xs);color: var(--theme-alternate-color);border-radius: 0;
 		display: -webkit-flex;display: flex;-webkit-justify-content: center;justify-content: center;
-		font-size: var(--font-size-h5);
+		font-size: var(--fs_h5);
 	}
 	#ui-datepicker-div .ui-datepicker-header .ui-icon {display: none;}
 	#ui-datepicker-div .ui-datepicker-prev {top: 10px;left: 10px;}
 	#ui-datepicker-div .ui-datepicker-next {top: 10px;right: 0;}
 	#ui-datepicker-div .ui-datepicker-header a.ui-datepicker-prev::before,
-	#ui-datepicker-div .ui-datepicker-header a.ui-datepicker-next::before { position: absolute;content: '>';color: #FFF;left: 0;font-size: var(--font-size-h5);top: 0;}
+	#ui-datepicker-div .ui-datepicker-header a.ui-datepicker-next::before { position: absolute;content: '>';color: #FFF;left: 0;font-size: var(--fs_h5);top: 0;}
 	#ui-datepicker-div .ui-datepicker-header a.ui-datepicker-prev::before {content: '<';}
 	#ui-datepicker-div .ui-datepicker-header .ui-state-hover {background-color: var(--theme-color);background-image: none;border-color: var(--theme-color);}
 	#ui-datepicker-div .ui-state-default {
@@ -1321,7 +1327,7 @@
 	}
 	#ui-datepicker-div a.ui-state-default:hover {background-color: darksalmon;}
 	#ui-datepicker-div .ui-state-active {background-color: var(--theme-color);color: var(--theme-alternate-color);background-image: none;}
-	#ui-datepicker-div .ui-datepicker-title {background-color: var(--theme-color);color: var(--theme-alternate-color);background-image: none;font-size: var(--font-size-h5);}
+	#ui-datepicker-div .ui-datepicker-title {background-color: var(--theme-color);color: var(--theme-alternate-color);background-image: none;font-size: var(--fs_h5);}
 	#ui-datepicker-div.ui-datepicker td {background-color: floralwhite;border: 1px dotted #000;padding: 4px 6px;}
 }
 /********************************************************************************************************************/
