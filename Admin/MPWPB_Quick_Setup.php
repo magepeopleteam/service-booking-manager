@@ -22,10 +22,10 @@
 			public function quick_setup_menu() {
 				$status = MPWPB_Plugin::check_woocommerce();
 				if ( $status == 1 ) {
-					add_submenu_page( 'edit.php?post_type=mpwpb_item', esc_html__( 'Quick Setup', 'bookingplus' ), '<span style="color:#10dd10">' . esc_html__( 'Quick Setup', 'bookingplus' ) . '</span>', 'manage_options', 'mpwpb_quick_setup', array( $this, 'quick_setup' ) );
+					add_submenu_page( 'edit.php?post_type=mpwpb_item', _( 'Quick Setup', 'bookingplus' ), '<span style="color:#10dd10">' . esc_html__( 'Quick Setup', 'bookingplus' ) . '</span>', 'manage_options', 'mpwpb_quick_setup', array( $this, 'quick_setup' ) );
 					add_submenu_page( 'mpwpb_item', esc_html__( 'Quick Setup', 'bookingplus' ), '<span style="color:#10dd10">' . esc_html__( 'Quick Setup', 'bookingplus' ) . '</span>', 'manage_options', 'mpwpb_quick_setup', array( $this, 'quick_setup' ) );
 				} else {
-					add_menu_page( esc_html__( 'Bookingplus', 'bookingplus' ), esc_html__( 'Bookingplus', 'bookingplus' ), 'manage_options', 'transportation', array( $this, 'quick_setup' ), 'dashicons-admin-site-alt2', 6 );
+					add_menu_page( esc_html__( 'Bookingplus', 'bookingplus' ), esc_html__( 'Bookingplus', 'bookingplus' ), 'manage_options', 'mpwpb_item', array( $this, 'quick_setup' ), 'dashicons-admin-site-alt2', 6 );
 					add_submenu_page( 'mpwpb_item', esc_html__( 'Quick Setup', 'bookingplus' ), '<span style="color:#10dd17">' . esc_html__( 'Quick Setup', 'bookingplus' ) . '</span>', 'manage_options', 'mpwpb_quick_setup', array( $this, 'quick_setup' ) );
 				}
 			}
@@ -93,38 +93,47 @@
 					$new_general_settings_data   = is_array( $general_settings_data ) ? array_replace( $general_settings_data, $update_general_settings_arr ) : $update_general_settings_arr;
 					update_option( 'mpwpb_general_settings', $new_general_settings_data );
 					flush_rewrite_rules();
-					wp_redirect( admin_url( 'edit.php?post_type=mpwpb_item&page=mpwpb_quick_setup' ) );
+					wp_redirect( admin_url( 'edit.php?post_type=mpwpb_item' ) );
 				}
 				?>
-				<div class="mpStyle">
-					<div id="mp_quick_setup" class="dLayout">
-						<form method="post" action="">
-							<div class="welcome-tabs">
-								<ul class="tab-navs">
-									<li class="tab-nav active" data-id="start"><i class="far fa-thumbs-up mR_xs"></i><?php esc_html_e( 'Welcome', 'bookingplus' ); ?></li>
-									<li class="tab-nav" data-id="general"><i class="fas fa-list-ul mR_xs"></i><?php esc_html_e( 'General', 'bookingplus' ); ?></li>
-									<li class="tab-nav" data-id="done"><i class="fas fa-pencil-alt mR_xs"></i><?php esc_html_e( 'Done', 'bookingplus' ); ?></li>
-								</ul>
+				<div id="mp_quick_setup" class="mpStyle">
+					<form method="post" action="">
+						<div class="mpTabsNext">
+							<div class="tabListsNext _max_700_mAuto">
+								<div data-tabs-target-next="#mpwpb_qs_welcome" class="tabItemNext">
+									<h4 class="circleIcon">1</h4>
+									<h5 class="circleTitle"><?php esc_html_e( 'Welcome', 'bookingplus' ); ?></h5>
+								</div>
+								<div data-tabs-target-next="#mpwpb_qs_general" class="tabItemNext">
+									<h4 class="circleIcon">2</h4>
+									<h5 class="circleTitle"><?php esc_html_e( 'General', 'bookingplus' ); ?></h5>
+								</div>
+								<div data-tabs-target-next="#mpwpb_qs_done" class="tabItemNext">
+									<h4 class="circleIcon">3</h4>
+									<h5 class="circleTitle"><?php esc_html_e( 'Done', 'bookingplus' ); ?></h5>
+								</div>
+							</div>
+							<div class="tabsContentNext _infoLayout_mT">
 								<?php
 									$this->setup_welcome_content();
 									$this->setup_general_content();
 									$this->setup_content_done();
 								?>
-								<div class="next-prev justifyBetween">
-									<button type="button" class="prev mpBtn"><span>&longleftarrow;<?php esc_html_e( 'Previous', 'bookingplus' ); ?></span></button>
-									<div></div>
-									<button type="button" class="next themeButton"><span><?php esc_html_e( 'Next', 'bookingplus' ); ?>&longrightarrow;</span></button>
-								</div>
 							</div>
-						</form>
-					</div>
+							<div class="justifyBetween">
+								<button type="button" class="mpBtn nextTab_prev"><span>&longleftarrow;<?php esc_html_e( 'Previous', 'bookingplus' ); ?></span></button>
+								<div></div>
+								<button type="button" class="themeButton nextTab_next"><span><?php esc_html_e( 'Next', 'bookingplus' ); ?>&longrightarrow;</span></button>
+							</div>
+						</div>
+					</form>
 				</div>
 				<?php
 			}
 			public function setup_welcome_content() {
 				$status = MPWPB_Plugin::check_woocommerce();
 				?>
-				<div class="tab-content active" id="start">
+				<div data-tabs-next="#mpwpb_qs_welcome">
 					<h2><?php esc_html_e( 'Bookingplus For Woocommerce Plugin', 'bookingplus' ); ?></h2>
 					<p class="mTB_xs"><?php esc_html_e( 'Bookingplus Plugin for WooCommerce for your site, Please go step by step and choose some options to get started.', 'bookingplus' ); ?></p>
 					<div class="_dLayout_mT_alignCenter justifyBetween">
@@ -149,11 +158,10 @@
 				<?php
 			}
 			public function setup_general_content() {
-				$general_data = get_option( 'mpwpb_general_settings' );
-				$label        = $general_data['label'] ?: 'Bookingplus';
-				$slug         = $general_data['slug'] ?: 'bookingplus';
+				$label        = self::get_general_settings( 'label', 'Bookingplus' );
+				$slug        = self::get_general_settings( 'slug', 'bookingplus' );
 				?>
-				<div class="tab-content" id="general">
+				<div data-tabs-next="#mpwpb_qs_general">
 					<div class="section">
 						<h2><?php esc_html_e( 'General settings', 'bookingplus' ); ?></h2>
 						<p class="mTB_xs"><?php esc_html_e( 'Choose some general option.', 'bookingplus' ); ?></p>
@@ -182,16 +190,21 @@
 			}
 			public function setup_content_done() {
 				?>
-				<div class="tab-content" id="done">
-					<div class="section">
-						<h2><?php esc_html_e( 'Finalize Setup', 'bookingplus' ); ?></h2>
-						<p class="mTB_xs"><?php esc_html_e( 'You are about to Finish & Save Bookingplus For Woocommerce Plugin setup process', 'bookingplus' ); ?></p>
-						<div class="mT allCenter">
-							<button type="submit" name="finish_quick_setup" class="themeButton"><?php esc_html_e( 'Finish & Save', 'bookingplus' ); ?></button>
-						</div>
+				<div data-tabs-next="#mpwpb_qs_done">
+					<h2><?php esc_html_e( 'Finalize Setup', 'bookingplus' ); ?></h2>
+					<p class="mTB_xs"><?php esc_html_e( 'You are about to Finish & Save Bookingplus For Woocommerce Plugin setup process', 'bookingplus' ); ?></p>
+					<div class="mT allCenter">
+						<button type="submit" name="finish_quick_setup" class="themeButton"><?php esc_html_e( 'Finish & Save', 'bookingplus' ); ?></button>
 					</div>
 				</div>
 				<?php
+			}
+			public static function get_general_settings( $key, $default = '' ) {
+				$options = get_option( 'mpwpb_general_settings' );
+				if ( isset( $options[ $key ] ) && $options[ $key ] ) {
+					$default = $options[ $key ];
+				}
+				return $default;
 			}
 		}
 		new MPWPB_Quick_Setup();

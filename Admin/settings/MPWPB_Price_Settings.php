@@ -79,8 +79,8 @@
 						</h5>
 						<?php MPWPB_Settings::info_text( 'mpwpb_service_duration_active' ); ?>
 						<div class="divider"></div>
-						<div class="ovAuto">
-							<div class="mp_settings_area min_1000 col_12">
+						<div class="mp_settings_area">
+							<div class="_oAuto_border">
 								<div class="mpwpb_category_area mpwpb_category_header">
 									<div class="mpwpb_category_item  <?php echo esc_attr( $category_active_class ); ?>" data-collapse="#mpwpb_category_active">
 										<label class="fullWidth">
@@ -129,12 +129,12 @@
 										}
 									?>
 								</div>
-								<div class="<?php echo esc_attr( $category_active_class ); ?>" data-collapse="#mpwpb_category_active">
-									<?php MPWPB_Layout::add_new_button( esc_html__( 'Add New ', 'bookingplus' ) . '<span data-input-change="mpwpb_category_text">' . $category_text . '</span>', 'mpwpb_add_category', '_successButton_xs_mT_xs' ); ?>
-									<div class="mp_hidden_content">
-										<div class="mp_hidden_item">
-											<?php $this->category_item( 1, $active ); ?>
-										</div>
+							</div>
+							<div class="<?php echo esc_attr( $category_active_class ); ?>" data-collapse="#mpwpb_category_active">
+								<?php MPWPB_Layout::add_new_button( esc_html__( 'Add New ', 'bookingplus' ) . '<span data-input-change="mpwpb_category_text">' . $category_text . '</span>', 'mpwpb_add_category', '_successButton_xs_mT_xs' ); ?>
+								<div class="mp_hidden_content">
+									<div class="mp_hidden_item">
+										<?php $this->category_item( 1, $active ); ?>
 									</div>
 								</div>
 							</div>
@@ -155,7 +155,9 @@
 					<div class="mpwpb_category_area mp_remove_area">
 						<div class="mpwpb_category_item  <?php echo esc_attr( $category_active_class ); ?>" data-collapse="#mpwpb_category_active">
 							<div class="groupContent">
-								<?php MPWPB_Layout::remove_button(); ?>
+								<?php if ( $category_count > 0 ) {
+									MPWPB_Layout::remove_button();
+								} ?>
 								<label class="fullWidth">
 									<input type="hidden" name="mpwpb_category_hidden_id[]" value="<?php echo esc_attr( $unique_name ); ?>"/>
 									<input type="text" name="mpwpb_category_name[]" class="formControl mp_name_validation" value="<?php echo esc_attr( $category_name ); ?>" placeholder="<?php esc_attr_e( 'Category Name', 'bookingplus' ); ?>"/>
@@ -217,7 +219,9 @@
 						<div class="mpwpb_sub_category_area mp_remove_area">
 							<div class="mpwpb_sub_category_item  <?php echo esc_attr( $sub_category_active_class ); ?>" data-collapse="#mpwpb_sub_category_active">
 								<div class="groupContent">
-									<?php MPWPB_Layout::remove_button(); ?>
+									<?php if ( $sub_category_count > 0 ) {
+										MPWPB_Layout::remove_button();
+									} ?>
 									<label class="fullWidth">
 										<input type="hidden" name="<?php echo esc_attr( $sub_category_hidden_name ); ?>" value="<?php echo esc_attr( $unique_name ); ?>"/>
 										<input type="text" name="<?php echo esc_attr( $sub_category_name ); ?>" class="formControl mp_name_validation" value="<?php echo esc_attr( $sub_category ); ?>" placeholder="<?php esc_attr_e( 'Sub-Category', 'bookingplus' ); ?>"/>
@@ -278,10 +282,10 @@
 					<div class="mpwpb_service_item">
 						<div class="groupContent">
 							<?php MPWPB_Layout::remove_button(); ?>
-							<?php MPWPB_Layout::move_button(); ?>
 							<label class="fullWidth">
 								<input type="text" name="<?php echo esc_attr( $service_name ); ?>" class="formControl mp_name_validation" value="<?php echo esc_attr( $service ); ?>" placeholder="<?php _e( 'Service Name', 'bookingplus' ); ?>"/>
 							</label>
+							<?php MPWPB_Layout::move_button(); ?>
 						</div>
 					</div>
 					<div class="mpwpb_service_content">
@@ -330,8 +334,8 @@
 								<?php MPWPB_Layout::switch_button( 'mpwpb_group_extra_service_active', $extra_service_group_active_checked ); ?>
 								<span class="mR"><?php esc_html_e( 'Enable Group Service', 'bookingplus' ); ?></span>
 							</h5>
-							<div class="ovAuto mT_xs">
-								<div class="mp_settings_area min_1000 col_12">
+							<div class="mp_settings_area _mT_xs">
+								<div class="_oAuto_border">
 									<div class="mpwpb_category_area mpwpb_category_header">
 										<div class="mpwpb_category_item <?php echo esc_attr( $extra_service_group_active_class ); ?>" data-collapse="#mpwpb_group_extra_service_active">
 											<h6><?php esc_html_e( 'Group Service', 'bookingplus' ); ?><span class="textRequired">&nbsp;*</span></h6>
@@ -358,12 +362,12 @@
 											}
 										?>
 									</div>
-									<div class="<?php echo esc_attr( $extra_service_group_active_class ); ?>" data-collapse="#mpwpb_group_extra_service_active">
-										<?php MPWPB_Layout::add_new_button( esc_html__( 'Add New Group service', 'bookingplus' ), 'mpwpb_add_group_service', '_successButton_xs_mT_xs' ); ?>
-										<div class="mp_hidden_content">
-											<div class="mp_hidden_item">
-												<?php $this->extra_service_group( 1, $extra_service_group_active_class ); ?>
-											</div>
+								</div>
+								<div class="<?php echo esc_attr( $extra_service_group_active_class ); ?>" data-collapse="#mpwpb_group_extra_service_active">
+									<?php MPWPB_Layout::add_new_button( esc_html__( 'Add New Group service', 'bookingplus' ), 'mpwpb_add_group_service', '_successButton_xs_mT_xs' ); ?>
+									<div class="mp_hidden_content">
+										<div class="mp_hidden_item">
+											<?php $this->extra_service_group( 1, $extra_service_group_active_class ); ?>
 										</div>
 									</div>
 								</div>
@@ -381,7 +385,9 @@
 					<div class="mpwpb_category_area mp_remove_area">
 						<div class="mpwpb_category_item <?php echo esc_attr( $extra_service_group_active_class ); ?>" data-collapse="#mpwpb_group_extra_service_active">
 							<div class="groupContent">
-								<?php MPWPB_Layout::remove_button(); ?>
+								<?php if ( $ex_count > 0 ) {
+									MPWPB_Layout::remove_button();
+								} ?>
 								<label class="fullWidth">
 									<input type="hidden" name="mpwpb_extra_hidden_name[]" value="<?php echo esc_attr( $unique_name ); ?>"/>
 									<input type="text" name="mpwpb_extra_group_service[]" class="formControl mp_name_validation" value="<?php echo esc_attr( $services ); ?>" placeholder="<?php esc_attr_e( 'service Group Name', 'bookingplus' ); ?>"/>

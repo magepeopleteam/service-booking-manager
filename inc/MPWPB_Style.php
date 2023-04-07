@@ -13,27 +13,29 @@
 				add_action( 'admin_head', array( $this, 'add_global_style' ), 100 );
 			}
 			public function add_global_style() {
-				$default_color   = MPWPB_Function::get_style_settings( 'default_text_color', '#303030' );
-				$theme_color     = MPWPB_Function::get_style_settings( 'theme_color', '#2F9DF4' );
-				$alternate_color = MPWPB_Function::get_style_settings( 'theme_alternate_color', '#fff' );
-				$warning_color   = MPWPB_Function::get_style_settings( 'warning_color', '#E67C30' );
-				$default_fs   = MPWPB_Function::get_style_settings( 'default_font_size', '14' ) . 'px';
-				$fs_h1        = MPWPB_Function::get_style_settings( 'font_size_h1', '35' ) . 'px';
-				$fs_h2        = MPWPB_Function::get_style_settings( 'font_size_h2', '30' ) . 'px';
-				$fs_h3        = MPWPB_Function::get_style_settings( 'font_size_h3', '25' ) . 'px';
-				$fs_h4        = MPWPB_Function::get_style_settings( 'font_size_h4', '22' ) . 'px';
-				$fs_h5        = MPWPB_Function::get_style_settings( 'font_size_h5', '18' ) . 'px';
-				$fs_h6        = MPWPB_Function::get_style_settings( 'font_size_h6', '16' ) . 'px';
-				$fs_label     = MPWPB_Function::get_style_settings( 'font_size_label', '16' ) . 'px';
-				$button_fs    = MPWPB_Function::get_style_settings( 'button_font_size', '16' ) . 'px';
-				$button_color = MPWPB_Function::get_style_settings( 'button_color', $alternate_color );
-				$button_bg    = MPWPB_Function::get_style_settings( 'button_bg', '#ea8125' );
-				$section_bg   = MPWPB_Function::get_style_settings( 'section_bg', '#FAFCFE' );
+				$default_color   = self::get_style_settings( 'default_text_color', '#303030' );
+				$theme_color     = self::get_style_settings( 'theme_color', '#2F9DF4' );
+				$alternate_color = self::get_style_settings( 'theme_alternate_color', '#fff' );
+				$warning_color   = self::get_style_settings( 'warning_color', '#E67C30' );
+				$default_fs      = self::get_style_settings( 'default_font_size', '14' ) . 'px';
+				$fs_h1           = self::get_style_settings( 'font_size_h1', '35' ) . 'px';
+				$fs_h2           = self::get_style_settings( 'font_size_h2', '30' ) . 'px';
+				$fs_h3           = self::get_style_settings( 'font_size_h3', '25' ) . 'px';
+				$fs_h4           = self::get_style_settings( 'font_size_h4', '22' ) . 'px';
+				$fs_h5           = self::get_style_settings( 'font_size_h5', '18' ) . 'px';
+				$fs_h6           = self::get_style_settings( 'font_size_h6', '16' ) . 'px';
+				$fs_label        = self::get_style_settings( 'font_size_label', '16' ) . 'px';
+				$button_fs       = self::get_style_settings( 'button_font_size', '16' ) . 'px';
+				$button_color    = self::get_style_settings( 'button_color', $alternate_color );
+				$button_bg       = self::get_style_settings( 'button_bg', '#ea8125' );
+				$section_bg      = self::get_style_settings( 'section_bg', '#FAFCFE' );
 				?>
 				<style>
 					:root {
-						--d_color: <?php echo esc_attr($default_color); ?>;
-						--container-max-width: 1320px;
+						--dContainer_Width: 1320px;
+						--sidebarLeft: 280px;
+						--sidebarRight: 300px;
+						--mainSection: calc(100% - 300px);
 						--dMPL: 40px;
 						--dMP: 20px;
 						--dMP_negetive: -20px;
@@ -41,49 +43,7 @@
 						--dMP_xs_negative: -10px;
 						--dBRL: 10px;
 						--dBR: 5px;
-						--medium-border-radious: 10px;
-						--border_color: #DDD;
-						--active_color: #0E6BB7;
-						--default-bg: #FFF;
-						--theme-color: <?php echo esc_attr($theme_color); ?>;
-						--theme-color_ee: <?php echo esc_attr($theme_color).'ee'; ?>;
-						--theme-color_cc: <?php echo esc_attr($theme_color).'cc'; ?>;
-						--theme-color_aa: <?php echo esc_attr($theme_color).'aa'; ?>;
-						--theme-color_88: <?php echo esc_attr($theme_color).'88'; ?>;
-						--theme-color_77: <?php echo esc_attr($theme_color).'77'; ?>;
-						--theme-alternate-color: <?php echo esc_attr($alternate_color); ?>;
-						--default-content-shadow: 0 0 2px #665F5F7A;
-						--content_bg: <?php echo esc_attr($section_bg); ?>;
-					}
-					/*****Header********/
-					:root {
-						--header-bg: #FFF;
-						--header-color: #333;
-						--header-padding: 20px 0;
-						--header-fs: 16px;
-						--header-shadows: none;
-					}
-					/******Navbar*******/
-					:root {
-						--nav-font-size: 18px;
-						--nav-font-weight: 400;
-						--nav-color: #FFF;
-						--nav-padding: 0;
-						--nav-margin: 0;
-						--nav-border: 1px solid #DDD;
-						--nav-active-color: #BCB;
-						--nav-bg: #6148BA;
-						--nav-content-shadow: none;
-					}
-					/*****Button********/
-					:root {
-						--button-bg: <?php echo esc_attr($button_bg); ?>;
-						--button-color: <?php echo esc_attr($button_color); ?>;
-						--button-fs: <?php echo esc_attr($button_fs); ?>;
-						--button-height: 40px;
-						--button-height-xs: 30px;
-						--button-width: 120px;
-						--button-shadows: 0 8px 12px rgb(51 65 80 / 6%), 0 14px 44px rgb(51 65 80 / 11%);
+						--dShadow: 0 0 2px #665F5F7A;
 					}
 					/*****Font size********/
 					:root {
@@ -92,65 +52,62 @@
 						--fs_small: 13px;
 						--font-size-label: <?php echo esc_attr($fs_label); ?>;
 						--fs_h6: <?php echo esc_attr($fs_h6); ?>;
-						--font-size-h5: <?php echo esc_attr($fs_h5); ?>;
-						--font-size-h4: <?php echo esc_attr($fs_h4); ?>;
-						--font-size-h3: <?php echo esc_attr($fs_h3); ?>;
-						--font-size-h2: <?php echo esc_attr($fs_h2); ?>;
-						--font-size-h1: <?php echo esc_attr($fs_h1); ?>;
+						--fs_h5: <?php echo esc_attr($fs_h5); ?>;
+						--fs_h4: <?php echo esc_attr($fs_h4); ?>;
+						--fs_h3: <?php echo esc_attr($fs_h3); ?>;
+						--fs_h2: <?php echo esc_attr($fs_h2); ?>;
+						--fs_h1: <?php echo esc_attr($fs_h1); ?>;
 						--fw-thin: 300; /*font weight medium*/
 						--fw-medium: 600; /*font weight medium*/
 						--fw-bold: bold; /*font weight bold*/
 					}
-					/*****Section********/
+					/*****Button********/
 					:root {
-						--section-bg: #F2F2F2;
-						--section-padding: 30px 0;
-						--section-margin: 0;
-						--left-sidebar-width: 280px;
-						--main-content-width: calc(100% - 300px);
-						--right-sidebar-width: 300px;
-						--sidebar-bg: #FAFCFE;
-					}
-					/******Footer*******/
-					:root {
-						--footer-bg: #FFF;
-						--footer-padding: 0;
-						--footer-fs: 16px;
-						--footer-color: #FFF;
-						--footer-top-bg: tranparent;
-						--footer-top-color: #555;
-						--footer-top-padding: 50px 0;
-						--footer-bottom-bg: #2C3E50;
-						--footer-bottom-color: #FFF;
-						--footer-bottom-padding: 15px 0;
+						--button_bg: <?php echo esc_attr($button_bg); ?>;
+						--color_button: <?php echo esc_attr($button_color); ?>;
+						--button_fs: <?php echo esc_attr($button_fs); ?>;
+						--button_height: 40px;
+						--button_height_xs: 30px;
+						--button_width: 120px;
+						--button_shadows: 0 8px 12px rgb(51 65 80 / 6%), 0 14px 44px rgb(51 65 80 / 11%);
 					}
 					/*******Color***********/
 					:root {
-						--warning_color: <?php echo esc_attr($warning_color); ?>;
-						--info-bg: #F2F2F2;
-						--success_color: #006607;
-						--danger-color: #C00;
-						--required-color: #C00;
-						--light-color: #F2F2F2;
-						--yellow-color: #FEBB02;
-						--blue-color: #815DF2;
-						--navy-blue-color: #007CBA;
+						--d_color: <?php echo esc_attr($default_color); ?>;
+						--color_border: #DDD;
+						--color_active: #0E6BB7;
+						--color_section: <?php echo esc_attr($section_bg); ?>;
+						--color_theme: <?php echo esc_attr($theme_color); ?>;
+						--color_theme_ee: <?php echo esc_attr($theme_color).'ee'; ?>;
+						--color_theme_cc: <?php echo esc_attr($theme_color).'cc'; ?>;
+						--color_theme_aa: <?php echo esc_attr($theme_color).'aa'; ?>;
+						--color_theme_88: <?php echo esc_attr($theme_color).'88'; ?>;
+						--color_theme_77: <?php echo esc_attr($theme_color).'77'; ?>;
+						--color_theme_alter: <?php echo esc_attr($alternate_color); ?>;
+						--color_warning: <?php echo esc_attr($warning_color); ?>;
+						--color_success: #006607;
+						--color_danger: #C00;
+						--color_required: #C00;
+						--color_white: #FFFFFF;
+						--color_light: #F2F2F2;
+						--color_yellow: #FEBB02;
+						--color_blue: #815DF2;
+						--color_navy_blue: #007CBA;
 						--color_1: #0C5460;
-						--color_2:#0CB32612;
-					}
-					/*****Click Slider******/
-					:root {
-						--click-slide-bg: #FFF;
+						--color_2: #0CB32612;
+						--color_3: #FAFCFE;
+						--color_4: #6148BA;
+						--color_5: #BCB;
 					}
 					@media only screen and (max-width: 1100px) {
 						:root {
 							--fs: 14px;
 							--fs_small: 12px;
 							--font-size-label: 15px;
-							--font-size-h4: 20px;
-							--font-size-h3: 22px;
-							--font-size-h2: 25px;
-							--font-size-h1: 30px;
+							--fs_h4: 20px;
+							--fs_h3: 22px;
+							--fs_h2: 25px;
+							--fs_h1: 30px;
 							--dMPL: 32px;
 							--dMP: 16px;
 							--dMP_negetive: -16px;
@@ -158,28 +115,31 @@
 							--dMP_xs_negative: -8px;
 						}
 					}
-					@media only screen and (max-width: 800px) {
-						/*:root {*/
-						/*	--dMP: 10px;*/
-						/*	--dMP_xs: 5px;*/
-						/*	--dMP_xs_negative: -5px;*/
-						/*}*/
-					}
-					@media only screen and (max-width: 500px) {
+					@media only screen and (max-width: 700px) {
 						:root {
 							--fs: 12px;
 							--fs_small: 10px;
 							--font-size-label: 13px;
 							--fs_h6: 15px;
-							--font-size-h5: 16px;
-							--font-size-h4: 18px;
-							--font-size-h3: 20px;
-							--font-size-h2: 22px;
-							--font-size-h1: 24px;
+							--fs_h5: 16px;
+							--fs_h4: 18px;
+							--fs_h3: 20px;
+							--fs_h2: 22px;
+							--fs_h1: 24px;
+							--dMP: 10px;
+							--dMP_xs: 5px;
+							--dMP_xs_negative: -5px;
 						}
 					}
 				</style>
 				<?php
+			}
+			public static function get_style_settings( $key, $default = '' ) {
+				$options = get_option( 'mpwpb_style_settings' );
+				if ( isset( $options[ $key ] ) && $options[ $key ] ) {
+					$default = $options[ $key ];
+				}
+				return $default;
 			}
 		}
 		new MPWPB_Style();

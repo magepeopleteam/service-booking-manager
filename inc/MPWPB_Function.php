@@ -34,8 +34,8 @@
 							jQuery(document).ready(function () {
 								jQuery("<?php echo esc_attr( $selector ); ?>").datepicker({
 									dateFormat: mp_date_format,
-									minDate: new Date(<?php echo esc_attr($start_year); ?>, <?php echo esc_attr($start_month); ?>, <?php echo esc_attr($start_day); ?>),
-									maxDate: new Date(<?php echo esc_attr($end_year); ?>, <?php echo esc_attr($end_month); ?>, <?php echo esc_attr($end_day); ?>),
+									minDate: new Date(<?php echo esc_attr( $start_year ); ?>, <?php echo esc_attr( $start_month ); ?>, <?php echo esc_attr( $start_day ); ?>),
+									maxDate: new Date(<?php echo esc_attr( $end_year ); ?>, <?php echo esc_attr( $end_month ); ?>, <?php echo esc_attr( $end_day ); ?>),
 									autoSize: true,
 									beforeShowDay: WorkingDates,
 									onSelect: function (dateString, data) {
@@ -122,8 +122,8 @@
 				}
 				return apply_filters( 'filter_mpwpb_details_template', $name );
 			}
-			public static function details_template_path($post_id=''): string {
-				$post_id       = $post_id??get_the_id();
+			public static function details_template_path( $post_id = '' ): string {
+				$post_id       = $post_id ?? get_the_id();
 				$template_name = self::get_post_info( $post_id, 'mpwpb_theme_file', 'default.php' );
 				$file_name     = 'themes/' . $template_name;
 				$dir           = MPWPB_PLUGIN_DIR . '/templates/' . $file_name;
@@ -280,31 +280,6 @@
 				}
 				return $all_slots;
 			}
-			public static function datetime_format( $date, $type = 'date-time-text' ) {
-				$date_format = get_option( 'date_format' );
-				$time_format = get_option( 'time_format' );
-				$wp_settings = $date_format . '  ' . $time_format;
-				$timezone    = wp_timezone_string();
-				$timestamp   = strtotime( $date . ' ' . $timezone );
-				if ( $type == 'date-time' ) {
-					$date = wp_date( $wp_settings, $timestamp );
-				} elseif ( $type == 'date-text' ) {
-					$date = wp_date( $date_format, $timestamp );
-				} elseif ( $type == 'date' ) {
-					$date = wp_date( $date_format, $timestamp );
-				} elseif ( $type == 'time' ) {
-					$date = wp_date( $time_format, $timestamp, wp_timezone() );
-				} elseif ( $type == 'day' ) {
-					$date = wp_date( 'd', $timestamp );
-				} elseif ( $type == 'month' ) {
-					$date = wp_date( 'M', $timestamp );
-				} elseif ( $type == 'date-time-text' ) {
-					$date = wp_date( $wp_settings, $timestamp, wp_timezone() );
-				} else {
-					$date = wp_date( $type, $timestamp );
-				}
-				return $date;
-			}
 			public static function date_format( $date, $format = 'date' ) {
 				$date_format = get_option( 'date_format' );
 				$time_format = get_option( 'time_format' );
@@ -381,13 +356,13 @@
 				$price = self::price_convert_raw( $price );
 				return apply_filters( 'mpwpb_price_filter', $price, $post_id, $category_name, $service_name, $date );
 			}
-			public static function get_extra_price( $post_id, $ex_service_types, $ex_service_category='' ) {
+			public static function get_extra_price( $post_id, $ex_service_types, $ex_service_category = '' ) {
 				$ex_price       = 0;
 				$extra_services = MPWPB_Function::get_post_info( $post_id, 'mpwpb_extra_service', array() );
 				if ( sizeof( $extra_services ) > 0 ) {
 					foreach ( $extra_services as $group_service ) {
 						$group_service_name = array_key_exists( 'group_service', $group_service ) ? $group_service['group_service'] : '';
-						if ( ($group_service_name && $ex_service_category && $group_service_name == $ex_service_category) || ( ! $group_service_name && ! $ex_service_category )) {
+						if ( ( $group_service_name && $ex_service_category && $group_service_name == $ex_service_category ) || ( ! $group_service_name && ! $ex_service_category ) ) {
 							$service_infos = array_key_exists( 'group_service_info', $group_service ) ? $group_service['group_service_info'] : [];
 							if ( sizeof( $service_infos ) > 0 ) {
 								foreach ( $service_infos as $service_info ) {
@@ -518,24 +493,20 @@
 				return $tax_list;
 			}
 			//************************//
-			public static function get_settings( $options, $key, $default = '' ) {
+			public static function get_settings( $section, $key, $default = '' ) {
+				$options = get_option( $section );
 				if ( isset( $options[ $key ] ) && $options[ $key ] ) {
 					$default = $options[ $key ];
 				}
 				return $default;
 			}
 			public static function get_general_settings( $key, $default = '' ) {
-				$options = get_option( 'mpwpb_general_settings' );
-				return self::get_settings( $options, $key, $default );
+				return self::get_settings( 'mpwpb_general_settings', $key, $default );
 			}
 			public static function get_slider_settings( $key, $default = '' ) {
-				$options = get_option( 'super_slider_settings' );
-				return self::get_settings( $options, $key, $default );
+				return self::get_settings( 'super_slider_settings', $key, $default );
 			}
-			public static function get_style_settings( $key, $default = '' ) {
-				$options = get_option( 'mpwpb_style_settings' );
-				return self::get_settings( $options, $key, $default );
-			}
+
 			//*****************//
 			public static function get_cpt_name(): string {
 				return 'mpwpb_item';
@@ -573,24 +544,6 @@
 					'sunday'    => esc_html__( 'Sunday', 'mptbm_plugin' ),
 				];
 			}
-			//***********************//
-//			public static function get_order_details( $order_id ) {
-//				$all_orders  = [];
-//				$guest_query = MPWPB_Query::get_order_info( $order_id );
-//				if ( $guest_query->found_posts > 0 ) {
-//					$attendee_query = $guest_query->posts;
-//					foreach ( $attendee_query as $_attendee ) {
-//						$attendee_id                              = $_attendee->ID;
-//						$order_id                                 = MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_order_id' );
-//						$all_orders[ $order_id ]['attendee_id'][] = $attendee_id;
-//						if ( ! array_key_exists( 'order_date', $all_orders[ $order_id ] ) ) {
-//							$all_orders[ $order_id ]['order_date']            = $_attendee->post_date;
-//							$all_orders[ $order_id ]['payment_method']        = MPWPB_Function::get_post_info( $attendee_id, 'mpwpb_payment_method' );
-//						}
-//					}
-//				}
-//				return $all_orders;
-//			}
 			//***********************//
 			public static function esc_html( $string ): string {
 				$allow_attr = array(
