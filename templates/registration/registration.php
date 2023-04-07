@@ -45,7 +45,7 @@
 									<div class="divider"></div>
 									<div class="justifyBetween">
 										<h3 class="alignCenter"><?php esc_html_e( 'Total :', 'bookingplus' ); ?>&nbsp;&nbsp;<i class="mpwpb_total_bill textTheme"><?php echo MPWPB_Function::wc_price( $post_id, 0 ); ?></i></h3>
-										<button class="_mpBtn_mT_xs_radius mActive mpwpb_service_next" type="button" data-alert="<?php echo esc_html__( 'Please Select', 'bookingplus' ) . ' ' . $service_text; ?>">
+										<button class="_mpBtn_mT_xs_bBR mActive mpwpb_service_next" type="button" data-alert="<?php echo esc_html__( 'Please Select', 'bookingplus' ) . ' ' . $service_text; ?>">
 											<?php esc_html_e( 'Next Date & Time', 'bookingplus' ); ?>
 											<i class="fas fa-long-arrow-alt-right _mL_xs"></i>
 										</button>

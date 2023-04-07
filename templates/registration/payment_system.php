@@ -49,7 +49,7 @@
 	<div class="mpwpb_book_now_area">
 		<div class="divider"></div>
 		<div class="justifyCenter mT_xs">
-			<button class="_mpBtn_mT_xs_radius mActive mpwpb_book_now" data-submit-path="<?php echo esc_attr( get_home_url() . '/mpwpb-order-details/' ); ?>" type="button" data-alert="<?php esc_attr_e( 'Please select Payment Method', 'bookingplus' ); ?>">
+			<button class="_mpBtn_mT_xs_bBR mActive mpwpb_book_now" data-submit-path="<?php echo esc_attr( get_home_url() . '/mpwpb-order-details/' ); ?>" type="button" data-alert="<?php esc_attr_e( 'Please select Payment Method', 'bookingplus' ); ?>">
 				<span class="fas fa-cart-plus mR_xs"></span>
 				<?php esc_html_e( 'Proceed Order', 'bookingplus' ); ?>
 			</button>

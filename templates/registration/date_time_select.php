@@ -21,13 +21,13 @@
 					while ( strtotime( $start_date ) <= strtotime( $end_date ) ) {
 						?>
 						<div class="fdColumn mpwpb_date_time_line">
-							<div class="_bgTheme_mB_xs_radius_padding_xs fdColumn">
+							<div class="_bgTheme_mB_xs_bBR_padding_xs fdColumn">
 								<h2 class="textWhite"><?php echo date_i18n( 'd', strtotime( $start_date ) ); ?></h2>
 								<p><?php echo date_i18n( $short_date_format, strtotime( $start_date ) ); ?></p>
 								<h6 class="textWhite textUppercase"><?php echo date_i18n( 'l', strtotime( $start_date ) ); ?></h6>
 							</div>
 							<?php if ( ! in_array( $start_date, $all_dates ) ) { ?>
-								<button type="button" class="_mpBtn_radius"><?php esc_html_e( 'Closed', 'bookingplus' ); ?></button>
+								<button type="button" class="_mpBtn_bBR"><?php esc_html_e( 'Closed', 'bookingplus' ); ?></button>
 							<?php } else {
 								$all_time_slots = MPWPB_Function::get_time_slot( $post_id, $start_date );
 								if ( sizeof( $all_time_slots ) > 0 ) {
@@ -35,11 +35,11 @@
 										$available = MPWPB_Function::get_total_available( $post_id, $slot );
 										if ( $available > 0 ) {
 											?>
-											<button type="button" class="_mpBtn_radius" data-date="<?php echo MPWPB_Function::date_format( $slot, 'full' ) ?>" data-radio-check="<?php echo esc_attr( $slot ); ?>" data-open-icon="fas fa-check" data-close-icon="">
+											<button type="button" class="_mpBtn_bBR" data-date="<?php echo MPWPB_Function::date_format( $slot, 'full' ) ?>" data-radio-check="<?php echo esc_attr( $slot ); ?>" data-open-icon="fas fa-check" data-close-icon="">
 												<span data-icon></span><?php echo date_i18n( 'h:i A', strtotime( $slot ) );  ?>
 											</button>
 										<?php } else { ?>
-											<button type="button" class="_mpBtn_radius"><?php esc_html_e( 'Fully Booked', 'bookingplus' ); ?></button>
+											<button type="button" class="_mpBtn_bBR"><?php esc_html_e( 'Fully Booked', 'bookingplus' ); ?></button>
 											<?php
 										}
 									}
@@ -53,12 +53,12 @@
 			</div>
 			<div class="divider"></div>
 			<div class="justifyBetween">
-				<button class="_mpBtn_mT_xs_radius mpActive mpwpb_date_time_prev" type="button">
+				<button class="_mpBtn_mT_xs_bBR mpActive mpwpb_date_time_prev" type="button">
 					<i class="fas fa-long-arrow-alt-left _mR_xs"></i>
 					<?php echo esc_html__( 'Previous', 'bookingplus' ) . ' ' . $service_text; ?>
 				</button>
 				<h3 class="alignCenter"><?php esc_html_e( 'Total :', 'bookingplus' ); ?>&nbsp;&nbsp;<i class="mpwpb_total_bill textTheme"><?php echo MPWPB_Function::wc_price( $post_id, 0 ); ?></i></h3>
-				<button class="_mpBtn_mT_xs_radius mActive mpwpb_date_time_next" type="button" data-alert="<?php esc_html_e( 'Please Select Date & Time', 'bookingplus' ); ?>">
+				<button class="_mpBtn_mT_xs_bBR mActive mpwpb_date_time_next" type="button" data-alert="<?php esc_html_e( 'Please Select Date & Time', 'bookingplus' ); ?>">
 					<?php esc_html_e( 'Next Summary', 'bookingplus' ); ?>
 					<i class="fas fa-long-arrow-alt-right _mL_xs"></i>
 				</button>

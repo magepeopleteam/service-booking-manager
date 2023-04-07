@@ -506,9 +506,7 @@
 			public static function get_slider_settings( $key, $default = '' ) {
 				return self::get_settings( 'super_slider_settings', $key, $default );
 			}
-			public static function get_style_settings( $key, $default = '' ) {
-				return self::get_settings( 'mpwpb_style_settings', $key, $default );
-			}
+
 			//*****************//
 			public static function get_cpt_name(): string {
 				return 'mpwpb_item';

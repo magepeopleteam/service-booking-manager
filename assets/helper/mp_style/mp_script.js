@@ -304,12 +304,68 @@ function mp_all_content_change($this) {
 //===========Tabs================//
 (function ($) {
 	"use strict";
+
+	function active_next_tab(parent, targetTab) {
+		parent.height(parent.height());
+		let tabsContent = parent.find('.tabsContentNext:first');
+		let target_tabContent = tabsContent.children('[data-tabs-next="' + targetTab + '"]');
+		let index = target_tabContent.index() + 1;
+		let num_of_tab = parent.find('.tabListsNext:first').children('[data-tabs-target-next]').length;
+		let i = 1;
+		for (i; i <= num_of_tab; i++) {
+			if (i <= index) {
+				parent.find('.tabListsNext:first').children('[data-tabs-target-next]:nth-child(' + i + ')').addClass('active');
+			}else{
+				parent.find('.tabListsNext:first').children('[data-tabs-target-next]:nth-child(' + i + ')').removeClass('active');
+			}
+		}
+		if (index < 2 && num_of_tab > index) {
+			parent.find('.nextTab_next').slideDown('fast');
+			parent.find('.nextTab_prev').slideUp('fast');
+		} else if (num_of_tab === index) {
+			parent.find('.nextTab_next').slideUp('fast');
+			parent.find('.nextTab_prev').slideDown('fast');
+		} else {
+			parent.find('.nextTab_next').slideDown('fast');
+			parent.find('.nextTab_prev').slideDown('fast');
+		}
+		target_tabContent.slideDown(350);
+		tabsContent.children('[data-tabs-next].active').slideUp(350).removeClass('active').promise().done(function () {
+			target_tabContent.addClass('active').promise().done(function () {
+				loadBgImage();
+				parent.height('auto');
+			});
+		});
+	}
+
+	$(document).on('click', '.mpStyle .mpTabsNext .nextTab_next', function () {
+		let parent = $(this).closest('.mpTabsNext');
+		let target = parent.find('.tabListsNext:first');
+		let num_of_tab = target.children('[data-tabs-target-next].active').length + 1;
+		let targetTab = target.children('[data-tabs-target-next]:nth-child(' + num_of_tab + ')').data('tabs-target-next');
+		active_next_tab(parent, targetTab);
+	});
+	$(document).on('click', '.mpStyle .mpTabsNext .nextTab_prev', function () {
+		let parent = $(this).closest('.mpTabsNext');
+		let target = parent.find('.tabListsNext:first');
+		let num_of_tab = target.children('[data-tabs-target-next].active').length - 1;
+		let targetTab = target.children('[data-tabs-target-next]:nth-child(' + num_of_tab + ')').data('tabs-target-next');
+		active_next_tab(parent, targetTab);
+	});
 	$(document).ready(function () {
 		$('.mpStyle .mpTabs').each(function () {
 			let tabLists = $(this).find('.tabLists:first');
 			let activeTab = tabLists.find('[data-tabs-target].active');
 			let targetTab = activeTab.length > 0 ? activeTab : tabLists.find('[data-tabs-target]').first();
 			targetTab.trigger('click');
+		});
+		$('.mpStyle .mpTabsNext').each(function () {
+			let parent = $(this);
+			if (parent.find('[data-tabs-target-next].active').length < 1) {
+				let tabLists = parent.find('.tabListsNext:first');
+				let targetTab = tabLists.find('[data-tabs-target-next]').first().data('tabs-target-next')
+				active_next_tab(parent, targetTab);
+			}
 		});
 	});
 	$(document).on('click', '.mpStyle [data-tabs-target]', function () {

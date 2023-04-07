@@ -51,7 +51,7 @@
 												<div class="mR_xs min_100" data-collapse="<?php echo esc_attr( $ex_unique_id ); ?>">
 													<?php MPWPB_Layout::qty_input( 'mpwpb_extra_service_qty[]', $ex_service_price_raw, $ex_service_info['qty'], 1, 0, $ex_service_info['qty'] ); ?>
 												</div>
-												<button type="button" class="_mpBtn_radius_min_150 mpwpb_price_calculation" data-extra-item data-collapse-target="<?php echo esc_attr( $ex_unique_id ); ?>" data-open-icon="far fa-check-circle" data-close-icon="" data-open-text="<?php esc_attr_e( 'Select', 'bookingplus' ); ?>" data-close-text="<?php esc_attr_e( 'Selected', 'bookingplus' ); ?>" data-add-class="mActive">
+												<button type="button" class="_mpBtn_bBR_min_150 mpwpb_price_calculation" data-extra-item data-collapse-target="<?php echo esc_attr( $ex_unique_id ); ?>" data-open-icon="far fa-check-circle" data-close-icon="" data-open-text="<?php esc_attr_e( 'Select', 'bookingplus' ); ?>" data-close-text="<?php esc_attr_e( 'Selected', 'bookingplus' ); ?>" data-add-class="mActive">
 													<input type="hidden" name="mpwpb_extra_service[]" data-value="<?php echo esc_attr( $group_service_name ); ?>" value=""/>
 													<input type="hidden" name="mpwpb_extra_service_type[]" data-value="<?php echo esc_attr( $ex_service_info['name'] ); ?>" value=""/>
 													<span data-text><?php esc_html_e( 'Select', 'mptbm_plugin' ); ?></span>
