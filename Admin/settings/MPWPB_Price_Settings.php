@@ -79,7 +79,6 @@
 						</h5>
 						<?php MPWPB_Settings::info_text( 'mpwpb_service_duration_active' ); ?>
 						<div class="divider"></div>
-
 						<div class="mp_settings_area">
 							<div class="_oAuto_border">
 								<div class="mpwpb_category_area mpwpb_category_header">
@@ -131,7 +130,6 @@
 									?>
 								</div>
 							</div>
-
 							<div class="<?php echo esc_attr( $category_active_class ); ?>" data-collapse="#mpwpb_category_active">
 								<?php MPWPB_Layout::add_new_button( esc_html__( 'Add New ', 'bookingplus' ) . '<span data-input-change="mpwpb_category_text">' . $category_text . '</span>', 'mpwpb_add_category', '_successButton_xs_mT_xs' ); ?>
 								<div class="mp_hidden_content">
@@ -336,8 +334,8 @@
 								<?php MPWPB_Layout::switch_button( 'mpwpb_group_extra_service_active', $extra_service_group_active_checked ); ?>
 								<span class="mR"><?php esc_html_e( 'Enable Group Service', 'bookingplus' ); ?></span>
 							</h5>
-							<div class="ovAuto mT_xs">
-								<div class="mp_settings_area min_1000 col_12">
+							<div class="mp_settings_area _mT_xs">
+								<div class="_oAuto_border">
 									<div class="mpwpb_category_area mpwpb_category_header">
 										<div class="mpwpb_category_item <?php echo esc_attr( $extra_service_group_active_class ); ?>" data-collapse="#mpwpb_group_extra_service_active">
 											<h6><?php esc_html_e( 'Group Service', 'bookingplus' ); ?><span class="textRequired">&nbsp;*</span></h6>
@@ -364,12 +362,12 @@
 											}
 										?>
 									</div>
-									<div class="<?php echo esc_attr( $extra_service_group_active_class ); ?>" data-collapse="#mpwpb_group_extra_service_active">
-										<?php MPWPB_Layout::add_new_button( esc_html__( 'Add New Group service', 'bookingplus' ), 'mpwpb_add_group_service', '_successButton_xs_mT_xs' ); ?>
-										<div class="mp_hidden_content">
-											<div class="mp_hidden_item">
-												<?php $this->extra_service_group( 1, $extra_service_group_active_class ); ?>
-											</div>
+								</div>
+								<div class="<?php echo esc_attr( $extra_service_group_active_class ); ?>" data-collapse="#mpwpb_group_extra_service_active">
+									<?php MPWPB_Layout::add_new_button( esc_html__( 'Add New Group service', 'bookingplus' ), 'mpwpb_add_group_service', '_successButton_xs_mT_xs' ); ?>
+									<div class="mp_hidden_content">
+										<div class="mp_hidden_item">
+											<?php $this->extra_service_group( 1, $extra_service_group_active_class ); ?>
 										</div>
 									</div>
 								</div>
