@@ -17,7 +17,7 @@
 				?>
 				<div class="tabsItem" data-tabs="#mpwpb_settings_gallery">
 					<h5 class="dFlex">
-						<span class="mR"><?php esc_html_e( 'On/Off Slider', 'bookingplus' ); ?></span>
+						<span class="mR"><?php esc_html_e( 'On/Off Slider', 'servicebookingmanager' ); ?></span>
 						<?php MPWPB_Layout::switch_button( 'mpwpb_display_slider', $checked ); ?>
 					</h5>
 					<?php MPWPB_Settings::info_text( 'mpwpb_display_slider' ); ?>
@@ -26,7 +26,7 @@
 						<table>
 							<tbody>
 							<tr>
-								<th><?php esc_html_e( 'Gallery Images ', 'bookingplus' ); ?></th>
+								<th><?php esc_html_e( 'Gallery Images ', 'servicebookingmanager' ); ?></th>
 								<td colspan="3"><?php do_action( 'mp_add_multi_image', 'mpwpb_slider_images', $image_ids ); ?></td>
 							</tr>
 							<tr>
@@ -39,7 +39,7 @@
 				<?php
 			}
 			public function save_gallery_settings( $post_id ) {
-				if ( get_post_type( $post_id ) == MPWPB_Function::get_cpt_name() ) {
+				if ( get_post_type( $post_id ) == MPWPB_Function::mp_cpt() ) {
 					$slider = MPWPB_Function::get_submit_info( 'mpwpb_display_slider' ) ? 'on' : 'off';
 					update_post_meta( $post_id, 'mpwpb_display_slider', $slider );
 					$images     = MPWPB_Function::get_submit_info( 'mpwpb_slider_images');

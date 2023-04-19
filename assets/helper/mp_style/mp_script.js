@@ -315,7 +315,7 @@ function mp_all_content_change($this) {
 		for (i; i <= num_of_tab; i++) {
 			if (i <= index) {
 				parent.find('.tabListsNext:first').children('[data-tabs-target-next]:nth-child(' + i + ')').addClass('active');
-			}else{
+			} else {
 				parent.find('.tabListsNext:first').children('[data-tabs-target-next]:nth-child(' + i + ')').removeClass('active');
 			}
 		}

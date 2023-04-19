@@ -17,7 +17,7 @@
 					?>
 					<div class="mpStyle">
 						<div class="justifyBetween mB">
-							<h3 class="textSuccess _mR"><?php esc_html_e( 'Booked Successfully', 'bookingplus' ); ?></h3>
+							<h3 class="textSuccess _mR"><?php esc_html_e( 'Booked Successfully', 'servicebookingmanager' ); ?></h3>
 							<?php
 								if ( $order_status == 'completed' ) {
 									do_action( 'mpwpb_pdf_button', $order_id );

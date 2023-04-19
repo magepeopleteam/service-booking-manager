@@ -18,7 +18,7 @@
 			<input type="hidden" name="mpwpb_category" value="">
 			<input type="hidden" name="mpwpb_sub_category" value="">
 			<input type="hidden" name="mpwpb_service" value="">
-			<h3><?php echo esc_html__( 'Select', 'bookingplus' ) . ' ' . $service_text; ?></h3>
+			<h3><?php echo esc_html__( 'Select', 'servicebookingmanager' ) . ' ' . $service_text; ?></h3>
 			<div class="divider"></div>
 			<div class="flexWrapJustifyBetween">
 				<?php

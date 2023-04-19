@@ -13,22 +13,22 @@
 				$sub_title  = MPWPB_Function::get_post_info( $post_id, 'mpwpb_shortcode_sub_title');
 				?>
 				<div class="tabsItem" data-tabs="#mpwpb_general_info">
-					<h5><?php esc_html_e( 'General Information Settings', 'bookingplus' ); ?></h5>
+					<h5><?php esc_html_e( 'General Information Settings', 'servicebookingmanager' ); ?></h5>
 					<div class="divider"></div>
 					<label>
-						<span class="max_200"><?php esc_html_e( 'Service Title', 'bookingplus' ); ?></span>
-						<input type="text"  name="mpwpb_shortcode_title" class="formControl" value="<?php echo esc_attr( $title ); ?>" placeholder="<?php esc_attr_e( 'Service Title', 'bookingplus' ); ?>"/>
+						<span class="max_200"><?php esc_html_e( 'Service Title', 'servicebookingmanager' ); ?></span>
+						<input type="text"  name="mpwpb_shortcode_title" class="formControl" value="<?php echo esc_attr( $title ); ?>" placeholder="<?php esc_attr_e( 'Service Title', 'servicebookingmanager' ); ?>"/>
 					</label>
 					<div class="divider"></div>
 					<label>
-						<span class="max_200"><?php esc_html_e( 'Service sub title', 'bookingplus' ); ?></span>
-						<input type="text"  name="mpwpb_shortcode_sub_title" class="formControl" value="<?php echo esc_attr( $sub_title ); ?>" placeholder="<?php esc_attr_e( 'Service Sub Title', 'bookingplus' ); ?>"/>
+						<span class="max_200"><?php esc_html_e( 'Service sub title', 'servicebookingmanager' ); ?></span>
+						<input type="text"  name="mpwpb_shortcode_sub_title" class="formControl" value="<?php echo esc_attr( $sub_title ); ?>" placeholder="<?php esc_attr_e( 'Service Sub Title', 'servicebookingmanager' ); ?>"/>
 					</label>
 				</div>
 				<?php
 			}
 			public function save_general_settings( $post_id ) {
-				if ( get_post_type( $post_id ) == MPWPB_Function::get_cpt_name() ) {
+				if ( get_post_type( $post_id ) == MPWPB_Function::mp_cpt() ) {
 					$title =MPWPB_Function::get_submit_info( 'mpwpb_shortcode_title' );
 					update_post_meta( $post_id, 'mpwpb_shortcode_title', $title );
 					$sub_title = MPWPB_Function::get_submit_info( 'mpwpb_shortcode_sub_title' );
