@@ -33,7 +33,7 @@
 							if ( $params['pagination-style'] == 'load_more' ) {
 								?>
 								<button type="button" class="_dButton_min_200 pagination_load_more" data-load-more="0">
-									<?php esc_html_e( 'Load More', 'bookingplus' ); ?>
+									<?php esc_html_e( 'Load More', 'servicebookingmanager' ); ?>
 								</button>
 								<?php
 							} else {
@@ -42,7 +42,7 @@
 								?>
 								<div class="buttonGroup">
 									<?php if ( $total_page > 2 ) { ?>
-										<button class="dButton_xs page_prev" type="button" title="<?php esc_html_e( 'GoTO Previous Page', 'bookingplus' ); ?>" disabled>
+										<button class="dButton_xs page_prev" type="button" title="<?php esc_html_e( 'GoTO Previous Page', 'servicebookingmanager' ); ?>" disabled>
 											<span class="fas fa-chevron-left mp_zero"></span>
 										</button>
 									<?php } ?>
@@ -64,7 +64,7 @@
 									<?php } ?>
 
 									<?php if ( $total_page > 2 ) { ?>
-										<button class="dButton_xs page_next" type="button" title="<?php esc_html_e( 'GoTO Next Page', 'bookingplus' ); ?>">
+										<button class="dButton_xs page_next" type="button" title="<?php esc_html_e( 'GoTO Next Page', 'servicebookingmanager' ); ?>">
 											<span class="fas fa-chevron-right mp_zero"></span>
 										</button>
 									<?php } ?>
@@ -139,8 +139,8 @@
 					<div class="mp_load_more_text_area">
 						<span data-read-close><?php echo esc_html( substr( $text, 0, $length ) ); ?> ....</span>
 						<span data-read-open class="dNone"><?php echo esc_html( $text ); ?></span>
-						<div data-read data-open-text="<?php esc_attr_e( 'Load More', 'bookingplus' ); ?>" data-close-text="<?php esc_attr_e( 'Less More', 'bookingplus' ); ?>">
-							<span data-text><?php esc_html_e( 'Load More', 'bookingplus' ); ?></span>
+						<div data-read data-open-text="<?php esc_attr_e( 'Load More', 'servicebookingmanager' ); ?>" data-close-text="<?php esc_attr_e( 'Less More', 'servicebookingmanager' ); ?>">
+							<span data-text><?php esc_html_e( 'Load More', 'servicebookingmanager' ); ?></span>
 						</div>
 					</div>
 					<?php
@@ -178,9 +178,9 @@
 				?>
 				<label class="min_400 post_id_select">
 					<select name="mpwpb_id" class="formControl mp_select2" id="mpwpb_id" required>
-						<option value="0"><?php echo esc_html__( 'Select', 'bookingplus' ) . ' ' . esc_html( $label ); ?></option>
+						<option value="0"><?php echo esc_html__( 'Select', 'servicebookingmanager' ) . ' ' . esc_html( $label ); ?></option>
 						<?php
-							$loop  = MPWPB_Query::query_post_type( MPWPB_Function::get_cpt_name());
+							$loop  = MPWPB_Query::query_post_type( MPWPB_Function::mp_cpt());
 							$posts = $loop->posts;
 							foreach ( $posts as $post ) {
 								?>

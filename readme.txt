@@ -1,4 +1,4 @@
-=== bookingplus ===
+=== Service Booking Manager ===
 Contributors: [aamahin,magepeopleteam]
 Tags: booking, reservations, calendar, events, management
 Requires at least: 5.3
@@ -11,15 +11,15 @@ Requires PHP: 7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-bookingplus is a powerful plugin for managing bookings and reservations for your any Services, events, classes, or appointments.
+Service Booking Manager is a powerful plugin for managing bookings and reservations for your any Services, events, classes, or appointments.
 
 == Description ==
-bookingplus makes it easy to manage bookings and reservations for any type of services or appointment, whether it's a fitness class, workshop, car wash, repair service or private consultation.
-With bookingplus, you can create booking solution with custom dates, times and allow users to book and pay for their spot using popular payment gateways available in WooCommerce.
-bookingplus also includes a robust calendar system, making it easy to keep track of all your upcoming bookings.
+Service Booking Manager makes it easy to manage bookings and reservations for any type of services or appointment, whether it's a fitness class, workshop, car wash, repair service or private consultation.
+With Service Booking Manager, you can create booking solution with custom dates, times and allow users to book and pay for their spot using popular payment gateways available in WooCommerce.
+Service Booking Manager also includes a robust calendar system, making it easy to keep track of all your upcoming bookings.
 
 
-Services that can be scheduled and booked online using bookingplus include:
+Services that can be scheduled and booked online using Service Booking Manager include:
 * **Repair Service** ( Car repair & maintanance, Television, Mobile Laptop Service Booking),
 * **Cleaning and Wash Service** ( any kinds of cleaning service like car wash, House cleaning etc),
 * **Salons & Beauty** (hair salons, nail salons and  barbershops),
@@ -30,10 +30,10 @@ Services that can be scheduled and booked online using bookingplus include:
 * **Professional Services** (coaches, consultants , lawyers , photographers , consulting psychologists , cleaning services) and many more.
 
 
-### Who can benefit from using bookingplus
-Local businesses and individual providers who offer services to customers can benefit from using bookingplus for WordPress since the booking form can be customized and personalized.
+### Who can benefit from using Service Booking Manager
+Local businesses and individual providers who offer services to customers can benefit from using Service Booking Manager for WordPress since the booking form can be customized and personalized.
 Many business sectors such as Cleaning & Wash Service, Repair Service, Paint Service, Healthcare, Beauty, Education, Medicine, Consulting have successfully implemented this solution and individuals have also taken advantage of it.
-Additionally, web studios and developers looking to improve the appointment process for their customers will find bookingplus an excellent solution.
+Additionally, web studios and developers looking to improve the appointment process for their customers will find Service Booking Manager an excellent solution.
 
 
 
@@ -48,20 +48,20 @@ Additionally, web studios and developers looking to improve the appointment proc
 ➡ Booking Extra Service with Price & Quantity Management.
 ➡ Works with Any Standards Compliant WordPress Theme.
 ➡ WooCommerce Support, You can Sell product and Booking service Separately. There is no mixing with Event with the WooCommerce Products.
-➡ [View Live Demo For bookingplus](https://bookingplus.mage-people.com/)
+➡ [View Live Demo For Service Booking Manager](https://bookingplus.mage-people.com/)
 
 
 == Installation ==
 
-Upload the bookingplus folder to the /wp-content/plugins/ directory
+Upload the Service Booking Manager folder to the /wp-content/plugins/ directory
 Activate the plugin through the 'Plugins' menu in WordPress
-Navigate to the bookingplus settings page to configure your options
+Navigate to the Service Booking Manager settings page to configure your options
 
 == Frequently Asked Questions ==
 
 
-= Q.Is bookingplus Basic Plugin Free? =
-A. Yes! bookingplus Basic is free to use and we are working for Pro version and it will have more feature.
+= Q.Is Service Booking Manager Basic Plugin Free? =
+A. Yes! Service Booking Manager Basic is free to use and we are working for Pro version and it will have more feature.
 You can check the demo of this plugin from here:
 [View Live Demo ](https://bookingplus.mage-people.com/)
 
@@ -72,13 +72,13 @@ A. You need to Re-save permalink settings it will solve the 404. if still not wo
 A. Here is shortcode  [bookingplus post_id='id'] you can to display booking section any page.
 
 
-= Q.Does bookingplus integrate with popular payment gateways? =
-A. Yes, bookingplus includes integrations all payment method with woocommerce.
+= Q.Does Service Booking Manager integrate with popular payment gateways? =
+A. Yes, Service Booking Manager includes integrations all payment method with woocommerce.
 
-= Can I create custom events with bookingplus? =
+= Can I create custom events with Service Booking Manager? =
 A. Yes, you can create events with custom dates, times and set prices and availability for each booking
 
-= Q.How does the calendar system work in bookingplus? =
+= Q.How does the calendar system work in Service Booking Manager? =
 A. The calendar system allows you to view all your upcoming events and bookings in a visual calendar format. You can view your calendar by day, week, or month, and easily manage your bookings functionality.
 
 == Changelog ==
@@ -87,4 +87,4 @@ A. The calendar system allows you to view all your upcoming events and bookings 
 Initial release
 == Upgrade Notice ==
 = 1.0.0 =
-This is the first version of bookingplus. No upgrade necessary at this time.
+This is the first version of Service Booking Manager. No upgrade necessary at this time.

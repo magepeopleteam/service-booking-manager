@@ -2,6 +2,11 @@
 /******************************************************************** Global settings ************************************************/
 @media only screen and (min-width: 10px) {
 	div.mp_settings_panel {overflow: hidden;position: relative;display: -webkit-flex;display: flex; line-height: 1.4;}
+	div.mp_settings_panel tr.set_book_status fieldset ,
+	div.mp_settings_panel tr.payment_system fieldset {display: -webkit-flex;display: flex; -webkit-flex-wrap: wrap;flex-wrap: wrap;}
+	div.mp_settings_panel tr.set_book_status fieldset label ,
+	div.mp_settings_panel tr.payment_system fieldset label {min-width: 150px;margin: 0 var(--dMP_xs) var(--dMP_xs) 0;}
+	/*******************/
 	.mp_settings_panel_header { background: #161B37;padding: 30px 20px 30px 20px;color: #FFF;font-size: 20px;margin-top: 30px;}
 	.mp_settings_panel_header small {margin-left: 10px;font-size: 13px;}
 	.mp_settings_panel .nav-tab-wrapper {
@@ -49,7 +54,7 @@
 }
 /******************************************************************** Meta tab settings ************************************************/
 @media only screen and (min-width: 10px) {
-	#mp_meta_box_panel .tabLists{border-right: 1px solid var(--color_border);}
+	#mp_meta_box_panel .tabLists {border-right: 1px solid var(--color_border);}
 	/************************************/
 	#mp_meta_box_panel table {table-layout: fixed;border-collapse: collapse;border: 1px solid #F5F5F5;}
 	#mp_meta_box_panel table tr:nth-child(even) {background-color: #0CB32612;}
@@ -72,25 +77,25 @@
 /******************************************************************** Image upload  ************************************************/
 @media only screen and (min-width: 10px) {
 	div.mp_multi_image { display: -webkit-flex; display: flex; -webkit-flex-wrap: wrap; flex-wrap: wrap;}
-	div.mp_multi_image_item { position: relative; width: calc( 25% - var(--dMP_xs)); min-width: 150px;margin: 0 var(--dMP_xs) var(--dMP_xs) 0;}
+	div.mp_multi_image_item { position: relative; width: calc(25% - var(--dMP_xs)); min-width: 150px;margin: 0 var(--dMP_xs) var(--dMP_xs) 0;}
 	span.mp_remove_single_image,
 	div.mpStyle span.mp_remove_multi_image { cursor: pointer; position: absolute; top: 0; right: 0; background-color: var(--color_danger);margin: 0; opacity: 0;}
 	div.mp_single_image_item:hover span.mp_remove_single_image,
 	div.mp_single_image_item:hover span.mp_remove_single_image:hover,
-	div.mp_multi_image_item:hover span.mp_remove_multi_image{opacity: 0.9;}
+	div.mp_multi_image_item:hover span.mp_remove_multi_image {opacity: 0.9;}
 	div.mp_add_single_image {max-width: 150px;width: 100%;}
 	div.mp_single_image_item {position: relative; width: 100%;}
 }
 /******************************************************************** add Icon image ************************************************/
 @media only screen and (min-width: 10px) {
-	div.mp_add_icon_image_area{border: 1px solid var(--color_theme);position: relative;max-width: 120px;}
-	div.mp_add_icon_image_area img{max-height: 100px;}
-	div.mpStyle div.mp_add_icon_image_area  button{padding: 5px;font-size: 12px;}
-	div.mp_add_icon_image_area button span{margin: 0 5px 0 0;}
-	div.mpStyle div.mp_add_icon_image_area img{border-radius: 0;}
-	div.mp_add_icon_image_area div.mp_icon_item{padding: var(--dMP_xs);background-color: var(--color_light);font-size:40px;}
-	div.mp_icon_item:hover  .mp_remove_icon,
-	div.mp_image_item:hover  .mp_remove_icon{opacity: 1;}
+	div.mp_add_icon_image_area {border: 1px solid var(--color_theme);position: relative;max-width: 120px;}
+	div.mp_add_icon_image_area img {max-height: 100px;}
+	div.mpStyle div.mp_add_icon_image_area button {padding: 5px;font-size: 12px;}
+	div.mp_add_icon_image_area button span {margin: 0 5px 0 0;}
+	div.mpStyle div.mp_add_icon_image_area img {border-radius: 0;}
+	div.mp_add_icon_image_area div.mp_icon_item {padding: var(--dMP_xs);background-color: var(--color_light);font-size: 40px;}
+	div.mp_icon_item:hover .mp_remove_icon,
+	div.mp_image_item:hover .mp_remove_icon {opacity: 1;}
 	div.mp_add_icon_popup .popupHeader {
 		color: #FFF;height: 60px;
 		margin: 0 auto;width: 100%;background-color: #222;position: relative;
@@ -145,7 +150,6 @@
 		-o-transition: 350ms ease-in-out;
 		transition: 350ms ease-in-out;
 	}
-
 }
 /********************************************************************  ************************************************/
 @media only screen and (min-width: 10px) {

@@ -14,7 +14,7 @@
 			}
 			public function language_load(): void {
 				$plugin_dir = basename( dirname( __DIR__ ) ) . "/languages/";
-				load_plugin_textdomain( 'bookingplus', false, $plugin_dir );
+				load_plugin_textdomain( 'Service Booking Manager', false, $plugin_dir );
 			}
 			private function load_file(): void {
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Function.php';
@@ -41,15 +41,6 @@
 				wp_enqueue_script( 'mp_plugin_global', MPWPB_PLUGIN_URL . '/assets/helper/mp_style/mp_script.js', array( 'jquery' ), time(), true );
 				do_action( 'add_mpwpb_common_script' );
 			}
-			public function frontend_script() {
-				$this->global_enqueue();
-				// custom
-				wp_enqueue_style( 'mpwpb', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb.css', array(), time() );
-				wp_enqueue_script( 'mpwpb', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb.js', array( 'jquery' ), time(), true );
-				wp_enqueue_style( 'mpwpb_registration', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_registration.css', array(), time());
-				wp_enqueue_script( 'mpwpb_registration', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_registration.js', array( 'jquery' ), time(), true );
-				do_action( 'add_mpwpb_frontend_script' );
-			}
 			public function admin_scripts() {
 				$this->global_enqueue();
 				wp_enqueue_editor();
@@ -67,6 +58,16 @@
 				wp_enqueue_script( 'mpwpb_admin', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_admin.js', array( 'jquery' ), time(), true );
 				do_action( 'add_mpwpb_admin_script' );
 			}
+			public function frontend_script() {
+				$this->global_enqueue();
+				// custom
+				wp_enqueue_style( 'mpwpb', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb.css', array(), time() );
+				wp_enqueue_script( 'mpwpb', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb.js', array( 'jquery' ), time(), true );
+				wp_enqueue_style( 'mpwpb_registration', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_registration.css', array(), time());
+				wp_enqueue_script( 'mpwpb_registration', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_registration.js', array( 'jquery' ), time(), true );
+				do_action( 'add_mpwpb_frontend_script' );
+			}
+
 			public function js_constant() {
 				?>
 				<script type="text/javascript">

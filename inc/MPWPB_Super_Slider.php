@@ -17,7 +17,7 @@
 				$sections = array(
 					array(
 						'id'    => 'super_slider_settings',
-						'title' => __( 'Super Slider Settings', 'bookingplus' )
+						'title' => __( 'Super Slider Settings', 'servicebookingmanager' )
 					)
 				);
 				return array_merge( $default_sec, $sections );
@@ -27,92 +27,92 @@
 					'super_slider_settings' => array(
 						array(
 							'name'    => 'super_slider_type',
-							'label'   => esc_html__( 'Slider Type', 'bookingplus' ),
-							'desc'    => esc_html__( 'Please Select Slider Type Default Slider', 'bookingplus' ),
+							'label'   => esc_html__( 'Slider Type', 'servicebookingmanager' ),
+							'desc'    => esc_html__( 'Please Select Slider Type Default Slider', 'servicebookingmanager' ),
 							'type'    => 'select',
 							'default' => 'slider',
 							'options' => array(
-								'slider'       => esc_html__( 'Slider', 'bookingplus' ),
-								'single_image' => esc_html__( 'Post Thumbnail', 'bookingplus' )
+								'slider'       => esc_html__( 'Slider', 'servicebookingmanager' ),
+								'single_image' => esc_html__( 'Post Thumbnail', 'servicebookingmanager' )
 							)
 						),
 						array(
 							'name'    => 'super_slider_style',
-							'label'   => esc_html__( 'Slider Style', 'bookingplus' ),
-							'desc'    => esc_html__( 'Please Select Slider Style Default Style One', 'bookingplus' ),
+							'label'   => esc_html__( 'Slider Style', 'servicebookingmanager' ),
+							'desc'    => esc_html__( 'Please Select Slider Style Default Style One', 'servicebookingmanager' ),
 							'type'    => 'select',
 							'default' => 'style_1',
 							'options' => array(
-								'style_1' => esc_html__( 'Style One', 'bookingplus' ),
-								'style_2' => esc_html__( 'Style Two', 'bookingplus' ),
+								'style_1' => esc_html__( 'Style One', 'servicebookingmanager' ),
+								'style_2' => esc_html__( 'Style Two', 'servicebookingmanager' ),
 							)
 						),
 						array(
 							'name'    => 'super_slider_indicator_visible',
-							'label'   => esc_html__( 'Slider Indicator Visible?', 'bookingplus' ),
-							'desc'    => esc_html__( 'Please Select Slider Indicator Visible or Not? Default ON', 'bookingplus' ),
+							'label'   => esc_html__( 'Slider Indicator Visible?', 'servicebookingmanager' ),
+							'desc'    => esc_html__( 'Please Select Slider Indicator Visible or Not? Default ON', 'servicebookingmanager' ),
 							'type'    => 'select',
 							'default' => 'on',
 							'options' => array(
-								'on'  => esc_html__( 'ON', 'bookingplus' ),
-								'off' => esc_html__( 'Off', 'bookingplus' )
+								'on'  => esc_html__( 'ON', 'servicebookingmanager' ),
+								'off' => esc_html__( 'Off', 'servicebookingmanager' )
 							)
 						),
 						array(
 							'name'    => 'super_slider_indicator_type',
-							'label'   => esc_html__( 'Slider Indicator Type', 'bookingplus' ),
-							'desc'    => esc_html__( 'Please Select Slider Indicator Type Default Icon', 'bookingplus' ),
+							'label'   => esc_html__( 'Slider Indicator Type', 'servicebookingmanager' ),
+							'desc'    => esc_html__( 'Please Select Slider Indicator Type Default Icon', 'servicebookingmanager' ),
 							'type'    => 'select',
 							'default' => 'icon',
 							'options' => array(
-								'icon'  => esc_html__( 'Icon Indicator', 'bookingplus' ),
-								'image' => esc_html__( 'image Indicator', 'bookingplus' )
+								'icon'  => esc_html__( 'Icon Indicator', 'servicebookingmanager' ),
+								'image' => esc_html__( 'image Indicator', 'servicebookingmanager' )
 							)
 						),
 						array(
 							'name'    => 'super_slider_showcase_visible',
-							'label'   => esc_html__( 'Slider Showcase Visible?', 'bookingplus' ),
-							'desc'    => esc_html__( 'Please Select Slider Showcase Visible or Not? Default ON', 'bookingplus' ),
+							'label'   => esc_html__( 'Slider Showcase Visible?', 'servicebookingmanager' ),
+							'desc'    => esc_html__( 'Please Select Slider Showcase Visible or Not? Default ON', 'servicebookingmanager' ),
 							'type'    => 'select',
 							'default' => 'on',
 							'options' => array(
-								'on'  => esc_html__( 'ON', 'bookingplus' ),
-								'off' => esc_html__( 'Off', 'bookingplus' )
+								'on'  => esc_html__( 'ON', 'servicebookingmanager' ),
+								'off' => esc_html__( 'Off', 'servicebookingmanager' )
 							)
 						),
 						array(
 							'name'    => 'super_slider_showcase_position',
-							'label'   => esc_html__( 'Slider Showcase Position', 'bookingplus' ),
-							'desc'    => esc_html__( 'Please Select Slider Showcase Position Default Right', 'bookingplus' ),
+							'label'   => esc_html__( 'Slider Showcase Position', 'servicebookingmanager' ),
+							'desc'    => esc_html__( 'Please Select Slider Showcase Position Default Right', 'servicebookingmanager' ),
 							'type'    => 'select',
 							'default' => 'right',
 							'options' => array(
-								'top'    => esc_html__( 'At Top Position', 'bookingplus' ),
-								'right'  => esc_html__( 'At Right Position', 'bookingplus' ),
-								'bottom' => esc_html__( 'At Bottom Position', 'bookingplus' ),
-								'left'   => esc_html__( 'At Left Position', 'bookingplus' )
+								'top'    => esc_html__( 'At Top Position', 'servicebookingmanager' ),
+								'right'  => esc_html__( 'At Right Position', 'servicebookingmanager' ),
+								'bottom' => esc_html__( 'At Bottom Position', 'servicebookingmanager' ),
+								'left'   => esc_html__( 'At Left Position', 'servicebookingmanager' )
 							)
 						),
 						array(
 							'name'    => 'super_slider_popup_image_indicator',
-							'label'   => esc_html__( 'Slider Popup Image Indicator', 'bookingplus' ),
-							'desc'    => esc_html__( 'Please Select Slider Popup Indicator Image ON or Off? Default ON', 'bookingplus' ),
+							'label'   => esc_html__( 'Slider Popup Image Indicator', 'servicebookingmanager' ),
+							'desc'    => esc_html__( 'Please Select Slider Popup Indicator Image ON or Off? Default ON', 'servicebookingmanager' ),
 							'type'    => 'select',
 							'default' => 'on',
 							'options' => array(
-								'on'  => esc_html__( 'ON', 'bookingplus' ),
-								'off' => esc_html__( 'Off', 'bookingplus' )
+								'on'  => esc_html__( 'ON', 'servicebookingmanager' ),
+								'off' => esc_html__( 'Off', 'servicebookingmanager' )
 							)
 						),
 						array(
 							'name'    => 'super_slider_popup_icon_indicator',
-							'label'   => esc_html__( 'Slider Popup Icon Indicator', 'bookingplus' ),
-							'desc'    => esc_html__( 'Please Select Slider Popup Indicator Icon ON or Off? Default ON', 'bookingplus' ),
+							'label'   => esc_html__( 'Slider Popup Icon Indicator', 'servicebookingmanager' ),
+							'desc'    => esc_html__( 'Please Select Slider Popup Indicator Icon ON or Off? Default ON', 'servicebookingmanager' ),
 							'type'    => 'select',
 							'default' => 'on',
 							'options' => array(
-								'on'  => esc_html__( 'ON', 'bookingplus' ),
-								'off' => esc_html__( 'Off', 'bookingplus' )
+								'on'  => esc_html__( 'ON', 'servicebookingmanager' ),
+								'off' => esc_html__( 'Off', 'servicebookingmanager' )
 							)
 						)
 					)
@@ -162,7 +162,7 @@
 									?>
 									<div class="abTopLeft">
 										<button type="button" class="_dButton_bgWhite_textDefault" data-target-popup="superSlider" data-slide-index="1">
-											<?php echo esc_html__( 'View All', 'bookingplus' ) .' '. sizeof( $image_ids ) . ' ' . esc_html__( 'Images', 'bookingplus' ); ?>
+											<?php echo esc_html__( 'View All', 'servicebookingmanager' ) .' '. sizeof( $image_ids ) . ' ' . esc_html__( 'Images', 'servicebookingmanager' ); ?>
 										</button>
 									</div>
 									<?php
