@@ -15,7 +15,7 @@
 			public function global_settings_menu() {
 				$label = MPWPB_Function::get_name();
 				$cpt   = MPWPB_Function::mp_cpt();
-				add_submenu_page( 'edit.php?post_type=' . $cpt, $label . esc_html__( ' Settings', 'servicebookingmanager' ), $label . esc_html__( ' Settings', 'servicebookingmanager' ), 'manage_options', 'mpwpb_settings_page', array( $this, 'settings_page' ) );
+				add_submenu_page( 'edit.php?post_type=' . $cpt, $label . esc_html__( ' Settings', 'service-booking-manager' ), $label . esc_html__( ' Settings', 'service-booking-manager' ), 'manage_options', 'mpwpb_settings_page', array( $this, 'settings_page' ) );
 			}
 			public function settings_page() {
 				$plugin_data = get_plugin_data( __FILE__ );
@@ -47,15 +47,15 @@
 				$sections = array(
 					array(
 						'id'    => 'mpwpb_general_settings',
-						'title' => __( 'General Settings', 'servicebookingmanager' )
+						'title' => __( 'General Settings', 'service-booking-manager' )
 					),
 					array(
 						'id'    => 'mpwpb_style_settings',
-						'title' => __( 'Style Settings', 'servicebookingmanager' )
+						'title' => __( 'Style Settings', 'service-booking-manager' )
 					),
 					array(
 						'id'    => 'mpwpb_custom_css',
-						'title' => __( 'Custom CSS', 'servicebookingmanager' )
+						'title' => __( 'Custom CSS', 'service-booking-manager' )
 					)
 				);
 				return array_merge( $default_sec, $sections );
@@ -67,35 +67,35 @@
 					'mpwpb_general_settings' => apply_filters( 'filter_mpwpb_general_settings', array(
 						array(
 							'name'    => 'disable_block_editor',
-							'label'   => esc_html__( 'Disable Block/Gutenberg Editor', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'If you want to disable WordPress\'s new Block/Gutenberg editor, please select Yes.', 'servicebookingmanager' ),
+							'label'   => esc_html__( 'Disable Block/Gutenberg Editor', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'If you want to disable WordPress\'s new Block/Gutenberg editor, please select Yes.', 'service-booking-manager' ),
 							'type'    => 'select',
 							'default' => 'yes',
 							'options' => array(
-								'yes' => esc_html__( 'Yes', 'servicebookingmanager' ),
-								'no'  => esc_html__( 'No', 'servicebookingmanager' )
+								'yes' => esc_html__( 'Yes', 'service-booking-manager' ),
+								'no'  => esc_html__( 'No', 'service-booking-manager' )
 							)
 						),
 						array(
 							'name'    => 'set_book_status',
-							'label'   => esc_html__( 'Seat Booked Status', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'Please Select when and which order status Seat Will be Booked/Reduced.', 'servicebookingmanager' ),
+							'label'   => esc_html__( 'Seat Booked Status', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'Please Select when and which order status Seat Will be Booked/Reduced.', 'service-booking-manager' ),
 							'type'    => 'multicheck',
 							'default' => array(
 								'processing' => 'processing',
 								'completed'  => 'completed'
 							),
 							'options' => array(
-								'on-hold'    => esc_html__( 'On Hold', 'servicebookingmanager' ),
-								'pending'    => esc_html__( 'Pending', 'servicebookingmanager' ),
-								'processing' => esc_html__( 'Processing', 'servicebookingmanager' ),
-								'completed'  => esc_html__( 'Completed', 'servicebookingmanager' ),
+								'on-hold'    => esc_html__( 'On Hold', 'service-booking-manager' ),
+								'pending'    => esc_html__( 'Pending', 'service-booking-manager' ),
+								'processing' => esc_html__( 'Processing', 'service-booking-manager' ),
+								'completed'  => esc_html__( 'Completed', 'service-booking-manager' ),
 							)
 						),
 						array(
 							'name'    => 'date_format',
-							'label'   => esc_html__( 'Date Picker Format', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'If you want to change Date Picker Format, please select format. Default  is D d M , yy.', 'servicebookingmanager' ),
+							'label'   => esc_html__( 'Date Picker Format', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'If you want to change Date Picker Format, please select format. Default  is D d M , yy.', 'service-booking-manager' ),
 							'type'    => 'select',
 							'default' => 'D d M , yy',
 							'options' => array(
@@ -115,8 +115,8 @@
 						),
 						array(
 							'name'    => 'date_format_short',
-							'label'   => esc_html__( 'Short Date  Format', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'If you want to change Short Date  Format, please select format. Default  is M , Y.', 'servicebookingmanager' ),
+							'label'   => esc_html__( 'Short Date  Format', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'If you want to change Short Date  Format, please select format. Default  is M , Y.', 'service-booking-manager' ),
 							'type'    => 'select',
 							'default' => 'M , Y',
 							'options' => array(
@@ -139,211 +139,211 @@
 						),
 						array(
 							'name'    => 'payment_system',
-							'label'   => esc_html__( 'Payment System', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'Please Select Payment System.', 'servicebookingmanager' ),
+							'label'   => esc_html__( 'Payment System', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'Please Select Payment System.', 'service-booking-manager' ),
 							'type'    => 'multicheck',
 							'default' => array(
 								'direct_order' => 'direct_order',
 								'woocommerce'  => 'woocommerce'
 							),
 							'options' => array(
-								'direct_order' => esc_html__( 'Pay on service', 'servicebookingmanager' ),
-								'woocommerce'  => esc_html__( 'woocommerce Payment', 'servicebookingmanager' ),
+								'direct_order' => esc_html__( 'Pay on service', 'service-booking-manager' ),
+								'woocommerce'  => esc_html__( 'woocommerce Payment', 'service-booking-manager' ),
 							)
 						),
 						array(
 							'name'    => 'direct_book_status',
-							'label'   => esc_html__( 'Pay on service Booked Status', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'Please Select when and which order status service Will be Booked/Reduced in Pay on service.', 'servicebookingmanager' ),
+							'label'   => esc_html__( 'Pay on service Booked Status', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'Please Select when and which order status service Will be Booked/Reduced in Pay on service.', 'service-booking-manager' ),
 							'type'    => 'select',
 							'default' => 'completed',
 							'options' => array(
-								'pending' => esc_html__( 'Pending', 'servicebookingmanager' ),
-								'completed'  => esc_html__( 'completed', 'servicebookingmanager' )
+								'pending' => esc_html__( 'Pending', 'service-booking-manager' ),
+								'completed'  => esc_html__( 'completed', 'service-booking-manager' )
 							)
 						),
 
 						array(
 							'name'    => 'label',
-							'label'   => $label . ' ' . esc_html__( 'Label', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'If you like to change the label in the dashboard menu, you can change it here.', 'servicebookingmanager' ),
+							'label'   => $label . ' ' . esc_html__( 'Label', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'If you like to change the label in the dashboard menu, you can change it here.', 'service-booking-manager' ),
 							'type'    => 'text',
-							'default' => 'servicebookingmanager'
+							'default' => 'service-booking-manager'
 						),
 						array(
 							'name'    => 'slug',
-							'label'   => $label . ' ' . esc_html__( 'Slug', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'Please enter the slug name you want. Remember, after changing this slug; you need to flush permalink; go to', 'servicebookingmanager' ) . '<strong>' . esc_html__( 'Settings-> Permalinks', 'servicebookingmanager' ) . '</strong> ' . esc_html__( 'hit the Save Settings button.', 'servicebookingmanager' ),
+							'label'   => $label . ' ' . esc_html__( 'Slug', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'Please enter the slug name you want. Remember, after changing this slug; you need to flush permalink; go to', 'service-booking-manager' ) . '<strong>' . esc_html__( 'Settings-> Permalinks', 'service-booking-manager' ) . '</strong> ' . esc_html__( 'hit the Save Settings button.', 'service-booking-manager' ),
 							'type'    => 'text',
-							'default' => 'servicebookingmanager'
+							'default' => 'service-booking-manager'
 						),
 						array(
 							'name'    => 'icon',
-							'label'   => $label . ' ' . esc_html__( 'Icon', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'If you want to change the  icon in the dashboard menu, you can change it from here, and the Dashboard icon only supports the Dashicons, So please go to ', 'servicebookingmanager' ) . '<a href=https://developer.wordpress.org/resource/dashicons/#calendar-alt target=_blank>' . esc_html__( 'Dashicons Library.', 'servicebookingmanager' ) . '</a>' . esc_html__( 'and copy your icon code and paste it here.', 'servicebookingmanager' ),
+							'label'   => $label . ' ' . esc_html__( 'Icon', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'If you want to change the  icon in the dashboard menu, you can change it from here, and the Dashboard icon only supports the Dashicons, So please go to ', 'service-booking-manager' ) . '<a href=https://developer.wordpress.org/resource/dashicons/#calendar-alt target=_blank>' . esc_html__( 'Dashicons Library.', 'service-booking-manager' ) . '</a>' . esc_html__( 'and copy your icon code and paste it here.', 'service-booking-manager' ),
 							'type'    => 'text',
 							'default' => 'dashicons-list-view'
 						),
 						array(
 							'name'    => 'category_label',
-							'label'   => $label . ' ' . esc_html__( 'Category Label', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'If you want to change the  category label in the dashboard menu, you can change it here.', 'servicebookingmanager' ),
+							'label'   => $label . ' ' . esc_html__( 'Category Label', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'If you want to change the  category label in the dashboard menu, you can change it here.', 'service-booking-manager' ),
 							'type'    => 'text',
-							'default' => esc_html__( 'Category', 'servicebookingmanager' )
+							'default' => esc_html__( 'Category', 'service-booking-manager' )
 						),
 						array(
 							'name'    => 'category_slug',
-							'label'   => $label . ' ' . esc_html__( 'Category Slug', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'Please enter the slug name you want for  category. Remember after change this slug you need to flush permalink, Just go to  ', 'servicebookingmanager' ) . '<strong>' . esc_html__( 'Settings-> Permalinks', 'servicebookingmanager' ) . '</strong> ' . esc_html__( 'hit the Save Settings button.', 'servicebookingmanager' ),
+							'label'   => $label . ' ' . esc_html__( 'Category Slug', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'Please enter the slug name you want for  category. Remember after change this slug you need to flush permalink, Just go to  ', 'service-booking-manager' ) . '<strong>' . esc_html__( 'Settings-> Permalinks', 'service-booking-manager' ) . '</strong> ' . esc_html__( 'hit the Save Settings button.', 'service-booking-manager' ),
 							'type'    => 'text',
 							'default' => 'service-category'
 						),
 						array(
 							'name'    => 'organizer_label',
-							'label'   => $label . ' ' . esc_html__( 'Organizer Label', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'If you want to change the   category label in the dashboard menu you can change here', 'servicebookingmanager' ),
+							'label'   => $label . ' ' . esc_html__( 'Organizer Label', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'If you want to change the   category label in the dashboard menu you can change here', 'service-booking-manager' ),
 							'type'    => 'text',
 							'default' => 'Organizer'
 						),
 						array(
 							'name'    => 'organizer_slug',
-							'label'   => $label . ' ' . esc_html__( 'Organizer Slug', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'Please enter the slug name you want for the   organizer. Remember, after changing this slug, you need to flush the permalinks. Just go to ', 'servicebookingmanager' ) . '<strong>' . esc_html__( 'Settings-> Permalinks', 'servicebookingmanager' ) . '</strong> ' . esc_html__( 'hit the Save Settings button.', 'servicebookingmanager' ),
+							'label'   => $label . ' ' . esc_html__( 'Organizer Slug', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'Please enter the slug name you want for the   organizer. Remember, after changing this slug, you need to flush the permalinks. Just go to ', 'service-booking-manager' ) . '<strong>' . esc_html__( 'Settings-> Permalinks', 'service-booking-manager' ) . '</strong> ' . esc_html__( 'hit the Save Settings button.', 'service-booking-manager' ),
 							'type'    => 'text',
 							'default' => 'service-organizer'
 						),
 						array(
 							'name'    => 'category_text',
-							'label'   => $label . ' ' . esc_html__( 'Product Category Text', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'If you want to change the  Product Category Text, you can change it here.', 'servicebookingmanager' ),
+							'label'   => $label . ' ' . esc_html__( 'Product Category Text', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'If you want to change the  Product Category Text, you can change it here.', 'service-booking-manager' ),
 							'type'    => 'text',
-							'default' => esc_html__( 'Category', 'servicebookingmanager' )
+							'default' => esc_html__( 'Category', 'service-booking-manager' )
 						),
 						array(
 							'name'    => 'sub_category_text',
-							'label'   => $label . ' ' . esc_html__( 'Product Sub-Category Text', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'If you want to change the  Product Sub-Category Text, you can change it here.', 'servicebookingmanager' ),
+							'label'   => $label . ' ' . esc_html__( 'Product Sub-Category Text', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'If you want to change the  Product Sub-Category Text, you can change it here.', 'service-booking-manager' ),
 							'type'    => 'text',
-							'default' => esc_html__( 'Sub-Category', 'servicebookingmanager' )
+							'default' => esc_html__( 'Sub-Category', 'service-booking-manager' )
 						),
 						array(
 							'name'    => 'service_text',
-							'label'   => $label . ' ' . esc_html__( 'Product ServiceText', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'If you want to change the  Product Service Text, you can change it here.', 'servicebookingmanager' ),
+							'label'   => $label . ' ' . esc_html__( 'Product ServiceText', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'If you want to change the  Product Service Text, you can change it here.', 'service-booking-manager' ),
 							'type'    => 'text',
-							'default' => esc_html__( 'Service', 'servicebookingmanager' )
+							'default' => esc_html__( 'Service', 'service-booking-manager' )
 						),
 					) ),
 					'mpwpb_style_settings'   => apply_filters( 'filter_mpwpb_style_settings', array(
 						array(
 							'name'    => 'theme_color',
-							'label'   => esc_html__( 'Theme Color', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'Select Default Theme Color', 'servicebookingmanager' ),
+							'label'   => esc_html__( 'Theme Color', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'Select Default Theme Color', 'service-booking-manager' ),
 							'type'    => 'color',
 							'default' => '#0793C9'
 						),
 						array(
 							'name'    => 'theme_alternate_color',
-							'label'   => esc_html__( 'Theme Alternate Color', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'Select Default Theme Alternate  Color that means, if background theme color then it will be text color.', 'servicebookingmanager' ),
+							'label'   => esc_html__( 'Theme Alternate Color', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'Select Default Theme Alternate  Color that means, if background theme color then it will be text color.', 'service-booking-manager' ),
 							'type'    => 'color',
 							'default' => '#fff'
 						),
 						array(
 							'name'    => 'default_text_color',
-							'label'   => esc_html__( 'Default Text Color', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'Select Default Text  Color.', 'servicebookingmanager' ),
+							'label'   => esc_html__( 'Default Text Color', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'Select Default Text  Color.', 'service-booking-manager' ),
 							'type'    => 'color',
 							'default' => '#000'
 						),
 						array(
 							'name'    => 'default_font_size',
-							'label'   => esc_html__( 'Default Font Size', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'Type Default Font Size(in PX Unit).', 'servicebookingmanager' ),
+							'label'   => esc_html__( 'Default Font Size', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'Type Default Font Size(in PX Unit).', 'service-booking-manager' ),
 							'type'    => 'number',
 							'default' => '15'
 						),
 						array(
 							'name'    => 'font_size_h1',
-							'label'   => esc_html__( 'Font Size h1 Title', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'Type Font Size Main Title(in PX Unit).', 'servicebookingmanager' ),
+							'label'   => esc_html__( 'Font Size h1 Title', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'Type Font Size Main Title(in PX Unit).', 'service-booking-manager' ),
 							'type'    => 'number',
 							'default' => '35'
 						),
 						array(
 							'name'    => 'font_size_h2',
-							'label'   => esc_html__( 'Font Size h2 Title', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'Type Font Size h2 Title(in PX Unit).', 'servicebookingmanager' ),
+							'label'   => esc_html__( 'Font Size h2 Title', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'Type Font Size h2 Title(in PX Unit).', 'service-booking-manager' ),
 							'type'    => 'number',
 							'default' => '25'
 						),
 						array(
 							'name'    => 'font_size_h3',
-							'label'   => esc_html__( 'Font Size h3 Title', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'Type Font Size h3 Title(in PX Unit).', 'servicebookingmanager' ),
+							'label'   => esc_html__( 'Font Size h3 Title', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'Type Font Size h3 Title(in PX Unit).', 'service-booking-manager' ),
 							'type'    => 'number',
 							'default' => '22'
 						),
 						array(
 							'name'    => 'font_size_h4',
-							'label'   => esc_html__( 'Font Size h4 Title', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'Type Font Size h4 Title(in PX Unit).', 'servicebookingmanager' ),
+							'label'   => esc_html__( 'Font Size h4 Title', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'Type Font Size h4 Title(in PX Unit).', 'service-booking-manager' ),
 							'type'    => 'number',
 							'default' => '20'
 						),
 						array(
 							'name'    => 'font_size_h5',
-							'label'   => esc_html__( 'Font Size h5 Title', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'Type Font Size h5 Title(in PX Unit).', 'servicebookingmanager' ),
+							'label'   => esc_html__( 'Font Size h5 Title', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'Type Font Size h5 Title(in PX Unit).', 'service-booking-manager' ),
 							'type'    => 'number',
 							'default' => '18'
 						),
 						array(
 							'name'    => 'font_size_h6',
-							'label'   => esc_html__( 'Font Size h6 Title', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'Type Font Size h6 Title(in PX Unit).', 'servicebookingmanager' ),
+							'label'   => esc_html__( 'Font Size h6 Title', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'Type Font Size h6 Title(in PX Unit).', 'service-booking-manager' ),
 							'type'    => 'number',
 							'default' => '16'
 						),
 						array(
 							'name'    => 'button_font_size',
-							'label'   => esc_html__( 'Button Font Size ', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'Type Font Size Button(in PX Unit).', 'servicebookingmanager' ),
+							'label'   => esc_html__( 'Button Font Size ', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'Type Font Size Button(in PX Unit).', 'service-booking-manager' ),
 							'type'    => 'number',
 							'default' => '18'
 						),
 						array(
 							'name'    => 'button_color',
-							'label'   => esc_html__( 'Button Text Color', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'Select Button Text  Color.', 'servicebookingmanager' ),
+							'label'   => esc_html__( 'Button Text Color', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'Select Button Text  Color.', 'service-booking-manager' ),
 							'type'    => 'color',
 							'default' => '#FFF'
 						),
 						array(
 							'name'    => 'button_bg',
-							'label'   => esc_html__( 'Button Background Color', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'Select Button Background  Color.', 'servicebookingmanager' ),
+							'label'   => esc_html__( 'Button Background Color', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'Select Button Background  Color.', 'service-booking-manager' ),
 							'type'    => 'color',
 							'default' => '#222'
 						),
 						array(
 							'name'    => 'font_size_label',
-							'label'   => esc_html__( 'Label Font Size ', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'Type Font Size Label(in PX Unit).', 'servicebookingmanager' ),
+							'label'   => esc_html__( 'Label Font Size ', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'Type Font Size Label(in PX Unit).', 'service-booking-manager' ),
 							'type'    => 'number',
 							'default' => '18'
 						),
 						array(
 							'name'    => 'warning_color',
-							'label'   => esc_html__( 'Warning Color', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'Select Warning  Color.', 'servicebookingmanager' ),
+							'label'   => esc_html__( 'Warning Color', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'Select Warning  Color.', 'service-booking-manager' ),
 							'type'    => 'color',
 							'default' => '#E67C30'
 						),
 						array(
 							'name'    => 'section_bg',
-							'label'   => esc_html__( 'Section Background color', 'servicebookingmanager' ),
-							'desc'    => esc_html__( 'Select Background  Color.', 'servicebookingmanager' ),
+							'label'   => esc_html__( 'Section Background color', 'service-booking-manager' ),
+							'desc'    => esc_html__( 'Select Background  Color.', 'service-booking-manager' ),
 							'type'    => 'color',
 							'default' => '#FAFCFE'
 						),
@@ -351,8 +351,8 @@
 					'mpwpb_custom_css'       => apply_filters( 'filter_mpwpb_custom_css', array(
 						array(
 							'name'  => 'custom_css',
-							'label' => esc_html__( 'Custom CSS', 'servicebookingmanager' ),
-							'desc'  => esc_html__( 'Write Your Custom CSS Code Here', 'servicebookingmanager' ),
+							'label' => esc_html__( 'Custom CSS', 'service-booking-manager' ),
+							'desc'  => esc_html__( 'Write Your Custom CSS Code Here', 'service-booking-manager' ),
 							'type'  => 'textarea',
 						)
 					) )

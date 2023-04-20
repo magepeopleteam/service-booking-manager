@@ -19,16 +19,16 @@
 						<div class="mp_sticky_area">
 							<div class="_dLayout_dShadow_7_bRL_dFlex_fdColumn">
 								<div class="registration_tab_item mptbm_service_tab mpActive">
-									<img src="<?php echo esc_attr( MPWPB_PLUGIN_URL . '/assets/helper/images/service_icon.png' ); ?>" alt="<?php esc_attr_e( 'Services', 'servicebookingmanager' ); ?>"/>
-									<span><?php esc_html_e( 'Services', 'servicebookingmanager' ); ?></span>
+									<img src="<?php echo esc_attr( MPWPB_PLUGIN_URL . '/assets/helper/images/service_icon.png' ); ?>" alt="<?php esc_attr_e( 'Services', 'service-booking-manager' ); ?>"/>
+									<span><?php esc_html_e( 'Services', 'service-booking-manager' ); ?></span>
 								</div>
 								<div class="registration_tab_item mpwpb_date_time_tab mpDisabled">
-									<img src="<?php echo esc_attr( MPWPB_PLUGIN_URL . '/assets/helper/images/date_time_icon.png' ); ?>" alt="<?php esc_attr_e( 'Date & Time', 'servicebookingmanager' ); ?>"/>
-									<span><?php esc_html_e( 'Date & Time', 'servicebookingmanager' ); ?></span>
+									<img src="<?php echo esc_attr( MPWPB_PLUGIN_URL . '/assets/helper/images/date_time_icon.png' ); ?>" alt="<?php esc_attr_e( 'Date & Time', 'service-booking-manager' ); ?>"/>
+									<span><?php esc_html_e( 'Date & Time', 'service-booking-manager' ); ?></span>
 								</div>
 								<div class="registration_tab_item mptbm_summary_tab mpDisabled">
-									<img src="<?php echo esc_attr( MPWPB_PLUGIN_URL . '/assets/helper/images/summary_icon.png' ); ?>" alt="<?php esc_attr_e( 'Summary', 'servicebookingmanager' ); ?>"/>
-									<span><?php esc_html_e( 'Summary', 'servicebookingmanager' ); ?></span>
+									<img src="<?php echo esc_attr( MPWPB_PLUGIN_URL . '/assets/helper/images/summary_icon.png' ); ?>" alt="<?php esc_attr_e( 'Summary', 'service-booking-manager' ); ?>"/>
+									<span><?php esc_html_e( 'Summary', 'service-booking-manager' ); ?></span>
 								</div>
 							</div>
 							<?php include( MPWPB_Function::template_path( 'registration/summary_left.php' ) ); ?>
@@ -44,9 +44,9 @@
 								<div class="next_date_time_area">
 									<div class="divider"></div>
 									<div class="justifyBetween">
-										<h3 class="alignCenter"><?php esc_html_e( 'Total :', 'servicebookingmanager' ); ?>&nbsp;&nbsp;<i class="mpwpb_total_bill textTheme"><?php echo MPWPB_Function::wc_price( $post_id, 0 ); ?></i></h3>
-										<button class="_mpBtn_mT_xs_bBR mActive mpwpb_service_next" type="button" data-alert="<?php echo esc_html__( 'Please Select', 'servicebookingmanager' ) . ' ' . $service_text; ?>">
-											<?php esc_html_e( 'Next Date & Time', 'servicebookingmanager' ); ?>
+										<h3 class="alignCenter"><?php esc_html_e( 'Total :', 'service-booking-manager' ); ?>&nbsp;&nbsp;<i class="mpwpb_total_bill textTheme"><?php echo MPWPB_Function::wc_price( $post_id, 0 ); ?></i></h3>
+										<button class="_mpBtn_mT_xs_bBR mActive mpwpb_service_next" type="button" data-alert="<?php echo esc_html__( 'Please Select', 'service-booking-manager' ) . ' ' . $service_text; ?>">
+											<?php esc_html_e( 'Next Date & Time', 'service-booking-manager' ); ?>
 											<i class="fas fa-long-arrow-alt-right _mL_xs"></i>
 										</button>
 									</div>

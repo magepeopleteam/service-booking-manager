@@ -6,7 +6,7 @@
 	 * Version: 1.0.0
 	 * Author: MagePeople Team
 	 * Author URI: http://www.mage-people.com/
-	 * Text Domain: servicebookingmanager
+	 * Text Domain: service-booking-manager
 	 * Domain Path: /languages/
 	 * WC requires at least: 3.0.9
 	 * WC tested up to: 5.0
@@ -67,7 +67,7 @@
 					$add_page = array(
 						'post_type'    => 'page',
 						'post_name'    => 'mpwpb-order-details',
-						'post_title'   => esc_html__( 'Order Details', 'servicebookingmanager' ),
+						'post_title'   => esc_html__( 'Order Details', 'service-booking-manager' ),
 						'post_content' => '[mpwpb-order-details]',
 						'post_status'  => 'publish',
 					);

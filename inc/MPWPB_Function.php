@@ -438,10 +438,10 @@ if (!class_exists('MPWPB_Function')) {
             return 'mpwpb_item';
         }
         public static function get_name() {
-            return self::get_general_settings('label', esc_html__('servicebookingmanager', 'mptbm_plugin'));
+            return self::get_general_settings('label', esc_html__('service-booking-manager', 'mptbm_plugin'));
         }
         public static function get_slug() {
-            return self::get_general_settings('slug', 'servicebookingmanager');
+            return self::get_general_settings('slug', 'service-booking-manager');
         }
         public static function get_icon() {
             return self::get_general_settings('icon', 'dashicons-list-view');
@@ -462,15 +462,15 @@ if (!class_exists('MPWPB_Function')) {
         //*******************************//
         public static function get_category_text($post_id) {
             $text = self::get_post_info($post_id, 'mpwpb_category_text');
-            return $text ?: self::get_general_settings('category_text', esc_html__('Category', 'servicebookingmanager'));
+            return $text ?: self::get_general_settings('category_text', esc_html__('Category', 'service-booking-manager'));
         }
         public static function get_sub_category_text($post_id) {
             $text = self::get_post_info($post_id, 'mpwpb_sub_category_text');
-            return $text ?: self::get_general_settings('sub_category_text', esc_html__('Sub-Category', 'servicebookingmanager'));
+            return $text ?: self::get_general_settings('sub_category_text', esc_html__('Sub-Category', 'service-booking-manager'));
         }
         public static function get_service_text($post_id) {
             $text = self::get_post_info($post_id, 'mpwpb_service_text');
-            return $text ?: self::get_general_settings('service_text', esc_html__('Service', 'servicebookingmanager'));
+            return $text ?: self::get_general_settings('service_text', esc_html__('Service', 'service-booking-manager'));
         }
         //*******************************//
         public static function get_category($post_id, $all_services = array()) {

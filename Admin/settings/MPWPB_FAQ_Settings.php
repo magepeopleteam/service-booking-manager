@@ -18,7 +18,7 @@
 				?>
 				<div class="tabsItem" data-tabs="#mpwpb_settings_gallery">
 					<h5 class="dFlex">
-						<span class="mR"><?php esc_html_e( 'On/Off Slider', 'servicebookingmanager' ); ?></span>
+						<span class="mR"><?php esc_html_e( 'On/Off Slider', 'service-booking-manager' ); ?></span>
 						<?php MPWPB_Layout::switch_button( 'mpwpb_display_slider', $checked ); ?>
 					</h5>
 					<?php MPWPB_Settings::info_text( 'mpwpb_display_slider' ); ?>
@@ -27,7 +27,7 @@
 						<table>
 							<tbody>
 							<tr>
-								<th><?php esc_html_e( 'Gallery Images ', 'servicebookingmanager' ); ?></th>
+								<th><?php esc_html_e( 'Gallery Images ', 'service-booking-manager' ); ?></th>
 								<td colspan="3"><?php do_action( 'mp_add_multi_image', 'mpwpb_slider_images', $image_ids ); ?></td>
 							</tr>
 							<tr>

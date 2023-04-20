@@ -11,7 +11,7 @@
 	<div class="mpwpb_date_time_area">
 		<div class="mpwpb_date_carousel groupRadioCheck">
 			<input type="hidden" name="mpwpb_date">
-			<h3 class="mB_xs"><?php esc_html_e( 'Choose Date & Time', 'servicebookingmanager' ); ?></h3>
+			<h3 class="mB_xs"><?php esc_html_e( 'Choose Date & Time', 'service-booking-manager' ); ?></h3>
 			<?php include( MPWPB_Function::template_path( 'layout/carousel_indicator.php' ) ); ?>
 			<div class="divider"></div>
 			<div class="owl-theme owl-carousel">
@@ -27,7 +27,7 @@
 								<h6 class="textWhite textUppercase"><?php echo date_i18n( 'l', strtotime( $start_date ) ); ?></h6>
 							</div>
 							<?php if ( ! in_array( $start_date, $all_dates ) ) { ?>
-								<button type="button" class="_mpBtn_bBR"><?php esc_html_e( 'Closed', 'servicebookingmanager' ); ?></button>
+								<button type="button" class="_mpBtn_bBR"><?php esc_html_e( 'Closed', 'service-booking-manager' ); ?></button>
 							<?php } else {
 								$all_time_slots = MPWPB_Function::get_time_slot( $post_id, $start_date );
 								if ( sizeof( $all_time_slots ) > 0 ) {
@@ -39,7 +39,7 @@
 												<span data-icon></span><?php echo date_i18n( 'h:i A', strtotime( $slot ) );  ?>
 											</button>
 										<?php } else { ?>
-											<button type="button" class="_mpBtn_bBR"><?php esc_html_e( 'Fully Booked', 'servicebookingmanager' ); ?></button>
+											<button type="button" class="_mpBtn_bBR"><?php esc_html_e( 'Fully Booked', 'service-booking-manager' ); ?></button>
 											<?php
 										}
 									}
@@ -55,11 +55,11 @@
 			<div class="justifyBetween">
 				<button class="_mpBtn_mT_xs_bBR mpActive mpwpb_date_time_prev" type="button">
 					<i class="fas fa-long-arrow-alt-left _mR_xs"></i>
-					<?php echo esc_html__( 'Previous', 'servicebookingmanager' ) . ' ' . $service_text; ?>
+					<?php echo esc_html__( 'Previous', 'service-booking-manager' ) . ' ' . $service_text; ?>
 				</button>
-				<h3 class="alignCenter"><?php esc_html_e( 'Total :', 'servicebookingmanager' ); ?>&nbsp;&nbsp;<i class="mpwpb_total_bill textTheme"><?php echo MPWPB_Function::wc_price( $post_id, 0 ); ?></i></h3>
-				<button class="_mpBtn_mT_xs_bBR mActive mpwpb_date_time_next" type="button" data-alert="<?php esc_html_e( 'Please Select Date & Time', 'servicebookingmanager' ); ?>">
-					<?php esc_html_e( 'Next Summary', 'servicebookingmanager' ); ?>
+				<h3 class="alignCenter"><?php esc_html_e( 'Total :', 'service-booking-manager' ); ?>&nbsp;&nbsp;<i class="mpwpb_total_bill textTheme"><?php echo MPWPB_Function::wc_price( $post_id, 0 ); ?></i></h3>
+				<button class="_mpBtn_mT_xs_bBR mActive mpwpb_date_time_next" type="button" data-alert="<?php esc_html_e( 'Please Select Date & Time', 'service-booking-manager' ); ?>">
+					<?php esc_html_e( 'Next Summary', 'service-booking-manager' ); ?>
 					<i class="fas fa-long-arrow-alt-right _mL_xs"></i>
 				</button>
 			</div>
