@@ -10,7 +10,7 @@
 	if ( sizeof( $all_sub_category ) > 0 ) {
 		?>
 		<div class="mpwpb_sub_category_area">
-			<h3><?php echo esc_html__( 'Select', 'servicebookingmanager' ) . ' ' . $sub_category_text; ?></h3>
+			<h3><?php echo esc_html__( 'Select', 'service-booking-manager' ) . ' ' . $sub_category_text; ?></h3>
 			<div class="divider"></div>
 			<div class="flexWrapJustifyBetween">
 				<?php

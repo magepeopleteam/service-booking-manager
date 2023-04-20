@@ -22,11 +22,11 @@
 			public function quick_setup_menu() {
 				$status = MPWPB_Plugin::check_woocommerce();
 				if ( $status == 1 ) {
-					add_submenu_page( 'edit.php?post_type=mpwpb_item', __( 'Quick Setup', 'servicebookingmanager' ), '<span style="color:#10dd10">' . esc_html__( 'Quick Setup', 'servicebookingmanager' ) . '</span>', 'manage_options', 'mpwpb_quick_setup', array( $this, 'quick_setup' ) );
-					add_submenu_page( 'mpwpb_item', esc_html__( 'Quick Setup', 'servicebookingmanager' ), '<span style="color:#10dd10">' . esc_html__( 'Quick Setup', 'servicebookingmanager' ) . '</span>', 'manage_options', 'mpwpb_quick_setup', array( $this, 'quick_setup' ) );
+					add_submenu_page( 'edit.php?post_type=mpwpb_item', __( 'Quick Setup', 'service-booking-manager' ), '<span style="color:#10dd10">' . esc_html__( 'Quick Setup', 'service-booking-manager' ) . '</span>', 'manage_options', 'mpwpb_quick_setup', array( $this, 'quick_setup' ) );
+					add_submenu_page( 'mpwpb_item', esc_html__( 'Quick Setup', 'service-booking-manager' ), '<span style="color:#10dd10">' . esc_html__( 'Quick Setup', 'service-booking-manager' ) . '</span>', 'manage_options', 'mpwpb_quick_setup', array( $this, 'quick_setup' ) );
 				} else {
-					add_menu_page( esc_html__( 'Service Booking Manager', 'servicebookingmanager' ), esc_html__( 'Service Booking Manager', 'servicebookingmanager' ), 'manage_options', 'mpwpb_item', array( $this, 'quick_setup' ), 'dashicons-admin-site-alt2', 6 );
-					add_submenu_page( 'mpwpb_item', esc_html__( 'Quick Setup', 'servicebookingmanager' ), '<span style="color:#10dd17">' . esc_html__( 'Quick Setup', 'servicebookingmanager' ) . '</span>', 'manage_options', 'mpwpb_quick_setup', array( $this, 'quick_setup' ) );
+					add_menu_page( esc_html__( 'Service Booking Manager', 'service-booking-manager' ), esc_html__( 'Service Booking Manager', 'service-booking-manager' ), 'manage_options', 'mpwpb_item', array( $this, 'quick_setup' ), 'dashicons-admin-site-alt2', 6 );
+					add_submenu_page( 'mpwpb_item', esc_html__( 'Quick Setup', 'service-booking-manager' ), '<span style="color:#10dd17">' . esc_html__( 'Quick Setup', 'service-booking-manager' ) . '</span>', 'manage_options', 'mpwpb_quick_setup', array( $this, 'quick_setup' ) );
 				}
 			}
 			public function quick_setup() {
@@ -83,8 +83,8 @@
 					<?php
 				}
 				if ( isset( $_POST['finish_quick_setup'] ) ) {
-					$label                       = isset( $_POST['mpwpb_label'] ) ? sanitize_text_field( $_POST['mpwpb_label'] ) : 'servicebookingmanager';
-					$slug                        = isset( $_POST['mpwpb_slug'] ) ? sanitize_text_field( $_POST['mpwpb_slug'] ) : 'servicebookingmanager';
+					$label                       = isset( $_POST['mpwpb_label'] ) ? sanitize_text_field( $_POST['mpwpb_label'] ) : 'service-booking-manager';
+					$slug                        = isset( $_POST['mpwpb_slug'] ) ? sanitize_text_field( $_POST['mpwpb_slug'] ) : 'service-booking-manager';
 					$general_settings_data       = get_option( 'mpwpb_general_settings' );
 					$update_general_settings_arr = [
 						'label' => $label,
@@ -102,15 +102,15 @@
 							<div class="tabListsNext _max_700_mAuto">
 								<div data-tabs-target-next="#mpwpb_qs_welcome" class="tabItemNext">
 									<h4 class="circleIcon">1</h4>
-									<h5 class="circleTitle"><?php esc_html_e( 'Welcome', 'servicebookingmanager' ); ?></h5>
+									<h5 class="circleTitle"><?php esc_html_e( 'Welcome', 'service-booking-manager' ); ?></h5>
 								</div>
 								<div data-tabs-target-next="#mpwpb_qs_general" class="tabItemNext">
 									<h4 class="circleIcon">2</h4>
-									<h5 class="circleTitle"><?php esc_html_e( 'General', 'servicebookingmanager' ); ?></h5>
+									<h5 class="circleTitle"><?php esc_html_e( 'General', 'service-booking-manager' ); ?></h5>
 								</div>
 								<div data-tabs-target-next="#mpwpb_qs_done" class="tabItemNext">
 									<h4 class="circleIcon">3</h4>
-									<h5 class="circleTitle"><?php esc_html_e( 'Done', 'servicebookingmanager' ); ?></h5>
+									<h5 class="circleTitle"><?php esc_html_e( 'Done', 'service-booking-manager' ); ?></h5>
 								</div>
 							</div>
 							<div class="tabsContentNext _infoLayout_mT">
@@ -121,9 +121,9 @@
 								?>
 							</div>
 							<div class="justifyBetween">
-								<button type="button" class="mpBtn nextTab_prev"><span>&longleftarrow;<?php esc_html_e( 'Previous', 'servicebookingmanager' ); ?></span></button>
+								<button type="button" class="mpBtn nextTab_prev"><span>&longleftarrow;<?php esc_html_e( 'Previous', 'service-booking-manager' ); ?></span></button>
 								<div></div>
-								<button type="button" class="themeButton nextTab_next"><span><?php esc_html_e( 'Next', 'servicebookingmanager' ); ?>&longrightarrow;</span></button>
+								<button type="button" class="themeButton nextTab_next"><span><?php esc_html_e( 'Next', 'service-booking-manager' ); ?>&longrightarrow;</span></button>
 							</div>
 						</div>
 					</form>
@@ -134,24 +134,24 @@
 				$status = MPWPB_Plugin::check_woocommerce();
 				?>
 				<div data-tabs-next="#mpwpb_qs_welcome">
-					<h2><?php esc_html_e( 'Service Booking Manager For Woocommerce Plugin', 'servicebookingmanager' ); ?></h2>
-					<p class="mTB_xs"><?php esc_html_e( 'Service Booking Manager Plugin for WooCommerce for your site, Please go step by step and choose some options to get started.', 'servicebookingmanager' ); ?></p>
+					<h2><?php esc_html_e( 'Service Booking Manager For Woocommerce Plugin', 'service-booking-manager' ); ?></h2>
+					<p class="mTB_xs"><?php esc_html_e( 'Service Booking Manager Plugin for WooCommerce for your site, Please go step by step and choose some options to get started.', 'service-booking-manager' ); ?></p>
 					<div class="_dLayout_mT_alignCenter justifyBetween">
 						<h5>
 							<?php if ( $status == 1 ) {
-								esc_html_e( 'Woocommerce already installed and activated', 'servicebookingmanager' );
+								esc_html_e( 'Woocommerce already installed and activated', 'service-booking-manager' );
 							} elseif ( $status == 0 ) {
-								esc_html_e( 'Woocommerce need to install and active', 'servicebookingmanager' );
+								esc_html_e( 'Woocommerce need to install and active', 'service-booking-manager' );
 							} else {
-								esc_html_e( 'Woocommerce already install , please activate it', 'servicebookingmanager' );
+								esc_html_e( 'Woocommerce already install , please activate it', 'service-booking-manager' );
 							} ?>
 						</h5>
 						<?php if ( $status == 1 ) { ?>
 							<h5><span class="fas fa-check-circle textSuccess"></span></h5>
 						<?php } elseif ( $status == 0 ) { ?>
-							<button class="warningButton" type="submit" name="install_and_active_woo_btn"><?php esc_html_e( 'Install & Active Now', 'servicebookingmanager' ); ?></button>
+							<button class="warningButton" type="submit" name="install_and_active_woo_btn"><?php esc_html_e( 'Install & Active Now', 'service-booking-manager' ); ?></button>
 						<?php } else { ?>
-							<button class="themeButton" type="submit" name="active_woo_btn"><?php esc_html_e( 'Active Now', 'servicebookingmanager' ); ?></button>
+							<button class="themeButton" type="submit" name="active_woo_btn"><?php esc_html_e( 'Active Now', 'service-booking-manager' ); ?></button>
 						<?php } ?>
 					</div>
 				</div>
@@ -159,29 +159,29 @@
 			}
 			public function setup_general_content() {
 				$label        = self::get_general_settings( 'label', 'Service Booking Manager' );
-				$slug        = self::get_general_settings( 'slug', 'servicebookingmanager' );
+				$slug        = self::get_general_settings( 'slug', 'service-booking-manager' );
 				?>
 				<div data-tabs-next="#mpwpb_qs_general">
 					<div class="section">
-						<h2><?php esc_html_e( 'General settings', 'servicebookingmanager' ); ?></h2>
-						<p class="mTB_xs"><?php esc_html_e( 'Choose some general option.', 'servicebookingmanager' ); ?></p>
+						<h2><?php esc_html_e( 'General settings', 'service-booking-manager' ); ?></h2>
+						<p class="mTB_xs"><?php esc_html_e( 'Choose some general option.', 'service-booking-manager' ); ?></p>
 						<div class="_dLayout_mT">
 							<label class="fullWidth">
-								<span class="min_200"><?php esc_html_e( 'Service Booking Manager Label:', 'servicebookingmanager' ); ?></span>
+								<span class="min_200"><?php esc_html_e( 'Service Booking Manager Label:', 'service-booking-manager' ); ?></span>
 								<input type="text" class="formControl" name="mpwpb_label" value='<?php echo esc_attr( $label ); ?>'/>
 							</label>
 							<i class="info_text">
 								<span class="fas fa-info-circle"></span>
-								<?php esc_html_e( 'It will change the Service Booking Manager post type label on the entire plugin.', 'servicebookingmanager' ); ?>
+								<?php esc_html_e( 'It will change the Service Booking Manager post type label on the entire plugin.', 'service-booking-manager' ); ?>
 							</i>
 							<div class="divider"></div>
 							<label class="fullWidth">
-								<span class="min_200"><?php esc_html_e( 'Service Booking Manager Slug:', 'servicebookingmanager' ); ?></span>
+								<span class="min_200"><?php esc_html_e( 'Service Booking Manager Slug:', 'service-booking-manager' ); ?></span>
 								<input type="text" class="formControl" name="mpwpb_slug" value='<?php echo esc_attr( $slug ); ?>'/>
 							</label>
 							<i class="info_text">
 								<span class="fas fa-info-circle"></span>
-								<?php esc_html_e( 'It will change the Service Booking Manager slug on the entire plugin. Remember after changing this slug you need to flush permalinks. Just go to Settings->Permalinks hit the Save Settings button', 'servicebookingmanager' ); ?>
+								<?php esc_html_e( 'It will change the Service Booking Manager slug on the entire plugin. Remember after changing this slug you need to flush permalinks. Just go to Settings->Permalinks hit the Save Settings button', 'service-booking-manager' ); ?>
 							</i>
 						</div>
 					</div>
@@ -191,10 +191,10 @@
 			public function setup_content_done() {
 				?>
 				<div data-tabs-next="#mpwpb_qs_done">
-					<h2><?php esc_html_e( 'Finalize Setup', 'servicebookingmanager' ); ?></h2>
-					<p class="mTB_xs"><?php esc_html_e( 'You are about to Finish & Save servicebookingmanager For Woocommerce Plugin setup process', 'servicebookingmanager' ); ?></p>
+					<h2><?php esc_html_e( 'Finalize Setup', 'service-booking-manager' ); ?></h2>
+					<p class="mTB_xs"><?php esc_html_e( 'You are about to Finish & Save service-booking-manager For Woocommerce Plugin setup process', 'service-booking-manager' ); ?></p>
 					<div class="mT allCenter">
-						<button type="submit" name="finish_quick_setup" class="themeButton"><?php esc_html_e( 'Finish & Save', 'servicebookingmanager' ); ?></button>
+						<button type="submit" name="finish_quick_setup" class="themeButton"><?php esc_html_e( 'Finish & Save', 'service-booking-manager' ); ?></button>
 					</div>
 				</div>
 				<?php

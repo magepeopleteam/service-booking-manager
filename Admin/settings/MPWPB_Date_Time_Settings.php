@@ -23,18 +23,18 @@
 				$now         = date_i18n( $date_format, strtotime( current_time( 'Y-m-d' ) ) );
 				?>
 				<div class="tabsItem mpwpb_settings_date_time" data-tabs="#mpwpb_settings_date_time">
-					<h5><?php echo get_the_title( $post_id ) . ' ' . esc_html__( 'Date & Time Settings', 'servicebookingmanager' ); ?></h5>
+					<h5><?php echo get_the_title( $post_id ) . ' ' . esc_html__( 'Date & Time Settings', 'service-booking-manager' ); ?></h5>
 					<div class="divider"></div>
 					<div class="mpTabs tabBorder">
 						<ul class="tabLists">
 							<li data-tabs-target="#mpwpb_date_time_general">
-								<span class="fas fa-home"></span><?php esc_html_e( 'General', 'servicebookingmanager' ); ?>
+								<span class="fas fa-home"></span><?php esc_html_e( 'General', 'service-booking-manager' ); ?>
 							</li>
 							<li data-tabs-target="#mpwpb_date_time_schedule">
-								<span class="far fa-clock"></span><?php esc_html_e( 'schedule', 'servicebookingmanager' ); ?>
+								<span class="far fa-clock"></span><?php esc_html_e( 'schedule', 'service-booking-manager' ); ?>
 							</li>
 							<li data-tabs-target="#mpwpb_date_time_off_day">
-								<span class="fas fa-calendar-alt"></span><?php esc_html_e( 'Off Days & Dates', 'servicebookingmanager' ); ?>
+								<span class="fas fa-calendar-alt"></span><?php esc_html_e( 'Off Days & Dates', 'service-booking-manager' ); ?>
 							</li>
 						</ul>
 						<div class="tabsContent tab-content">
@@ -52,32 +52,32 @@
 									$capacity  = MPWPB_Function::get_post_info( $post_id, 'mpwpb_capacity_per_session' ,1);
 								?>
 								<label>
-									<span class="max_200"><?php esc_html_e( 'Service Start Date', 'servicebookingmanager' ); ?><span class="textRequired">&nbsp;*</span></span>
+									<span class="max_200"><?php esc_html_e( 'Service Start Date', 'service-booking-manager' ); ?><span class="textRequired">&nbsp;*</span></span>
 									<input type="hidden" name="mpwpb_service_start_date" value="<?php echo esc_attr( $hidden_start_date ); ?>" required/>
 									<input type="text" readonly required name="" class="formControl date_type" value="<?php echo esc_attr( $visible_start_date ); ?>" placeholder="<?php echo esc_attr( $now ); ?>"/>
 								</label>
 								<div class="divider"></div>
 								<label>
-									<span class="max_200"><?php esc_html_e( 'Service end Date', 'servicebookingmanager' ); ?><span class="textRequired">&nbsp;*</span></span>
+									<span class="max_200"><?php esc_html_e( 'Service end Date', 'service-booking-manager' ); ?><span class="textRequired">&nbsp;*</span></span>
 									<input type="hidden" name="mpwpb_service_end_date" value="<?php echo esc_attr( $hidden_end_date ); ?>" required/>
 									<input type="text" readonly required name="" class="formControl date_type" value="<?php echo esc_attr( $visible_end_date ); ?>" placeholder="<?php echo esc_attr( $now ); ?>"/>
 								</label>
 								<div class="divider"></div>
 								<label>
-									<span class="max_200"><?php esc_html_e( 'Time Slot Length', 'servicebookingmanager' ); ?></span>
+									<span class="max_200"><?php esc_html_e( 'Time Slot Length', 'service-booking-manager' ); ?></span>
 									<select class="formControl" name="mpwpb_time_slot_length">
-										<option selected disabled><?php esc_html_e( 'Select time slot Length', 'servicebookingmanager' ); ?></option>
-										<option value="10" <?php echo esc_attr( $time_slot == 10 ? 'selected' : '' ); ?>><?php esc_html_e( '10 min', 'servicebookingmanager' ); ?></option>
-										<option value="15" <?php echo esc_attr( $time_slot == 15 ? 'selected' : '' ); ?>><?php esc_html_e( '15 min', 'servicebookingmanager' ); ?></option>
-										<option value="30" <?php echo esc_attr( $time_slot == 30 ? 'selected' : '' ); ?>><?php esc_html_e( '30 min', 'servicebookingmanager' ); ?></option>
-										<option value="60" <?php echo esc_attr( $time_slot == 60 ? 'selected' : '' ); ?>><?php esc_html_e( '1 Hour', 'servicebookingmanager' ); ?></option>
-										<option value="120" <?php echo esc_attr( $time_slot == 120 ? 'selected' : '' ); ?>><?php esc_html_e( '2 Hour', 'servicebookingmanager' ); ?></option>
-										<option value="180" <?php echo esc_attr( $time_slot == 180 ? 'selected' : '' ); ?>><?php esc_html_e( '3 Hour', 'servicebookingmanager' ); ?></option>
+										<option selected disabled><?php esc_html_e( 'Select time slot Length', 'service-booking-manager' ); ?></option>
+										<option value="10" <?php echo esc_attr( $time_slot == 10 ? 'selected' : '' ); ?>><?php esc_html_e( '10 min', 'service-booking-manager' ); ?></option>
+										<option value="15" <?php echo esc_attr( $time_slot == 15 ? 'selected' : '' ); ?>><?php esc_html_e( '15 min', 'service-booking-manager' ); ?></option>
+										<option value="30" <?php echo esc_attr( $time_slot == 30 ? 'selected' : '' ); ?>><?php esc_html_e( '30 min', 'service-booking-manager' ); ?></option>
+										<option value="60" <?php echo esc_attr( $time_slot == 60 ? 'selected' : '' ); ?>><?php esc_html_e( '1 Hour', 'service-booking-manager' ); ?></option>
+										<option value="120" <?php echo esc_attr( $time_slot == 120 ? 'selected' : '' ); ?>><?php esc_html_e( '2 Hour', 'service-booking-manager' ); ?></option>
+										<option value="180" <?php echo esc_attr( $time_slot == 180 ? 'selected' : '' ); ?>><?php esc_html_e( '3 Hour', 'service-booking-manager' ); ?></option>
 									</select>
 								</label>
 								<div class="divider"></div>
 								<label>
-									<span class="max_200"><?php esc_html_e( 'Capacity per Session', 'servicebookingmanager' ); ?></span>
+									<span class="max_200"><?php esc_html_e( 'Capacity per Session', 'service-booking-manager' ); ?></span>
 									<input class="formControl" name="mpwpb_capacity_per_session" type="number" value="<?php echo esc_attr( $capacity ); ?>" placeholder="Ex. 25"/>
 								</label>
 							</div>
@@ -85,11 +85,11 @@
 								<table>
 									<thead>
 									<tr>
-										<th><?php esc_html_e( 'Day', 'servicebookingmanager' ); ?></th>
-										<th><?php esc_html_e( 'Start Time', 'servicebookingmanager' ); ?></th>
-										<th><?php esc_html_e( 'To', 'servicebookingmanager' ); ?></th>
-										<th><?php esc_html_e( 'End Time', 'servicebookingmanager' ); ?></th>
-										<th colspan="3" style="background-color: #e3d3d3;"><?php esc_html_e( 'Break Time', 'servicebookingmanager' ); ?></th>
+										<th><?php esc_html_e( 'Day', 'service-booking-manager' ); ?></th>
+										<th><?php esc_html_e( 'Start Time', 'service-booking-manager' ); ?></th>
+										<th><?php esc_html_e( 'To', 'service-booking-manager' ); ?></th>
+										<th><?php esc_html_e( 'End Time', 'service-booking-manager' ); ?></th>
+										<th colspan="3" style="background-color: #e3d3d3;"><?php esc_html_e( 'Break Time', 'service-booking-manager' ); ?></th>
 									</tr>
 									</thead>
 									<tbody>
@@ -106,7 +106,7 @@
 							<div class="tabsItem" data-tabs="#mpwpb_date_time_off_day">
 								<table>
 									<tr>
-										<th><?php esc_html_e( 'Off Day', 'servicebookingmanager' ); ?></th>
+										<th><?php esc_html_e( 'Off Day', 'service-booking-manager' ); ?></th>
 										<td colspan="2">
 											<?php
 												$off_days      = MPWPB_Function::get_post_info( $post_id, 'mpwpb_off_days' );
@@ -125,7 +125,7 @@
 										</td>
 									</tr>
 									<tr>
-										<th><?php esc_html_e( 'Off Dates', 'servicebookingmanager' ); ?></th>
+										<th><?php esc_html_e( 'Off Dates', 'service-booking-manager' ); ?></th>
 										<td colspan="2">
 											<div class="mp_settings_area">
 												<div class="mp_item_insert">
@@ -146,7 +146,7 @@
 															}
 														} ?>
 												</div>
-												<?php MPWPB_Layout::add_new_button( esc_html__( 'Add New Off date', 'servicebookingmanager' ) ); ?>
+												<?php MPWPB_Layout::add_new_button( esc_html__( 'Add New Off date', 'service-booking-manager' ) ); ?>
 												<div class="mp_hidden_content">
 													<div class="mp_hidden_item">
 														<label>
@@ -189,14 +189,14 @@
 							</select>
 						</label>
 					</td>
-					<td class="textCenter"><strong><?php esc_html_e( 'To', 'servicebookingmanager' ); ?></strong></td>
+					<td class="textCenter"><strong><?php esc_html_e( 'To', 'service-booking-manager' ); ?></strong></td>
 					<td class="mpwpb_end_time">
 						<?php $this->end_time_slot( $post_id, $day, $start_time ); ?>
 					</td>
 					<td style="background-color: #e3d3d3;" class="mpwpb_start_break_time">
 						<?php $this->start_break_time_slot( $post_id, $day, $start_time, $end_time ) ?>
 					</td>
-					<td class="textCenter" style="background-color: #e3d3d3;"><strong><?php esc_html_e( 'To', 'servicebookingmanager' ); ?></strong></td>
+					<td class="textCenter" style="background-color: #e3d3d3;"><strong><?php esc_html_e( 'To', 'service-booking-manager' ); ?></strong></td>
 					<td style="background-color: #e3d3d3;" class="mpwpb_end_break_time">
 						<?php $this->end_break_time_slot( $post_id, $day, $start_time_break, $end_time ) ?>
 					</td>
@@ -224,7 +224,7 @@
 				?>
 				<label>
 					<select class="formControl" name="<?php echo $start_name_break; ?>">
-						<option value="" <?php echo ! $start_time_break ? 'selected' : ''; ?>><?php esc_html_e( 'No Break', 'servicebookingmanager' ); ?></option>
+						<option value="" <?php echo ! $start_time_break ? 'selected' : ''; ?>><?php esc_html_e( 'No Break', 'service-booking-manager' ); ?></option>
 						<?php $this->time_slot( $start_time_break, $start_time, $end_time ); ?>
 					</select>
 				</label>
@@ -237,7 +237,7 @@
 				<label>
 					<select class="formControl" name="<?php echo $end_name_break; ?>">
 						<?php if ( $start_time_break == '' ) { ?>
-							<option value="" selected><?php esc_html_e( 'No Break', 'servicebookingmanager' ); ?></option>
+							<option value="" selected><?php esc_html_e( 'No Break', 'service-booking-manager' ); ?></option>
 						<?php } ?>
 						<?php $this->time_slot( $end_time_break, $start_time_break, $end_time ); ?>
 					</select>
@@ -259,9 +259,9 @@
 			}
 			public function default_text( $day ) {
 				if ( $day == 'default' ) {
-					esc_html_e( 'Please select', 'servicebookingmanager' );
+					esc_html_e( 'Please select', 'service-booking-manager' );
 				} else {
-					esc_html_e( 'Default', 'servicebookingmanager' );
+					esc_html_e( 'Default', 'service-booking-manager' );
 				}
 			}
 			/*************************************/

@@ -11,7 +11,7 @@
 			public function settings_meta() {
 				$label = MPWPB_Function::get_name();
 				$cpt   = MPWPB_Function::mp_cpt();
-				add_meta_box( 'mp_meta_box_panel', '<span class="fas fa-cogs"></span>' . $label . esc_html__( ' Information Settings : ', 'servicebookingmanager' ) . get_the_title( get_the_id() ), array( $this, 'settings' ), $cpt, 'normal', 'high' );
+				add_meta_box( 'mp_meta_box_panel', '<span class="fas fa-cogs"></span>' . $label . esc_html__( ' Information Settings : ', 'service-booking-manager' ) . get_the_title( get_the_id() ), array( $this, 'settings' ), $cpt, 'normal', 'high' );
 			}
 			//******************************//
 			public function settings() {
@@ -22,13 +22,13 @@
 					<div class="mpTabs leftTabs">
 						<ul class="tabLists">
 							<li data-tabs-target="#mpwpb_general_info">
-								<span class="fas fa-tools"></span><?php esc_html_e( 'General Info', 'servicebookingmanager' ); ?>
+								<span class="fas fa-tools"></span><?php esc_html_e( 'General Info', 'service-booking-manager' ); ?>
 							</li>
 							<li data-tabs-target="#mpwpb_price_settings">
-								<span class="fas fa-hand-holding-usd"></span><?php esc_html_e( 'Pricing', 'servicebookingmanager' ); ?>
+								<span class="fas fa-hand-holding-usd"></span><?php esc_html_e( 'Pricing', 'service-booking-manager' ); ?>
 							</li>
 							<li data-tabs-target="#mpwpb_settings_date_time">
-								<span class="far fa-clock"></span><?php esc_html_e( 'Date & Time', 'servicebookingmanager' ); ?>
+								<span class="far fa-clock"></span><?php esc_html_e( 'Date & Time', 'service-booking-manager' ); ?>
 							</li>
 							<?php do_action( 'add_mpwpb_settings_tab_after_date', $post_id ); ?>
 						</ul>
@@ -41,15 +41,15 @@
 			}
 			public static function description_array( $key ) {
 				$des = array(
-					'mpwpb_category_active'         => esc_html__( 'By default Category  is ON but you can keep it off by switching this option', 'servicebookingmanager' ),
-					'mpwpb_sub_category_active'     => esc_html__( 'By default Sub-Category  is ON but you can keep it off by switching this option', 'servicebookingmanager' ),
-					'mpwpb_service_details_active'  => esc_html__( 'By default Service Details  is OFF but you can keep it ON by switching this option', 'servicebookingmanager' ),
-					'mpwpb_service_duration_active' => esc_html__( 'By default Service Duration  is ON but you can keep it OFF by switching this option', 'servicebookingmanager' ),
-					'mpwpb_extra_service_active'    => esc_html__( 'By default extra service  is OFF but you can keep it ON by switching this option', 'servicebookingmanager' ),
+					'mpwpb_category_active'         => esc_html__( 'By default Category  is ON but you can keep it off by switching this option', 'service-booking-manager' ),
+					'mpwpb_sub_category_active'     => esc_html__( 'By default Sub-Category  is ON but you can keep it off by switching this option', 'service-booking-manager' ),
+					'mpwpb_service_details_active'  => esc_html__( 'By default Service Details  is OFF but you can keep it ON by switching this option', 'service-booking-manager' ),
+					'mpwpb_service_duration_active' => esc_html__( 'By default Service Duration  is ON but you can keep it OFF by switching this option', 'service-booking-manager' ),
+					'mpwpb_extra_service_active'    => esc_html__( 'By default extra service  is OFF but you can keep it ON by switching this option', 'service-booking-manager' ),
 					//======Slider==========//
-					'mpwpb_display_slider'          => esc_html__( 'By default slider is ON but you can keep it off by switching this option', 'servicebookingmanager' ),
-					'mpwpb_slider_images'           => esc_html__( 'Please upload images for gallery', 'servicebookingmanager' ),
-					//''          => esc_html__( '', 'servicebookingmanager' ),
+					'mpwpb_display_slider'          => esc_html__( 'By default slider is ON but you can keep it off by switching this option', 'service-booking-manager' ),
+					'mpwpb_slider_images'           => esc_html__( 'Please upload images for gallery', 'service-booking-manager' ),
+					//''          => esc_html__( '', 'service-booking-manager' ),
 				);
 				$des = apply_filters( 'mptbm_filter_description_array', $des );
 				return $des[ $key ];
