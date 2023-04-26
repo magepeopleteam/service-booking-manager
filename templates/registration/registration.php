@@ -4,10 +4,10 @@
 	}
 	$post_id              = $post_id ?? get_the_id();
 	$all_dates            = $all_dates ?? MPWPB_Function::get_all_date( $post_id );
-	$all_services         = $all_services ?? MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_infos', array() );
-	$extra_services       = $extra_services ?? MPWPB_Function::get_post_info( $post_id, 'mpwpb_extra_service', array() );
+	$all_services         = $all_services ?? MP_Global_Function::get_post_info( $post_id, 'mpwpb_category_infos', array() );
+	$extra_services       = $extra_services ?? MP_Global_Function::get_post_info( $post_id, 'mpwpb_extra_service', array() );
 	$service_text         = $service_text ?? MPWPB_Function::get_service_text( $post_id );
-	$mpwpb_payment_system = MPWPB_Function::get_submit_info( 'mpwpb_payment_system' );
+	$mpwpb_payment_system = MP_Global_Function::get_submit_info( 'mpwpb_payment_system' );
 	if ( $mpwpb_payment_system == 'direct_order' ) {
 		do_action('mpwpb_direct_order_place');
 	} else {
@@ -44,7 +44,7 @@
 								<div class="next_date_time_area">
 									<div class="divider"></div>
 									<div class="justifyBetween">
-										<h3 class="alignCenter"><?php esc_html_e( 'Total :', 'service-booking-manager' ); ?>&nbsp;&nbsp;<i class="mpwpb_total_bill textTheme"><?php echo MPWPB_Function::wc_price( $post_id, 0 ); ?></i></h3>
+										<h3 class="alignCenter"><?php esc_html_e( 'Total :', 'service-booking-manager' ); ?>&nbsp;&nbsp;<i class="mpwpb_total_bill textTheme"><?php echo MP_Global_Function::wc_price( $post_id, 0 ); ?></i></h3>
 										<button class="_mpBtn_mT_xs_bBR mActive mpwpb_service_next" type="button" data-alert="<?php echo esc_html__( 'Please Select', 'service-booking-manager' ) . ' ' . $service_text; ?>">
 											<?php esc_html_e( 'Next Date & Time', 'service-booking-manager' ); ?>
 											<i class="fas fa-long-arrow-alt-right _mL_xs"></i>

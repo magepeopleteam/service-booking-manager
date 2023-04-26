@@ -21,8 +21,8 @@
 				$plugin_data = get_plugin_data( __FILE__ );
 				?>
 				<div class="mp_settings_panel_header">
-					<?php echo $plugin_data['Name']; ?>
-					<small><?php echo $plugin_data['Version']; ?></small>
+					<?php echo esc_html($plugin_data['Name']); ?>
+					<small><?php echo esc_html($plugin_data['Version']); ?></small>
 				</div>
 				<div class="mp_settings_panel">
 					<?php $this->settings_api->show_navigation(); ?>

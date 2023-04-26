@@ -27,13 +27,14 @@
 				if ( ! defined( 'MPWPB_PLUGIN_URL' ) ) {
 					define( 'MPWPB_PLUGIN_URL', plugins_url() . '/' . plugin_basename( dirname( __FILE__ ) ) );
 				}
-				if ( self::check_woocommerce() == 1 ) {
+                require_once MPWPB_PLUGIN_DIR . '/inc/MP_Global_Function.php';
+                require_once MPWPB_PLUGIN_DIR . '/inc/MP_Global_Style.php';
+				if ( MP_Global_Function::check_woocommerce() == 1 ) {
 					register_activation_hook( __FILE__, array( $this, 'on_activation_page_create' ) );
 					add_action( 'activated_plugin', array( $this, 'activation_redirect' ), 90, 1 );
 
 					require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Dependencies.php';
 				} else {
-					require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Style.php';
 					require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Quick_Setup.php';
 					add_action( 'admin_notices', [ $this, 'woocommerce_not_active' ] );
 					add_action( 'activated_plugin', array( $this, 'activation_redirect_setup' ), 90, 1 );
@@ -51,19 +52,8 @@
 					exit( wp_redirect( admin_url( 'admin.php?post_type=mpwpb_item&page=mpwpb_quick_setup' ) ) );
 				}
 			}
-			public static function check_woocommerce(): int {
-				include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-				$plugin_dir = ABSPATH . 'wp-content/plugins/woocommerce';
-				if ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
-					return 1;
-				} elseif ( is_dir( $plugin_dir ) ) {
-					return 2;
-				} else {
-					return 0;
-				}
-			}
 			public function on_activation_page_create() {
-				if ( ! $this->get_page_by_slug( 'mpwpb-order-details' ) ) {
+				if ( ! MP_Global_Function::get_page_by_slug( 'mpwpb-order-details' ) ) {
 					$add_page = array(
 						'post_type'    => 'page',
 						'post_name'    => 'mpwpb-order-details',
@@ -73,16 +63,6 @@
 					);
 					wp_insert_post( $add_page );
 				}
-			}
-			public function get_page_by_slug( $slug ) {
-				if ( $pages = get_pages() ) {
-					foreach ( $pages as $page ) {
-						if ( $slug === $page->post_name ) {
-							return $page;
-						}
-					}
-				}
-				return false;
 			}
 			public function woocommerce_not_active() {
 				$wc_install_url = get_admin_url() . 'plugin-install.php?s=woocommerce&tab=search&type=term';

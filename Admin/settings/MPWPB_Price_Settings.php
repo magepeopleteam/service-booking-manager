@@ -23,19 +23,19 @@
 				$sub_category_text = MPWPB_Function::get_sub_category_text( $post_id );
 				$service_text      = MPWPB_Function::get_service_text( $post_id );
 				//**************//
-				$category_infos          = MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_infos', array() );
-				$category_active         = MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_active', 'on' );
+				$category_infos          = MP_Global_Function::get_post_info( $post_id, 'mpwpb_category_infos', array() );
+				$category_active         = MP_Global_Function::get_post_info( $post_id, 'mpwpb_category_active', 'on' );
 				$category_active_class   = $category_active == 'on' ? 'mActive' : '';
 				$category_active_checked = $category_active == 'on' ? 'checked' : '';
 				//**************//
-				$sub_category_active         = MPWPB_Function::get_post_info( $post_id, 'mpwpb_sub_category_active', 'off' );
+				$sub_category_active         = MP_Global_Function::get_post_info( $post_id, 'mpwpb_sub_category_active', 'off' );
 				$sub_category_active_class   = $category_active == 'on' && $sub_category_active == 'on' ? 'mActive' : '';
 				$sub_category_active_checked = $category_active == 'on' && $sub_category_active == 'on' ? 'checked' : '';
 				//**************//
-				$service_details_active          = MPWPB_Function::get_post_info( $post_id, 'mpwpb_service_details_active', 'off' );
+				$service_details_active          = MP_Global_Function::get_post_info( $post_id, 'mpwpb_service_details_active', 'off' );
 				$service_details_active_class    = $service_details_active == 'on' ? 'mActive' : '';
 				$service_details_active_checked  = $service_details_active == 'on' ? 'checked' : '';
-				$service_duration_active         = MPWPB_Function::get_post_info( $post_id, 'mpwpb_service_duration_active', 'on' );
+				$service_duration_active         = MP_Global_Function::get_post_info( $post_id, 'mpwpb_service_duration_active', 'on' );
 				$service_duration_active_class   = $service_duration_active == 'on' ? 'mActive' : '';
 				$service_duration_active_checked = $service_duration_active == 'on' ? 'checked' : '';
 				//echo '<pre>';print_r($category_infos);echo '</pre>';
@@ -311,11 +311,11 @@
 			}
 			/******************************** Extra Service Settings************************************/
 			public function extra_service_settings( $post_id ) {
-				$extra_services                     = MPWPB_Function::get_post_info( $post_id, 'mpwpb_extra_service', array() );
-				$extra_service_active               = MPWPB_Function::get_post_info( $post_id, 'mpwpb_extra_service_active', 'off' );
+				$extra_services                     = MP_Global_Function::get_post_info( $post_id, 'mpwpb_extra_service', array() );
+				$extra_service_active               = MP_Global_Function::get_post_info( $post_id, 'mpwpb_extra_service_active', 'off' );
 				$extra_service_active_class         = $extra_service_active == 'on' ? 'mActive' : '';
 				$extra_service_active_checked       = $extra_service_active == 'on' ? 'checked' : '';
-				$extra_service_group_active         = MPWPB_Function::get_post_info( $post_id, 'mpwpb_group_extra_service_active', 'off' );
+				$extra_service_group_active         = MP_Global_Function::get_post_info( $post_id, 'mpwpb_group_extra_service_active', 'off' );
 				$extra_service_group_active_class   = $extra_service_group_active == 'on' ? 'mActive' : '';
 				$extra_service_group_active_checked = $extra_service_group_active == 'on' ? 'checked' : '';
 				$ex_count                           = 0;
@@ -471,43 +471,43 @@
 			public function save_price_settings( $post_id ) {
 				if ( get_post_type( $post_id ) == MPWPB_Function::mp_cpt() ) {
 					/****************************/
-					$active_category     = MPWPB_Function::get_submit_info( 'mpwpb_category_active' ) ? 'on' : 'off';
-					$active_sub_category = MPWPB_Function::get_submit_info( 'mpwpb_sub_category_active' ) ? 'on' : 'off';
+					$active_category     = MP_Global_Function::get_submit_info( 'mpwpb_category_active' ) ? 'on' : 'off';
+					$active_sub_category = MP_Global_Function::get_submit_info( 'mpwpb_sub_category_active' ) ? 'on' : 'off';
 					$active_sub_category = $active_category == 'on' ? $active_sub_category : 'off';
 					update_post_meta( $post_id, 'mpwpb_category_active', $active_category );
 					update_post_meta( $post_id, 'mpwpb_sub_category_active', $active_sub_category );
-					$active_service_details = MPWPB_Function::get_submit_info( 'mpwpb_service_details_active' ) ? 'on' : 'off';
+					$active_service_details = MP_Global_Function::get_submit_info( 'mpwpb_service_details_active' ) ? 'on' : 'off';
 					update_post_meta( $post_id, 'mpwpb_service_details_active', $active_service_details );
 					/****************************/
-					$category_text = MPWPB_Function::get_submit_info( 'mpwpb_category_text', MPWPB_Function::get_category_text( $post_id ) );
+					$category_text = MP_Global_Function::get_submit_info( 'mpwpb_category_text', MPWPB_Function::get_category_text( $post_id ) );
 					update_post_meta( $post_id, 'mpwpb_category_text', $category_text );
-					$sub_category_text = MPWPB_Function::get_submit_info( 'mpwpb_sub_category_text', MPWPB_Function::get_sub_category_text( $post_id ) );
+					$sub_category_text = MP_Global_Function::get_submit_info( 'mpwpb_sub_category_text', MPWPB_Function::get_sub_category_text( $post_id ) );
 					update_post_meta( $post_id, 'mpwpb_sub_category_text', $sub_category_text );
-					$service_text = MPWPB_Function::get_submit_info( 'mpwpb_service_text', MPWPB_Function::get_service_text( $post_id ) );
+					$service_text = MP_Global_Function::get_submit_info( 'mpwpb_service_text', MPWPB_Function::get_service_text( $post_id ) );
 					update_post_meta( $post_id, 'mpwpb_service_text', $service_text );
 					/****************************/
 					$category_infos      = array();
-					$category_hidden_id  = MPWPB_Function::get_submit_info( 'mpwpb_category_hidden_id', array() );
-					$categories          = MPWPB_Function::get_submit_info( 'mpwpb_category_name', array() );
-					$categories_img_icon = MPWPB_Function::get_submit_info( 'mpwpb_category_img_icon', array() );
+					$category_hidden_id  = MP_Global_Function::get_submit_info( 'mpwpb_category_hidden_id', array() );
+					$categories          = MP_Global_Function::get_submit_info( 'mpwpb_category_name', array() );
+					$categories_img_icon = MP_Global_Function::get_submit_info( 'mpwpb_category_img_icon', array() );
 					$categories_count    = sizeof( $categories );
 					if ( $categories_count > 0 ) {
 						$categories_count = $active_category == 'on' ? $categories_count : 1;
 						for ( $i = 0; $i < $categories_count; $i ++ ) {
 							$sub_category_infos      = [];
-							$sub_category_hidden_id  = MPWPB_Function::get_submit_info( 'mpwpb_sub_category_hidden_id_' . $category_hidden_id[ $i ], array() );
-							$sub_categories          = MPWPB_Function::get_submit_info( 'mpwpb_sub_category_' . $category_hidden_id[ $i ], array() );
-							$sub_categories_img_icon = MPWPB_Function::get_submit_info( 'mpwpb_sub_category_img_icon_' . $category_hidden_id[ $i ], array() );
+							$sub_category_hidden_id  = MP_Global_Function::get_submit_info( 'mpwpb_sub_category_hidden_id_' . $category_hidden_id[ $i ], array() );
+							$sub_categories          = MP_Global_Function::get_submit_info( 'mpwpb_sub_category_' . $category_hidden_id[ $i ], array() );
+							$sub_categories_img_icon = MP_Global_Function::get_submit_info( 'mpwpb_sub_category_img_icon_' . $category_hidden_id[ $i ], array() );
 							$sub_categories_count    = sizeof( $sub_categories );
 							if ( $sub_categories_count > 0 ) {
 								$sub_categories_count = $active_category == 'on' && $active_sub_category == 'on' ? $sub_categories_count : 1;
 								for ( $j = 0; $j < $sub_categories_count; $j ++ ) {
 									$service_infos = [];
-									$service_names = MPWPB_Function::get_submit_info( 'mpwpb_service_name_' . $sub_category_hidden_id[ $j ], array() );
-									$service_price = MPWPB_Function::get_submit_info( 'mpwpb_service_price_' . $sub_category_hidden_id[ $j ], array() );
-									$images        = MPWPB_Function::get_submit_info( 'mpwpb_service_img_' . $sub_category_hidden_id[ $j ], array() );
-									$details       = MPWPB_Function::get_submit_info( 'mpwpb_service_details_' . $sub_category_hidden_id[ $j ], array() );
-									$duration      = MPWPB_Function::get_submit_info( 'mpwpb_service_duration_' . $sub_category_hidden_id[ $j ], array() );
+									$service_names = MP_Global_Function::get_submit_info( 'mpwpb_service_name_' . $sub_category_hidden_id[ $j ], array() );
+									$service_price = MP_Global_Function::get_submit_info( 'mpwpb_service_price_' . $sub_category_hidden_id[ $j ], array() );
+									$images        = MP_Global_Function::get_submit_info( 'mpwpb_service_img_' . $sub_category_hidden_id[ $j ], array() );
+									$details       = MP_Global_Function::get_submit_info( 'mpwpb_service_details_' . $sub_category_hidden_id[ $j ], array() );
+									$duration      = MP_Global_Function::get_submit_info( 'mpwpb_service_duration_' . $sub_category_hidden_id[ $j ], array() );
 									if ( sizeof( $service_names ) > 0 && sizeof( $service_price ) > 0 ) {
 										foreach ( $service_names as $key => $service_name ) {
 											if ( $service_name && $service_price[ $key ] != '' ) {
@@ -570,21 +570,21 @@
 					//echo '<pre>'; print_r( $category_infos ); echo '</pre>'; die();
 					update_post_meta( $post_id, 'mpwpb_category_infos', $category_infos );
 					//**********************//
-					$active_extra_service = MPWPB_Function::get_submit_info( 'mpwpb_extra_service_active' ) ? 'on' : 'off';
+					$active_extra_service = MP_Global_Function::get_submit_info( 'mpwpb_extra_service_active' ) ? 'on' : 'off';
 					update_post_meta( $post_id, 'mpwpb_extra_service_active', $active_extra_service );
-					$active_group_extra_service = MPWPB_Function::get_submit_info( 'mpwpb_group_extra_service_active' ) ? 'on' : 'off';
+					$active_group_extra_service = MP_Global_Function::get_submit_info( 'mpwpb_group_extra_service_active' ) ? 'on' : 'off';
 					update_post_meta( $post_id, 'mpwpb_group_extra_service_active', $active_group_extra_service );
 					$extra_service       = array();
-					$extra_hidden_name   = MPWPB_Function::get_submit_info( 'mpwpb_extra_hidden_name', array() );
-					$group_service       = MPWPB_Function::get_submit_info( 'mpwpb_extra_group_service', array() );
+					$extra_hidden_name   = MP_Global_Function::get_submit_info( 'mpwpb_extra_hidden_name', array() );
+					$group_service       = MP_Global_Function::get_submit_info( 'mpwpb_extra_group_service', array() );
 					$count_group_service = $active_group_extra_service == 'on' ? count( $extra_hidden_name ) : 1;
 					if ( $count_group_service > 0 ) {
 						for ( $i = 0; $i < $count_group_service; $i ++ ) {
-							$ex_service      = MPWPB_Function::get_submit_info( 'mpwpb_extra_service_name_' . $extra_hidden_name[ $i ], array() );
-							$ex_qty          = MPWPB_Function::get_submit_info( 'mpwpb_extra_service_qty_' . $extra_hidden_name[ $i ], array() );
-							$ex_price        = MPWPB_Function::get_submit_info( 'mpwpb_extra_service_price_' . $extra_hidden_name[ $i ], array() );
-							$images          = MPWPB_Function::get_submit_info( 'mpwpb_extra_service_img_' . $extra_hidden_name[ $i ], array() );
-							$details         = MPWPB_Function::get_submit_info( 'mpwpb_extra_service_details_' . $extra_hidden_name[ $i ], array() );
+							$ex_service      = MP_Global_Function::get_submit_info( 'mpwpb_extra_service_name_' . $extra_hidden_name[ $i ], array() );
+							$ex_qty          = MP_Global_Function::get_submit_info( 'mpwpb_extra_service_qty_' . $extra_hidden_name[ $i ], array() );
+							$ex_price        = MP_Global_Function::get_submit_info( 'mpwpb_extra_service_price_' . $extra_hidden_name[ $i ], array() );
+							$images          = MP_Global_Function::get_submit_info( 'mpwpb_extra_service_img_' . $extra_hidden_name[ $i ], array() );
+							$details         = MP_Global_Function::get_submit_info( 'mpwpb_extra_service_details_' . $extra_hidden_name[ $i ], array() );
 							$ex_service_info = array();
 							if ( sizeof( $ex_service ) > 0 && sizeof( $ex_price ) > 0 ) {
 								for ( $j = 0; $j < count( $ex_service ); $j ++ ) {

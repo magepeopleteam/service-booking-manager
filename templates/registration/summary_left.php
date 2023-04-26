@@ -3,11 +3,11 @@
 		exit;
 	}
 	$post_id          = $post_id ?? get_the_id();
-	$all_services     = $all_services ?? MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_infos', array() );
+	$all_services     = $all_services ?? MP_Global_Function::get_post_info( $post_id, 'mpwpb_category_infos', array() );
 	$all_category     = $all_category ?? MPWPB_Function::get_category( $post_id );
 	$all_sub_category = $all_sub_category ?? MPWPB_Function::get_sub_category( $post_id );
 	$all_service_list = $all_service_list ?? MPWPB_Function::get_all_service( $post_id );
-	$extra_services   = $extra_services ?? MPWPB_Function::get_post_info( $post_id, 'mpwpb_extra_service', array() );
+	$extra_services   = $extra_services ?? MP_Global_Function::get_post_info( $post_id, 'mpwpb_extra_service', array() );
 ?>
 	<div class="mpwpb_summary_area_left dShadow ">
 		<div class="fdColumn">
@@ -52,13 +52,13 @@
 												<?php
 													echo esc_html( $ex_service_info['name'] );
 													if($group_service_name){
-														echo '(&nbsp;'.$group_service_name.'&nbsp;)';
+														echo esc_html('(&nbsp;'.$group_service_name.'&nbsp;)');
 													}
 													?>
 											</h6>
 											<p>
 												<span class="textTheme ex_service_qty">x1</span>&nbsp;|&nbsp;
-												<span class="textTheme"><?php echo MPWPB_Function::wc_price( $post_id, $ex_service_price ); ?></span>
+												<span class="textTheme"><?php echo MP_Global_Function::wc_price( $post_id, $ex_service_price ); ?></span>
 											</p>
 										</div>
 									</div>

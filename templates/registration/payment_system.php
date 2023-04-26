@@ -1,6 +1,6 @@
 <?php
 	$post_id        = $post_id ?? get_the_id();
-	$product_id     = $product_id ?? MPWPB_Function::get_post_info( $post_id, 'link_wc_product' );
+	$product_id     = $product_id ?? MP_Global_Function::get_post_info( $post_id, 'link_wc_product' );
 	$payment_system = MPWPB_Function::get_general_settings( 'payment_system', array( 'direct_order', 'woocommerce' ) );
 	$current_payment_system=current( $payment_system );
 	if ( sizeof( $payment_system ) > 1 ) {

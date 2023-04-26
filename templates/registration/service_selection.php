@@ -4,13 +4,13 @@
 	}
 	$post_id           = $post_id ?? get_the_id();
 	$all_category      = $all_category ?? MPWPB_Function::get_category( $post_id );
-	$all_services      = $all_services ?? MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_infos', array() );
+	$all_services      = $all_services ?? MP_Global_Function::get_post_info( $post_id, 'mpwpb_category_infos', array() );
 	$all_sub_category  = $all_sub_category ?? MPWPB_Function::get_sub_category( $post_id );
 	$all_service_list  = $all_service_list ?? MPWPB_Function::get_all_service( $post_id );
 	$category_text     = $category_text ?? MPWPB_Function::get_category_text( $post_id );
 	$sub_category_text = $sub_category_text ?? MPWPB_Function::get_sub_category_text( $post_id );
 	$service_text      = $service_text ?? MPWPB_Function::get_service_text( $post_id );
-	$extra_services    = $extra_services ?? MPWPB_Function::get_post_info( $post_id, 'mpwpb_extra_service', array() );
+	$extra_services    = $extra_services ?? MP_Global_Function::get_post_info( $post_id, 'mpwpb_extra_service', array() );
 	if ( sizeof( $all_service_list ) > 0 ) {
 		//echo '<pre>';print_r($all_services);echo '</pre>';
 		?>
@@ -38,7 +38,7 @@
 								<?php if ( $service_image ) { ?>
 									<div class="service_img_area alignCenter">
 										<div class="bg_image_area">
-											<div data-bg-image="<?php echo esc_attr( MPWPB_Function::get_image_url( '', $service_image, 'medium' ) ); ?>"></div>
+											<div data-bg-image="<?php echo esc_attr( MP_Global_Function::get_image_url( '', $service_image, 'medium' ) ); ?>"></div>
 										</div>
 									</div>
 								<?php } ?>
@@ -60,7 +60,7 @@
 										<?php if ( $service_duration ) { ?>
 											<h5 class="textTheme alignCenter">
 												<span class="fas fa-clock mR_xs"></span>
-												<span><?php echo MPWPB_Function::esc_html( $service_duration ); ?></span>
+												<span><?php echo MP_Global_Function::esc_html( $service_duration ); ?></span>
 											</h5>
 										<?php } ?>
 									</div>
