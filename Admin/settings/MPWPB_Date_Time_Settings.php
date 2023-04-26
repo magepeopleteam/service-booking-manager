@@ -40,16 +40,16 @@
 						<div class="tabsContent tab-content">
 							<div class="tabsItem" data-tabs="#mpwpb_date_time_general">
 								<?php
-									$start_date         = MPWPB_Function::get_post_info( $post_id, 'mpwpb_service_start_date' );
+									$start_date         = MP_Global_Function::get_post_info( $post_id, 'mpwpb_service_start_date' );
 									$hidden_start_date  = $start_date ? date( 'Y-m-d', strtotime( $start_date ) ) : '';
 									$visible_start_date = $start_date ? date_i18n( $date_format, strtotime( $start_date ) ) : '';
 									/**************/
-									$end_date         = MPWPB_Function::get_post_info( $post_id, 'mpwpb_service_end_date' );
+									$end_date         = MP_Global_Function::get_post_info( $post_id, 'mpwpb_service_end_date' );
 									$hidden_end_date  = $end_date ? date( 'Y-m-d', strtotime( $end_date ) ) : '';
 									$visible_end_date = $end_date ? date_i18n( $date_format, strtotime( $end_date ) ) : '';
 									/********************/
-									$time_slot = MPWPB_Function::get_post_info( $post_id, 'mpwpb_time_slot_length' );
-									$capacity  = MPWPB_Function::get_post_info( $post_id, 'mpwpb_capacity_per_session' ,1);
+									$time_slot = MP_Global_Function::get_post_info( $post_id, 'mpwpb_time_slot_length' );
+									$capacity  = MP_Global_Function::get_post_info( $post_id, 'mpwpb_capacity_per_session' ,1);
 								?>
 								<label>
 									<span class="max_200"><?php esc_html_e( 'Service Start Date', 'service-booking-manager' ); ?><span class="textRequired">&nbsp;*</span></span>
@@ -95,7 +95,7 @@
 									<tbody>
 									<?php
 										$this->time_slot_tr( $post_id, 'default' );
-										$days = MPWPB_Function::week_day();
+										$days = MP_Global_Function::week_day();
 										foreach ( $days as $key => $day ) {
 											$this->time_slot_tr( $post_id, $key );
 										}
@@ -109,15 +109,15 @@
 										<th><?php esc_html_e( 'Off Day', 'service-booking-manager' ); ?></th>
 										<td colspan="2">
 											<?php
-												$off_days      = MPWPB_Function::get_post_info( $post_id, 'mpwpb_off_days' );
-												$days          = MPWPB_Function::week_day();
+												$off_days      = MP_Global_Function::get_post_info( $post_id, 'mpwpb_off_days' );
+												$days          = MP_Global_Function::week_day();
 												$off_day_array = explode( ',', $off_days );
 											?>
 											<div class="groupCheckBox">
 												<input type="hidden" name="mpwpb_off_days" value="<?php echo esc_attr( $off_days ); ?>"/>
 												<?php foreach ( $days as $key => $day ) { ?>
 													<label class="customCheckboxLabel">
-														<input type="checkbox" <?php echo in_array( $key, $off_day_array ) ? 'checked' : ''; ?> data-checked="<?php echo esc_attr( $key ); ?>"/>
+														<input type="checkbox" <?php echo esc_attr( in_array( $key, $off_day_array ) ? 'checked' : ''); ?> data-checked="<?php echo esc_attr( $key ); ?>"/>
 														<span class="customCheckbox"><?php echo esc_html( $day ); ?></span>
 													</label>
 												<?php } ?>
@@ -130,7 +130,7 @@
 											<div class="mp_settings_area">
 												<div class="mp_item_insert">
 													<?php
-														$off_day_lists = MPWPB_Function::get_post_info( $post_id, 'mpwpb_off_dates', array() );
+														$off_day_lists = MP_Global_Function::get_post_info( $post_id, 'mpwpb_off_dates', array() );
 														if ( sizeof( $off_day_lists ) ) {
 															foreach ( $off_day_lists as $off_day ) {
 																if ( $off_day ) {
@@ -169,12 +169,12 @@
 			public function time_slot_tr( $post_id, $day ) {
 				$start_name       = 'mpwpb_' . $day . '_start_time';
 				$default_start_time=$day=='default'?10:'';
-				$start_time       = MPWPB_Function::get_post_info( $post_id, $start_name ,$default_start_time);
+				$start_time       = MP_Global_Function::get_post_info( $post_id, $start_name ,$default_start_time);
 				$end_name         = 'mpwpb_' . $day . '_end_time';
 				$default_end_time=$day=='default'?18:'';
-				$end_time         = MPWPB_Function::get_post_info( $post_id, $end_name ,$default_end_time);
+				$end_time         = MP_Global_Function::get_post_info( $post_id, $end_name ,$default_end_time);
 				$start_name_break = 'mpwpb_' . $day . '_start_break_time';
-				$start_time_break = MPWPB_Function::get_post_info( $post_id, $start_name_break );
+				$start_time_break = MP_Global_Function::get_post_info( $post_id, $start_name_break );
 				?>
 				<tr>
 					<th style="text-transform: capitalize;"><?php echo esc_html( $day ); ?></th>
@@ -182,7 +182,7 @@
 						<?php //echo '<pre>'; print_r( $start_time );echo '</pre>'; ?>
 						<label>
 							<select class="formControl" name="<?php echo esc_attr( $start_name ); ?>">
-								<option value="" <?php echo $start_time == '' ? 'selected' : ''; ?>>
+								<option value="" <?php echo esc_attr( $start_time == '' ? 'selected' : ''); ?>>
 									<?php $this->default_text( $day ); ?>
 								</option>
 								<?php $this->time_slot( $start_time ); ?>
@@ -206,10 +206,10 @@
 			public function end_time_slot( $post_id, $day, $start_time ) {
 				$end_name = 'mpwpb_' . $day . '_end_time';
 				$default_end_time=$day=='default'?18:'';
-				$end_time = MPWPB_Function::get_post_info( $post_id, $end_name,$default_end_time );
+				$end_time = MP_Global_Function::get_post_info( $post_id, $end_name,$default_end_time );
 				?>
 				<label>
-					<select class="formControl " name="<?php echo $end_name; ?>">
+					<select class="formControl " name="<?php echo esc_attr( $end_name); ?>">
 						<?php if ( $start_time == '' ) { ?>
 							<option value="" selected><?php $this->default_text( $day ); ?></option>
 						<?php } ?>
@@ -220,11 +220,11 @@
 			}
 			public function start_break_time_slot( $post_id, $day, $start_time, $end_time = '' ) {
 				$start_name_break = 'mpwpb_' . $day . '_start_break_time';
-				$start_time_break = MPWPB_Function::get_post_info( $post_id, $start_name_break );
+				$start_time_break = MP_Global_Function::get_post_info( $post_id, $start_name_break );
 				?>
 				<label>
-					<select class="formControl" name="<?php echo $start_name_break; ?>">
-						<option value="" <?php echo ! $start_time_break ? 'selected' : ''; ?>><?php esc_html_e( 'No Break', 'service-booking-manager' ); ?></option>
+					<select class="formControl" name="<?php echo esc_attr( $start_name_break); ?>">
+						<option value="" <?php echo esc_attr( ! $start_time_break ? 'selected' : ''); ?>><?php esc_html_e( 'No Break', 'service-booking-manager' ); ?></option>
 						<?php $this->time_slot( $start_time_break, $start_time, $end_time ); ?>
 					</select>
 				</label>
@@ -232,10 +232,10 @@
 			}
 			public function end_break_time_slot( $post_id, $day, $start_time_break, $end_time ) {
 				$end_name_break = 'mpwpb_' . $day . '_end_break_time';
-				$end_time_break = MPWPB_Function::get_post_info( $post_id, $end_name_break );
+				$end_time_break = MP_Global_Function::get_post_info( $post_id, $end_name_break );
 				?>
 				<label>
-					<select class="formControl" name="<?php echo $end_name_break; ?>">
+					<select class="formControl" name="<?php echo esc_attr( $end_name_break); ?>">
 						<?php if ( $start_time_break == '' ) { ?>
 							<option value="" selected><?php esc_html_e( 'No Break', 'service-booking-manager' ); ?></option>
 						<?php } ?>
@@ -266,25 +266,25 @@
 			}
 			/*************************************/
 			public function get_mpwpb_end_time_slot() {
-				$post_id    = $_REQUEST['post_id'];
-				$day        = $_REQUEST['day_name'];
-				$start_time = $_REQUEST['start_time'];
+				$post_id    = isset( $_REQUEST['post_id'] )?MP_Global_Function::data_sanitize($_REQUEST['post_id']):'';
+				$day    = isset( $_REQUEST['day_name'] )?MP_Global_Function::data_sanitize($_REQUEST['day_name']):'';
+				$start_time    = isset( $_REQUEST['start_time'] )?MP_Global_Function::data_sanitize($_REQUEST['start_time']):'';
 				$this->end_time_slot( $post_id, $day, $start_time );
 				die();
 			}
 			public function get_mpwpb_start_break_time() {
-				$post_id    = $_REQUEST['post_id'];
-				$day        = $_REQUEST['day_name'];
-				$start_time = $_REQUEST['start_time'];
-				$end_time   = $_REQUEST['end_time'];
+				$post_id    = isset( $_REQUEST['post_id'] )?MP_Global_Function::data_sanitize($_REQUEST['post_id']):'';
+				$day    = isset( $_REQUEST['day_name'] )?MP_Global_Function::data_sanitize($_REQUEST['day_name']):'';
+				$start_time    = isset( $_REQUEST['start_time'] )?MP_Global_Function::data_sanitize($_REQUEST['start_time']):'';
+				$end_time    = isset( $_REQUEST['end_time'] )?MP_Global_Function::data_sanitize($_REQUEST['end_time']):'';
 				$this->start_break_time_slot( $post_id, $day, $start_time, $end_time );
 				die();
 			}
 			public function get_mpwpb_end_break_time() {
-				$post_id    = $_REQUEST['post_id'];
-				$day        = $_REQUEST['day_name'];
-				$start_time = $_REQUEST['start_time'];
-				$end_time   = $_REQUEST['end_time'];
+				$post_id    = isset( $_REQUEST['post_id'] )?MP_Global_Function::data_sanitize($_REQUEST['post_id']):'';
+				$day    = isset( $_REQUEST['day_name'] )?MP_Global_Function::data_sanitize($_REQUEST['day_name']):'';
+				$start_time    = isset( $_REQUEST['start_time'] )?MP_Global_Function::data_sanitize($_REQUEST['start_time']):'';
+				$end_time    = isset( $_REQUEST['end_time'] )?MP_Global_Function::data_sanitize($_REQUEST['end_time']):'';
 				$this->end_break_time_slot( $post_id, $day, $start_time, $end_time );
 				die();
 			}
@@ -292,27 +292,27 @@
 			public function save_date_time_settings( $post_id ) {
 				if ( get_post_type( $post_id ) == MPWPB_Function::mp_cpt() ) {
 					//************************************//
-					$service_start_date = MPWPB_Function::get_submit_info( 'mpwpb_service_start_date' );
+					$service_start_date = MP_Global_Function::get_submit_info( 'mpwpb_service_start_date' );
 					$service_start_date = $service_start_date?date( 'Y-m-d', strtotime( $service_start_date ) ):'';
 					update_post_meta( $post_id, 'mpwpb_service_start_date', $service_start_date );
-					$service_end_date = MPWPB_Function::get_submit_info( 'mpwpb_service_end_date' );
+					$service_end_date = MP_Global_Function::get_submit_info( 'mpwpb_service_end_date' );
 					$service_end_date = $service_end_date?date( 'Y-m-d', strtotime( $service_end_date ) ):'';
 					update_post_meta( $post_id, 'mpwpb_service_end_date', $service_end_date );
-					$time_slot_length = MPWPB_Function::get_submit_info( 'mpwpb_time_slot_length' );
+					$time_slot_length = MP_Global_Function::get_submit_info( 'mpwpb_time_slot_length' );
 					update_post_meta( $post_id, 'mpwpb_time_slot_length', $time_slot_length );
-					$capacity_per_session = MPWPB_Function::get_submit_info( 'mpwpb_capacity_per_session' );
+					$capacity_per_session = MP_Global_Function::get_submit_info( 'mpwpb_capacity_per_session' );
 					update_post_meta( $post_id, 'mpwpb_capacity_per_session', $capacity_per_session );
 					//**********************//
 					$this->save_schedule( $post_id, 'default' );
-					$days = MPWPB_Function::week_day();
+					$days = MP_Global_Function::week_day();
 					foreach ( $days as $key => $day ) {
 						$this->save_schedule( $post_id, $key );
 					}
 					//**********************//
-					$off_days = MPWPB_Function::get_submit_info( 'mpwpb_off_days', array() );
+					$off_days = MP_Global_Function::get_submit_info( 'mpwpb_off_days', array() );
 					update_post_meta( $post_id, 'mpwpb_off_days', $off_days );
 					//**********************//
-					$off_dates = MPWPB_Function::get_submit_info( 'mpwpb_off_dates', array() );
+					$off_dates = MP_Global_Function::get_submit_info( 'mpwpb_off_dates', array() );
 					$_off_dates     = array();
 					if ( sizeof( $off_dates ) > 0 ) {
 						foreach ( $off_dates as $off_date ) {
@@ -326,16 +326,16 @@
 			}
 			public function save_schedule( $post_id, $day ) {
 				$start_name = 'mpwpb_' . $day . '_start_time';
-				$start_time = MPWPB_Function::get_submit_info( $start_name );
+				$start_time = MP_Global_Function::get_submit_info( $start_name );
 				update_post_meta( $post_id, $start_name, $start_time );
 				$end_name = 'mpwpb_' . $day . '_end_time';
-				$end_time = MPWPB_Function::get_submit_info( $end_name );
+				$end_time = MP_Global_Function::get_submit_info( $end_name );
 				update_post_meta( $post_id, $end_name, $end_time );
 				$start_name_break = 'mpwpb_' . $day . '_start_break_time';
-				$start_time_break = MPWPB_Function::get_submit_info( $start_name_break );
+				$start_time_break = MP_Global_Function::get_submit_info( $start_name_break );
 				update_post_meta( $post_id, $start_name_break, $start_time_break );
 				$end_name_break = 'mpwpb_' . $day . '_end_break_time';
-				$end_time_break = MPWPB_Function::get_submit_info( $end_name_break );
+				$end_time_break = MP_Global_Function::get_submit_info( $end_name_break );
 				update_post_meta( $post_id, $end_name_break, $end_time_break );
 			}
 		}

@@ -15,15 +15,15 @@
 				?>
 				<div class="mp_add_icon_area">
 					<button type="button" class="mp_add_icon dButton_xs ">
-						<input type="hidden" name="<?php echo esc_html( $name ); ?>" placeholder="" value="<?php echo esc_html( $value ); ?>"/>
-						<span class="<?php echo esc_html( $value ); ?>" data-empty-text="<?php esc_html_e( 'Add Icon', 'service-booking-manager' ); ?>">
+						<input type="hidden" name="<?php echo esc_attr( $name ); ?>" placeholder="" value="<?php echo esc_attr( $value ); ?>"/>
+						<span class="<?php echo esc_attr( $value ); ?>" data-empty-text="<?php esc_attr_e( 'Add Icon', 'service-booking-manager' ); ?>">
 			                    <?php
 							  if ( ! $value ) {
 								  esc_html_e( 'Add Icon', 'service-booking-manager' );
 							  }
 						  ?>
 			                </span>
-						<span class="fas fa-times remove_input_icon <?php echo esc_html( $value ? 'active' : '' ); ?> " title="<?php esc_html_e( 'Remove Icon', 'service-booking-manager' ); ?>"></span>
+						<span class="fas fa-times remove_input_icon <?php echo esc_attr( $value ? 'active' : '' ); ?> " title="<?php esc_attr_e( 'Remove Icon', 'service-booking-manager' ); ?>"></span>
 					</button>
 				</div>
 				<?php
@@ -54,7 +54,7 @@
 												<?php
 													foreach ( $icons as $key => $icon ) {
 														?>
-														<li data-icon-menu="<?php echo esc_html( $key ); ?>">
+														<li data-icon-menu="<?php echo esc_attr( $key ); ?>">
 															<?php echo esc_html( $icon['title'] ) . '&nbsp;(<strong>' . sizeof( $icon['icon'] ) . '</strong>)'; ?>
 														</li>
 														<?php
@@ -65,13 +65,13 @@
 												<?php
 													foreach ( $icons as $key => $icon ) {
 														?>
-														<div class="popupTabItem" data-icon-list="<?php echo esc_html( $key ); ?>">
+														<div class="popupTabItem" data-icon-list="<?php echo esc_attr( $key ); ?>">
 															<div class="itemIconArea">
 																<?php
 																	foreach ( $icon['icon'] as $icon => $item ) {
 																		?>
-																		<div class="iconItem allCenter" data-icon-class="<?php echo esc_html( $icon ); ?>" data-icon-name="<?php echo esc_html( $item ); ?>" title="<?php echo esc_html( $item ); ?>">
-																			<span class="<?php echo esc_html( $icon ); ?>"></span>
+																		<div class="iconItem allCenter" data-icon-class="<?php echo esc_attr( $icon ); ?>" data-icon-name="<?php echo esc_attr( $item ); ?>" title="<?php echo esc_attr( $item ); ?>">
+																			<span class="<?php echo esc_attr( $icon ); ?>"></span>
 																		</div>
 																		<?php
 																	}
@@ -110,7 +110,7 @@
 				<?php
 			}
 			public function add_multi_image( $name, $images ) {
-				$images = is_array( $images ) ? MPWPB_Function::array_to_string( $images ) : $images;
+				$images = is_array( $images ) ? MP_Global_Function::array_to_string( $images ) : $images;
 				?>
 				<div class="mp_multi_image_area">
 					<input type="hidden" class="mp_multi_image_value" name="<?php echo esc_attr( $name ); ?>" value="<?php esc_attr_e( $images ); ?>"/>
@@ -122,7 +122,7 @@
 									?>
 									<div class="mp_multi_image_item" data-image-id="<?php esc_attr_e( $image ); ?>">
 										<span class="fas fa-times circleIcon_xs mp_remove_multi_image"></span>
-										<img src="<?php echo MPWPB_Function::get_image_url( '', $image, 'medium' ); ?>" alt="<?php esc_attr_e( $image ); ?>"/>
+										<img src="<?php echo MP_Global_Function::get_image_url( '', $image, 'medium' ); ?>" alt="<?php esc_attr_e( $image ); ?>"/>
 									</div>
 									<?php
 								}
@@ -152,7 +152,7 @@
 						<span class="fas fa-times mp_remove_icon mp_icon_remove" title="<?php esc_html_e( 'Remove Icon', 'service-booking-manager' ); ?>"></span>
 					</div>
 					<div class="mp_image_item <?php echo esc_attr( $image_class ); ?>">
-						<img class="" src="<?php echo esc_attr( MPWPB_Function::get_image_url( '', $image, 'medium' ) ); ?>" alt="">
+						<img class="" src="<?php echo esc_attr( MP_Global_Function::get_image_url( '', $image, 'medium' ) ); ?>" alt="">
 						<span class="fas fa-times mp_remove_icon mp_image_remove" title="<?php esc_html_e( 'Remove Image', 'service-booking-manager' ); ?>"></span>
 					</div>
 					<div class="mp_add_icon_image_button_area <?php echo esc_attr( $button_active_class ); ?>">

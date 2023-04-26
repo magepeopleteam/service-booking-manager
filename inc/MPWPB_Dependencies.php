@@ -14,14 +14,12 @@
 			}
 			public function language_load(): void {
 				$plugin_dir = basename( dirname( __DIR__ ) ) . "/languages/";
-				load_plugin_textdomain( 'Service Booking Manager', false, $plugin_dir );
+				load_plugin_textdomain( 'service-booking-manager', false, $plugin_dir );
 			}
 			private function load_file(): void {
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Function.php';
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Query.php';
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Layout.php';
-				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Style.php';
-				//require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Super_Slider.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Admin.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Frontend.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Order_layout.php';
@@ -31,12 +29,12 @@
 				wp_enqueue_script( 'jquery-ui-core' );
 				wp_enqueue_script( 'jquery-ui-datepicker' );
 				wp_localize_script( 'jquery', 'mpwpb_ajax', array( 'mpwpb_ajax' => admin_url( 'admin-ajax.php' ) ) );
-				wp_enqueue_style( 'mp_jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/base/jquery-ui.min.css', array(), '1.12.1' );
+				//wp_enqueue_style( 'mp_jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/base/jquery-ui.min.css', array(), '1.12.1' );
 				wp_enqueue_style( 'mp_font_awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css', array(), '5.15.4' );
-				wp_enqueue_style( 'mp_select_2', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css', array(), '4.0.13' );
-				wp_enqueue_script( 'mp_select_2', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js', array( 'jquery' ),'4.0.13');
-				wp_enqueue_style( 'mp_owl_carousel', 'https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css', array( ),'2.3.4');
-				wp_enqueue_script( 'mp_owl_carousel', 'https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js', array( 'jquery' ),'2.3.4');
+				//wp_enqueue_style( 'mp_select_2', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css', array(), '4.0.13' );
+				//wp_enqueue_script( 'mp_select_2', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js', array( 'jquery' ),'4.0.13');
+				//wp_enqueue_style( 'mp_owl_carousel', 'https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css', array( ),'2.3.4');
+				//wp_enqueue_script( 'mp_owl_carousel', 'https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js', array( 'jquery' ),'2.3.4');
 				wp_enqueue_style( 'mp_plugin_global', MPWPB_PLUGIN_URL . '/assets/helper/mp_style/mp_style.css', array(), time() );
 				wp_enqueue_script( 'mp_plugin_global', MPWPB_PLUGIN_URL . '/assets/helper/mp_style/mp_script.js', array( 'jquery' ), time(), true );
 				do_action( 'add_mpwpb_common_script' );

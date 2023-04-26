@@ -2,8 +2,8 @@
 Contributors: [aamahin,magepeopleteam]
 Tags: booking, reservations, calendar, events, management
 Requires at least: 5.3
-Stable tag: 3.8.8
-Version: 3.8.8
+Stable tag: 1.0.0
+Version: 1.0,0
 Tested up to: 6.1
 WC requires at least: 3.0
 WC tested up to: 6.5

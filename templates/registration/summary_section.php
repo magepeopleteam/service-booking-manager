@@ -3,12 +3,12 @@
 		exit;
 	}
 	$post_id          = $post_id ?? get_the_id();
-	$product_id       = $product_id ?? MPWPB_Function::get_post_info( $post_id, 'link_wc_product' );
-	$all_services     = $all_services ?? MPWPB_Function::get_post_info( $post_id, 'mpwpb_category_infos', array() );
+	$product_id       = $product_id ?? MP_Global_Function::get_post_info( $post_id, 'link_wc_product' );
+	$all_services     = $all_services ?? MP_Global_Function::get_post_info( $post_id, 'mpwpb_category_infos', array() );
 	$all_category     = $all_category ?? MPWPB_Function::get_category( $post_id );
 	$all_sub_category = $all_sub_category ?? MPWPB_Function::get_sub_category( $post_id );
 	$all_service_list = $all_service_list ?? MPWPB_Function::get_all_service( $post_id );
-	$extra_services   = $extra_services ?? MPWPB_Function::get_post_info( $post_id, 'mpwpb_extra_service', array() );
+	$extra_services   = $extra_services ?? MP_Global_Function::get_post_info( $post_id, 'mpwpb_extra_service', array() );
 ?>
 	<div class="mpwpb_summary_area">
 		<h3 class="mB_xs"><?php esc_html_e( 'Order Summary', 'service-booking-manager' ); ?></h3>
@@ -63,7 +63,7 @@
 											<h6><?php echo esc_html( $ex_service_info['name'] ); ?></h6>
 										</div>
 									</div>
-									<h6><span class="ex_service_qty">x1</span>&nbsp;|&nbsp;<?php echo MPWPB_Function::wc_price( $post_id, $ex_service_price ); ?></h6>
+									<h6><span class="ex_service_qty">x1</span>&nbsp;|&nbsp;<?php echo MP_Global_Function::wc_price( $post_id, $ex_service_price ); ?></h6>
 								</div>
 							</div>
 							<?php
@@ -81,7 +81,7 @@
 		<div class="divider"></div>
 		<div class="justifyBetween">
 			<h3><?php esc_html_e( 'Total :', 'service-booking-manager' ); ?>&nbsp;&nbsp;</h3>
-			<h3><i class="mpwpb_total_bill textTheme"><?php echo MPWPB_Function::wc_price( $post_id, 0 ); ?></i></h3>
+			<h3><i class="mpwpb_total_bill textTheme"><?php echo MP_Global_Function::wc_price( $post_id, 0 ); ?></i></h3>
 		</div>
 		<?php do_action( 'add_mpwpb_summary_section', $post_id ); ?>
 		<?php include( MPWPB_Function::template_path( 'registration/payment_system.php' ) ); ?>

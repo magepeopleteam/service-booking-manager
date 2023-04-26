@@ -20,7 +20,7 @@
 				wp_enqueue_style( 'mptbm_font_awesome', '//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css', array(), '5.15.4' );
 			}
 			public function quick_setup_menu() {
-				$status = MPWPB_Plugin::check_woocommerce();
+				$status = MP_Global_Function::check_woocommerce();
 				if ( $status == 1 ) {
 					add_submenu_page( 'edit.php?post_type=mpwpb_item', __( 'Quick Setup', 'service-booking-manager' ), '<span style="color:#10dd10">' . esc_html__( 'Quick Setup', 'service-booking-manager' ) . '</span>', 'manage_options', 'mpwpb_quick_setup', array( $this, 'quick_setup' ) );
 					add_submenu_page( 'mpwpb_item', esc_html__( 'Quick Setup', 'service-booking-manager' ), '<span style="color:#10dd10">' . esc_html__( 'Quick Setup', 'service-booking-manager' ) . '</span>', 'manage_options', 'mpwpb_quick_setup', array( $this, 'quick_setup' ) );
@@ -131,7 +131,7 @@
 				<?php
 			}
 			public function setup_welcome_content() {
-				$status = MPWPB_Plugin::check_woocommerce();
+				$status = MP_Global_Function::check_woocommerce();
 				?>
 				<div data-tabs-next="#mpwpb_qs_welcome">
 					<h2><?php esc_html_e( 'Service Booking Manager For Woocommerce Plugin', 'service-booking-manager' ); ?></h2>
@@ -158,8 +158,8 @@
 				<?php
 			}
 			public function setup_general_content() {
-				$label        = self::get_general_settings( 'label', 'Service Booking Manager' );
-				$slug        = self::get_general_settings( 'slug', 'service-booking-manager' );
+				$label        = MP_Global_Function::get_settings('mpwpb_general_settings', 'label', 'Service Booking Manager');
+				$slug        = MP_Global_Function::get_settings('mpwpb_general_settings', 'slug', 'service-booking-manager');
 				?>
 				<div data-tabs-next="#mpwpb_qs_general">
 					<div class="section">
@@ -198,13 +198,6 @@
 					</div>
 				</div>
 				<?php
-			}
-			public static function get_general_settings( $key, $default = '' ) {
-				$options = get_option( 'mpwpb_general_settings' );
-				if ( isset( $options[ $key ] ) && $options[ $key ] ) {
-					$default = $options[ $key ];
-				}
-				return $default;
 			}
 		}
 		new MPWPB_Quick_Setup();

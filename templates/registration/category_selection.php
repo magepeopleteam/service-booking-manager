@@ -27,7 +27,7 @@
 							<?php if ( $category_image ) { ?>
 								<div class="mT_xs">
 									<div class="bg_image_area">
-										<div data-bg-image="<?php echo esc_attr( MPWPB_Function::get_image_url( '', $category_image, 'medium' ) ); ?>"></div>
+										<div data-bg-image="<?php echo esc_attr( MP_Global_Function::get_image_url( '', $category_image, 'medium' ) ); ?>"></div>
 									</div>
 								</div>
 

@@ -11,10 +11,10 @@
 			}
 			public function faq_settings( $post_id ) {
 
-				$display   = MPWPB_Function::get_post_info( $post_id, 'mpwpb_display_slider', 'off' );
+				$display   = MP_Global_Function::get_post_info( $post_id, 'mpwpb_display_slider', 'off' );
 				$active    = $display == 'off' ? '' : 'mActive';
 				$checked   = $display == 'off' ? '' : 'checked';
-				$image_ids = MPWPB_Function::get_post_info( $post_id, 'mpwpb_slider_images', array() );
+				$image_ids = MP_Global_Function::get_post_info( $post_id, 'mpwpb_slider_images', array() );
 				?>
 				<div class="tabsItem" data-tabs="#mpwpb_settings_gallery">
 					<h5 class="dFlex">
@@ -41,9 +41,9 @@
 			}
 			public function save_faq_settings( $post_id ) {
 				if ( get_post_type( $post_id ) == MPWPB_Function::mp_cpt() ) {
-					$slider = MPWPB_Function::get_submit_info( 'mpwpb_display_slider' ) ? 'on' : 'off';
+					$slider = MP_Global_Function::get_submit_info( 'mpwpb_display_slider' ) ? 'on' : 'off';
 					update_post_meta( $post_id, 'mpwpb_display_slider', $slider );
-					$images     = MPWPB_Function::get_submit_info( 'mpwpb_slider_images');
+					$images     = MP_Global_Function::get_submit_info( 'mpwpb_slider_images');
 					$all_images = explode( ',', $images );
 					update_post_meta( $post_id, 'mpwpb_slider_images', $all_images );
 				}
