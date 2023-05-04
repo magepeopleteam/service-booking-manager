@@ -154,12 +154,14 @@
 /********************************************************************  ************************************************/
 @media only screen and (min-width: 10px) {
 }
-/********************************************************************  ************************************************/
+/******************************************************************** ************************************************/
 @media only screen and (min-width: 10px) {
-}
-/******************************************************************** Quick set up ************************************************/
-@media only screen and (min-width: 10px) {
-	#mp_quick_setup {padding: 50px;max-width: 1000px;margin: 100px auto;background-color: #FFF;border: 1px solid var(--color_border);border-radius: var(--dBRL);}
+	div.mpStyle .adminLayout,
+	div.mpStyle [class*="_adminLayout"]{padding: 50px;max-width: 1000px;margin: 100px auto;background-color: #FFF;border: 1px solid var(--color_border);border-radius: var(--dBRL);}
+	div.mpStyle .adminLayout th,
+	div.mpStyle .adminLayout td,
+	div.mpStyle [class*="_adminLayout"] th,
+	div.mpStyle [class*="_adminLayout"] td{text-align: left;font-size: var(--fs_h5);}
 }
 /********************************************************************  ************************************************/
 @media only screen and (min-width: 10px) {
