@@ -51,7 +51,7 @@ if (!class_exists('MPWPB_Dependencies')) {
             //**********************//
             wp_enqueue_style('mp_admin_settings', MPWPB_PLUGIN_URL . '/assets/admin/mp_admin_settings.css', array(), time());
             wp_enqueue_script('mp_admin_settings', MPWPB_PLUGIN_URL . '/assets/admin/mp_admin_settings.js', array('jquery'), time(), true);
-            // custom
+            // ****custom************//
             wp_enqueue_style('mpwpb_admin', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_admin.css', array(), time());
             wp_enqueue_script('mpwpb_admin', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_admin.js', array('jquery'), time(), true);
             do_action('add_mpwpb_admin_script');
