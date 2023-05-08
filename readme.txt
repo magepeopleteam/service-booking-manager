@@ -48,7 +48,6 @@ Additionally, web studios and developers looking to improve the appointment proc
 ➡ Booking Extra Service with Price & Quantity Management.
 ➡ Works with Any Standards Compliant WordPress Theme.
 ➡ WooCommerce Support, You can Sell product and Booking service Separately. There is no mixing with Event with the WooCommerce Products.
-➡ [View Live Demo For Service Booking Manager](https://bookingplus.mage-people.com/)
 
 
 == Installation ==
@@ -59,11 +58,8 @@ Navigate to the Service Booking Manager settings page to configure your options
 
 == Frequently Asked Questions ==
 
-
 = Q.Is Service Booking Manager Basic Plugin Free? =
 A. Yes! Service Booking Manager Basic is free to use and we are working for Pro version and it will have more feature.
-You can check the demo of this plugin from here:
-[View Live Demo ](https://bookingplus.mage-people.com/)
 
 = Q.I installed correctly but 404 error what can I do ?  =
 A. You need to Re-save permalink settings it will solve the 404. if still not work that means you permalink not working, you may have httaccess problem or you have server permission problem.

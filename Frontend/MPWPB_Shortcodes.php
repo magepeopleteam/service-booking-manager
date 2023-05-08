@@ -10,7 +10,7 @@
 			}
 			public function order_details() {
 				ob_start();
-				$order_id = $_GET['order_id'] ?? '';
+				$order_id = sanitize_term_field($_GET['order_id']) ?? '';
 				if ( $order_id ) {
 					$order_details = wc_get_order( $order_id );
 					$order_status  = $order_details->get_status();

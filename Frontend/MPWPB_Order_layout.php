@@ -9,7 +9,7 @@
 				add_action( 'mpwpb_order_details', array( $this, 'order_details' ), 10, 1 );
 			}
 			public function direct_order_place() {
-				if ( isset( $_POST['mpwpb_product_id'] ) && $_POST['mpwpb_product_id'] > 0 ) {
+				if ( isset( $_POST['mpwpb_product_id'] ) && sanitize_text_field($_POST['mpwpb_product_id']) > 0 ) {
 					$post_id          = MP_Global_Function::get_submit_info( 'post_id', 0 );
 					$total_price      = MPWPB_Woocommerce::get_cart_total_price( $post_id );
 					$order_date       = date( 'M-d-Y-hi-a' );
