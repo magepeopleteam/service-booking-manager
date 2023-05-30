@@ -31,14 +31,14 @@
 				$date_format = $format == 'M d , yy' ? 'M  j, Y' : $date_format;
 				return $format == 'D M d , yy' ? 'D M  j, Y' : $date_format;
 			}
-
+			
 			//************************************************************Partially custom Function******************************//
 			//***********Template********************//
 			public static function all_details_template() {
 				$template_path = get_stylesheet_directory() . '/mpwpb_templates/themes/';
 				$default_path = MPWPB_PLUGIN_DIR . '/templates/themes/';
 				$dir = is_dir($template_path) ? glob($template_path . "*") : glob($default_path . "*");
-				$names = array();
+				$names = [];
 				foreach ($dir as $filename) {
 					if (is_file($filename)) {
 						$file = basename($filename);
@@ -67,7 +67,7 @@
 				$default_dir = MPWPB_PLUGIN_DIR . '/templates/';
 				$dir = is_dir($template_path) ? $template_path : $default_dir;
 				$file_path = $dir . $file_name;
-				return locate_template(array('mpwpb_templates/' . $file_name)) ? $file_path : $default_dir . $file_name;
+				return locate_template(['mpwpb_templates/' . $file_name]) ? $file_path : $default_dir . $file_name;
 			}
 			//************************//
 			public static function get_general_settings($key, $default = '') {
@@ -113,9 +113,9 @@
 				return $text ?: self::get_general_settings('service_text', esc_html__('Service', 'service-booking-manager'));
 			}
 			//*******************************//
-			public static function get_category($post_id, $all_services = array()) {
+			public static function get_category($post_id, $all_services = []) {
 				$categories = [];
-				$all_services = $all_services ?: MP_Global_Function::get_post_info($post_id, 'mpwpb_category_infos', array());
+				$all_services = $all_services ?: MP_Global_Function::get_post_info($post_id, 'mpwpb_category_infos', []);
 				$category_active = MP_Global_Function::get_post_info($post_id, 'mpwpb_category_active', 'on');
 				if ($category_active == 'on' && sizeof($all_services) > 0) {
 					$count = 0;
@@ -130,17 +130,17 @@
 				}
 				return $categories;
 			}
-			public static function get_sub_category($post_id, $all_services = array()) {
+			public static function get_sub_category($post_id, $all_services = []) {
 				$sub_category_list = [];
 				$category_active = MP_Global_Function::get_post_info($post_id, 'mpwpb_category_active', 'on');
 				$sub_category_active = MP_Global_Function::get_post_info($post_id, 'mpwpb_sub_category_active', 'off');
-				$all_services = $all_services ?: MP_Global_Function::get_post_info($post_id, 'mpwpb_category_infos', array());
+				$all_services = $all_services ?: MP_Global_Function::get_post_info($post_id, 'mpwpb_category_infos', []);
 				$count = 0;
 				if (sizeof($all_services) > 0) {
 					foreach ($all_services as $category_info) {
 						$category_name = array_key_exists('category', $category_info) ? $category_info['category'] : '';
 						$category_name = $category_active == 'on' ? $category_name : '';
-						$sub_categories = array_key_exists('sub_category', $category_info) ? $category_info['sub_category'] : array();
+						$sub_categories = array_key_exists('sub_category', $category_info) ? $category_info['sub_category'] : [];
 						if ($category_name && sizeof($sub_categories) > 0) {
 							foreach ($sub_categories as $sub_category) {
 								$sub_category_name = array_key_exists('name', $sub_category) ? $sub_category['name'] : '';
@@ -164,16 +164,16 @@
 				$all_service_item = [];
 				$category_active = MP_Global_Function::get_post_info($post_id, 'mpwpb_category_active', 'on');
 				$sub_category_active = MP_Global_Function::get_post_info($post_id, 'mpwpb_sub_category_active', 'off');
-				$all_services = MP_Global_Function::get_post_info($post_id, 'mpwpb_category_infos', array());
+				$all_services = MP_Global_Function::get_post_info($post_id, 'mpwpb_category_infos', []);
 				$count = 0;
 				if (sizeof($all_services) > 0) {
 					foreach ($all_services as $category_info) {
 						$category_name = array_key_exists('category', $category_info) ? $category_info['category'] : '';
-						$sub_categories = array_key_exists('sub_category', $category_info) ? $category_info['sub_category'] : array();
+						$sub_categories = array_key_exists('sub_category', $category_info) ? $category_info['sub_category'] : [];
 						if (sizeof($sub_categories) > 0) {
 							foreach ($sub_categories as $sub_category) {
 								$sub_category_name = array_key_exists('name', $sub_category) ? $sub_category['name'] : '';
-								$services = array_key_exists('service', $sub_category) ? $sub_category['service'] : array();
+								$services = array_key_exists('service', $sub_category) ? $sub_category['service'] : [];
 								if (sizeof($services) > 0) {
 									foreach ($services as $service) {
 										$all_service_item[$count]['category'] = $category_active == 'on' ? $category_name : '';
@@ -200,10 +200,10 @@
 				$start_date = MP_Global_Function::get_post_info($post_id, 'mpwpb_service_start_date');
 				$end_date = MP_Global_Function::get_post_info($post_id, 'mpwpb_service_end_date');
 				$all_dates = MP_Global_Function::date_separate_period($start_date, $end_date);
-				$all_off_dates = MP_Global_Function::get_post_info($post_id, 'mpwpb_off_dates', array());
+				$all_off_dates = MP_Global_Function::get_post_info($post_id, 'mpwpb_off_dates', []);
 				$all_off_days = MP_Global_Function::get_post_info($post_id, 'mpwpb_off_days');
 				$all_off_days = explode(',', $all_off_days);
-				$off_dates = array();
+				$off_dates = [];
 				foreach ($all_off_dates as $off_date) {
 					$off_dates[] = date('Y-m-d', strtotime($off_date));
 				}
@@ -229,10 +229,9 @@
 					$start_time = MP_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_start_time');
 				}
 				$start_time = $start_time * 3600;
-				//$start_time=$start_time+strtotime($start_date);
 				$end_time = MP_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_end_time') * 3600;
-				$start_time_break = MP_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_start_break_time') * 3600;
-				$end_time_break = MP_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_end_break_time') * 3600;
+				$start_time_break = MP_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_start_break_time',0) * 3600;
+				$end_time_break = MP_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_end_break_time',0) * 3600;
 				for ($i = $start_time; $i <= $end_time; $i = $i + $slot_length) {
 					if ($i < $start_time_break || $i >= $end_time_break) {
 						$all_slots[] = $start_date . ' ' . date('H:i', $i);
@@ -242,13 +241,13 @@
 			}
 			//*************Price*********************************//
 			public static function get_price($post_id, $service_name, $category_name = '', $sub_category_name = '', $date = '') {
-				$all_service = MP_Global_Function::get_post_info($post_id, 'mpwpb_category_infos', array());
+				$all_service = MP_Global_Function::get_post_info($post_id, 'mpwpb_category_infos', []);
 				$price = 0;
 				if (sizeof($all_service) > 0) {
 					foreach ($all_service as $categories) {
 						$current_category_name = array_key_exists('category', $categories) ? $categories['category'] : '';
 						if (($current_category_name && $category_name && $current_category_name == $category_name) || (!$current_category_name && !$category_name)) {
-							$sub_categories = array_key_exists('sub_category', $categories) ? $categories['sub_category'] : array();
+							$sub_categories = array_key_exists('sub_category', $categories) ? $categories['sub_category'] : [];
 							if (sizeof($sub_categories) > 0) {
 								foreach ($sub_categories as $sub_category) {
 									$current_sub_category_name = array_key_exists('name', $sub_category) ? $sub_category['name'] : '';
@@ -274,7 +273,7 @@
 			}
 			public static function get_extra_price($post_id, $ex_service_types, $ex_service_category = '') {
 				$ex_price = 0;
-				$extra_services = MP_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', array());
+				$extra_services = MP_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', []);
 				if (sizeof($extra_services) > 0) {
 					foreach ($extra_services as $group_service) {
 						$group_service_name = array_key_exists('group_service', $group_service) ? $group_service['group_service'] : '';

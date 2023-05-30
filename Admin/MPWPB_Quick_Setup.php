@@ -25,7 +25,7 @@
 					add_submenu_page('edit.php?post_type=mpwpb_item', __('Quick Setup', 'service-booking-manager'), '<span style="color:#10dd10">' . esc_html__('Quick Setup', 'service-booking-manager') . '</span>', 'manage_options', 'mpwpb_quick_setup', array($this, 'quick_setup'));
 					add_submenu_page('mpwpb_item', esc_html__('Quick Setup', 'service-booking-manager'), '<span style="color:#10dd10">' . esc_html__('Quick Setup', 'service-booking-manager') . '</span>', 'manage_options', 'mpwpb_quick_setup', array($this, 'quick_setup'));
 				} else {
-					add_menu_page(esc_html__('Service Booking Manager', 'service-booking-manager'), esc_html__('Service Booking Manager', 'service-booking-manager'), 'manage_options', 'mpwpb_item', array($this, 'quick_setup'), 'dashicons-admin-site-alt2', 6);
+					add_menu_page(esc_html__('Service Booking', 'service-booking-manager'), esc_html__('Service Booking', 'service-booking-manager'), 'manage_options', 'mpwpb_item', array($this, 'quick_setup'), 'dashicons-admin-site-alt2', 6);
 					add_submenu_page('mpwpb_item', esc_html__('Quick Setup', 'service-booking-manager'), '<span style="color:#10dd17">' . esc_html__('Quick Setup', 'service-booking-manager') . '</span>', 'manage_options', 'mpwpb_quick_setup', array($this, 'quick_setup'));
 				}
 			}
@@ -33,15 +33,15 @@
 				if (isset($_POST['active_woo_btn'])) {
 					?>
 					<script>
-                        dLoaderBody();
+						dLoaderBody();
 					</script>
 					<?php
 					activate_plugin('woocommerce/woocommerce.php');
 					?>
 					<script>
-                        let mpwpb_admin_location = window.location.href;
-                        mpwpb_admin_location = mpwpb_admin_location.replace('admin.php?page=mpwpb_item', 'edit.php?post_type=mpwpb_item&page=mpwpb_quick_setup');
-                        window.location.href = mpwpb_admin_location;
+						let mpwpb_admin_location = window.location.href;
+						mpwpb_admin_location = mpwpb_admin_location.replace('admin.php?page=mpwpb_item', 'edit.php?post_type=mpwpb_item&page=mpwpb_quick_setup');
+						window.location.href = mpwpb_admin_location;
 					</script>
 					<?php
 				}
@@ -76,9 +76,9 @@
 					echo '</div>';
 					?>
 					<script>
-                        let mpwpb_admin_location = window.location.href;
-                        mpwpb_admin_location = mpwpb_admin_location.replace('admin.php?page=mpwpb_item', 'edit.php?post_type=mpwpb_item&page=mpwpb_quick_setup');
-                        window.location.href = mpwpb_admin_location;
+						let mpwpb_admin_location = window.location.href;
+						mpwpb_admin_location = mpwpb_admin_location.replace('admin.php?page=mpwpb_item', 'edit.php?post_type=mpwpb_item&page=mpwpb_quick_setup');
+						window.location.href = mpwpb_admin_location;
 					</script>
 					<?php
 				}
@@ -156,10 +156,10 @@
 							<h5><span class="fas fa-check-circle textSuccess"></span></h5>
 						<?php } elseif ($status == 0) { ?>
 							<button class="warningButton" type="submit"
-							        name="install_and_active_woo_btn"><?php esc_html_e('Install & Active Now', 'service-booking-manager'); ?></button>
+								name="install_and_active_woo_btn"><?php esc_html_e('Install & Active Now', 'service-booking-manager'); ?></button>
 						<?php } else { ?>
 							<button class="themeButton" type="submit"
-							        name="active_woo_btn"><?php esc_html_e('Active Now', 'service-booking-manager'); ?></button>
+								name="active_woo_btn"><?php esc_html_e('Active Now', 'service-booking-manager'); ?></button>
 						<?php } ?>
 					</div>
 				</div>
@@ -176,9 +176,9 @@
 						<div class="_dLayout_mT">
 							<label class="fullWidth">
                             <span
-	                            class="min_300"><?php esc_html_e('Service Booking Manager Label:', 'service-booking-manager'); ?></span>
+								class="min_300"><?php esc_html_e('Service Booking Manager Label:', 'service-booking-manager'); ?></span>
 								<input type="text" class="formControl" name="mpwpb_label"
-								       value='<?php echo esc_attr($label); ?>'/>
+									value='<?php echo esc_attr($label); ?>'/>
 							</label>
 							<i class="info_text">
 								<span class="fas fa-info-circle"></span>
@@ -187,9 +187,9 @@
 							<div class="divider"></div>
 							<label class="fullWidth">
                             <span
-	                            class="min_300"><?php esc_html_e('Service Booking Manager Slug:', 'service-booking-manager'); ?></span>
+								class="min_300"><?php esc_html_e('Service Booking Manager Slug:', 'service-booking-manager'); ?></span>
 								<input type="text" class="formControl" name="mpwpb_slug"
-								       value='<?php echo esc_attr($slug); ?>'/>
+									value='<?php echo esc_attr($slug); ?>'/>
 							</label>
 							<i class="info_text">
 								<span class="fas fa-info-circle"></span>
@@ -207,7 +207,7 @@
 					<p class="mTB_xs"><?php esc_html_e('You are about to Finish & Save service-booking-manager For Woocommerce Plugin setup process', 'service-booking-manager'); ?></p>
 					<div class="mT allCenter">
 						<button type="submit" name="finish_quick_setup"
-						        class="themeButton"><?php esc_html_e('Finish & Save', 'service-booking-manager'); ?></button>
+							class="themeButton"><?php esc_html_e('Finish & Save', 'service-booking-manager'); ?></button>
 					</div>
 				</div>
 				<?php

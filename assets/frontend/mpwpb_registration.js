@@ -18,7 +18,6 @@ function mpwpb_price_calculation($this) {
 	});
 	parent.find('.mpwpb_total_bill').html(mp_price_format(price));
 }
-
 //Registration
 (function ($) {
 	"use strict";
@@ -62,7 +61,6 @@ function mpwpb_price_calculation($this) {
 		loadBgImage();
 		pageScrollTo(parent.find('.mpwpb_summary_area'));
 	});
-
 	//==========category============//
 	function refresh_sub_category(parent) {
 		parent.find('.mpwpb_service_area,.mpwpb_extra_service_area,.next_date_time_area,.mpwpb_date_time_area,.mpwpb_summary_area').slideUp(350);
@@ -83,7 +81,6 @@ function mpwpb_price_calculation($this) {
 			});
 		}
 	}
-
 	function refresh_service(parent) {
 		parent.find('.mpwpb_extra_service_area,.next_date_time_area,.mpwpb_date_time_area,.mpwpb_summary_area').slideUp(350);
 		let target_sub_category = parent.find('.mpwpb_sub_category_area');
@@ -111,7 +108,6 @@ function mpwpb_price_calculation($this) {
 			}
 		});
 	}
-
 	$(document).on('click', 'form.mpwpb_registration .mpwpb_category_item', function () {
 		let current = $(this);
 		let category = current.data('category');
@@ -257,27 +253,9 @@ function mpwpb_price_calculation($this) {
 			parent.find('[data-extra-service="' + service_name + '"]').slideUp(350);
 		}
 		mpwpb_price_calculation($(this));
-	})
+	});
 	$(document).on('click', 'form.mpwpb_registration .mpwpb_price_calculation', function () {
 		mpwpb_price_calculation($(this));
-	});
-	$(document).on("click", "form.mpwpb_registration .decQty ,form.mpwpb_registration .incQty", function () {
-		let current = $(this);
-		let target = current.closest('.qtyIncDec').find('input');
-		let currentValue = parseInt(target.val());
-		let value = current.hasClass('incQty') ? (currentValue + 1) : ((currentValue - 1) > 0 ? (currentValue - 1) : 0);
-		let min = parseInt(target.attr('min'));
-		let max = parseInt(target.attr('max'));
-		target.parents('.qtyIncDec').find('.incQty , .decQty').removeClass('mpDisabled');
-		if (value < min || isNaN(value) || value === 0) {
-			value = min;
-			target.parents('.qtyIncDec').find('.decQty').addClass('mpDisabled');
-		}
-		if (value > max) {
-			value = max;
-			target.parents('.qtyIncDec').find('.incQty').addClass('mpDisabled');
-		}
-		target.val(value).trigger('change').trigger('input');
 	});
 	//======================//
 	$(document).on('change', 'form.mpwpb_registration [name="mpwpb_payment_system"]', function () {
