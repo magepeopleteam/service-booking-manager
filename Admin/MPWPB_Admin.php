@@ -11,6 +11,7 @@
 				add_filter('use_block_editor_for_post_type', [$this, 'disable_gutenberg'], 10, 2);
 				add_action('admin_action_mpwpb_item_duplicate', [$this, 'mpwpb_item_duplicate']);
 				add_filter('post_row_actions', [$this, 'post_duplicator'], 10, 2);
+				add_filter('wp_mail_content_type', array($this, 'email_content_type'));
 			}
 			private function load_file(): void {
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MAGE_Setting_API.php';
@@ -115,6 +116,11 @@
 				}
 				return $actions;
 			}
+			//*************************//
+			public function email_content_type() {
+				return "text/html";
+			}
+			
 		}
 		new MPWPB_Admin();
 	}
