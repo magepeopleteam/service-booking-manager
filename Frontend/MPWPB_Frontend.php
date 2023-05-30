@@ -15,7 +15,7 @@
 			}
 			public function load_single_template( $template ): string {
 				global $post;
-				if ( $post->post_type && $post->post_type == MPWPB_Function::mp_cpt()) {
+				if ( $post->post_type && $post->post_type == MPWPB_Function::get_cpt()) {
 					$template = MPWPB_Function::template_path( 'single_page/mpwpb_details.php' );
 				}
 				return $template;

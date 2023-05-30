@@ -290,7 +290,7 @@
 			}
 			/*************************************/
 			public function save_date_time_settings( $post_id ) {
-				if ( get_post_type( $post_id ) == MPWPB_Function::mp_cpt() ) {
+				if ( get_post_type( $post_id ) == MPWPB_Function::get_cpt() ) {
 					//************************************//
 					$service_start_date = MP_Global_Function::get_submit_info( 'mpwpb_service_start_date' );
 					$service_start_date = $service_start_date?date( 'Y-m-d', strtotime( $service_start_date ) ):'';

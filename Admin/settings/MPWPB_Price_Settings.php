@@ -469,7 +469,7 @@
 			}
 			/*******************/
 			public function save_price_settings( $post_id ) {
-				if ( get_post_type( $post_id ) == MPWPB_Function::mp_cpt() ) {
+				if ( get_post_type( $post_id ) == MPWPB_Function::get_cpt() ) {
 					/****************************/
 					$active_category     = MP_Global_Function::get_submit_info( 'mpwpb_category_active' ) ? 'on' : 'off';
 					$active_sub_category = MP_Global_Function::get_submit_info( 'mpwpb_sub_category_active' ) ? 'on' : 'off';

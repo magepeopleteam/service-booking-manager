@@ -28,7 +28,7 @@
 				<?php
 			}
 			public function save_general_settings( $post_id ) {
-				if ( get_post_type( $post_id ) == MPWPB_Function::mp_cpt() ) {
+				if ( get_post_type( $post_id ) == MPWPB_Function::get_cpt() ) {
 					$title =MP_Global_Function::get_submit_info( 'mpwpb_shortcode_title' );
 					update_post_meta( $post_id, 'mpwpb_shortcode_title', $title );
 					$sub_title = MP_Global_Function::get_submit_info( 'mpwpb_shortcode_sub_title' );

@@ -5,15 +5,6 @@
 	if (!class_exists('MPWPB_Function')) {
 		class MPWPB_Function {
 			public function __construct() {
-				add_filter('use_block_editor_for_post_type', [$this, 'disable_gutenberg'], 10, 2);
-			}
-			//************************************//
-			public function disable_gutenberg($current_status, $post_type) {
-				$user_status = self::get_general_settings('disable_block_editor', 'yes');
-				if ($post_type === self::mp_cpt() && $user_status == 'yes') {
-					return false;
-				}
-				return $current_status;
 			}
 			//*********Date and Time**********************//
 			public static function date_picker_format(): string {
@@ -74,7 +65,7 @@
 				return MP_Global_Function::get_settings('mpwpb_general_settings', $key, $default);
 			}
 			//*****************//
-			public static function mp_cpt(): string {
+			public static function get_cpt(): string {
 				return 'mpwpb_item';
 			}
 			public static function get_name() {

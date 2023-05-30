@@ -40,7 +40,7 @@
 				<?php
 			}
 			public function save_faq_settings( $post_id ) {
-				if ( get_post_type( $post_id ) == MPWPB_Function::mp_cpt() ) {
+				if ( get_post_type( $post_id ) == MPWPB_Function::get_cpt() ) {
 					$slider = MP_Global_Function::get_submit_info( 'mpwpb_display_slider' ) ? 'on' : 'off';
 					update_post_meta( $post_id, 'mpwpb_display_slider', $slider );
 					$images     = MP_Global_Function::get_submit_info( 'mpwpb_slider_images');

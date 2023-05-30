@@ -20,7 +20,7 @@
 			public function add_cart_item_data( $cart_item_data, $product_id ) {
 				$linked_id  = MP_Global_Function::get_post_info( $product_id, 'link_mpwpb_id', $product_id );
 				$product_id = is_string( get_post_status( $linked_id ) ) ? $linked_id : $product_id;
-				if ( get_post_type( $product_id ) == MPWPB_Function::mp_cpt() ) {
+				if ( get_post_type( $product_id ) == MPWPB_Function::get_cpt() ) {
 					$category                                   = MP_Global_Function::get_submit_info( 'mpwpb_category' );
 					$sub_category                               = MP_Global_Function::get_submit_info( 'mpwpb_sub_category' );
 					$service                                    = MP_Global_Function::get_submit_info( 'mpwpb_service' );
@@ -46,7 +46,7 @@
 			public function before_calculate_totals( $cart_object ): void {
 				foreach ( $cart_object->cart_contents as $value ) {
 					$post_id = array_key_exists( 'mpwpb_id', $value ) ? $value['mpwpb_id'] : 0;
-					if ( get_post_type( $post_id ) == MPWPB_Function::mp_cpt() ) {
+					if ( get_post_type( $post_id ) == MPWPB_Function::get_cpt() ) {
 						$total_price = $value['mpwpb_tp'];
 						$value['data']->set_price( $total_price );
 						$value['data']->set_regular_price( $total_price );
@@ -58,7 +58,7 @@
 			}
 			public function cart_item_thumbnail( $thumbnail, $cart_item ) {
 				$post_id = array_key_exists( 'mpwpb_id', $cart_item ) ? $cart_item['mpwpb_id'] : 0;
-				if ( get_post_type( $post_id ) == MPWPB_Function::mp_cpt() ) {
+				if ( get_post_type( $post_id ) == MPWPB_Function::get_cpt() ) {
 					$thumbnail = '<div class="bg_image_area" data-href="' . get_the_permalink( $post_id ) . '"><div data-bg-image="' . MP_Global_Function::get_image_url( $post_id ) . '"></div></div>';
 				}
 				return $thumbnail;
@@ -66,7 +66,7 @@
 			public function get_item_data( $item_data, $cart_item ) {
 				$post_id = array_key_exists( 'mpwpb_id', $cart_item ) ? $cart_item['mpwpb_id'] : 0;
 				ob_start();
-				if ( get_post_type( $post_id ) == MPWPB_Function::mp_cpt() ) {
+				if ( get_post_type( $post_id ) == MPWPB_Function::get_cpt() ) {
 					$this->show_cart_item( $cart_item, $post_id );
 					do_action( 'mpwpb_show_cart_item', $cart_item, $post_id );
 				}
@@ -83,7 +83,7 @@
 				$items = $woocommerce->cart->get_cart();
 				foreach ( $items as $values ) {
 					$post_id = array_key_exists( 'mpwpb_id', $values ) ? $values['mpwpb_id'] : 0;
-					if ( get_post_type( $post_id ) == MPWPB_Function::mp_cpt() ) {
+					if ( get_post_type( $post_id ) == MPWPB_Function::get_cpt() ) {
 						//wc_add_notice( __( "custom_notice", 'fake_error' ), 'error');
 						do_action( 'mpwpb_validate_cart_item', $values, $post_id );
 					}
@@ -91,7 +91,7 @@
 			}
 			public function checkout_create_order_line_item( $item, $cart_item_key, $values ) {
 				$post_id = array_key_exists( 'mpwpb_id', $values ) ? $values['mpwpb_id'] : 0;
-				if ( get_post_type( $post_id ) == MPWPB_Function::mp_cpt() ) {
+				if ( get_post_type( $post_id ) == MPWPB_Function::get_cpt() ) {
 					$category      = $values['mpwpb_category'] ?: '';
 					$sub_category  = $values['mpwpb_sub_category'] ?: '';
 					$service       = $values['mpwpb_service'] ?: '';
@@ -140,7 +140,7 @@
 				$order_status = $order->get_status();
 				foreach ( $order->get_items() as $item_id => $item_values ) {
 					$post_id = MPWPB_Query::get_order_meta( $item_id, '_mpwpb_id' );
-					if ( get_post_type( $post_id ) == MPWPB_Function::mp_cpt() ) {
+					if ( get_post_type( $post_id ) == MPWPB_Function::get_cpt() ) {
 						if ( $order->has_status( 'processing' ) || $order->has_status( 'pending' ) || $order->has_status( 'on-hold' ) || $order->has_status( 'completed' ) || $order->has_status( 'cancelled' ) || $order->has_status( 'refunded' ) || $order->has_status( 'failed' ) || $order->has_status( 'requested' ) ) {
 							$this->wc_order_status_change( $order_status, $post_id, $order_id );
 						}
@@ -276,7 +276,7 @@
 						//$item_id = current( array_keys( $order->get_items() ) );
 						foreach ( $order->get_items() as $item_id => $item ) {
 							$post_id = MPWPB_Query::get_order_meta( $item_id, '_mpwpb_id' );
-							if ( get_post_type( $post_id ) == MPWPB_Function::mp_cpt() ) {
+							if ( get_post_type( $post_id ) == MPWPB_Function::get_cpt() ) {
 								$date               = self::get_order_item_meta( $item_id, '_mpwpb_date' );
 								$date               = $date ? MP_Global_Function::data_sanitize( $date ) : '';
 								$category           = self::get_order_item_meta( $item_id, '_mpwpb_category' );

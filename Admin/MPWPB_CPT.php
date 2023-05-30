@@ -48,7 +48,7 @@
 					'rewrite' => ['slug' => $slug],
 					'show_in_rest' => true
 				];
-				register_post_type(MPWPB_Function::mp_cpt(), $args);
+				register_post_type(MPWPB_Function::get_cpt(), $args);
 			}
 		}
 		new MPWPB_CPT();

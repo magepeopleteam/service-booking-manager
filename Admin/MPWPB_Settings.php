@@ -10,7 +10,7 @@
 			//************************//
 			public function settings_meta() {
 				$label = MPWPB_Function::get_name();
-				$cpt   = MPWPB_Function::mp_cpt();
+				$cpt   = MPWPB_Function::get_cpt();
 				add_meta_box( 'mp_meta_box_panel', '<span class="fas fa-cogs"></span>' . $label . esc_html__( ' Information Settings : ', 'service-booking-manager' ) . get_the_title( get_the_id() ), array( $this, 'settings' ), $cpt, 'normal', 'high' );
 			}
 			//******************************//
