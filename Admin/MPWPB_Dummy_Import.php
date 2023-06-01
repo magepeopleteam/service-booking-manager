@@ -5,9 +5,11 @@
 	if (!class_exists('MPWPB_Dummy_Import')) {
 		class MPWPB_Dummy_Import {
 			public function __construct() {
+				//update_option('mpwpb_dummy_already_inserted', 'no');
 				$this->dummy_import();
 			}
 			private function dummy_import() {
+
 				$dummy_post = get_option('mpwpb_dummy_already_inserted');
 				$all_post = MPWPB_Query::query_post_type('mpwpb_item');
 				if ($all_post->post_count == 0 && $dummy_post != 'yes') {
@@ -45,744 +47,1499 @@
 							}
 						}
 					}
-					update_option('mptbm_dummy_already_inserted', 'yes');
+					update_option('mpwpb_dummy_already_inserted', 'yes');
 				}
 			}
 			public function dummy_data(): array {
 				return [
 					'taxonomy' => [
-						'ttbm_tour_cat' => [
-							0 => ['name' => 'Fixed Tour'],
-							1 => ['name' => 'Flexible Tour']
-						],
+						// 'mpwpb_category' => [
+						// 	0 => ['name' => 'Fixed Tour'],
+						// 	1 => ['name' => 'Flexible Tour']
+						// ],
 					],
 					'custom_post' => [
-						'ttbm_tour' => [
+						'mpwpb_item' => [
 							0 => [
-								'name' => 'The Mentalist Tickets: Las Vegas',
+								'name' => 'Rent Your Dream Car',
 								'post_data' => [
 									//General_settings
-									'ttbm_travel_duration' => 2,
-									'ttbm_travel_duration_type' => 'day',
-									'ttbm_display_duration_night' => 'on',
-									'ttbm_travel_duration_night' => 3,
-									'ttbm_display_price_start' => 'on',
-									'ttbm_travel_start_price' => 250,
-									'ttbm_display_max_people' => 'on',
-									'ttbm_display_min_age' => 'on',
-									'ttbm_travel_min_age' => 10,
-									'ttbm_display_start_location' => 'on',
-									'ttbm_travel_start_place' => 'Las Vegas',
-									'ttbm_display_location' => 'off',
-									'ttbm_location_name' => '',
-									'ttbm_display_map' => 'off',
-									'ttbm_display_description' => 'on',
-									'ttbm_short_description' => 'Watch Gerry McCambridge perform comedy, magic, and mind reading live on stage at the amazing 75-minute Las Vegas show, The Mentalist! McCambridge has been nominated “Best Magician in Las Vegas”, so come and see him live for a mind-blowing night.',
+									'mpwpb_shortcode_title' => 'Rent-A-Car Service',
+									'mpwpb_shortcode_sub_title' => 'Rent your dream car easily with affordable price',
 									//date_settings
-									'ttbm_travel_type' => 'fixed',
-									'ttbm_travel_start_date' => date('Y-m-d', strtotime(' +25 day')),
-									'ttbm_travel_reg_end_date' => date('Y-m-d', strtotime(' +30 day')),
+									'mpwpb_service_start_date' => '2023-03-01',
+									'mpwpb_service_end_date' => '2023-08-25',
+									'mpwpb_time_slot_length' => '60',
+									'mpwpb_capacity_per_session' => '1',
+									'mpwpb_default_start_time' => '10',
+									'mpwpb_default_end_time' => '18',
+									'mpwpb_default_start_break_time' => '13',
+									'mpwpb_default_end_break_time' => '15',
+									'mpwpb_monday_start_time' => '10',
+									'mpwpb_monday_end_time' => '18',
+									'mpwpb_monday_start_break_time' => '13',
+									'mpwpb_monday_end_break_time' => '15',
+									'mpwpb_tuesday_start_time' => '10.5',
+									'mpwpb_tuesday_end_time' => '18.5',
+									'mpwpb_tuesday_start_break_time' => '13.5',
+									'mpwpb_tuesday_end_break_time' => '15.5',
+									'mpwpb_wednesday_start_time' => '11',
+									'mpwpb_wednesday_end_time' => '19',
+									'mpwpb_wednesday_start_break_time' => '14',
+									'mpwpb_wednesday_end_break_time' => '16',
+									'mpwpb_thursday_start_time' => '10',
+									'mpwpb_thursday_end_time' => '18',
+									'mpwpb_thursday_start_break_time' => '13',
+									'mpwpb_thursday_end_break_time' => '15',
+									'mpwpb_off_days' => 'saturday,sunday',
+									'mpwpb_off_dates' => array(
+										0 => '2023-03-07',
+										1 => '2023-03-15',
+									),
 									//price_settings
-									'ttbm_display_registration' => 'on',
-									'ttbm_display_advance' => 'off',
-									'ttbm_type' => 'general',
-									'ttbm_hotels' => array(),
-									'ttbm_ticket_type' => [
-										0 => [
-											'ticket_type_icon' => 'fas fa-user-tie',
-											'ticket_type_name' => 'Adult',
-											'ticket_type_price' => 15,
-											'sale_price' => 10,
-											'ticket_type_qty' => 150,
-											'ticket_type_default_qty' => 0,
-											'ticket_type_resv_qty' => 5,
-											'ticket_type_qty_type' => 'inputbox',
-											'ticket_type_description' => '',
-										],
-										1 => [
-											'ticket_type_icon' => 'fas fa-snowman',
-											'ticket_type_name' => 'Child',
-											'ticket_type_price' => 10,
-											'sale_price' => 7,
-											'ticket_type_qty' => 100,
-											'ticket_type_default_qty' => 0,
-											'ticket_type_resv_qty' => 25,
-											'ticket_type_qty_type' => 'inputbox',
-											'ticket_type_description' => '',
-										]
-									],
-									'ttbm_extra_service_data' => [
-										0 => [
-											'service_icon' => 'fas fa-graduation-cap',
-											'service_name' => 'Cap',
-											'service_price' => 6,
-											'service_qty' => 500,
-											'service_qty_type' => 'inputbox',
-											'extra_service_description' => '',
-										],
-										1 => [
-											'service_icon' => 'fas fa-coffee',
-											'service_name' => 'Coffe',
-											'service_price' => 4,
-											'service_qty' => 1500,
-											'service_qty_type' => 'inputbox',
-											'extra_service_description' => '',
-										],
-									],
-									'ttbm_display_include_service' => 'on',
-									'ttbm_service_included_in_price' => [
-										0 => 'Accommodation',
-										1 => 'Breakfast',
-										2 => 'Welcome Drinks',
-										3 => 'Lunch',
-										4 => 'Transport',
-									],
-									'ttbm_service_excluded_in_price' => [
-										0 => 'Airport Transfer',
-										1 => 'BBQ Night',
-										2 => 'Guide',
-										3 => 'Insurance',
-										4 => 'Outing Ticket',
-									],
-									//Place_you_see_settings
-									//day wise details_settings
-									//faq_settings
-									'ttbm_display_faq' => 'on',
-									'mep_event_faq' => [
-										0 => [
-											'ttbm_faq_title' => 'What can I expect to see at The Mentalist at Planet Hollywood Resort and Casino?',
-											'ttbm_faq_content' => 'Comedy, magic and mind-reading! The Mentalist has the ability to get inside the minds of audience members, revealing everything from their names, hometowns and anniversaries to their wildest wishes.',
-										],
-										1 => [
-											'ttbm_faq_title' => 'Where is The Mentalist located?',
-											'ttbm_faq_content' => 'The V Theater is located inside the Miracle Mile Shops at the Planet Hollywood Resort & Casino.',
-										],
-										2 => [
-											'ttbm_faq_title' => 'Can I purchase alcohol at the venue during The Mentalist!?',
-											'ttbm_faq_content' => 'Absolutely! Drinks are available for purchase at the Showgirl Bar outside of the theater and may be brought into the showroom, however, no other outside food or drink will be allowed in the theater.',
-										],
-										3 => [
-											'ttbm_faq_title' => 'Is The Mentalist appropriate for children?',
-											'ttbm_faq_content' => 'Due to language, this show is recommended for guests 16 years old and over.',
-										],
-										4 => [
-											'ttbm_faq_title' => 'Do I need to exchange my ticket upon arrival at The Mentalist!?',
-											'ttbm_faq_content' => 'Please pick up your tickets at the V Theater Box Office with a valid photo ID for the lead traveler at least 30 minutes prior to show time (box office opens at 11 am). Seating will begin 15 minutes before showtime.',
-										],
-									],
-									//why chose us_settings
-									'ttbm_why_choose_us_texts' => [
-										0 => 'Enjoy a taste of Las Vegas glitz at the mind-bending magic show',
-										1 => 'Enjoy a taste of Las Vegas glitz at the mind-bending magic show',
-										2 => 'Watch as Gerry McCambridge performs comedy and magic',
-									],
-									//activities_settings
-									'ttbm_display_activities' => 'on',
-									'ttbm_tour_activities' => [
-										0 => 'Beach',
-										1 => 'Hiking',
-										2 => 'Snow & Ice',
-									],
-									//gallery_settings
-									'ttbm_gallery_images' => [120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300],
-									//extras_settings
-									'ttbm_display_get_question' => 'on',
-									'ttbm_contact_email' => 'example.gmail.com',
-									'ttbm_contact_phone' => '123456789',
-									'ttbm_contact_text' => 'Do not hesitage to give us a call. We are an expert team and we are happy to talk to you.',
-									'ttbm_display_tour_guide' => 'on',
-									//Related tour_settings
-									//Display_settings
-									'ttbm_section_title_style' => 'ttbm_title_style_2',
-									'ttbm_ticketing_system' => 'availability_section',
-									'ttbm_display_seat_details' => 'on',
-									'ttbm_display_sidebar' => 'off',
-									'ttbm_display_tour_type' => 'on',
-									'ttbm_display_hotels' => 'on',
-									'ttbm_display_duration' => 'on',
-								]
+									'mpwpb_category_active' => 'on',
+									'mpwpb_sub_category_active' => 'off',
+									'mpwpb_service_details_active' => 'off',
+									'mpwpb_service_duration_active' => 'on',
+									'mpwpb_category_text' => 'Car Type',
+									'mpwpb_sub_category_text' => '',
+									'mpwpb_service_text' => 'Service',
+									'mpwpb_category_infos' => array
+									(
+										0 => array
+											(
+												'icon' => 'fas fa-car',
+												'image' => '',
+												'category' => 'Economy Car',
+												'sub_category' => array
+													(
+														0 => array
+															(
+																'icon' => '',
+																'image' => '', 
+																'name' => '',
+																'service' => array
+																	(
+																		0 => array
+																			(
+																				'name' => 'Casinos',
+																				'price' => '10',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-gifts',
+																				'image' => '',
+																			),
+									
+																		1 => array
+																			(
+																				'name' => 'Birthdays',
+																				'price' => '10',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-coffee',
+																				'image' => '',
+																			),
+																		2 => array
+																			(
+																				'name' => 'Airport Transfer',
+																				'price' => '10',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-car-side',
+																				'image' => '',
+																			),
+									
+																	)
+									
+															)
+									
+													)
+									
+											),
+									
+										1 => array
+											(
+												'icon' => 'fas fa-shuttle-van',
+												'image' => '',
+												'category' => 'Standard Car',
+												'sub_category' => array
+													(
+														0 => array
+															(
+																'icon' => '',
+																'image' => '', 
+																'name' => '',
+																'service' => array
+																	(
+																		0 => array
+																			(
+																				'name' => 'Weddings',
+																				'price' => '10',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-gifts',
+																				'image' => '',
+																			),
+									
+																		
+									
+																	)
+									
+															)
+									
+													)
+									
+											),
+										2 => array
+											(
+												'icon' => 'fas fa-car-side',
+												'image' => '',
+												'category' => 'SUV Car',
+												'sub_category' => array
+													(
+														0 => array
+															(
+																'icon' => '',
+																'image' => '', 
+																'name' => '',
+																'service' => array
+																	(
+																		0 => array
+																			(
+																				'name' => 'Night Parties Long Drive',
+																				'price' => '10',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-gifts',
+																				'image' => '',
+																			),
+									
+																		
+									
+																	)
+									
+															)
+									
+													)
+									
+											),
+									
+									),
+									'mpwpb_extra_service_active' => 'on',
+									'mpwpb_group_extra_service_active' => 'off',
+									'mpwpb_extra_service' => array
+									(
+										0 => array
+											(
+												'group_service' => '',
+												'group_service_info' => array
+													(
+														0 => array
+															(
+																'name' => 'Baby Seats',
+																'qty' => 5,
+																'price' => 5,
+																'details' => 'you will be provided a baby seat for our baby inside car',
+																'icon' => 'fas fa-baby-carriage',
+																'image' => '',
+															),
+									
+														1 => array
+															(
+																'name' => 'Birthday Cake',
+																'qty' => 10,
+																'price' => 10,
+																'details' => 'you will be provided a birthday Cake 1 pound',
+																'icon' => 'fas fa-boxes',
+																'image' => '',
+															),
+														2 => array
+															(
+																'name' => 'Campaig',
+																'qty' => 10,
+																'price' => 10,
+																'details' => 'you will get 1 bottle Campaig with giftbox',
+																'icon' => 'fas fa-wheelchair',
+																'image' => '',
+															)	
+									
+													)
+									
+											)
+									
+									),
+									//Galary Settings
+									'mpwpb_display_slider' => 'off',
+									'mpwpb_slider_images' => 'off',
+								],
 							],
 							1 => [
-								'name' => 'Highlights of Naples and the Amalfi Coast',
+								'name' => 'YOGA INSTRUCTOR',
 								'post_data' => [
 									//General_settings
-									'ttbm_travel_duration' => 1,
-									'ttbm_travel_duration_type' => 'day',
-									'ttbm_display_duration_night' => 'on',
-									'ttbm_travel_duration_night' => 1,
-									'ttbm_display_price_start' => 'on',
-									'ttbm_travel_start_price' => 180,
-									'ttbm_display_max_people' => 'on',
-									'ttbm_display_min_age' => 'on',
-									'ttbm_travel_min_age' => 5,
-									'ttbm_display_start_location' => 'on',
-									'ttbm_travel_start_place' => 'Naple',
-									'ttbm_display_location' => 'off',
-									'ttbm_location_name' => '',
-									'ttbm_display_map' => 'off',
-									'ttbm_display_description' => 'on',
-									'ttbm_short_description' => '',
+									'mpwpb_shortcode_title' => 'Yoga Instructor',
+									'mpwpb_shortcode_sub_title' => 'Choose your yoga instructor easily with effordable price',
 									//date_settings
-									'ttbm_travel_type' => 'fixed',
-									'ttbm_travel_start_date' => date('Y-m-d', strtotime(' +35 day')),
-									'ttbm_travel_reg_end_date' => date('Y-m-d', strtotime(' +36 day')),
+									'mpwpb_service_start_date' => '2023-03-01',
+									'mpwpb_service_end_date' => '2023-08-25',
+									'mpwpb_time_slot_length' => '60',
+									'mpwpb_capacity_per_session' => '1',
+									'mpwpb_default_start_time' => '10',
+									'mpwpb_default_end_time' => '18',
+									'mpwpb_default_start_break_time' => '13',
+									'mpwpb_default_end_break_time' => '15',
+									'mpwpb_monday_start_time' => '10',
+									'mpwpb_monday_end_time' => '18',
+									'mpwpb_monday_start_break_time' => '13',
+									'mpwpb_monday_end_break_time' => '15',
+									'mpwpb_tuesday_start_time' => '10.5',
+									'mpwpb_tuesday_end_time' => '18.5',
+									'mpwpb_tuesday_start_break_time' => '13.5',
+									'mpwpb_tuesday_end_break_time' => '15.5',
+									'mpwpb_wednesday_start_time' => '11',
+									'mpwpb_wednesday_end_time' => '19',
+									'mpwpb_wednesday_start_break_time' => '14',
+									'mpwpb_wednesday_end_break_time' => '16',
+									'mpwpb_thursday_start_time' => '10',
+									'mpwpb_thursday_end_time' => '18',
+									'mpwpb_thursday_start_break_time' => '13',
+									'mpwpb_thursday_end_break_time' => '15',
+									'mpwpb_off_days' => 'saturday,sunday',
+									'mpwpb_off_dates' => array(
+										0 => '2023-03-07',
+										1 => '2023-03-15',
+									),
 									//price_settings
-									'ttbm_display_registration' => 'on',
-									'ttbm_display_advance' => 'off',
-									'ttbm_type' => 'general',
-									'ttbm_hotels' => array(),
-									'ttbm_ticket_type' => [
-										0 => [
-											'ticket_type_icon' => 'fas fa-user-tie',
-											'ticket_type_name' => 'Adult',
-											'ticket_type_price' => 55,
-											'sale_price' => 40,
-											'ticket_type_qty' => 220,
-											'ticket_type_default_qty' => 0,
-											'ticket_type_resv_qty' => 5,
-											'ticket_type_qty_type' => 'inputbox',
-											'ticket_type_description' => '',
-										],
-										1 => [
-											'ticket_type_icon' => 'fas fa-snowman',
-											'ticket_type_name' => 'Child',
-											'ticket_type_price' => 100,
-											'sale_price' => 70,
-											'ticket_type_qty' => 100,
-											'ticket_type_default_qty' => 0,
-											'ticket_type_resv_qty' => 20,
-											'ticket_type_qty_type' => 'inputbox',
-											'ticket_type_description' => '',
-										]
-									],
-									'ttbm_extra_service_data' => [
-										0 => [
-											'service_icon' => 'fas fa-graduation-cap',
-											'service_name' => 'Cap',
-											'service_price' => 6,
-											'service_qty' => 500,
-											'service_qty_type' => 'inputbox',
-											'extra_service_description' => '',
-										],
-										1 => [
-											'service_icon' => 'fas fa-coffee',
-											'service_name' => 'Coffe',
-											'service_price' => 4,
-											'service_qty' => 1500,
-											'service_qty_type' => 'inputbox',
-											'extra_service_description' => '',
-										],
-									],
-									'ttbm_display_include_service' => 'on',
-									'ttbm_service_included_in_price' => [
-										0 => 'Accommodation',
-										1 => 'Breakfast',
-										2 => 'Welcome Drinks',
-										3 => 'Lunch',
-										4 => 'Transport',
-									],
-									'ttbm_display_exclude_service' => 'on',
-									'ttbm_service_excluded_in_price' => [
-										0 => 'Airport Transfer',
-										1 => 'BBQ Night',
-										2 => 'Guide',
-										3 => 'Insurance',
-										4 => 'Outing Ticket',
-									],
-									//Place_you_see_settings
-									//day wise details_settings
-									//faq_settings
-									'ttbm_display_faq' => 'on',
-									'mep_event_faq' => [
-										0 => [
-											'ttbm_faq_title' => 'What can I expect to see at The Mentalist at Planet Hollywood Resort and Casino?',
-											'ttbm_faq_content' => 'Comedy, magic and mind-reading! The Mentalist has the ability to get inside the minds of audience members, revealing everything from their names, hometowns and anniversaries to their wildest wishes.',
-										],
-										1 => [
-											'ttbm_faq_title' => 'Where is The Mentalist located?',
-											'ttbm_faq_content' => 'The V Theater is located inside the Miracle Mile Shops at the Planet Hollywood Resort & Casino.',
-										],
-										2 => [
-											'ttbm_faq_title' => 'Can I purchase alcohol at the venue during The Mentalist!?',
-											'ttbm_faq_content' => 'Absolutely! Drinks are available for purchase at the Showgirl Bar outside of the theater and may be brought into the showroom, however, no other outside food or drink will be allowed in the theater.',
-										],
-										3 => [
-											'ttbm_faq_title' => 'Is The Mentalist appropriate for children?',
-											'ttbm_faq_content' => 'Due to language, this show is recommended for guests 16 years old and over.',
-										],
-										4 => [
-											'ttbm_faq_title' => 'Do I need to exchange my ticket upon arrival at The Mentalist!?',
-											'ttbm_faq_content' => 'Please pick up your tickets at the V Theater Box Office with a valid photo ID for the lead traveler at least 30 minutes prior to show time (box office opens at 11 am). Seating will begin 15 minutes before showtime.',
-										],
-									],
-									//why chose us_settings
-									'ttbm_why_choose_us_texts' => [
-										0 => 'Enjoy a taste of Las Vegas glitz at the mind-bending magic show',
-										1 => 'Enjoy a taste of Las Vegas glitz at the mind-bending magic show',
-										2 => 'Watch as Gerry McCambridge performs comedy and magic',
-									],
-									//activities_settings
-									'ttbm_display_activities' => 'on',
-									'ttbm_tour_activities' => [
-										0 => 'City Tours',
-										1 => 'Hiking',
-										2 => 'Rural',
-									],
-									//gallery_settings
-									'ttbm_gallery_images' => [120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300],
-									//extras_settings
-									'ttbm_display_get_question' => 'on',
-									'ttbm_contact_email' => 'example.gmail.com',
-									'ttbm_contact_phone' => '123456789',
-									'ttbm_contact_text' => 'Do not hesitate to give us a call. We are an expert team and we are happy to talk to you.',
-									'ttbm_display_tour_guide' => 'on',
-									//Related tour_settings
-									//Display_settings
-									'ttbm_section_title_style' => 'ttbm_title_style_2',
-									'ttbm_ticketing_system' => 'availability_section',
-									'ttbm_display_seat_details' => 'on',
-									'ttbm_display_sidebar' => 'off',
-									'ttbm_display_tour_type' => 'on',
-									'ttbm_display_hotels' => 'on',
-									'ttbm_display_duration' => 'on',
-								]
+									'mpwpb_category_active' => 'on',
+									'mpwpb_sub_category_active' => 'off',
+									'mpwpb_service_details_active' => 'on',
+									'mpwpb_service_duration_active' => 'on',
+									'mpwpb_category_text' => 'Yoga Styles',
+									'mpwpb_sub_category_text' => '',
+									'mpwpb_service_text' => 'Classes',
+									'mpwpb_category_infos' => array
+									(
+																			
+										0 => array
+											(
+												'icon' => 'fas fa-running',
+												'image' => '',
+												'category' => 'Hatha Yoga',
+												'sub_category' => array
+													(
+														0 => array
+															(
+																'icon' => '',
+																'image' => '', 
+																'name' => '',
+																'service' => array
+																	(
+																		0 => array
+																			(
+																				'name' => 'Back Body Space Posture',
+																				'price' => '10',
+																				'details' => 'Learn process about Back Body Space Posture',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-gifts',
+																				'image' => '',
+																			),
+																		1 => array
+																			(
+																				'name' => 'Hatha-Yin Stretch',
+																				'price' => '12',
+																				'details' => 'Learn process about Hatha-Yin Stretch',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-wheelchair',
+																				'image' => '',
+																			),
+																		2 => array
+																			(
+																				'name' => 'Hands Free Yoga',
+																				'price' => '14',
+																				'details' => 'Learn process about Hands Free Yoga',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-thermometer',
+																				'image' => '',
+																			),
+																		3 => array
+																			(
+																				'name' => 'Shake It Off',
+																				'price' => '15',
+																				'details' => 'Learn process about Shake It Off',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-id-card-alt',
+																				'image' => '',
+																			),
+																		4 => array
+																			(
+																				'name' => 'Rotation Stretch',
+																				'price' => '20',
+																				'details' => 'Learn process about Rotation Stretch',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-soundcloud',
+																				'image' => '',
+																			),
+																		5 => array
+																			(
+																				'name' => 'Stretch Assist',
+																				'price' => '22',
+																				'details' => 'Learn process about Stretch Assist',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-record-vinyl',
+																				'image' => '',
+																			),									
+																		
+									
+																	)
+									
+															),
+									
+													)
+									
+											),
+										1 => array
+											(
+												'icon' => 'fas fa-user-md',
+												'image' => '',
+												'category' => 'Vinyasa Yoga',
+												'sub_category' => array
+													(
+														0 => array
+															(
+																'icon' => '',
+																'image' => '', 
+																'name' => '',
+																'service' => array
+																	(
+																		0 => array
+																			(
+																				'name' => 'Vinyasa For Backbends',
+																				'price' => '10',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-gifts',
+																				'image' => '',
+																			),
+																		1 => array
+																			(
+																				'name' => 'Full Body Power Flow',
+																				'price' => '25',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-x-ray',
+																				'image' => '',
+																			),
+																		2 => array
+																			(
+																				'name' => 'Strong Flow',
+																				'price' => '30',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-dolly-flatbed',
+																				'image' => '',
+																			),
+																		3 => array
+																			(
+																				'name' => 'Vinyasa Flow',
+																				'price' => '35',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-anchor',
+																				'image' => '',
+																			),
+																		4 => array
+																			(
+																				'name' => 'Intuitive Flexibility',
+																				'price' => '40',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-compass',
+																				'image' => '',
+																			),
+																		5 => array
+																			(
+																				'name' => 'Sweat Ladder Flow',
+																				'price' => '45',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-record-vinyl',
+																				'image' => '',
+																			),
+									
+																		
+									
+																	)
+									
+															),
+									
+													)
+									
+											),
+										2 => array
+											(
+												'icon' => 'fas fa-play',
+												'image' => '',
+												'category' => 'Kids Yoga',
+												'sub_category' => array
+													(
+														0 => array
+															(
+																'icon' => '',
+																'image' => '', 
+																'name' => '',
+																'service' => array
+																	(
+																		0 => array
+																			(
+																				'name' => 'Tree Power',
+																				'price' => '10',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-gifts',
+																				'image' => '',
+																			),
+																		1 => array
+																			(
+																				'name' => 'Strong Inside',
+																				'price' => '25',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-dolly-flatbed',
+																				'image' => '',
+																			),
+																		2 => array
+																			(
+																				'name' => 'Rainbow Power',
+																				'price' => '30',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-warehouse',
+																				'image' => '',
+																			),
+																		3 => array
+																			(
+																				'name' => 'Mind Muscle',
+																				'price' => '35',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-wind',
+																				'image' => '',
+																			),
+									
+																		
+									
+																	)
+									
+															),
+																							
+													)
+									
+											),
+										3 => array
+											(
+												'icon' => 'fas fa-x-ray',
+												'image' => '',
+												'category' => 'Kundalini Yoga',
+												'sub_category' => array
+													(
+														0 => array
+															(
+																'icon' => '',
+																'image' => '', 
+																'name' => '',
+																'service' => array
+																	(
+																		0 => array
+																			(
+																				'name' => 'Mental Balance',
+																				'price' => '10',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-gifts',
+																				'image' => '',
+																			),
+																		1 => array
+																			(
+																				'name' => 'Access Your Inner Power',
+																				'price' => '25',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-thermometer',
+																				'image' => '',
+																			),
+																		2 => array
+																			(
+																				'name' => 'Uplift Your Energy',
+																				'price' => '30',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-soundcloud',
+																				'image' => '',
+																			),
+																		3 => array
+																			(
+																				'name' => 'Clean Sweep Your Mind',
+																				'price' => '35',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-play',
+																				'image' => '',
+																			),
+									
+																		
+									
+																	)
+									
+															),
+																							
+													)
+									
+											),
+									
+									),
+									'mpwpb_extra_service_active' => 'off',
+									'mpwpb_group_extra_service_active' => 'off',
+									'mpwpb_extra_service' => array
+									(
+										
+									),
+									//Galary Settings
+									'mpwpb_display_slider' => 'off',
+									'mpwpb_slider_images' => 'off',
+								],
 							],
 							2 => [
-								'name' => 'Deep-Sea Exploration on a Shampan',
+								'name' => 'Medical & Dental',
 								'post_data' => [
 									//General_settings
-									'ttbm_travel_duration' => 1,
-									'ttbm_travel_duration_type' => 'day',
-									'ttbm_display_duration_night' => 'on',
-									'ttbm_travel_duration_night' => 1,
-									'ttbm_display_price_start' => 'on',
-									'ttbm_travel_start_price' => '',
-									'ttbm_display_max_people' => 'on',
-									'ttbm_display_min_age' => 'on',
-									'ttbm_travel_min_age' => 5,
-									'ttbm_display_start_location' => 'on',
-									'ttbm_travel_start_place' => '',
-									'ttbm_display_location' => 'off',
-									'ttbm_location_name' => '',
-									'ttbm_display_map' => 'off',
-									'ttbm_display_description' => 'on',
-									'ttbm_short_description' => '',
+									'mpwpb_shortcode_title' => 'Medical & Dental Service',
+									'mpwpb_shortcode_sub_title' => 'Choose your medical and dental services easily with affordable price.',
 									//date_settings
-									'ttbm_travel_type' => 'repeated',
-									'ttbm_travel_repeated_after' => '4',
-									'ttbm_travel_repeated_start_date' => date('Y-m-d', strtotime(' +15 day')),
-									'ttbm_travel_repeated_end_date' => date('Y-m-d', strtotime(' +365 day')),
+									'mpwpb_service_start_date' => '2023-03-01',
+									'mpwpb_service_end_date' => '2023-08-25',
+									'mpwpb_time_slot_length' => '60',
+									'mpwpb_capacity_per_session' => '1',
+									'mpwpb_default_start_time' => '10',
+									'mpwpb_default_end_time' => '18',
+									'mpwpb_default_start_break_time' => '13',
+									'mpwpb_default_end_break_time' => '15',
+									'mpwpb_monday_start_time' => '10',
+									'mpwpb_monday_end_time' => '18',
+									'mpwpb_monday_start_break_time' => '13',
+									'mpwpb_monday_end_break_time' => '15',
+									'mpwpb_tuesday_start_time' => '10.5',
+									'mpwpb_tuesday_end_time' => '18.5',
+									'mpwpb_tuesday_start_break_time' => '13.5',
+									'mpwpb_tuesday_end_break_time' => '15.5',
+									'mpwpb_wednesday_start_time' => '11',
+									'mpwpb_wednesday_end_time' => '19',
+									'mpwpb_wednesday_start_break_time' => '14',
+									'mpwpb_wednesday_end_break_time' => '16',
+									'mpwpb_thursday_start_time' => '10',
+									'mpwpb_thursday_end_time' => '18',
+									'mpwpb_thursday_start_break_time' => '13',
+									'mpwpb_thursday_end_break_time' => '15',
+									'mpwpb_off_days' => 'saturday,sunday',
+									'mpwpb_off_dates' => array(
+										0 => '2023-03-07',
+										1 => '2023-03-15',
+									),
 									//price_settings
-									'ttbm_display_registration' => 'on',
-									'ttbm_display_advance' => 'off',
-									'ttbm_type' => 'general',
-									'ttbm_hotels' => array(),
-									'ttbm_ticket_type' => [
-										0 => [
-											'ticket_type_icon' => 'fas fa-user-tie',
-											'ticket_type_name' => 'Adult',
-											'ticket_type_price' => 55,
-											'sale_price' => 40,
-											'ticket_type_qty' => 220,
-											'ticket_type_default_qty' => 0,
-											'ticket_type_resv_qty' => 5,
-											'ticket_type_qty_type' => 'inputbox',
-											'ticket_type_description' => '',
-										],
-										1 => [
-											'ticket_type_icon' => 'fas fa-snowman',
-											'ticket_type_name' => 'Child',
-											'ticket_type_price' => 100,
-											'sale_price' => 70,
-											'ticket_type_qty' => 100,
-											'ticket_type_default_qty' => 0,
-											'ticket_type_resv_qty' => 20,
-											'ticket_type_qty_type' => 'inputbox',
-											'ticket_type_description' => '',
-										]
-									],
-									'ttbm_extra_service_data' => [
-										0 => [
-											'service_icon' => 'fas fa-graduation-cap',
-											'service_name' => 'Cap',
-											'service_price' => 6,
-											'service_qty' => 500,
-											'service_qty_type' => 'inputbox',
-											'extra_service_description' => '',
-										],
-										1 => [
-											'service_icon' => 'fas fa-coffee',
-											'service_name' => 'Coffe',
-											'service_price' => 4,
-											'service_qty' => 1500,
-											'service_qty_type' => 'inputbox',
-											'extra_service_description' => '',
-										],
-									],
-									'ttbm_display_include_service' => 'on',
-									'ttbm_service_included_in_price' => [
-										0 => 'Accommodation',
-										1 => 'Breakfast',
-										2 => 'Welcome Drinks',
-										3 => 'Lunch',
-										4 => 'Transport',
-									],
-									'ttbm_display_exclude_service' => 'on',
-									'ttbm_service_excluded_in_price' => [
-										0 => 'Airport Transfer',
-										1 => 'BBQ Night',
-										2 => 'Guide',
-										3 => 'Insurance',
-										4 => 'Outing Ticket',
-									],
-									//Place_you_see_settings
-									//day wise details_settings
-									//faq_settings
-									'ttbm_display_faq' => 'on',
-									'mep_event_faq' => [
-										0 => [
-											'ttbm_faq_title' => 'What can I expect to see at The Mentalist at Planet Hollywood Resort and Casino?',
-											'ttbm_faq_content' => 'Comedy, magic and mind-reading! The Mentalist has the ability to get inside the minds of audience members, revealing everything from their names, hometowns and anniversaries to their wildest wishes.',
-										],
-										1 => [
-											'ttbm_faq_title' => 'Where is The Mentalist located?',
-											'ttbm_faq_content' => 'The V Theater is located inside the Miracle Mile Shops at the Planet Hollywood Resort & Casino.',
-										],
-										2 => [
-											'ttbm_faq_title' => 'Can I purchase alcohol at the venue during The Mentalist!?',
-											'ttbm_faq_content' => 'Absolutely! Drinks are available for purchase at the Showgirl Bar outside of the theater and may be brought into the showroom, however, no other outside food or drink will be allowed in the theater.',
-										],
-										3 => [
-											'ttbm_faq_title' => 'Is The Mentalist appropriate for children?',
-											'ttbm_faq_content' => 'Due to language, this show is recommended for guests 16 years old and over.',
-										],
-										4 => [
-											'ttbm_faq_title' => 'Do I need to exchange my ticket upon arrival at The Mentalist!?',
-											'ttbm_faq_content' => 'Please pick up your tickets at the V Theater Box Office with a valid photo ID for the lead traveler at least 30 minutes prior to show time (box office opens at 11 am). Seating will begin 15 minutes before showtime.',
-										],
-									],
-									//why chose us_settings
-									'ttbm_why_choose_us_texts' => [
-										0 => 'Enjoy a taste of Las Vegas glitz at the mind-bending magic show',
-										1 => 'Enjoy a taste of Las Vegas glitz at the mind-bending magic show',
-										2 => 'Watch as Gerry McCambridge performs comedy and magic',
-									],
-									//activities_settings
-									'ttbm_display_activities' => 'on',
-									'ttbm_tour_activities' => [
-										0 => 'City Tours',
-										1 => 'Hiking',
-										2 => 'Rural',
-									],
-									//gallery_settings
-									'ttbm_gallery_images' => [120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300],
-									//extras_settings
-									'ttbm_display_get_question' => 'on',
-									'ttbm_contact_email' => 'example.gmail.com',
-									'ttbm_contact_phone' => '123456789',
-									'ttbm_contact_text' => 'Do not hesitate to give us a call. We are an expert team and we are happy to talk to you.',
-									'ttbm_display_tour_guide' => 'on',
-									//Related tour_settings
-									//Display_settings
-									'ttbm_section_title_style' => 'ttbm_title_style_2',
-									'ttbm_ticketing_system' => 'regular_ticket',
-									'ttbm_display_seat_details' => 'on',
-									'ttbm_display_sidebar' => 'off',
-									'ttbm_display_tour_type' => 'on',
-									'ttbm_display_hotels' => 'on',
-									'ttbm_display_duration' => 'on',
-								]
+									'mpwpb_category_active' => 'off',
+									'mpwpb_sub_category_active' => 'off',
+									'mpwpb_service_details_active' => 'on',
+									'mpwpb_service_duration_active' => 'off',
+									'mpwpb_category_text' => '',
+									'mpwpb_sub_category_text' => '',
+									'mpwpb_service_text' => 'Service',
+									'mpwpb_category_infos' => array
+									(
+																			
+										0 => array
+											(
+												'icon' => '',
+												'image' => '',
+												'category' => '',
+												'sub_category' => array
+													(
+														0 => array
+															(
+																'icon' => '',
+																'image' => '', 
+																'name' => '',
+																'service' => array
+																	(
+																		0 => array
+																			(
+																				'name' => 'Fever​',
+																				'price' => '10',
+																				'details' => 'Nisl tempus, sollicitudin amet, porttitor erat magna congue dui malesuada vestibulum.',
+																				'duration' => '',
+																				'icon' => 'fas fa-ambulance',
+																				'image' => '',
+																			),
+																		1 => array
+																			(
+																				'name' => 'Tiredness',
+																				'price' => '12',
+																				'details' => 'Ultrices et ultrices enim nunc, quis pellentesque sit mauris',
+																				'duration' => '',
+																				'icon' => 'fas fa-user-md',
+																				'image' => '',
+																			),
+																		2 => array
+																			(
+																				'name' => 'Dry Cough​',
+																				'price' => '14',
+																				'details' => 'Nisl tempus, metus, sollicitudin amet, porttitor erat magna congue dui malesuada vestibulum.',
+																				'duration' => '',
+																				'icon' => 'fas fa-id-card-alt',
+																				'image' => '',
+																			),
+																		3 => array
+																			(
+																				'name' => 'Shortness of Breath​',
+																				'price' => '15',
+																				'details' => 'Nisl tempus, metus, sollicitudin amet, porttitor erat magna congue dui malesuada vestibulum.',
+																				'duration' => '',
+																				'icon' => 'fas fa-x-ray',
+																				'image' => '',
+																			),
+																		4 => array
+																			(
+																				'name' => 'Aches and Pains​',
+																				'price' => '20',
+																				'details' => 'Nisl tempus, metus, sollicitudin amet, porttitor erat magna congue dui malesuada vestibulum.',
+																				'duration' => '',
+																				'icon' => 'fas fa-thermometer',
+																				'image' => '',
+																			),
+																		5 => array
+																			(
+																				'name' => 'Sore Throat​',
+																				'price' => '22',
+																				'details' => 'Nisl tempus, metus, sollicitudin amet, porttitor erat magna congue dui malesuada vestibulum.',
+																				'duration' => '',
+																				'icon' => 'fas fa-record-vinyl',
+																				'image' => '',
+																			),
+									
+																		
+									
+																	)
+									
+															),
+									
+													)
+									
+											),
+									
+									),
+									'mpwpb_extra_service_active' => 'off',
+									'mpwpb_group_extra_service_active' => 'off',
+									'mpwpb_extra_service' => array
+									(
+										
+									),
+									//Galary Settings
+									'mpwpb_display_slider' => 'off',
+									'mpwpb_slider_images' => 'off',
+								],
 							],
 							3 => [
-								'name' => 'Beach Hopping at Inani, Himchari, Patuartek',
+								'name' => 'Musical Class',
 								'post_data' => [
 									//General_settings
-									'ttbm_travel_duration' => 2,
-									'ttbm_travel_duration_type' => 'day',
-									'ttbm_display_duration_night' => 'on',
-									'ttbm_travel_duration_night' => 1,
-									'ttbm_display_price_start' => 'on',
-									'ttbm_travel_start_price' => '',
-									'ttbm_display_max_people' => 'on',
-									'ttbm_display_min_age' => 'on',
-									'ttbm_travel_min_age' => 12,
-									'ttbm_display_start_location' => 'on',
-									'ttbm_travel_start_place' => '',
-									'ttbm_display_location' => 'off',
-									'ttbm_location_name' => '',
-									'ttbm_display_map' => 'off',
-									'ttbm_display_description' => 'on',
-									'ttbm_short_description' => '',
+									'mpwpb_shortcode_title' => 'Musical Service',
+									'mpwpb_shortcode_sub_title' => 'Find your musical instructor easily with affordable price.',
 									//date_settings
-									'ttbm_travel_type' => 'repeated',
-									'ttbm_travel_repeated_after' => '7',
-									'ttbm_travel_repeated_start_date' => date('Y-m-d', strtotime(' +25 day')),
-									'ttbm_travel_repeated_end_date' => date('Y-m-d', strtotime(' +365 day')),
+									'mpwpb_service_start_date' => '2023-03-01',
+									'mpwpb_service_end_date' => '2023-08-25',
+									'mpwpb_time_slot_length' => '60',
+									'mpwpb_capacity_per_session' => '1',
+									'mpwpb_default_start_time' => '10',
+									'mpwpb_default_end_time' => '18',
+									'mpwpb_default_start_break_time' => '13',
+									'mpwpb_default_end_break_time' => '15',
+									'mpwpb_monday_start_time' => '10',
+									'mpwpb_monday_end_time' => '18',
+									'mpwpb_monday_start_break_time' => '13',
+									'mpwpb_monday_end_break_time' => '15',
+									'mpwpb_tuesday_start_time' => '10.5',
+									'mpwpb_tuesday_end_time' => '18.5',
+									'mpwpb_tuesday_start_break_time' => '13.5',
+									'mpwpb_tuesday_end_break_time' => '15.5',
+									'mpwpb_wednesday_start_time' => '11',
+									'mpwpb_wednesday_end_time' => '19',
+									'mpwpb_wednesday_start_break_time' => '14',
+									'mpwpb_wednesday_end_break_time' => '16',
+									'mpwpb_thursday_start_time' => '10',
+									'mpwpb_thursday_end_time' => '18',
+									'mpwpb_thursday_start_break_time' => '13',
+									'mpwpb_thursday_end_break_time' => '15',
+									'mpwpb_off_days' => 'saturday,sunday',
+									'mpwpb_off_dates' => array(
+										0 => '2023-03-07',
+										1 => '2023-03-15',
+									),
 									//price_settings
-									'ttbm_display_registration' => 'on',
-									'ttbm_display_advance' => 'off',
-									'ttbm_type' => 'general',
-									'ttbm_hotels' => array(),
-									'ttbm_ticket_type' => [
-										0 => [
-											'ticket_type_icon' => 'fas fa-user-tie',
-											'ticket_type_name' => 'Adult',
-											'ticket_type_price' => 105,
-											'sale_price' => 100,
-											'ticket_type_qty' => 200,
-											'ticket_type_default_qty' => 0,
-											'ticket_type_resv_qty' => 2,
-											'ticket_type_qty_type' => 'inputbox',
-											'ticket_type_description' => '',
-										],
-										1 => [
-											'ticket_type_icon' => 'fas fa-snowman',
-											'ticket_type_name' => 'Child',
-											'ticket_type_price' => 100,
-											'sale_price' => 90,
-											'ticket_type_qty' => 100,
-											'ticket_type_default_qty' => 0,
-											'ticket_type_resv_qty' => 20,
-											'ticket_type_qty_type' => 'inputbox',
-											'ticket_type_description' => '',
-										]
-									],
-									'ttbm_extra_service_data' => [
-										0 => [
-											'service_icon' => 'fas fa-graduation-cap',
-											'service_name' => 'Cap',
-											'service_price' => 6,
-											'service_qty' => 500,
-											'service_qty_type' => 'inputbox',
-											'extra_service_description' => '',
-										],
-										1 => [
-											'service_icon' => 'fas fa-coffee',
-											'service_name' => 'Coffe',
-											'service_price' => 4,
-											'service_qty' => 1500,
-											'service_qty_type' => 'inputbox',
-											'extra_service_description' => '',
-										],
-									],
-									'ttbm_display_include_service' => 'on',
-									'ttbm_service_included_in_price' => [
-										0 => 'Accommodation',
-										1 => 'BBQ Night',
-										2 => 'Welcome Drinks',
-										3 => 'Lunch',
-										4 => 'Transport',
-									],
-									'ttbm_display_exclude_service' => 'on',
-									'ttbm_service_excluded_in_price' => [
-										0 => 'Airport Transfer',
-										1 => 'Breakfast',
-										2 => 'Guide',
-										3 => 'Insurance',
-										4 => 'Outing Ticket',
-									],
-									//Place_you_see_settings
-									//day wise details_settings
-									//faq_settings
-									'ttbm_display_faq' => 'on',
-									'mep_event_faq' => [
-										0 => [
-											'ttbm_faq_title' => 'What can I expect to see at The Mentalist at Planet Hollywood Resort and Casino?',
-											'ttbm_faq_content' => 'Comedy, magic and mind-reading! The Mentalist has the ability to get inside the minds of audience members, revealing everything from their names, hometowns and anniversaries to their wildest wishes.',
-										],
-										1 => [
-											'ttbm_faq_title' => 'Where is The Mentalist located?',
-											'ttbm_faq_content' => 'The V Theater is located inside the Miracle Mile Shops at the Planet Hollywood Resort & Casino.',
-										],
-										2 => [
-											'ttbm_faq_title' => 'Can I purchase alcohol at the venue during The Mentalist!?',
-											'ttbm_faq_content' => 'Absolutely! Drinks are available for purchase at the Showgirl Bar outside of the theater and may be brought into the showroom, however, no other outside food or drink will be allowed in the theater.',
-										],
-										3 => [
-											'ttbm_faq_title' => 'Is The Mentalist appropriate for children?',
-											'ttbm_faq_content' => 'Due to language, this show is recommended for guests 16 years old and over.',
-										],
-										4 => [
-											'ttbm_faq_title' => 'Do I need to exchange my ticket upon arrival at The Mentalist!?',
-											'ttbm_faq_content' => 'Please pick up your tickets at the V Theater Box Office with a valid photo ID for the lead traveler at least 30 minutes prior to show time (box office opens at 11 am). Seating will begin 15 minutes before showtime.',
-										],
-									],
-									//why chose us_settings
-									'ttbm_why_choose_us_texts' => [
-										0 => 'Enjoy a taste of Las Vegas glitz at the mind-bending magic show',
-										1 => 'Enjoy a taste of Las Vegas glitz at the mind-bending magic show',
-										2 => 'Watch as Gerry McCambridge performs comedy and magic',
-									],
-									//activities_settings
-									'ttbm_display_activities' => 'on',
-									'ttbm_tour_activities' => [
-										0 => 'City Tours',
-										1 => 'Hiking',
-										2 => 'Rural',
-									],
-									//gallery_settings
-									'ttbm_gallery_images' => [120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300],
-									//extras_settings
-									'ttbm_display_get_question' => 'on',
-									'ttbm_contact_email' => 'example.gmail.com',
-									'ttbm_contact_phone' => '123456789',
-									'ttbm_contact_text' => 'Do not hesitate to give us a call. We are an expert team and we are happy to talk to you.',
-									'ttbm_display_tour_guide' => 'on',
-									//Related tour_settings
-									//Display_settings
-									'ttbm_section_title_style' => 'ttbm_title_style_2',
-									'ttbm_ticketing_system' => 'regular_ticket',
-									'ttbm_display_seat_details' => 'on',
-									'ttbm_display_sidebar' => 'off',
-									'ttbm_display_tour_type' => 'on',
-									'ttbm_display_hotels' => 'on',
-									'ttbm_display_duration' => 'on',
-								]
+									'mpwpb_category_active' => 'off',
+									'mpwpb_sub_category_active' => 'off',
+									'mpwpb_service_details_active' => 'on',
+									'mpwpb_service_duration_active' => 'on',
+									'mpwpb_category_text' => '',
+									'mpwpb_sub_category_text' => '',
+									'mpwpb_service_text' => 'Service',
+									'mpwpb_category_infos' => array
+									(
+																			
+										0 => array
+											(
+												'icon' => '',
+												'image' => '',
+												'category' => '',
+												'sub_category' => array
+													(
+														0 => array
+															(
+																'icon' => '',
+																'image' => '', 
+																'name' => '',
+																'service' => array
+																	(
+																		0 => array
+																			(
+																				'name' => 'Classical Class (3 Months)',
+																				'price' => '10',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-music',
+																				'image' => '',
+																			),
+																		1 => array
+																			(
+																				'name' => 'Jazz Classes (2 Months)',
+																				'price' => '12',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-soundcloud',
+																				'image' => '',
+																			),
+																		2 => array
+																			(
+																				'name' => 'Classical Private Tutor​',
+																				'price' => '14',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-record-vinyl',
+																				'image' => '',
+																			),
+																		3 => array
+																			(
+																				'name' => 'Pop Songs Classes​',
+																				'price' => '15',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-play',
+																				'image' => '',
+																			),
+																		4 => array
+																			(
+																				'name' => 'Rock Music Piano Class​',
+																				'price' => '20',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-dolly-flatbed',
+																				'image' => '',
+																			),
+																		5 => array
+																			(
+																				'name' => 'Classical Advance Class​',
+																				'price' => '22',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-warehouse',
+																				'image' => '',
+																			),
+																		6 => array
+																			(
+																				'name' => 'Classical Private tutor​',
+																				'price' => '22',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-wind',
+																				'image' => '',
+																			),
+																		7 => array
+																			(
+																				'name' => 'Pop Songs Advance (Annually)​',
+																				'price' => '22',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-anchor',
+																				'image' => '',
+																			),
+																		8 => array
+																			(
+																				'name' => 'Rock Music Piano Advance​',
+																				'price' => '22',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-compass',
+																				'image' => '',
+																			),
+									
+																		
+									
+																	)
+									
+															),
+									
+													)
+									
+											),
+									
+									),
+									'mpwpb_extra_service_active' => 'off',
+									'mpwpb_group_extra_service_active' => 'off',
+									'mpwpb_extra_service' => array
+									(
+										
+									),
+									//Galary Settings
+									'mpwpb_display_slider' => 'off',
+									'mpwpb_slider_images' => 'off',
+								],
 							],
 							4 => [
-								'name' => 'Boga Lake : A Relaxing Gateway Tour',
+								'name' => 'Car Wash',
 								'post_data' => [
 									//General_settings
-									'ttbm_travel_duration' => 4,
-									'ttbm_travel_duration_type' => 'day',
-									'ttbm_display_duration_night' => 'on',
-									'ttbm_travel_duration_night' => 5,
-									'ttbm_display_price_start' => 'on',
-									'ttbm_travel_start_price' => '',
-									'ttbm_display_max_people' => 'on',
-									'ttbm_display_min_age' => 'on',
-									'ttbm_travel_min_age' => 18,
-									'ttbm_display_start_location' => 'on',
-									'ttbm_travel_start_place' => '',
-									'ttbm_display_location' => 'off',
-									'ttbm_location_name' => '',
-									'ttbm_display_map' => 'off',
-									'ttbm_display_description' => 'on',
-									'ttbm_short_description' => '',
+									'mpwpb_shortcode_title' => 'Car Wash Service',
+									'mpwpb_shortcode_sub_title' => 'Wash your car easily with affordable price',
 									//date_settings
-									'ttbm_travel_type' => 'repeated',
-									'ttbm_travel_repeated_after' => '15',
-									'ttbm_travel_repeated_start_date' => date('Y-m-d', strtotime(' +35 day')),
-									'ttbm_travel_repeated_end_date' => date('Y-m-d', strtotime(' +365 day')),
+									'mpwpb_service_start_date' => '2023-03-01',
+									'mpwpb_service_end_date' => '2023-08-25',
+									'mpwpb_time_slot_length' => '60',
+									'mpwpb_capacity_per_session' => '1',
+									'mpwpb_default_start_time' => '10',
+									'mpwpb_default_end_time' => '18',
+									'mpwpb_default_start_break_time' => '13',
+									'mpwpb_default_end_break_time' => '15',
+									'mpwpb_monday_start_time' => '10',
+									'mpwpb_monday_end_time' => '18',
+									'mpwpb_monday_start_break_time' => '13',
+									'mpwpb_monday_end_break_time' => '15',
+									'mpwpb_tuesday_start_time' => '10.5',
+									'mpwpb_tuesday_end_time' => '18.5',
+									'mpwpb_tuesday_start_break_time' => '13.5',
+									'mpwpb_tuesday_end_break_time' => '15.5',
+									'mpwpb_wednesday_start_time' => '11',
+									'mpwpb_wednesday_end_time' => '19',
+									'mpwpb_wednesday_start_break_time' => '14',
+									'mpwpb_wednesday_end_break_time' => '16',
+									'mpwpb_thursday_start_time' => '10',
+									'mpwpb_thursday_end_time' => '18',
+									'mpwpb_thursday_start_break_time' => '13',
+									'mpwpb_thursday_end_break_time' => '15',
+									'mpwpb_off_days' => 'saturday,sunday',
+									'mpwpb_off_dates' => array(
+										0 => '2023-03-07',
+										1 => '2023-03-15',
+									),
 									//price_settings
-									'ttbm_display_registration' => 'on',
-									'ttbm_display_advance' => 'off',
-									'ttbm_type' => 'general',
-									'ttbm_hotels' => array(),
-									'ttbm_ticket_type' => [
-										0 => [
-											'ticket_type_icon' => 'fas fa-user-tie',
-											'ticket_type_name' => 'Adult',
-											'ticket_type_price' => 105,
-											'sale_price' => 100,
-											'ticket_type_qty' => 200,
-											'ticket_type_default_qty' => 0,
-											'ticket_type_resv_qty' => 2,
-											'ticket_type_qty_type' => 'inputbox',
-											'ticket_type_description' => '',
-										],
-										1 => [
-											'ticket_type_icon' => 'fas fa-snowman',
-											'ticket_type_name' => 'Child',
-											'ticket_type_price' => 100,
-											'sale_price' => 90,
-											'ticket_type_qty' => 100,
-											'ticket_type_default_qty' => 0,
-											'ticket_type_resv_qty' => 20,
-											'ticket_type_qty_type' => 'inputbox',
-											'ticket_type_description' => '',
-										]
-									],
-									'ttbm_extra_service_data' => [
-										0 => [
-											'service_icon' => 'fas fa-graduation-cap',
-											'service_name' => 'Cap',
-											'service_price' => 6,
-											'service_qty' => 500,
-											'service_qty_type' => 'inputbox',
-											'extra_service_description' => '',
-										],
-										1 => [
-											'service_icon' => 'fas fa-coffee',
-											'service_name' => 'Coffe',
-											'service_price' => 4,
-											'service_qty' => 1500,
-											'service_qty_type' => 'inputbox',
-											'extra_service_description' => '',
-										],
-									],
-									'ttbm_display_include_service' => 'on',
-									'ttbm_service_included_in_price' => [
-										0 => 'Accommodation',
-										1 => 'BBQ Night',
-										2 => 'Welcome Drinks',
-										3 => 'Lunch',
-										4 => 'Transport',
-									],
-									'ttbm_display_exclude_service' => 'on',
-									'ttbm_service_excluded_in_price' => [
-										0 => 'Airport Transfer',
-										1 => 'Breakfast',
-										2 => 'Guide',
-										3 => 'Insurance',
-										4 => 'Outing Ticket',
-									],
-									//Place_you_see_settings
-									//day wise details_settings
-									//faq_settings
-									'ttbm_display_faq' => 'on',
-									'mep_event_faq' => [
-										0 => [
-											'ttbm_faq_title' => 'What can I expect to see at The Mentalist at Planet Hollywood Resort and Casino?',
-											'ttbm_faq_content' => 'Comedy, magic and mind-reading! The Mentalist has the ability to get inside the minds of audience members, revealing everything from their names, hometowns and anniversaries to their wildest wishes.',
-										],
-										1 => [
-											'ttbm_faq_title' => 'Where is The Mentalist located?',
-											'ttbm_faq_content' => 'The V Theater is located inside the Miracle Mile Shops at the Planet Hollywood Resort & Casino.',
-										],
-										2 => [
-											'ttbm_faq_title' => 'Can I purchase alcohol at the venue during The Mentalist!?',
-											'ttbm_faq_content' => 'Absolutely! Drinks are available for purchase at the Showgirl Bar outside of the theater and may be brought into the showroom, however, no other outside food or drink will be allowed in the theater.',
-										],
-										3 => [
-											'ttbm_faq_title' => 'Is The Mentalist appropriate for children?',
-											'ttbm_faq_content' => 'Due to language, this show is recommended for guests 16 years old and over.',
-										],
-										4 => [
-											'ttbm_faq_title' => 'Do I need to exchange my ticket upon arrival at The Mentalist!?',
-											'ttbm_faq_content' => 'Please pick up your tickets at the V Theater Box Office with a valid photo ID for the lead traveler at least 30 minutes prior to show time (box office opens at 11 am). Seating will begin 15 minutes before showtime.',
-										],
-									],
-									//why chose us_settings
-									'ttbm_why_choose_us_texts' => [
-										0 => 'Enjoy a taste of Las Vegas glitz at the mind-bending magic show',
-										1 => 'Enjoy a taste of Las Vegas glitz at the mind-bending magic show',
-										2 => 'Watch as Gerry McCambridge performs comedy and magic',
-									],
-									//activities_settings
-									'ttbm_display_activities' => 'on',
-									'ttbm_tour_activities' => [
-										0 => 'Hiking',
-										1 => 'Rural',
-									],
-									//gallery_settings
-									'ttbm_gallery_images' => [120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300],
-									//extras_settings
-									'ttbm_display_get_question' => 'on',
-									'ttbm_contact_email' => 'example.gmail.com',
-									'ttbm_contact_phone' => '123456789',
-									'ttbm_contact_text' => 'Do not hesitate to give us a call. We are an expert team and we are happy to talk to you.',
-									'ttbm_display_tour_guide' => 'on',
-									//Related tour_settings
-									//Display_settings
-									'ttbm_section_title_style' => 'ttbm_title_style_2',
-									'ttbm_ticketing_system' => 'regular_ticket',
-									'ttbm_display_seat_details' => 'on',
-									'ttbm_display_sidebar' => 'off',
-									'ttbm_display_tour_type' => 'on',
-									'ttbm_display_hotels' => 'on',
-									'ttbm_display_duration' => 'on',
-								]
+									'mpwpb_category_active' => 'on',
+									'mpwpb_sub_category_active' => 'on',
+									'mpwpb_service_details_active' => 'on',
+									'mpwpb_service_duration_active' => 'on',
+									'mpwpb_category_text' => 'Wash Type',
+									'mpwpb_sub_category_text' => 'Car Type',
+									'mpwpb_service_text' => 'Service',
+									'mpwpb_category_infos' => array
+									(
+																			
+										0 => array
+											(
+												'icon' => 'fas fa-luggage-cart',
+												'image' => '',
+												'category' => 'Car Wash Polish',
+												'sub_category' => array
+													(
+														0 => array
+															(
+																'icon' => 'fas fa-car-side',
+																'image' => '', 
+																'name' => 'Car Type SUV',
+																'service' => array
+																	(
+																		0 => array
+																			(
+																				'name' => 'Hand Wash',
+																				'price' => '100',
+																				'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-gifts',
+																				'image' => '',
+																			),
+																		1 => array
+																			(
+																				'name' => 'Exterior Handwax',
+																				'price' => '200',
+																				'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-soundcloud',
+																				'image' => '',
+																			),
+																		2 => array
+																			(
+																				'name' => 'Hand Wash Wax',
+																				'price' => '300',
+																				'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-play',
+																				'image' => '',
+																			),					
+																		
+									
+																	)
+									
+															),
+														1 => array
+															(
+																'icon' => 'fas fa-car',
+																'image' => '', 
+																'name' => 'Car Type Zeep',
+																'service' => array
+																	(
+																		0 => array
+																			(
+																				'name' => 'Hand Wash',
+																				'price' => '130',
+																				'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-gifts',
+																				'image' => '',
+																			),
+																		1 => array
+																			(
+																				'name' => 'Exterior Handwax',
+																				'price' => '250',
+																				'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-dolly-flatbed',
+																				'image' => '',
+																			),
+																		2 => array
+																			(
+																				'name' => 'Hand Wash Wax',
+																				'price' => '350',
+																				'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-wind',
+																				'image' => '',
+																			),
+									
+																		
+									
+																	)
+									
+															),
+														2 => array
+															(
+																'icon' => 'fas fa-compass',
+																'image' => '', 
+																'name' => 'Car Type Sedan',
+																'service' => array
+																	(
+																		0 => array
+																			(
+																				'name' => 'Hand Wash',
+																				'price' => '130',
+																				'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-gifts',
+																				'image' => '',
+																			),
+																		1 => array
+																			(
+																				'name' => 'Exterior Handwax',
+																				'price' => '250',
+																				'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-coffee',
+																				'image' => '',
+																			),
+																		2 => array
+																			(
+																				'name' => 'Hand Wash Wax',
+																				'price' => '350',
+																				'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-shuttle-van',
+																				'image' => '',
+																			),
+									
+																		
+									
+																	)
+									
+															),
+														
+													)
+									
+											),
+										1 => array
+											(
+												'icon' => 'fas fa-ambulance',
+												'image' => '',
+												'category' => 'Car Detailing',
+												'sub_category' => array
+													(
+														0 => array
+															(
+																'icon' => 'fas fa-car-side',
+																'image' => '', 
+																'name' => 'Car Type Sedan',
+																'service' => array
+																	(
+																		0 => array
+																			(
+																				'name' => 'Standard Interior',
+																				'price' => '700',
+																				'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-gifts',
+																				'image' => '',
+																			),
+																		1 => array
+																			(
+																				'name' => 'Premium Interior',
+																				'price' => '750',
+																				'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-user-md',
+																				'image' => '',
+																			),
+																		2 => array
+																			(
+																				'name' => 'Complete Detail',
+																				'price' => '900',
+																				'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-id-card-alt',
+																				'image' => '',
+																			),					
+																		
+									
+																	)
+									
+															),
+														
+													)
+									
+											),
+									
+									),
+									'mpwpb_extra_service_active' => 'on',
+									'mpwpb_group_extra_service_active' => 'off',
+									'mpwpb_extra_service' => array
+									(
+										0 => array
+											(
+												'group_service' => '',
+												'group_service_info' => array
+													(
+														0 => array
+															(
+																'name' => 'Tyre Pressure Checking',
+																'qty' => 5,
+																'price' => 5,
+																'details' => 'A gentle but detailed hand wash procedure that keeps your car looking its best, longer. This service includes: Hand wash of the body Windows and mirrors Rims Tire & Wheel shine',
+																'icon' => 'fas fa-boxes',
+																'image' => '',
+															),
+									
+														1 => array
+															(
+																'name' => 'Tyre Changing',
+																'qty' => 10,
+																'price' => 10,
+																'details' => 'A gentle but detailed hand wash procedure that keeps your car looking its best, longer. This service includes: Hand wash of the body Windows and mirrors Rims Tire & Wheel shine',
+																'icon' => 'fas fa-baby-carriage',
+																'image' => '',
+															),
+														2 => array
+															(
+																'name' => 'Odor Removal',
+																'qty' => 10,
+																'price' => 10,
+																'details' => 'A gentle but detailed hand wash procedure that keeps your car looking its best, longer. This service includes: Hand wash of the body Windows and mirrors Rims Tire & Wheel shine',
+																'icon' => 'fas fa-wheelchair',
+																'image' => '',
+															),
+									
+													)
+									
+											)
+										
+									),
+									//Galary Settings
+									'mpwpb_display_slider' => 'off',
+									'mpwpb_slider_images' => 'off',
+								],
+							],
+							5 => [
+								'name' => 'Repair service',
+								'post_data' => [
+									//General_settings
+									'mpwpb_shortcode_title' => 'Repair Service',
+									'mpwpb_shortcode_sub_title' => 'Repair anything easily with effordable price',
+									//date_settings
+									'mpwpb_service_start_date' => '2023-03-01',
+									'mpwpb_service_end_date' => '2023-08-25',
+									'mpwpb_time_slot_length' => '60',
+									'mpwpb_capacity_per_session' => '1',
+									'mpwpb_default_start_time' => '10',
+									'mpwpb_default_end_time' => '18',
+									'mpwpb_default_start_break_time' => '13',
+									'mpwpb_default_end_break_time' => '15',
+									'mpwpb_monday_start_time' => '10',
+									'mpwpb_monday_end_time' => '18',
+									'mpwpb_monday_start_break_time' => '13',
+									'mpwpb_monday_end_break_time' => '15',
+									'mpwpb_tuesday_start_time' => '10.5',
+									'mpwpb_tuesday_end_time' => '18.5',
+									'mpwpb_tuesday_start_break_time' => '13.5',
+									'mpwpb_tuesday_end_break_time' => '15.5',
+									'mpwpb_wednesday_start_time' => '11',
+									'mpwpb_wednesday_end_time' => '19',
+									'mpwpb_wednesday_start_break_time' => '14',
+									'mpwpb_wednesday_end_break_time' => '16',
+									'mpwpb_thursday_start_time' => '10',
+									'mpwpb_thursday_end_time' => '18',
+									'mpwpb_thursday_start_break_time' => '13',
+									'mpwpb_thursday_end_break_time' => '15',
+									'mpwpb_off_days' => 'saturday,sunday',
+									'mpwpb_off_dates' => array(
+										0 => '2023-03-07',
+										1 => '2023-03-15',
+									),
+									//price_settings
+									'mpwpb_category_active' => 'on',
+									'mpwpb_sub_category_active' => 'off',
+									'mpwpb_service_details_active' => 'on',
+									'mpwpb_service_duration_active' => 'on',
+									'mpwpb_category_text' => 'Service Type',
+									'mpwpb_sub_category_text' => '',
+									'mpwpb_service_text' => 'Service Details',
+									'mpwpb_category_infos' => array
+									(
+																			
+										0 => array
+											(
+												'icon' => 'fas fa-car-side',
+												'image' => '',
+												'category' => 'Car Maintenance',
+												'sub_category' => array
+													(
+														0 => array
+															(
+																'icon' => '',
+																'image' => '', 
+																'name' => '',
+																'service' => array
+																	(
+																		0 => array
+																			(
+																				'name' => 'Auto Maintenance Services​',
+																				'price' => '100',
+																				'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-gifts',
+																				'image' => '',
+																			),
+																		1 => array
+																			(
+																				'name' => 'Oil Filter Change',
+																				'price' => '200',
+																				'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-ambulance',
+																				'image' => '',
+																			),
+																		2 => array
+																			(
+																				'name' => 'Cabin Air Filter Replacement',
+																				'price' => '300',
+																				'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-x-ray',
+																				'image' => '',
+																			),
+																		3 => array
+																			(
+																				'name' => 'Engine Performance',
+																				'price' => '300',
+																				'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-thermometer',
+																				'image' => '',
+																			),					
+																		
+									
+																	)
+									
+															),														
+														
+													)
+									
+											),
+										1 => array
+											(
+												'icon' => 'fas fa-running',
+												'image' => '',
+												'category' => 'Car Repair',
+												'sub_category' => array
+													(
+														0 => array
+															(
+																'icon' => '',
+																'image' => '', 
+																'name' => '',
+																'service' => array
+																	(
+																		0 => array
+																			(
+																				'name' => 'Brake Repair Pads Rotors',
+																				'price' => '700',
+																				'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-gifts',
+																				'image' => '',
+																			),
+																		1 => array
+																			(
+																				'name' => 'Air Conditioning Services​​',
+																				'price' => '750',
+																				'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-user-md',
+																				'image' => '',
+																			),
+																		2 => array
+																			(
+																				'name' => 'Body Repair Painting',
+																				'price' => '900',
+																				'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-thermometer',
+																				'image' => '',
+																			),					
+																		
+									
+																	)
+									
+															),
+														
+													)
+									
+											),
+									
+									),
+									'mpwpb_extra_service_active' => 'on',
+									'mpwpb_group_extra_service_active' => 'off',
+									'mpwpb_extra_service' => array
+									(
+										0 => array
+											(
+												'group_service' => '',
+												'group_service_info' => array
+													(
+														0 => array
+															(
+																'name' => 'Driver Seating Chair',
+																'qty' => 5,
+																'price' => 5,
+																'details' => 'A gentle but detailed hand wash procedure that keeps your car looking its best, longer. This service includes: Hand wash of the body Windows and mirrors Rims Tire & Wheel shine',
+																'icon' => 'fas fa-boxes',
+																'image' => '',
+															),
+									
+														1 => array
+															(
+																'name' => 'Lunch box for driver',
+																'qty' => 10,
+																'price' => 10,
+																'details' => 'A gentle but detailed hand wash procedure that keeps your car looking its best, longer. This service includes: Hand wash of the body Windows and mirrors Rims Tire & Wheel shine',
+																'icon' => 'fas fa-wheelchair',
+																'image' => '',
+															),
+									
+													)
+									
+											)
+										
+									),
+									//Galary Settings
+									'mpwpb_display_slider' => 'off',
+									'mpwpb_slider_images' => 'off',
+								],
+							],
+							6 => [
+								'name' => 'Hair Cut',
+								'post_data' => [
+									//General_settings
+									'mpwpb_shortcode_title' => 'Hair Cut Service',
+									'mpwpb_shortcode_sub_title' => 'Cut your hair beautifully with affordable price',
+									//date_settings
+									'mpwpb_service_start_date' => '2023-03-01',
+									'mpwpb_service_end_date' => '2023-08-25',
+									'mpwpb_time_slot_length' => '60',
+									'mpwpb_capacity_per_session' => '1',
+									'mpwpb_default_start_time' => '10',
+									'mpwpb_default_end_time' => '18',
+									'mpwpb_default_start_break_time' => '13',
+									'mpwpb_default_end_break_time' => '15',
+									'mpwpb_monday_start_time' => '10',
+									'mpwpb_monday_end_time' => '18',
+									'mpwpb_monday_start_break_time' => '13',
+									'mpwpb_monday_end_break_time' => '15',
+									'mpwpb_tuesday_start_time' => '10.5',
+									'mpwpb_tuesday_end_time' => '18.5',
+									'mpwpb_tuesday_start_break_time' => '13.5',
+									'mpwpb_tuesday_end_break_time' => '15.5',
+									'mpwpb_wednesday_start_time' => '11',
+									'mpwpb_wednesday_end_time' => '19',
+									'mpwpb_wednesday_start_break_time' => '14',
+									'mpwpb_wednesday_end_break_time' => '16',
+									'mpwpb_thursday_start_time' => '10',
+									'mpwpb_thursday_end_time' => '18',
+									'mpwpb_thursday_start_break_time' => '13',
+									'mpwpb_thursday_end_break_time' => '15',
+									'mpwpb_off_days' => 'saturday,sunday',
+									'mpwpb_off_dates' => array(
+										0 => '2023-03-07',
+										1 => '2023-03-15',
+									),
+									//price_settings
+									'mpwpb_category_active' => 'off',
+									'mpwpb_sub_category_active' => 'off',
+									'mpwpb_service_details_active' => 'on',
+									'mpwpb_service_duration_active' => 'on',
+									'mpwpb_category_text' => '',
+									'mpwpb_sub_category_text' => '',
+									'mpwpb_service_text' => 'Service Details',
+									'mpwpb_category_infos' => array
+									(
+																			
+										0 => array
+											(
+												'icon' => '',
+												'image' => '',
+												'category' => '',
+												'sub_category' => array
+													(
+														0 => array
+															(
+																'icon' => '',
+																'image' => '', 
+																'name' => '',
+																'service' => array
+																	(
+																		0 => array
+																			(
+																				'name' => 'Fade Haircut​',
+																				'price' => '100',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-gifts',
+																				'image' => '',
+																			),
+																		1 => array
+																			(
+																				'name' => 'Taper Haircut',
+																				'price' => '200',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-baby-carriage',
+																				'image' => '',
+																			),
+																		2 => array
+																			(
+																				'name' => 'Buzz Cut',
+																				'price' => '300',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-running',
+																				'image' => '',
+																			),
+																		3 => array
+																			(
+																				'name' => 'Crew Cut',
+																				'price' => '300',
+																				'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																				'duration' => '1h',
+																				'icon' => 'fas fa-thermometer',
+																				'image' => '',
+																			),					
+																		
+									
+																	)
+									
+															),														
+														
+													)
+									
+											),
+									
+									),
+									'mpwpb_extra_service_active' => 'on',
+									'mpwpb_group_extra_service_active' => 'off',
+									'mpwpb_extra_service' => array
+									(
+										0 => array
+											(
+												'group_service' => '',
+												'group_service_info' => array
+													(
+														0 => array
+															(
+																'name' => 'Pre Hair Wash',
+																'qty' => 5,
+																'price' => 5,
+																'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																'icon' => 'fas fa-boxes',
+																'image' => '',
+															),
+									
+														1 => array
+															(
+																'name' => 'After Hair Wash',
+																'qty' => 10,
+																'price' => 10,
+																'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																'icon' => 'fas fa-wheelchair',
+																'image' => '',
+															),
+														2 => array
+															(
+																'name' => 'Face Wash',
+																'qty' => 10,
+																'price' => 10,
+																'details' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae fringilla velit. Maecenas in purus ipsum. Integer euismod dui risus, eget porttitor enim molestie ac. Nunc ac sem a mauris vestibulum vestibulum. Duis orci massa, venenatis a gravida eget, convallis ac sapien',
+																'icon' => 'fas fa-thermometer',
+																'image' => '',
+															),
+									
+													)
+									
+											)
+										
+									),
+									//Galary Settings
+									'mpwpb_display_slider' => 'off',
+									'mpwpb_slider_images' => 'off',
+								],
 							],
 						]
 					]
@@ -790,3 +1547,6 @@
 			}
 		}
 	}
+
+
+	
