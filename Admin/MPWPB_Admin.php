@@ -32,7 +32,7 @@
 				//require_once MPWPB_PLUGIN_DIR . '/Admin/settings/MPWPB_FAQ_Settings.php';
 			}
 			public function add_dummy_data(){
-				//new MPWPB_Dummy_Import();
+				new MPWPB_Dummy_Import();
 			}
 			public function flush_rewrite() {
 				flush_rewrite_rules();
