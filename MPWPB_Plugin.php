@@ -3,7 +3,7 @@
 	 * Plugin Name: Service Booking Manager
 	 * Plugin URI: http://mage-people.com
 	 * Description: A complete solution for Any kind of service booking.
-	 * Version: 1.0.0
+	 * Version: 1.0.2
 	 * Author: MagePeople Team
 	 * Author URI: http://www.mage-people.com/
 	 * Text Domain: service-booking-manager
@@ -27,17 +27,24 @@
 				if (!defined('MPWPB_PLUGIN_URL')) {
 					define('MPWPB_PLUGIN_URL', plugins_url() . '/' . plugin_basename(dirname(__FILE__)));
 				}
-				require_once MPWPB_PLUGIN_DIR . '/inc/MP_Global_Function.php';
-				require_once MPWPB_PLUGIN_DIR . '/inc/MP_Global_Style.php';
+				$this->load_global_file();
 				if (MP_Global_Function::check_woocommerce() == 1) {
 					register_activation_hook(__FILE__, array($this, 'on_activation_page_create'));
 					add_action('activated_plugin', array($this, 'activation_redirect'), 90, 1);
 					require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Dependencies.php';
-				} else {
+				}
+				else {
 					require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Quick_Setup.php';
-					//add_action('admin_notices', [$this, 'woocommerce_not_active']);
+					add_action('admin_notices', [$this, 'woocommerce_not_active']);
 					add_action('activated_plugin', array($this, 'activation_redirect_setup'), 90, 1);
 				}
+			}
+			public function load_global_file() {
+				require_once MPWPB_PLUGIN_DIR . '/inc/global/MP_Global_Function.php';
+				require_once MPWPB_PLUGIN_DIR . '/inc/global/MP_Global_Style.php';
+				require_once MPWPB_PLUGIN_DIR . '/inc/global/MP_Custom_Layout.php';
+				require_once MPWPB_PLUGIN_DIR . '/inc/global/MP_Custom_Slider.php';
+				require_once MPWPB_PLUGIN_DIR . '/inc/global/MP_Select_Icon_image.php';
 			}
 			public function activation_redirect($plugin) {
 				if ($plugin == plugin_basename(__FILE__)) {

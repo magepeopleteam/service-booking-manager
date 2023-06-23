@@ -62,7 +62,7 @@
 			}
 			//************************//
 			public static function get_general_settings($key, $default = '') {
-				return MP_Global_Function::get_settings('mpwpb_general_settings', $key, $default);
+				return MP_Global_Function::get_settings( 'MPWPB_General_Settings', $key, $default);
 			}
 			//*****************//
 			public static function get_cpt(): string {
@@ -217,10 +217,10 @@
 				$start_time = MP_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_start_time');
 				if (!$start_time) {
 					$day_name = 'default';
-					$start_time = MP_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_start_time');
+					$start_time = MP_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_start_time',10);
 				}
 				$start_time = $start_time * 3600;
-				$end_time = MP_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_end_time') * 3600;
+				$end_time = MP_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_end_time',18) * 3600;
 				$start_time_break = MP_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_start_break_time',0) * 3600;
 				$end_time_break = MP_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_end_break_time',0) * 3600;
 				for ($i = $start_time; $i <= $end_time; $i = $i + $slot_length) {

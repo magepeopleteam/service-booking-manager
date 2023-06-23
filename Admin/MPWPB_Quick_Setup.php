@@ -85,13 +85,13 @@
 				if (isset($_POST['finish_quick_setup'])) {
 					$label = isset($_POST['mpwpb_label']) ? sanitize_text_field($_POST['mpwpb_label']) : 'service-booking-manager';
 					$slug = isset($_POST['mpwpb_slug']) ? sanitize_text_field($_POST['mpwpb_slug']) : 'service-booking-manager';
-					$general_settings_data = get_option('mpwpb_general_settings');
+					$general_settings_data = get_option( 'MPWPB_General_Settings' );
 					$update_general_settings_arr = [
 						'label' => $label,
 						'slug' => $slug
 					];
 					$new_general_settings_data = is_array($general_settings_data) ? array_replace($general_settings_data, $update_general_settings_arr) : $update_general_settings_arr;
-					update_option('mpwpb_general_settings', $new_general_settings_data);
+					update_option( 'MPWPB_General_Settings', $new_general_settings_data);
 					flush_rewrite_rules();
 					wp_redirect(admin_url('edit.php?post_type=mpwpb_item'));
 				}
@@ -166,8 +166,8 @@
 				<?php
 			}
 			public function setup_general_content() {
-				$label = MP_Global_Function::get_settings('mpwpb_general_settings', 'label', 'Service Booking');
-				$slug = MP_Global_Function::get_settings('mpwpb_general_settings', 'slug', 'service-booking');
+				$label = MP_Global_Function::get_settings( 'MPWPB_General_Settings', 'label', 'Service Booking');
+				$slug = MP_Global_Function::get_settings( 'MPWPB_General_Settings', 'slug', 'service-booking');
 				?>
 				<div data-tabs-next="#mpwpb_qs_general">
 					<div class="section">

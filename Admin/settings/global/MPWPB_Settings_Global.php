@@ -46,7 +46,7 @@
 			public function settings_sec_reg( $default_sec ): array {
 				$sections = array(
 					array(
-						'id'    => 'mpwpb_general_settings',
+						'id'    => 'MPWPB_General_Settings',
 						'title' => __( 'General Settings', 'service-booking-manager' )
 					),
 					array(
@@ -64,7 +64,7 @@
 				$label           = MPWPB_Function::get_name();
 				$current_date    = current_time( 'Y-m-d' );
 				$settings_fields = array(
-					'mpwpb_general_settings' => apply_filters( 'filter_mpwpb_general_settings', array(
+					'MPWPB_General_Settings' => apply_filters( 'filter_mpwpb_general_settings', array(
 						array(
 							'name'    => 'disable_block_editor',
 							'label'   => esc_html__( 'Disable Block/Gutenberg Editor', 'service-booking-manager' ),

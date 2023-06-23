@@ -6,7 +6,7 @@ div.registration_tab_item {
 }
 /********************************************************************************************************************/
 @media only screen and (min-width: 10px) {
-	div.mpStyle form.mpwpb_registration{margin: 0 0 var(--dMPL) 0;}
+	div.mpStyle form.mpwpb_registration {margin: 0 0 var(--dMPL) 0;}
 	form.mpwpb_registration div.mpwpb_main_section {border: 1px solid var(--color_border); border-radius: var(--dBRL); }
 	form.mpwpb_registration span.mpwpb_item_check {position: absolute;top: -9px;right: -9px;font-size: var(--fs_h6);opacity: 0;margin: 0; }
 	/*************/
@@ -14,7 +14,7 @@ div.registration_tab_item {
 	div.registration_tab_item {display: -webkit-flex;display: flex;-webkit-align-items: center;align-items: center;border-radius: var(--dBR);cursor: pointer;font-size: var(--fs_h6);opacity: 0.7;padding: var(--dMP_xs);}
 	div.registration_tab_item:hover,
 	div.registration_tab_item.mpActive {opacity: 1;color: var(--color_theme);font-weight: var(--fw-bold);}
-	div.registration_tab_item img {border: 1px solid var(--d_color);width: 25px;padding: 5px;margin: 0 10px 0 0;background-color: var(--d_color);}
+	div.registration_tab_item img {border: 1px solid var(--d_color);width: 25px !important;padding: 5px;margin: 0 10px 0 0;background-color: var(--d_color);}
 	div.registration_tab_item:hover img,
 	div.registration_tab_item.mpActive img {border-color: var(--color_theme);background-color: var(--color_theme);}
 	div.mpwpb_sub_category_area,

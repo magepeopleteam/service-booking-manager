@@ -76,10 +76,8 @@ function pageScrollTo(target) {
 }
 function mp_load_date_picker() {
 	jQuery(".mpStyle .date_type").datepicker({
-		dateFormat: mp_date_format,
-		autoSize: true,
-		onSelect: function (dateString, data) {
-			let date = data.selectedYear + '-' + (parseInt(data.selectedMonth) + 1) + '-' + data.selectedDay;
+		dateFormat: mp_date_format, autoSize: true, onSelect: function (dateString, data) {
+			let date = data.selectedYear + '-' + ('0' + (parseInt(data.selectedMonth) + 1)).slice(-2) + '-' + data.selectedDay;
 			jQuery(this).closest('label').find('input[type="hidden"]').val(date).trigger('change');
 		}
 	});
@@ -92,33 +90,37 @@ function mp_alert($this, attr = 'alert') {
 	"use strict";
 	$(document).ready(function () {
 		mp_load_date_picker();
-		//$('.mp_select2').select2({});
+		$('.mp_select2').select2({});
 	});
 }(jQuery));
 //==========Load Bg Image=================//
 function loadBgImage() {
 	jQuery('body').find('[data-bg-image]:visible').each(function () {
 		let target = jQuery(this);
-		//let height = target.outerWidth() * 2 / 3;
-		if (target.css('background-image') === 'none') {
+		let width = target.outerWidth();
+		let height = target.outerHeight();
+		if (target.css('background-image') === 'none' || width === 0 || height === 0) {
 			let bg_url = target.data('bg-image');
-			let tmpImg = new Image();
-			tmpImg.src = bg_url;
-			jQuery(tmpImg).one('load', function () {
-				let imgWidth = tmpImg.width;
-				let imgHeight = tmpImg.height;
-				let height = target.outerWidth() * imgHeight / imgWidth;
-				target.css({"min-height": height});
-			});
 			if (!bg_url || bg_url.width === 0 || bg_url.width === 'undefined') {
 				bg_url = mp_empty_image_url;
 			}
+			mp_resize_bg_image_area(target, bg_url);
 			target.css('background-image', 'url("' + bg_url + '")').promise().done(function () {
 				dLoaderRemove(jQuery(this));
 			});
 		}
 	});
 	return true;
+}
+function mp_resize_bg_image_area(target, bg_url) {
+	let tmpImg = new Image();
+	tmpImg.src = bg_url;
+	jQuery(tmpImg).one('load', function () {
+		let imgWidth = tmpImg.width;
+		let imgHeight = tmpImg.height;
+		let height = target.outerWidth() * imgHeight / imgWidth;
+		target.css({"min-height": height});
+	});
 }
 (function ($) {
 	let bg_image_load = false;
@@ -145,8 +147,11 @@ function loadBgImage() {
 	$(window).on('load , resize', function () {
 		$('body').find('[data-bg-image]:visible').each(function () {
 			let target = $(this);
-			let height = target.outerWidth() * 2 / 3;
-			target.css({"min-height": height, "height": height});
+			let bg_url = target.data('bg-image');
+			if (!bg_url || bg_url.width === 0 || bg_url.width === 'undefined') {
+				bg_url = mp_empty_image_url;
+			}
+			mp_resize_bg_image_area(target, bg_url);
 		});
 	});
 	function load_initial() {
@@ -171,7 +176,7 @@ function content_text_change(currentTarget) {
 	let closeText = currentTarget.data('close-text');
 	if (openText || closeText) {
 		let text = currentTarget.find('[data-text]').html();
-		if (openText !== text) {
+		if (text !== openText) {
 			currentTarget.find('[data-text]').html(openText);
 		} else {
 			currentTarget.find('[data-text]').html(closeText);
@@ -181,7 +186,11 @@ function content_text_change(currentTarget) {
 function content_class_change(currentTarget) {
 	let clsName = currentTarget.data('add-class');
 	if (clsName) {
-		currentTarget.toggleClass(clsName);
+		if (currentTarget.find('[data-class]').length > 0) {
+			currentTarget.find('[data-class]').toggleClass(clsName);
+		} else {
+			currentTarget.toggleClass(clsName);
+		}
 	}
 }
 function content_input_value_change(currentTarget) {
@@ -265,7 +274,6 @@ function mp_all_content_change($this) {
 		target.val(value).trigger('change').trigger('input');
 	});
 }(jQuery));
-
 //===========Sticky================//
 (function ($) {
 	"use strict";
@@ -309,10 +317,14 @@ function mp_all_content_change($this) {
 		let num_of_tab = parent.find('.tabListsNext:first').children('[data-tabs-target-next]').length;
 		let i = 1;
 		for (i; i <= num_of_tab; i++) {
+			let target_tab = parent.find('.tabListsNext:first').children('[data-tabs-target-next]:nth-child(' + i + ')');
 			if (i <= index) {
-				parent.find('.tabListsNext:first').children('[data-tabs-target-next]:nth-child(' + i + ')').addClass('active');
+				target_tab.addClass('active');
 			} else {
-				parent.find('.tabListsNext:first').children('[data-tabs-target-next]:nth-child(' + i + ')').removeClass('active');
+				target_tab.removeClass('active');
+			}
+			if (i === index - 1) {
+				mp_all_content_change(target_tab);
 			}
 		}
 		if (index < 2 && num_of_tab > index) {
@@ -328,8 +340,9 @@ function mp_all_content_change($this) {
 		target_tabContent.slideDown(350);
 		tabsContent.children('[data-tabs-next].active').slideUp(350).removeClass('active').promise().done(function () {
 			target_tabContent.addClass('active').promise().done(function () {
-				loadBgImage();
 				parent.height('auto');
+				loadBgImage();
+				dLoaderRemove(parent);
 			});
 		});
 	}
@@ -357,6 +370,7 @@ function mp_all_content_change($this) {
 		$('.mpStyle .mpTabsNext').each(function () {
 			let parent = $(this);
 			if (parent.find('[data-tabs-target-next].active').length < 1) {
+				dLoader(parent);
 				let tabLists = parent.find('.tabListsNext:first');
 				let targetTab = tabLists.find('[data-tabs-target-next]').first().data('tabs-target-next')
 				active_next_tab(parent, targetTab);
@@ -405,14 +419,27 @@ function mp_all_content_change($this) {
 		let currentTarget = $(this);
 		let value = currentTarget.val();
 		currentTarget.find('option').each(function () {
-			let current_value = $(this).val();
 			let target_id = $(this).data('option-target');
 			let target = $('[data-collapse="' + target_id + '"]');
-			if (current_value === value) {
-				target.slideDown(250).removeClass('mActive');
-			} else {
-				target.slideUp(250).removeClass('mActive');
-			}
+			target.slideUp('fast').removeClass('mActive');
+		}).promise().done(function () {
+			currentTarget.find('option').each(function () {
+				let current_value = $(this).val();
+				if (current_value === value) {
+					if ($(this).attr('data-option-target-multi')) {
+						let target_ids = $(this).data('option-target-multi');
+						target_ids = target_ids.toString().split(" ");
+						target_ids.forEach(function (target_id) {
+							let target = $('[data-collapse="' + target_id + '"]');
+							target.slideDown(350).removeClass('mActive');
+						});
+					} else {
+						let target_id = $(this).data('option-target');
+						let target = $('[data-collapse="' + target_id + '"]');
+						target.slideDown(350).removeClass('mActive');
+					}
+				}
+			});
 		});
 	});
 	function target_close(close_id, target_id) {

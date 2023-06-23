@@ -205,7 +205,7 @@
 								</div>
 								<div class="dFlex">
 									<h6><?php esc_html_e( 'Price : ', 'service-booking-manager' ); ?></h6>&nbsp;
-									<span><?php echo esc_html(' ( ' . MP_Global_Function::wc_price( $post_id, $service['ex_price'] ) . ' x ' . $service['ex_qty'] . ' ) = ' . MP_Global_Function::wc_price( $post_id, ( $service['ex_price'] * $service['ex_qty'] ) )); ?></span>
+									<span><?php echo ' ( ' . MP_Global_Function::wc_price( $post_id, $service['ex_price'] ) . ' x ' . $service['ex_qty'] . ' ) = ' . MP_Global_Function::wc_price( $post_id, ( $service['ex_price'] * $service['ex_qty'] ) ); ?></span>
 								</div>
 							<?php } ?>
 						</div>

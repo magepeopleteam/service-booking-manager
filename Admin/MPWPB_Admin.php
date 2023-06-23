@@ -1,37 +1,38 @@
 <?php
-	if ( ! defined( 'ABSPATH' ) ) {
+	if (!defined('ABSPATH')) {
 		die;
 	} // Cannot access pages directly.
-	if ( ! class_exists( 'MPWPB_Admin' ) ) {
+	if (!class_exists('MPWPB_Admin')) {
 		class MPWPB_Admin {
 			public function __construct() {
 				$this->load_file();
 				add_action('init', [$this, 'add_dummy_data']);
-				add_action( 'upgrader_process_complete', [ $this, 'flush_rewrite' ] );
+				add_action('upgrader_process_complete', [$this, 'flush_rewrite']);
 				add_filter('use_block_editor_for_post_type', [$this, 'disable_gutenberg'], 10, 2);
 				add_action('admin_action_mpwpb_item_duplicate', [$this, 'mpwpb_item_duplicate']);
 				add_filter('post_row_actions', [$this, 'post_duplicator'], 10, 2);
 				add_filter('wp_mail_content_type', array($this, 'email_content_type'));
 			}
 			private function load_file(): void {
-				require_once MPWPB_PLUGIN_DIR . '/Admin/MAGE_Setting_API.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Taxonomy.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Dummy_Import.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Settings_Global.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Hidden_Product.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/MP_Select_Icon_image.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_CPT.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Quick_Setup.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Status.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Save.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Settings.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/MPWPB_General_Settings.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/MPWPB_Price_Settings.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/MPWPB_Date_Time_Settings.php';
+				//*************Global Settings*****************//
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/global/MAGE_Setting_API.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/global/MPWPB_Settings_Global.php';
+				//*************Service Settings*****************//
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/service/MPWPB_Settings.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/service/MPWPB_General_Settings.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/service/MPWPB_Price_Settings.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/service/MPWPB_Date_Time_Settings.php';
 				//require_once MPWPB_PLUGIN_DIR . '/Admin/settings/MPWPB_Gallery_Settings.php';
 				//require_once MPWPB_PLUGIN_DIR . '/Admin/settings/MPWPB_FAQ_Settings.php';
+				//******************************//
 			}
-			public function add_dummy_data(){
+			public function add_dummy_data() {
 				new MPWPB_Dummy_Import();
 			}
 			public function flush_rewrite() {
@@ -106,7 +107,8 @@
 					}
 					wp_redirect(admin_url('post.php?action=edit&post=' . $new_post_id));
 					exit;
-				} else {
+				}
+				else {
 					wp_die('Post creation failed, could not find original post: ' . $post_id);
 				}
 			}
@@ -120,7 +122,6 @@
 			public function email_content_type() {
 				return "text/html";
 			}
-			
 		}
 		new MPWPB_Admin();
 	}

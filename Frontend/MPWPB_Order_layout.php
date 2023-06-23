@@ -40,6 +40,10 @@
 						add_post_meta( $order_id, '_order_currency', get_woocommerce_currency_symbol(), true );
 						add_post_meta( $order_id, '_paid_date', $order_date, true );
 						add_post_meta( $order_id, '_billing_first_name', $billing_name, true );
+						add_post_meta( $order_id, '_billing_last_name', '', true );
+						add_post_meta( $order_id, '_billing_phone', '', true );
+						add_post_meta( $order_id, '_billing_address_2', '', true );
+						add_post_meta( $order_id, '_billing_address_1', '', true );
 						add_post_meta( $order_id, '_billing_email', $billing_email, true );
 						// get product by item_id
 						$product_id = MP_Global_Function::get_post_info($post_id,'link_wc_product');

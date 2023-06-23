@@ -4,9 +4,7 @@ function load_sortable_datepicker(parent, item) {
 			handle: jQuery(this).find('.mp_sortable_button')
 		});
 		parent.find(".date_type").removeClass('hasDatepicker').attr('id', '').removeData('datepicker').unbind().datepicker({
-			dateFormat: mp_date_format,
-			autoSize: true,
-			onSelect: function (dateString, data) {
+			dateFormat: mp_date_format, autoSize: true, onSelect: function (dateString, data) {
 				let date = data.selectedYear + '-' + (parseInt(data.selectedMonth) + 1) + '-' + data.selectedDay;
 				jQuery(this).closest('label').find('input[type="hidden"]').val(date).trigger('change');
 			}
@@ -14,7 +12,6 @@ function load_sortable_datepicker(parent, item) {
 	});
 	return true;
 }
-
 (function ($) {
 	"use strict";
 	$(document).ready(function () {

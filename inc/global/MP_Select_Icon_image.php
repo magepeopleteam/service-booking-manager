@@ -2,7 +2,7 @@
 	if ( ! defined( 'ABSPATH' ) ) {
 		die;
 	} // Cannot access pages directly.
-	if ( ! class_exists( 'MP_Select_Icon_image' ) ) {
+	if ( ! class_exists('MP_Select_Icon_image') ) {
 		$GLOBALS['mp_icon_popup_exit'] = false;
 		class MP_Select_Icon_image {
 			public function __construct() {

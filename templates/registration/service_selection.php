@@ -52,7 +52,7 @@
 									<div class="divider"></div>
 									<?php
 										if ( $service_details ) {
-											MPWPB_Layout::load_more_text($service_details);
+											MP_Custom_Layout::load_more_text($service_details);
 										}
 										?>
 									<div class="_dFlex_justifyBetween_mT_fullWidth">
