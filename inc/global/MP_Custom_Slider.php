@@ -1,13 +1,13 @@
 <?php
 	/*
-	* @Author 		engr.sumonazma@gmail.com
-	* Copyright: 	mage-people.com
-	*/
+* @Author 		engr.sumonazma@gmail.com
+* Copyright: 	mage-people.com
+*/
 	if ( ! defined( 'ABSPATH' ) ) {
 		die;
 	} // Cannot access pages directly.
 	//echo '<pre>';print_r();echo '</pre>';
-	if ( ! class_exists( 'global\MP_Custom_Slider' ) ) {
+	if ( ! class_exists( 'MP_Custom_Slider' ) ) {
 		class MP_Custom_Slider {
 			public function __construct() {
 				add_filter( 'mp_settings_sec_reg', array( $this, 'slider_tab_name' ), 20 );

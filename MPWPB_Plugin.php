@@ -29,8 +29,8 @@
 				}
 				$this->load_global_file();
 				if (MP_Global_Function::check_woocommerce() == 1) {
-					register_activation_hook(__FILE__, array($this, 'on_activation_page_create'));
 					add_action('activated_plugin', array($this, 'activation_redirect'), 90, 1);
+					self::on_activation_page_create();
 					require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Dependencies.php';
 				}
 				else {
@@ -57,7 +57,7 @@
 					exit(wp_redirect(admin_url('admin.php?post_type=mpwpb_item&page=mpwpb_quick_setup')));
 				}
 			}
-			public function on_activation_page_create() {
+			public static function on_activation_page_create() {
 				if (!MP_Global_Function::get_page_by_slug('mpwpb-order-details')) {
 					$add_page = array(
 						'post_type' => 'page',

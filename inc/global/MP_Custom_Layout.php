@@ -1,12 +1,12 @@
 <?php
 	/*
-	* @Author 		engr.sumonazma@gmail.com
-	* Copyright: 	mage-people.com
-	*/
+   * @Author 		engr.sumonazma@gmail.com
+   * Copyright: 	mage-people.com
+   */
 	if (!defined('ABSPATH')) {
 		die;
 	} // Cannot access pages directly.
-	if (!class_exists('global\MP_Custom_Layout')) {
+	if (!class_exists('MP_Custom_Layout')) {
 		class MP_Custom_Layout {
 			public function __construct() {
 				add_action('add_mp_hidden_table', array($this, 'hidden_table'), 10, 2);
@@ -169,7 +169,14 @@
 							<span class="fas fa-minus"></span>
 						</div>
 						<label>
-							<input type="text" class="formControl inputIncDec" data-price="<?php echo esc_attr($price); ?>" name="<?php echo esc_attr($input_name); ?>" value="<?php echo esc_attr(max(0, $default_qty)); ?>" min="<?php echo esc_attr($min_qty); ?>" max="<?php echo esc_attr($max_qty > 0 ? $max_qty : $available_seat); ?>"/>
+							<input type="text"
+								class="formControl inputIncDec"
+								data-price="<?php echo esc_attr($price); ?>"
+								name="<?php echo esc_attr($input_name); ?>"
+								value="<?php echo esc_attr(max(0, $default_qty)); ?>"
+								min="<?php echo esc_attr($min_qty); ?>"
+								max="<?php echo esc_attr($max_qty > 0 ? $max_qty : $available_seat); ?>"
+							/>
 						</label>
 						<div class="incQty addonGroupContent">
 							<span class="fas fa-plus"></span>

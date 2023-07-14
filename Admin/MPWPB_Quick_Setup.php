@@ -15,8 +15,6 @@
 				wp_enqueue_script('mp_plugin_global', MPWPB_PLUGIN_URL . '/assets/helper/mp_style/mp_script.js', array('jquery'), time(), true);
 				wp_enqueue_script('mp_admin_settings', MPWPB_PLUGIN_URL . '/assets/admin/mp_admin_settings.js', array('jquery'), time(), true);
 				wp_enqueue_style('mp_admin_settings', MPWPB_PLUGIN_URL . '/assets/admin/mp_admin_settings.css', array(), time());
-				wp_enqueue_script('mpwpb_admin', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_admin.js', array('jquery'), time(), true);
-				wp_enqueue_style('mpwpb_admin', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_admin.css', array(), time());
 				wp_enqueue_style('mp_font_awesome', '//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css', array(), '5.15.4');
 			}
 			public function quick_setup_menu() {
@@ -24,7 +22,8 @@
 				if ($status == 1) {
 					add_submenu_page('edit.php?post_type=mpwpb_item', __('Quick Setup', 'service-booking-manager'), '<span style="color:#10dd10">' . esc_html__('Quick Setup', 'service-booking-manager') . '</span>', 'manage_options', 'mpwpb_quick_setup', array($this, 'quick_setup'));
 					add_submenu_page('mpwpb_item', esc_html__('Quick Setup', 'service-booking-manager'), '<span style="color:#10dd10">' . esc_html__('Quick Setup', 'service-booking-manager') . '</span>', 'manage_options', 'mpwpb_quick_setup', array($this, 'quick_setup'));
-				} else {
+				}
+				else {
 					add_menu_page(esc_html__('Service Booking', 'service-booking-manager'), esc_html__('Service Booking', 'service-booking-manager'), 'manage_options', 'mpwpb_item', array($this, 'quick_setup'), 'dashicons-admin-site-alt2', 6);
 					add_submenu_page('mpwpb_item', esc_html__('Quick Setup', 'service-booking-manager'), '<span style="color:#10dd17">' . esc_html__('Quick Setup', 'service-booking-manager') . '</span>', 'manage_options', 'mpwpb_quick_setup', array($this, 'quick_setup'));
 				}
@@ -37,17 +36,28 @@
 					</script>
 					<?php
 					activate_plugin('woocommerce/woocommerce.php');
+					MPWPB_Plugin::on_activation_page_create();
 					?>
 					<script>
-						let mpwpb_admin_location = window.location.href;
-						mpwpb_admin_location = mpwpb_admin_location.replace('admin.php?page=mpwpb_item', 'edit.php?post_type=mpwpb_item&page=mpwpb_quick_setup');
-						window.location.href = mpwpb_admin_location;
+						(function ($) {
+							"use strict";
+							$(document).ready(function () {
+								let mpwpb_admin_location = window.location.href;
+								mpwpb_admin_location = mpwpb_admin_location.replace('admin.php?post_type=mpwpb_item&page=mpwpb_quick_setup', 'edit.php?post_type=mpwpb_item&page=mpwpb_quick_setup');
+								mpwpb_admin_location = mpwpb_admin_location.replace('admin.php?page=mpwpb_item', 'edit.php?post_type=mpwpb_item&page=mpwpb_quick_setup');
+								mpwpb_admin_location = mpwpb_admin_location.replace('admin.php?page=mpwpb_quick_setup', 'edit.php?post_type=mpwpb_item&page=mpwpb_quick_setup');
+								window.location.href = mpwpb_admin_location;
+							});
+						}(jQuery));
 					</script>
 					<?php
 				}
 				if (isset($_POST['install_and_active_woo_btn'])) {
 					echo '<div style="display:none">';
-					include_once(ABSPATH . 'wp-admin/includes/plugin-install.php'); //for plugins_api..
+					include_once(ABSPATH . 'wp-admin/includes/plugin-install.php');
+					include_once(ABSPATH . 'wp-admin/includes/file.php');
+					include_once(ABSPATH . 'wp-admin/includes/misc.php');
+					include_once(ABSPATH . 'wp-admin/includes/class-wp-upgrader.php');
 					$plugin = 'woocommerce';
 					$api = plugins_api('plugin_information', array(
 						'slug' => $plugin,
@@ -66,32 +76,36 @@
 							'donate_link' => false,
 						),
 					));
-					//includes necessary for Plugin_Upgrade and Plugin_Installer_Skin
-					include_once(ABSPATH . 'wp-admin/includes/file.php');
-					include_once(ABSPATH . 'wp-admin/includes/misc.php');
-					include_once(ABSPATH . 'wp-admin/includes/class-wp-upgrader.php');
 					$woocommerce_plugin = new Plugin_Upgrader(new Plugin_Installer_Skin(compact('title', 'url', 'nonce', 'plugin', 'api')));
 					$woocommerce_plugin->install($api->download_link);
 					activate_plugin('woocommerce/woocommerce.php');
+					MPWPB_Plugin::on_activation_page_create();
 					echo '</div>';
 					?>
 					<script>
-						let mpwpb_admin_location = window.location.href;
-						mpwpb_admin_location = mpwpb_admin_location.replace('admin.php?page=mpwpb_item', 'edit.php?post_type=mpwpb_item&page=mpwpb_quick_setup');
-						window.location.href = mpwpb_admin_location;
+						(function ($) {
+							"use strict";
+							$(document).ready(function () {
+								let mpwpb_admin_location = window.location.href;
+								mpwpb_admin_location = mpwpb_admin_location.replace('admin.php?post_type=mpwpb_item&page=mpwpb_quick_setup', 'edit.php?post_type=mpwpb_item&page=mpwpb_quick_setup');
+								mpwpb_admin_location = mpwpb_admin_location.replace('admin.php?page=mpwpb_item', 'edit.php?post_type=mpwpb_item&page=mpwpb_quick_setup');
+								mpwpb_admin_location = mpwpb_admin_location.replace('admin.php?page=mpwpb_quick_setup', 'edit.php?post_type=mpwpb_item&page=mpwpb_quick_setup');
+								window.location.href = mpwpb_admin_location;
+							});
+						}(jQuery));
 					</script>
 					<?php
 				}
 				if (isset($_POST['finish_quick_setup'])) {
 					$label = isset($_POST['mpwpb_label']) ? sanitize_text_field($_POST['mpwpb_label']) : 'service-booking-manager';
 					$slug = isset($_POST['mpwpb_slug']) ? sanitize_text_field($_POST['mpwpb_slug']) : 'service-booking-manager';
-					$general_settings_data = get_option( 'MPWPB_General_Settings' );
+					$general_settings_data = get_option('MPWPB_General_Settings');
 					$update_general_settings_arr = [
 						'label' => $label,
 						'slug' => $slug
 					];
 					$new_general_settings_data = is_array($general_settings_data) ? array_replace($general_settings_data, $update_general_settings_arr) : $update_general_settings_arr;
-					update_option( 'MPWPB_General_Settings', $new_general_settings_data);
+					update_option('MPWPB_General_Settings', $new_general_settings_data);
 					flush_rewrite_rules();
 					wp_redirect(admin_url('edit.php?post_type=mpwpb_item'));
 				}
@@ -101,17 +115,26 @@
 						<form method="post" action="">
 							<div class="mpTabsNext">
 								<div class="tabListsNext _max_700_mAuto">
-									<div data-tabs-target-next="#mpwpb_qs_welcome" class="tabItemNext">
-										<h4 class="circleIcon">1</h4>
-										<h5 class="circleTitle"><?php esc_html_e('Welcome', 'service-booking-manager'); ?></h5>
+									<div data-tabs-target-next="#mpwpb_qs_welcome" class="tabItemNext" data-open-text="1" data-close-text=" " data-open-icon="" data-close-icon="fas fa-check" data-add-class="success">
+										<h4 class="circleIcon" data-class>
+											<span class="mp_zero" data-icon></span>
+											<span class="mp_zero" data-text>1</span>
+										</h4>
+										<h6 class="circleTitle" data-class><?php esc_html_e('Welcome', 'service-booking-manager'); ?></h6>
 									</div>
-									<div data-tabs-target-next="#mpwpb_qs_general" class="tabItemNext">
-										<h4 class="circleIcon">2</h4>
-										<h5 class="circleTitle"><?php esc_html_e('General', 'service-booking-manager'); ?></h5>
+									<div data-tabs-target-next="#mpwpb_qs_general" class="tabItemNext" data-open-text="2" data-close-text="" data-open-icon="" data-close-icon="fas fa-check" data-add-class="success">
+										<h4 class="circleIcon" data-class>
+											<span class="mp_zero" data-icon></span>
+											<span class="mp_zero" data-text>2</span>
+										</h4>
+										<h6 class="circleTitle" data-class><?php esc_html_e('General', 'service-booking-manager'); ?></h6>
 									</div>
-									<div data-tabs-target-next="#mpwpb_qs_done" class="tabItemNext">
-										<h4 class="circleIcon">3</h4>
-										<h5 class="circleTitle"><?php esc_html_e('Done', 'service-booking-manager'); ?></h5>
+									<div data-tabs-target-next="#mpwpb_qs_done" class="tabItemNext" data-open-text="3" data-close-text="" data-open-icon="" data-close-icon="fas fa-check" data-add-class="success">
+										<h4 class="circleIcon" data-class>
+											<span class="mp_zero" data-icon></span>
+											<span class="mp_zero" data-text>3</span>
+										</h4>
+										<h6 class="circleTitle" data-class><?php esc_html_e('Done', 'service-booking-manager'); ?></h6>
 									</div>
 								</div>
 								<div class="tabsContentNext _infoLayout_mT">
@@ -146,14 +169,18 @@
 						<h5>
 							<?php if ($status == 1) {
 								esc_html_e('Woocommerce already installed and activated', 'service-booking-manager');
-							} elseif ($status == 0) {
+							}
+							elseif ($status == 0) {
 								esc_html_e('Woocommerce need to install and active', 'service-booking-manager');
-							} else {
+							}
+							else {
 								esc_html_e('Woocommerce already install , please activate it', 'service-booking-manager');
 							} ?>
 						</h5>
 						<?php if ($status == 1) { ?>
-							<h5><span class="fas fa-check-circle textSuccess"></span></h5>
+							<h5>
+								<span class="fas fa-check-circle textSuccess"></span>
+							</h5>
 						<?php } elseif ($status == 0) { ?>
 							<button class="warningButton" type="submit"
 								name="install_and_active_woo_btn"><?php esc_html_e('Install & Active Now', 'service-booking-manager'); ?></button>
@@ -166,8 +193,8 @@
 				<?php
 			}
 			public function setup_general_content() {
-				$label = MP_Global_Function::get_settings( 'MPWPB_General_Settings', 'label', 'Service Booking');
-				$slug = MP_Global_Function::get_settings( 'MPWPB_General_Settings', 'slug', 'service-booking');
+				$label = MP_Global_Function::get_settings('MPWPB_General_Settings', 'label', 'Service Booking');
+				$slug = MP_Global_Function::get_settings('MPWPB_General_Settings', 'slug', 'service-booking');
 				?>
 				<div data-tabs-next="#mpwpb_qs_general">
 					<div class="section">
@@ -175,10 +202,8 @@
 						<p class="mTB_xs"><?php esc_html_e('Choose some general option.', 'service-booking-manager'); ?></p>
 						<div class="_dLayout_mT">
 							<label class="fullWidth">
-                            <span
-								class="min_300"><?php esc_html_e('Service Booking Manager Label:', 'service-booking-manager'); ?></span>
-								<input type="text" class="formControl" name="mpwpb_label"
-									value='<?php echo esc_attr($label); ?>'/>
+								<span class="min_300"><?php esc_html_e('Service Booking Manager Label:', 'service-booking-manager'); ?></span>
+								<input type="text" class="formControl" name="mpwpb_label" value='<?php echo esc_attr($label); ?>'/>
 							</label>
 							<i class="info_text">
 								<span class="fas fa-info-circle"></span>
@@ -187,9 +212,8 @@
 							<div class="divider"></div>
 							<label class="fullWidth">
                             <span
-								class="min_300"><?php esc_html_e('Service Booking Manager Slug:', 'service-booking-manager'); ?></span>
-								<input type="text" class="formControl" name="mpwpb_slug"
-									value='<?php echo esc_attr($slug); ?>'/>
+	                            class="min_300"><?php esc_html_e('Service Booking Manager Slug:', 'service-booking-manager'); ?></span>
+								<input type="text" class="formControl" name="mpwpb_slug" value='<?php echo esc_attr($slug); ?>'/>
 							</label>
 							<i class="info_text">
 								<span class="fas fa-info-circle"></span>

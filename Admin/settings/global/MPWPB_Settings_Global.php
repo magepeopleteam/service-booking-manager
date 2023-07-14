@@ -18,11 +18,12 @@
 				add_submenu_page( 'edit.php?post_type=' . $cpt, $label . esc_html__( ' Settings', 'service-booking-manager' ), $label . esc_html__( ' Settings', 'service-booking-manager' ), 'manage_options', 'mpwpb_settings_page', array( $this, 'settings_page' ) );
 			}
 			public function settings_page() {
-				$plugin_data = get_plugin_data( __FILE__ );
+				$label = MPWPB_Function::get_name();
 				?>
 				<div class="mp_settings_panel_header">
-					<?php echo esc_html($plugin_data['Name']); ?>
-					<small><?php echo esc_html($plugin_data['Version']); ?></small>
+					<h3>
+						<?php echo esc_html($label . esc_html__(' Global Settings', 'service-booking-manager')); ?>
+					</h3>
 				</div>
 				<div class="mp_settings_panel">
 					<?php $this->settings_api->show_navigation(); ?>

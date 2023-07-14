@@ -1,17 +1,32 @@
 <?php
 	/*
-	* @Author 		engr.sumonazma@gmail.com
-	* Copyright: 	mage-people.com
-	*/
+* @Author 		engr.sumonazma@gmail.com
+* Copyright: 	mage-people.com
+*/
 	if (!defined('ABSPATH')) {
 		die;
 	} // Cannot access pages directly.
-	if (!class_exists('global\MP_Global_Function')) {
+	if (!class_exists('MP_Global_Function')) {
 		class MP_Global_Function {
 			public function __construct() {
 				add_action('mp_load_date_picker_js', [$this, 'date_picker_js'], 10, 2);
 			}
 			//**************Date related*********************//
+			public static function date_picker_format($option,$key='date_format'): string {
+				$format=MP_Global_Function::get_settings($option, $key, 'D d M , yy');
+				$date_format = 'Y-m-d';
+				$date_format = $format == 'yy/mm/dd' ? 'Y/m/d' : $date_format;
+				$date_format = $format == 'yy-dd-mm' ? 'Y-d-m' : $date_format;
+				$date_format = $format == 'yy/dd/mm' ? 'Y/d/m' : $date_format;
+				$date_format = $format == 'dd-mm-yy' ? 'd-m-Y' : $date_format;
+				$date_format = $format == 'dd/mm/yy' ? 'd/m/Y' : $date_format;
+				$date_format = $format == 'mm-dd-yy' ? 'm-d-Y' : $date_format;
+				$date_format = $format == 'mm/dd/yy' ? 'm/d/Y' : $date_format;
+				$date_format = $format == 'd M , yy' ? 'j M , Y' : $date_format;
+				$date_format = $format == 'D d M , yy' ? 'D j M , Y' : $date_format;
+				$date_format = $format == 'M d , yy' ? 'M  j, Y' : $date_format;
+				return $format == 'D M d , yy' ? 'D M  j, Y' : $date_format;
+			}
 			public function date_picker_js($selector, $dates) {
 				$start_date = $dates[0];
 				$start_year = date('Y', strtotime($start_date));
