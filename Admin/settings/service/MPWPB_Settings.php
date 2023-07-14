@@ -47,8 +47,17 @@
 				do_action('mpwpb_settings_save', $post_id);
 			}
 			public static function description_array($key) {
-				$des = array('mpwpb_category_active' => esc_html__('By default Category  is ON but you can keep it off by switching this option', 'service-booking-manager'), 'mpwpb_sub_category_active' => esc_html__('By default Sub-Category  is ON but you can keep it off by switching this option', 'service-booking-manager'), 'mpwpb_service_details_active' => esc_html__('By default Service Details  is OFF but you can keep it ON by switching this option', 'service-booking-manager'), 'mpwpb_service_duration_active' => esc_html__('By default Service Duration  is ON but you can keep it OFF by switching this option', 'service-booking-manager'), 'mpwpb_extra_service_active' => esc_html__('By default extra service  is OFF but you can keep it ON by switching this option', 'service-booking-manager'), //======Slider==========//
-				             'mpwpb_display_slider' => esc_html__('By default slider is ON but you can keep it off by switching this option', 'service-booking-manager'), 'mpwpb_slider_images' => esc_html__('Please upload images for gallery', 'service-booking-manager'),//''          => esc_html__( '', 'service-booking-manager' ),
+				$des = array(
+					'mpwpb_category_active' => esc_html__('By default Category  is ON but you can keep it off by switching this option', 'service-booking-manager'),
+					'mpwpb_sub_category_active' => esc_html__('By default Sub-Category  is ON but you can keep it off by switching this option', 'service-booking-manager'),
+					'mpwpb_service_details_active' => esc_html__('By default Service Details  is OFF but you can keep it ON by switching this option', 'service-booking-manager'),
+					'mpwpb_service_duration_active' => esc_html__('By default Service Duration  is ON but you can keep it OFF by switching this option', 'service-booking-manager'),
+					'mpwpb_extra_service_active' => esc_html__('By default extra service  is OFF but you can keep it ON by switching this option', 'service-booking-manager'),
+					//======Slider==========//
+					'mpwpb_display_slider' => esc_html__('By default slider is ON but you can keep it off by switching this option', 'service-booking-manager'),
+					'mpwpb_slider_images' => esc_html__('Please upload images for gallery', 'service-booking-manager'),
+					//''          => esc_html__( '', 'service-booking-manager' ),
+					'mpwpb_short_code' => esc_html__('You can display this Ticket type list with the add to cart button anywhere on your website by copying the shortcode and using it on any post or page.', 'service-booking-manager'),
 				);
 				$des = apply_filters('mptbm_filter_description_array', $des);
 				return $des[$key];

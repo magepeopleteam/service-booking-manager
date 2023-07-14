@@ -15,6 +15,11 @@
 					<div class="divider"></div>
 					<?php $this->price( $post_id ); ?>
 					<?php $this->extra_service_settings( $post_id ); ?>
+					<div class="dLayout">
+						<h5><?php esc_html_e('Add To Cart Form Shortcode : ', 'service-booking-manage'); ?> </h5>
+						<code> [service-booking post_id="<?php echo esc_html($post_id); ?>"]</code>
+						<?php MPWPB_Settings::info_text('mpwpb_short_code'); ?>
+					</div>
 				</div>
 				<?php
 			}
