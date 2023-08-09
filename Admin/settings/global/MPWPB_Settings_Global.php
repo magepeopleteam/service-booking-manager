@@ -1,4 +1,8 @@
 <?php
+	/*
+   * @Author 		engr.sumonazma@gmail.com
+   * Copyright: 	mage-people.com
+   */
 	if ( ! defined( 'ABSPATH' ) ) {
 		die;
 	} // Cannot access pages directly.
@@ -121,6 +125,7 @@
 							'type'    => 'select',
 							'default' => 'M , Y',
 							'options' => array(
+								'D , M d' => date_i18n( 'D , M d', strtotime( $current_date ) ),
 								'M , Y' => date_i18n( 'M , Y', strtotime( $current_date ) ),
 								'M , y' => date_i18n( 'M , y', strtotime( $current_date ) ),
 								'M - Y' => date_i18n( 'M - Y', strtotime( $current_date ) ),
@@ -138,32 +143,6 @@
 								'M'     => date_i18n( 'M', strtotime( $current_date ) ),
 							)
 						),
-						array(
-							'name'    => 'payment_system',
-							'label'   => esc_html__( 'Payment System', 'service-booking-manager' ),
-							'desc'    => esc_html__( 'Please Select Payment System.', 'service-booking-manager' ),
-							'type'    => 'multicheck',
-							'default' => array(
-								'direct_order' => 'direct_order',
-								'woocommerce'  => 'woocommerce'
-							),
-							'options' => array(
-								'direct_order' => esc_html__( 'Pay on service', 'service-booking-manager' ),
-								'woocommerce'  => esc_html__( 'woocommerce Payment', 'service-booking-manager' ),
-							)
-						),
-						array(
-							'name'    => 'direct_book_status',
-							'label'   => esc_html__( 'Pay on service Booked Status', 'service-booking-manager' ),
-							'desc'    => esc_html__( 'Please Select when and which order status service Will be Booked/Reduced in Pay on service.', 'service-booking-manager' ),
-							'type'    => 'select',
-							'default' => 'completed',
-							'options' => array(
-								'pending' => esc_html__( 'Pending', 'service-booking-manager' ),
-								'completed'  => esc_html__( 'completed', 'service-booking-manager' )
-							)
-						),
-
 						array(
 							'name'    => 'label',
 							'label'   => $label . ' ' . esc_html__( 'Label', 'service-booking-manager' ),

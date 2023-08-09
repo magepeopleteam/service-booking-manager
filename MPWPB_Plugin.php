@@ -58,16 +58,6 @@
 				}
 			}
 			public static function on_activation_page_create() {
-				if (!MP_Global_Function::get_page_by_slug('mpwpb-order-details')) {
-					$add_page = array(
-						'post_type' => 'page',
-						'post_name' => 'mpwpb-order-details',
-						'post_title' => esc_html__('Order Details', 'service-booking-manager'),
-						'post_content' => '[mpwpb-order-details]',
-						'post_status' => 'publish',
-					);
-					wp_insert_post($add_page);
-				}
 			}
 			public function woocommerce_not_active() {
 				$wc_install_url = get_admin_url() . 'plugin-install.php?s=woocommerce&tab=search&type=term';

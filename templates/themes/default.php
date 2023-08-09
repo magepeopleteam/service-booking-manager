@@ -1,5 +1,9 @@
 <?php
 	// Template Name: Default Theme
+	/*
+   * @Author 		engr.sumonazma@gmail.com
+   * Copyright: 	mage-people.com
+   */
 	if ( ! defined( 'ABSPATH' ) ) {
 		exit;
 	}

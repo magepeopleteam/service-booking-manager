@@ -1,4 +1,8 @@
 <?php
+	/*
+   * @Author 		engr.sumonazma@gmail.com
+   * Copyright: 	mage-people.com
+   */
 	if ( ! defined( 'ABSPATH' ) ) {
 		die;
 	} // Cannot access pages directly.
@@ -13,7 +17,7 @@
 					<select name="mpwpb_id" class="formControl mp_select2" id="mpwpb_id" required>
 						<option value="0"><?php echo esc_html__( 'Select', 'service-booking-manager' ) . ' ' . esc_html( $label ); ?></option>
 						<?php
-							$loop  = MPWPB_Query::query_post_type( MPWPB_Function::get_cpt() );
+							$loop  = MP_Global_Function::query_post_type( MPWPB_Function::get_cpt() );
 							$posts = $loop->posts;
 							foreach ( $posts as $post ) {
 								?>
