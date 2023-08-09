@@ -1,12 +1,16 @@
 <?php
+	/*
+   * @Author 		engr.sumonazma@gmail.com
+   * Copyright: 	mage-people.com
+   */
 	if ( ! defined( 'ABSPATH' ) ) {
 		die;
 	} // Cannot access pages directly.
 	if ( ! class_exists( 'MPWPB_Shortcodes' ) ) {
 		class MPWPB_Shortcodes {
 			public function __construct() {
-				add_shortcode( 'mpwpb-order-details', array( $this, 'order_details' ) );
-				add_shortcode( 'bookingplus', array( $this, 'service_booking' ) );
+				//add_shortcode( 'mpwpb-order-details', array( $this, 'order_details' ) );
+				//add_shortcode( 'bookingplus', array( $this, 'service_booking' ) );
 				add_shortcode( 'service-booking', array( $this, 'service_booking' ) );
 			}
 			public function order_details() {

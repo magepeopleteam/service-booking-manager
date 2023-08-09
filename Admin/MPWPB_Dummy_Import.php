@@ -1,4 +1,8 @@
 <?php
+	/*
+   * @Author 		engr.sumonazma@gmail.com
+   * Copyright: 	mage-people.com
+   */
 	if (!defined('ABSPATH')) {
 		die;
 	} // Cannot access pages directly.
@@ -9,7 +13,7 @@
 			}
 			private function dummy_import() {
 				$dummy_post = get_option('mpwpb_dummy_already_inserted');
-				$all_post = MPWPB_Query::query_post_type('mpwpb_item');
+				$all_post = MP_Global_Function::query_post_type('mpwpb_item');
 				if ($all_post->post_count == 0 && $dummy_post != 'yes') {
 					$dummy_data = $this->dummy_data();
 					foreach ($dummy_data as $type => $dummy) {
@@ -25,7 +29,7 @@
 						}
 						if ($type == 'custom_post') {
 							foreach ($dummy as $custom_post => $dummy_post) {
-								$post = MPWPB_Query::query_post_type($custom_post);
+								$post = MP_Global_Function::query_post_type($custom_post);
 								if ($post->post_count == 0) {
 									foreach ($dummy_post as $dummy_data) {
 										$title = $dummy_data['name'];

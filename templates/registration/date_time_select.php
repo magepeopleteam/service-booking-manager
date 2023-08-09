@@ -1,10 +1,15 @@
 <?php
+	/*
+   * @Author 		engr.sumonazma@gmail.com
+   * Copyright: 	mage-people.com
+   */
 	if ( ! defined( 'ABSPATH' ) ) {
 		die;
 	}
 	$post_id           = $post_id ?? get_the_id();
+	$link_wc_product = MP_Global_Function::get_post_info($post_id, 'link_wc_product');
 	$all_dates         = $all_dates ?? MPWPB_Function::get_all_date( $post_id );
-	$short_date_format = $short_date_format ?? MPWPB_Function::get_general_settings( 'date_format_short', 'M , Y' );
+	$short_date_format = $short_date_format ?? MPWPB_Function::get_general_settings( 'date_format_short', 'D , M d' );
 	$extra_services    = $extra_services ?? MP_Global_Function::get_post_info( $post_id, 'mpwpb_extra_service', array() );
 	$service_text      = $service_text ?? MPWPB_Function::get_service_text( $post_id );
 ?>
@@ -21,13 +26,13 @@
 					while ( strtotime( $start_date ) <= strtotime( $end_date ) ) {
 						?>
 						<div class="fdColumn mpwpb_date_time_line">
-							<div class="_bgTheme_mB_xs_bBR_padding_xs fdColumn">
-								<h2 class="textWhite"><?php echo date_i18n( 'd', strtotime( $start_date ) ); ?></h2>
-								<p><?php echo date_i18n( $short_date_format, strtotime( $start_date ) ); ?></p>
-								<h6 class="textWhite textUppercase"><?php echo date_i18n( 'l', strtotime( $start_date ) ); ?></h6>
+							<div class="_bgTheme_mB_xs_padding_xs fdColumn">
+								<strong><?php echo date_i18n( $short_date_format, strtotime( $start_date ) ); ?></strong>
 							</div>
 							<?php if ( ! in_array( $start_date, $all_dates ) ) { ?>
-								<button type="button" class="_mpBtn_bBR"><?php esc_html_e( 'Closed', 'service-booking-manager' ); ?></button>
+								<div  class="_mpBtn_mpDisabled_fullHeight_bgLight">
+									<h4 class="_rotate_90"><?php esc_html_e( 'Closed', 'service-booking-manager' ); ?></h4>
+								</div>
 							<?php } else {
 								$all_time_slots = MPWPB_Function::get_time_slot( $post_id, $start_date );
 								if ( sizeof( $all_time_slots ) > 0 ) {
@@ -35,11 +40,11 @@
 										$available = MPWPB_Function::get_total_available( $post_id, $slot );
 										if ( $available > 0 ) {
 											?>
-											<button type="button" class="_mpBtn_bBR" data-date="<?php echo MP_Global_Function::date_format( $slot, 'full' ) ?>" data-radio-check="<?php echo esc_attr( $slot ); ?>" data-open-icon="fas fa-check" data-close-icon="">
+											<button type="button" class="_mpBtn" data-date="<?php echo MP_Global_Function::date_format( $slot, 'full' ) ?>" data-radio-check="<?php echo esc_attr( $slot ); ?>" data-open-icon="fas fa-check" data-close-icon="">
 												<span data-icon></span><?php echo date_i18n( 'h:i A', strtotime( $slot ) );  ?>
 											</button>
 										<?php } else { ?>
-											<button type="button" class="_mpBtn_bBR"><?php esc_html_e( 'Fully Booked', 'service-booking-manager' ); ?></button>
+											<button type="button" class="_mpBtn"><?php esc_html_e( 'Fully Booked', 'service-booking-manager' ); ?></button>
 											<?php
 										}
 									}
@@ -53,12 +58,12 @@
 			</div>
 			<div class="divider"></div>
 			<div class="justifyBetween">
-				<button class="_mpBtn_mT_xs_bBR mpActive mpwpb_date_time_prev" type="button">
+				<button class="_mpBtn_mT_xs mpActive mpwpb_date_time_prev" type="button">
 					<i class="fas fa-long-arrow-alt-left _mR_xs"></i>
 					<?php echo esc_html__( 'Previous', 'service-booking-manager' ) . ' ' . $service_text; ?>
 				</button>
 				<h3 class="alignCenter"><?php esc_html_e( 'Total :', 'service-booking-manager' ); ?>&nbsp;&nbsp;<i class="mpwpb_total_bill textTheme"><?php echo MP_Global_Function::wc_price( $post_id, 0 ); ?></i></h3>
-				<button class="_mpBtn_mT_xs_bBR mActive mpwpb_date_time_next" type="button" data-alert="<?php esc_html_e( 'Please Select Date & Time', 'service-booking-manager' ); ?>">
+				<button class="_mpBtn_mT_xs mActive mpwpb_date_time_next" type="button" data-wc_link_id="<?php echo esc_attr($link_wc_product); ?>"  data-alert="<?php esc_html_e( 'Please Select Date & Time', 'service-booking-manager' ); ?>">
 					<?php esc_html_e( 'Next Summary', 'service-booking-manager' ); ?>
 					<i class="fas fa-long-arrow-alt-right _mL_xs"></i>
 				</button>
