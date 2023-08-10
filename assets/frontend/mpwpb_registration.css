@@ -12,6 +12,12 @@ div.registration_tab_item {
 	div.mpwpb_registration table th,
 	div.mpwpb_registration table td {border: none;}
 	div.mpwpb_registration .woocommerce form .form-row {margin-bottom: var(--dMP_xs);}
+	div.mpwpb_registration #customer_details {background-color: #F7F7F7;padding: var(--dMP_xs);margin: 0;}
+	div.mpwpb_registration #order_review {background-color: #FFF;padding: 0 !important;margin: 0 !important; border: none !important;}
+	div.mpwpb_registration .mpwpb_order_details_area {background-color: #FFF;padding: var(--dMP_xs) var(--dMP_xs) var(--dMP_xs) var(--dMP);margin: 0;}
+	div.mpwpb_registration .woocommerce-page h3 {padding: 0 0 var(--dMP_xs) 0 !important;margin: 0 !important;font-size: var(--fs_h3) !important;}
+	div.mpwpb_registration .woocommerce-page input[type="radio"].shipping_method+label,
+	div.mpwpb_registration .woocommerce-page input[type="radio"][name="payment_method"]+label{ display: inline-block; }
 }
 /********************************************************************************************************************/
 @media only screen and (min-width: 10px) {
@@ -59,7 +65,6 @@ div.registration_tab_item {
 	div.mpwpb_summary_item span.mpwpb_item_check {opacity: 1;right: inherit;left: -14px;font-size: var(--fs_small);top: -3px; }
 	div.mpwpb_summary_item:last-child {border-color: transparent;}
 	/*************/
-
 }
 /********************************************************************************************************************/
 @media only screen and (min-width: 10px) {

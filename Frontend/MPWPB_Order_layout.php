@@ -32,8 +32,7 @@
 													<?php self::order_info( $attendee_id ); ?>
 													<div class="divider"></div>
 													<?php self::billing_info( $attendee_id ); ?>
-													<div class="divider"></div>
-													<?php do_action( 'mpwpb_attendee_info', $attendee_id, $item_id ); ?>
+													<div class="divider"></div>>
 												</div>
 												<div class="col_1"></div>
 												<div class="col_6 col_xs_12">

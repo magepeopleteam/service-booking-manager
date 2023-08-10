@@ -8,26 +8,12 @@
 	} // Cannot access pages directly.
 	if (!class_exists('MPWPB_Function')) {
 		class MPWPB_Function {
-			public function __construct() {
-			}
+			public function __construct() {}
+			//************************************************************Partially custom Function******************************//
 			//*********Date and Time**********************//
 			public static function date_picker_format(): string {
-				$format = self::get_general_settings('date_format', 'D d M , yy');
-				$date_format = 'Y-m-d';
-				$date_format = $format == 'yy/mm/dd' ? 'Y/m/d' : $date_format;
-				$date_format = $format == 'yy-dd-mm' ? 'Y-d-m' : $date_format;
-				$date_format = $format == 'yy/dd/mm' ? 'Y/d/m' : $date_format;
-				$date_format = $format == 'dd-mm-yy' ? 'd-m-Y' : $date_format;
-				$date_format = $format == 'dd/mm/yy' ? 'd/m/Y' : $date_format;
-				$date_format = $format == 'mm-dd-yy' ? 'm-d-Y' : $date_format;
-				$date_format = $format == 'mm/dd/yy' ? 'm/d/Y' : $date_format;
-				$date_format = $format == 'd M , yy' ? 'j M , Y' : $date_format;
-				$date_format = $format == 'D d M , yy' ? 'D j M , Y' : $date_format;
-				$date_format = $format == 'M d , yy' ? 'M  j, Y' : $date_format;
-				return $format == 'D M d , yy' ? 'D M  j, Y' : $date_format;
+				return MP_Global_Function::date_picker_format('mpwpb_general_settings');
 			}
-			
-			//************************************************************Partially custom Function******************************//
 			//***********Template********************//
 			public static function all_details_template() {
 				$template_path = get_stylesheet_directory() . '/mpwpb_templates/themes/';
@@ -66,7 +52,7 @@
 			}
 			//************************//
 			public static function get_general_settings($key, $default = '') {
-				return MP_Global_Function::get_settings( 'MPWPB_General_Settings', $key, $default);
+				return MP_Global_Function::get_settings('mpwpb_general_settings', $key, $default);
 			}
 			//*****************//
 			public static function get_cpt(): string {
@@ -189,29 +175,45 @@
 				return $all_service_item;
 			}
 			//*********Date and Time**********************//
-			public static function get_all_date($post_id) {
-				$dates = [];
-				$now = strtotime(current_time('Y-m-d'));
-				$start_date = MP_Global_Function::get_post_info($post_id, 'mpwpb_service_start_date');
-				$end_date = MP_Global_Function::get_post_info($post_id, 'mpwpb_service_end_date');
-				$all_dates = MP_Global_Function::date_separate_period($start_date, $end_date);
-				$all_off_dates = MP_Global_Function::get_post_info($post_id, 'mpwpb_off_dates', []);
-				$all_off_days = MP_Global_Function::get_post_info($post_id, 'mpwpb_off_days');
-				$all_off_days = explode(',', $all_off_days);
+			public static function get_date($post_id, $expire = false) {
+				$now = current_time('Y-m-d');
+				$date_type = MP_Global_Function::get_post_info($post_id, 'mpwpb_date_type', 'repeated');
+				$all_dates = [];
+				$off_days = MP_Global_Function::get_post_info($post_id, 'mpwpb_off_days');
+				$all_off_days = explode(',', $off_days);
+				$all_off_dates = MP_Global_Function::get_post_info($post_id, 'mpwpb_off_dates', array());
 				$off_dates = [];
 				foreach ($all_off_dates as $off_date) {
 					$off_dates[] = date('Y-m-d', strtotime($off_date));
 				}
-				foreach ($all_dates as $date) {
-					$date = $date->format('Y-m-d');
-					if ($now <= strtotime($date)) {
+				if ($date_type == 'repeated') {
+					$start_date = MP_Global_Function::get_post_info($post_id, 'mpwpb_repeated_start_date', $now);
+					if (strtotime($now) >= strtotime($start_date) && !$expire) {
+						$start_date = $now;
+					}
+					$repeated_after = MP_Global_Function::get_post_info($post_id, 'mpwpb_repeated_after', 1);
+					$active_days = MP_Global_Function::get_post_info($post_id, 'mpwpb_active_days', 10) - 1;
+					$end_date = date('Y-m-d', strtotime($start_date . ' +' . $active_days . ' day'));
+					$dates = MP_Global_Function::date_separate_period($start_date, $end_date, $repeated_after);
+					foreach ($dates as $date) {
+						$date = $date->format('Y-m-d');
 						$day = strtolower(date('l', strtotime($date)));
 						if (!in_array($date, $off_dates) && !in_array($day, $all_off_days)) {
-							$dates[] = $date;
+							$all_dates[] = $date;
 						}
 					}
 				}
-				return apply_filters('mpwpb_get_date', $dates, $post_id);
+				else {
+					$particular_date_lists = MP_Global_Function::get_post_info($post_id, 'mpwpb_particular_dates', array());
+					if (sizeof($particular_date_lists)) {
+						foreach ($particular_date_lists as $particular_date) {
+							if ($particular_date && ($expire || strtotime($now) <= strtotime($particular_date)) && !in_array($particular_date, $off_dates) && !in_array($particular_date, $all_off_days)) {
+								$all_dates[] = $particular_date;
+							}
+						}
+					}
+				}
+				return apply_filters('mpwpb_get_date', $all_dates, $post_id);
 			}
 			public static function get_time_slot($post_id, $start_date) {
 				$all_slots = [];
@@ -221,12 +223,12 @@
 				$start_time = MP_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_start_time');
 				if (!$start_time) {
 					$day_name = 'default';
-					$start_time = MP_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_start_time',10);
+					$start_time = MP_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_start_time', 10);
 				}
 				$start_time = $start_time * 3600;
-				$end_time = MP_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_end_time',18) * 3600;
-				$start_time_break = MP_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_start_break_time',0) * 3600;
-				$end_time_break = MP_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_end_break_time',0) * 3600;
+				$end_time = MP_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_end_time', 18) * 3600;
+				$start_time_break = MP_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_start_break_time', 0) * 3600;
+				$end_time_break = MP_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_end_break_time', 0) * 3600;
 				for ($i = $start_time; $i <= $end_time; $i = $i + $slot_length) {
 					if ($i < $start_time_break || $i >= $end_time_break) {
 						$all_slots[] = $start_date . ' ' . date('H:i', $i);

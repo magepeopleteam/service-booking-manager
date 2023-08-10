@@ -7,7 +7,7 @@
 		exit;
 	}
 	$post_id              = $post_id ?? get_the_id();
-	$all_dates            = $all_dates ?? MPWPB_Function::get_all_date( $post_id );
+	$all_dates            = $all_dates ?? MPWPB_Function::get_date( $post_id );
 	$all_services         = $all_services ?? MP_Global_Function::get_post_info( $post_id, 'mpwpb_category_infos', array() );
 	$extra_services       = $extra_services ?? MP_Global_Function::get_post_info( $post_id, 'mpwpb_extra_service', array() );
 	$service_text         = $service_text ?? MPWPB_Function::get_service_text( $post_id );
@@ -17,7 +17,7 @@
 			<div class="leftSidebar">
 				<div class="mp_sticky_area">
 					<div class="_dLayout_dShadow_7_bRL_dFlex_fdColumn">
-						<div class="registration_tab_item mptbm_service_tab mpActive">
+						<div class="registration_tab_item mpwpb_service_tab mpActive">
 							<img src="<?php echo esc_attr( MPWPB_PLUGIN_URL . '/assets/helper/images/service_icon.png' ); ?>" alt="<?php esc_attr_e( 'Services', 'service-booking-manager' ); ?>"/>
 							<span><?php esc_html_e( 'Services', 'service-booking-manager' ); ?></span>
 						</div>
