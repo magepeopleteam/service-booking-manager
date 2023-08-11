@@ -9,32 +9,7 @@
 	if ( ! class_exists( 'MPWPB_Shortcodes' ) ) {
 		class MPWPB_Shortcodes {
 			public function __construct() {
-				//add_shortcode( 'mpwpb-order-details', array( $this, 'order_details' ) );
-				//add_shortcode( 'bookingplus', array( $this, 'service_booking' ) );
 				add_shortcode( 'service-booking', array( $this, 'service_booking' ) );
-			}
-			public function order_details() {
-				ob_start();
-				$order_id = isset($_GET['order_id']) ?MP_Global_Function::data_sanitize($_GET['order_id']):'';
-				if ( $order_id ) {
-					$order_details = wc_get_order( $order_id );
-					$order_status  = $order_details->get_status();
-					?>
-					<div class="mpStyle">
-						<div class="justifyBetween mB">
-							<h3 class="textSuccess _mR"><?php esc_html_e( 'Booked Successfully', 'service-booking-manager' ); ?></h3>
-							<?php
-								if ( $order_status == 'completed' ) {
-									do_action( 'mpwpb_pdf_button', $order_id );
-									do_action( 'mpwpb_send_mail', $order_id );
-								}
-							?>
-						</div>
-					</div>
-					<?php
-					do_action( 'mpwpb_order_details', $order_id );
-				}
-				return ob_get_clean();
 			}
 			public function service_booking( $attribute ) {
 				ob_start();

@@ -103,6 +103,7 @@
 					$service = $values['mpwpb_service'] ?: '';
 					$date = $values['mpwpb_date'] ?: '';
 					$price = $values['mpwpb_price'] ?: '';
+					$total_price = $values['mpwpb_tp'] ?? '';
 					$extra_service = $values['mpwpb_extra_service_info'] ?: [];
 					if ($category) {
 						$item->add_meta_data(MPWPB_Function::get_category_text($post_id), $category);
@@ -132,6 +133,7 @@
 					}
 					$item->add_meta_data('_mpwpb_service', $service);
 					$item->add_meta_data('_mpwpb_price', $price);
+					$item->add_meta_data('_mpwpb_tp', $total_price);
 					$item->add_meta_data('_mpwpb_extra_service_info', $extra_service);
 					do_action('mpwpb_checkout_create_order_line_item', $item, $values);
 				}
@@ -158,6 +160,8 @@
 								$service = $service ? MP_Global_Function::data_sanitize($service) : '';
 								$price = MP_Global_Function::get_order_item_meta($item_id, '_mpwpb_price');
 								$price = $price ? MP_Global_Function::data_sanitize($price) : '';
+								$total_price = MP_Global_Function::get_order_item_meta($item_id, '_mpwpb_tp');
+								$total_price = $total_price ? MP_Global_Function::data_sanitize($total_price) : '';
 								$ex_service = MP_Global_Function::get_order_item_meta($item_id, '_mpwpb_extra_service_info');
 								$ex_service_infos = $ex_service ? MP_Global_Function::data_sanitize($ex_service) : [];
 								$data['mpwpb_id'] = $post_id;
@@ -170,6 +174,8 @@
 								}
 								$data['mpwpb_service'] = $service;
 								$data['mpwpb_price'] = $price;
+								$data['mpwpb_tp'] = $total_price;
+								$data['mpwpb_service_info'] = $ex_service_infos;
 								$data['mpwpb_order_id'] = $order_id;
 								$data['mpwpb_order_status'] = $order_status;
 								$data['mpwpb_payment_method'] = $payment_method;

@@ -10,10 +10,10 @@
 		class MPWPB_Layout {
 			public function __construct() {}
 			
-			public static function all_service_in_select() {
+			public static function post_select() {
 				$label = MPWPB_Function::get_name();
 				?>
-				<label class="min_400 post_id_select">
+				<label class="min_400 mpwpb_id">
 					<select name="mpwpb_id" class="formControl mp_select2" id="mpwpb_id" required>
 						<option value="0"><?php echo esc_html__( 'Select', 'service-booking-manager' ) . ' ' . esc_html( $label ); ?></option>
 						<?php

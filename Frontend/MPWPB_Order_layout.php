@@ -9,51 +9,6 @@
 	if ( ! class_exists( 'MPWPB_Order_layout' ) ) {
 		class MPWPB_Order_layout {
 			public function __construct() {
-				add_action( 'mpwpb_order_details', array( $this, 'order_details' ), 10, 1 );
-			}
-			public function order_details( $order_id ) {
-				if ( $order_id ) {
-					$wc_order     = wc_get_order( $order_id );
-					$item_id      = current( array_keys( $wc_order->get_items() ) );
-					$order_status = $wc_order->get_status();
-					if ( $order_status != 'failed' ) {
-						$total       = MP_Global_Function::get_post_info( $order_id, '_order_total' );
-						$order_infos = MPWPB_Query::get_order_info( $order_id );
-						if ( $order_infos->found_posts > 0 ) {
-							$order_info = $order_infos->posts;
-							if ( sizeof( $order_info ) > 0 ) {
-								foreach ( $order_info as $order ) {
-									$attendee_id = $order->ID;
-									?>
-									<div class="mpStyle">
-										<div class="dLayout">
-											<div class="flexWrap">
-												<div class="col_5 col_xs_12">
-													<?php self::order_info( $attendee_id ); ?>
-													<div class="divider"></div>
-													<?php self::billing_info( $attendee_id ); ?>
-													<div class="divider"></div>>
-												</div>
-												<div class="col_1"></div>
-												<div class="col_6 col_xs_12">
-													<?php self::service_info( $attendee_id ); ?>
-													<div class="divider"></div>
-													<?php self::ex_service_info( $item_id ); ?>
-													<div class="divider"></div>
-													<h4 class="justifyBetween">
-														<span><?php esc_html_e( 'Total Bill : ', 'service-booking-manager' ) ?></span>
-														<span class="textTheme"><?php echo wc_price( $total ); ?></span>
-													</h4>
-												</div>
-											</div>
-										</div>
-									</div>
-									<?php
-								}
-							}
-						}
-					}
-				}
 			}
 			public static function order_info( $attendee_id ) {
 				if ( $attendee_id > 0 ) {

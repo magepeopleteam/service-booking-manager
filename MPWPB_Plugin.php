@@ -3,7 +3,7 @@
 	 * Plugin Name: Service Booking Manager
 	 * Plugin URI: http://mage-people.com
 	 * Description: A complete solution for Any kind of service booking.
-	 * Version: 1.0.4
+	 * Version: 1.0.5
 	 * Author: MagePeople Team
 	 * Author URI: http://www.mage-people.com/
 	 * Text Domain: service-booking-manager
