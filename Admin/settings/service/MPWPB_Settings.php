@@ -63,7 +63,7 @@
 					//''          => esc_html__( '', 'service-booking-manager' ),
 					'mpwpb_short_code' => esc_html__('You can display this Ticket type list with the add to cart button anywhere on your website by copying the shortcode and using it on any post or page.', 'service-booking-manager'),
 				);
-				$des = apply_filters('mptbm_filter_description_array', $des);
+				$des = apply_filters('mpwpb_filter_description_array', $des);
 				return $des[$key];
 			}
 			public static function info_text($key) {

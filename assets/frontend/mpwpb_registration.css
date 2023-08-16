@@ -12,6 +12,14 @@ div.registration_tab_item {
 	div.mpwpb_registration table th,
 	div.mpwpb_registration table td {border: none;}
 	div.mpwpb_registration .woocommerce form .form-row {margin-bottom: var(--dMP_xs);}
+	div.mpwpb_registration #customer_details {background-color: #F7F7F7;padding: var(--dMP_xs);margin: 0;}
+	div.mpwpb_registration #order_review {background-color: #FFF;padding: 0 !important;margin: 0 !important; border: none !important;}
+	div.mpwpb_registration .mpwpb_order_details_area {background-color: #FFF;padding: var(--dMP_xs) var(--dMP_xs) var(--dMP_xs) var(--dMP);margin: 0;}
+	div.mpwpb_registration .woocommerce-page h3 {padding: 0 0 var(--dMP_xs) 0 !important;margin: 0 !important;font-size: var(--fs_h3) !important;}
+	div.mpwpb_registration .woocommerce-page input[type="radio"].shipping_method+label,
+	div.mpwpb_registration .woocommerce-page input[type="radio"][name="payment_method"]+label{ display: inline-block; }
+	div.mpwpb_registration .woocommerce #payment #place_order,
+	div.mpwpb_registration .woocommerce-page #payment #place_order{margin: var(--dMP_xs) 0;}
 }
 /********************************************************************************************************************/
 @media only screen and (min-width: 10px) {
@@ -50,16 +58,14 @@ div.registration_tab_item {
 	/*************/
 	div.mpwpb_extra_service_area div.mpwpb_item_box {width: 100%;margin: var(--dMP) 0;cursor: initial;}
 	div.mpwpb_extra_service_area div.mpwpb_item_box:hover {border-color: transparent;color: inherit;}
-	div.mpwpb_extra_service_area .mpwpb_price_calculation {color: var(--color_theme);border-color: var(--color_theme);}
 	/*************/
 	div.mpwpb_summary_area_left {display: none;border-radius: var(--dBRL);}
-	div.mpwpb_summary_area_left .mpwpb_summary_area_left_title {background-color: var(--color_theme);color: var(--color_theme_alter);padding: var(--dMP_xs);text-align: center;border-radius: var(--dBRL) var(--dBRL) 0 0; }
-	div.mpwpb_summary_area_left_content {border-radius: 0 0 var(--dBRL) var(--dBRL);border: 1px solid var(--color_border);padding: var(--dMP);background-color: #FFF;overflow: auto;}
+	div.mpwpb_summary_area_left .mpwpb_summary_area_left_title {background-color: var(--color_theme);color: var(--color_theme_alter);padding: var(--dMP);text-align: center;border-radius: var(--dBRL) var(--dBRL) 0 0; }
+	div.mpwpb_summary_area_left_content {border-radius: 0 0 var(--dBRL) var(--dBRL);border: 1px solid var(--color_border);padding: var(--dMP) 20px;background-color: #FFF;overflow: auto;}
 	div.mpwpb_summary_item {position: relative;padding: 0 5px 15px 25px;display: none;border-left: 3px solid var(--color_theme);}
 	div.mpwpb_summary_item span.mpwpb_item_check {opacity: 1;right: inherit;left: -14px;font-size: var(--fs_small);top: -3px; }
 	div.mpwpb_summary_item:last-child {border-color: transparent;}
 	/*************/
-
 }
 /********************************************************************************************************************/
 @media only screen and (min-width: 10px) {
@@ -71,6 +77,14 @@ div.registration_tab_item {
 	.mpwpb_date_time_line [data-radio-check]:last-child {margin: 0;}
 	.mpwpb_date_time_line p {color: #D0D0D0;}
 }
-/********************************************************************************************************************/
-@media only screen and (min-width: 10px) {
+/*************************************************Responsive*******************************************************************/
+@media only screen and (max-width: 900px) {
+	div.mpwpb_item_box{width: 100%;}
+}
+@media only screen and (max-width: 800px) {
+	div.mpwpb_registration div.leftSidebar,
+	div.mpwpb_registration div.leftSidebar .mp_sticky_area,
+	div.mpwpb_registration div.mainSection {max-width: 100%;width: 100%;margin: var(--dMP_xs) 0;}
+	div.mpwpb_summary_area_left .mpwpb_summary_area_left_title{text-align: left;}
+	div.mpwpb_registration div.mpwpb_item_box h4{-webkit-justify-content:flex-start;justify-content: flex-start;}
 }

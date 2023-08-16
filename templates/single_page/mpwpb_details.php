@@ -14,7 +14,8 @@
 	} else {
 		do_action( 'woocommerce_before_single_product' );
 		$post_id                   = get_the_id();
-		$all_dates      = MPWPB_Function::get_all_date( $post_id );
+		$all_dates      = MPWPB_Function::get_date( $post_id );
+		//echo '<pre>';print_r($all_dates);echo '</pre>';
 		$product_id         = MP_Global_Function::get_post_info( $post_id, 'link_wc_product' );
 		$all_services    = MP_Global_Function::get_post_info( $post_id, 'mpwpb_category_infos', array() );
 		$all_category = MPWPB_Function::get_category($post_id,$all_services);
