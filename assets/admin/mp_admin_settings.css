@@ -35,7 +35,7 @@
 	.mp_settings_panel table tr:nth-child(even) {background-color: #F2F2F2;}
 	.mp_settings_panel p.submit {text-align: right; margin: 20px 0 0 0; padding: 0;}
 	div.mpStyle .description,
-	.mp_settings_panel .description {display: block;font-weight: normal;font-size: var(--fs_small) !important;color: #666;margin: var(--dMP_xs) 0 0 0;}
+	.mp_settings_panel .description {display: block;font-weight: normal;font-size: var(--fs_small) !important;color: var(--color_info);margin: var(--dMP_xs) 0 0 0;}
 	div.mpStyle .description span,
 	.mp_settings_panel .description span {margin: 0 var(--dMP_xs) 0 0;}
 	.mp_settings_panel .description strong {color: #000;}
@@ -163,6 +163,6 @@
 }
 /********************************************************************  ************************************************/
 @media only screen and (min-width: 10px) {
-	div.mpStyle .info_text {display: block;font-weight: normal;font-size: var(--fs_small);color: #666;}
+	div.mpStyle .info_text {display: block;font-weight: normal;font-size: var(--fs_small);color: var(--color_info);}
 	div.mpStyle .info_text span {margin: 0 5px 0 0;}
 }

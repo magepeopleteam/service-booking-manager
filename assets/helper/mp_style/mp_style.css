@@ -1314,8 +1314,8 @@
 	div.mpStyle [class*='textSuccess'] { color: var(--color_success); }
 	div.mpStyle [class*='bgSuccess'] { background-color: var(--color_success); }
 	/*****Success*********/
-	div.mpStyle [class*='textInfo'] { color: #666; }
-	div.mpStyle [class*='bgInfo'] { background-color: #666; }
+	div.mpStyle [class*='textInfo'] { color: var(--color_info); }
+	div.mpStyle [class*='bgInfo'] { background-color: var(--color_info); }
 	/*****danger*********/
 	div.mpStyle .textDanger, div.mpStyle [class*='_textDanger'] { color: var(--color_danger); }
 	div.mpStyle .bgDanger, div.mpStyle [class*='_bgDanger'] { background-color: var(--color_danger); }
@@ -1331,6 +1331,9 @@
 	div.mpStyle .bgLight, div.mpStyle [class*='_bgLight'] { background-color: var(--color_light); }
 	div.mpStyle .textLight_1, div.mpStyle [class*='_textLight_1'] { color: var(--color_light_1); }
 	div.mpStyle .bgLight_1, div.mpStyle [class*='_bgLight_1'] { background-color: var(--color_light_1); }
+	div.mpStyle .textLight_2, div.mpStyle [class*='_textLight_2'] { color: var(--color_light_2); }
+	div.mpStyle .bgLight_2, div.mpStyle [class*='_bgLight_2'] { background-color: var(--color_light_2); }
+	div.mpStyle .btLight_2, div.mpStyle [class*='_btLight_2'] { background-color: var(--color_light_2); color: var(--color_info);}
 	/*****Gray*********/
 	div.mpStyle .textGray, div.mpStyle [class*='_textGray'] { color: gray; }
 	div.mpStyle .bgGray, div.mpStyle [class*='_bgGray'] { background-color: gray; }
