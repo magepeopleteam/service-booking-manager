@@ -1,17 +1,17 @@
-=== Service Booking Manager ===
+=== WordPress Service Booking & Scheduling Plugin | All-in-one Booking Systems ===
 Contributors: [aamahin,magepeopleteam]
-Tags: booking, reservations, calendar, events, management
+Tags: appointment booking, Car Wash Booking, Booking calendar, Service Booking
 Requires at least: 5.3
-Stable tag: 1.0.0
-Version: 1.0,0
-Tested up to: 6.1
+Stable tag: 1.0.5
+Version: 1.0.6
+Tested up to: 6.3
 WC requires at least: 3.0
 WC tested up to: 6.5
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Service Booking Manager is a powerful plugin for managing bookings and reservations for your any Services, events, classes, or appointments.
+Service Booking Manager is a powerful plugin for managing bookings and Scheduling for your any Services like Car Wash, Repair Services,Salon & Spa, any kind of class appointments.
 
 == Description ==
 Service Booking Manager makes it easy to manage bookings and reservations for any type of services or appointment, whether it's a fitness class, workshop, car wash, repair service or private consultation.
@@ -28,6 +28,13 @@ Services that can be scheduled and booked online using Service Booking Manager i
 * **Education** (education centers, tutors, language schools, private lessons),
 * **Fitness & Gyms** (yoga classes, personal trainers, health clubs, fitness centers) and
 * **Professional Services** (coaches, consultants , lawyers , photographers , consulting psychologists , cleaning services) and many more.
+
+➡ [View Car Wash Demo](https://wpbookingly.com/service/car-wash/)
+➡ [View Rent a Car Demo](https://wpbookingly.com/service/rent-your-dream-car/)
+➡ [View Medical & Dental Demo](https://wpbookingly.com/service/medical-dental/)
+➡ [View Musical Class Demo](https://wpbookingly.com/service/musical-class/)
+➡ [View Repair Service Demo](https://wpbookingly.com/service/repair-service/)
+➡ [View Hair Cut Demo](https://wpbookingly.com/service/car-repair-service/)
 
 
 ### Who can benefit from using Service Booking Manager
@@ -78,9 +85,24 @@ A. Yes, you can create events with custom dates, times and set prices and availa
 A. The calendar system allows you to view all your upcoming events and bookings in a visual calendar format. You can view your calendar by day, week, or month, and easily manage your bookings functionality.
 
 == Changelog ==
+= 1.0.6 =
+* date time fixing
+
+= 1.0.5 =
+* Bug Fixed
+* Code Optimized
+
+= 1.0.3 =
+* PHP Warning issue fixed
+* Bug Fixed
+* Code Optimized
+
+= 1.0.1 =
+* Bug Fixed
+* Code Optimized
+
 = 1.0.0 =
+This is the first version of Service Booking Manager. No upgrade necessary at this time.
 
 Initial release
 == Upgrade Notice ==
-= 1.0.0 =
-This is the first version of Service Booking Manager. No upgrade necessary at this time.
