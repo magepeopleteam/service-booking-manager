@@ -27,7 +27,7 @@
 						?>
 						<div class="fdColumn mpwpb_date_time_line">
 							<div class="_bgTheme_mB_xs_padding_xs fdColumn">
-								<strong><?php echo date_i18n( $short_date_format, strtotime( $start_date ) ); ?></strong>
+								<strong><?php echo MP_Global_Function::date_format($start_date); ?></strong>
 							</div>
 							<?php if ( ! in_array( $start_date, $all_dates ) ) { ?>
 								<div  class="_mpBtn_mpDisabled_fullHeight_bgLight">
