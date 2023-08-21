@@ -36,6 +36,7 @@ Services that can be scheduled and booked online using Service Booking Manager i
 ➡ [View Repair Service Demo](https://wpbookingly.com/service/repair-service/)
 ➡ [View Hair Cut Demo](https://wpbookingly.com/service/car-repair-service/)
 
+👉[Buy Service Booking Manager Pro Plugin](https://mage-people.com/product/wordpress-service-booking-plugin-all-kind-of-service-booking-solution/) 👈
 
 ### Who can benefit from using Service Booking Manager
 Local businesses and individual providers who offer services to customers can benefit from using Service Booking Manager for WordPress since the booking form can be customized and personalized.
