@@ -11,7 +11,7 @@ Requires PHP: 7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Service Booking Manager is a powerful plugin for managing bookings and Scheduling for Services like Car Wash, Repair Services, Salon & Spa, and any kind of class appointments.
+Service Booking Manager is a powerful plugin for managing bookings and Scheduling for Services like Car Wash service Booking, Repair Services Booking, Salon & Spa Appointment Booking, and any kind of class appointments.
 
 == Description ==
 Service Booking Manager makes it easy to manage bookings and reservations for any type of service or appointment, whether it's a fitness class, workshop, car wash, repair service, or private consultation.
@@ -20,21 +20,21 @@ Service Booking Manager also includes a robust calendar system, making it easy t
 
 
 Services that can be scheduled and booked online using Service Booking Manager include:
-* **Repair Service** ( Car repair & maintenance, Television, Mobile Laptop Service Booking),
-* **Cleaning and Wash Service** ( any kind of cleaning service like car wash, House cleaning etc),
-* **Salons & Beauty** (hair salons, nail salons, and  barbershops),
-* **Health and Wellness** (wellness, spas & massage, therapy, baths),
-* **Medicine** (clinics, doctors, dentists, medical centers),
-* **Education** (education centers, tutors, language schools, private lessons),
-* **Fitness & Gyms** (yoga classes, personal trainers, health clubs, fitness centers) and
-* **Professional Services** (coaches, consultants, lawyers, photographers, consulting psychologists, cleaning services) and many more.
+* **Repair Service Booking** ( Car repair & maintenance, Television, Mobile Laptop Service Booking),
+* **Cleaning and Wash Service Booking** ( any kind of cleaning service like car wash, House cleaning etc),
+* **Salons & Beauty Appointment Booking** (hair salons, nail salons, and  barbershops),
+* **Health and Wellness Appointment Booking** (wellness, spas & massage, therapy, baths),
+* **Medicine Appointment Booking** (clinics, doctors, dentists, medical centers),
+* **Educational Appointment Booking** (education centers, tutors, language schools, private lessons),
+* **Fitness & Gyms Booking** (yoga classes, personal trainers, health clubs, fitness centers) and
+* **Professional Services Booking** (coaches, consultants, lawyers, photographers, consulting psychologists, cleaning services) and many more.
 
-➡ [View Car Wash Demo](https://wpbookingly.com/service/car-wash/)
-➡ [View Rent a Car Demo](https://wpbookingly.com/service/rent-your-dream-car/)
-➡ [View Medical & Dental Demo](https://wpbookingly.com/service/medical-dental/)
-➡ [View Musical Class Demo](https://wpbookingly.com/service/musical-class/)
-➡ [View Repair Service Demo](https://wpbookingly.com/service/repair-service/)
-➡ [View Hair Cut Demo](https://wpbookingly.com/service/car-repair-service/)
+➡ [Car Wash server Booking Demo](https://wpbookingly.com/service/car-wash/)
+➡ [Car Rental Booking Demo](https://wpbookingly.com/service/rent-your-dream-car/)
+➡ [Medical & Dental Service Appointment Demo](https://wpbookingly.com/service/medical-dental/)
+➡ [Musical Class Appointment Booking Demo](https://wpbookingly.com/service/musical-class/)
+➡ [Repair Service Booking Demo](https://wpbookingly.com/service/repair-service/)
+➡ [Salon & Spa Appointment Booking Demo](https://wpbookingly.com/service/car-repair-service/)
 
 👉[Buy WordPress Service Booking & Scheduling Plugin Pro](https://mage-people.com/product/wordpress-service-booking-plugin-all-kind-of-service-booking-solution/) 👈
 
