@@ -11,9 +11,8 @@
 	$category_text = $category_text ?? MPWPB_Function::get_category_text( $post_id );
 	if ( sizeof( $all_category ) > 0 ) {
 		?>
-		<div class="mpwpb_category_area">
+		<div class="_dShadow_7_mB_xs mpwpb_category_area">
 			<h3><?php echo esc_html__( 'Select', 'service-booking-manager' ) . ' ' . $category_text; ?></h3>
-			<div class="divider"></div>
 			<div class="flexWrapJustifyBetween">
 				<?php
 					foreach ( $all_category as $category_item ) {
@@ -21,7 +20,7 @@
 						$category_icon  = array_key_exists( 'icon', $category_item ) ? $category_item['icon'] : '';
 						$category_image = array_key_exists( 'image', $category_item ) ? $category_item['image'] : '';
 						?>
-						<div class="mpwpb_item_box mpwpb_category_item dShadow_8" data-category="<?php echo esc_attr( $category_name ); ?>">
+						<div class="mpwpb_item_box mpwpb_category_item dShadow_1" data-category="<?php echo esc_attr( $category_name ); ?>">
 							<h4 class="alignCenter">
 								<?php if ( $category_icon ) { ?>
 									<span class="<?php echo esc_attr( $category_icon ); ?> _mR_xs"></span>

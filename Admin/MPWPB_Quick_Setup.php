@@ -33,6 +33,7 @@
 				}
 			}
 			public function quick_setup() {
+				$status = MP_Global_Function::check_woocommerce();
 				if (isset($_POST['active_woo_btn'])) {
 					?>
 					<script>
@@ -80,6 +81,9 @@
 							'donate_link' => false,
 						),
 					));
+					$title = 'title';
+					$url = 'url';
+					$nonce = 'nonce';
 					$woocommerce_plugin = new Plugin_Upgrader(new Plugin_Installer_Skin(compact('title', 'url', 'nonce', 'plugin', 'api')));
 					$woocommerce_plugin->install($api->download_link);
 					activate_plugin('woocommerce/woocommerce.php');
@@ -148,15 +152,17 @@
 										$this->setup_content_done();
 									?>
 								</div>
-								<div class="justifyBetween">
-									<button type="button" class="mpBtn nextTab_prev">
-										<span>&longleftarrow;<?php esc_html_e('Previous', 'service-booking-manager'); ?></span>
-									</button>
-									<div></div>
-									<button type="button" class="themeButton nextTab_next">
-										<span><?php esc_html_e('Next', 'service-booking-manager'); ?>&longrightarrow;</span>
-									</button>
-								</div>
+								<?php if ($status == 1) { ?>
+									<div class="justifyBetween">
+										<button type="button" class="mpBtn nextTab_prev">
+											<span>&longleftarrow;<?php esc_html_e('Previous', 'service-booking-manager'); ?></span>
+										</button>
+										<div></div>
+										<button type="button" class="themeButton nextTab_next">
+											<span><?php esc_html_e('Next', 'service-booking-manager'); ?>&longrightarrow;</span>
+										</button>
+									</div>
+								<?php } ?>
 							</div>
 						</form>
 					</div>

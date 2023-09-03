@@ -18,12 +18,11 @@
 	if ( sizeof( $all_service_list ) > 0 ) {
 		//echo '<pre>';print_r($all_services);echo '</pre>';
 		?>
-		<div class="mpwpb_service_area">
+		<div class="_dShadow_7_mB_xs mpwpb_service_area">
 			<input type="hidden" name="mpwpb_category" value="">
 			<input type="hidden" name="mpwpb_sub_category" value="">
 			<input type="hidden" name="mpwpb_service" value="">
 			<h3><?php echo esc_html__( 'Select', 'service-booking-manager' ) . ' ' . $service_text; ?></h3>
-			<div class="divider"></div>
 			<div class="flexWrapJustifyBetween">
 				<?php
 					foreach ( $all_service_list as $service_item ) {

@@ -12,9 +12,8 @@
 	$extra_service_active = $extra_service_active ?? MP_Global_Function::get_post_info( $post_id, 'mpwpb_extra_service_active', 'off' );
 	if ( sizeof( $extra_services ) > 0 && $extra_service_active == 'on' ) {
 		?>
-		<div class="mpwpb_extra_service_area">
-			<h3 class="mB_xs"><?php esc_html_e( 'Choose Extra Features (Optional)', 'service-booking-manager' ); ?></h3>
-			<div class="divider"></div>
+		<div class="_dShadow_7_mB_xs mpwpb_extra_service_area">
+			<h3><?php esc_html_e( 'Choose Extra Features (Optional)', 'service-booking-manager' ); ?></h3>
 			<?php
 				foreach ( $extra_services as $group_service ) {
 					$group_service_name = array_key_exists( 'group_service', $group_service ) ? $group_service['group_service'] : '';

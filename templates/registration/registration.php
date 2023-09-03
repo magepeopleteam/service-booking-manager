@@ -34,17 +34,16 @@
 				</div>
 			</div>
 			<div class="mainSection ">
-				<div class="_dShadow_7_dFlex_fdColumn mpwpb_main_section mp_sticky_depend_area">
+				<div class="_dFlex_fdColumn mpwpb_main_section mp_sticky_depend_area">
 					<div class="all_service_area fdColumn">
 						<?php include( MPWPB_Function::template_path( 'registration/category_selection.php' ) ); ?>
 						<?php include( MPWPB_Function::template_path( 'registration/sub_category_selection.php' ) ); ?>
 						<?php include( MPWPB_Function::template_path( 'registration/service_selection.php' ) ); ?>
 						<?php include( MPWPB_Function::template_path( 'registration/extra_services.php' ) ); ?>
 						<div class="next_date_time_area">
-							<div class="divider"></div>
 							<div class="justifyBetween">
-								<h3 class="alignCenter"><?php esc_html_e( 'Total :', 'service-booking-manager' ); ?>&nbsp;&nbsp;<i class="mpwpb_total_bill textTheme"><?php echo MP_Global_Function::wc_price( $post_id, 0 ); ?></i></h3>
-								<button class="_mpBtn_mT_xs mActive mpwpb_service_next" type="button" data-alert="<?php echo esc_html__( 'Please Select', 'service-booking-manager' ) . ' ' . $service_text; ?>">
+								<h3 class="alignCenter"><?php esc_html_e( 'Total :', 'service-booking-manager' ); ?>&nbsp;&nbsp;<span class="mpwpb_total_bill textTheme"><?php echo MP_Global_Function::wc_price( $post_id, 0 ); ?></span></h3>
+								<button class="_mpBtn_dBR_padding mActive mpwpb_service_next" type="button" data-alert="<?php echo esc_html__( 'Please Select', 'service-booking-manager' ) . ' ' . $service_text; ?>">
 									<?php esc_html_e( 'Next Date & Time', 'service-booking-manager' ); ?>
 									<i class="fas fa-long-arrow-alt-right _mL_xs"></i>
 								</button>

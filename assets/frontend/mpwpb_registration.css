@@ -24,7 +24,7 @@ div.registration_tab_item {
 /********************************************************************************************************************/
 @media only screen and (min-width: 10px) {
 	div.mpStyle div.mpwpb_registration {margin: 0 0 var(--dMPL) 0;}
-	div.mpwpb_registration div.mpwpb_main_section {border: 1px solid var(--color_border); border-radius: var(--dBRL); }
+	div.mpwpb_registration div.mpwpb_main_section {}
 	div.mpwpb_registration span.mpwpb_item_check {position: absolute;top: -9px;right: -9px;font-size: var(--fs_h6);opacity: 0;margin: 0; }
 	/*************/
 	/*************/
@@ -39,15 +39,23 @@ div.registration_tab_item {
 	div.mpwpb_extra_service_area,
 	div.mpwpb_date_time_area,
 	div.next_date_time_area,
-	div.mpwpb_order_proceed_area {display: none;padding: var(--dMP);background-color: #FFF;}
-	div.mpwpb_category_area {padding: var(--dMP);background-color: rgba(47, 157, 244, 0.1);}
-	div.mpwpb_sub_category_area {background-color: rgba(250, 171, 54, 0.05);border-top: 1px solid var(--color_border);}
-	div.mpwpb_service_area {background-color: rgba(54, 250, 121, 0.06);border-top: 1px solid var(--color_border);}
-	div.mpwpb_extra_service_area {background-color: rgba(54, 85, 250, 0.06);border-top: 1px solid var(--color_border);}
-	div.next_date_time_area {background-color: #FFF;border-radius: 0 0 var(--dBRL) var(--dBRL);}
+	div.mpwpb_order_proceed_area {display: none;background-color: #FFF;border: 1px solid var(--color_border); border-radius: var(--dBRL);}
+	div.mpwpb_category_area h3{padding: var(--dMP);background-color: rgba(47, 157, 244, 0.1);border-radius: var(--dBRL) var(--dBRL) 0 0;border-bottom: 1px solid var(--color_border);}
+	div.mpwpb_category_area{border: 1px solid var(--color_border); border-radius: var(--dBRL);}
+	div.mpwpb_category_area>div,
+	div.mpwpb_sub_category_area>div,
+	div.mpwpb_service_area>div{padding: var(--dMP);background-color: #fff;border-radius: 0 0 var(--dBRL) var(--dBRL);}
+	div.mpwpb_sub_category_area {}
+	div.mpwpb_sub_category_area h3{padding: var(--dMP);background-color: rgb(227, 209, 181);border-radius: var(--dBRL) var(--dBRL) 0 0;border-bottom: 1px solid var(--color_border);}
+	div.mpwpb_sub_category_area>div{}
+	div.mpwpb_service_area h3{background-color: rgba(54, 250, 121, 0.16);border-bottom: 1px solid var(--color_border);padding: var(--dMP);}
+	div.mpwpb_service_area>div{}
+	div.mpwpb_extra_service_area h3{background-color: rgba(54, 85, 250, 0.06);border-bottom: 1px solid var(--color_border);padding: var(--dMP);}
+	div.next_date_time_area{background-color: #FFF;padding: var(--dMP);border-radius: var(--dBRL);}
+	div.mpwpb_date_time_area h3{background-color: rgba(54, 85, 250, 0.06);padding: var(--dMP);border-radius: var(--dBRL) var(--dBRL) 0 0;border-bottom: 1px solid var(--color_border);}
 	div.mpwpb_date_time_area,
 	div.mpwpb_order_proceed_area {border-radius: var(--dBRL);}
-	div.mpwpb_item_box {cursor: pointer;width: calc(50% - var(--dMP_xs));padding: var(--dMP);margin: var(--dMP_xs) 0;border-radius: var(--dBRL);position: relative;border: 2px solid transparent;background-color: #FFF;}
+	div.mpwpb_item_box {cursor: pointer;width: calc(50% - var(--dMP_xs));padding: var(--dMP);margin: var(--dMP_xs) 0;border-radius: var(--dBRL);position: relative;border: 2px solid transparent;background-color: var(--color_light_2);}
 	div.mpwpb_item_box:hover,
 	div.mpwpb_item_box.mpActive {border-color: var(--color_theme);color: var(--color_theme);}
 	div.mpwpb_item_box.mpActive span.mpwpb_item_check {opacity: 1;}
@@ -56,7 +64,7 @@ div.registration_tab_item {
 	div.service_img_area {max-width: 120px;margin: 0 15px 0 0;width: 100%;}
 	div.mpwpb_icon_area {font-size: 60px;padding: var(--dMP);}
 	/*************/
-	div.mpwpb_extra_service_area div.mpwpb_item_box {width: 100%;margin: var(--dMP) 0;cursor: initial;}
+	div.mpwpb_extra_service_area div.mpwpb_item_box {width: 100%;margin: var(--dMP) 0 0 0;cursor: initial;background-color: #fff;}
 	div.mpwpb_extra_service_area div.mpwpb_item_box:hover {border-color: transparent;color: inherit;}
 	/*************/
 	div.mpwpb_summary_area_left {display: none;border-radius: var(--dBRL);}

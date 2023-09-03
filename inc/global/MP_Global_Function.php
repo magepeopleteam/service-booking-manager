@@ -103,7 +103,7 @@
 							changeYear: true,
 							beforeShowDay: WorkingDates,
 							onSelect: function (dateString, data) {
-								let date = data.selectedYear + '-' + ('0' + (parseInt(data.selectedMonth) + 1)).slice(-2) + '-' + data.selectedDay;
+								let date = data.selectedYear + '-' + ('0' + (parseInt(data.selectedMonth) + 1)).slice(-2) + '-' + ('0' + parseInt(data.selectedDay) ).slice(-2) ;
 								jQuery(this).closest('label').find('input[type="hidden"]').val(date).trigger('change');
 							}
 						});
@@ -259,7 +259,7 @@
 			public static function get_image_url($post_id = '', $image_id = '', $size = 'full') {
 				if ($post_id) {
 					$image_id = get_post_thumbnail_id($post_id);
-					$image_id = $image_id ?:self::get_post_info($post_id, 'mp_thumbnail') ;
+					$image_id = $image_id ?: self::get_post_info($post_id, 'mp_thumbnail');
 				}
 				return wp_get_attachment_image_url($image_id, $size);
 			}
@@ -327,13 +327,13 @@
 			}
 			public static function week_day(): array {
 				return [
-					'monday' => esc_html__('Monday', 'service-booking-manager'),
-					'tuesday' => esc_html__('Tuesday', 'service-booking-manager'),
-					'wednesday' => esc_html__('Wednesday', 'service-booking-manager'),
-					'thursday' => esc_html__('Thursday', 'service-booking-manager'),
-					'friday' => esc_html__('Friday', 'service-booking-manager'),
-					'saturday' => esc_html__('Saturday', 'service-booking-manager'),
-					'sunday' => esc_html__('Sunday', 'service-booking-manager'),
+					'monday' => esc_html__('Monday', 'mage-eventpress'),
+					'tuesday' => esc_html__('Tuesday', 'mage-eventpress'),
+					'wednesday' => esc_html__('Wednesday', 'mage-eventpress'),
+					'thursday' => esc_html__('Thursday', 'mage-eventpress'),
+					'friday' => esc_html__('Friday', 'mage-eventpress'),
+					'saturday' => esc_html__('Saturday', 'mage-eventpress'),
+					'sunday' => esc_html__('Sunday', 'mage-eventpress'),
 				];
 			}
 			public static function get_plugin_data($data) {
