@@ -94,7 +94,7 @@
 	div.mpStyle div.mp_add_icon_image_area button {padding: 5px;font-size: 12px;}
 	div.mp_add_icon_image_area button span {margin: 0 5px 0 0;}
 	div.mpStyle div.mp_add_icon_image_area img {border-radius: 0;}
-	div.mp_add_icon_image_area div.mp_icon_item {padding: var(--dMP_xs);background-color: var(--color_light);font-size: 40px;}
+	div.mp_add_icon_image_area div.mp_icon_item {padding: var(--dMP_xs);background-color: var(--color_light);font-size: 16px;}
 	div.mp_icon_item:hover .mp_remove_icon,
 	div.mp_image_item:hover .mp_remove_icon {opacity: 1;}
 	div.mp_add_icon_popup .popupHeader {

@@ -207,7 +207,7 @@
 /******************************************************************** Radios Section************************************************/
 @media only screen and (min-width: 10px) {
 	.mpStyle img,
-	.mpStyle [class*="dButton"],
+	.mpStyle [class*="dButton"],.mpStyle button,
 	div.filter_item,
 	.mpStyle .formControl,
 	div.mpPopup .popupMainArea, div.mpPopup .popupClose,

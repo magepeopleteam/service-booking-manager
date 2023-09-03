@@ -36,7 +36,7 @@
 						$service_details   = array_key_exists( 'details', $service_item ) ? $service_item['details'] : '';
 						$service_duration  = array_key_exists( 'duration', $service_item ) ? $service_item['duration'] : '';
 						?>
-						<div class="mpwpb_item_box mpwpb_service_item dShadow_8" data-price="<?php echo esc_attr( $service_price ); ?>" data-category="<?php echo esc_attr( $category_name ); ?>" data-sub-category="<?php echo esc_attr( $sub_category_name ); ?>" data-service="<?php echo esc_attr( $service_name ); ?>">
+						<div class="mpwpb_item_box mpwpb_service_item dShadow_5" data-price="<?php echo esc_attr( $service_price ); ?>" data-category="<?php echo esc_attr( $category_name ); ?>" data-sub-category="<?php echo esc_attr( $sub_category_name ); ?>" data-service="<?php echo esc_attr( $service_name ); ?>">
 							<div class="dFlex">
 								<?php if ( $service_image ) { ?>
 									<div class="service_img_area alignCenter">
