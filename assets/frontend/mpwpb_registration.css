@@ -60,6 +60,7 @@ div.registration_tab_item {
 	div.mpwpb_item_box.mpActive {border-color: var(--color_theme);color: var(--color_theme);}
 	div.mpwpb_item_box.mpActive span.mpwpb_item_check {opacity: 1;}
 	div.mpwpb_item_box .bg_image_area {max-width: 160px;margin: 0 auto;}
+	div.mpwpb_service_area div.mpwpb_item_box{background-color: transparent}
 	/*************/
 	div.service_img_area {max-width: 120px;margin: 0 15px 0 0;width: 100%;}
 	div.mpwpb_icon_area {font-size: 60px;padding: var(--dMP);}
