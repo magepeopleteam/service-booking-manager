@@ -2,7 +2,7 @@
 Contributors: [aamahin,magepeopleteam]
 Tags: appointment booking, Car Wash Booking, Booking calendar, Service Booking
 Requires at least: 5.3
-Stable tag: 1.0.6
+Stable tag: 1.0.7
 Version: 1.0.6
 Tested up to: 6.3
 WC requires at least: 3.0
