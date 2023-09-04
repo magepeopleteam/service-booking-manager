@@ -46,7 +46,7 @@ div.registration_tab_item {
 	div.mpwpb_sub_category_area>div,
 	div.mpwpb_service_area>div{padding: var(--dMP);background-color: #fff;border-radius: 0 0 var(--dBRL) var(--dBRL);}
 	div.mpwpb_sub_category_area {}
-	div.mpwpb_sub_category_area h3{padding: var(--dMP);background-color: rgb(227, 209, 181);border-radius: var(--dBRL) var(--dBRL) 0 0;border-bottom: 1px solid var(--color_border);}
+	div.mpwpb_sub_category_area h3{padding: var(--dMP);background-color: rgb(255 238 211 / 66%);border-radius: var(--dBRL) var(--dBRL) 0 0;border-bottom: 1px solid var(--color_border);}
 	div.mpwpb_sub_category_area>div{}
 	div.mpwpb_service_area h3{background-color: rgba(54, 250, 121, 0.16);border-bottom: 1px solid var(--color_border);padding: var(--dMP);}
 	div.mpwpb_service_area>div{}
