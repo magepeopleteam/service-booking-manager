@@ -34,7 +34,13 @@
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/service/MPWPB_Date_Time_Settings.php';
 				//require_once MPWPB_PLUGIN_DIR . '/Admin/settings/MPWPB_Gallery_Settings.php';
 				//require_once MPWPB_PLUGIN_DIR . '/Admin/settings/MPWPB_FAQ_Settings.php';
-				//******************************//
+				//****************Woocommerce Checkout*********************** */
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Settings.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Fields.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Billing.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Shipping.php';
+				//require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Account.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Order.php';
 			}
 			public function add_dummy_data() {
 				new MPWPB_Dummy_Import();

@@ -16,6 +16,7 @@
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Shortcodes.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Details_Layout.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Woocommerce.php';
+				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Wc_Checkout_Fields_Helper.php';
 			}
 			public function load_single_template( $template ): string {
 				global $post;
