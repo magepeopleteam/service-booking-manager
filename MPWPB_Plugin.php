@@ -1,6 +1,6 @@
 <?php
 	/**
-	 * Plugin Name: WordPress Service Booking & Scheduling Plugin | All-in-one Booking Systems
+	 * Plugin Name: WordPress Service Booking & Scheduling Plugin | All-in-one Booking Systems -WpBookingly
 	 * Plugin URI: http://mage-people.com
 	 * Description: A complete solution for Any kind of service booking.
 	 * Version: 1.0.7
