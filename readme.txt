@@ -1,4 +1,4 @@
-=== WordPress Service Booking & Scheduling Plugin | All-in-one Booking Systems ===
+=== WordPress Service Booking & Scheduling Plugin | All-in-one Booking Systems -WpBookingly ===
 Contributors: [aamahin,magepeopleteam]
 Tags: appointment booking, Car Wash Booking, Booking calendar, Service Booking
 Requires at least: 5.3
