@@ -1,4 +1,4 @@
-=== WordPress Service Booking & Scheduling Plugin | All-in-one Booking Systems -WpBookingly ===
+=== WordPress Service Booking & Scheduling Plugin | All-in-one Booking Systems - WpBookingly ===
 Contributors: [aamahin,magepeopleteam]
 Tags: appointment booking, Car Wash Booking, Booking calendar, Service Booking
 Requires at least: 5.3
@@ -11,12 +11,12 @@ Requires PHP: 7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Service Booking Manager is a powerful plugin for managing bookings and Scheduling for Services like Car Wash service Booking, Repair Services Booking, Salon & Spa Appointment Booking, and any kind of class appointments.
+Service Booking Manager - WpBookingly is a powerful plugin for managing bookings and Scheduling Services like Car Wash service Booking, Repair Services Booking, Salon  Appointment Booking, and any kind of service appointment.
 
 == Description ==
-Service Booking Manager makes it easy to manage bookings and reservations for any type of service or appointment, whether it's a fitness class, workshop, car wash, repair service, or private consultation.
-With Service Booking Manager, you can create a booking solution with custom dates, and times and allow users to book and pay for their spot using popular payment gateways available in WooCommerce.
-Service Booking Manager also includes a robust calendar system, making it easy to keep track of all your upcoming bookings.
+Service Booking Manager - WpBookingly is powerful for online booking and scheduling solutions, whether it's a fitness class, workshop, car wash, repair service, or private consultation.
+With WpBookingly, you can create a booking solution with custom dates, and times and allow users to book and pay for their spot using popular payment gateways available in WooCommerce.
+this online booking solution includes a robust calendar system, making it easy to keep track of all your upcoming bookings.
 
 
 Services that can be scheduled and booked online using Service Booking Manager include:
@@ -53,7 +53,7 @@ Additionally, web studios and developers looking to improve the appointment proc
 ➡ Multilingual Translation Support
 ➡ Available Short Code for Booking Section.
 ➡ Manage Category, Sub-category, Quantity, Prices and Images.
-➡ Booking Extra Service with Price & Quantity Management.
+➡ Booking Extra Service with Price and quantity Management.
 ➡ Works with Any Standards Compliant WordPress Theme.
 ➡ WooCommerce Support, You can Sell products and Booking services Separately. There is no mixing with Event with the WooCommerce Products.
 
