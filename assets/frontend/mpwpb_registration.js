@@ -264,8 +264,15 @@ function mpwpb_price_calculation($this) {
 				success: function (data) {
 					target_checkout.html(data);
 					$(document.body).trigger('init_checkout');
-					$('body #billing_country').select2({});
-					$('body #billing_state').select2({});
+					if ($('body #billing_country').length) 
+					{
+						$('body #billing_country').select2({});
+					}
+					if ($('body #billing_state').length) 
+					{
+						$('body #billing_state').select2({});
+					}
+					
 					parent.find('.mpwpb_order_proceed_tab').addClass('mpActive').removeClass('mpDisabled').trigger('click');
 					dLoaderRemove(parent);
 					pageScrollTo(target_checkout);
