@@ -20,7 +20,7 @@
 				$sections = array(
 					array(
 						'id'    => 'mp_slider_settings',
-						'title' => __( 'Slider Settings', 'service-booking-manager' )
+						'title' => esc_html__( 'Slider Settings', 'service-booking-manager' )
 					)
 				);
 				return array_merge( $default_sec, $sections );
