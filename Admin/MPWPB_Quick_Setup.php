@@ -9,17 +9,7 @@
 	if (!class_exists('MPWPB_Quick_Setup')) {
 		class MPWPB_Quick_Setup {
 			public function __construct() {
-				if (!class_exists('MPWPB_Dependencies')) {
-					add_action('admin_enqueue_scripts', array($this, 'add_admin_scripts'), 10, 1);
-				}
 				add_action('admin_menu', array($this, 'quick_setup_menu'));
-			}
-			public function add_admin_scripts() {
-				wp_enqueue_style('mp_plugin_global', MPWPB_PLUGIN_URL . '/assets/helper/mp_style/mp_style.css', array(), time());
-				wp_enqueue_script('mp_plugin_global', MPWPB_PLUGIN_URL . '/assets/helper/mp_style/mp_script.js', array('jquery'), time(), true);
-				wp_enqueue_script('mp_admin_settings', MPWPB_PLUGIN_URL . '/assets/admin/mp_admin_settings.js', array('jquery'), time(), true);
-				wp_enqueue_style('mp_admin_settings', MPWPB_PLUGIN_URL . '/assets/admin/mp_admin_settings.css', array(), time());
-				wp_enqueue_style('mp_font_awesome', '//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css', array(), '5.15.4');
 			}
 			public function quick_setup_menu() {
 				$status = MP_Global_Function::check_woocommerce();
@@ -41,7 +31,6 @@
 					</script>
 					<?php
 					activate_plugin('woocommerce/woocommerce.php');
-					MPWPB_Plugin::on_activation_page_create();
 					?>
 					<script>
 						(function ($) {
@@ -87,7 +76,6 @@
 					$woocommerce_plugin = new Plugin_Upgrader(new Plugin_Installer_Skin(compact('title', 'url', 'nonce', 'plugin', 'api')));
 					$woocommerce_plugin->install($api->download_link);
 					activate_plugin('woocommerce/woocommerce.php');
-					MPWPB_Plugin::on_activation_page_create();
 					echo '</div>';
 					?>
 					<script>

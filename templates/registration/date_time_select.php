@@ -9,7 +9,7 @@
 	$post_id = $post_id ?? get_the_id();
 	$link_wc_product = MP_Global_Function::get_post_info($post_id, 'link_wc_product');
 	$all_dates = $all_dates ?? MPWPB_Function::get_date($post_id);
-	$short_date_format = $short_date_format ?? MPWPB_Function::get_general_settings('date_format_short', 'D , M d');
+	$short_date_format = $short_date_format ?? MP_Global_Function::get_settings( 'mp_global_settings','date_format_short', 'M , Y' );
 	$extra_services = $extra_services ?? MP_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', array());
 	$service_text = $service_text ?? MPWPB_Function::get_service_text($post_id);
 ?>
