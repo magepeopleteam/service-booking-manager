@@ -10,10 +10,6 @@
 		class MPWPB_Function {
 			public function __construct() {}
 			//************************************************************Partially custom Function******************************//
-			//*********Date and Time**********************//
-			public static function date_picker_format(): string {
-				return MP_Global_Function::date_picker_format('mpwpb_general_settings');
-			}
 			//***********Template********************//
 			public static function all_details_template() {
 				$template_path = get_stylesheet_directory() . '/mpwpb_templates/themes/';

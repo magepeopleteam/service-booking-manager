@@ -23,7 +23,7 @@
 				add_action('mpwpb_settings_save', [$this, 'save_date_time_settings'], 10, 1);
 			}
 			public function date_time_settings($post_id) {
-				$date_format = MP_Global_Function::date_picker_format('mpwpb_general_settings');
+				$date_format = MP_Global_Function::date_picker_format();
 				$now = date_i18n($date_format, strtotime(current_time('Y-m-d')));
 				$date_type = MP_Global_Function::get_post_info($post_id, 'mpwpb_date_type', 'repeated');
 				$time_slot = MP_Global_Function::get_post_info($post_id, 'mpwpb_time_slot_length');
@@ -77,7 +77,7 @@
 														if (sizeof($particular_date_lists)) {
 															foreach ($particular_date_lists as $particular_date) {
 																if ($particular_date) {
-																	$this->particular_date_item('mpwpb_particular_dates[]', $particular_date);
+																	self::particular_date_item('mpwpb_particular_dates[]', $particular_date);
 																}
 															}
 														}
@@ -86,7 +86,7 @@
 												<?php MP_Custom_Layout::add_new_button(esc_html__('Add New Particular date', 'service-booking-manager')); ?>
 												<div class="mp_hidden_content">
 													<div class="mp_hidden_item">
-														<?php $this->particular_date_item('mpwpb_particular_dates[]'); ?>
+														<?php self::particular_date_item('mpwpb_particular_dates[]'); ?>
 													</div>
 												</div>
 											</div>
@@ -182,70 +182,55 @@
 								</table>
 							</div>
 							<div class="tabsItem" data-tabs="#mpwpb_date_time_off_day">
-								<table>
-									<tr>
-										<th><?php esc_html_e('Off Day', 'service-booking-manager'); ?></th>
-										<td colspan="2">
+								<div class="dFlex">
+									<span class="_fs_label_w_200"><?php esc_html_e('Off Day', 'service-booking-manager'); ?></span>
+									<?php
+										$off_days = MP_Global_Function::get_post_info($post_id, 'mpwpb_off_days');
+										$days = MP_Global_Function::week_day();
+										$off_day_array = explode(',', $off_days);
+									?>
+									<div class="groupCheckBox flexWrap">
+										<input type="hidden" name="mpwpb_off_days" value="<?php echo esc_attr($off_days); ?>"/>
+										<?php foreach ($days as $key => $day) { ?>
+											<label class="customCheckboxLabel _w_200">
+												<input type="checkbox" <?php echo esc_attr(in_array($key, $off_day_array) ? 'checked' : ''); ?> data-checked="<?php echo esc_attr($key); ?>"/>
+												<span class="customCheckbox"><?php echo esc_html($day); ?></span>
+											</label>
+										<?php } ?>
+									</div>
+								</div>
+								<div class="divider"></div>
+								<div class="dFlex">
+									<span class="_fs_label_w_200"><?php esc_html_e('Off Dates', 'service-booking-manager'); ?></span>
+									<div class="mp_settings_area">
+										<div class="mp_item_insert mp_sortable_area">
 											<?php
-												$off_days = MP_Global_Function::get_post_info($post_id, 'mpwpb_off_days');
-												$days = MP_Global_Function::week_day();
-												$off_day_array = explode(',', $off_days);
+												$off_day_lists = MP_Global_Function::get_post_info($post_id, 'mpwpb_off_dates', array());
+												if (sizeof($off_day_lists)>0) {
+													foreach ($off_day_lists as $off_day) {
+														if ($off_day) {
+															MPWPB_Date_Time_Settings::particular_date_item('mpwpb_off_dates[]', $off_day);
+														}
+													}
+												}
 											?>
-											<div class="groupCheckBox">
-												<input type="hidden" name="mpwpb_off_days" value="<?php echo esc_attr($off_days); ?>"/>
-												<?php foreach ($days as $key => $day) { ?>
-													<label class="customCheckboxLabel">
-														<input type="checkbox" <?php echo esc_attr(in_array($key, $off_day_array) ? 'checked' : ''); ?> data-checked="<?php echo esc_attr($key); ?>"/>
-														<span class="customCheckbox"><?php echo esc_html($day); ?></span>
-													</label>
-												<?php } ?>
+										</div>
+										<?php MP_Custom_Layout::add_new_button(esc_html__('Add New Off date', 'service-booking-manager')); ?>
+										<div class="mp_hidden_content">
+											<div class="mp_hidden_item">
+												<?php MPWPB_Date_Time_Settings::particular_date_item('mpwpb_off_dates[]'); ?>
 											</div>
-										</td>
-									</tr>
-									<tr>
-										<th><?php esc_html_e('Off Dates', 'service-booking-manager'); ?></th>
-										<td colspan="2">
-											<div class="mp_settings_area">
-												<div class="mp_item_insert">
-													<?php
-														$off_day_lists = MP_Global_Function::get_post_info($post_id, 'mpwpb_off_dates', array());
-														if (sizeof($off_day_lists)) {
-															foreach ($off_day_lists as $off_day) {
-																if ($off_day) {
-																	$hidden_off_day = date('Y-m-d', strtotime($off_day));
-																	$visible_off_day = date_i18n($date_format, strtotime($off_day));
-																	?>
-																	<label>
-																		<input type="hidden" name="mpwpb_off_dates[]" value="<?php echo esc_attr($hidden_off_day); ?>"/>
-																		<input value="<?php echo esc_attr($visible_off_day); ?>" class="formControl date_type" placeholder="<?php echo esc_attr($now); ?>"/>
-																	</label>
-																	<div class="divider"></div>
-																<?php }
-															}
-														} ?>
-												</div>
-												<?php MP_Custom_Layout::add_new_button(esc_html__('Add New Off date', 'service-booking-manager')); ?>
-												<div class="mp_hidden_content">
-													<div class="mp_hidden_item">
-														<label>
-															<input type="hidden" name="mpwpb_off_dates[]" value=""/>
-															<input value="" class="formControl date_type" placeholder="<?php echo esc_attr($now); ?>"/>
-														</label>
-														<div class="divider"></div>
-													</div>
-												</div>
-											</div>
-										</td>
-									</tr>
-								</table>
+										</div>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 				<?php
 			}
-			public function particular_date_item($name, $date = '') {
-				$date_format = MP_Global_Function::date_picker_format('mpwpb_general_settings');
+			public static function particular_date_item($name, $date = '') {
+				$date_format = MP_Global_Function::date_picker_format();
 				$now = date_i18n($date_format, strtotime(current_time('Y-m-d')));
 				$hidden_date = $date ? date('Y-m-d', strtotime($date)) : '';
 				$visible_date = $date ? date_i18n($date_format, strtotime($date)) : '';

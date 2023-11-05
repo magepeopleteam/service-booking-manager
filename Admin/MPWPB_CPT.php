@@ -12,6 +12,7 @@
 				add_action('init', [$this, 'add_cpt']);
 			}
 			public function add_cpt(): void {
+				$cpt = MPWPB_Function::get_cpt();
 				$label = MPWPB_Function::get_name();
 				$slug = MPWPB_Function::get_slug();
 				$icon = MPWPB_Function::get_icon();
@@ -58,7 +59,7 @@
 					'has_archive' => false,  // it shouldn't have archive page
 					'rewrite' => ['slug' => $slug],
 				];
-				register_post_type(MPWPB_Function::get_cpt(), $args);
+				register_post_type($cpt, $args);
 			}
 		}
 		new MPWPB_CPT();

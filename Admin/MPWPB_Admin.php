@@ -24,15 +24,15 @@
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_CPT.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Quick_Setup.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Status.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Staffs.php';
 				//*************Global Settings*****************//
-				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/global/MAGE_Setting_API.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/global/MPWPB_Settings_Global.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Settings_Global.php';
 				//*************Service Settings*****************//
-				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/service/MPWPB_Settings.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/service/MPWPB_General_Settings.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/service/MPWPB_Price_Settings.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/service/MPWPB_Date_Time_Settings.php';
-				//require_once MPWPB_PLUGIN_DIR . '/Admin/settings/MPWPB_Gallery_Settings.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Settings.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/MPWPB_General_Settings.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/MPWPB_Date_Time_Settings.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/MPWPB_Price_Settings.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/MPWPB_Extra_service_Settings.php';
 				//require_once MPWPB_PLUGIN_DIR . '/Admin/settings/MPWPB_FAQ_Settings.php';
 				//****************Woocommerce Checkout*********************** */
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Settings.php';
@@ -50,7 +50,7 @@
 			}
 			//************Disable Gutenberg************************//
 			public function disable_gutenberg($current_status, $post_type) {
-				$user_status = MPWPB_Function::get_general_settings('disable_block_editor', 'yes');
+				$user_status = MP_Global_Function::get_settings('mp_global_settings', 'disable_block_editor', 'yes');
 				if ($post_type === MPWPB_Function::get_cpt() && $user_status == 'yes') {
 					return false;
 				}

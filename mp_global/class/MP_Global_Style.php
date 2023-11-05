@@ -6,7 +6,7 @@
 	if ( ! defined( 'ABSPATH' ) ) {
 		die;
 	} // Cannot access pages directly.
-	if ( ! class_exists( 'MP_Global_Style' ) ) {
+	if ( ! class_exists('MP_Global_Style') ) {
 		class MP_Global_Style {
 			public function __construct() {
 				add_action( 'wp_head', array( $this, 'add_global_style' ), 100 );
@@ -49,7 +49,7 @@
 					:root {
 						--fs: <?php echo esc_attr($default_fs); ?>;
 						--fw: normal;
-						--fs_small: 13px;
+						--fs_small: 10px;
 						--fs_label: <?php echo esc_attr($fs_label); ?>;
 						--fs_h6: <?php echo esc_attr($fs_h6); ?>;
 						--fs_h5: <?php echo esc_attr($fs_h5); ?>;
@@ -94,6 +94,8 @@
 						--color_light: #F2F2F2;
 						--color_light_1: #BBB;
 						--color_light_2: #EAECEE;
+						--color_light_3: #878787;
+						--color_light_4: #f9f9f9;
 						--color_info: #666;
 						--color_yellow: #FEBB02;
 						--color_blue: #815DF2;
@@ -103,6 +105,7 @@
 						--color_3: #FAFCFE;
 						--color_4: #6148BA;
 						--color_5: #BCB;
+						--color_6: #D7DBDF;
 					}
 					@media only screen and (max-width: 1100px) {
 						:root {

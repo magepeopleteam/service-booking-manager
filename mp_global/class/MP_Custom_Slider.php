@@ -10,117 +10,9 @@
 	if ( ! class_exists( 'MP_Custom_Slider' ) ) {
 		class MP_Custom_Slider {
 			public function __construct() {
-				add_filter( 'mp_settings_sec_reg', array( $this, 'slider_tab_name' ), 20 );
-				add_filter( 'mp_settings_sec_fields', array( $this, 'slider_settings' ), 20 );
 				add_action( 'add_mp_custom_slider', array( $this, 'super_slider' ), 10, 2 );
 				add_action( 'add_mp_custom_slider_only', array( $this, 'super_slider_only' ) );
 				add_action( 'add_mp_custom_slider_icon_indicator', array( $this, 'icon_indicator' ) );
-			}
-			public function slider_tab_name( $default_sec ): array {
-				$sections = array(
-					array(
-						'id'    => 'mp_slider_settings',
-						'title' => __( 'Slider Settings', 'service-booking-manager' )
-					)
-				);
-				return array_merge( $default_sec, $sections );
-			}
-			public function slider_settings( $default_fields ): array {
-				$settings_fields = array(
-					'mp_slider_settings' => array(
-						array(
-							'name'    => 'slider_type',
-							'label'   => esc_html__( 'Slider Type', 'service-booking-manager' ),
-							'desc'    => esc_html__( 'Please Select Slider Type Default Slider', 'service-booking-manager' ),
-							'type'    => 'select',
-							'default' => 'slider',
-							'options' => array(
-								'slider'       => esc_html__( 'Slider', 'service-booking-manager' ),
-								'single_image' => esc_html__( 'Post Thumbnail', 'service-booking-manager' )
-							)
-						),
-						array(
-							'name'    => 'slider_style',
-							'label'   => esc_html__( 'Slider Style', 'service-booking-manager' ),
-							'desc'    => esc_html__( 'Please Select Slider Style Default Style One', 'service-booking-manager' ),
-							'type'    => 'select',
-							'default' => 'style_1',
-							'options' => array(
-								'style_1' => esc_html__( 'Style One', 'service-booking-manager' ),
-								'style_2' => esc_html__( 'Style Two', 'service-booking-manager' ),
-							)
-						),
-						array(
-							'name'    => 'indicator_visible',
-							'label'   => esc_html__( 'Slider Indicator Visible?', 'service-booking-manager' ),
-							'desc'    => esc_html__( 'Please Select Slider Indicator Visible or Not? Default ON', 'service-booking-manager' ),
-							'type'    => 'select',
-							'default' => 'on',
-							'options' => array(
-								'on'  => esc_html__( 'ON', 'service-booking-manager' ),
-								'off' => esc_html__( 'Off', 'service-booking-manager' )
-							)
-						),
-						array(
-							'name'    => 'indicator_type',
-							'label'   => esc_html__( 'Slider Indicator Type', 'service-booking-manager' ),
-							'desc'    => esc_html__( 'Please Select Slider Indicator Type Default Icon', 'service-booking-manager' ),
-							'type'    => 'select',
-							'default' => 'icon',
-							'options' => array(
-								'icon'  => esc_html__( 'Icon Indicator', 'service-booking-manager' ),
-								'image' => esc_html__( 'image Indicator', 'service-booking-manager' )
-							)
-						),
-						array(
-							'name'    => 'showcase_visible',
-							'label'   => esc_html__( 'Slider Showcase Visible?', 'service-booking-manager' ),
-							'desc'    => esc_html__( 'Please Select Slider Showcase Visible or Not? Default ON', 'service-booking-manager' ),
-							'type'    => 'select',
-							'default' => 'on',
-							'options' => array(
-								'on'  => esc_html__( 'ON', 'service-booking-manager' ),
-								'off' => esc_html__( 'Off', 'service-booking-manager' )
-							)
-						),
-						array(
-							'name'    => 'showcase_position',
-							'label'   => esc_html__( 'Slider Showcase Position', 'service-booking-manager' ),
-							'desc'    => esc_html__( 'Please Select Slider Showcase Position Default Right', 'service-booking-manager' ),
-							'type'    => 'select',
-							'default' => 'right',
-							'options' => array(
-								'top'    => esc_html__( 'At Top Position', 'service-booking-manager' ),
-								'right'  => esc_html__( 'At Right Position', 'service-booking-manager' ),
-								'bottom' => esc_html__( 'At Bottom Position', 'service-booking-manager' ),
-								'left'   => esc_html__( 'At Left Position', 'service-booking-manager' )
-							)
-						),
-						array(
-							'name'    => 'popup_image_indicator',
-							'label'   => esc_html__( 'Slider Popup Image Indicator', 'service-booking-manager' ),
-							'desc'    => esc_html__( 'Please Select Slider Popup Indicator Image ON or Off? Default ON', 'service-booking-manager' ),
-							'type'    => 'select',
-							'default' => 'on',
-							'options' => array(
-								'on'  => esc_html__( 'ON', 'service-booking-manager' ),
-								'off' => esc_html__( 'Off', 'service-booking-manager' )
-							)
-						),
-						array(
-							'name'    => 'popup_icon_indicator',
-							'label'   => esc_html__( 'Slider Popup Icon Indicator', 'service-booking-manager' ),
-							'desc'    => esc_html__( 'Please Select Slider Popup Indicator Icon ON or Off? Default ON', 'service-booking-manager' ),
-							'type'    => 'select',
-							'default' => 'on',
-							'options' => array(
-								'on'  => esc_html__( 'ON', 'service-booking-manager' ),
-								'off' => esc_html__( 'Off', 'service-booking-manager' )
-							)
-						)
-					)
-				);
-				return array_merge( $default_fields, $settings_fields );
 			}
 			public function super_slider( $post_id = '', $meta_key = '' ) {
 				$type      = MP_Global_Function::get_slider_settings( 'slider_type', 'slider' );
@@ -204,7 +96,7 @@
 								$image_url = MP_Global_Function::get_image_url( '', $id );
 								?>
 								<div class="sliderItem" data-slide-index="<?php echo esc_html( $count ); ?>" data-target-popup="superSlider" data-placeholder>
-									<div data-bg-image="<?php echo esc_html( $image_url ); ?>"></div>
+									<div data-bg-image="<?php echo sanitize_url( $image_url ); ?>"></div>
 								</div>
 								<?php
 								$count ++;
@@ -244,18 +136,18 @@
 					$image_url = MP_Global_Function::get_image_url( '', $id );
 					if ( $count < 4 ) {
 						?>
-						<div class="sliderShowcaseItem" data-slide-target="<?php echo esc_html( $count ); ?>" data-placeholder>
-							<div data-bg-image="<?php echo esc_html( $image_url ); ?>"></div>
+						<div class="sliderShowcaseItem" data-slide-target="<?php echo esc_attr( $count ); ?>" data-placeholder>
+							<div data-bg-image="<?php echo sanitize_url( $image_url ); ?>"></div>
 						</div>
 						<?php
 					}
 					if ( $count == 4 ) {
 						?>
 						<div class="sliderShowcaseItem" data-target-popup="superSlider" data-placeholder>
-							<div data-bg-image="<?php echo esc_html( $image_url ); ?>"></div>
+							<div data-bg-image="<?php echo sanitize_url( $image_url ); ?>"></div>
 							<div class="sliderMoreItem">
 								<span class="fas fa-plus"></span>
-								<?php echo sizeof( $image_ids ) - 4; ?>
+								<?php echo esc_html(sizeof( $image_ids ) - 4); ?>
 								<span class="far fa-image"></span>
 							</div>
 						</div>
@@ -270,8 +162,8 @@
 					$image_url = MP_Global_Function::get_image_url( '', $id );
 					if ( $count > 1 && $count < 5 ) {
 						?>
-						<div class="sliderShowcaseItem" data-target-popup="superSlider" data-slide-index="<?php echo esc_html( $count ); ?>" data-placeholder>
-							<div data-bg-image="<?php echo esc_html( $image_url ); ?>"></div>
+						<div class="sliderShowcaseItem" data-target-popup="superSlider" data-slide-index="<?php echo esc_attr( $count ); ?>" data-placeholder>
+							<div data-bg-image="<?php echo sanitize_url( $image_url ); ?>"></div>
 						</div>
 						<?php
 					}
@@ -287,8 +179,8 @@
 							foreach ( $image_ids as $id ) {
 								$image_url = MP_Global_Function::get_image_url( '', $id, array( 150, 100 ) );
 								?>
-								<div class="slideIndicatorItem" data-slide-target="<?php echo esc_html( $count ); ?>">
-									<div data-bg-image="<?php echo esc_html( $image_url ); ?>"></div>
+								<div class="slideIndicatorItem" data-slide-target="<?php echo esc_attr( $count ); ?>">
+									<div data-bg-image="<?php echo sanitize_url( $image_url ); ?>"></div>
 								</div>
 								<?php
 								$count ++;
@@ -318,7 +210,7 @@
 					<div class="sliderPopup" data-popup="superSlider">
 						<div class="superSlider">
 							<div class="popupHeader">
-								<h2><?php echo get_the_title( $post_id ); ?></h2>
+								<h2><?php echo esc_html(get_the_title( $post_id )); ?></h2>
 								<span class="fas fa-times popupClose"></span>
 							</div>
 							<div class="popupBody">

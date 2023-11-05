@@ -27,10 +27,9 @@
 				if (!defined('MPWPB_PLUGIN_URL')) {
 					define('MPWPB_PLUGIN_URL', plugins_url() . '/' . plugin_basename(dirname(__FILE__)));
 				}
-				$this->load_global_file();
+				require_once MPWPB_PLUGIN_DIR . '/mp_global/MP_Global_File_Load.php';
 				if (MP_Global_Function::check_woocommerce() == 1) {
 					add_action('activated_plugin', array($this, 'activation_redirect'), 90, 1);
-					self::on_activation_page_create();
 					require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Dependencies.php';
 				}
 				else {
@@ -39,16 +38,17 @@
 					add_action('activated_plugin', array($this, 'activation_redirect_setup'), 90, 1);
 				}
 			}
-			public function load_global_file() {
-				require_once MPWPB_PLUGIN_DIR . '/inc/global/MP_Global_Function.php';
-				require_once MPWPB_PLUGIN_DIR . '/inc/global/MP_Global_Style.php';
-				require_once MPWPB_PLUGIN_DIR . '/inc/global/MP_Custom_Layout.php';
-				require_once MPWPB_PLUGIN_DIR . '/inc/global/MP_Custom_Slider.php';
-				require_once MPWPB_PLUGIN_DIR . '/inc/global/MP_Select_Icon_image.php';
-			}
 			public function activation_redirect($plugin) {
 				if ($plugin == plugin_basename(__FILE__)) {
 					flush_rewrite_rules();
+					if(!MP_Global_Function::user_role_exists('mpwpb_staff')){
+						add_role('mpwpb_staff', esc_html__('Service Staffs', 'service-booking-manager'), array(
+							'read' => true, // True allows that capability
+							'edit_posts' => true,
+							'create_posts' => false,
+							'delete_posts' => false, // Use false to explicitly deny
+						));
+					}
 					exit(wp_redirect(admin_url('edit.php?post_type=mpwpb_item&page=mpwpb_quick_setup')));
 				}
 			}
@@ -56,8 +56,6 @@
 				if ($plugin == plugin_basename(__FILE__)) {
 					exit(wp_redirect(admin_url('admin.php?post_type=mpwpb_item&page=mpwpb_quick_setup')));
 				}
-			}
-			public static function on_activation_page_create() {
 			}
 			public function woocommerce_not_active() {
 				$wc_install_url = get_admin_url() . 'plugin-install.php?s=woocommerce&tab=search&type=term';

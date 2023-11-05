@@ -10,7 +10,7 @@
 		class MPWPB_Query {
 			public function __construct() {}
 			public static function query_all_sold( $post_id, $date): WP_Query {
-				$_seat_booked_status      = MPWPB_Function::get_general_settings( 'set_book_status', array( 'processing', 'completed' ) );
+				$_seat_booked_status      = MP_Global_Function::get_settings('mp_global_settings', 'set_book_status', array('processing', 'completed'));
 				$seat_booked_status       = ! empty( $_seat_booked_status ) ? $_seat_booked_status : [];
 
 				$date_filter              = ! empty( $date ) ? array(

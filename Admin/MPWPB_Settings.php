@@ -29,16 +29,24 @@
 							<li data-tabs-target="#mpwpb_general_info">
 								<span class="fas fa-tools"></span><?php esc_html_e('General Info', 'service-booking-manager'); ?>
 							</li>
+							<li data-tabs-target="#mpwpb_settings_date_time">
+								<span class="far fa-clock"></span><?php esc_html_e('Date & Time', 'service-booking-manager'); ?>
+							</li>
 							<li data-tabs-target="#mpwpb_price_settings">
 								<span class="fas fa-hand-holding-usd"></span><?php esc_html_e('Pricing', 'service-booking-manager'); ?>
 							</li>
-							<li data-tabs-target="#mpwpb_settings_date_time">
-								<span class="far fa-clock"></span><?php esc_html_e('Date & Time', 'service-booking-manager'); ?>
+							<li data-tabs-target="#mpwpb_extra_service_settings">
+								<span class="fas fa-funnel-dollar"></span><?php esc_html_e('Extra Service', 'service-booking-manager'); ?>
 							</li>
 							<?php do_action('add_mpwpb_settings_tab_after_date', $post_id); ?>
 						</ul>
 						<div class="tabsContent">
 							<?php do_action('add_mpwpb_settings_tab_content', $post_id); ?>
+							<div class="_dLayout_mT">
+								<h5><?php esc_html_e('Add To Cart Form Shortcode : ', 'service-booking-manage'); ?> </h5>
+								<code> [service-booking post_id="<?php echo esc_html($post_id); ?>"]</code>
+								<?php MPWPB_Settings::info_text('mpwpb_short_code'); ?>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -57,6 +65,9 @@
 					'mpwpb_service_details_active' => esc_html__('By default Service Details  is OFF but you can keep it ON by switching this option', 'service-booking-manager'),
 					'mpwpb_service_duration_active' => esc_html__('By default Service Duration  is ON but you can keep it OFF by switching this option', 'service-booking-manager'),
 					'mpwpb_extra_service_active' => esc_html__('By default extra service  is OFF but you can keep it ON by switching this option', 'service-booking-manager'),
+					
+					//======staff==========//
+					'mpwpb_staff_service_display' => esc_html__('By default staff  is OFF but you can keep it ON by switching this option', 'service-booking-manager'),
 					//======Slider==========//
 					'mpwpb_display_slider' => esc_html__('By default slider is ON but you can keep it off by switching this option', 'service-booking-manager'),
 					'mpwpb_slider_images' => esc_html__('Please upload images for gallery', 'service-booking-manager'),

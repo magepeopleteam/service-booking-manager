@@ -18,15 +18,15 @@
 				<div class="mp_sticky_area">
 					<div class="_dLayout_dShadow_7_bRL_dFlex_fdColumn">
 						<div class="registration_tab_item mpwpb_service_tab mpActive">
-							<img src="<?php echo esc_attr( MPWPB_PLUGIN_URL . '/assets/helper/images/service_icon.png' ); ?>" alt="<?php esc_attr_e( 'Services', 'service-booking-manager' ); ?>"/>
+							<img src="<?php echo esc_attr( MPWPB_PLUGIN_URL . '/assets/images/service_icon.png' ); ?>" alt="<?php esc_attr_e( 'Services', 'service-booking-manager' ); ?>"/>
 							<span><?php esc_html_e( 'Services', 'service-booking-manager' ); ?></span>
 						</div>
 						<div class="registration_tab_item mpwpb_date_time_tab mpDisabled">
-							<img src="<?php echo esc_attr( MPWPB_PLUGIN_URL . '/assets/helper/images/date_time_icon.png' ); ?>" alt="<?php esc_attr_e( 'Date & Time', 'service-booking-manager' ); ?>"/>
+							<img src="<?php echo esc_attr( MPWPB_PLUGIN_URL . '/mp_global/assets/images/date_time_icon.png' ); ?>" alt="<?php esc_attr_e( 'Date & Time', 'service-booking-manager' ); ?>"/>
 							<span><?php esc_html_e( 'Date & Time', 'service-booking-manager' ); ?></span>
 						</div>
 						<div class="registration_tab_item mpwpb_order_proceed_tab mpDisabled">
-							<img src="<?php echo esc_attr( MPWPB_PLUGIN_URL . '/assets/helper/images/summary_icon.png' ); ?>" alt="<?php esc_attr_e( 'Order Proceed', 'service-booking-manager' ); ?>"/>
+							<img src="<?php echo esc_attr( MPWPB_PLUGIN_URL . '/assets/images/summary_icon.png' ); ?>" alt="<?php esc_attr_e( 'Order Proceed', 'service-booking-manager' ); ?>"/>
 							<span><?php esc_html_e( 'Order Proceed', 'service-booking-manager' ); ?></span>
 						</div>
 					</div>
