@@ -19,15 +19,15 @@
 				?>
 				<div class="mp_add_icon_area">
 					<button type="button" class="mp_add_icon dButton_xs ">
-						<input type="hidden" name="<?php echo esc_attr($name); ?>" placeholder="" value="<?php echo esc_attr($value); ?>"/>
-						<span class="<?php echo esc_attr($value); ?>" data-empty-text="<?php esc_attr_e('Add Icon', 'service-booking-manager'); ?>">
+						<input type="hidden" name="<?php echo esc_html($name); ?>" placeholder="" value="<?php echo esc_html($value); ?>"/>
+						<span class="<?php echo esc_html($value); ?>" data-empty-text="<?php esc_html_e('Add Icon', 'service-booking-manager'); ?>">
 			                    <?php
 				                    if (!$value) {
 					                    esc_html_e('Add Icon', 'service-booking-manager');
 				                    }
 			                    ?>
 			                </span>
-						<span class="fas fa-times remove_input_icon <?php echo esc_attr($value ? 'active' : ''); ?> " title="<?php esc_attr_e('Remove Icon', 'service-booking-manager'); ?>"></span>
+						<span class="fas fa-times remove_input_icon <?php echo esc_html($value ? 'active' : ''); ?> " title="<?php esc_html_e('Remove Icon', 'service-booking-manager'); ?>"></span>
 					</button>
 				</div>
 				<?php
@@ -99,7 +99,7 @@
 					<?php if ($image_id) { ?>
 						<div class="mp_single_image_item" data-image-id="<?php echo esc_attr($image_id); ?>'">
 							<span class="fas fa-times circleIcon_xs mp_remove_single_image"></span>
-							<img src="<?php echo esc_attr(wp_get_attachment_image_url($image_id, 'medium')); ?>" alt="<?php echo esc_attr($image_id); ?>"/>
+							<img src="<?php echo wp_get_attachment_image_url($image_id, 'medium') ?>" alt="<?php echo esc_attr($image_id); ?>"/>
 						</div>
 					<?php } ?>
 					<button type="button" class="_dButton_xs_bgColor_1_fullWidth <?php echo esc_attr($image_id ? 'dNone' : ''); ?>">
@@ -112,16 +112,16 @@
 				$images = is_array($images) ? MP_Global_Function::array_to_string($images) : $images;
 				?>
 				<div class="mp_multi_image_area">
-					<input type="hidden" class="mp_multi_image_value" name="<?php echo esc_attr($name); ?>" value="<?php echo  esc_attr($images); ?>"/>
+					<input type="hidden" class="mp_multi_image_value" name="<?php echo esc_attr($name); ?>" value="<?php esc_attr_e($images); ?>"/>
 					<div class="mp_multi_image">
 						<?php
 							$all_images = explode(',', $images);
 							if ($images && sizeof($all_images) > 0) {
 								foreach ($all_images as $image) {
 									?>
-									<div class="mp_multi_image_item" data-image-id="<?php echo esc_attr($image); ?>">
+									<div class="mp_multi_image_item" data-image-id="<?php esc_attr_e($image); ?>">
 										<span class="fas fa-times circleIcon_xs mp_remove_multi_image"></span>
-										<img src="<?php echo esc_attr(MP_Global_Function::get_image_url('', $image, 'medium')); ?>" alt="<?php echo esc_attr($image); ?>"/>
+										<img src="<?php echo MP_Global_Function::get_image_url('', $image, 'medium'); ?>" alt="<?php esc_attr_e($image); ?>"/>
 									</div>
 									<?php
 								}
