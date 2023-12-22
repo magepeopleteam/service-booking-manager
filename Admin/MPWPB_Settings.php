@@ -64,8 +64,9 @@
 					'mpwpb_sub_category_active' => esc_html__('By default Sub-Category  is ON but you can keep it off by switching this option', 'service-booking-manager'),
 					'mpwpb_service_details_active' => esc_html__('By default Service Details  is OFF but you can keep it ON by switching this option', 'service-booking-manager'),
 					'mpwpb_service_duration_active' => esc_html__('By default Service Duration  is ON but you can keep it OFF by switching this option', 'service-booking-manager'),
+					'mpwpb_service_multi_select_active' => esc_html__('By default Multi Select  is OFF but you can keep it ON by switching this option', 'service-booking-manager'),
+					'mpwpb_service_staff_active' => esc_html__('By default Staff  is OFF but you can keep it ON by switching this option', 'service-booking-manager'),
 					'mpwpb_extra_service_active' => esc_html__('By default extra service  is OFF but you can keep it ON by switching this option', 'service-booking-manager'),
-					
 					//======staff==========//
 					'mpwpb_staff_service_display' => esc_html__('By default staff  is OFF but you can keep it ON by switching this option', 'service-booking-manager'),
 					//======Slider==========//

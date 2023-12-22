@@ -105,7 +105,6 @@
 						--color_3: #FAFCFE;
 						--color_4: #6148BA;
 						--color_5: #BCB;
-						--color_6: #D7DBDF;
 					}
 					@media only screen and (max-width: 1100px) {
 						:root {
