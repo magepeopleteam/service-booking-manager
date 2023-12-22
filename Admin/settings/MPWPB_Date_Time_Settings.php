@@ -35,9 +35,9 @@
 				$active_days = MP_Global_Function::get_post_info($post_id, 'mpwpb_active_days', 10);
 				?>
 				<div class="tabsItem mpwpb_settings_date_time" data-tabs="#mpwpb_settings_date_time">
-					<h5><?php echo get_the_title($post_id) . ' ' . esc_html__('Date & Time Settings', 'service-booking-manager'); ?></h5>
-					<div class="divider"></div>
-					<div class="mpTabs tabBorder">
+					<h2 class="h4 text-primary px-0"><?php echo get_the_title($post_id) . ' ' . esc_html__('Date & Time Settings', 'service-booking-manager'); ?></h2>
+					
+					<div class="mpTabs tabBorder component">
 						<ul class="tabLists">
 							<li data-tabs-target="#mpwpb_date_time_general">
 								<span class="fas fa-home"></span><?php esc_html_e('General', 'service-booking-manager'); ?>
