@@ -40,13 +40,9 @@
 							</li>
 							<?php do_action('add_mpwpb_settings_tab_after_date', $post_id); ?>
 						</ul>
-						<div class="tabsContent m-0 ms-2 w-80">
+						<div class="tabsContent p-0 m-0 ms-2 w-80">
 							<?php do_action('add_mpwpb_settings_tab_content', $post_id); ?>
-							<div class="_dLayout_mT">
-								<h5><?php esc_html_e('Add To Cart Form Shortcode : ', 'service-booking-manage'); ?> </h5>
-								<code> [service-booking post_id="<?php echo esc_html($post_id); ?>"]</code>
-								<?php MPWPB_Settings::info_text('mpwpb_short_code'); ?>
-							</div>
+							
 						</div>
 					</div>
 				</div>
