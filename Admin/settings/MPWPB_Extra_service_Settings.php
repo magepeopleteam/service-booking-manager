@@ -23,10 +23,16 @@
 				$ex_count                           = 0;
 				?>
 				<div class="tabsItem mpwpb_extra_service_settings" data-tabs="#mpwpb_extra_service_settings">
-					<h5 class="dFlex mT">
-						<?php MP_Custom_Layout::switch_button( 'mpwpb_extra_service_active', $extra_service_active_checked ); ?>
-						<span class="mR"><?php esc_html_e( 'Enable Extra Service', 'service-booking-manager' ); ?></span>
-					</h5>
+				<h2 class="h4 text-primary px-0"><?php esc_html_e( 'Extra Service Configuration', 'service-booking-manager' ); ?></h2>
+					
+					<section class="component d-flex justify-content-between align-items-center mb-2">
+                        <div class="w-50 d-flex justify-content-between align-items-center">
+                            <label class=""><?php esc_html_e( 'Enable Extra Service', 'service-booking-manager' ); ?><i class="fas fa-question-circle tool-tips"></i></label>
+                        </div>
+                        <div class="w-50 d-flex justify-content-end align-items-center">
+							<?php MP_Custom_Layout::switch_button( 'mpwpb_extra_service_active', $extra_service_active_checked ); ?>
+                        </div>
+                    </section>
 					<div class="mpPanel mT_xs <?php echo esc_attr( $extra_service_active_class ); ?>" data-collapse="#mpwpb_extra_service_active">
 						<div class="mpPanelHeader bgTheme" data-collapse-target="#mpwpb_extra_service_setting" data-open-icon="fa-minus" data-close-icon="fa-plus">
 							<h6><span data-icon class="fas fa-minus mR_xs"></span><?php _e( 'Extra service Settings', 'service-booking-manager' ); ?></h6>

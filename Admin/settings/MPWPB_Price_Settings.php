@@ -15,8 +15,8 @@
 			public function price_settings($post_id) {
 				?>
 				<div class="tabsItem mpwpb_price_settings" data-tabs="#mpwpb_price_settings">
-					<h5><?php echo get_the_title($post_id) . ' ' . esc_html__('Price Settings', 'service-booking-manager'); ?></h5>
-					<div class="divider"></div>
+					<h2 class="h4 text-primary px-0"><?php echo get_the_title($post_id) . ' ' . esc_html__('Price Settings', 'service-booking-manager'); ?></h2>
+					
 					<?php $this->price($post_id); ?>
 				</div>
 				<?php
