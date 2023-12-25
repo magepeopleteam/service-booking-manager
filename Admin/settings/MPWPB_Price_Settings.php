@@ -117,7 +117,7 @@
 							<?php MP_Custom_Layout::switch_button('mpwpb_service_staff_active', $service_details_active_checked); ?>
 						</div>
 					</section>
-					<div class="mp_settings_area">
+					<div class="mp_settings_area component">
 						<div class="_oAuto_border">
 							<div class="mpwpb_category_area mpwpb_category_header">
 								<div class="mpwpb_category_item  <?php echo esc_attr($category_active_class); ?>" data-collapse="#mpwpb_category_active">
