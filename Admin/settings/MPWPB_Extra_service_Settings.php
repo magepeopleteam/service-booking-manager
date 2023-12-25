@@ -23,7 +23,7 @@
 				$ex_count                           = 0;
 				?>
 				<div class="tabsItem mpwpb_extra_service_settings" data-tabs="#mpwpb_extra_service_settings">
-				<h2 class="h4 text-primary px-0"><?php esc_html_e( 'Extra Service Configuration', 'service-booking-manager' ); ?></h2>
+					<h2 class="h4 text-primary px-0"><?php esc_html_e( 'Extra Service Configuration', 'service-booking-manager' ); ?></h2>
 					
 					<section class="component d-flex justify-content-between align-items-center mb-2">
                         <div class="w-50 d-flex justify-content-between align-items-center">
@@ -33,55 +33,56 @@
 							<?php MP_Custom_Layout::switch_button( 'mpwpb_extra_service_active', $extra_service_active_checked ); ?>
                         </div>
                     </section>
-					<div class="mpPanel mT_xs <?php echo esc_attr( $extra_service_active_class ); ?>" data-collapse="#mpwpb_extra_service_active">
-						<div class="mpPanelHeader bgTheme" data-collapse-target="#mpwpb_extra_service_setting" data-open-icon="fa-minus" data-close-icon="fa-plus">
-							<h6><span data-icon class="fas fa-minus mR_xs"></span><?php _e( 'Extra service Settings', 'service-booking-manager' ); ?></h6>
-						</div>
-						<div class="mpPanelBody mActive" data-collapse="#mpwpb_extra_service_setting">
-							<h5 class="dFlex">
-								<?php MP_Custom_Layout::switch_button( 'mpwpb_group_extra_service_active', $extra_service_group_active_checked ); ?>
-								<span class="mR"><?php esc_html_e( 'Enable Group Service', 'service-booking-manager' ); ?></span>
-							</h5>
-							<div class="mp_settings_area _mT_xs">
-								<div class="_oAuto_border">
-									<div class="mpwpb_category_area mpwpb_category_header">
-										<div class="mpwpb_category_item <?php echo esc_attr( $extra_service_group_active_class ); ?>" data-collapse="#mpwpb_group_extra_service_active">
-											<h6><?php esc_html_e( 'Group Service', 'service-booking-manager' ); ?><span class="textRequired">&nbsp;*</span></h6>
-										</div>
-										<div class="mpwpb_category_content">
-											<div class="mpwpb_service_area">
-												<div class="mpwpb_service_item"><h6><?php esc_html_e( 'Extra service', 'service-booking-manager' ); ?><span class="textRequired">&nbsp;*</span></h6></div>
-												<div class="mpwpb_service_content"><h6><?php esc_html_e( 'Quantity', 'service-booking-manager' ); ?><span class="textRequired">&nbsp;*</span></h6></div>
-												<div class="mpwpb_service_content"><h6><?php esc_html_e( 'Price', 'service-booking-manager' ); ?><span class="textRequired">&nbsp;*</span></h6></div>
-												<div class="mpwpb_service_content"><h6><?php esc_html_e( 'image', 'service-booking-manager' ); ?></h6></div>
-												<div class="mpwpb_service_item"><h6><?php esc_html_e( 'Details', 'service-booking-manager' ); ?></h6></div>
-											</div>
-										</div>
+
+					<section class="component d-flex justify-content-between align-items-center mb-2">
+                        <div class="w-50 d-flex justify-content-between align-items-center">
+                            <label class=""><?php esc_html_e( 'Enable Group Service', 'service-booking-manager' ); ?> <i class="fas fa-question-circle tool-tips"></i></label>
+                        </div>
+                        <div class="w-50 d-flex justify-content-end align-items-center">
+							<?php MP_Custom_Layout::switch_button( 'mpwpb_group_extra_service_active', $extra_service_group_active_checked ); ?>
+                        </div>
+                    </section>
+
+					<section class="component"  >
+						<div class="mp_settings_area _mT_xs">
+							<div class="_oAuto_border">
+								<div class="mpwpb_category_area mpwpb_category_header">
+									<div class="mpwpb_category_item <?php echo esc_attr( $extra_service_group_active_class ); ?>" data-collapse="#mpwpb_group_extra_service_active">
+										<h6><?php esc_html_e( 'Group Service', 'service-booking-manager' ); ?><span class="textRequired">&nbsp;*</span></h6>
 									</div>
-									<div class="mp_item_insert mp_sortable_area">
-										<?php
-											if ( sizeof( $extra_services ) > 0 ) {
-												foreach ( $extra_services as $group_service ) {
-													$this->extra_service_group( $ex_count, $extra_service_group_active_class, $group_service );
-													$ex_count ++;
-												}
-											} else {
-												$this->extra_service_group( 0, $extra_service_group_active_class );
-											}
-										?>
+									<div class="mpwpb_category_content">
+										<div class="mpwpb_service_area">
+											<div class="mpwpb_service_item"><h6><?php esc_html_e( 'Extra service', 'service-booking-manager' ); ?><span class="textRequired">&nbsp;*</span></h6></div>
+											<div class="mpwpb_service_content"><h6><?php esc_html_e( 'Quantity', 'service-booking-manager' ); ?><span class="textRequired">&nbsp;*</span></h6></div>
+											<div class="mpwpb_service_content"><h6><?php esc_html_e( 'Price', 'service-booking-manager' ); ?><span class="textRequired">&nbsp;*</span></h6></div>
+											<div class="mpwpb_service_content"><h6><?php esc_html_e( 'image', 'service-booking-manager' ); ?></h6></div>
+											<div class="mpwpb_service_item"><h6><?php esc_html_e( 'Details', 'service-booking-manager' ); ?></h6></div>
+										</div>
 									</div>
 								</div>
-								<div class="<?php echo esc_attr( $extra_service_group_active_class ); ?>" data-collapse="#mpwpb_group_extra_service_active">
-									<?php MP_Custom_Layout::add_new_button( esc_html__( 'Add New Group service', 'service-booking-manager' ), 'mpwpb_add_group_service', '_successButton_xs_mT_xs' ); ?>
-									<div class="mp_hidden_content">
-										<div class="mp_hidden_item">
-											<?php $this->extra_service_group( 1, $extra_service_group_active_class ); ?>
-										</div>
+								<div class="mp_item_insert mp_sortable_area">
+									<?php
+										if ( sizeof( $extra_services ) > 0 ) {
+											foreach ( $extra_services as $group_service ) {
+												$this->extra_service_group( $ex_count, $extra_service_group_active_class, $group_service );
+												$ex_count ++;
+											}
+										} else {
+											$this->extra_service_group( 0, $extra_service_group_active_class );
+										}
+									?>
+								</div>
+							</div>
+							<div class="<?php echo esc_attr( $extra_service_group_active_class ); ?>" data-collapse="#mpwpb_group_extra_service_active">
+								<?php MP_Custom_Layout::add_new_button( esc_html__( 'Add New Group service', 'service-booking-manager' ), 'mpwpb_add_group_service', '_successButton_xs_mT_xs' ); ?>
+								<div class="mp_hidden_content">
+									<div class="mp_hidden_item">
+										<?php $this->extra_service_group( 1, $extra_service_group_active_class ); ?>
 									</div>
 								</div>
 							</div>
 						</div>
-					</div>
+					</section>
 				</div>
 				<?php
 			}
@@ -124,7 +125,7 @@
 							}
 						?>
 					</div>
-					<?php MP_Custom_Layout::add_new_button( esc_html__( 'Add New service', 'service-booking-manager' ), '', '_navy_blueButton_xs_mTB_xs' ); ?>
+					<?php MP_Custom_Layout::add_new_button( esc_html__( 'Add New service', 'service-booking-manager' ), 'mpwpb_add_group_service', '_navy_blueButton_xs_mTB_xs' ); ?>
 					<div class="mp_hidden_content">
 						<div class="mp_hidden_item">
 							<?php $this->extra_service_item( $unique_name ); ?>
