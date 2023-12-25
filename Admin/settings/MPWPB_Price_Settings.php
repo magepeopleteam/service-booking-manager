@@ -16,7 +16,7 @@
 				?>
 				<div class="tabsItem mpwpb_price_settings" data-tabs="#mpwpb_price_settings">
 					<h2 class="h4 text-primary px-0"><?php echo esc_html__('Price Settings', 'service-booking-manager'); ?></h2>
-					
+
 					<?php $this->price($post_id); ?>
 				</div>
 				<?php
@@ -60,114 +60,126 @@
 				$active['service_details'] = $service_details_active_class;
 				$active['service_duration'] = $service_duration_active_class;
 				?>
-				<div class="mpPanel mT">
-					<div class="mpPanelHeader bgTheme" data-collapse-target="#mpwpb_settings_pricing" data-open-icon="fa-minus" data-close-icon="fa-plus">
-						<h6>
-							<span data-icon class="fas fa-minus mR_xs"></span><?php _e('Price Settings', 'service-booking-manager'); ?></h6>
-					</div>
-					<div class="mpPanelBody mActive" data-collapse="#mpwpb_settings_pricing">
-						<h5 class="dFlex">
-							<?php MP_Custom_Layout::switch_button('mpwpb_category_active', $category_active_checked); ?>
-							<span class="_mL_xs"><?php echo esc_html__('Enable', 'service-booking-manager') . ' <span data-input-change="mpwpb_category_text">' . $category_text . ' </span> ' . esc_html__('Section', 'service-booking-manager'); ?></span>
-						</h5>
-						<?php MPWPB_Settings::info_text('mpwpb_category_active'); ?>
-						<div class="divider"></div>
-						<div class="<?php echo esc_attr($category_active_class); ?>" data-collapse="#mpwpb_category_active">
-							<h5 class="dFlex">
-								<?php MP_Custom_Layout::switch_button('mpwpb_sub_category_active', $sub_category_active_checked); ?>
-								<span class="_mL_xs"><?php echo esc_html__('Enable', 'service-booking-manager') . ' <span data-input-change="mpwpb_sub_category_text">' . $sub_category_text . ' </span> ' . esc_html__('Section', 'service-booking-manager'); ?></span>
-							</h5>
-							<?php MPWPB_Settings::info_text('mpwpb_sub_category_active'); ?>
+				<div>
+
+					<section class="component d-flex justify-content-between align-items-center mb-2">
+						<div class="w-50 d-flex justify-content-between align-items-center">
+							<label class=""><?php echo esc_html__('Enable', 'service-booking-manager') . ' <span data-input-change="mpwpb_category_text">' . $category_text . ' </span> ' . esc_html__('Section', 'service-booking-manager'); ?><i class="fas fa-question-circle tool-tips"><span><?php MPWPB_Settings::info_text('mpwpb_category_active'); ?></span></i></label>
 						</div>
-						<div class="divider"></div>
-						<h5 class="dFlex">
+						<div class="w-50 d-flex justify-content-end align-items-center">
+							<?php MP_Custom_Layout::switch_button('mpwpb_category_active', $category_active_checked); ?>
+						</div>
+					</section>
+
+					<section class="component <?php echo esc_attr($category_active_class); ?>" data-collapse="#mpwpb_category_active">
+						<div class="d-flex justify-content-between align-items-center mb-2 ">
+							<div class="w-50 d-flex justify-content-between align-items-center">
+								<label class=""><?php echo esc_html__('Enable', 'service-booking-manager') . '&nbsp;<span data-input-change="mpwpb_sub_category_text">' . $sub_category_text . '</span>&nbsp;' . esc_html__('Section', 'service-booking-manager'); ?> <i class="fas fa-question-circle tool-tips"><span><?php MPWPB_Settings::info_text('mpwpb_sub_category_active'); ?></span></i></label>
+							</div>
+							<div class="w-50 d-flex justify-content-end align-items-center">
+								<?php MP_Custom_Layout::switch_button('mpwpb_sub_category_active', $category_active_checked); ?>
+							</div>
+						</div>
+					</section>
+
+					<section class="component d-flex justify-content-between align-items-center mb-2 " >
+						<div class="w-50 d-flex justify-content-between align-items-center">
+							<label class=""><?php echo esc_html__('Enable', 'service-booking-manager') . '&nbsp;<span data-input-change="mpwpb_service_text">' . $service_text . ' </span>&nbsp;' . esc_html__('Details', 'service-booking-manager'); ?><i class="fas fa-question-circle tool-tips"><span><?php MPWPB_Settings::info_text('mpwpb_service_details_active'); ?></span></i></label>
+						</div>
+						<div class="w-50 d-flex justify-content-end align-items-center">
 							<?php MP_Custom_Layout::switch_button('mpwpb_service_details_active', $service_details_active_checked); ?>
-							<span class="_mL_xs"><?php echo esc_html__('Enable', 'service-booking-manager') . ' <span data-input-change="mpwpb_service_text">' . $service_text . ' </span> ' . esc_html__('Details', 'service-booking-manager'); ?></span>
-						</h5>
-						<?php MPWPB_Settings::info_text('mpwpb_service_details_active'); ?>
-						<div class="divider"></div>
-						<h5 class="dFlex">
-							<?php MP_Custom_Layout::switch_button('mpwpb_service_duration_active', $service_duration_active_checked); ?>
-							<span class="_mL_xs"><?php echo esc_html__('Enable', 'service-booking-manager') . ' <span data-input-change="mpwpb_service_text">' . $service_text . ' </span> ' . esc_html__('Duration', 'service-booking-manager'); ?></span>
-						</h5>
-						<?php MPWPB_Settings::info_text('mpwpb_service_duration_active'); ?>
-						<div class="divider"></div>
-						<h5 class="dFlex">
-							<?php MP_Custom_Layout::switch_button('mpwpb_service_multi_select_active', $multi_select_active_checked); ?>
-							<span class="_mL_xs"><?php esc_html_e('Enable Multiple select', 'service-booking-manager'); ?></span>
-						</h5>
-						<?php MPWPB_Settings::info_text('mpwpb_service_multi_select_active'); ?>
-						<div class="divider"></div>
-						<h5 class="dFlex">
-							<?php MP_Custom_Layout::switch_button('mpwpb_service_staff_active', $staff_active_checked); ?>
-							<span class="_mL_xs"><?php esc_html_e('Enable Staff', 'service-booking-manager'); ?></span>
-						</h5>
-						<?php MPWPB_Settings::info_text('mpwpb_service_staff_active'); ?>
-						<div class="divider"></div>
-						<div class="mp_settings_area">
-							<div class="_oAuto_border">
-								<div class="mpwpb_category_area mpwpb_category_header">
-									<div class="mpwpb_category_item  <?php echo esc_attr($category_active_class); ?>" data-collapse="#mpwpb_category_active">
-										<label class="fullWidth">
-											<input type="text" data-input-text="mpwpb_category_text" name="mpwpb_category_text" class="formControl mp_name_validation" value="<?php echo esc_attr($category_text); ?>" placeholder="<?php esc_attr_e('Category', 'service-booking-manager'); ?>"/>
-											<span class="textRequired">&nbsp;*</span>
-										</label>
-									</div>
-									<div class="mpwpb_category_content">
-										<div class="mpwpb_sub_category_area">
-											<div class="mpwpb_sub_category_item  <?php echo esc_attr($sub_category_active_class); ?>" data-collapse="#mpwpb_sub_category_active">
-												<label class="fullWidth">
-													<input type="text" data-input-text="mpwpb_sub_category_text" name="mpwpb_sub_category_text" class="formControl mp_name_validation" value="<?php echo esc_attr($sub_category_text); ?>" placeholder="<?php esc_attr_e('Sub-Category', 'service-booking-manager'); ?>"/>
-													<span class="textRequired">&nbsp;*</span>
-												</label>
-											</div>
-											<div class="mpwpb_sub_category_content">
-												<div class="mpwpb_service_area">
-													<div class="mpwpb_service_item">
-														<label class="fullWidth">
-															<input type="text" data-input-text="mpwpb_service_text" name="mpwpb_service_text" class="formControl mp_name_validation" value="<?php echo esc_attr($service_text); ?>" placeholder="<?php esc_attr_e('Service', 'service-booking-manager'); ?>"/>
-															<span class="textRequired">&nbsp;*</span>
-														</label>
-													</div>
-													<div class="mpwpb_service_content">
-														<h6><?php esc_html_e('Image/Icon', 'service-booking-manager'); ?></h6>
-													</div>
-													<div class="mpwpb_service_content">
-														<h6><?php esc_html_e('Price', 'service-booking-manager'); ?>
-															<span class="textRequired">&nbsp;*</span>
-														</h6>
-													</div>
-													<div class="mpwpb_service_content <?php echo esc_attr($service_duration_active_class); ?>" data-collapse="#mpwpb_service_duration_active">
-														<h6><?php esc_html_e('Duration', 'service-booking-manager'); ?></h6>
-													</div>
-													<div class="mpwpb_service_item <?php echo esc_attr($service_details_active_class); ?>" data-collapse="#mpwpb_service_details_active">
-														<h6><?php esc_html_e('Details', 'service-booking-manager'); ?></h6>
-													</div>
+						</div>
+					</section>
+					
+					<section class="component d-flex justify-content-between align-items-center mb-2">
+						<div class="w-50 d-flex justify-content-between align-items-center">
+							<label class=""><?php echo esc_html__('Enable', 'service-booking-manager') . '&nbsp;<span data-input-change="mpwpb_service_text">' . $service_text . ' </span>&nbsp;' . esc_html__('Duration', 'service-booking-manager'); ?> <i class="fas fa-question-circle tool-tips"><span><?php MPWPB_Settings::info_text('mpwpb_service_duration_active'); ?></span></i></label>
+						</div>
+						<div class="w-50 d-flex justify-content-end align-items-center">
+							<?php MP_Custom_Layout::switch_button('mpwpb_service_duration_active', $service_details_active_checked); ?>
+						</div>
+					</section>
+
+					<section class="component d-flex justify-content-between align-items-center mb-2" >
+						<div class="w-50 d-flex justify-content-between align-items-center">
+							<label class=""><?php esc_html_e('Enable Multiple select', 'service-booking-manager'); ?><i class="fas fa-question-circle tool-tips"><span><?php MPWPB_Settings::info_text('mpwpb_service_multi_select_active'); ?></span></i></label>
+						</div>
+						<div class="w-50 d-flex justify-content-end align-items-center">
+							<?php MP_Custom_Layout::switch_button('mpwpb_service_multi_select_active', $service_details_active_checked); ?>
+						</div>
+					</section>
+
+					<section class="component d-flex justify-content-between align-items-center mb-2" >
+						<div class="w-50 d-flex justify-content-between align-items-center">
+							<label class=""><?php esc_html_e('Enable Staff', 'service-booking-manager'); ?><i class="fas fa-question-circle tool-tips"><span><?php MPWPB_Settings::info_text('mpwpb_service_staff_active'); ?></span></i></label>
+						</div>
+						<div class="w-50 d-flex justify-content-end align-items-center">
+							<?php MP_Custom_Layout::switch_button('mpwpb_service_staff_active', $service_details_active_checked); ?>
+						</div>
+					</section>
+					<div class="mp_settings_area">
+						<div class="_oAuto_border">
+							<div class="mpwpb_category_area mpwpb_category_header">
+								<div class="mpwpb_category_item  <?php echo esc_attr($category_active_class); ?>" data-collapse="#mpwpb_category_active">
+									<label class="fullWidth">
+										<input type="text" data-input-text="mpwpb_category_text" name="mpwpb_category_text" class="formControl mp_name_validation" value="<?php echo esc_attr($category_text); ?>" placeholder="<?php esc_attr_e('Category', 'service-booking-manager'); ?>"/>
+										<span class="textRequired">&nbsp;*</span>
+									</label>
+								</div>
+								<div class="mpwpb_category_content">
+									<div class="mpwpb_sub_category_area">
+										<div class="mpwpb_sub_category_item  <?php echo esc_attr($sub_category_active_class); ?>" data-collapse="#mpwpb_sub_category_active">
+											<label class="fullWidth">
+												<input type="text" data-input-text="mpwpb_sub_category_text" name="mpwpb_sub_category_text" class="formControl mp_name_validation" value="<?php echo esc_attr($sub_category_text); ?>" placeholder="<?php esc_attr_e('Sub-Category', 'service-booking-manager'); ?>"/>
+												<span class="textRequired">&nbsp;*</span>
+											</label>
+										</div>
+										<div class="mpwpb_sub_category_content">
+											<div class="mpwpb_service_area">
+												<div class="mpwpb_service_item">
+													<label class="fullWidth">
+														<input type="text" data-input-text="mpwpb_service_text" name="mpwpb_service_text" class="formControl mp_name_validation" value="<?php echo esc_attr($service_text); ?>" placeholder="<?php esc_attr_e('Service', 'service-booking-manager'); ?>"/>
+														<span class="textRequired">&nbsp;*</span>
+													</label>
+												</div>
+												<div class="mpwpb_service_content">
+													<h6><?php esc_html_e('Image/Icon', 'service-booking-manager'); ?></h6>
+												</div>
+												<div class="mpwpb_service_content">
+													<h6><?php esc_html_e('Price', 'service-booking-manager'); ?>
+														<span class="textRequired">&nbsp;*</span>
+													</h6>
+												</div>
+												<div class="mpwpb_service_content <?php echo esc_attr($service_duration_active_class); ?>" data-collapse="#mpwpb_service_duration_active">
+													<h6><?php esc_html_e('Duration', 'service-booking-manager'); ?></h6>
+												</div>
+												<div class="mpwpb_service_item <?php echo esc_attr($service_details_active_class); ?>" data-collapse="#mpwpb_service_details_active">
+													<h6><?php esc_html_e('Details', 'service-booking-manager'); ?></h6>
 												</div>
 											</div>
 										</div>
 									</div>
 								</div>
-								<div class="mp_item_insert mp_sortable_area">
-									<?php
-										if (sizeof($category_infos) > 0) {
-											foreach ($category_infos as $categories) {
-												$this->category_item($category_count, $active, $categories);
-												$category_count = 1;
-											}
-										}
-										else {
-											$this->category_item($category_count, $active);
-										}
-									?>
-								</div>
 							</div>
-							<div class="<?php echo esc_attr($category_active_class); ?>" data-collapse="#mpwpb_category_active">
-								<?php MP_Custom_Layout::add_new_button(esc_html__('Add New ', 'service-booking-manager') . ' ' . $category_text , 'mpwpb_add_category', '_successButton_xs_mT_xs','','mpwpb_category_text'); ?>
-								<div class="mp_hidden_content">
-									<div class="mp_hidden_item">
-										<?php $this->category_item(1, $active); ?>
-									</div>
+							<div class="mp_item_insert mp_sortable_area">
+								<?php
+									if (sizeof($category_infos) > 0) {
+										foreach ($category_infos as $categories) {
+											$this->category_item($category_count, $active, $categories);
+											$category_count = 1;
+										}
+									}
+									else {
+										$this->category_item($category_count, $active);
+									}
+								?>
+							</div>
+						</div>
+						<div class="<?php echo esc_attr($category_active_class); ?>" data-collapse="#mpwpb_category_active">
+							<?php MP_Custom_Layout::add_new_button(esc_html__('Add New ', 'service-booking-manager') . ' ' . $category_text , 'mpwpb_add_category', '_successButton_xs_mT_xs','','mpwpb_category_text'); ?>
+							<div class="mp_hidden_content">
+								<div class="mp_hidden_item">
+									<?php $this->category_item(1, $active); ?>
 								</div>
 							</div>
 						</div>
@@ -350,10 +362,12 @@
 					$active_category = MP_Global_Function::get_submit_info('mpwpb_category_active') ? 'on' : 'off';
 					$active_sub_category = MP_Global_Function::get_submit_info('mpwpb_sub_category_active') ? 'on' : 'off';
 					$active_sub_category = $active_category == 'on' ? $active_sub_category : 'off';
+					$active_service_details = MP_Global_Function::get_submit_info('mpwpb_service_details_active') ? 'on' : 'off';
+					$active_service_duration = MP_Global_Function::get_submit_info('mpwpb_service_duration_active') ? 'on' : 'off';
 					update_post_meta($post_id, 'mpwpb_category_active', $active_category);
 					update_post_meta($post_id, 'mpwpb_sub_category_active', $active_sub_category);
-					$active_service_details = MP_Global_Function::get_submit_info('mpwpb_service_details_active') ? 'on' : 'off';
 					update_post_meta($post_id, 'mpwpb_service_details_active', $active_service_details);
+					update_post_meta($post_id, 'mpwpb_service_duration_active', $active_service_duration);
 					/****************************/
 					$category_text = MP_Global_Function::get_submit_info('mpwpb_category_text', MPWPB_Function::get_category_text($post_id));
 					update_post_meta($post_id, 'mpwpb_category_text', $category_text);
