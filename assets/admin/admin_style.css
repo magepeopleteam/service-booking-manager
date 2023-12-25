@@ -921,7 +921,10 @@
 
 @media only screen and (min-width: 0px) {
   #mp_meta_box_panel .tabLists {
-    border-right: 0px solid var(--mpl-light);
+    border-right: 0 solid var(--mpl-light);
+  }
+  #mp_meta_box_panel .mpwpb_settings_date_time .tabLists {
+    background-color: var(--mpl-light);
   }
   .leftTabs [data-tabs-target] {
     border-bottom: 0px solid var(--mpl-light);
