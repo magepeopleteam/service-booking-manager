@@ -40,13 +40,13 @@
 					<div class="mpTabs tabBorder component">
 						<ul class="tabLists">
 							<li data-tabs-target="#mpwpb_date_time_general">
-								<span class="fas fa-home"></span><?php esc_html_e('General', 'service-booking-manager'); ?>
+								<span class="fas fa-home pe-1"></span><?php esc_html_e('General', 'service-booking-manager'); ?>
 							</li>
 							<li data-tabs-target="#mpwpb_date_time_schedule">
-								<span class="far fa-clock"></span><?php esc_html_e('schedule', 'service-booking-manager'); ?>
+								<span class="far fa-clock pe-1"></span><?php esc_html_e('schedule', 'service-booking-manager'); ?>
 							</li>
 							<li data-tabs-target="#mpwpb_date_time_off_day">
-								<span class="fas fa-calendar-alt"></span><?php esc_html_e('Off Days & Dates', 'service-booking-manager'); ?>
+								<span class="fas fa-calendar-alt pe-1"></span><?php esc_html_e('Off Days & Dates', 'service-booking-manager'); ?>
 							</li>
 						</ul>
 						<div class="tabsContent tab-content">
@@ -164,7 +164,7 @@
 										<th><?php esc_html_e('Start Time', 'service-booking-manager'); ?></th>
 										<th><?php esc_html_e('To', 'service-booking-manager'); ?></th>
 										<th><?php esc_html_e('End Time', 'service-booking-manager'); ?></th>
-										<th colspan="3" style="background-color: #e3d3d3;"><?php esc_html_e('Break Time', 'service-booking-manager'); ?></th>
+										<th colspan="3" class="bg-sky-light"><?php esc_html_e('Break Time', 'service-booking-manager'); ?></th>
 									</tr>
 									</thead>
 									<tbody>
@@ -285,13 +285,13 @@
 					<td class="mpwpb_end_time">
 						<?php $this->end_time_slot($post_id, $day, $start_time); ?>
 					</td>
-					<td style="background-color: #e3d3d3;" class="mpwpb_start_break_time">
+					<td class="bg-sky-light" class="mpwpb_start_break_time">
 						<?php $this->start_break_time_slot($post_id, $day, $start_time, $end_time) ?>
 					</td>
-					<td class="textCenter" style="background-color: #e3d3d3;">
+					<td class="textCenter bg-sky-light" class="bg-sky-light">
 						<strong><?php esc_html_e('To', 'service-booking-manager'); ?></strong>
 					</td>
-					<td style="background-color: #e3d3d3;" class="mpwpb_end_break_time">
+					<td class="bg-sky-light" class="mpwpb_end_break_time">
 						<?php $this->end_break_time_slot($post_id, $day, $start_time_break, $end_time) ?>
 					</td>
 				</tr>

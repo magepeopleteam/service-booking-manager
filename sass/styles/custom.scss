@@ -35,7 +35,9 @@
     .mpStyle .tabsContent {
       overflow: visible;
     }
-
+    #mp_meta_box_panel table tr:nth-child(2n) {
+      background-color: $color-light;
+    }
     .mpStyle .navy_blueButton, .mpStyle [class*="_navy_blueButton"] {
       background-color: $color-primary;
       color: $color-white;
