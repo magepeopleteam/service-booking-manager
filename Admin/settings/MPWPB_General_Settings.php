@@ -30,13 +30,13 @@
 					
 					<section class="component d-flex justify-content-between align-items-center mb-2">
                         <div class="w-50 d-flex justify-content-between align-items-center">
-                            <label for=""><?php esc_html_e('Service Title', 'service-booking-manager'); ?> <i class="fas fa-question-circle tool-tips"><span>Tool tips hover text</span></i></label>
+                            <label for=""><?php esc_html_e('Service Title', 'service-booking-manager'); ?> <i class="fas fa-question-circle tool-tips"></i></label>
                             <div class=" d-flex justify-content-between">
 								<input type="text" name="mpwpb_shortcode_title" class="formControl" value="<?php echo esc_attr($title); ?>" placeholder="<?php esc_attr_e('Service Title', 'service-booking-manager'); ?>"/>
                             </div>
                         </div>
                         <div class="w-50 ms-5 d-flex justify-content-between align-items-center">
-                            <label for=""><?php esc_html_e('Service sub title', 'service-booking-manager'); ?> <i class="fas fa-question-circle tool-tips"><span>Tool tips hover text when on hover</span></i></label>
+                            <label for=""><?php esc_html_e('Service sub title', 'service-booking-manager'); ?> <i class="fas fa-question-circle tool-tips"></i></label>
                             <div class=" d-flex justify-content-between align-items-center">
 								<input type="text" name="mpwpb_shortcode_sub_title" class="formControl" value="<?php echo esc_attr($sub_title); ?>" placeholder="<?php esc_attr_e('Service Sub Title', 'service-booking-manager'); ?>"/>
                             </div>
