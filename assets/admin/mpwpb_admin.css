@@ -122,7 +122,7 @@
     > div:nth-child(odd)
     .mp_item_insert
     > div:nth-child(even) {
-    background-color: #f9e1c9;
+    background-color: #f8f8f8;
   }
   div.mpwpb_price_settings
     .mp_item_insert
