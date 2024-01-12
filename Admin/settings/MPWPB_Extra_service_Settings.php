@@ -45,7 +45,7 @@
 
 					<section class="component"  >
 						<div class="mp_settings_area _mT_xs">
-							<div class="_oAuto_border">
+							<div class="_oAuto">
 								<div class="mpwpb_category_area mpwpb_category_header">
 									<div class="mpwpb_category_item <?php echo esc_attr( $extra_service_group_active_class ); ?>" data-collapse="#mpwpb_group_extra_service_active">
 										<h6><?php esc_html_e( 'Group Service', 'service-booking-manager' ); ?><span class="textRequired">&nbsp;*</span></h6>
@@ -125,7 +125,7 @@
 							}
 						?>
 					</div>
-					<?php MP_Custom_Layout::add_new_button( esc_html__( 'Add New service', 'service-booking-manager' ), 'mpwpb_add_group_service', '_navy_blueButton_xs_mTB_xs' ); ?>
+					<?php MP_Custom_Layout::add_new_button( esc_html__( 'Add New service', 'service-booking-manager' ), 'mpwpb_add_group_service', 'btn my-2' ); ?>
 					<div class="mp_hidden_content">
 						<div class="mp_hidden_item">
 							<?php $this->extra_service_item( $unique_name ); ?>

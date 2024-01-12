@@ -300,7 +300,7 @@
 							}
 						?>
 					</div>
-					<?php MP_Custom_Layout::add_new_button(esc_html__('Add New ', 'service-booking-manager') . $service_text, 'mp_add_item', 'btn my-2','','mpwpb_service_text'); ?>
+					<?php MP_Custom_Layout::add_new_button(esc_html__('Add New ', 'service-booking-manager') . $service_text, 'mp_add_item', 'btn m-2','','mpwpb_service_text'); ?>
 					<div class="mp_hidden_content">
 						<div class="mp_hidden_item">
 							<?php $this->service_item($unique_name, $active); ?>
