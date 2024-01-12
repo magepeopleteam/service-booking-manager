@@ -176,7 +176,7 @@
 							</div>
 						</div>
 						<div class="<?php echo esc_attr($category_active_class); ?>" data-collapse="#mpwpb_category_active">
-							<?php MP_Custom_Layout::add_new_button(esc_html__('Add New ', 'service-booking-manager') . ' ' . $category_text , 'mpwpb_add_category', '_successButton_xs_mT_xs','','mpwpb_category_text'); ?>
+							<?php MP_Custom_Layout::add_new_button(esc_html__('Add New ', 'service-booking-manager') . ' ' . $category_text , 'mpwpb_add_category', 'btn my-1','','mpwpb_category_text'); ?>
 							<div class="mp_hidden_content">
 								<div class="mp_hidden_item">
 									<?php $this->category_item(1, $active); ?>
@@ -300,7 +300,7 @@
 							}
 						?>
 					</div>
-					<?php MP_Custom_Layout::add_new_button(esc_html__('Add New ', 'service-booking-manager') . $service_text, 'mp_add_item', '_warningButton_xs_mTB_xs','','mpwpb_service_text'); ?>
+					<?php MP_Custom_Layout::add_new_button(esc_html__('Add New ', 'service-booking-manager') . $service_text, 'mp_add_item', 'btn my-2','','mpwpb_service_text'); ?>
 					<div class="mp_hidden_content">
 						<div class="mp_hidden_item">
 							<?php $this->service_item($unique_name, $active); ?>
@@ -327,10 +327,11 @@
 				<div class="mpwpb_service_area mp_remove_area">
 					<div class="mpwpb_service_item">
 						<div class="groupContent">
-							<?php MP_Custom_Layout::remove_button(); ?>
+							
 							<label class="fullWidth">
 								<input type="text" name="<?php echo esc_attr($service_name); ?>" class="formControl mp_name_validation" value="<?php echo esc_attr($service); ?>" placeholder="<?php _e('Service Name', 'service-booking-manager'); ?>"/>
 							</label>
+							<?php MP_Custom_Layout::remove_button(); ?>
 							<?php MP_Custom_Layout::move_button(); ?>
 						</div>
 					</div>

@@ -713,7 +713,6 @@
   font-weight: 300;
 }
 #mp_meta_box_panel textarea, #mp_meta_box_panel select, #mp_meta_box_panel input[type=text], #mp_meta_box_panel input[type=email], #mp_meta_box_panel input[type=search], #mp_meta_box_panel input[type=tel], #mp_meta_box_panel input[type=url], #mp_meta_box_panel input[type=password], #mp_meta_box_panel input[type=file], #mp_meta_box_panel input[type=color], #mp_meta_box_panel input[type=number], #mp_meta_box_panel input[type=range], #mp_meta_box_panel input[type=date], #mp_meta_box_panel input[type=month], #mp_meta_box_panel input[type=week], #mp_meta_box_panel input[type=time], #mp_meta_box_panel input[type=datetime], #mp_meta_box_panel input[type=datetime-local] {
-  width: 16em;
   height: 2.5em;
   border: 0px solid var(--mpl-dark);
   border: 1px solid var(--mpl-dark);
