@@ -118,7 +118,7 @@
 							}
 						?>
 					</div>
-					<?php MP_Custom_Layout::add_new_button( esc_html__( 'Add New service', 'service-booking-manager' ), '', '_navy_blueButton_xs_mTB_xs' ); ?>
+					<?php MP_Custom_Layout::add_new_button( esc_html__( 'Add New service', 'service-booking-manager' ), 'mpwpb_add_group_service', '_navy_blueButton_xs_mTB_xs' ); ?>
 					<div class="mp_hidden_content">
 						<div class="mp_hidden_item">
 							<?php $this->extra_service_item( $unique_name ); ?>
