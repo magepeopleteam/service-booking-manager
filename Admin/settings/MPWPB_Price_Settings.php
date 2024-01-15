@@ -238,7 +238,7 @@
 						?>
 					</div>
 					<div class="<?php echo esc_attr($sub_category_active_class); ?>" data-collapse="#mpwpb_sub_category_active">
-						<?php MP_Custom_Layout::add_new_button(esc_html__('Add New ', 'service-booking-manager') . $sub_category_text, 'mpwpb_add_sub_category', '_navy_blueButton_xs_mTB_xs','','mpwpb_sub_category_text'); ?>
+						<?php MP_Custom_Layout::add_new_button(esc_html__('Add New ', 'service-booking-manager') . $sub_category_text, 'mpwpb_add_sub_category', '_navy_blueButton_xs_mTB_xs my-2','','mpwpb_sub_category_text'); ?>
 						<div class="mp_hidden_content">
 							<div class="mp_hidden_item">
 								<?php $this->sub_category_item(1, $unique_name, $active); ?>
