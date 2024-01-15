@@ -74,7 +74,7 @@
 								</div>
 							</div>
 							<div class="<?php echo esc_attr( $extra_service_group_active_class ); ?>" data-collapse="#mpwpb_group_extra_service_active">
-								<?php MP_Custom_Layout::add_new_button( esc_html__( 'Add New Group service', 'service-booking-manager' ), 'mpwpb_add_group_service', '_successButton_xs_mT_xs' ); ?>
+								<?php MP_Custom_Layout::add_new_button( esc_html__( 'Add New Group service', 'service-booking-manager' ), 'mpwpb_add_group_service', '_successButton_xs_mT_xs my-2' ); ?>
 								<div class="mp_hidden_content">
 									<div class="mp_hidden_item">
 										<?php $this->extra_service_group( 1, $extra_service_group_active_class ); ?>
