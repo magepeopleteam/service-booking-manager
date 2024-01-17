@@ -1,9 +1,9 @@
-=== WordPress Service Booking & Scheduling Plugin | All-in-one Booking Systems - WpBookingly ===
+=== Online Service Booking System & Reservation Plugin - WpBookingly ===
 Contributors: [aamahin,magepeopleteam]
 Tags: appointment booking, Car Wash Booking, Booking calendar, Service Booking
 Requires at least: 5.3
-Stable tag: 1.0.7
-Version: 1.0.6
+Stable tag: 1.0.8
+Version: 1.0.8
 Tested up to: 6.3
 WC requires at least: 3.0
 WC tested up to: 6.5
@@ -11,51 +11,101 @@ Requires PHP: 7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Service Booking Manager - WpBookingly is a powerful plugin for managing bookings and Scheduling Services like Car Wash service Booking, Repair Services Booking, Salon  Appointment Booking, and any kind of service appointment.
+Simplify your service bookings and reservation system with a powerful WordPress plugin WpBookingly. Install and enjoy the hassle-free booking solution.
 
 == Description ==
-Service Booking Manager - WpBookingly is powerful for online booking and scheduling solutions, whether it's a fitness class, workshop, car wash, repair service, or private consultation.
-With WpBookingly, you can create a booking solution with custom dates, and times and allow users to book and pay for their spot using popular payment gateways available in WooCommerce.
-this online booking solution includes a robust calendar system, making it easy to keep track of all your upcoming bookings.
+Create an automated and simple online booking system whether you're a small local shop or a wide-reaching enterprise, From restaurants to salons, hotels, or any service-based operation, our solution covers a comprehensive booking system.
+WpBookingly offers a flexible and user-friendly solution, simplifying online appointment booking across a wide range of industries. Enhance customer experience, manage bookings easily, and transform your business with our convenient online booking system.
+
+### Best Online Booking System Plugin
+WpBookingly is an organized and lightweight online booking and scheduling solution designed to provide a wide array of services. 
+Whether it's a salon booking,  music class, workshop, car wash, repair service, or private consultation, WpBookingly provides a smooth experience.
 
 
-Services that can be scheduled and booked online using Service Booking Manager include:
-* **Repair Service Booking** ( Car repair & maintenance, Television, Mobile Laptop Service Booking),
-* **Cleaning and Wash Service Booking** ( any kind of cleaning service like car wash, House cleaning etc),
-* **Salons & Beauty Appointment Booking** (hair salons, nail salons, and  barbershops),
-* **Health and Wellness Appointment Booking** (wellness, spas & massage, therapy, baths),
-* **Medicine Appointment Booking** (clinics, doctors, dentists, medical centers),
-* **Educational Appointment Booking** (education centers, tutors, language schools, private lessons),
-* **Fitness & Gyms Booking** (yoga classes, personal trainers, health clubs, fitness centers) and
-* **Professional Services Booking** (coaches, consultants, lawyers, photographers, consulting psychologists, cleaning services) and many more.
+### Services Available for Online Booking
+WpBookingly is designed to perfectly integrate with a variety of booking systems, ensuring compatibility across common platforms. This versatile system performs exceptionally well with various services, including:
 
-➡ [Car Wash server Booking Demo](https://wpbookingly.com/service/car-wash/)
-➡ [Car Rental Booking Demo](https://wpbookingly.com/service/rent-your-dream-car/)
-➡ [Medical & Dental Service Appointment Demo](https://wpbookingly.com/service/medical-dental/)
-➡ [Musical Class Appointment Booking Demo](https://wpbookingly.com/service/musical-class/)
-➡ [Repair Service Booking Demo](https://wpbookingly.com/service/repair-service/)
-➡ [Salon & Spa Appointment Booking Demo](https://wpbookingly.com/service/car-repair-service/)
+
+### 🛠️ Repair Service Booking:
+       Car repair & maintenance, Television, Mobile Laptop Service Booking.
+
+### 🚗 Cleaning and Wash Service Booking:
+       Car wash, House cleaning, and more.
+
+### 💇‍♀️ Salons & Beauty Appointment Booking:
+      Hair salons, nail salons, barbershops, and more.
+
+### 💆 Health and Wellness Appointment Booking:
+      Wellness, spas & massage, therapy, baths.
+
+### 🏥 Medicine Appointment Booking:
+      Clinics, doctors, dentists, and medical centres.
+
+### 🏫 Educational Appointment Booking:
+      Education centres, tutors, language schools, private lessons.
+
+### 🏋️‍♂️ Fitness & Gyms Booking:
+       Yoga classes, personal trainers, health clubs, and fitness centres.
+
+### 🤝 Professional Services Booking:
+      Coaches, consultants, lawyers, photographers, consulting psychologists, cleaning services, and many more.
+
+
+Let's See Demos To Get A Clear Idea
+
+🧼🚗[Car Wash server Booking Demo](https://wpbookingly.com/service/car-wash/)
+🚗 [Car Rental Booking Demo](https://wpbookingly.com/service/rent-your-dream-car/)
+🏥 [Medical & Dental Service Appointment Demo](https://wpbookingly.com/service/medical-dental/)
+🎵 [Musical Class Appointment Booking Demo](https://wpbookingly.com/service/musical-class/)
+🔧 [Repair Service Booking Demo](https://wpbookingly.com/service/repair-service/)
+💇‍♀️[Salon & Spa Appointment Booking Demo](https://wpbookingly.com/service/car-repair-service/)
+
 
 👉[Buy WordPress Service Booking & Scheduling Plugin Pro](https://mage-people.com/product/wordpress-service-booking-plugin-all-kind-of-service-booking-solution/) 👈
 
-### Who can benefit from using Service Booking Manager
-Local businesses and individual providers who offer services to customers can benefit from using Service Booking Manager for WordPress since the booking form can be customized and personalized.
-Many business sectors such as Cleaning & Wash Services, Repair Services, Paint Services, Healthcare, Beauty, Education, Medicine, and Consulting have successfully implemented this solution and individuals have also taken advantage of it.
-Additionally, web studios and developers looking to improve the appointment process for their customers will find Service Booking Manager an excellent solution.
 
 
+### Explore the Power of Our Plugin with Key Features
 
-###  Free Version Plugin Features:
+Freatues that includes with the plugin will help you to build your booking solution smoothly. Lets see what are those powerful features that makes the plugin useful.
 
-➡ Support All Payment Methods available in WooCommerce.
-➡ Cross Browser Support – (Chrome, Firefox, Safari, Opera, Etc.)
-➡ Responsive and SEO Friendly.
-➡ Multilingual Translation Support
-➡ Available Short Code for Booking Section.
-➡ Manage Category, Sub-category, Quantity, Prices and Images.
-➡ Booking Extra Service with Price and quantity Management.
-➡ Works with Any Standards Compliant WordPress Theme.
-➡ WooCommerce Support, You can Sell products and Booking services Separately. There is no mixing with Event with the WooCommerce Products.
+
+🌐 Support for All Payment Methods:
+Easily integrates with all payment methods available in WooCommerce.
+
+💳 Secure Payment Processing:
+Allow users to conveniently book and pay for their spot using popular payment gateways within WooCommerce.
+
+🗓️ Integrated Calendar System:
+Keep track of all your upcoming bookings with ease using our comprehensive calendar system.
+
+🔍 Short Codes for Booking Section:
+Easily customize and display the booking section using available shortcodes.
+
+📦 Comprehensive Category Management:
+Manage categories, sub-categories, quantities, prices, and images.
+
+🛠️ Booking Extra Service Management:
+Enhance your offerings with additional services, effortlessly managing prices and quantities.
+
+🎨 Theme Compatibility:
+Works smoothly with any standards-compliant WordPress theme.
+
+📄 PDF Invoices:
+Generate PDF Tickets or Invoices with detailed booking information.
+
+📧 Email Settings:
+Maximize earnings by allowing clients to opt for extra services when booking.
+
+🌐 Translation Settings:
+Explore varied translation options for connecting with a wide range of audience.
+
+📊 Export Data in CSV:
+Easily export all available data in CSV format.
+
+
+Experience the convenience of a versatile and powerful service booking solution with WpBookingly. Streamline your booking processes and offer a seamless experience to your clients across diverse industries.
+
 
 
 == Installation ==
