@@ -327,7 +327,7 @@
 	.mpStyle [class*="_bB_dot"] { border-bottom: 1px dotted var(--color_border); }
 	.mpStyle .zeroBorder, .mpStyle [class*="_zeroBorder"] { border: none; }
 	/**************/
-	div.mpStyle .padZero, div.mpStyle span.padZero, div.mpStyle [class*="_pad_zero"] { padding: 0; }
+	.mpStyle .padZero, .mpStyle span.padZero, .mpStyle [class*="_pad_zero"] { padding: 0; }
 	.mpStyle .padding, .mpStyle [class*="_padding"] { padding: var(--dMP); }
 	.mpStyle .padding_xs, .mpStyle [class*="_padding_xs"] { padding: var(--dMP_xs); }
 	.mpStyle .pad_25, .mpStyle [class*="_pad_25"] { padding: 25px; }
@@ -386,10 +386,10 @@
 	/*****************/
 	/*****************/
 	@media only screen and (max-width: 900px) {
-		.mpStyle .hidden_sm { display: none; }
+		div.mpStyle .hidden_sm { display: none; }
 	}
 	@media only screen and (max-width: 767px) {
-		.mpStyle .hidden_xs { display: none; }
+		div.mpStyle .hidden_xs,div.mpStyle [class*="_hidden_xs"] { display: none; }
 	}
 }
 /******************************************************************** Loader Section ************************************************/
@@ -1030,7 +1030,7 @@
 		-webkit-align-items: center; align-items: center;
 		-webkit-flex-wrap: nowrap; flex-wrap: nowrap;
 		position: relative; text-align: left; cursor: pointer;
-		padding: var(--dMP_xs) var(--dMP); color: var(--d_color);
+		padding: var(--dMP_xs); color: var(--d_color);
 	}
 	.mpStyle [data-tabs-target]:hover { font-weight: var(--fw-medium); border-color: var(--color_theme); color: var(--color_theme) }
 	.mpStyle [data-tabs-target].active { font-weight: var(--fw-medium); background-color: var(--color_theme); color: var(--color_theme_alter); }
@@ -1111,6 +1111,8 @@
 }
 /******************************************************************** Pagination section ************************************************/
 @media only screen and (min-width: 10px) {
+	div.mp_pagination_main_area .mp_pagination_item{position: relative;}
+	div.mp_pagination_main_area .ribbon{left:var(--dMP_xs_negative);}
 	div.pagination_area { margin: var(--dMP_xs) 0 0 0; }
 	div.pagination_area button[class*="dButton_xs"] { min-width: 50px; }
 	div.pagination_area button.active_pagination { color: var(--color_theme_alter); background-color: var(--color_active); min-width: 75px; font-size: var(--fs_h4); }
@@ -1180,16 +1182,38 @@
 	div.mpStyle .min_1000, div.mpStyle [class*="_min_1000"] { min-width: 1000px; }
 	div.mpStyle .min_auto, div.mpStyle [class*="_min_auto"] { min-width: auto; }
 	/**********************/
-	div.grid_1 { width: 100%; }
-	div.grid_2 { width: calc(50% - var(--dMP)); }
-	div.grid_3 { width: calc(33.333333% - var(--dMP)); }
-	div.grid_4 { width: calc(25% - var(--dMP)); }
-	div.grid_5 { width: calc(20% - var(--dMP)); }
-	div.grid_6 { width: calc(16.66666667% - var(--dMP)); }
-	div.grid_7 { width: calc(14.285715% - var(--dMP)); }
-	div.grid_8 { width: calc(12.5% - var(--dMP)); }
-	div.grid_9 { width: calc(11.1111111111% - var(--dMP)); }
-	div.grid_10 { width: calc(10% - var(--dMP)); }
+	div.mpStyle div.grid_1 { width: 100%;padding: var(--dMP_xs); }
+	div.mpStyle div.grid_2 { width: calc(50% - var(--dMP));margin: var(--dMP_xs); padding: var(--dMP_xs);}
+	div.mpStyle div.grid_3 { width: calc(33.333333% - var(--dMP)); margin: var(--dMP_xs);padding: var(--dMP_xs);}
+	div.mpStyle div.grid_4 { width: calc(25% - var(--dMP)); margin: var(--dMP_xs);padding: var(--dMP_xs);}
+	div.mpStyle div.grid_5 { width: calc(20% - var(--dMP)); margin: var(--dMP_xs);padding: var(--dMP_xs);}
+	div.mpStyle div.grid_6 { width: calc(16.66666667% - var(--dMP)); margin: var(--dMP_xs);padding: var(--dMP_xs);}
+	div.mpStyle div.grid_7 { width: calc(14.285715% - var(--dMP));margin: var(--dMP_xs);padding: var(--dMP_xs); }
+	div.mpStyle div.grid_8 { width: calc(12.5% - var(--dMP)); margin: var(--dMP_xs);padding: var(--dMP_xs);}
+	div.mpStyle div.grid_9 { width: calc(11.1111111111% - var(--dMP)); margin: var(--dMP_xs);padding: var(--dMP_xs);}
+	div.mpStyle div.grid_10 { width: calc(10% - var(--dMP)); margin: var(--dMP_xs);padding: var(--dMP_xs);}
+	@media only screen and (max-width: 1000px) {
+		div.mpStyle div.grid_2 ,
+		div.mpStyle div.grid_3 ,
+		div.mpStyle div.grid_4 ,
+		div.mpStyle div.grid_5 ,
+		div.mpStyle div.grid_6 ,
+		div.mpStyle div.grid_7 ,
+		div.mpStyle div.grid_8 ,
+		div.mpStyle div.grid_9 ,
+		div.mpStyle div.grid_10 { width: calc(50% - var(--dMP));}
+	}
+	@media only screen and (max-width: 600px) {
+		div.mpStyle div.grid_2 ,
+		div.mpStyle div.grid_3 ,
+		div.mpStyle div.grid_4 ,
+		div.mpStyle div.grid_5 ,
+		div.mpStyle div.grid_6 ,
+		div.mpStyle div.grid_7 ,
+		div.mpStyle div.grid_8 ,
+		div.mpStyle div.grid_9 ,
+		div.mpStyle div.grid_10 { width: 100%;}
+	}
 	/**********************/
 	.mpStyle .col_1 { width: 8.3333333333%; }
 	.mpStyle .col_2 { width: 16.666666667%; }
@@ -1409,17 +1433,11 @@
 	div.mpStyle .textColor_2, div.mpStyle [class*='_textColor_2'] { color: var(--color_2); }
 	div.mpStyle .bgColor_2, div.mpStyle [class*='_bgColor_2'] { background-color: var(--color_2); }
 	/*****Color_3*********/
-	div.mpStyle .textColor_3, div.mpStyle [class*='_textColor_3'] { color: var(--color_3);  }
-	div.mpStyle .bgColor_3, div.mpStyle [class*='_bgColor_3'] { background-color: var(--color_3);}
+	div.mpStyle .textColor_3, div.mpStyle [class*='_textColor_3'] { color: #F2FFC3; }
+	div.mpStyle .bgColor_3, div.mpStyle [class*='_bgColor_3'] { background-color: #F2FFC3; }
 	/*****Color_4*********/
-	div.mpStyle .textColor_4, div.mpStyle [class*='_textColor_4'] { color: var(--color_4);  }
-	div.mpStyle .bgColor_4, div.mpStyle [class*='_bgColor_4'] {background-color: var(--color_4);  }
-	/*****Color_5*********/
-	div.mpStyle .textColor_5, div.mpStyle [class*='_textColor_5'] { color: var(--color_5);  }
-	div.mpStyle .bgColor_5, div.mpStyle [class*='_bgColor_5'] { background-color: var(--color_5); }
-	/*****Color_6*********/
-	div.mpStyle .textColor_6, div.mpStyle [class*='_textColor_6'] { color: var(--color_6);  }
-	div.mpStyle .bgColor_6, div.mpStyle [class*='_bgColor_6'] { background-color: var(--color_6); }
+	div.mpStyle .textColor_4, div.mpStyle [class*='_textColor_4'] { color: #1A1919; }
+	div.mpStyle .bgColor_4, div.mpStyle [class*='_bgColor_4'] { background-color: #1A1919; }
 }
 /******************************************************************** Icon Section************************************************/
 @media only screen and (min-width: 10px) {

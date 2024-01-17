@@ -45,6 +45,7 @@
 				wp_enqueue_script('mp_owl_carousel', MP_GLOBAL_PLUGIN_URL . '/assets/owl_carousel/owl.carousel.min.js', array(), '2.3.4');
 				wp_enqueue_style('mp_plugin_global', MP_GLOBAL_PLUGIN_URL . '/assets/mp_style/mp_style.css', array(), time());
 				wp_enqueue_script('mp_plugin_global', MP_GLOBAL_PLUGIN_URL . '/assets/mp_style/mp_script.js', array('jquery'), time(), true);
+				do_action('add_mp_global_enqueue');
 			}
 			public function admin_enqueue() {
 				$this->global_enqueue();
@@ -65,9 +66,11 @@
 				// admin setting global
 				wp_enqueue_script('mp_admin_settings', MP_GLOBAL_PLUGIN_URL . '/assets/admin/mp_admin_settings.js', array('jquery'), time(), true);
 				wp_enqueue_style('mp_admin_settings', MP_GLOBAL_PLUGIN_URL . '/assets/admin/mp_admin_settings.css', array(), time());
+				do_action('add_mp_admin_enqueue');
 			}
 			public function frontend_enqueue() {
 				$this->global_enqueue();
+				do_action('add_mp_frontend_enqueue');
 			}
 			public function add_admin_head() {
 				$this->js_constant();
@@ -93,11 +96,11 @@
 				if (MP_Global_Function::check_woocommerce() == 1) {
 					?>
 					<script type="text/javascript">
-						mp_currency_symbol = "<?php echo esc_attr(get_woocommerce_currency_symbol()); ?>";
-						mp_currency_position = "<?php echo esc_attr(get_option('woocommerce_currency_pos')); ?>";
-						mp_currency_decimal = "<?php echo esc_attr(wc_get_price_decimal_separator()); ?>";
-						mp_currency_thousands_separator = "<?php echo esc_attr(wc_get_price_thousand_separator()); ?>";
-						mp_num_of_decimal = "<?php echo esc_attr(get_option('woocommerce_price_num_decimals', 2)); ?>";
+						mp_currency_symbol = "<?php echo get_woocommerce_currency_symbol(); ?>";
+						mp_currency_position = "<?php echo get_option('woocommerce_currency_pos'); ?>";
+						mp_currency_decimal = "<?php echo wc_get_price_decimal_separator(); ?>";
+						mp_currency_thousands_separator = "<?php echo wc_get_price_thousand_separator(); ?>";
+						mp_num_of_decimal = "<?php echo get_option('woocommerce_price_num_decimals', 2); ?>";
 					</script>
 					<?php
 				}
@@ -107,7 +110,7 @@
 				ob_start();
 				?>
 				<style>
-					<?php echo esc_attr($custom_css); ?>
+					<?php echo $custom_css; ?>
 				</style>
 				<?php
 				echo ob_get_clean();

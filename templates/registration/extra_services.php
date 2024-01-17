@@ -41,7 +41,7 @@
 											</div>
 										</div>
 									<?php } ?>
-									<div class="fdColumn fullWidth">
+									<div class="_dFlex_fdColumn_fullWidth">
 										<div class="_dFlex_justifyBetween_alignCenter">
 											<h4>
 												<?php if ( $ex_service_icon ) { ?>

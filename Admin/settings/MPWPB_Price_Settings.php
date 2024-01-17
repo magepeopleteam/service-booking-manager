@@ -350,10 +350,12 @@
 					$active_category = MP_Global_Function::get_submit_info('mpwpb_category_active') ? 'on' : 'off';
 					$active_sub_category = MP_Global_Function::get_submit_info('mpwpb_sub_category_active') ? 'on' : 'off';
 					$active_sub_category = $active_category == 'on' ? $active_sub_category : 'off';
+					$active_service_details = MP_Global_Function::get_submit_info('mpwpb_service_details_active') ? 'on' : 'off';
+					$active_service_duration = MP_Global_Function::get_submit_info('mpwpb_service_duration_active') ? 'on' : 'off';
 					update_post_meta($post_id, 'mpwpb_category_active', $active_category);
 					update_post_meta($post_id, 'mpwpb_sub_category_active', $active_sub_category);
-					$active_service_details = MP_Global_Function::get_submit_info('mpwpb_service_details_active') ? 'on' : 'off';
 					update_post_meta($post_id, 'mpwpb_service_details_active', $active_service_details);
+					update_post_meta($post_id, 'mpwpb_service_duration_active', $active_service_duration);
 					/****************************/
 					$category_text = MP_Global_Function::get_submit_info('mpwpb_category_text', MPWPB_Function::get_category_text($post_id));
 					update_post_meta($post_id, 'mpwpb_category_text', $category_text);

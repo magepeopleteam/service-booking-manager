@@ -11,28 +11,30 @@
 			public function __construct() {
 				add_filter('mp_settings_sec_reg', array($this, 'settings_sec_reg'), 20, 1);
 				add_filter('mp_settings_sec_fields', array($this, 'settings_sec_fields'), 20, 1);
+				add_action('wsa_form_bottom_mp_basic_license_settings', [$this, 'license_settings'], 5);
+				add_action('mp_basic_license_list', [$this, 'licence_area']);
 			}
 			public function settings_sec_reg($default_sec): array {
 				$sections = array(
 					array(
 						'id' => 'mp_global_settings',
-						'icon' => 'fas fa-globe',
 						'title' => esc_html__('Global Settings', 'service-booking-manager')
 					),
 					array(
 						'id' => 'mp_slider_settings',
-						'icon' => 'fas fa-photo-video',
 						'title' => esc_html__('Slider Settings', 'service-booking-manager')
 					),
 					array(
 						'id' => 'mp_style_settings',
-						'icon' => 'fas fa-drafting-compass',
 						'title' => esc_html__('Style Settings', 'service-booking-manager')
 					),
 					array(
 						'id' => 'mp_add_custom_css',
-						'icon' => 'far fa-file-code',
 						'title' => esc_html__('Custom CSS', 'service-booking-manager')
+					),
+					array(
+						'id' => 'mp_basic_license_settings',
+						'title' => esc_html__('Mage-People License', 'service-booking-manager')
 					)
 				);
 				return array_merge($default_sec, $sections);
@@ -274,49 +276,49 @@
 						array(
 							'name' => 'font_size_h6',
 							'label' => esc_html__('Font Size h6 Title', 'service-booking-manager'),
-							'desc' => esc_html__('Type Font Size h6 Title(in PX Unit).', 'ecab-taxi-booking-manager'),
+							'desc' => esc_html__('Type Font Size h6 Title(in PX Unit).', 'service-booking-manager'),
 							'type' => 'number',
 							'default' => '16'
 						),
 						array(
 							'name' => 'button_font_size',
-							'label' => esc_html__('Button Font Size ', 'ecab-taxi-booking-manager'),
-							'desc' => esc_html__('Type Font Size Button(in PX Unit).', 'ecab-taxi-booking-manager'),
+							'label' => esc_html__('Button Font Size ', 'service-booking-manager'),
+							'desc' => esc_html__('Type Font Size Button(in PX Unit).', 'service-booking-manager'),
 							'type' => 'number',
 							'default' => '18'
 						),
 						array(
 							'name' => 'button_color',
-							'label' => esc_html__('Button Text Color', 'ecab-taxi-booking-manager'),
-							'desc' => esc_html__('Select Button Text  Color.', 'ecab-taxi-booking-manager'),
+							'label' => esc_html__('Button Text Color', 'service-booking-manager'),
+							'desc' => esc_html__('Select Button Text  Color.', 'service-booking-manager'),
 							'type' => 'color',
 							'default' => '#FFF'
 						),
 						array(
 							'name' => 'button_bg',
-							'label' => esc_html__('Button Background Color', 'ecab-taxi-booking-manager'),
-							'desc' => esc_html__('Select Button Background  Color.', 'ecab-taxi-booking-manager'),
+							'label' => esc_html__('Button Background Color', 'service-booking-manager'),
+							'desc' => esc_html__('Select Button Background  Color.', 'service-booking-manager'),
 							'type' => 'color',
 							'default' => '#222'
 						),
 						array(
 							'name' => 'font_size_label',
-							'label' => esc_html__('Label Font Size ', 'ecab-taxi-booking-manager'),
-							'desc' => esc_html__('Type Font Size Label(in PX Unit).', 'ecab-taxi-booking-manager'),
+							'label' => esc_html__('Label Font Size ', 'service-booking-manager'),
+							'desc' => esc_html__('Type Font Size Label(in PX Unit).', 'service-booking-manager'),
 							'type' => 'number',
 							'default' => '18'
 						),
 						array(
 							'name' => 'warning_color',
-							'label' => esc_html__('Warning Color', 'ecab-taxi-booking-manager'),
-							'desc' => esc_html__('Select Warning  Color.', 'ecab-taxi-booking-manager'),
+							'label' => esc_html__('Warning Color', 'service-booking-manager'),
+							'desc' => esc_html__('Select Warning  Color.', 'service-booking-manager'),
 							'type' => 'color',
 							'default' => '#E67C30'
 						),
 						array(
 							'name' => 'section_bg',
-							'label' => esc_html__('Section Background color', 'ecab-taxi-booking-manager'),
-							'desc' => esc_html__('Select Background  Color.', 'ecab-taxi-booking-manager'),
+							'label' => esc_html__('Section Background color', 'service-booking-manager'),
+							'desc' => esc_html__('Select Background  Color.', 'service-booking-manager'),
 							'type' => 'color',
 							'default' => '#FAFCFE'
 						),
@@ -324,13 +326,48 @@
 					'mp_add_custom_css' => apply_filters('filter_mp_add_custom_css', array(
 						array(
 							'name' => 'custom_css',
-							'label' => esc_html__('Custom CSS', 'ecab-taxi-booking-manager'),
-							'desc' => esc_html__('Write Your Custom CSS Code Here', 'ecab-taxi-booking-manager'),
+							'label' => esc_html__('Custom CSS', 'service-booking-manager'),
+							'desc' => esc_html__('Write Your Custom CSS Code Here', 'service-booking-manager'),
 							'type' => 'textarea',
 						)
 					))
 				);
 				return array_merge($default_fields, $settings_fields);
+			}
+			public function license_settings() {
+				?>
+				<div class="mp_basic_license_settings">
+					<h3><?php esc_html_e('Mage-People License', 'service-booking-manager'); ?></h3>
+					<div class="_dFlex">
+						<span class="fas fa-info-circle _mR_xs"></span>
+						<i><?php esc_html_e('Thanking you for using our Mage-People plugin. Our some plugin  free and no license is required. We have some Additional addon to enhance feature of this plugin functionality. If you have any addon you need to enter a valid license for that plugin below.', 'service-booking-manager'); ?>                    </i>
+					</div>
+					<div class="divider"></div>
+					<div class="dLayout mp_basic_license_area">
+						<?php $this->licence_area(); ?>
+					</div>
+				</div>
+				<?php
+			}
+			public function licence_area(){
+				?>
+				<table>
+					<thead>
+					<tr>
+						<th colspan="4"><?php esc_html_e('Plugin Name', 'service-booking-manager'); ?></th>
+						<th><?php esc_html_e('Type', 'service-booking-manager'); ?></th>
+						<th><?php esc_html_e('Order No', 'service-booking-manager'); ?></th>
+						<th colspan="2"><?php esc_html_e('Expire on', 'service-booking-manager'); ?></th>
+						<th colspan="3"><?php esc_html_e('License Key', 'service-booking-manager'); ?></th>
+						<th><?php esc_html_e('Status', 'service-booking-manager'); ?></th>
+						<th colspan="2"><?php esc_html_e('Action', 'service-booking-manager'); ?></th>
+					</tr>
+					</thead>
+					<tbody>
+					<?php do_action('mp_license_page_plugin_list'); ?>
+					</tbody>
+				</table>
+				<?php
 			}
 		}
 		new MP_Settings_Global();

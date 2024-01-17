@@ -30,20 +30,6 @@
 				));
 				return array_unique($all_data);
 			}
-			public static function user_role_exists($role) {
-				if (!empty($role)) {
-					return $GLOBALS['wp_roles']->is_role($role);
-				}
-				return false;
-			}
-			public static function get_users_by_role($role, $order_by='user_nicename', $order='ASC') {
-				$args = array(
-					'role' => $role,
-					'orderby' => $order_by,
-					'order' => $order
-				);
-				return get_users($args);
-			}
 			public static function get_post_info($post_id, $key, $default = '') {
 				$data = get_post_meta($post_id, $key, true) ?: $default;
 				return self::data_sanitize($data);
@@ -59,7 +45,7 @@
 			public static function get_all_term_data($term_name, $value = 'name') {
 				$all_data = [];
 				$taxonomies = self::get_taxonomy($term_name);
-				if ($taxonomies && sizeof($taxonomies) > 0) {
+				if ($taxonomies && is_array($taxonomies) && sizeof($taxonomies) > 0) {
 					foreach ($taxonomies as $taxonomy) {
 						$all_data[] = $taxonomy->$value;
 					}
@@ -173,8 +159,8 @@
 				$date_format = get_option('date_format');
 				$time_format = get_option('time_format');
 				$wp_settings = $date_format . '  ' . $time_format;
-				$timezone = wp_timezone_string();
-				$timestamp = strtotime($date . ' ' . $timezone);
+				//$timezone = wp_timezone_string();
+				$timestamp = strtotime($date);
 				if ($format == 'date') {
 					$date = date_i18n($date_format, $timestamp);
 				}
@@ -213,6 +199,20 @@
 				}
 				return false;
 			}
+			public static function check_licensee_date($date) {
+				if ($date) {
+					if ($date == 'lifetime') {
+						return esc_html__('Lifetime', 'service-booking-manager');
+					}
+					else if (strtotime(current_time('Y-m-d H:i')) < strtotime(date('Y-m-d H:i', strtotime($date)))) {
+						return MP_Global_Function::date_format($date, 'full');
+					}
+					else {
+						return esc_html__('Expired', 'service-booking-manager');
+					}
+				}
+				return $date;
+			}
 			public static function sort_date($a, $b) {
 				return strtotime($a) - strtotime($b);
 			}
@@ -242,6 +242,9 @@
 			}
 			public static function get_slider_settings($key, $default = '') {
 				return self::get_settings('mp_slider_settings', $key, $default);
+			}
+			public static function get_licence_settings($key, $default = '') {
+				return self::get_settings('mp_basic_license_settings', $key, $default);
 			}
 			//***********************************//
 			public static function price_convert_raw($price) {
@@ -550,6 +553,48 @@
 					'strong' => array(),
 				);
 				return wp_kses($string, $allow_attr);
+			}
+			//***********************************//
+			public static function license_error_text($response, $license_data, $plugin_name) {
+				if (is_wp_error($response) || 200 !== wp_remote_retrieve_response_code($response)) {
+					$message = (is_wp_error($response) && !empty($response->get_error_message())) ? $response->get_error_message() : esc_html__('An error occurred, please try again.', 'service-booking-manager');
+				}
+				else {
+					if (false === $license_data->success) {
+						switch ($license_data->error) {
+							case 'expired':
+								$message = esc_html__('Your license key expired on ') . ' ' . date_i18n(get_option('date_format'), strtotime($license_data->expires, current_time('timestamp')));
+								break;
+							case 'revoked':
+								$message = esc_html__('Your license key has been disabled.', 'service-booking-manager');
+								break;
+							case 'missing':
+								$message = esc_html__('Missing license.', 'service-booking-manager');
+								break;
+							case 'invalid':
+								$message = esc_html__('Invalid license.', 'service-booking-manager');
+								break;
+							case 'site_inactive':
+								$message = esc_html__('Your license is not active for this URL.', 'service-booking-manager');
+								break;
+							case 'item_name_mismatch':
+								$message = esc_html__('This appears to be an invalid license key for .', 'service-booking-manager') . ' ' . $plugin_name;
+								break;
+							case 'no_activations_left':
+								$message = esc_html__('Your license key has reached its activation limit.', 'service-booking-manager');
+								break;
+							default:
+								$message = esc_html__('An error occurred, please try again.', 'service-booking-manager');
+								break;
+						}
+					}
+					else {
+						$payment_id = $license_data->payment_id;
+						$expire = $license_data->expires;
+						$message = esc_html__('Success, License Key is valid for the plugin', 'service-booking-manager') . ' ' . $plugin_name . ' ' . esc_html__('Your Order id is', 'service-booking-manager') . ' ' . $payment_id . ' ' . $plugin_name . ' ' . esc_html__('Validity of this licenses is', 'service-booking-manager') . ' ' . MP_Global_Function::check_licensee_date($expire);
+					}
+				}
+				return $message;
 			}
 			//***********************************//
 			public static function get_country_list() {
