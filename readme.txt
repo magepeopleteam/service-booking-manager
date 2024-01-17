@@ -2,11 +2,11 @@
 Contributors: [aamahin,magepeopleteam]
 Tags: appointment booking, Car Wash Booking, Booking calendar, Service Booking
 Requires at least: 5.3
-Stable tag: 1.0.8
-Version: 1.0.8
-Tested up to: 6.3
+Stable tag: 1.0.9
+Version: 1.0.9
+Tested up to: 6.4
 WC requires at least: 3.0
-WC tested up to: 6.5
+WC tested up to: 8.5
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -27,28 +27,28 @@ WpBookingly is designed to perfectly integrate with a variety of booking systems
 
 
 ### 🛠️ Repair Service Booking:
-       Car repair & maintenance, Television, Mobile Laptop Service Booking.
+Car repair & maintenance, Television, Mobile Laptop Service Booking.
 
 ### 🚗 Cleaning and Wash Service Booking:
-       Car wash, House cleaning, and more.
+Car wash, House cleaning, and more.
 
 ### 💇‍♀️ Salons & Beauty Appointment Booking:
-      Hair salons, nail salons, barbershops, and more.
+Hair salons, nail salons, barbershops, and more.
 
 ### 💆 Health and Wellness Appointment Booking:
-      Wellness, spas & massage, therapy, baths.
+Wellness, spas & massage, therapy, baths.
 
 ### 🏥 Medicine Appointment Booking:
-      Clinics, doctors, dentists, and medical centres.
+Clinics, doctors, dentists, and medical centres.
 
 ### 🏫 Educational Appointment Booking:
-      Education centres, tutors, language schools, private lessons.
+Education centres, tutors, language schools, private lessons.
 
 ### 🏋️‍♂️ Fitness & Gyms Booking:
-       Yoga classes, personal trainers, health clubs, and fitness centres.
+Yoga classes, personal trainers, health clubs, and fitness centres.
 
 ### 🤝 Professional Services Booking:
-      Coaches, consultants, lawyers, photographers, consulting psychologists, cleaning services, and many more.
+Coaches, consultants, lawyers, photographers, consulting psychologists, cleaning services, and many more.
 
 
 Let's See Demos To Get A Clear Idea
@@ -59,8 +59,6 @@ Let's See Demos To Get A Clear Idea
 🎵 [Musical Class Appointment Booking Demo](https://wpbookingly.com/service/musical-class/)
 🔧 [Repair Service Booking Demo](https://wpbookingly.com/service/repair-service/)
 💇‍♀️[Salon & Spa Appointment Booking Demo](https://wpbookingly.com/service/car-repair-service/)
-
-
 👉[Buy WordPress Service Booking & Scheduling Plugin Pro](https://mage-people.com/product/wordpress-service-booking-plugin-all-kind-of-service-booking-solution/) 👈
 
 
@@ -70,37 +68,37 @@ Let's See Demos To Get A Clear Idea
 Freatues that includes with the plugin will help you to build your booking solution smoothly. Lets see what are those powerful features that makes the plugin useful.
 
 
-🌐 Support for All Payment Methods:
+### 🌐 Support for All Payment Methods:
 Easily integrates with all payment methods available in WooCommerce.
 
-💳 Secure Payment Processing:
+### 💳 Secure Payment Processing:
 Allow users to conveniently book and pay for their spot using popular payment gateways within WooCommerce.
 
-🗓️ Integrated Calendar System:
+### 🗓️ Integrated Calendar System:
 Keep track of all your upcoming bookings with ease using our comprehensive calendar system.
 
-🔍 Short Codes for Booking Section:
+### 🔍 Short Codes for Booking Section:
 Easily customize and display the booking section using available shortcodes.
 
-📦 Comprehensive Category Management:
+### 📦 Comprehensive Category Management:
 Manage categories, sub-categories, quantities, prices, and images.
 
-🛠️ Booking Extra Service Management:
+### 🛠️ Booking Extra Service Management:
 Enhance your offerings with additional services, effortlessly managing prices and quantities.
 
-🎨 Theme Compatibility:
+### 🎨 Theme Compatibility:
 Works smoothly with any standards-compliant WordPress theme.
 
-📄 PDF Invoices:
+### 📄 PDF Invoices:
 Generate PDF Tickets or Invoices with detailed booking information.
 
-📧 Email Settings:
+### 📧 Email Settings:
 Maximize earnings by allowing clients to opt for extra services when booking.
 
-🌐 Translation Settings:
+### 🌐 Translation Settings:
 Explore varied translation options for connecting with a wide range of audience.
 
-📊 Export Data in CSV:
+### 📊 Export Data in CSV:
 Easily export all available data in CSV format.
 
 
@@ -134,6 +132,10 @@ A. Yes, you can create events with custom dates, times and set prices and availa
 
 = Q.How does the calendar system work in Service Booking Manager? =
 A. The calendar system allows you to view all your upcoming events and bookings in a visual calendar format. You can view your calendar by day, week, or month, and easily manage your bookings functionality.
+
+== Changelog ==
+= 1.0.9 =
+* Design Improvement
 
 == Changelog ==
 = 1.0.6 =
