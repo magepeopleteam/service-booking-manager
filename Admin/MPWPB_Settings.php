@@ -24,30 +24,25 @@
 				wp_nonce_field('mpwpb_nonce', 'mpwpb_nonce');
 				?>
 				<div class="mpStyle">
-					<div class="mpTabs leftTabs">
-						<ul class="tabLists">
-							<li data-tabs-target="#mpwpb_general_info">
-								<span class="fas fa-tools"></span><?php esc_html_e('General Info', 'service-booking-manager'); ?>
+					<div class="mpTabs leftTabs bg-sky-light p-1 d-flex justify-content-between">
+						<ul class="tabLists sidebar w-20">
+							<li class="nav-item" data-tabs-target="#mpwpb_general_info">
+								<span class="fas fa-tools pe-1"></span><?php esc_html_e('General Info', 'service-booking-manager'); ?>
 							</li>
-							<li data-tabs-target="#mpwpb_price_settings">
-								<span class="fas fa-hand-holding-usd"></span><?php esc_html_e('Pricing', 'service-booking-manager'); ?>
+							<li class="nav-item" data-tabs-target="#mpwpb_settings_date_time">
+								<span class="far fa-clock pe-1"></span><?php esc_html_e('Date & Time', 'service-booking-manager'); ?>
 							</li>
-							<li data-tabs-target="#mpwpb_extra_service_settings">
-								<span class="fas fa-funnel-dollar"></span><?php esc_html_e('Extra Service', 'service-booking-manager'); ?>
+							<li class="nav-item" data-tabs-target="#mpwpb_price_settings">
+								<span class="fas fa-hand-holding-usd pe-1"></span><?php esc_html_e('Pricing', 'service-booking-manager'); ?>
 							</li>
-							<li data-tabs-target="#mpwpb_settings_date_time">
-								<span class="far fa-clock"></span><?php esc_html_e('Date & Time', 'service-booking-manager'); ?>
+							<li class="nav-item" data-tabs-target="#mpwpb_extra_service_settings">
+								<span class="fas fa-funnel-dollar pe-1"></span><?php esc_html_e('Extra Service', 'service-booking-manager'); ?>
 							</li>
-
 							<?php do_action('add_mpwpb_settings_tab_after_date', $post_id); ?>
 						</ul>
-						<div class="tabsContent">
+						<div class="tabsContent p-0 m-0 ms-2 w-80">
 							<?php do_action('add_mpwpb_settings_tab_content', $post_id); ?>
-							<div class="_dLayout_mT">
-								<h5><?php esc_html_e('Add To Cart Form Shortcode : ', 'service-booking-manage'); ?> </h5>
-								<code> [service-booking post_id="<?php echo esc_html($post_id); ?>"]</code>
-								<?php MPWPB_Settings::info_text('mpwpb_short_code'); ?>
-							</div>
+							
 						</div>
 					</div>
 				</div>
@@ -83,10 +78,7 @@
 				$data = self::description_array($key);
 				if ($data) {
 					?>
-					<i class="info_text">
-						<span class="fas fa-info-circle"></span>
-						<?php echo esc_html($data); ?>
-					</i>
+					<?php echo esc_html($data); ?>
 					<?php
 				}
 			}
