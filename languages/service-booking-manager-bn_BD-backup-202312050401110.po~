@@ -1,0 +1,1408 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WordPress Service Booking & Scheduling Plugin | All-in-"
+"one Booking Systems -WpBookingly\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-12-04 08:38+0000\n"
+"PO-Revision-Date: 2023-12-05 04:01+0000\n"
+"Last-Translator: \n"
+"Language-Team: বাংলা\n"
+"Language: bn_BD\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.6.6; wp-6.4.1\n"
+"X-Domain: service-booking-manager"
+
+#: Admin/MPWPB_CPT.php:38
+msgid " Feature Image"
+msgstr ""
+
+#: Admin/MPWPB_CPT.php:39 Admin/MPWPB_CPT.php:40 Admin/MPWPB_CPT.php:41
+#: Admin/MPWPB_CPT.php:41
+msgid " featured image"
+msgstr "বৈশিষ্ট্যযুক্ত ইমেজ"
+
+#: Admin/MPWPB_Settings_Global.php:29
+msgid " Global Settings"
+msgstr "গ্লোবাল সেটিংস"
+
+#: Admin/MPWPB_Settings.php:19
+msgid " Information Settings : "
+msgstr "তথ্য সেটিংস"
+
+#: Admin/MPWPB_CPT.php:26
+msgid " Item:"
+msgstr "আইটেম"
+
+#: Admin/MPWPB_CPT.php:24 Admin/MPWPB_CPT.php:25
+msgid " List"
+msgstr "তালিকা"
+
+#: Admin/MPWPB_Taxonomy.php:37 Admin/MPWPB_CPT.php:44 Admin/MPWPB_CPT.php:46
+msgid " list"
+msgstr "তালিকা"
+
+#: Admin/MPWPB_Taxonomy.php:38 Admin/MPWPB_CPT.php:45
+msgid " list navigation"
+msgstr "তালিকা নেভিগেশন"
+
+#: Admin/MPWPB_Taxonomy.php:25
+msgid " Name"
+msgstr "নাম"
+
+#: Admin/MPWPB_CPT.php:36
+msgid " Not found"
+msgstr "পাওয়া যায়নি"
+
+#: Admin/MPWPB_CPT.php:37
+msgid " Not found in Trash"
+msgstr "ট্র্যাশে পাওয়া যায়নি"
+
+#: Admin/MPWPB_Settings_Global.php:22
+msgid " Settings"
+msgstr "সেটিংস"
+
+#: Admin/MPWPB_Taxonomy.php:30
+msgid " with commas"
+msgstr "কমা সহ"
+
+#: Admin/settings/MPWPB_Date_Time_Settings.php:141
+msgid "1 Hour"
+msgstr "1 ঘন্টা"
+
+#: Admin/settings/MPWPB_Date_Time_Settings.php:138
+msgid "10 min"
+msgstr "10 মিনিট"
+
+#: Admin/settings/MPWPB_Date_Time_Settings.php:139
+msgid "15 min"
+msgstr "15 মিনিট"
+
+#: Admin/settings/MPWPB_Date_Time_Settings.php:142
+msgid "2 Hour"
+msgstr "২ ঘন্টা"
+
+#: Admin/settings/MPWPB_Date_Time_Settings.php:143
+msgid "3 Hour"
+msgstr "3 ঘন্টা"
+
+#: Admin/settings/MPWPB_Date_Time_Settings.php:140
+msgid "30 min"
+msgstr "30 মিনিট"
+
+#: Admin/MPWPB_Status.php:16
+msgid "<span style=\"color:yellow\">Status</span>"
+msgstr "<span style=\"color:yellow\">স্ট্যাটাস</span>"
+
+#. Description of the plugin
+msgid "A complete solution for Any kind of service booking."
+msgstr "যেকোনো ধরনের সার্ভিস বুকিংয়ের জন্য একটি সম্পূর্ণ সমাধান।"
+
+#: Admin/MPWPB_Staffs.php:81
+msgid "Action"
+msgstr "কর্ম"
+
+#: Admin/MPWPB_Quick_Setup.php:187
+msgid "Active Now"
+msgstr "এখন সক্রিয়"
+
+#: mp_global/class/MP_Select_Icon_image.php:23
+#: mp_global/class/MP_Select_Icon_image.php:26
+msgid "Add Icon"
+msgstr "আইকন যোগ করুন"
+
+#: Admin/MPWPB_CPT.php:28 Admin/MPWPB_CPT.php:29
+#: Admin/settings/MPWPB_Price_Settings.php:145
+#: Admin/settings/MPWPB_Price_Settings.php:208
+#: Admin/settings/MPWPB_Price_Settings.php:270
+msgid "Add New "
+msgstr "নতুন যোগ করুন"
+
+#: Admin/settings/MPWPB_Extra_service_Settings.php:69
+msgid "Add New Group service"
+msgstr "নতুন গ্রুপ পরিষেবা যোগ করুন"
+
+#: Admin/MPWPB_Staffs.php:351 Admin/settings/MPWPB_Date_Time_Settings.php:218
+msgid "Add New Off date"
+msgstr "নতুন বন্ধ তারিখ যোগ করুন"
+
+#: Admin/MPWPB_Staffs.php:246 Admin/settings/MPWPB_Date_Time_Settings.php:86
+msgid "Add New Particular date"
+msgstr "নতুন বিশেষ তারিখ যোগ করুন"
+
+#: Admin/settings/MPWPB_Extra_service_Settings.php:121
+msgid "Add New service"
+msgstr "নতুন পরিষেবা যোগ করুন"
+
+#: Admin/MPWPB_Staffs.php:142
+msgid "Add New User"
+msgstr "নতুন ব্যবহারকারী যোগ করুন"
+
+#: Admin/MPWPB_Staffs.php:45
+msgid "Add/Update Staff"
+msgstr "স্টাফ যোগ/আপডেট করুন"
+
+#: Admin/MPWPB_Taxonomy.php:22 Admin/MPWPB_CPT.php:27
+msgid "All "
+msgstr "সব"
+
+#: mp_global/class/MP_Select_Icon_image.php:61
+msgid "All Icon"
+msgstr "সমস্ত আইকন"
+
+#: Admin/MPWPB_Settings_Global.php:86
+msgid "and copy your icon code and paste it here."
+msgstr "এবং আপনার আইকন কোড কপি করে এখানে পেস্ট করুন।"
+
+#: mp_global/class/MP_Settings_Global.php:183
+msgid "At Bottom Position"
+msgstr "নিচের অবস্থানে"
+
+#: mp_global/class/MP_Settings_Global.php:184
+msgid "At Left Position"
+msgstr "বাম অবস্থানে"
+
+#: mp_global/class/MP_Settings_Global.php:182
+msgid "At Right Position"
+msgstr "সঠিক অবস্থানে"
+
+#: mp_global/class/MP_Settings_Global.php:181
+msgid "At Top Position"
+msgstr "শীর্ষ অবস্থানে"
+
+#: Frontend/MPWPB_Woocommerce.php:79
+msgid "Booking Details "
+msgstr "বুকিং বিবরণ"
+
+#: Admin/MPWPB_Staffs.php:290 Admin/settings/MPWPB_Date_Time_Settings.php:170
+msgid "Break Time"
+msgstr "বিরতি"
+
+#: Admin/MPWPB_Settings.php:63
+msgid ""
+"By default Category  is ON but you can keep it off by switching this option"
+msgstr ""
+"ডিফল্টভাবে ক্যাটাগরি চালু থাকে তবে আপনি এই বিকল্পটি পরিবর্তন করে এটি বন্ধ "
+"রাখতে পারেন"
+
+#: Admin/MPWPB_Settings.php:67
+msgid ""
+"By default extra service  is OFF but you can keep it ON by switching this "
+"option"
+msgstr ""
+"ডিফল্টরূপে অতিরিক্ত পরিষেবা বন্ধ থাকে তবে আপনি এই বিকল্পটি স্যুইচ করে এটি "
+"চালু রাখতে পারেন"
+
+#: Admin/MPWPB_Settings.php:65
+msgid ""
+"By default Service Details  is OFF but you can keep it ON by switching this "
+"option"
+msgstr ""
+"ডিফল্টভাবে পরিষেবার বিবরণ বন্ধ থাকে তবে আপনি এই বিকল্পটি স্যুইচ করে এটি চালু "
+"রাখতে পারেন"
+
+#: Admin/MPWPB_Settings.php:66
+msgid ""
+"By default Service Duration  is ON but you can keep it OFF by switching this "
+"option"
+msgstr ""
+"ডিফল্টভাবে পরিষেবার সময়কাল চালু থাকে তবে আপনি এই বিকল্পটি স্যুইচ করে এটি "
+"বন্ধ রাখতে পারেন"
+
+#: Admin/MPWPB_Settings.php:72
+msgid ""
+"By default slider is ON but you can keep it off by switching this option"
+msgstr ""
+"ডিফল্টরূপে স্লাইডার চালু থাকে তবে আপনি এই বিকল্পটি স্যুইচ করে এটি বন্ধ রাখতে "
+"পারেন"
+
+#: Admin/MPWPB_Settings.php:70
+msgid ""
+"By default staff  is OFF but you can keep it ON by switching this option"
+msgstr ""
+"ডিফল্ট স্টাফ অফ থাকে তবে আপনি এই বিকল্পটি স্যুইচ করে এটি চালু রাখতে পারেন"
+
+#: Admin/MPWPB_Settings.php:64
+msgid ""
+"By default Sub-Category  is ON but you can keep it off by switching this "
+"option"
+msgstr ""
+"ডিফল্টভাবে সাব-ক্যাটাগরি চালু থাকে কিন্তু আপনি এই বিকল্পটি পরিবর্তন করে এটি "
+"বন্ধ রাখতে পারেন"
+
+#: Admin/settings/MPWPB_Date_Time_Settings.php:150
+msgid "Capacity per Session"
+msgstr "সেশন প্রতি ক্ষমতা"
+
+#: Admin/MPWPB_Settings_Global.php:95 Admin/MPWPB_Settings_Global.php:123
+#: inc/MPWPB_Function.php:67 inc/MPWPB_Function.php:82
+#: Admin/settings/MPWPB_Price_Settings.php:91
+msgid "Category"
+msgstr "শ্রেণী"
+
+#: Admin/MPWPB_Settings_Global.php:92
+msgid "Category Label"
+msgstr "ক্যাটাগরি লেবেল"
+
+#: Admin/settings/MPWPB_Price_Settings.php:174
+msgid "Category Name"
+msgstr "বিভাগ নাম"
+
+#: Admin/MPWPB_Settings_Global.php:99
+msgid "Category Slug"
+msgstr "ক্যাটাগরি স্লাগ"
+
+#: templates/registration/date_time_select.php:19
+msgid "Choose Date & Time"
+msgstr "তারিখ ও সময় নির্বাচন করুন"
+
+#: templates/registration/extra_services.php:16
+msgid "Choose Extra Features (Optional)"
+msgstr "অতিরিক্ত বৈশিষ্ট্য চয়ন করুন (ঐচ্ছিক)"
+
+#: Admin/MPWPB_Taxonomy.php:32
+msgid "Choose from the most used"
+msgstr "সর্বাধিক ব্যবহৃত থেকে চয়ন করুন"
+
+#: Admin/MPWPB_Quick_Setup.php:200
+msgid "Choose some general option."
+msgstr "কিছু সাধারণ বিকল্প চয়ন করুন."
+
+#: templates/registration/date_time_select.php:34
+msgid "Closed"
+msgstr "বন্ধ"
+
+#: mp_global/class/MP_Settings_Global.php:68
+msgid "Completed"
+msgstr "সম্পন্ন"
+
+#: mp_global/class/MP_Settings_Global.php:35
+msgid "Custom CSS"
+msgstr "কাস্টম সিএসএস"
+
+#: Admin/MPWPB_Settings_Global.php:86
+msgid "Dashicons Library."
+msgstr "Dashicons লাইব্রেরি।"
+
+#: Frontend/MPWPB_Woocommerce.php:254
+msgid "Date"
+msgstr "তারিখ"
+
+#: Frontend/MPWPB_Woocommerce.php:116
+msgid "Date "
+msgstr "তারিখ"
+
+#: Admin/MPWPB_Settings.php:33 templates/registration/registration.php:25
+#: templates/registration/registration.php:26
+msgid "Date & Time"
+msgstr "তারিখ সময়"
+
+#: Admin/settings/MPWPB_Date_Time_Settings.php:38
+msgid "Date & Time Settings"
+msgstr "তারিখ এবং সময় সেটিংস"
+
+#: mp_global/class/MP_Settings_Global.php:73
+msgid "Date Picker Format"
+msgstr "তারিখ চয়নকারী বিন্যাস"
+
+#: Admin/MPWPB_Staffs.php:221 Admin/settings/MPWPB_Date_Time_Settings.php:57
+msgid "Date Type"
+msgstr "তারিখের ধরন"
+
+#: Admin/MPWPB_Staffs.php:286 Admin/settings/MPWPB_Date_Time_Settings.php:166
+msgid "Day"
+msgstr "দিন"
+
+#: Admin/MPWPB_Staffs.php:470 Admin/settings/MPWPB_Date_Time_Settings.php:350
+msgid "Default"
+msgstr "ডিফল্ট"
+
+#: mp_global/class/MP_Settings_Global.php:234
+msgid "Default Font Size"
+msgstr "ডিফল্ট ফন্ট সাইজ"
+
+#: mp_global/class/MP_Settings_Global.php:227
+msgid "Default Text Color"
+msgstr "ডিফল্ট টেক্সট রঙ"
+
+#: Admin/settings/MPWPB_Price_Settings.php:76
+#: Admin/settings/MPWPB_Price_Settings.php:123
+#: Admin/settings/MPWPB_Extra_service_Settings.php:51
+msgid "Details"
+msgstr "বিস্তারিত"
+
+#: mp_global/class/MP_Settings_Global.php:46
+msgid "Disable Block/Gutenberg Editor"
+msgstr "ব্লক/গুটেনবার্গ সম্পাদক অক্ষম করুন"
+
+#: Admin/MPWPB_Quick_Setup.php:133
+msgid "Done"
+msgstr "সম্পন্ন"
+
+#: Admin/MPWPB_Admin.php:127
+msgid "Duplicate"
+msgstr "নকল"
+
+#: Admin/MPWPB_Admin.php:127
+msgid "Duplicate Post"
+msgstr "ডুপ্লিকেট পোস্ট"
+
+#: Admin/settings/MPWPB_Price_Settings.php:82
+#: Admin/settings/MPWPB_Price_Settings.php:120
+msgid "Duration"
+msgstr "সময়কাল"
+
+#: Admin/MPWPB_CPT.php:31
+msgid "Edit "
+msgstr "সম্পাদনা করুন"
+
+#: Admin/MPWPB_Status.php:62
+msgid "Email Address : "
+msgstr "ইমেইল ঠিকানা:"
+
+#: Admin/settings/MPWPB_Price_Settings.php:62
+#: Admin/settings/MPWPB_Price_Settings.php:69
+#: Admin/settings/MPWPB_Price_Settings.php:76
+#: Admin/settings/MPWPB_Price_Settings.php:82
+msgid "Enable"
+msgstr "সক্ষম করুন"
+
+#: Admin/settings/MPWPB_Extra_service_Settings.php:28
+msgid "Enable Extra Service"
+msgstr "অতিরিক্ত পরিষেবা সক্ষম করুন"
+
+#: Admin/settings/MPWPB_Extra_service_Settings.php:37
+msgid "Enable Group Service"
+msgstr "গ্রুপ পরিষেবা সক্ষম করুন"
+
+#: Admin/MPWPB_Staffs.php:289 Admin/settings/MPWPB_Date_Time_Settings.php:169
+msgid "End Time"
+msgstr "শেষ সময়"
+
+#: Admin/MPWPB_Settings.php:39
+msgid "Extra Service"
+msgstr "অতিরিক্ত পরিষেবা"
+
+#: Admin/settings/MPWPB_Extra_service_Settings.php:47
+msgid "Extra service"
+msgstr "অতিরিক্ত পরিষেবা"
+
+#: Admin/settings/MPWPB_Extra_service_Settings.php:149
+msgid "Extra Service Name"
+msgstr "অতিরিক্ত পরিষেবার নাম"
+
+#: Admin/settings/MPWPB_Extra_service_Settings.php:32
+msgid "Extra service Settings"
+msgstr "অতিরিক্ত পরিষেবা সেটিংস"
+
+#: Frontend/MPWPB_Woocommerce.php:266
+msgid "Extra Services"
+msgstr "অতিরিক্ত পরিষেবা"
+
+#: Admin/MPWPB_CPT.php:46
+msgid "Filter "
+msgstr "ছাঁকনি"
+
+#: Admin/MPWPB_Quick_Setup.php:228
+msgid "Finalize Setup"
+msgstr "সেটআপ চূড়ান্ত করুন"
+
+#: Admin/MPWPB_Quick_Setup.php:232
+msgid "Finish & Save"
+msgstr "শেষ করুন এবং সংরক্ষণ করুন"
+
+#: mp_global/class/MP_Settings_Global.php:241
+msgid "Font Size h1 Title"
+msgstr "ফন্ট সাইজ h1 শিরোনাম"
+
+#: mp_global/class/MP_Settings_Global.php:248
+msgid "Font Size h2 Title"
+msgstr "ফন্ট সাইজ h2 শিরোনাম"
+
+#: mp_global/class/MP_Settings_Global.php:255
+msgid "Font Size h3 Title"
+msgstr "ফন্ট সাইজ h3 শিরোনাম"
+
+#: mp_global/class/MP_Settings_Global.php:262
+msgid "Font Size h4 Title"
+msgstr "ফন্ট সাইজ h4 শিরোনাম"
+
+#: mp_global/class/MP_Settings_Global.php:269
+msgid "Font Size h5 Title"
+msgstr "ফন্ট সাইজ h5 শিরোনাম"
+
+#: mp_global/class/MP_Settings_Global.php:276
+msgid "Font Size h6 Title"
+msgstr "ফন্ট সাইজ h6 শিরোনাম"
+
+#: Admin/MPWPB_Status.php:32
+msgid "For Woocommerce Environment Status"
+msgstr "Woocommerce এনভায়রনমেন্ট স্ট্যাটাসের জন্য"
+
+#: mp_global/class/MP_Global_Function.php:413
+msgid "Friday"
+msgstr "শুক্রবার"
+
+#: templates/registration/date_time_select.php:48
+msgid "Fully Booked"
+msgstr "পুরোপুরি পরিপূর্ণ"
+
+#: Admin/settings/MPWPB_Gallery_Settings.php:32
+#: Admin/settings/MPWPB_FAQ_Settings.php:32
+msgid "Gallery Images "
+msgstr "গ্যালারি ইমেজ"
+
+#: Admin/MPWPB_Quick_Setup.php:126
+#: Admin/settings/MPWPB_Date_Time_Settings.php:43
+msgid "General"
+msgstr "সাধারণ"
+
+#: Admin/MPWPB_Settings.php:30
+msgid "General Info"
+msgstr "সাধারণ তথ্য"
+
+#: Admin/settings/MPWPB_General_Settings.php:20
+msgid "General Information Settings"
+msgstr "সাধারণ তথ্য সেটিংস"
+
+#: Admin/MPWPB_Staffs.php:216 Admin/MPWPB_Settings_Global.php:60
+msgid "General Settings"
+msgstr "সাধারণ সেটিংস"
+
+#: Admin/MPWPB_Quick_Setup.php:199
+msgid "General settings"
+msgstr "সাধারণ সেটিংস"
+
+#: mp_global/class/MP_Settings_Global.php:20
+msgid "Global Settings"
+msgstr "গ্লোবাল সেটিংস"
+
+#: mp_global/class/MP_Custom_Layout.php:71
+msgid "GoTO Next Page"
+msgstr "পরবর্তী পৃষ্ঠায় যান"
+
+#: mp_global/class/MP_Custom_Layout.php:49
+msgid "GoTO Previous Page"
+msgstr "যাও পূর্ববর্তী পৃষ্ঠা"
+
+#: Admin/settings/MPWPB_Extra_service_Settings.php:43
+msgid "Group Service"
+msgstr "গ্রুপ সার্ভিস"
+
+#: Admin/MPWPB_Settings_Global.php:79 Admin/MPWPB_Settings_Global.php:100
+#: Admin/MPWPB_Settings_Global.php:114
+msgid "hit the Save Settings button."
+msgstr "সেভ সেটিংস বোতাম টিপুন।"
+
+#. URI of the plugin
+msgid "http://mage-people.com"
+msgstr "http://mage-people.com"
+
+#. Author URI of the plugin
+msgid "http://www.mage-people.com/"
+msgstr "http://www.mage-people.com/"
+
+#: Admin/MPWPB_Settings_Global.php:85
+#: mp_global/class/MP_Select_Icon_image.php:161
+msgid "Icon"
+msgstr "আইকন"
+
+#: mp_global/class/MP_Settings_Global.php:159
+msgid "Icon Indicator"
+msgstr "আইকন নির্দেশক"
+
+#: mp_global/class/MP_Select_Icon_image.php:45
+msgid "Icon/class name...."
+msgstr "আইকন/শ্রেণীর নাম..."
+
+#: Admin/MPWPB_Settings_Global.php:72
+msgid ""
+"If you like to change the label in the dashboard menu, you can change it "
+"here."
+msgstr ""
+"আপনি যদি ড্যাশবোর্ড মেনুতে লেবেল পরিবর্তন করতে চান তবে আপনি এটি এখানে "
+"পরিবর্তন করতে পারেন।"
+
+#: mp_global/class/MP_Settings_Global.php:74
+msgid ""
+"If you want to change Date Picker Format, please select format. Default  is "
+"D d M , yy."
+msgstr ""
+"আপনি যদি তারিখ চয়নকারী বিন্যাস পরিবর্তন করতে চান, দয়া করে বিন্যাস নির্বাচন "
+"করুন। ডিফল্ট হল D d M , yy।"
+
+#: mp_global/class/MP_Settings_Global.php:95
+msgid ""
+"If you want to change Short Date  Format, please select format. Default  is "
+"M , Y."
+msgstr ""
+"If you want to change Short Date  Format, please select format. Default  is "
+"M , Y."
+
+#: Admin/MPWPB_Settings_Global.php:107
+msgid ""
+"If you want to change the   category label in the dashboard menu you can "
+"change here"
+msgstr ""
+"If you want to change the   category label in the dashboard menu you can "
+"change here"
+
+#: Admin/MPWPB_Settings_Global.php:93
+msgid ""
+"If you want to change the  category label in the dashboard menu, you can "
+"change it here."
+msgstr ""
+"আপনি যদি ড্যাশবোর্ড মেনুতে বিভাগ লেবেল পরিবর্তন করতে চান তবে আপনি এটি এখানে "
+"পরিবর্তন করতে পারেন।"
+
+#: Admin/MPWPB_Settings_Global.php:86
+msgid ""
+"If you want to change the  icon in the dashboard menu, you can change it "
+"from here, and the Dashboard icon only supports the Dashicons, So please go "
+"to "
+msgstr ""
+"আপনি যদি ড্যাশবোর্ড মেনুতে আইকনটি পরিবর্তন করতে চান তবে আপনি এটি এখান থেকে "
+"পরিবর্তন করতে পারেন এবং ড্যাশবোর্ড আইকনটি শুধুমাত্র ড্যাশিকনগুলিকে সমর্থন "
+"করে, তাই দয়া করে এখানে যান"
+
+#: Admin/MPWPB_Settings_Global.php:121
+msgid ""
+"If you want to change the  Product Category Text, you can change it here."
+msgstr ""
+"আপনি যদি পণ্য বিভাগের পাঠ্য পরিবর্তন করতে চান তবে আপনি এটি এখানে পরিবর্তন "
+"করতে পারেন।"
+
+#: Admin/MPWPB_Settings_Global.php:135
+msgid ""
+"If you want to change the  Product Service Text, you can change it here."
+msgstr ""
+"আপনি যদি পণ্য পরিষেবা পাঠ্য পরিবর্তন করতে চান তবে আপনি এটি এখানে পরিবর্তন "
+"করতে পারেন।"
+
+#: Admin/MPWPB_Settings_Global.php:128
+msgid ""
+"If you want to change the  Product Sub-Category Text, you can change it here."
+msgstr ""
+"আপনি যদি পণ্য উপ-বিভাগের পাঠ্য পরিবর্তন করতে চান তবে আপনি এটি এখানে পরিবর্তন "
+"করতে পারেন।"
+
+#: mp_global/class/MP_Settings_Global.php:47
+msgid ""
+"If you want to disable WordPress's new Block/Gutenberg editor, please select "
+"Yes."
+msgstr ""
+"আপনি যদি ওয়ার্ডপ্রেসের নতুন ব্লক/গুটেনবার্গ সম্পাদক নিষ্ক্রিয় করতে চান, "
+"তাহলে অনুগ্রহ করে হ্যাঁ নির্বাচন করুন।"
+
+#: mp_global/class/MP_Select_Icon_image.php:106
+#: mp_global/class/MP_Select_Icon_image.php:132
+#: mp_global/class/MP_Select_Icon_image.php:159
+msgid "Image"
+msgstr "ইমেজ"
+
+#: Admin/settings/MPWPB_Extra_service_Settings.php:50
+msgid "image"
+msgstr "ইমেজ"
+
+#: mp_global/class/MP_Settings_Global.php:160
+msgid "image Indicator"
+msgstr "ইমেজ সূচক"
+
+#: Admin/settings/MPWPB_Price_Settings.php:112
+msgid "Image/Icon"
+msgstr "ছবি/আইকন"
+
+#: mp_global/class/MP_Custom_Slider.php:60
+msgid "Images"
+msgstr "ছবি"
+
+#: Admin/MPWPB_CPT.php:42
+msgid "Insert into "
+msgstr "মধ্যে ঢোকান  "
+
+#: Admin/MPWPB_Quick_Setup.php:184
+msgid "Install & Active Now"
+msgstr "এখনই ইনস্টল করুন এবং সক্রিয় করুন"
+
+#: Admin/MPWPB_Quick_Setup.php:208
+msgid ""
+"It will change the Service Booking Manager post type label on the entire "
+"plugin."
+msgstr ""
+"এটি সম্পূর্ণ প্লাগইনে সার্ভিস বুকিং ম্যানেজার পোস্ট টাইপ লেবেল পরিবর্তন করবে।"
+
+#: Admin/MPWPB_Quick_Setup.php:218
+msgid ""
+"It will change the Service Booking Manager slug on the entire plugin. "
+"Remember after changing this slug you need to flush permalinks. Just go to "
+"Settings->Permalinks hit the Save Settings button"
+msgstr ""
+"এটি পুরো প্লাগইনে সার্ভিস বুকিং ম্যানেজার স্লাগ পরিবর্তন করবে। মনে রাখবেন এই "
+"স্লাগ পরিবর্তন করার পরে আপনাকে পারমালিঙ্কগুলি ফ্লাশ করতে হবে। শুধু Settings->"
+"Permalinks-এ যান সেভ সেটিংস বোতামে চাপ দিন"
+
+#: Admin/MPWPB_Settings_Global.php:71
+msgid "Label"
+msgstr "লেবেল"
+
+#: mp_global/class/MP_Custom_Layout.php:163
+msgid "Less More"
+msgstr "কম বেশী"
+
+#: mp_global/class/MP_Custom_Layout.php:39
+#: mp_global/class/MP_Custom_Layout.php:163
+#: mp_global/class/MP_Custom_Layout.php:164
+msgid "Load More"
+msgstr "আর "
+
+#. Author of the plugin
+msgid "MagePeople Team"
+msgstr "MagePeople টিম"
+
+#: Admin/settings/MPWPB_Date_Time_Settings.php:120
+msgid "Maximum advanced day booking"
+msgstr "সর্বোচ্চ অ্যাডভান্স ডে বুকিং"
+
+#: mp_global/class/MP_Global_Function.php:409
+msgid "Monday"
+msgstr "সোমবার"
+
+#: Admin/MPWPB_Status.php:56
+msgid "Name : "
+msgstr "নাম:"
+
+#: Admin/MPWPB_CPT.php:30
+msgid "New "
+msgstr "নতুন"
+
+#: Admin/MPWPB_Quick_Setup.php:150
+msgid "Next"
+msgstr "পরবর্তী"
+
+#: templates/registration/registration.php:47
+msgid "Next Date & Time"
+msgstr "পরবর্তী তারিখ ও সময়"
+
+#: templates/registration/date_time_select.php:71
+msgid "Next Summary"
+msgstr "পরবর্তী সারাংশ"
+
+#: Admin/MPWPB_Status.php:21 mp_global/class/MP_Settings_Global.php:52
+msgid "No"
+msgstr "না"
+
+#: Admin/MPWPB_Staffs.php:431 Admin/MPWPB_Staffs.php:445
+#: Admin/settings/MPWPB_Date_Time_Settings.php:312
+#: Admin/settings/MPWPB_Date_Time_Settings.php:325
+msgid "No Break"
+msgstr "বিরতি নেই"
+
+#: Admin/MPWPB_Staffs.php:112
+msgid "No Staff Found!"
+msgstr "কোন কর্মী পাওয়া যায়নি!"
+
+#: Admin/MPWPB_Taxonomy.php:35
+msgid "Not Found"
+msgstr "পাওয়া যায়নি"
+
+#: mp_global/class/MP_Settings_Global.php:149
+#: mp_global/class/MP_Settings_Global.php:171
+#: mp_global/class/MP_Settings_Global.php:195
+#: mp_global/class/MP_Settings_Global.php:206
+msgid "Off"
+msgstr "বন্ধ"
+
+#: Admin/MPWPB_Staffs.php:336 Admin/settings/MPWPB_Date_Time_Settings.php:204
+msgid "Off Dates"
+msgstr "তারিখ বন্ধ"
+
+#: Admin/MPWPB_Staffs.php:323 Admin/settings/MPWPB_Date_Time_Settings.php:186
+msgid "Off Day"
+msgstr "ছুটির দিন"
+
+#: Admin/settings/MPWPB_Date_Time_Settings.php:49
+msgid "Off Days & Dates"
+msgstr "বন্ধ দিন এবং তারিখ"
+
+#: Admin/MPWPB_Staffs.php:318
+msgid "Off Days & Dates Settings"
+msgstr "বন্ধ দিন এবং তারিখ সেটিংস"
+
+#: mp_global/class/MP_Settings_Global.php:148
+#: mp_global/class/MP_Settings_Global.php:170
+#: mp_global/class/MP_Settings_Global.php:194
+#: mp_global/class/MP_Settings_Global.php:205
+msgid "ON"
+msgstr "চালু"
+
+#: mp_global/class/MP_Settings_Global.php:65
+msgid "On Hold"
+msgstr "স্হগিত"
+
+#: Admin/settings/MPWPB_Gallery_Settings.php:23
+#: Admin/settings/MPWPB_FAQ_Settings.php:23
+msgid "On/Off Slider"
+msgstr "অন/অফ স্লাইডার"
+
+#: templates/registration/registration.php:29
+#: templates/registration/registration.php:30
+msgid "Order Proceed"
+msgstr "অর্ডার এগিয়ে যান"
+
+#: inc/MPWPB_Function.php:73
+msgid "Organizer"
+msgstr "সংগঠক"
+
+#: Admin/MPWPB_Settings_Global.php:106
+msgid "Organizer Label"
+msgstr "সংগঠক লেবেল"
+
+#: Admin/MPWPB_Settings_Global.php:113
+msgid "Organizer Slug"
+msgstr "সংগঠক স্লাগ"
+
+#: Admin/MPWPB_Taxonomy.php:23 Admin/MPWPB_Taxonomy.php:24
+msgid "Parent "
+msgstr "অভিভাবক"
+
+#: Admin/MPWPB_Staffs.php:224 Admin/settings/MPWPB_Date_Time_Settings.php:64
+msgid "Particular"
+msgstr "বিশেষ"
+
+#: Admin/MPWPB_Staffs.php:231 Admin/settings/MPWPB_Date_Time_Settings.php:71
+msgid "Particular Dates"
+msgstr "বিশেষ তারিখ"
+
+#: mp_global/class/MP_Settings_Global.php:66
+msgid "Pending"
+msgstr "বিচারাধীন"
+
+#: Admin/MPWPB_Settings_Global.php:100
+msgid ""
+"Please enter the slug name you want for  category. Remember after change "
+"this slug you need to flush permalink, Just go to  "
+msgstr ""
+"বিভাগের জন্য আপনি যে স্লাগ নামটি চান তা লিখুন। মনে রাখবেন এই স্লাগ পরিবর্তন "
+"করার পরে আপনাকে পার্মালিঙ্ক ফ্লাশ করতে হবে, শুধু যান"
+
+#: Admin/MPWPB_Settings_Global.php:114
+msgid ""
+"Please enter the slug name you want for the   organizer. Remember, after "
+"changing this slug, you need to flush the permalinks. Just go to "
+msgstr ""
+"অনুগ্রহ করে সংগঠকের জন্য আপনি যে স্লাগ নামটি চান তা লিখুন। মনে রাখবেন, এই "
+"স্লাগ পরিবর্তন করার পরে, আপনাকে পারমালিঙ্কগুলি ফ্লাশ করতে হবে। শুধু যান"
+
+#: Admin/MPWPB_Settings_Global.php:79
+msgid ""
+"Please enter the slug name you want. Remember, after changing this slug; you "
+"need to flush permalink; go to"
+msgstr ""
+"আপনি চান স্লাগ নাম লিখুন. মনে রাখবেন, এই স্লাগ পরিবর্তন করার পরে; আপনাকে "
+"পারমালিঙ্ক ফ্লাশ করতে হবে; যাও"
+
+#: templates/registration/registration.php:46
+msgid "Please Select"
+msgstr "অনুগ্রহ করে নির্বাচন করুন"
+
+#: Admin/MPWPB_Staffs.php:467 mp_global/class/MP_Custom_Layout.php:205
+#: Admin/settings/MPWPB_Date_Time_Settings.php:347
+msgid "Please select"
+msgstr "অনুগ্রহ করে নির্বাচন করুন"
+
+#: Admin/MPWPB_Staffs.php:223 Admin/settings/MPWPB_Date_Time_Settings.php:63
+msgid "Please select ..."
+msgstr "অনুগ্রহ করে নির্বাচন করুন"
+
+#: templates/registration/date_time_select.php:70
+msgid "Please Select Date & Time"
+msgstr "অনুগ্রহ করে তারিখ ও সময় নির্বাচন করুন"
+
+#: mp_global/class/MP_Settings_Global.php:155
+msgid "Please Select Slider Indicator Type Default Icon"
+msgstr "অনুগ্রহ করে স্লাইডার ইন্ডিকেটর টাইপ ডিফল্ট আইকন নির্বাচন করুন"
+
+#: mp_global/class/MP_Settings_Global.php:144
+msgid "Please Select Slider Indicator Visible or Not? Default ON"
+msgstr ""
+"অনুগ্রহ করে স্লাইডার নির্দেশক দৃশ্যমান বা না নির্বাচন করুন? ডিফল্ট চালু"
+
+#: mp_global/class/MP_Settings_Global.php:201
+msgid "Please Select Slider Popup Indicator Icon ON or Off? Default ON"
+msgstr ""
+"অনুগ্রহ করে স্লাইডার পপআপ ইন্ডিকেটর আইকন চালু বা বন্ধ নির্বাচন করুন? ডিফল্ট "
+"চালু"
+
+#: mp_global/class/MP_Settings_Global.php:190
+msgid "Please Select Slider Popup Indicator Image ON or Off? Default ON"
+msgstr ""
+"অনুগ্রহ করে স্লাইডার পপআপ সূচক চিত্রটি চালু বা বন্ধ নির্বাচন করুন? ডিফল্ট "
+"চালু"
+
+#: mp_global/class/MP_Settings_Global.php:177
+msgid "Please Select Slider Showcase Position Default Right"
+msgstr "অনুগ্রহ করে স্লাইডার শোকেস অবস্থান ডিফল্ট ডান নির্বাচন করুন"
+
+#: mp_global/class/MP_Settings_Global.php:166
+msgid "Please Select Slider Showcase Visible or Not? Default ON"
+msgstr "অনুগ্রহ করে স্লাইডার শোকেস দৃশ্যমান বা না নির্বাচন করুন? ডিফল্ট চালু"
+
+#: mp_global/class/MP_Settings_Global.php:133
+msgid "Please Select Slider Style Default Style One"
+msgstr "অনুগ্রহ করে স্লাইডার স্টাইল ডিফল্ট স্টাইল এক নির্বাচন করুন"
+
+#: mp_global/class/MP_Settings_Global.php:122
+msgid "Please Select Slider Type Default Slider"
+msgstr "অনুগ্রহ করে স্লাইডার টাইপ ডিফল্ট স্লাইডার নির্বাচন করুন"
+
+#: mp_global/class/MP_Settings_Global.php:58
+msgid "Please Select when and which order status Seat Will be Booked/Reduced."
+msgstr ""
+"অনুগ্রহ করে নির্বাচন করুন কখন এবং কোন অর্ডারের স্থিতি আসন বুক করা হবে/কমানো "
+"হবে।"
+
+#: Admin/MPWPB_Staffs.php:162
+msgid "Please Type Staff Email....."
+msgstr "দয়া করে স্টাফ ইমেল টাইপ করুন....."
+
+#: Admin/MPWPB_Staffs.php:166
+msgid "Please Type Staff First Name....."
+msgstr "দয়া করে স্টাফের প্রথম নাম টাইপ করুন....."
+
+#: Admin/MPWPB_Staffs.php:170
+msgid "Please Type Staff Last Name....."
+msgstr "দয়া করে স্টাফের শেষ নাম লিখুন....."
+
+#: Admin/MPWPB_Staffs.php:154
+msgid "Please Type Staff Name....."
+msgstr "দয়া করে স্টাফের নাম লিখুন....."
+
+#: Admin/MPWPB_Staffs.php:158
+msgid "Please Type Staff Password....."
+msgstr "দয়া করে স্টাফ পাসওয়ার্ড টাইপ করুন....."
+
+#: Admin/MPWPB_Settings.php:73
+msgid "Please upload images for gallery"
+msgstr "গ্যালারির জন্য ছবি আপলোড করুন"
+
+#: mp_global/class/MP_Settings_Global.php:127
+msgid "Post Thumbnail"
+msgstr "পোস্ট থাম্বনেল"
+
+#: Admin/MPWPB_Quick_Setup.php:146
+#: templates/registration/date_time_select.php:64
+msgid "Previous"
+msgstr "আগে"
+
+#: Frontend/MPWPB_Woocommerce.php:249 Frontend/MPWPB_Woocommerce.php:280
+#: Admin/settings/MPWPB_Price_Settings.php:115
+#: Admin/settings/MPWPB_Extra_service_Settings.php:49
+msgid "Price"
+msgstr "দাম"
+
+#: Frontend/MPWPB_Woocommerce.php:115 Frontend/MPWPB_Woocommerce.php:123
+msgid "Price "
+msgstr "দাম"
+
+#: Admin/settings/MPWPB_Price_Settings.php:18
+#: Admin/settings/MPWPB_Price_Settings.php:57
+msgid "Price Settings"
+msgstr "মূল্য সেটিংস"
+
+#: Admin/MPWPB_Settings.php:36
+msgid "Pricing"
+msgstr "মূল্য নির্ধারণ"
+
+#: mp_global/class/MP_Settings_Global.php:67
+msgid "Processing"
+msgstr "প্রক্রিয়াকরণ"
+
+#: Admin/MPWPB_Settings_Global.php:120
+msgid "Product Category Text"
+msgstr "পণ্য বিভাগের পাঠ্য"
+
+#: Admin/MPWPB_Settings_Global.php:134
+msgid "Product ServiceText"
+msgstr "পণ্য পরিষেবা পাঠ্য"
+
+#: Admin/MPWPB_Settings_Global.php:127
+msgid "Product Sub-Category Text"
+msgstr "পণ্য উপ-শ্রেণি পাঠ্য"
+
+#: Admin/settings/MPWPB_Extra_service_Settings.php:48
+msgid "Quantity"
+msgstr "পরিমাণ"
+
+#: Frontend/MPWPB_Woocommerce.php:122
+msgid "Quantity "
+msgstr "পরিমাণ"
+
+#: Admin/MPWPB_Quick_Setup.php:17 Admin/MPWPB_Quick_Setup.php:18
+#: Admin/MPWPB_Quick_Setup.php:18 Admin/MPWPB_Quick_Setup.php:22
+#: Admin/MPWPB_Quick_Setup.php:22
+msgid "Quick Setup"
+msgstr "দ্রুত পদক্ষেপ"
+
+#: Admin/MPWPB_CPT.php:40
+msgid "Remove "
+msgstr "অপসারণ"
+
+#: mp_global/class/MP_Select_Icon_image.php:30
+#: mp_global/class/MP_Select_Icon_image.php:150
+msgid "Remove Icon"
+msgstr "আইকন সরান"
+
+#: mp_global/class/MP_Select_Icon_image.php:154
+msgid "Remove Image"
+msgstr "ছবি সরান"
+
+#: Admin/MPWPB_Staffs.php:225 Admin/settings/MPWPB_Date_Time_Settings.php:65
+msgid "Repeated"
+msgstr "পুনরাবৃত্ত"
+
+#: Admin/MPWPB_Staffs.php:266 Admin/settings/MPWPB_Date_Time_Settings.php:109
+msgid "Repeated after"
+msgstr "পরে পুনরাবৃত্তি হয়েছে"
+
+#: Admin/MPWPB_Staffs.php:258 Admin/settings/MPWPB_Date_Time_Settings.php:97
+msgid "Repeated Start Date"
+msgstr "পুনরাবৃত্ত শুরুর তারিখ"
+
+#: mp_global/class/MP_Global_Function.php:414
+msgid "Saturday"
+msgstr "শনিবার"
+
+#: Admin/MPWPB_Staffs.php:191
+msgid "Save New Staff"
+msgstr "নতুন কর্মীদের সংরক্ষণ করুন"
+
+#: Admin/settings/MPWPB_Date_Time_Settings.php:46
+msgid "schedule"
+msgstr "সময়সূচী"
+
+#: Admin/MPWPB_CPT.php:35
+msgid "Search "
+msgstr "অনুসন্ধান করুন"
+
+#: mp_global/class/MP_Settings_Global.php:57
+msgid "Seat Booked Status"
+msgstr "আসন বুকড অবস্থা"
+
+#: Admin/settings/MPWPB_Price_Settings.php:62
+#: Admin/settings/MPWPB_Price_Settings.php:69
+msgid "Section"
+msgstr "অধ্যায়"
+
+#: inc/MPWPB_Layout.php:18 templates/registration/category_selection.php:15
+#: templates/registration/service_selection.php:25
+#: templates/registration/sub_category_selection.php:17
+#: templates/registration/extra_services.php:57
+#: templates/registration/extra_services.php:60
+msgid "Select"
+msgstr "নির্বাচন করুন"
+
+#: mp_global/class/MP_Settings_Global.php:228
+msgid "Select Default Text  Color."
+msgstr "ডিফল্ট পাঠ্য রঙ নির্বাচন করুন।"
+
+#: mp_global/class/MP_Settings_Global.php:221
+msgid ""
+"Select Default Theme Alternate  Color that means, if background theme color "
+"then it will be text color."
+msgstr ""
+"ডিফল্ট থিম বিকল্প রঙ নির্বাচন করুন মানে, যদি ব্যাকগ্রাউন্ড থিম রঙ হয় তবে "
+"এটি পাঠ্য রঙ হবে।"
+
+#: mp_global/class/MP_Settings_Global.php:214
+msgid "Select Default Theme Color"
+msgstr "ডিফল্ট থিমের রঙ নির্বাচন করুন"
+
+#: mp_global/class/MP_Select_Icon_image.php:43
+msgid "Select Icon"
+msgstr "আইকন নির্বাচন করুন"
+
+#: Admin/settings/MPWPB_Date_Time_Settings.php:137
+msgid "Select time slot Length"
+msgstr "সময় স্লট দৈর্ঘ্য নির্বাচন করুন"
+
+#: Admin/MPWPB_Staffs.php:140
+msgid "Select User"
+msgstr "ব্যবহারকারী নির্বাচন করুন"
+
+#: templates/registration/extra_services.php:57
+msgid "Selected"
+msgstr "নির্বাচিত"
+
+#: templates/registration/summary_left.php:18
+msgid "Selection Summary"
+msgstr "নির্বাচনের সারাংশ"
+
+#: Admin/MPWPB_Settings_Global.php:137 inc/MPWPB_Function.php:90
+#: Admin/settings/MPWPB_Price_Settings.php:107
+msgid "Service"
+msgstr "সেবা"
+
+#: Admin/MPWPB_Quick_Setup.php:21 inc/MPWPB_Function.php:58
+msgid "Service Booking"
+msgstr "সার্ভিস বুকিং"
+
+#: Admin/MPWPB_Quick_Setup.php:164
+msgid "Service Booking Manager For Woocommerce Plugin"
+msgstr "Woocommerce প্লাগইনের জন্য পরিষেবা বুকিং ম্যানেজার"
+
+#: Admin/MPWPB_Quick_Setup.php:203
+msgid "Service Booking Manager Label:"
+msgstr "সার্ভিস বুকিং ম্যানেজার লেবেল:"
+
+#: Admin/MPWPB_Quick_Setup.php:165
+msgid ""
+"Service Booking Manager Plugin for WooCommerce for your site, Please go step "
+"by step and choose some options to get started."
+msgstr ""
+"আপনার সাইটের জন্য WooCommerce-এর জন্য সার্ভিস বুকিং ম্যানেজার প্লাগইন, "
+"অনুগ্রহ করে ধাপে ধাপে যান এবং শুরু করতে কিছু বিকল্প বেছে নিন।"
+
+#: Admin/MPWPB_Quick_Setup.php:213
+msgid "Service Booking Manager Slug:"
+msgstr "সার্ভিস বুকিং ম্যানেজার স্লাগ:"
+
+#: Admin/settings/MPWPB_Price_Settings.php:319
+msgid "Service details..."
+msgstr "পরিষেবার বিবরণ..."
+
+#: Admin/settings/MPWPB_Price_Settings.php:314
+msgid "Service Duration"
+msgstr "পরিষেবার সময়কাল"
+
+#: Admin/settings/MPWPB_Extra_service_Settings.php:95
+msgid "service Group Name"
+msgstr "সেবা গ্রুপের নাম"
+
+#: Admin/settings/MPWPB_Price_Settings.php:299
+msgid "Service Name"
+msgstr "কাজের নাম"
+
+#: MPWPB_Plugin.php:45
+msgid "Service Staffs"
+msgstr "সার্ভিস স্টাফ"
+
+#: Admin/settings/MPWPB_General_Settings.php:29
+msgid "Service Sub Title"
+msgstr "সার্ভিস সাব টাইটেল"
+
+#: Admin/settings/MPWPB_General_Settings.php:28
+msgid "Service sub title"
+msgstr "পরিষেবা উপ শিরোনাম"
+
+#: Admin/settings/MPWPB_General_Settings.php:23
+#: Admin/settings/MPWPB_General_Settings.php:24
+msgid "Service Title"
+msgstr "পরিষেবা শিরোনাম"
+
+#: templates/registration/registration.php:21
+#: templates/registration/registration.php:22
+msgid "Services"
+msgstr "সেবা"
+
+#: Frontend/MPWPB_Woocommerce.php:270
+msgid "Services Name"
+msgstr "পরিষেবার নাম"
+
+#: Frontend/MPWPB_Woocommerce.php:121
+msgid "Services Name "
+msgstr "পরিষেবার নাম"
+
+#: Admin/MPWPB_CPT.php:39
+msgid "Set "
+msgstr "সেট"
+
+#: Admin/MPWPB_Settings_Global.php:79 Admin/MPWPB_Settings_Global.php:100
+#: Admin/MPWPB_Settings_Global.php:114
+msgid "Settings-> Permalinks"
+msgstr "সেটিংস-> পারমালিঙ্ক"
+
+#: mp_global/class/MP_Settings_Global.php:94
+msgid "Short Date  Format"
+msgstr "সংক্ষিপ্ত তারিখ বিন্যাস"
+
+#: Admin/MPWPB_Staffs.php:77
+msgid "SI."
+msgstr "SI."
+
+#: mp_global/class/MP_Settings_Global.php:126
+msgid "Slider"
+msgstr "স্লাইডার"
+
+#: mp_global/class/MP_Settings_Global.php:154
+msgid "Slider Indicator Type"
+msgstr "স্লাইডার ইন্ডিকেটর টাইপ"
+
+#: mp_global/class/MP_Settings_Global.php:143
+msgid "Slider Indicator Visible?"
+msgstr "স্লাইডার নির্দেশক দৃশ্যমান?"
+
+#: mp_global/class/MP_Settings_Global.php:200
+msgid "Slider Popup Icon Indicator"
+msgstr "স্লাইডার পপআপ আইকন সূচক"
+
+#: mp_global/class/MP_Settings_Global.php:189
+msgid "Slider Popup Image Indicator"
+msgstr "স্লাইডার পপআপ ইমেজ ইন্ডিকেটর"
+
+#: mp_global/class/MP_Settings_Global.php:25
+msgid "Slider Settings"
+msgstr "স্লাইডার সেটিংস"
+
+#: mp_global/class/MP_Settings_Global.php:176
+msgid "Slider Showcase Position"
+msgstr "স্লাইডার শোকেস অবস্থান"
+
+#: mp_global/class/MP_Settings_Global.php:165
+msgid "Slider Showcase Visible?"
+msgstr "স্লাইডার শোকেস দৃশ্যমান?"
+
+#: mp_global/class/MP_Settings_Global.php:132
+msgid "Slider Style"
+msgstr "স্লাইডার স্টাইল"
+
+#: mp_global/class/MP_Settings_Global.php:121
+msgid "Slider Type"
+msgstr "স্লাইডার টাইপ"
+
+#: Admin/MPWPB_Settings_Global.php:78
+msgid "Slug"
+msgstr "স্লাগ"
+
+#: Admin/MPWPB_Staffs.php:80 Admin/MPWPB_Staffs.php:161
+msgid "Staff Email"
+msgstr "স্টাফ ইমেল"
+
+#: Admin/MPWPB_Staffs.php:165
+msgid "Staff First Name"
+msgstr "স্টাফ প্রথম নাম"
+
+#: Admin/MPWPB_Staffs.php:137
+msgid "Staff Information"
+msgstr "স্টাফ তথ্য"
+
+#: Admin/MPWPB_Staffs.php:169
+msgid "Staff Last Name"
+msgstr "স্টাফ শেষ নাম"
+
+#: Admin/MPWPB_Staffs.php:42
+msgid "Staff Lists"
+msgstr "স্টাফ তালিকা"
+
+#: Admin/MPWPB_Staffs.php:30
+msgid "Staff Members"
+msgstr "কর্মচারি"
+
+#: Admin/MPWPB_Staffs.php:79
+msgid "Staff Name"
+msgstr "কর্মীদের নাম"
+
+#: Admin/MPWPB_Staffs.php:157
+msgid "Staff Password"
+msgstr "স্টাফ পাসওয়ার্ড"
+
+#: Admin/MPWPB_Staffs.php:174
+msgid "Staff Schedule"
+msgstr "স্টাফ শিডিউল"
+
+#: Admin/MPWPB_Staffs.php:287 Admin/settings/MPWPB_Date_Time_Settings.php:167
+msgid "Start Time"
+msgstr "সময় শুরু"
+
+#: Admin/MPWPB_Status.php:16
+msgid "Status"
+msgstr "স্ট্যাটাস"
+
+#: mp_global/class/MP_Settings_Global.php:137
+msgid "Style One"
+msgstr "শৈলী এক"
+
+#: mp_global/class/MP_Settings_Global.php:30
+msgid "Style Settings"
+msgstr "শৈলী সেটিংস"
+
+#: mp_global/class/MP_Settings_Global.php:138
+msgid "Style Two"
+msgstr "শৈলী দুই"
+
+#: Admin/MPWPB_Settings_Global.php:130 inc/MPWPB_Function.php:86
+#: Admin/settings/MPWPB_Price_Settings.php:99
+#: Admin/settings/MPWPB_Price_Settings.php:239
+msgid "Sub-Category"
+msgstr "উপ-শ্রেণী"
+
+#: mp_global/class/MP_Global_Function.php:415
+msgid "Sunday"
+msgstr "রবিবার"
+
+#: mp_global/class/MP_Settings_Global.php:220
+msgid "Theme Alternate Color"
+msgstr "থিম বিকল্প রঙ"
+
+#: mp_global/class/MP_Settings_Global.php:213
+msgid "Theme Color"
+msgstr "থিম রঙ"
+
+#: mp_global/class/MP_Global_Function.php:412
+msgid "Thursday"
+msgstr "বৃহস্পতিবার"
+
+#: Frontend/MPWPB_Woocommerce.php:259
+msgid "Time"
+msgstr "সময়"
+
+#: Frontend/MPWPB_Woocommerce.php:117
+msgid "Time "
+msgstr "সময়"
+
+#: Admin/MPWPB_Staffs.php:279
+msgid "Time Schedule Settings"
+msgstr "সময় সূচি সেটিংস"
+
+#: Admin/settings/MPWPB_Date_Time_Settings.php:131
+msgid "Time Slot Length"
+msgstr "সময় স্লট দৈর্ঘ্য"
+
+#: Admin/MPWPB_Staffs.php:288 Admin/MPWPB_Staffs.php:391
+#: Admin/MPWPB_Staffs.php:400 Admin/settings/MPWPB_Date_Time_Settings.php:168
+#: Admin/settings/MPWPB_Date_Time_Settings.php:274
+#: Admin/settings/MPWPB_Date_Time_Settings.php:283
+msgid "To"
+msgstr "প্রতি"
+
+#: templates/registration/date_time_select.php:67
+#: templates/registration/registration.php:45
+msgid "Total :"
+msgstr "মোট"
+
+#: mp_global/class/MP_Global_Function.php:410
+msgid "Tuesday"
+msgstr "মঙ্গলবার"
+
+#: mp_global/class/MP_Settings_Global.php:235
+msgid "Type Default Font Size(in PX Unit)."
+msgstr "ডিফল্ট ফন্ট সাইজ (PX ইউনিটে) টাইপ করুন।"
+
+#: mp_global/class/MP_Settings_Global.php:249
+msgid "Type Font Size h2 Title(in PX Unit)."
+msgstr "ফন্ট সাইজ h2 শিরোনাম (PX ইউনিটে) টাইপ করুন।"
+
+#: mp_global/class/MP_Settings_Global.php:256
+msgid "Type Font Size h3 Title(in PX Unit)."
+msgstr "ফন্ট সাইজ h3 শিরোনাম (PX ইউনিটে) টাইপ করুন।"
+
+#: mp_global/class/MP_Settings_Global.php:263
+msgid "Type Font Size h4 Title(in PX Unit)."
+msgstr "ফন্ট সাইজ h4 শিরোনাম (PX ইউনিটে) টাইপ করুন।"
+
+#: mp_global/class/MP_Settings_Global.php:270
+msgid "Type Font Size h5 Title(in PX Unit)."
+msgstr "ফন্ট সাইজ h5 শিরোনাম (PX ইউনিটে) টাইপ করুন।"
+
+#: mp_global/class/MP_Settings_Global.php:242
+msgid "Type Font Size Main Title(in PX Unit)."
+msgstr "ফন্ট সাইজ প্রধান শিরোনাম (PX ইউনিটে) টাইপ করুন।"
+
+#: Admin/MPWPB_CPT.php:32
+msgid "Update "
+msgstr "হালনাগাদ"
+
+#: Admin/MPWPB_Staffs.php:188
+msgid "Update Staff"
+msgstr "স্টাফ আপডেট করুন"
+
+#: Admin/MPWPB_CPT.php:43
+msgid "Uploaded to this "
+msgstr "এই আপলোড"
+
+#: Admin/MPWPB_Staffs.php:78 Admin/MPWPB_Staffs.php:153
+msgid "User Name"
+msgstr "ব্যবহারকারীর নাম"
+
+#: Admin/MPWPB_CPT.php:33 Admin/MPWPB_CPT.php:34
+msgid "View "
+msgstr "দেখুন"
+
+#: mp_global/class/MP_Custom_Slider.php:60
+msgid "View All"
+msgstr "সব দেখ"
+
+#: mp_global/class/MP_Global_Function.php:411
+msgid "Wednesday"
+msgstr "বুধবার"
+
+#: Admin/MPWPB_Quick_Setup.php:119
+msgid "Welcome"
+msgstr "স্বাগত"
+
+#: Admin/MPWPB_Quick_Setup.php:175
+msgid "Woocommerce already install , please activate it"
+msgstr "Woocommerce ইতিমধ্যেই ইনস্টল করা আছে, দয়া করে এটি সক্রিয় করুন"
+
+#: Admin/MPWPB_Quick_Setup.php:169
+msgid "Woocommerce already installed and activated"
+msgstr "Woocommerce ইতিমধ্যে ইনস্টল এবং সক্রিয়"
+
+#: Admin/MPWPB_Status.php:43
+msgid "Woocommerce Installed : "
+msgstr "Woocommerce ইনস্টল করা হয়েছে:"
+
+#: Admin/MPWPB_Quick_Setup.php:172
+msgid "Woocommerce need to install and active"
+msgstr "Woocommerce ইন্সটল এবং সক্রিয় করতে হবে"
+
+#: Admin/MPWPB_Status.php:50
+msgid "Woocommerce Version : "
+msgstr "Woocommerce সংস্করণ:"
+
+#. Name of the plugin
+msgid ""
+"WordPress Service Booking & Scheduling Plugin | All-in-one Booking Systems -"
+"WpBookingly"
+msgstr ""
+"ওয়ার্ডপ্রেস সার্ভিস বুকিং ও শিডিউলিং প্লাগইন | অল-ইন-ওয়ান বুকিং সিস্টেম -"
+"WpBookingly"
+
+#: Admin/MPWPB_Status.php:37
+msgid "WordPress Version : "
+msgstr "ওয়ার্ডপ্রেস সংস্করণ:"
+
+#: Admin/MPWPB_Status.php:21 mp_global/class/MP_Settings_Global.php:51
+msgid "Yes"
+msgstr "হ্যাঁ"
+
+#: Admin/MPWPB_Quick_Setup.php:229
+msgid ""
+"You are about to Finish & Save service-booking-manager For Woocommerce "
+"Plugin setup process"
+msgstr ""
+"আপনি Woocommerce প্লাগইন সেটআপ প্রক্রিয়ার জন্য পরিষেবা-বুকিং-ম্যানেজার শেষ "
+"এবং সংরক্ষণ করতে চলেছেন"
+
+#: Admin/MPWPB_Settings.php:75
+msgid ""
+"You can display this Ticket type list with the add to cart button anywhere "
+"on your website by copying the shortcode and using it on any post or page."
+msgstr ""
+"আপনি শর্টকোডটি কপি করে যেকোনো পোস্ট বা পৃষ্ঠায় ব্যবহার করে আপনার "
+"ওয়েবসাইটের যেকোনো জায়গায় কার্ট বাটনে যোগ করার সাথে এই টিকিটের প্রকার "
+"তালিকাটি প্রদর্শন করতে পারেন।"
+
+#: Admin/MPWPB_Staffs.php:119
+msgid "You have no permission to create staff"
+msgstr ""
+
+#: templates/registration/checkout.php:33
+msgid "You must be logged in to checkout."
+msgstr ""
+
+#: templates/registration/checkout.php:52
+msgid "Your order"
+msgstr ""
