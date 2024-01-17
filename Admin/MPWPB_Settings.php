@@ -29,15 +29,16 @@
 							<li data-tabs-target="#mpwpb_general_info">
 								<span class="fas fa-tools"></span><?php esc_html_e('General Info', 'service-booking-manager'); ?>
 							</li>
-							<li data-tabs-target="#mpwpb_settings_date_time">
-								<span class="far fa-clock"></span><?php esc_html_e('Date & Time', 'service-booking-manager'); ?>
-							</li>
 							<li data-tabs-target="#mpwpb_price_settings">
 								<span class="fas fa-hand-holding-usd"></span><?php esc_html_e('Pricing', 'service-booking-manager'); ?>
 							</li>
 							<li data-tabs-target="#mpwpb_extra_service_settings">
 								<span class="fas fa-funnel-dollar"></span><?php esc_html_e('Extra Service', 'service-booking-manager'); ?>
 							</li>
+							<li data-tabs-target="#mpwpb_settings_date_time">
+								<span class="far fa-clock"></span><?php esc_html_e('Date & Time', 'service-booking-manager'); ?>
+							</li>
+
 							<?php do_action('add_mpwpb_settings_tab_after_date', $post_id); ?>
 						</ul>
 						<div class="tabsContent">

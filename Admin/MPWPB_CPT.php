@@ -46,7 +46,7 @@
 					'filter_items_list' => esc_html__('Filter ', 'service-booking-manager') . ' ' . $label . ' ' . esc_html__(' list', 'service-booking-manager')
 				];
 				$args = [
-					'public' => false,
+					'public' => true,
 					'labels' => $labels,
 					'menu_icon' => $icon,
 					'supports' => ['title', 'thumbnail'],
