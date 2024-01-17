@@ -17,17 +17,31 @@
 				$sub_title = MP_Global_Function::get_post_info($post_id, 'mpwpb_shortcode_sub_title');
 				?>
 				<div class="tabsItem" data-tabs="#mpwpb_general_info">
-					<h5><?php esc_html_e('General Information Settings', 'service-booking-manager'); ?></h5>
-					<div class="divider"></div>
-					<label>
-						<span class="max_200"><?php esc_html_e('Service Title', 'service-booking-manager'); ?></span>
-						<input type="text" name="mpwpb_shortcode_title" class="formControl" value="<?php echo esc_attr($title); ?>" placeholder="<?php esc_attr_e('Service Title', 'service-booking-manager'); ?>"/>
-					</label>
-					<div class="divider"></div>
-					<label>
-						<span class="max_200"><?php esc_html_e('Service sub title', 'service-booking-manager'); ?></span>
-						<input type="text" name="mpwpb_shortcode_sub_title" class="formControl" value="<?php echo esc_attr($sub_title); ?>" placeholder="<?php esc_attr_e('Service Sub Title', 'service-booking-manager'); ?>"/>
-					</label>
+					<h2 class="h4 text-primary px-0"><?php esc_html_e('General Information Settings', 'service-booking-manager'); ?></h2>
+					
+					<section class="component d-flex justify-content-between align-items-center mb-2">
+                        <div class="w-50 d-flex justify-content-between align-items-center">
+                            <label class=""><?php esc_html_e('Add To Cart Form Shortcode : ', 'service-booking-manage'); ?> <i class="fas fa-question-circle tool-tips"><span><?php MPWPB_Settings::info_text('mpwpb_short_code'); ?></span></i></label>
+                        </div>
+                        <div class="w-50 d-flex justify-content-end align-items-center">
+							<code> [service-booking post_id="<?php echo esc_html($post_id); ?>"]</code>
+                        </div>
+                    </section>
+					
+					<section class="component d-flex justify-content-between align-items-center mb-2">
+                        <div class="w-50 d-flex justify-content-between align-items-center">
+                            <label for=""><?php esc_html_e('Service Title', 'service-booking-manager'); ?> <i class="fas fa-question-circle tool-tips"></i></label>
+                            <div class=" d-flex justify-content-between">
+								<input type="text" name="mpwpb_shortcode_title" class="formControl" value="<?php echo esc_attr($title); ?>" placeholder="<?php esc_attr_e('Service Title', 'service-booking-manager'); ?>"/>
+                            </div>
+                        </div>
+                        <div class="w-50 ms-5 d-flex justify-content-between align-items-center">
+                            <label for=""><?php esc_html_e('Service sub title', 'service-booking-manager'); ?> <i class="fas fa-question-circle tool-tips"></i></label>
+                            <div class=" d-flex justify-content-between align-items-center">
+								<input type="text" name="mpwpb_shortcode_sub_title" class="formControl" value="<?php echo esc_attr($sub_title); ?>" placeholder="<?php esc_attr_e('Service Sub Title', 'service-booking-manager'); ?>"/>
+                            </div>
+                        </div>
+                    </section>
 				</div>
 				<?php
 			}

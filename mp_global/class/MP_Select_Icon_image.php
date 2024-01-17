@@ -154,10 +154,10 @@
 						<span class="fas fa-times mp_remove_icon mp_image_remove" title="<?php esc_html_e('Remove Image', 'service-booking-manager'); ?>"></span>
 					</div>
 					<div class="mp_add_icon_image_button_area <?php echo esc_attr($button_active_class); ?>">
-						<div class="flexEqual">
-							<button class="_mpBtn_xs mp_image_add" type="button">
+						<div class="flexEqual d-flex flex-column">
+							<button class="_mpBtn_xs mp_image_add m-1" type="button">
 								<span class="fas fa-images"></span><?php esc_html_e('Image', 'service-booking-manager'); ?></button>
-							<button class="_mpBtn_xs mp_icon_add" type="button" data-target-popup="#mp_add_icon_popup">
+							<button class="_mpBtn_xs mp_icon_add m-1" type="button" data-target-popup="#mp_add_icon_popup">
 								<span class="fas fa-plus"></span><?php esc_html_e('Icon', 'service-booking-manager'); ?></button>
 						</div>
 					</div>
