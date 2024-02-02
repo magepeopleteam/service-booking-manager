@@ -808,8 +808,15 @@
 	/****************/
 	.mpStyle .title_on_border { line-height: 1; height: 40px; position: absolute; top: -20px; left: 30px; color: var(--color_theme); background-color: var(--color_theme_alter); padding: 0 var(--dMP); border-radius: var(--dBR); }
 	/********fixed Content********/
-	div.mpStyle .mp_sticky_area.mpSticky { position: fixed; }
-	div.mpStyle .mp_sticky_area.mpSticky .mp_sticky_on_scroll { overflow: auto;z-index: 1111; }
+	div.mpStyle .mp_sticky_area.mpSticky {
+		position: fixed;top: 100px;
+	}
+	div.mpStyle .mp_sticky_area.mpSticky .mp_sticky_on_scroll {
+		overflow: auto;
+		z-index: 1111;
+	}
+	div.mpStyle .mp_sticky_on_scroll {width: 100%;}
+	div.mpStyle .mp_sticky_area.stickyFixed {display: flex; align-items: end;height: 100%;}
 }
 /******************************************************************** Form section ************************************************/
 @media only screen and (min-width: 10px) {
