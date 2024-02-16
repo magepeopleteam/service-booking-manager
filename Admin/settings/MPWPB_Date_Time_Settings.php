@@ -139,6 +139,7 @@
 													<option value="15" <?php echo esc_attr($time_slot == 15 ? 'selected' : ''); ?>><?php esc_html_e('15 min', 'service-booking-manager'); ?></option>
 													<option value="30" <?php echo esc_attr($time_slot == 30 ? 'selected' : ''); ?>><?php esc_html_e('30 min', 'service-booking-manager'); ?></option>
 													<option value="60" <?php echo esc_attr($time_slot == 60 ? 'selected' : ''); ?>><?php esc_html_e('1 Hour', 'service-booking-manager'); ?></option>
+													<option value="90" <?php echo esc_attr($time_slot == 90 ? 'selected' : ''); ?>><?php esc_html_e('1.5 Hour', 'service-booking-manager'); ?></option>
 													<option value="120" <?php echo esc_attr($time_slot == 120 ? 'selected' : ''); ?>><?php esc_html_e('2 Hour', 'service-booking-manager'); ?></option>
 													<option value="180" <?php echo esc_attr($time_slot == 180 ? 'selected' : ''); ?>><?php esc_html_e('3 Hour', 'service-booking-manager'); ?></option>
 												</select>
