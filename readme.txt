@@ -1,5 +1,5 @@
 === Online Service Booking System & Reservation Plugin - WpBookingly ===
-Contributors: [aamahin, magepeopleteam]
+Contributors: aamahin, magepeopleteam
 Tags: appointment booking, Car Wash Booking, Booking calendar, Service Booking
 Requires at least: 5.3
 Stable tag: 1.1.0
