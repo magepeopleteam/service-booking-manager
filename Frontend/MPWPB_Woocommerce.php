@@ -413,16 +413,18 @@
 				$product_status = get_post_status($product_id);
 				WC()->cart->empty_cart();
 				if ($passed_validation && WC()->cart->add_to_cart($product_id, 1) && 'publish' === $product_status) {
-					do_action('woocommerce_ajax_added_to_cart', $product_id);
+					$checkout_system = MP_Global_Function::get_settings('mpwpb_general_settings', 'single_page_checkout', 'no');
+                    if($checkout_system=='yes'){
+                        echo wc_get_checkout_url();
+                    }else{
 					?>
 					<div class="woocommerce-page">
 						<div class="woocommerce">
-							<?php //echo do_shortcode('[woocommerce_checkout]'); ?>
-							<?php // do_action('woocommerce_ajax_checkout'); ?>
-							<?php require MPWPB_PLUGIN_DIR . '/templates/registration/checkout.php'; ?>
+							<?php  echo do_shortcode('[woocommerce_checkout]'); ?>
 						</div>
 					</div>
 					<?php
+                    }
 				}
 				die();
 			}
