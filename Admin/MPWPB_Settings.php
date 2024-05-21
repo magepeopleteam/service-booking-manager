@@ -24,22 +24,24 @@
 				wp_nonce_field('mpwpb_nonce', 'mpwpb_nonce');
 				?>
 				<div class="mpStyle">
-					<div class="mpTabs">
-						<ul class="tabLists">
-							<li  data-tabs-target="#mpwpb_general_info">
-								<i class="fas fa-tools pe-1"></i><?php esc_html_e('General Info', 'service-booking-manager'); ?>
-							</li>
-							<li  data-tabs-target="#mpwpb_settings_date_time">
-								<i class="far fa-clock pe-1"></i><?php esc_html_e('Date & Time', 'service-booking-manager'); ?>
-							</li>
-							<li  data-tabs-target="#mpwpb_price_settings">
-								<i class="fas fa-hand-holding-usd pe-1"></i><?php esc_html_e('Pricing', 'service-booking-manager'); ?>
-							</li>
-							<li  data-tabs-target="#mpwpb_extra_service_settings">
-								<i class="fas fa-funnel-dollar pe-1"></i><?php esc_html_e('Extra Service', 'service-booking-manager'); ?>
-							</li>
-							<?php do_action('add_mpwpb_settings_tab_after_date', $post_id); ?>
-						</ul>
+					<div class="mpTabs metabox">
+						<div class="tabLists">
+							<ul>
+								<li  data-tabs-target="#mpwpb_general_info">
+									<i class="fas fa-tools pe-1"></i><?php esc_html_e('General Info', 'service-booking-manager'); ?>
+								</li>
+								<li  data-tabs-target="#mpwpb_settings_date_time">
+									<i class="far fa-clock pe-1"></i><?php esc_html_e('Date & Time', 'service-booking-manager'); ?>
+								</li>
+								<li  data-tabs-target="#mpwpb_price_settings">
+									<i class="fas fa-hand-holding-usd pe-1"></i><?php esc_html_e('Pricing', 'service-booking-manager'); ?>
+								</li>
+								<li  data-tabs-target="#mpwpb_extra_service_settings">
+									<i class="fas fa-funnel-dollar pe-1"></i><?php esc_html_e('Extra Service', 'service-booking-manager'); ?>
+								</li>
+								<?php do_action('add_mpwpb_settings_tab_after_date', $post_id); ?>
+							</ul>
+						</div>
 						<div class="tabsContent">
 							<?php do_action('add_mpwpb_settings_tab_content', $post_id); ?>
 							
@@ -69,7 +71,7 @@
 					'mpwpb_display_slider' => esc_html__('By default slider is ON but you can keep it off by switching this option', 'service-booking-manager'),
 					'mpwpb_slider_images' => esc_html__('Please upload images for gallery', 'service-booking-manager'),
 					//''          => esc_html__( '', 'service-booking-manager' ),
-					'mpwpb_short_code' => esc_html__('You can display this Ticket type list with the add to cart button anywhere on your website by copying the shortcode and using it on any post or page.', 'service-booking-manager'),
+					'mpwpb_short_code' => esc_html__('Copty this shortcode and paste any post or page.', 'service-booking-manager'),
 				);
 				$des = apply_filters('mpwpb_filter_description_array', $des);
 				return $des[$key];
