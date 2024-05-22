@@ -23,28 +23,39 @@
 				$ex_count                           = 0;
 				?>
 				<div class="tabsItem mpwpb_extra_service_settings" data-tabs="#mpwpb_extra_service_settings">
-					<h2 class="h4 text-primary px-0"><?php esc_html_e( 'Extra Service Configuration', 'service-booking-manager' ); ?></h2>
-					
-					<section class="component d-flex justify-content-between align-items-center mb-2">
-                        <div class="w-50 d-flex justify-content-between align-items-center">
-                            <label class=""><?php esc_html_e( 'Enable Extra Service', 'service-booking-manager' ); ?><i class="fas fa-question-circle tool-tips"></i></label>
-                        </div>
-                        <div class="w-50 d-flex justify-content-end align-items-center">
-							<?php MP_Custom_Layout::switch_button( 'mpwpb_extra_service_active', $extra_service_active_checked ); ?>
-                        </div>
+					<header>
+							<h2><?php esc_html_e('Extra Service Configuration', 'service-booking-manager'); ?></h2>
+							<span><?php MPWPB_Settings::info_text('ex_service'); ?></span>
+                    </header>
+					<section class="section">
+							<h2><?php esc_html_e('Extra Service Settings', 'service-booking-manager'); ?></h2>
+							<span><?php MPWPB_Settings::info_text('ex_service_desc'); ?></span>
                     </section>
 
-					<section class="component d-flex justify-content-between align-items-center mb-2">
-                        <div class="w-50 d-flex justify-content-between align-items-center">
-                            <label class=""><?php esc_html_e( 'Enable Group Service', 'service-booking-manager' ); ?> <i class="fas fa-question-circle tool-tips"></i></label>
-                        </div>
-                        <div class="w-50 d-flex justify-content-end align-items-center">
-							<?php MP_Custom_Layout::switch_button( 'mpwpb_group_extra_service_active', $extra_service_group_active_checked ); ?>
-                        </div>
+					<section>
+						<label class="label">
+							<div>
+								<p><?php esc_html_e( 'Enable Extra Service', 'service-booking-manager' ); ?></p>
+							</div>
+							<div>
+								<?php MP_Custom_Layout::switch_button( 'mpwpb_extra_service_active', $extra_service_active_checked ); ?>
+							</div>
+						</label>
                     </section>
 
-					<section class="component"  >
-						<div class="mp_settings_area _mT_xs">
+					<section>
+						<label class="label">
+							<div>
+								<p><?php esc_html_e( 'Enable Group Service', 'service-booking-manager' ); ?> <i class="fas fa-question-circle tool-tips"></i></p>
+							</div>
+							<div>
+								<?php MP_Custom_Layout::switch_button( 'mpwpb_group_extra_service_active', $extra_service_group_active_checked ); ?>
+							</div>
+						</label>
+                    </section>
+
+					<section>
+						<div class="mp_settings_area">
 							<div class="_oAuto">
 								<div class="mpwpb_category_area mpwpb_category_header">
 									<div class="mpwpb_category_item <?php echo esc_attr( $extra_service_group_active_class ); ?>" data-collapse="#mpwpb_group_extra_service_active">
