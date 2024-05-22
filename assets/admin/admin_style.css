@@ -73,6 +73,7 @@
 }
 #mp_meta_box_panel .metabox .tabsContent section.section {
   background-color: var(--color_light);
+  margin-top: 50px;
 }
 #mp_meta_box_panel .metabox .tabsContent section.section h2 {
   font-weight: 600;

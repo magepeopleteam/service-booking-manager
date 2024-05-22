@@ -72,6 +72,8 @@
 					'mpwpb_slider_images' => esc_html__('Please upload images for gallery', 'service-booking-manager'),
 					//''          => esc_html__( '', 'service-booking-manager' ),
 					'mpwpb_short_code' => esc_html__('Copty this shortcode and paste any post or page.', 'service-booking-manager'),
+					'date_time_desc' => esc_html__('Date & time settings', 'service-booking-manager'),
+					'general_date_time_desc' => esc_html__('Date & time settings', 'service-booking-manager'),
 				);
 				$des = apply_filters('mpwpb_filter_description_array', $des);
 				return $des[$key];
