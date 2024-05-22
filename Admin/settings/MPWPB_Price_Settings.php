@@ -15,8 +15,14 @@
 			public function price_settings($post_id) {
 				?>
 				<div class="tabsItem mpwpb_price_settings" data-tabs="#mpwpb_price_settings">
-					<h2 class="h4 text-primary px-0"><?php echo esc_html__('Price Settings', 'service-booking-manager'); ?></h2>
-
+					<header>
+							<h2><?php esc_html_e('Price Settings', 'service-booking-manager'); ?></h2>
+							<span><?php MPWPB_Settings::info_text('date_time_desc'); ?></span>
+                    </header>
+					<section class="section">
+							<h2><?php esc_html_e('Price Settings', 'service-booking-manager'); ?></h2>
+							<span><?php MPWPB_Settings::info_text('general_date_time_desc'); ?></span>
+                    </section>
 					<?php $this->price($post_id); ?>
 				</div>
 				<?php
@@ -60,27 +66,28 @@
 				$active['service_details'] = $service_details_active_class;
 				$active['service_duration'] = $service_duration_active_class;
 				?>
-				<div>
-
-					<section class="component d-flex justify-content-between align-items-center mb-2">
-						<div class="w-50 d-flex justify-content-between align-items-center">
-							<label class=""><?php echo esc_html__('Enable', 'service-booking-manager') . ' <span data-input-change="mpwpb_category_text">' . $category_text . ' </span> ' . esc_html__('Section', 'service-booking-manager'); ?><i class="fas fa-question-circle tool-tips"><span><?php MPWPB_Settings::info_text('mpwpb_category_active'); ?></span></i></label>
+				
+				<section>
+					<label class="label">
+						<div>
+							<p><?php echo esc_html__('Enable', 'service-booking-manager') . ' <span data-input-change="mpwpb_category_text">' . $category_text . ' </span> ' . esc_html__('Section', 'service-booking-manager'); ?><i class="fas fa-question-circle tool-tips"><span><?php MPWPB_Settings::info_text('mpwpb_category_active'); ?></span></i></p>
 						</div>
-						<div class="w-50 d-flex justify-content-end align-items-center">
+						<div>
 							<?php MP_Custom_Layout::switch_button('mpwpb_category_active', $category_active_checked); ?>
 						</div>
-					</section>
+					</label>
+				</section>
 
-					<section class="component <?php echo esc_attr($category_active_class); ?>" data-collapse="#mpwpb_category_active">
-						<div class="d-flex justify-content-between align-items-center mb-2 ">
-							<div class="w-50 d-flex justify-content-between align-items-center">
-								<label class=""><?php echo esc_html__('Enable', 'service-booking-manager') . '&nbsp;<span data-input-change="mpwpb_sub_category_text">' . $sub_category_text . '</span>&nbsp;' . esc_html__('Section', 'service-booking-manager'); ?> <i class="fas fa-question-circle tool-tips"><span><?php MPWPB_Settings::info_text('mpwpb_sub_category_active'); ?></span></i></label>
-							</div>
-							<div class="w-50 d-flex justify-content-end align-items-center">
-								<?php MP_Custom_Layout::switch_button('mpwpb_sub_category_active', $category_active_checked); ?>
-							</div>
+				<section class="<?php echo esc_attr($category_active_class); ?>" data-collapse="#mpwpb_category_active">
+					<label class="label">
+						<div class="w-50 d-flex justify-content-between align-items-center">
+							<label class=""><?php echo esc_html__('Enable', 'service-booking-manager') . '&nbsp;<span data-input-change="mpwpb_sub_category_text">' . $sub_category_text . '</span>&nbsp;' . esc_html__('Section', 'service-booking-manager'); ?> <i class="fas fa-question-circle tool-tips"><span><?php MPWPB_Settings::info_text('mpwpb_sub_category_active'); ?></span></i></label>
 						</div>
-					</section>
+						<div class="w-50 d-flex justify-content-end align-items-center">
+							<?php MP_Custom_Layout::switch_button('mpwpb_sub_category_active', $category_active_checked); ?>
+						</div>
+					</label>
+				</section>
 
 					<section class="component d-flex justify-content-between align-items-center mb-2 " >
 						<div class="w-50 d-flex justify-content-between align-items-center">
@@ -184,7 +191,7 @@
 							</div>
 						</div>
 					</div>
-				</div>
+				
 				<?php
 			}
 			public function category_item($category_count, $active, $categories = array()) {
