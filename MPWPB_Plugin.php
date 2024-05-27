@@ -41,7 +41,7 @@
 			public function activation_redirect($plugin) {
 				if ($plugin == plugin_basename(__FILE__)) {
 					flush_rewrite_rules();
-					if(!MP_Global_Function::user_role_exists('mpwpb_staff')){
+					if(! wp_roles()->is_role('mpwpb_staff')){
 						add_role('mpwpb_staff', esc_html__('Service Staffs', 'service-booking-manager'), array(
 							'read' => true, // True allows that capability
 							'edit_posts' => true,
