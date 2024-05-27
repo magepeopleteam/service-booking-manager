@@ -57,7 +57,7 @@
 						</label>
 					</section>
 					<section class="<?php echo esc_attr($date_type == 'particular' ? 'mActive' : ''); ?>" data-collapse="#mp_particular">
-						<label class="label">
+						<label class="_dFlex_justifyBetween">
 							<div>
 								<p><?php esc_html_e('Particular Dates', 'service-booking-manager'); ?> <span class="textRequired">&nbsp;*</span></p>
 							</div>
@@ -151,7 +151,7 @@
 						<table>
 							<thead>
 							<tr>
-								<th><?php esc_html_e('Day', 'service-booking-manager'); ?></th>
+								<th style="text-align: left;"><?php esc_html_e('Day', 'service-booking-manager'); ?></th>
 								<th><?php esc_html_e('Start Time', 'service-booking-manager'); ?></th>
 								<th><?php esc_html_e('To', 'service-booking-manager'); ?></th>
 								<th><?php esc_html_e('End Time', 'service-booking-manager'); ?></th>
@@ -177,9 +177,6 @@
                     </section>
 					<section>
 						<label class="label">
-							<div>
-								<p><?php esc_html_e('Off Day', 'service-booking-manager'); ?> <span class="textRequired">&nbsp;*</span></p>
-							</div>
 							<div class="groupCheckBox flexWrap">
 								<?php
 									$off_days = MP_Global_Function::get_post_info($post_id, 'mpwpb_off_days');
@@ -188,7 +185,7 @@
 								?>
 								<input type="hidden" name="mpwpb_off_days" value="<?php echo esc_attr($off_days); ?>"/>
 								<?php foreach ($days as $key => $day) { ?>
-									<label class="customCheckboxLabel _w_200">
+									<label class="customCheckboxLabel ">
 										<input type="checkbox" <?php echo esc_attr(in_array($key, $off_day_array) ? 'checked' : ''); ?> data-checked="<?php echo esc_attr($key); ?>"/>
 										<span class="customCheckbox"><?php echo esc_html($day); ?></span>
 									</label>
@@ -197,10 +194,10 @@
 						</label>
 					</section>
 					<section>
-						<label class="label">
-							<div>
-								<p><?php esc_html_e('Off Dates', 'service-booking-manager'); ?> <i class="fas fa-question-circle tool-tips"></i></p>
-							</div>
+						<label class="_dFlex_justifyBetween">
+							<p>
+								<?php esc_html_e('Off date', 'service-booking-manager'); ?>
+							</p>
 							<div class="mp_settings_area">
 								<div class="mp_item_insert mp_sortable_area">
 									<?php
