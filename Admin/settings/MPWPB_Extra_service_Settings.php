@@ -46,7 +46,7 @@
 					<section>
 						<label class="label">
 							<div>
-								<p><?php esc_html_e( 'Enable Group Service', 'service-booking-manager' ); ?> <i class="fas fa-question-circle tool-tips"></i></p>
+								<p><?php esc_html_e( 'Enable Group Service', 'service-booking-manager' ); ?></p>
 							</div>
 							<div>
 								<?php MP_Custom_Layout::switch_button( 'mpwpb_group_extra_service_active', $extra_service_group_active_checked ); ?>
@@ -137,7 +137,7 @@
 						?>
 					</div>
 
-					<?php MP_Custom_Layout::add_new_button( esc_html__( 'Add New service', 'service-booking-manager' ), 'mpwpb_add_group_service', 'btn my-2' ); ?>
+					<?php MP_Custom_Layout::add_new_button( esc_html__( 'Add New service', 'service-booking-manager' ), 'mpwpb_add_group_service', '_themeButton_xs _mT' ); ?>
 
 					<div class="mp_hidden_content">
 						<div class="mp_hidden_item">
