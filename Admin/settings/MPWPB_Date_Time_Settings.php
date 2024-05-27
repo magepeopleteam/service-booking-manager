@@ -232,7 +232,7 @@
 				$hidden_date = $date ? date('Y-m-d', strtotime($date)) : '';
 				$visible_date = $date ? date_i18n($date_format, strtotime($date)) : '';
 				?>
-				<div class="mp_remove_area  mb-1 bg-light p-1 rounded">
+				<div class="mp_remove_area  _mB_xs">
 					<div class="justifyBetween">
 						<label class="col_8">
 							<input type="hidden" name="<?php echo esc_attr($name); ?>" value="<?php echo esc_attr($hidden_date); ?>"/>
