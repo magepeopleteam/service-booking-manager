@@ -920,18 +920,18 @@
 	/*********Input Switch*******/
 	.mpStyle .roundSwitchLabel input[type='checkbox'] { display: none; }
 	.mpStyle .roundSwitch {
-		width: 60px; height: 25px; min-width: auto;
+		width: 52px; height: 25px; min-width: auto;
 		position: relative; background-color: #CCC; border-radius: 30px;
 		-webkit-transition: .4s; transition: .4s;
 	}
 	.mpStyle .roundSwitch::before {
-		position: absolute; content: "";height: 17px; width: 17px; left: 4px; bottom: 4px;
+		position: absolute; content: "";height: 23px; width: 23px; left: 1px; bottom: 1px;
 		background-color: white; border-radius: 50%;
 		-webkit-transition: .4s; transition: .4s;
 	}
-	.mpStyle .roundSwitchLabel input:checked + .roundSwitch { background-color: var(--color_success); }
+	.mpStyle .roundSwitchLabel input:checked + .roundSwitch { background-color: var(--color_theme); }
 	.mpStyle .roundSwitchLabel input:focus + .roundSwitch { box-shadow: 0 0 1px #2276D2; }
-	.mpStyle .roundSwitchLabel input:checked + .roundSwitch:before { -ms-transform: translateX(35px); transform: translateX(35px); }
+	.mpStyle .roundSwitchLabel input:checked + .roundSwitch:before { -ms-transform: translateX(27px); transform: translateX(27px); }
 	/*********Group radio check*******/
 	.groupRadioCheck [data-radio-check] { cursor: pointer; -webkit-justify-content: flex-start; justify-content: flex-start; }
 	.groupRadioCheck button[data-radio-check] { -webkit-justify-content: center; justify-content: center; }
