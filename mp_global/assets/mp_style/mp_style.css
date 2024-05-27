@@ -940,7 +940,7 @@
 	/*********Group Content*******/
 	.mpStyle .groupContent {
 		font-size: var(--fs); border: 1px solid var(--color_border);
-		background-color: var(--color_theme); color: var(--color_theme_alter);
+		background-color: var(--color_light); color: var(--color_theme_alter);
 		text-align: center; position: relative;
 	}
 	div.mpStyle div.groupContent > * { border-left: 1px solid var(--color_border); margin: 0; }

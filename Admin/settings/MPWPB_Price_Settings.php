@@ -196,7 +196,7 @@
 						</div>
 					</div>
 					<div class="<?php echo esc_attr($category_active_class); ?>" data-collapse="#mpwpb_category_active">
-						<?php MP_Custom_Layout::add_new_button(esc_html__('Add New ', 'service-booking-manager') . ' ' . $category_text , 'mpwpb_add_category', 'btn my-1','','mpwpb_category_text'); ?>
+						<?php MP_Custom_Layout::add_new_button(esc_html__('Add New ', 'service-booking-manager') . ' ' . $category_text , 'mpwpb_add_category', '_themeButton_xs_mT','','mpwpb_category_text'); ?>
 						<div class="mp_hidden_content">
 							<div class="mp_hidden_item">
 								<?php $this->category_item(1, $active); ?>
@@ -258,7 +258,7 @@
 						?>
 					</div>
 					<div class="<?php echo esc_attr($sub_category_active_class); ?>" data-collapse="#mpwpb_sub_category_active">
-						<?php MP_Custom_Layout::add_new_button(esc_html__('Add New ', 'service-booking-manager') . $sub_category_text, 'mpwpb_add_sub_category', '_navy_blueButton_xs_mTB_xs my-2','','mpwpb_sub_category_text'); ?>
+						<?php MP_Custom_Layout::add_new_button(esc_html__('Add New ', 'service-booking-manager') . $sub_category_text, 'mpwpb_add_sub_category', '_navy_blueButton_xs_mTB_xs mT','','mpwpb_sub_category_text'); ?>
 						<div class="mp_hidden_content">
 							<div class="mp_hidden_item">
 								<?php $this->sub_category_item(1, $unique_name, $active); ?>
@@ -320,7 +320,7 @@
 							}
 						?>
 					</div>
-					<?php MP_Custom_Layout::add_new_button(esc_html__('Add New ', 'service-booking-manager') . $service_text, 'mp_add_item', 'btn m-2','','mpwpb_service_text'); ?>
+					<?php MP_Custom_Layout::add_new_button(esc_html__('Add New ', 'service-booking-manager') . $service_text, 'mp_add_item', '_themeButton_xs','','mpwpb_service_text'); ?>
 					<div class="mp_hidden_content">
 						<div class="mp_hidden_item">
 							<?php $this->service_item($unique_name, $active); ?>
