@@ -57,32 +57,21 @@
 						</label>
 					</section>
 					<section class="<?php echo esc_attr($date_type == 'particular' ? 'mActive' : ''); ?>" data-collapse="#mp_particular">
-						<label class="_dFlex_justifyBetween">
+						<label class="label">
 							<div>
 								<p><?php esc_html_e('Particular Dates', 'service-booking-manager'); ?> <span class="textRequired">&nbsp;*</span></p>
 							</div>
-							<div class="mp_settings_area">
-								<div class="mp_item_insert mp_sortable_area">
-									<?php
-										$particular_date_lists = MP_Global_Function::get_post_info($post_id, 'mpwpb_particular_dates', array());
-										if (sizeof($particular_date_lists)) {
-											foreach ($particular_date_lists as $particular_date) {
-												if ($particular_date) {
-													self::particular_date_item('mpwpb_particular_dates[]', $particular_date);
-												}
-											}
-										}
-									?>
-								</div>
-								<?php MP_Custom_Layout::add_new_button(esc_html__('Add New Particular date', 'service-booking-manager')); ?>
-								<div class="mp_hidden_content">
-									<div class="mp_hidden_item">
-										<?php self::particular_date_item('mpwpb_particular_dates[]'); ?>
-									</div>
-								</div>
-							</div>
+							<?php MP_Custom_Layout::add_new_button(esc_html__('New Particular date', 'service-booking-manager'),'show_sidebar'); ?>
 						</label>
 					</section>
+					<?php $particular_date_lists = MP_Global_Function::get_post_info($post_id, 'mpwpb_particular_dates', array()); ?>
+					<?php if (sizeof($particular_date_lists)) :?>
+					<section class="_dFlex_justifyCenter">
+							<?php foreach ($particular_date_lists as $key => $value):?>
+								<div class="particula-date-lists"><?php echo esc_html($value); ?></div>
+							<?php endforeach; ?>
+					</section>
+					<?php endif; ?>
 					<section class="<?php echo esc_attr($date_type == 'repeated' ? 'mActive' : ''); ?>" data-collapse="#mp_repeated">
 						<label class="label">
 							<div>
@@ -229,14 +218,10 @@
 				$hidden_date = $date ? date('Y-m-d', strtotime($date)) : '';
 				$visible_date = $date ? date_i18n($date_format, strtotime($date)) : '';
 				?>
-				<div class="mp_remove_area  _mB_xs">
-					<div class="justifyBetween">
-						<label class="col_8">
-							<input type="hidden" name="<?php echo esc_attr($name); ?>" value="<?php echo esc_attr($hidden_date); ?>"/>
-							<input value="<?php echo esc_attr($visible_date); ?>" class="formControl date_type" placeholder="<?php echo esc_attr($now); ?>"/>
-						</label>
-						<?php MP_Custom_Layout::move_remove_button(); ?>
-					</div>
+				<div class="_dFlex_justifyCenter">
+					<label class="">
+						<p><?php echo esc_attr($visible_date); ?></p>
+					</label>
 				</div>
 				<?php
 			}
