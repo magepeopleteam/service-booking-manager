@@ -8,7 +8,7 @@
   div.mpwpb_category_header,
   div.mpwpb_category_header div.mpwpb_service_area {
     text-align: center;
-    background-color: #03a9f4;
+    background-color: var(--color_theme);
     color: #fff;
   }
   div.mpwpb_category_header div.mpwpb_category_content {
