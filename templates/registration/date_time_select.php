@@ -60,6 +60,11 @@
 								$start_date = date('Y-m-d', strtotime($start_date . ' +1 day'));
 							}
 						}
+						else{
+							?>
+							<h5><?php echo __('Date not available','service-booking-manager'); ?></h5>
+							<?php
+						}
 					?>
 				</div>
 				<div class="divider"></div>

@@ -248,7 +248,7 @@
 	.mpStyle button[disabled] { cursor: not-allowed; opacity: 0.8; background-color: #DDD; }
 	.mpStyle button:hover, .mpStyle button:focus { text-decoration: none; opacity: 0.8; background-color: var(--color_theme_cc); color: #FFF; }
 	.mpStyle button:hover span, .mpStyle button:focus span { color: #FFF; }
-	.mpStyle .mpBtn, .mpStyle [class*="_mpBtn"] { padding: var(--dMP_xs) var(--dMP); color: var(--d_color); background-color: transparent; border: 1px solid var(--color_border); }
+	.mpStyle .mpBtn, .mpStyle [class*="_mpBtn"] { padding: var(--dMP_xs) var(--dMP); color: var(--d_color); background-color: transparent; border: 1px solid var(--color_border); font-weight: var(--fw-thin);}
 	.mpStyle .mpBtn_xs, .mpStyle [class*="_mpBtn_xs"] { padding: 7px var(--dMP_xs); }
 	.mpStyle .mpBtn.mpActive, .mpStyle [class*="_mpBtn"].mpActive { border-color: var(--color_theme); color: var(--color_theme); }
 	.mpStyle .mpBtn.mActive, .mpStyle [class*="_mpBtn"].mActive,
