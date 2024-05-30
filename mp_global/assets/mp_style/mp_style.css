@@ -1032,7 +1032,7 @@
 		position: relative; text-align: left; cursor: pointer;
 		padding: var(--dMP_xs); color: var(--d_color);
 	}
-	.mpStyle [data-tabs-target]:hover { font-weight: var(--fw-medium); border-color: var(--color_theme); color: var(--color_theme) }
+	.mpStyle [data-tabs-target]:hover { font-weight: var(--fw-medium); border-color: var(--color_theme); color: var(--color_white) }
 	.mpStyle [data-tabs-target].active { font-weight: var(--fw-medium); background-color: var(--color_theme); color: var(--color_theme_alter); }
 	.topTabs [data-tabs-target] { border-right: 1px solid var(--color_border); -webkit-justify-content: center; justify-content: center; }
 	.topTabs [data-tabs-target]:last-child { border-right: none; }
