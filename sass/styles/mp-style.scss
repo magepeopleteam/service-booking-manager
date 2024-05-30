@@ -1,0 +1,64 @@
+    .mpStyle button:hover, .mpStyle button:focus {
+        text-decoration: none;
+        opacity: 0.8;
+        background-color: var(--mage-primary);
+        color: #FFF;
+    }
+
+    .mpStyle .roundSwitchLabel input:checked + .roundSwitch { background-color: var(--mage-primary); }
+    	/***/
+	.mpStyle .themeButton, .mpStyle [class*="_themeButton"] { background-color: var(--mage-primary); color: var(--mage-white); padding: var(--dMP_xs) var(--dMP); border: 2px solid var(--mage-primary); }
+	.mpStyle .themeButton span, .mpStyle [class*="_themeButton"] span { color: var(--mage-white); }
+	.mpStyle .themeButton:hover, .mpStyle [class*="_themeButton"]:hover { background-color: var(--mage-primary); color: var(--mage-white); border-color: var(--mage-primary); }
+	.mpStyle .themeButton:hover span, .mpStyle [class*="_themeButton"]:hover span { color: var(--mage-white); }
+	/****/
+
+
+    div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
+        text-align: center;
+        background-color: var(--mage-light);
+        color: var(--mage-dark);
+      }
+// *****************group checkbox******************
+      .mpStyle .customCheckbox { padding: 3px 0 0 30px; position: relative; line-height: 1; min-width: auto; white-space: normal !important;}
+      .mpStyle .customCheckbox::before {
+          content: ""; position: absolute; left: 0; top: 0; height: 20px; width: 20px;
+          background-color: var(--mage-white);
+          border: 2px solid var(--mage-primary); border-radius: 2px; }
+      .mpStyle .customCheckboxLabel { padding: 0 0 10px 0; cursor: pointer; font-weight: var(--fw-medium); width: 130px;}
+      .mpStyle .customCheckboxLabel input:checked ~ .customCheckbox::before { background: var(--mage-primary); }
+      /******************************************************************** Date picker ************************************************/
+@media only screen and (min-width: 10px) {
+	#ui-datepicker-div {width: 342px;border-color: var(--mage-primary);padding: 0;background-color: #FFF;}
+	#ui-datepicker-div .ui-datepicker-header {
+		background-color: var(--mage-primary);background-image: none;border-color: var(--mage-primary);
+		padding: var(--dMP_xs);color: var(--mage-white);border-radius: 0;
+		display: -webkit-flex;display: flex;-webkit-justify-content: center;justify-content: center;
+		font-size: var(--fs_h6);
+	}
+	#ui-datepicker-div .ui-datepicker-header .ui-icon {display: none;}
+	#ui-datepicker-div .ui-datepicker-prev {top: var(--dMP_xs);left: 5px;height: 30px;width: 30px;}
+	#ui-datepicker-div .ui-datepicker-next {top: var(--dMP_xs);right: 5px;height: 30px;width: 30px;}
+	#ui-datepicker-div .ui-datepicker-prev:hover,
+	#ui-datepicker-div .ui-datepicker-prev:focus,
+	#ui-datepicker-div .ui-datepicker-next:focus,
+	#ui-datepicker-div .ui-datepicker-next:hover {box-shadow: 0 0 0 2px #FFF, 0 0 2px 1px #FFF; outline: 1px solid transparent}
+	#ui-datepicker-div .ui-datepicker-header a.ui-datepicker-prev::before,
+	#ui-datepicker-div .ui-datepicker-header a.ui-datepicker-next::before { position: absolute;content: '>';color: #FFF;left: 10px;font-size: var(--fs_h3);top: 5px;font-weight: bold;line-height: 1;}
+	#ui-datepicker-div .ui-datepicker-header a.ui-datepicker-prev::before {content: '<';}
+	#ui-datepicker-div .ui-datepicker-header .ui-state-hover {background-color: var(--mage-primary);background-image: none;border-color: var(--mage-primary);}
+	#ui-datepicker-div .ui-state-default {
+		background-color: transparent;background-image: none;border: none;border-radius: 50%;
+		width: 35px;height: 35px;color: var(--mage-primary);font-weight: bold;padding: 0;
+		display: -webkit-flex;display: flex;-webkit-align-items: center;align-items: center;-webkit-justify-content: center;justify-content: center;
+	}
+	#ui-datepicker-div a.ui-state-default:hover {background-color: var(--mage-primary);color:var(--mage-white)}
+	#ui-datepicker-div .ui-state-active {background-color: var(--mage-primary);color: var(--mage-white);background-image: none;}
+	#ui-datepicker-div .ui-datepicker-title {background-color: var(--mage-primary);color: var(--mage-white);background-image: none;font-size: var(--fs_h5);display: -webkit-flex;display: flex;margin: 0;}
+	#ui-datepicker-div .ui-datepicker-title select {min-width: 100px;height: 30px;font-size: var(--fs);padding: 0 var(--dMP_xs);text-align: left;}
+	#ui-datepicker-div.ui-datepicker td {background-color: var(--mage-white); border: 1px dotted var(--mage-dark);padding: 4px 6px;}
+}
+
+.wp-core-ui select:hover {
+    color:var(--mage-primary);
+  }
