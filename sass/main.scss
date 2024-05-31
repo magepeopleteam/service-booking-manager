@@ -2,5 +2,12 @@
 // Email: raselsha@gmail.com 
 // Version: 1.0.0
 // Descriptoin: this file is main sass file that will compile one main css into /assets/admin/mp_main_settings.css
-
+:root{
+    --mage-primary:#f12971;
+    --mage-light:#F2F2F2;
+    --mage-black: #000;
+    --mage-white: #FFFFFF;
+    --mage-border: #DDD;
+}
+@import 'styles/mp-style';
 @import 'styles/metabox';
