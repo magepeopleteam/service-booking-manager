@@ -33,6 +33,7 @@
 									<div class="_bgTheme_mB_xs_padding_xs fdColumn">
 										<strong><?php echo MP_Global_Function::date_format($start_date); ?></strong>
 									</div>
+
 									<?php if (!in_array($start_date, $all_dates)) { ?>
 										<div class="_mpBtn_mpDisabled_fullHeight_bgLight">
 											<h4 class="_rotate_90"><?php esc_html_e('Closed', 'service-booking-manager'); ?></h4>
@@ -52,6 +53,7 @@
 													<button type="button" class="_mpBtn"><?php esc_html_e('Fully Booked', 'service-booking-manager'); ?></button>
 													<?php
 												}
+
 											}
 										}
 									} ?>
