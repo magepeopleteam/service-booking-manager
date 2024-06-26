@@ -14,7 +14,7 @@
 			}
 			public function add_global_style() {
 				$default_color   = MP_Global_Function::get_style_settings( 'default_text_color', '#303030' );
-				$theme_color     = MP_Global_Function::get_style_settings( 'theme_color', '#2F9DF4' );
+				$theme_color     = MP_Global_Function::get_style_settings( 'theme_color', '#F12971' );
 				$alternate_color = MP_Global_Function::get_style_settings( 'theme_alternate_color', '#fff' );
 				$warning_color   = MP_Global_Function::get_style_settings( 'warning_color', '#E67C30' );
 				$default_fs      = MP_Global_Function::get_style_settings( 'default_font_size', '14' ) . 'px';
@@ -30,20 +30,20 @@
 				$button_bg       = MP_Global_Function::get_style_settings( 'button_bg', '#ea8125' );
 				$section_bg      = MP_Global_Function::get_style_settings( 'section_bg', '#FAFCFE' );
 				?>
-				<style>
+                <style>
 					:root {
-						--dContainer_Width: 1320px;
-						--sidebarLeft: 280px;
-						--sidebarRight: 300px;
-						--mainSection: calc(100% - 300px);
-						--dMPL: 40px;
-						--dMP: 20px;
-						--dMP_negetive: -20px;
-						--dMP_xs: 10px;
-						--dMP_xs_negative: -10px;
-						--dBRL: 10px;
-						--dBR: 5px;
-						--dShadow: 0 0 2px #665F5F7A;
+						--dcontainer_width: 1320px;
+						--sidebarleft: 280px;
+						--sidebarright: 300px;
+						--mainsection: calc(100% - 300px);
+						--dmpl: 40px;
+						--dmp: 20px;
+						--dmp_negetive: -20px;
+						--dmp_xs: 10px;
+						--dmp_xs_negative: -10px;
+						--dbrl: 10px;
+						--dbr: 5px;
+						--dshadow: 0 0 2px #665F5F7A;
 					}
 					/*****Font size********/
 					:root {
@@ -87,7 +87,7 @@
 						--color_theme_alter: <?php echo esc_attr($alternate_color); ?>;
 						--color_warning: <?php echo esc_attr($warning_color); ?>;
 						--color_black: #000;
-						--color_success: #03A9F4;
+						--color_success: #00A656;
 						--color_danger: #C00;
 						--color_required: #C00;
 						--color_white: #FFFFFF;
@@ -101,7 +101,7 @@
 						--color_blue: #815DF2;
 						--color_navy_blue: #007CBA;
 						--color_1: #0C5460;
-						--color_2: #0CB32612;
+						--color_2: #caf0ffcc;
 						--color_3: #FAFCFE;
 						--color_4: #6148BA;
 						--color_5: #BCB;
@@ -115,11 +115,11 @@
 							--fs_h3: 22px;
 							--fs_h2: 25px;
 							--fs_h1: 30px;
-							--dMPL: 32px;
-							--dMP: 16px;
-							--dMP_negetive: -16px;
-							--dMP_xs: 8px;
-							--dMP_xs_negative: -8px;
+							--dmpl: 32px;
+							--dmp: 16px;
+							--dmp_negetive: -16px;
+							--dmp_xs: 8px;
+							--dmp_xs_negative: -8px;
 						}
 					}
 					@media only screen and (max-width: 700px) {
@@ -133,13 +133,13 @@
 							--fs_h3: 20px;
 							--fs_h2: 22px;
 							--fs_h1: 24px;
-							--dMP: 10px;
-							--dMP_xs: 5px;
-							--dMP_xs_negative: -5px;
+							--dmp: 10px;
+							--dmp_xs: 5px;
+							--dmp_xs_negative: -5px;
 							--button_fs: 14px;
 						}
 					}
-				</style>
+                </style>
 				<?php
 			}
 		}
