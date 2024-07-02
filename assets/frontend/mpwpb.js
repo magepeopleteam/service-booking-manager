@@ -2,13 +2,24 @@
 function mpwpb_active_carousel(target,qty) {
 	target.each(function () {
 		let current_target = jQuery(this);
-		current_target.find(".owl-carousel").owlCarousel({
+		current_target.find(".mpwpb-owl-carousel").owlCarousel({
 			loop: false,
 			margin: 2,
 			nav: true,
-			responsive: {
-				0: {
-					items: qty
+			responsiveClass:true,
+			responsive:{
+				0:{
+					items:2,
+					nav:true
+				},
+				600:{
+					items:2,
+					nav:false
+				},
+				1000:{
+					items: qty,
+					nav:true,
+					loop:false
 				}
 			}
 		});

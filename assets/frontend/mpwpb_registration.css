@@ -83,8 +83,9 @@ div.registration_tab_item {
 /********************************************************************************************************************/
 @media only screen and (min-width: 10px) {
 	.mpwpb_date_carousel {position: relative;}
-	.mpwpb_date_carousel .owl-stage {display: -webkit-flex;display: flex;}
-	.mpwpb_date_carousel .owl-carousel .owl-item {display: -webkit-flex;display: flex;}
+	.mpwpb_date_carousel .mpwpb-owl-carousel{overflow: hidden;}
+	.mpwpb_date_carousel .mpwpb-owl-carousel .owl-stage {display: -webkit-flex;display: flex;}
+	.mpwpb_date_carousel .mpwpb-owl-carousel .owl-item {display: -webkit-flex;display: flex;}
 	.mpwpb_date_time_line {width: 100%;padding: var(--dMP_xs);text-align: center;}
 	.mpwpb_date_time_line [data-radio-check] {width: 100%;margin: 0 0 var(--dMP_xs) 0;-webkit-justify-content: center;}
 	.mpwpb_date_time_line [data-radio-check]:last-child {margin: 0;}
@@ -100,4 +101,15 @@ div.registration_tab_item {
 	div.mpwpb_registration div.mainSection {max-width: 100%;width: 100%;margin: var(--dMP_xs) 0;}
 	div.mpwpb_summary_area_left .mpwpb_summary_area_left_title{text-align: left;}
 	div.mpwpb_registration div.mpwpb_item_box h4{-webkit-justify-content:flex-start;justify-content: flex-start;}
+}
+
+@media (max-width: 600px){
+	.mpwpb-booking-navigation{
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
+	.mpwpb-booking-navigation .mpwpb-total{
+		padding: 20px 0;
+	}
 }

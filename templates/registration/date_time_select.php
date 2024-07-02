@@ -22,7 +22,7 @@
 				<?php include(MPWPB_Function::template_path('layout/carousel_indicator.php')); ?>
 			</header>
 			<div class="padding">
-				<div class="owl-theme owl-carousel">
+				<div class="owl-theme mpwpb-owl-carousel">
 					<?php
 						if(sizeof($all_dates)>0){
 							$start_date = $all_dates[0];
@@ -70,12 +70,12 @@
 					?>
 				</div>
 				<div class="divider"></div>
-				<div class="justifyBetween">
+				<div class="justifyBetween mpwpb-booking-navigation">
 					<button class="_mpBtn_dBR_padding mpActive mpwpb_date_time_prev" type="button">
 						<i class="fas fa-long-arrow-alt-left _mR_xs"></i>
 						<?php echo esc_html__('Previous', 'service-booking-manager') . ' ' . $service_text; ?>
 					</button>
-					<h4 class="alignCenter">
+					<h4 class="alignCenter mpwpb-total">
 						<?php esc_html_e('Total :', 'service-booking-manager'); ?>&nbsp;&nbsp;
 						<span class="mpwpb_total_bill textTheme"><?php echo MP_Global_Function::wc_price($post_id, 0); ?></span>
 					</h4>
