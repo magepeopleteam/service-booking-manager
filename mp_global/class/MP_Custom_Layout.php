@@ -127,14 +127,14 @@
 			}
 			public static function remove_button() {
 				?>
-				<button class="_warningButton_xs mp_item_remove" type="button">
+				<button class="_themeButton_xs mp_item_remove" type="button">
 					<span class="fas fa-trash-alt mp_zero"></span>
 				</button>
 				<?php
 			}
 			public static function move_button() {
 				?>
-				<div class="_mpBtn_navy_blueButton_xs mp_sortable_button" type="">
+				<div class="_themeButton_xs mp_sortable_button" type="">
 					<span class="fas fa-expand-arrows-alt mp_zero"></span>
 				</div>
 				<?php
