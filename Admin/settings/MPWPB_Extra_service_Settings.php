@@ -25,11 +25,9 @@
 				<div class="tabsItem mpwpb_extra_service_settings" data-tabs="#mpwpb_extra_service_settings">
 					<header>
 							<h2><?php esc_html_e('Extra Service Configuration', 'service-booking-manager'); ?></h2>
-							<span><?php MPWPB_Settings::info_text('ex_service'); ?></span>
                     </header>
 					<section class="section">
 							<h2><?php esc_html_e('Extra Service Settings', 'service-booking-manager'); ?></h2>
-							<span><?php MPWPB_Settings::info_text('ex_service_desc'); ?></span>
                     </section>
 
 					<section>

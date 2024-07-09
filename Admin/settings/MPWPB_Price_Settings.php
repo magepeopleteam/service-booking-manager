@@ -17,11 +17,9 @@
 				<div class="tabsItem mpwpb_price_settings" data-tabs="#mpwpb_price_settings">
 					<header>
 							<h2><?php esc_html_e('Price Settings', 'service-booking-manager'); ?></h2>
-							<span><?php MPWPB_Settings::info_text('date_time_desc'); ?></span>
                     </header>
 					<section class="section">
 							<h2><?php esc_html_e('Price Settings', 'service-booking-manager'); ?></h2>
-							<span><?php MPWPB_Settings::info_text('general_date_time_desc'); ?></span>
                     </section>
 					<?php $this->price($post_id); ?>
 				</div>
