@@ -17,11 +17,9 @@
 				<div class="tabsItem mpwpb_price_settings" data-tabs="#mpwpb_price_settings">
 					<header>
 							<h2><?php esc_html_e('Price Settings', 'service-booking-manager'); ?></h2>
-							<span><?php MPWPB_Settings::info_text('date_time_desc'); ?></span>
                     </header>
 					<section class="section">
 							<h2><?php esc_html_e('Price Settings', 'service-booking-manager'); ?></h2>
-							<span><?php MPWPB_Settings::info_text('general_date_time_desc'); ?></span>
                     </section>
 					<?php $this->price($post_id); ?>
 				</div>
@@ -125,17 +123,17 @@
 					</label>
 				</section>
 
-				<section>
-					<label class="label">
-						<div>
-							<p><?php esc_html_e('Enable Staff', 'service-booking-manager'); ?></p>
-							<span><?php MPWPB_Settings::info_text('mpwpb_service_staff_active'); ?></span>
-						</div>
-						<div>
-							<?php MP_Custom_Layout::switch_button('mpwpb_service_staff_active', $service_details_active_checked); ?>
-						</div>
-					</label>
-				</section>
+<!--				<section>-->
+<!--					<label class="label">-->
+<!--						<div>-->
+<!--							<p>--><?php //esc_html_e('Enable Staff', 'service-booking-manager'); ?><!--</p>-->
+<!--							<span>--><?php //MPWPB_Settings::info_text('mpwpb_service_staff_active'); ?><!--</span>-->
+<!--						</div>-->
+<!--						<div>-->
+<!--							--><?php //MP_Custom_Layout::switch_button('mpwpb_service_staff_active', $service_details_active_checked); ?>
+<!--						</div>-->
+<!--					</label>-->
+<!--				</section>-->
 
 				<div class="mp_settings_area component">
 					<div class="_oAuto">

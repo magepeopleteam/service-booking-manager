@@ -79,6 +79,7 @@ div.registration_tab_item {
 	div.mpwpb_summary_item span.mpwpb_item_check {opacity: 1;right: inherit;left: -14px;font-size: var(--fs_small);top: -3px; }
 	div.mpwpb_summary_item:last-child {border-color: transparent;}
 	/*************/
+	div.mpwpb_date_carousel .owl-dots{display: none;}
 }
 /********************************************************************************************************************/
 @media only screen and (min-width: 10px) {
