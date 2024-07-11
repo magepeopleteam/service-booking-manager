@@ -146,7 +146,15 @@
 								'yes' => esc_html__('Yes', 'service-booking-manager'),
 								'no' => esc_html__('No', 'service-booking-manager')
 							)
-						)
+						),
+						array(
+							'name' => 'buffer_time',
+							'label' => esc_html__('Buffer Time', 'service-booking-manager'),
+							'desc' => esc_html__('Please enter here car buffer time in minute. By default is 0', 'service-booking-manager'),
+							'type' => 'number',
+							'default' => 0,
+							'placeholder' => esc_html__('Ex:50', 'service-booking-manager'),
+						),
 					))
 				);
 				return array_merge($default_fields, $settings_fields);
