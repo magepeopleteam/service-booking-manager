@@ -150,7 +150,7 @@
 						array(
 							'name' => 'buffer_time',
 							'label' => esc_html__('Buffer Time', 'service-booking-manager'),
-							'desc' => esc_html__('Please enter here car buffer time in minute. By default is 0', 'service-booking-manager'),
+							'desc' => esc_html__('Please enter here  buffer time in minute. By default is 0', 'service-booking-manager'),
 							'type' => 'number',
 							'default' => 0,
 							'placeholder' => esc_html__('Ex:50', 'service-booking-manager'),

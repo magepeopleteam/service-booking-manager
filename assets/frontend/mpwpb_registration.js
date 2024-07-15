@@ -191,7 +191,7 @@ function mpwpb_price_calculation($this) {
                     target_extra_service.slideDown(350);
                     loadBgImage();
                     //pageScrollTo(parent);
-                    jQuery('html, body').animate({scrollTop: current.closest('.mpwpb_service_area').position().top += current.closest('.mpwpb_service_area').outerHeight()}, 1000);
+                   // jQuery('html, body').animate({scrollTop: current.closest('.mpwpb_service_area').position().top += current.closest('.mpwpb_service_area').outerHeight()}, 1000);
                 } else {
                     parent.find('.mpwpb_service_next').trigger('click');
                 }
@@ -205,6 +205,7 @@ function mpwpb_price_calculation($this) {
             parent.find('.all_service_area').slideUp(350);
             parent.find('.mpwpb_date_time_tab').addClass('mpActive').removeClass('mpDisabled').trigger('click');
             loadBgImage();
+            pageScrollTo(parent);
             //pageScrollTo(parent.find('.mpwpb_date_time_area'));
         } else {
             mp_alert($(this));
