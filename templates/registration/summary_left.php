@@ -32,13 +32,15 @@
 				<?php } ?>
 
 				<?php if ( sizeof( $all_service_list ) > 0 ) { ?>
-					<div class="mpwpb_summary_item" data-service>
+                    <?php foreach ($all_service_list as $service_list){ ?>
+					<div class="mpwpb_summary_item" data-service="<?php echo esc_attr( $service_list['service'] ); ?>"  data-service-category="<?php echo esc_attr( $service_list['category'] ); ?>" data-service-sub-category="<?php echo esc_attr( $service_list['sub_category'] ); ?>">
 						<span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
 						<div class="flexWrap justifyBetween">
-							<h6 class="mR_xs"></h6>
-							<p><span class="textTheme">x1</span>&nbsp;|&nbsp; <span class="textTheme service_price"></span></p>
+							<h6 class="mR_xs"><?php echo esc_html( $service_list['service'] ); ?></h6>
+							<p><span class="textTheme">x1</span>&nbsp;|&nbsp; <span class="textTheme service_price"><?php echo MP_Global_Function::wc_price( $post_id, $service_list['price'] ); ?></span></p>
 						</div>
 					</div>
+				<?php } ?>
 				<?php } ?>
 				<?php
 					if ( sizeof( $extra_services ) > 0 ) {
