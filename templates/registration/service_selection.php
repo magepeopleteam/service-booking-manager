@@ -35,43 +35,40 @@
 					$service_price = MPWPB_Function::get_price($post_id, $service_name, $category_name, $sub_category_name);
 					$service_details = array_key_exists('details', $service_item) ? $service_item['details'] : '';
 					$service_duration = array_key_exists('duration', $service_item) ? $service_item['duration'] : '';
-					$unique_id         = '#service_' . uniqid();
+					$unique_id = '#service_' . uniqid();
 					?>
-                    <div class="mpwpb_item_box mpwpb_service_item" data-price="<?php echo esc_attr($service_price); ?>" data-category="<?php echo esc_attr($category_name); ?>" data-sub-category="<?php echo esc_attr($sub_category_name); ?>" data-service="<?php echo esc_attr($service_name); ?>">
-                        <input type="hidden" name="mpwpb_service[]" value="">
+                    <div class="mpwpb_service_item" data-price="<?php echo esc_attr($service_price); ?>" data-category="<?php echo esc_attr($category_name); ?>" data-sub-category="<?php echo esc_attr($sub_category_name); ?>" data-service="<?php echo esc_attr($service_name); ?>">
                         <div class="dFlex">
-
-                            <div class="_dFlex_justifyBetween_fullWidth">
+                            <div class="_dFlex_justifyBetween_fullWidth_alignCenter">
                                 <div class="alignCenter">
 									<?php if ($service_icon) { ?>
                                         <span class="<?php echo esc_attr($service_icon); ?> mR_xs"></span>
 									<?php } ?>
-	                                <?php if ($service_image) { ?>
+									<?php if ($service_image) { ?>
                                         <div class="bg_image_area">
                                             <div data-bg-image="<?php echo esc_attr(MP_Global_Function::get_image_url('', $service_image, 'medium')); ?>"></div>
                                         </div>
-	                                <?php } ?>
+									<?php } ?>
                                     <h6><?php echo esc_html($service_name); ?></h6>
-                                    <div class="_mL_xs" data-collapse-target="<?php echo esc_attr( $unique_id ); ?>" data-read data-open-text="<?php esc_attr_e('Load More', 'service-booking-manager'); ?>" data-close-text="<?php esc_attr_e('Less More', 'service-booking-manager'); ?>">
+                                    <div class="_mL_xs" data-collapse-target="<?php echo esc_attr($unique_id); ?>" data-read data-open-text="<?php esc_attr_e('Load More', 'service-booking-manager'); ?>" data-close-text="<?php esc_attr_e('Less More', 'service-booking-manager'); ?>">
                                         <span data-text><?php esc_html_e('Load More', 'service-booking-manager'); ?></span>
                                     </div>
                                 </div>
                                 <h6 class="_textTheme_min_100"><?php echo wc_price($service_price); ?></h6>
-	                            <?php if ($service_duration) { ?>
+								<?php if ($service_duration) { ?>
                                     <h6 class="textTheme alignCenter">
                                         <span class="fas fa-clock mR_xs"></span>
                                         <span><?php echo MP_Global_Function::esc_html($service_duration); ?></span>
                                     </h6>
-	                            <?php } ?>
-                                <button type="button" class="_mpBtn_btLight_2_min_150 mpwpb_price_calculation"  data-open-icon="far fa-check-circle" data-close-icon="" data-open-text="<?php esc_attr_e( 'Select', 'service-booking-manager' ); ?>" data-close-text="<?php esc_attr_e( 'Selected', 'service-booking-manager' ); ?>" data-add-class="mActive">
-                                    <span data-text><?php esc_html_e( 'Select', 'service-booking-manager' ); ?></span>
+								<?php } ?>
+                                <button type="button" class="_mpBtn_btLight_4_min_150 mpwpb_service_button" data-open-icon="far fa-check-circle" data-close-icon="" data-open-text="<?php esc_attr_e('Select', 'service-booking-manager'); ?>" data-close-text="<?php esc_attr_e('Selected', 'service-booking-manager'); ?>" data-add-class="mActive">
+                                    <span data-text><?php esc_html_e('Select', 'service-booking-manager'); ?></span>
                                     <span data-icon class="mL_xs"></span>
+                                    <input type="hidden" name="mpwpb_service[]" value="">
                                 </button>
-
                             </div>
                         </div>
-                        <span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
-                        <div data-collapse="<?php echo esc_attr( $unique_id ); ?>" ><?php echo esc_html($service_details); ?></div>
+                        <div data-collapse="<?php echo esc_attr($unique_id); ?>"><?php echo esc_html($service_details); ?></div>
                     </div>
 				<?php } ?>
         </div>

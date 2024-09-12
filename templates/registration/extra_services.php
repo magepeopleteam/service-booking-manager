@@ -42,21 +42,21 @@
                                             </div>
                                         </div>
 									<?php } ?>
-                                    <div class="_dFlex_justifyBetween_fullWidth">
+                                    <div class="_dFlex_justifyBetween_fullWidth_alignCenter">
                                         <div class="alignCenter">
 											<?php if ($ex_service_icon) { ?>
                                                 <span class="<?php echo esc_attr($ex_service_icon); ?> _mR_xs"></span>
 											<?php } ?>
                                             <h6>
 												<?php echo esc_html($ex_service_info['name']); ?>
-                                                <sub class="textTheme">&nbsp;/ &nbsp;&nbsp;<?php echo MP_Global_Function::esc_html($ex_service_price); ?></sub>
                                             </h6>
+											<?php if ($ex_service_info['details']) { ?>
+                                                <div class="_mL_xs" data-collapse-target="<?php echo esc_attr($unique_id); ?>" data-read data-open-text="<?php esc_attr_e('Load More', 'service-booking-manager'); ?>" data-close-text="<?php esc_attr_e('Less More', 'service-booking-manager'); ?>">
+                                                    <span data-text><?php esc_html_e('Load More', 'service-booking-manager'); ?></span>
+                                                </div>
+											<?php } ?>
                                         </div>
-										<?php if ($ex_service_info['details']) { ?>
-                                            <div class="_mL_xs" data-collapse-target="<?php echo esc_attr($unique_id); ?>" data-read data-open-text="<?php esc_attr_e('Load More', 'service-booking-manager'); ?>" data-close-text="<?php esc_attr_e('Less More', 'service-booking-manager'); ?>">
-                                                <span data-text><?php esc_html_e('Load More', 'service-booking-manager'); ?></span>
-                                            </div>
-										<?php } ?>
+                                        <h6 class="_textTheme_min_100"><?php echo MP_Global_Function::esc_html($ex_service_price); ?></h6>
                                         <div class="alignCenter">
                                             <div class="mR_xs min_100" data-collapse="<?php echo esc_attr($ex_unique_id); ?>">
 												<?php MP_Custom_Layout::qty_input('mpwpb_extra_service_qty[]', $ex_service_price_raw, $ex_service_info['qty'], 1, 0, $ex_service_info['qty']); ?>

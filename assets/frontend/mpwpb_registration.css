@@ -47,11 +47,11 @@ div.registration_tab_item {
 	div.next_date_time_area {background-color: #FFF;padding: var(--dMP_xs);}
 	div.mpwpb_date_time_area header {background-color: rgba(54, 85, 250, 0.06);padding: var(--dMP_xs);border-bottom: 1px solid var(--color_border);}
 	div.mpwpb_item_box {cursor: pointer;padding: var(--dMP_xs);margin: var(--dMP_xs) 0;position: relative;border: 2px solid transparent;background-color: var(--color_light_2);}
-	div.mpwpb_item_box:hover,
 	div.mpwpb_item_box.mpActive {border-color: var(--color_theme);color: var(--color_theme);}
 	div.mpwpb_item_box.mpActive span.mpwpb_item_check {opacity: 1;}
 	div.mpwpb_item_box .bg_image_area {max-width: 50px;margin: 0  15px 0 0;}
 	div.mpwpb_service_area div.mpwpb_item_box {background-color: transparent}
+	div.mpwpb_service_area div.mpwpb_service_item {padding: var(--dMP_xs);margin: var(--dMP_xs) 0;position: relative;background-color: var(--color_light_2);}
 	/*************/
 	div.service_img_area {max-width: 120px;margin: 0 15px 0 0;width: 100%;}
 	div.mpwpb_icon_area {font-size: 60px;padding: var(--dMP);}
