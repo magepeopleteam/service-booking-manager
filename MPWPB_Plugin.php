@@ -3,7 +3,7 @@
 	 * Plugin Name: WordPress Service Booking & Scheduling Plugin | All-in-one Booking Systems -WpBookingly
 	 * Plugin URI: http://mage-people.com
 	 * Description: A complete solution for Any kind of service booking.
-	 * Version: 1.1.2
+	 * Version: 1.1.3
 	 * Author: MagePeople Team
 	 * Author URI: http://www.mage-people.com/
 	 * Text Domain: service-booking-manager
@@ -29,8 +29,7 @@
 				if (MP_Global_Function::check_woocommerce() == 1) {
 					add_action('activated_plugin', array($this, 'activation_redirect'), 90, 1);
 					require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Dependencies.php';
-				}
-				else {
+				} else {
 					require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Quick_Setup.php';
 					add_action('admin_notices', [$this, 'woocommerce_not_active']);
 					add_action('activated_plugin', array($this, 'activation_redirect_setup'), 90, 1);
@@ -38,8 +37,7 @@
 			}
 			public function activation_redirect($plugin) {
 				if ($plugin == plugin_basename(__FILE__)) {
-					flush_rewrite_rules();
-					if(! wp_roles()->is_role('mpwpb_staff')){
+					if (!wp_roles()->is_role('mpwpb_staff')) {
 						add_role('mpwpb_staff', esc_html__('Service Staffs', 'service-booking-manager'), array(
 							'read' => true, // True allows that capability
 							'edit_posts' => true,
@@ -47,6 +45,7 @@
 							'delete_posts' => false, // Use false to explicitly deny
 						));
 					}
+					flush_rewrite_rules();
 					exit(wp_redirect(admin_url('edit.php?post_type=mpwpb_item&page=mpwpb_quick_setup')));
 				}
 			}
