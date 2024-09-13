@@ -45,21 +45,18 @@ function mpwpb_price_calculation($this) {
         parent.find('.all_service_area').slideDown(350);
         parent.find('.mpwpb_date_time_area,.mpwpb_order_proceed_area').slideUp(300);
         loadBgImage();
-        // pageScrollTo(parent.find('.all_service_area'));
     });
     $(document).on('click', 'div.mpwpb_registration .mpwpb_date_time_tab', function () {
         let parent = $(this).closest('div.mpwpb_registration');
         parent.find('.mpwpb_date_time_area').slideDown(350);
         parent.find('.all_service_area,.mpwpb_order_proceed_area').slideUp(300)
         loadBgImage();
-        //pageScrollTo(parent.find('.mpwpb_date_time_area'));
     });
     $(document).on('click', 'div.mpwpb_registration .mpwpb_order_proceed_tab', function () {
         let parent = $(this).closest('div.mpwpb_registration');
         parent.find('.mpwpb_order_proceed_area').slideDown(350);
         parent.find('.all_service_area,.mpwpb_date_time_area').slideUp(300)
         loadBgImage();
-        //pageScrollTo(parent.find('.mpwpb_order_proceed_area'));
     });
     //==========category============//
     function refresh_sub_category(parent) {
@@ -67,7 +64,6 @@ function mpwpb_price_calculation($this) {
         let target_sub_category = parent.find('.mpwpb_sub_category_area');
         parent.find('[name="mpwpb_sub_category"]').val('');
         if (target_sub_category.length > 0) {
-            //target_sub_category.slideUp('fast');
             parent.find('.mpwpb_summary_item[data-sub-category]').slideUp('fast');
             let category = parent.find('[name="mpwpb_category"]').val();
             target_sub_category.find('.mpwpb_sub_category_item[data-category]').each(function () {
@@ -88,7 +84,6 @@ function mpwpb_price_calculation($this) {
             $(this).val('');
         });
         parent.find('.mpwpb_summary_item[data-service]').slideUp('fast');
-        //target_service.slideUp('fast');
         let category = parent.find('[name="mpwpb_category"]').val();
         let sub_category = parent.find('[name="mpwpb_sub_category"]').val();
         target_service.find('.mpwpb_service_item[data-category]').each(function () {
@@ -134,12 +129,9 @@ function mpwpb_price_calculation($this) {
                     target_sub_category.slideDown(250);
                     target_service.slideUp('fast');
                     loadBgImage();
-                    jQuery('html, body').animate({scrollTop: current.closest('.mpwpb_category_area').position().top += current.closest('.mpwpb_category_area').outerHeight()}, 1000);
                 } else {
                     if (target_service.length > 0) {
                         target_service.slideDown(250);
-                        //pageScrollTo(target_service);
-                        jQuery('html, body').animate({scrollTop: current.closest('.mpwpb_category_area').position().top += current.closest('.mpwpb_category_area').outerHeight()}, 1000);
                         loadBgImage();
                     }
                 }
@@ -167,8 +159,6 @@ function mpwpb_price_calculation($this) {
                     mpwpb_price_calculation(current);
                     target_service.slideDown(250);
                     loadBgImage();
-                    //pageScrollTo(target_service);
-                    jQuery('html, body').animate({scrollTop: current.closest('.mpwpb_sub_category_area').position().top += current.closest('.mpwpb_sub_category_area').outerHeight()}, 1000);
                 });
             });
         }else{
@@ -241,8 +231,6 @@ function mpwpb_price_calculation($this) {
             parent.find('.all_service_area').slideUp(350);
             parent.find('.mpwpb_date_time_tab').addClass('mpActive').removeClass('mpDisabled').trigger('click');
             loadBgImage();
-            pageScrollTo(parent);
-            //pageScrollTo(parent.find('.mpwpb_date_time_area'));
         } else {
             mp_alert($(this));
         }
@@ -324,7 +312,6 @@ function mpwpb_price_calculation($this) {
                             }
                             parent.find('.mpwpb_order_proceed_tab').addClass('mpActive').removeClass('mpDisabled').trigger('click');
                             dLoaderRemove(parent);
-                            //pageScrollTo(target_checkout);
                         });
                     } else {
                         window.location.href = data;

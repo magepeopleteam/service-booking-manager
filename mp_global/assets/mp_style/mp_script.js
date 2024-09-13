@@ -360,13 +360,17 @@ function mp_sticky_management() {
         window.onscroll = function () {
             jQuery('.mpStyle .mp_sticky_area').each(function () {
                 let current = jQuery(this);
-                let target_scroll = current.find('.mp_sticky_on_scroll');
+                let target_scroll = current.find('.mp_sticky_area');
                 let parent = current.closest('.mp_sticky_section');
                 let target_content = parent.find('.mp_sticky_depend_area');
                 let scroll_top = jQuery(window).scrollTop();
                 let content_top = target_content.offset().top;
-                let scroll_height = target_content.innerHeight() - target_scroll.innerHeight();
+                let scroll_height = target_content.innerHeight() - current.innerHeight();
                 if (jQuery('body').outerWidth() > 800) {
+                    console.log(target_content.innerHeight() + ' - ' + current.innerHeight() + ' = ' + scroll_height);
+                    console.log(scroll_top + ' + ' + scroll_height + ' = ' + scroll_top+scroll_height);
+                    //console.log(content_top);
+                    //console.log(scroll_top+scroll_height);
                     if (scroll_top > content_top + scroll_height - 100) {
                         if (!current.hasClass('stickyFixed')) {
                             current.removeClass('mpSticky').addClass('stickyFixed');
