@@ -15,6 +15,8 @@
 			public function general_settings($post_id) {
 				$title = MP_Global_Function::get_post_info($post_id, 'mpwpb_shortcode_title');
 				$sub_title = MP_Global_Function::get_post_info($post_id, 'mpwpb_shortcode_sub_title');
+				$mpwpb_template = MP_Global_Function::get_post_info($post_id, 'mpwpb_theme_file','default.php');
+                echo $mpwpb_template;
 				?>
 				<div class="tabsItem" data-tabs="#mpwpb_general_info">
 					<header>
@@ -55,6 +57,19 @@
 							
 						</label>
 					</section>
+                    <section>
+                        <label class="label">
+                            <div>
+                                <p><?php esc_html_e('Service template', 'service-booking-manager'); ?></p>
+                            </div>
+                            <select class="" name="mpwpb_theme_file" >
+                                <option disabled selected><?php esc_html_e('Please select ...', 'service-booking-manager'); ?></option>
+                                <option value="default.php"  <?php echo esc_attr($mpwpb_template == 'default.php' ? 'selected' : ''); ?>><?php esc_html_e('Regular', 'service-booking-manager'); ?></option>
+                                <option value="static.php" <?php echo esc_attr($mpwpb_template == 'static.php' ? 'selected' : ''); ?>><?php esc_html_e('Static', 'service-booking-manager'); ?></option>
+                            </select>
+
+                        </label>
+                    </section>
 				</div>
 				<?php
 			}
@@ -64,6 +79,8 @@
 					update_post_meta($post_id, 'mpwpb_shortcode_title', $title);
 					$sub_title = MP_Global_Function::get_submit_info('mpwpb_shortcode_sub_title');
 					update_post_meta($post_id, 'mpwpb_shortcode_sub_title', $sub_title);
+					$mpwpb_template = MP_Global_Function::get_submit_info('mpwpb_theme_file','default.php');
+					update_post_meta($post_id, 'mpwpb_theme_file', $mpwpb_template);
 				}
 			}
 		}

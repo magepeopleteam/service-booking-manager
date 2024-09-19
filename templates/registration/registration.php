@@ -38,7 +38,7 @@
                     <div class="all_service_area ">
                         <div class="_equalChild _mB_xs">
 							<?php include(MPWPB_Function::template_path('registration/category_selection.php')); ?>
-							<?php //include(MPWPB_Function::template_path('registration/sub_category_selection.php')); ?>
+							<?php //include(MPWPB_Function::template_path('registration/category_selection_static.php')); ?>
                         </div>
 						<?php include(MPWPB_Function::template_path('registration/service_selection.php')); ?>
 						<?php include(MPWPB_Function::template_path('registration/extra_services.php')); ?>
@@ -53,8 +53,7 @@
                         </div>
                     </div>
 					<?php include(MPWPB_Function::template_path('registration/date_time_select.php')); ?>
-                    <div class="mpwpb_order_proceed_area">
-                    </div>
+                    <div class="mpwpb_order_proceed_area"></div>
 					<?php //include( MPWPB_Function::template_path( 'registration/summary_section.php' ) ); ?>
                 </div>
             </div>
