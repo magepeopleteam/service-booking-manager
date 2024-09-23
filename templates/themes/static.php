@@ -16,9 +16,11 @@
 	$extra_services = $extra_services ?? MP_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', array());
 ?>
     <div class="mpStyle mpwpb_registration mpwpb_static_theme">
-    <div class="mpwpb_static">
-		<?php include(MPWPB_Function::template_path('layout/title_details_page.php')); ?>
-		<?php include(MPWPB_Function::template_path('registration/category_selection_static.php')); ?>
+    <div class="mpwpb_static_area alignCenter">
+        <div class="mpwpb_static ">
+			<?php include(MPWPB_Function::template_path('layout/title_details_page.php')); ?>
+			<?php include(MPWPB_Function::template_path('registration/category_selection_static.php')); ?>
+        </div>
     </div>
     <div class="mpPopup mpStyle" data-popup="#mpwpb_static_popup">
         <div class="popupMainArea max_1100">
@@ -30,13 +32,9 @@
                 <div class="_dFlex">
                     <div class="mpwpb_static_service _padding_xs">
                         <div class="all_service_area ">
-                            <div class="_equalChild _mB_xs">
-								<?php include(MPWPB_Function::template_path('registration/category_selection.php')); ?>
-								<?php //include(MPWPB_Function::template_path('registration/category_selection_static.php')); ?>
-                            </div>
+							<?php include(MPWPB_Function::template_path('registration/category_selection.php')); ?>
 							<?php include(MPWPB_Function::template_path('registration/service_selection.php')); ?>
 							<?php include(MPWPB_Function::template_path('registration/extra_services.php')); ?>
-
                         </div>
 						<?php include(MPWPB_Function::template_path('registration/date_time_select.php')); ?>
                         <div class="mpwpb_order_proceed_area"></div>
@@ -116,15 +114,8 @@
                 </div>
             </div>
             <div class="popupFooter _justifyBetween">
-                <div class="next_date_time_area">
-                    <div class="justifyBetween">
-                        <h3 class="alignCenter"><?php esc_html_e('Total :', 'service-booking-manager'); ?>&nbsp;&nbsp;<span class="mpwpb_total_bill textTheme"><?php echo MP_Global_Function::wc_price($post_id, 0); ?></span></h3>
-                        <button class="_mpBtn_dBR_padding mActive mpwpb_service_next" type="button" data-alert="<?php echo esc_html__('Please Select', 'service-booking-manager') . ' ' . $service_text; ?>">
-				            <?php esc_html_e('Next Date & Time', 'service-booking-manager'); ?>
-                            <i class="fas fa-long-arrow-alt-right _mL_xs"></i>
-                        </button>
-                    </div>
-                </div>
+				<?php include(MPWPB_Function::template_path('registration/next_service.php')); ?>
+				<?php include(MPWPB_Function::template_path('registration/next_date_time.php')); ?>
             </div>
         </div>
     </div>

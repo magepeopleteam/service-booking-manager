@@ -56,7 +56,7 @@ function mpwpb_price_calculation($this) {
     });
     //==========category============//
     function refresh_sub_category(parent) {
-        parent.find('.mpwpb_service_area,.mpwpb_extra_service_area,.next_date_time_area,.mpwpb_date_time_area,.mpwpb_order_proceed_area').slideUp(350);
+        parent.find('.mpwpb_service_area,.mpwpb_extra_service_area,.next_service_area,.mpwpb_date_time_area,.mpwpb_order_proceed_area').slideUp(350);
         let target_sub_category = parent.find('.mpwpb_sub_category_area');
         parent.find('[name="mpwpb_sub_category"]').val('');
         if (target_sub_category.length > 0) {
@@ -73,7 +73,7 @@ function mpwpb_price_calculation($this) {
         }
     }
     function refresh_service(parent) {
-        parent.find('.mpwpb_extra_service_area,.next_date_time_area,.mpwpb_date_time_area,.mpwpb_order_proceed_area').slideUp(350);
+        parent.find('.mpwpb_extra_service_area,.next_service_area,.mpwpb_date_time_area,.mpwpb_order_proceed_area').slideUp(350);
         let target_sub_category = parent.find('.mpwpb_sub_category_area');
         let target_service = parent.find('.mpwpb_service_area');
         parent.find('[name="mpwpb_service[]"]').each(function (){
@@ -209,7 +209,8 @@ function mpwpb_price_calculation($this) {
             mpwpb_price_calculation(current);
             let target_extra_service = parent.find('.mpwpb_extra_service_area');
             parent.find('.mpwpb_summary_area_left').slideDown('fast');
-            parent.find('.next_date_time_area').slideDown('fast');
+            parent.find('.next_service_area').slideDown('fast');
+            parent.find('.next_date_area').slideUp('fast');
             if (target_extra_service.length > 0) {
                 target_extra_service.slideDown(350);
                 loadBgImage();
@@ -249,13 +250,13 @@ function mpwpb_price_calculation($this) {
         }
     });
     function load_date_time_tab(parent){
-        parent.find('.mpwpb_date_time_area').slideDown(350);
-        parent.find('.all_service_area,.mpwpb_order_proceed_area').slideUp(300)
+        parent.find('.mpwpb_date_time_area,.next_date_area').slideDown(350);
+        parent.find('.all_service_area,.mpwpb_order_proceed_area,.next_service_area').slideUp(300)
         loadBgImage();
     }
     function load_service_tab(parent){
-        parent.find('.all_service_area').slideDown(350);
-        parent.find('.mpwpb_date_time_area,.mpwpb_order_proceed_area').slideUp(300);
+        parent.find('.all_service_area,.next_service_area').slideDown(350);
+        parent.find('.mpwpb_date_time_area,.mpwpb_order_proceed_area,.next_date_area').slideUp(300);
         loadBgImage();
     }
     //==========date============//
