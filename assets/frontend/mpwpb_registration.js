@@ -50,9 +50,7 @@ function mpwpb_price_calculation($this) {
     });
     $(document).on('click', 'div.mpwpb_registration .mpwpb_order_proceed_tab', function () {
         let parent = $(this).closest('div.mpwpb_registration');
-        parent.find('.mpwpb_order_proceed_area').slideDown(350);
-        parent.find('.all_service_area,.mpwpb_date_time_area').slideUp(300)
-        loadBgImage();
+        load_order_proceed_tab(parent);
     });
     //==========category============//
     function refresh_sub_category(parent) {
@@ -138,6 +136,7 @@ function mpwpb_price_calculation($this) {
         let current = $(this);
         let parent = current.closest('div.mpwpb_registration');
         let category = current.data('category');
+        load_service_tab(parent);
         if(category){
             parent.find('.mpwpb_category_item').each(function () {
                 if ($(this).data('category') === category) {
@@ -259,6 +258,11 @@ function mpwpb_price_calculation($this) {
         parent.find('.mpwpb_date_time_area,.mpwpb_order_proceed_area,.next_date_area').slideUp(300);
         loadBgImage();
     }
+    function load_order_proceed_tab(parent){
+        parent.find('.mpwpb_order_proceed_area').slideDown(350);
+        parent.find('.all_service_area,.mpwpb_date_time_area,.next_date_area,.next_service_area').slideUp(300)
+        loadBgImage();
+    }
     //==========date============//
     $(document).on('change', 'div.mpwpb_registration [name="mpwpb_date"]', function () {
         let parent = $(this).closest('div.mpwpb_registration');
@@ -334,7 +338,8 @@ function mpwpb_price_calculation($this) {
                             if ($('body select#billing_state').length > 0) {
                                 $('body select#billing_state').select2({});
                             }
-                            parent.find('.mpwpb_order_proceed_tab').addClass('mpActive').removeClass('mpDisabled').trigger('click');
+                            parent.find('.mpwpb_order_proceed_tab').addClass('mpActive').removeClass('mpDisabled');
+                            load_order_proceed_tab(parent);
                             dLoaderRemove(parent);
                         });
                     } else {
