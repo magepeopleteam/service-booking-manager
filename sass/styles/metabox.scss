@@ -109,3 +109,26 @@
     }
 }
 
+.mpwpb-faq-container{
+    .faq-header{
+
+    }
+    .faq-contents{
+
+    }
+    .faq-add-content{
+        position: fixed;
+        right: -300px; /* Initially hidden off-screen */
+        top: 0;
+        width: 300px; /* Width of the sidebar */
+        height: 100%; /* Full height */
+        background-color: #fff; /* Background color */
+        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5); /* Shadow effect */
+        transition: right 0.3s ease; /* Animation effect */
+        padding: 20px; /* Padding inside the sidebar */
+        z-index: 1000; /* Ensure it's above other content */
+        &.open {
+            right: 0; /* Slide in */
+        }
+    }
+}
