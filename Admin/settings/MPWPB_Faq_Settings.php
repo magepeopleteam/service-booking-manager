@@ -94,7 +94,7 @@ if( ! class_exists('MPWPB_Faq_Settings')){
                 <input id="mpwpb-post-id" type="hidden" name="mpwpb_post_id" value="<?php echo $post_id; ?>"> 
                 <input id="mpwpb-faq-input-title" type="text" name="mpwpb_faq[][title]"> 
                 <p><?php _e('Add Content','service-booking-manage'); ?></p>
-                <textarea id="mpwpb-faq-input-content" name="mpwpb_faq[][content]"></textarea><br>
+                <textarea id="mpwpb-faq-input-content" name="mpwpb_faq[][content]" rows="5"></textarea><br>
                 <p><input type="submit" name="faq_save" class="button button-primary button-large" value="save"><p>
             <?php
         }

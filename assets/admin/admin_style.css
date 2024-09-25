@@ -341,6 +341,9 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   padding: 0;
   margin: 5px 0;
 }
+.mpwpb-sidebar-container .mpwpb-sidebar-content input, .mpwpb-sidebar-container .mpwpb-sidebar-content textarea {
+  width: 100%;
+}
 .mpwpb-sidebar-container .mpwpb-sidebar-content .mpwpb-sidebar-close {
   position: absolute;
   top: 40px;

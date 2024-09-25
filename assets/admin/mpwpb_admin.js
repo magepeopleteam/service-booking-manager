@@ -286,6 +286,11 @@
 // ============= sidebar collapsible ======================
 (function($) {
 	$(document).ready(function($){
+
+		var title = document.getElementById('mpwpb-faq-input-title');
+		var content = document.getElementById('mpwpb-faq-input-content');
+		var postID =  document.getElementById('mpwpb-post-id');
+
 		$('.mpwpb-sidebar-open').on('click', function(e) {
 			e.preventDefault();
 			e.stopPropagation();
@@ -298,9 +303,7 @@
 		// ======save faq by ajax=============
 		$('input[name="faq_save"]').click(function(event) {
 			event.preventDefault();
-			var title = document.getElementById('mpwpb-faq-input-title');
-			var content = document.getElementById('mpwpb-faq-input-content');
-			var postID =  document.getElementById('mpwpb-post-id');
+			
 			$.ajax({
 				url: mp_ajax_url,
 				type: 'POST',
