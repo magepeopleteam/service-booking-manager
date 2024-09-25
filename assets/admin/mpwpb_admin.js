@@ -287,41 +287,77 @@
 (function($) {
 	$(document).ready(function($){
 
-		var title = document.getElementById('mpwpb-faq-input-title');
-		var content = document.getElementById('mpwpb-faq-input-content');
-		var postID =  document.getElementById('mpwpb-post-id');
+		sidebar_toggle_open_close();
+		edit_faq();
 
-		$('.mpwpb-sidebar-open').on('click', function(e) {
-			e.preventDefault();
-			e.stopPropagation();
-			$('.mpwpb-sidebar-container').addClass('open');
-		});
-		
-		$('.mpwpb-sidebar-close').on('click', function() {
-			$('.mpwpb-sidebar-container').removeClass('open');
-		});
-		// ======save faq by ajax=============
-		$('input[name="faq_save"]').click(function(event) {
-			event.preventDefault();
+		function edit_faq(){
 			
-			$.ajax({
-				url: mp_ajax_url,
-				type: 'POST',
-				data: {
-					action: 'mpwpb_faq_data_save',
-					mpwpb_faq_title:title.value,
-					mpwpb_faq_content:content.value,
-					mpwpb_faq_postID:postID.value,
-				},
-				success: function(response) {
-					console.log(response.data);
-					$('#mpwpb-faq-msg').html(response.data);
-				},
-				error: function(error) {
-					console.log('Error:', error);
-				}
+			$('.edit-faq').on('click', function(e) {
+				var postID =  document.getElementById('mpwpb-post-id');
+				itemId = $(this).data('id');
+				console.log(postId);
+				console.log(itemId);
+				$.ajax({
+					url: mp_ajax_url,
+					type: 'POST',
+					data: {
+						action: 'mpwpb_edit_faq_data',
+						postID:postID.value,
+						itemId:itemId,
+					},
+					success: function(response) {
+						console.log(response.data);
+						$('#mpwpb-faq-input-title').val();
+					},
+					error: function(error) {
+						console.log('Error:', error);
+					}
+				});
 			});
-		});
+		}
+
+		function sidebar_toggle_open_close(){
+			$('.mpwpb-sidebar-open').on('click', function(e) {
+				e.preventDefault();
+				e.stopPropagation();
+				$('.mpwpb-sidebar-container').addClass('open');
+				save_faq_data();
+			});
+			
+			$('.mpwpb-sidebar-close').on('click', function() {
+				$('.mpwpb-sidebar-container').removeClass('open');
+			});
+		}
+		// ======save faq by ajax=============
+		
+
+		function save_faq_data(){
+			$('input[name="faq_save"]').click(function(event) {
+				event.preventDefault();
+
+				var title = document.getElementById('mpwpb-faq-input-title');
+				var content = document.getElementById('mpwpb-faq-input-content');
+				var postID =  document.getElementById('mpwpb-post-id');
+
+				$.ajax({
+					url: mp_ajax_url,
+					type: 'POST',
+					data: {
+						action: 'mpwpb_faq_data_save',
+						mpwpb_faq_title:title.value,
+						mpwpb_faq_content:content.value,
+						mpwpb_faq_postID:postID.value,
+					},
+					success: function(response) {
+						console.log(response.data);
+						$('#mpwpb-faq-msg').html(response.data);
+					},
+					error: function(error) {
+						console.log('Error:', error);
+					}
+				});
+			});
+		}
 	});
 })(jQuery);
 

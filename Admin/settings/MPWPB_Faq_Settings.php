@@ -18,6 +18,10 @@ if( ! class_exists('MPWPB_Faq_Settings')){
             // save faq data
             add_action('wp_ajax_mpwpb_faq_data_save', [$this, 'save_faq_data_settings']);
             add_action('wp_ajax_nopriv_mpwpb_faq_data_save', [$this, 'save_faq_data_settings']);
+            
+            // mpwpb_edit_faq_data
+            add_action('wp_ajax_mpwpb_edit_faq_data', [$this, 'edit_faq_data']);
+            add_action('wp_ajax_nopriv_mpwpb_edit_faq_data', [$this, 'edit_faq_data']);
         }
 
         public function faq_settings($post_id) {
@@ -63,6 +67,10 @@ if( ! class_exists('MPWPB_Faq_Settings')){
             <?php
         }
 
+        public function edit_faq_data(){
+            echo 'test';
+            die;
+        }
         public function show_faq_data($post_id){
             $mpwpb_faq = get_post_meta($post_id,'mpwpb_faq',true);
             if( ! empty($mpwpb_faq)){
@@ -72,7 +80,7 @@ if( ! class_exists('MPWPB_Faq_Settings')){
                         <label class="label">
                             <p><?php echo esc_html($value['title']); ?></p>
                             <div class="faq-action">
-                                <span class="mpwpb-sidebar-open" data-id="<?php echo esc_attr($key); ?>"><i class="fas fa-edit"></i></span>
+                                <span class="mpwpb-sidebar-open edit-faq" data-id="<?php echo esc_attr($key); ?>"><i class="fas fa-edit"></i></span>
                                 <span><i class="fas fa-trash"></i></span>
                             </div>
                         </label>
