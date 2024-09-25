@@ -47,23 +47,7 @@ if( ! class_exists('MPWPB_Faq_Settings')){
                             [
                                 'title' => 'Title One',
                                 'content' => 'Content for FAQ one.',
-                            ],
-                            [
-                                'title' => 'Title Two',
-                                'content' => 'Content for FAQ two.',
-                            ],
-                            [
-                                'title' => 'Title Three',
-                                'content' => 'Content for FAQ three.',
-                            ],
-                            [
-                                'title' => 'Title Four',
-                                'content' => 'Content for FAQ four.',
-                            ],
-                            [
-                                'title' => 'Title Five',
-                                'content' => 'Content for FAQ five.',
-                            ],
+                            ]
                         ];
                         foreach ($faq_items as $key => $item) {
                             ?>
@@ -86,9 +70,16 @@ if( ! class_exists('MPWPB_Faq_Settings')){
                 <div class="mpwpb-sidebar-container">
                     <div class="mpwpb-sidebar-content">
                         <span class="mpwpb-sidebar-close"><i class="fas fa-times"></i></span>
-                        <p>Add F.A.Q.</p>
-                        <input type="text">
-                        <?php $this->content_editor($post_id);?>
+                        <h2><?php _e('Add F.A.Q.','service-booking-manage'); ?></h2>
+                        <input type="text" name="mpwpb_faq_title[]">
+                        <?php 
+                            $content = get_post_meta($post_id, 'mpwpb_faq_content', true);
+                            wp_editor($content, 'mpwpb_faq_content[]', array(
+                                'mpwpb_faq_content' => 'mpwpb_faq_content[]',
+                                'editor_height' => 200,
+                            ));
+                        ?>
+                        
                     </div>
                 </div>
                 <script>
@@ -99,10 +90,9 @@ if( ! class_exists('MPWPB_Faq_Settings')){
         }
 
         function content_editor($post_id) {   
-            add_action('admin_init', [$this,'my_enqueue_editor_styles']);     
             $content = get_post_meta($post_id, 'mpwpb_faq_content[]', true);
-            wp_editor($content, 'my_meta_box_editor', array(
-                'textarea_name' => 'my_meta_box_content',
+            wp_editor($content, 'mpwpb_faq_content', array(
+                'mpwpb_faq_content' => 'mpwpb_faq_content',
                 'editor_height' => 200,
             ));
         }

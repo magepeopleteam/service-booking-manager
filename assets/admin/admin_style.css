@@ -334,13 +334,13 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   position: absolute;
   top: 0;
   right: 0;
-  padding: 70px 15px;
+  padding: 80px 15px;
 }
 .mpwpb-sidebar-container .mpwpb-sidebar-content .mpwpb-sidebar-close {
   position: absolute;
-  top: 30px;
+  top: 40px;
   right: 15px;
-  font-size: 30px;
+  font-size: 20px;
   cursor: pointer;
 }
 
