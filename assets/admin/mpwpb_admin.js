@@ -282,3 +282,18 @@
 		});
 	}
 }(jQuery));
+
+// ============= sidebar collapsible ======================
+(function($) {
+	$(document).ready(function(){
+		$('.mpwpb-sidebar-open').on('click', function(e) {
+			e.stopPropagation();
+			$('.mpwpb-sidebar-container').addClass('open').slideLeft();
+		});
+		
+		$('.mpwpb-sidebar-close').on('click', function() {
+			$('.mpwpb-sidebar-container').removeClass('open').slideRight();
+		});
+	});
+})(jQuery);
+

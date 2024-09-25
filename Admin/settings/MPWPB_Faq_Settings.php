@@ -41,7 +41,7 @@ if( ! class_exists('MPWPB_Faq_Settings')){
                         </div>
                     </label>
                 </section>
-                <section class="mpwpb-faq-container <?php echo $active_class; ?>" data-collapse="#mpwpb_faq_active">
+                <section class="mpwpb-faq <?php echo $active_class; ?>" data-collapse="#mpwpb_faq_active">
                     <?php 
                         $faq_items = [
                             [
@@ -65,54 +65,33 @@ if( ! class_exists('MPWPB_Faq_Settings')){
                                 'content' => 'Content for FAQ five.',
                             ],
                         ];
-                        foreach ($faq_items as $item) {
+                        foreach ($faq_items as $key => $item) {
                             ?>
-                            <section class="faq-header">
+                            <section class="faq-header" data-collapse-target="#faq-content-<?php echo esc_attr($key); ?>">
                                 <label class="label">
                                     <p><?php echo esc_html($item['title']); ?></p>
-                                    <div>
-                                        <span><i class="fas fa-edit open-sidebar" style="cursor: pointer;"></i></span>
+                                    <div class="faq-action">
+                                        <span class="mpwpb-sidebar-open"><i class="fas fa-edit"></i></span>
                                         <span><i class="fas fa-trash"></i></span>
                                     </div>
                                 </label>
                             </section>
-                            <section class="faq-contents mB" style="display: none;">
+                            <section class="faq-content mB" data-collapse="#faq-content-<?php echo esc_attr($key); ?>">
                                 <?php echo esc_html($item['content']); ?>
-                            </section>
-                            <section class="faq-add-container">
-                                <div class="faq-add-content">
-                                    <p>Add F.A.Q.</p>
-                                    <input type="text">
-                                    <?php $this->content_editor($post_id);?>
-                                    <span class="faq-close-container"><i class="fas fa-times"></i></span>
-                                </div>
                             </section>
                             <?php
                         }
-                        
-                     ?>
+                    ?>
                 </section>
+                <div class="mpwpb-sidebar-container">
+                    <div class="mpwpb-sidebar-content">
+                        <span class="mpwpb-sidebar-close"><i class="fas fa-times"></i></span>
+                        <p>Add F.A.Q.</p>
+                        <input type="text">
+                        <?php $this->content_editor($post_id);?>
+                    </div>
+                </div>
                 <script>
-                    jQuery(document).ready(function($) {
-                        $('.faq-header').on('click', function(e) {
-                            e.preventDefault();
-                            $(this).next('.faq-contents').slideToggle(); // Use slideToggle for a smooth effect
-                        });
-
-                        $('.open-sidebar').on('click', function(e) {
-                            e.preventDefault();
-                            $('.faq-add-container').addClass('open').slideLeft(); // Slide in the sidebar
-                        });
-
-                        // Close sidebar on click of close button
-                        $('.faq-close-container').on('click', function() {
-                            $('.faq-add-container').removeClass('open').slideRight(); // Slide out the sidebar
-                        });
-                    });
-                    jQuery(document).ready(function($) {
-                        e.preventDefault();
-                        
-                    });
 
                 </script>
             </div>

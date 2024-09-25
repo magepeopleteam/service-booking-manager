@@ -293,11 +293,28 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   font-weight: normal;
 }
 
-.mpwpb-faq-container .faq-header i {
-  padding: 5px;
-  color: var(--mage-secondary);
+.mpwpb-faq .faq-header, #mp_meta_box_panel .metabox .tabsContent .faq-header {
+  position: relative;
+  z-index: 0;
 }
-.mpwpb-faq-container .faq-add-container {
+.mpwpb-faq .faq-header .faq-action, #mp_meta_box_panel .metabox .tabsContent .faq-header .faq-action {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  z-index: 1;
+}
+.mpwpb-faq .faq-header .faq-action span, #mp_meta_box_panel .metabox .tabsContent .faq-header .faq-action span {
+  padding: 5px 10px;
+  background-color: var(--mage-light);
+  color: var(--mage-primary);
+  border-radius: 2px;
+}
+.mpwpb-faq .faq-content, #mp_meta_box_panel .metabox .tabsContent .faq-content {
+  display: none;
+}
+
+.mpwpb-sidebar-container {
   position: fixed;
   right: -100%; /* Initially hidden off-screen */
   top: 0;
@@ -307,10 +324,10 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   transition: right 0.3s ease; /* Animation effect */
   z-index: 1000; /* Ensure it's above other content */
 }
-.mpwpb-faq-container .faq-add-container.open {
+.mpwpb-sidebar-container.open {
   right: 0; /* Slide in */
 }
-.mpwpb-faq-container .faq-add-container .faq-add-content {
+.mpwpb-sidebar-container .mpwpb-sidebar-content {
   background-color: #fff;
   width: 450px;
   height: 100%;
@@ -319,7 +336,7 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   right: 0;
   padding: 70px 15px;
 }
-.mpwpb-faq-container .faq-add-container .faq-close-container {
+.mpwpb-sidebar-container .mpwpb-sidebar-content .mpwpb-sidebar-close {
   position: absolute;
   top: 30px;
   right: 15px;

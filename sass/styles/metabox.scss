@@ -1,5 +1,3 @@
-
-
 #mp_meta_box_panel{
     .postbox-header{
         background-color: var(--mage-primary);
@@ -104,48 +102,30 @@
                     
                 }
             }
-            
+            @extend .mpwpb-faq;
         }
     }
 }
 
-.mpwpb-faq-container{
+.mpwpb-faq{
     .faq-header{
-        i{
-            padding: 5px;
-            color: var(--mage-secondary);
-        }
-    }
-    .faq-contents{
-
-    }
-    .faq-add-container{
-        position: fixed;
-        right: -100%; /* Initially hidden off-screen */
-        top: 0;
-        width: 100%; /* Width of the sidebar */
-        height: 100%; /* Full height */
-        background-color: #0000002c; /* Background color */
-        transition: right 0.3s ease; /* Animation effect */
-        z-index: 1000; /* Ensure it's above other content */
-        &.open {
-            right: 0; /* Slide in */
-        }
-        .faq-add-content{
-            background-color: #fff;
-            width: 450px;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            right: 0;
-            padding: 70px 15px;
-        }
-        .faq-close-container{
+        position: relative;
+        z-index: 0;
+        .faq-action{
             position:absolute;
-            top: 30px;
-            right: 15px;
-            font-size: 30px;
-            cursor: pointer;
+            top: 50%;
+            right: 0;
+            transform: translateY(-50%);
+            z-index:1;
+            span{
+                padding: 5px 10px;
+                background-color: var(--mage-light);
+                color: var(--mage-primary);
+                border-radius: 2px;
+            }
         }
+    }
+    .faq-content{
+        display: none;
     }
 }
