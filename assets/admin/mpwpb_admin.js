@@ -285,14 +285,39 @@
 
 // ============= sidebar collapsible ======================
 (function($) {
-	$(document).ready(function(){
+	$(document).ready(function($){
 		$('.mpwpb-sidebar-open').on('click', function(e) {
+			e.preventDefault();
 			e.stopPropagation();
-			$('.mpwpb-sidebar-container').addClass('open').slideLeft();
+			$('.mpwpb-sidebar-container').addClass('open');
 		});
 		
 		$('.mpwpb-sidebar-close').on('click', function() {
-			$('.mpwpb-sidebar-container').removeClass('open').slideRight();
+			$('.mpwpb-sidebar-container').removeClass('open');
+		});
+		// ======save faq by ajax=============
+		$('input[name="faq_save"]').click(function(event) {
+			event.preventDefault();
+			var title = document.getElementById('mpwpb-faq-input-title');
+			var content = document.getElementById('mpwpb-faq-input-content');
+			var postID =  document.getElementById('mpwpb-post-id');
+			$.ajax({
+				url: mp_ajax_url,
+				type: 'POST',
+				data: {
+					action: 'mpwpb_faq_data_save',
+					mpwpb_faq_title:title.value,
+					mpwpb_faq_content:content.value,
+					mpwpb_faq_postID:postID.value,
+				},
+				success: function(response) {
+					console.log(response.data);
+					$('#mpwpb-faq-msg').html(response.data);
+				},
+				error: function(error) {
+					console.log('Error:', error);
+				}
+			});
 		});
 	});
 })(jQuery);

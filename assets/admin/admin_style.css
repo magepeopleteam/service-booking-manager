@@ -336,6 +336,11 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   right: 0;
   padding: 80px 15px;
 }
+.mpwpb-sidebar-container .mpwpb-sidebar-content h4 {
+  font-size: 18px;
+  padding: 0;
+  margin: 5px 0;
+}
 .mpwpb-sidebar-container .mpwpb-sidebar-content .mpwpb-sidebar-close {
   position: absolute;
   top: 40px;
