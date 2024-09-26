@@ -288,40 +288,29 @@
 	$(document).ready(function($){
 
 		sidebar_toggle_open_close();
-		edit_faq();
+		// edit_faq();
 
-		function edit_faq(){
+		// function edit_faq(){
 			
-			$('.edit-faq').on('click', function(e) {
-				var postID =  document.getElementById('mpwpb-post-id');
-				itemId = $(this).data('id');
-				console.log(postId);
-				console.log(itemId);
-				$.ajax({
-					url: mp_ajax_url,
-					type: 'POST',
-					data: {
-						action: 'mpwpb_edit_faq_data',
-						postID:postID.value,
-						itemId:itemId,
-					},
-					success: function(response) {
-						console.log(response.data);
-						$('#mpwpb-faq-input-title').val();
-					},
-					error: function(error) {
-						console.log('Error:', error);
-					}
-				});
-			});
-		}
+		// 	$('.edit-faq').on('click', function(e) {
+		// 		var postID =  document.getElementById('mpwpb-post-id');
+		// 		itemId = $(this).data('id');
+		// 		console.log(postId);
+		// 		console.log(itemId);
+
+		// 	});
+		// }
 
 		function sidebar_toggle_open_close(){
 			$('.mpwpb-sidebar-open').on('click', function(e) {
 				e.preventDefault();
 				e.stopPropagation();
 				$('.mpwpb-sidebar-container').addClass('open');
-				save_faq_data();
+				var itemId = $(this).closest('.mpwpb-faq-items').data('id');
+				if (typeof itemId == 'undefined' && itemId == null && itemId == '') {
+					itemId = '';
+				}
+				save_faq_data(itemId);
 			});
 			
 			$('.mpwpb-sidebar-close').on('click', function() {
@@ -331,22 +320,21 @@
 		// ======save faq by ajax=============
 		
 
-		function save_faq_data(){
-			$('input[name="faq_save"]').click(function(event) {
+		function save_faq_data(itemId){
+			$('input[name="mpwpb_faq_save"]').click(function(event) {
 				event.preventDefault();
-
-				var title = document.getElementById('mpwpb-faq-input-title');
-				var content = document.getElementById('mpwpb-faq-input-content');
-				var postID =  document.getElementById('mpwpb-post-id');
-
+				var title   = $('input[name="mpwpb_faq_title"]');
+				var content = $('textarea[name="mpwpb_faq_content"]');
+				var postID  = $('input[name="mpwpb_post_id"]');
 				$.ajax({
 					url: mp_ajax_url,
 					type: 'POST',
 					data: {
 						action: 'mpwpb_faq_data_save',
-						mpwpb_faq_title:title.value,
-						mpwpb_faq_content:content.value,
-						mpwpb_faq_postID:postID.value,
+						mpwpb_faq_title:title.val(),
+						mpwpb_faq_content:content.val(),
+						mpwpb_faq_postID:postID.val(),
+						itemId:itemId,
 					},
 					success: function(response) {
 						console.log(response.data);
