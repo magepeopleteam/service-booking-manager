@@ -83,7 +83,7 @@ if( ! class_exists('MPWPB_Faq_Settings')){
                             </label>
                         </section>
                         <section class="faq-content mB" data-collapse="#faq-content-<?php echo esc_attr($key); ?>">
-                                <?php echo esc_html($value['content']); ?>
+                            <?php echo esc_html($value['content']); ?>
                         </section>
                     </div>
                     <?php
