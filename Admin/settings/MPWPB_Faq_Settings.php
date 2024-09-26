@@ -19,9 +19,9 @@ if( ! class_exists('MPWPB_Faq_Settings')){
             add_action('wp_ajax_mpwpb_faq_data_save', [$this, 'save_faq_data_settings']);
             add_action('wp_ajax_nopriv_mpwpb_faq_data_save', [$this, 'save_faq_data_settings']);
             
-            // mpwpb_edit_faq_data
-            add_action('wp_ajax_mpwpb_edit_faq_data', [$this, 'edit_faq_data']);
-            add_action('wp_ajax_nopriv_mpwpb_edit_faq_data', [$this, 'edit_faq_data']);
+            // mpwpb_delete_faq_data
+            add_action('wp_ajax_mpwpb_faq_delete_item', [$this, 'faq_delete_item']);
+            add_action('wp_ajax_nopriv_mpwpb_faq_delete_item', [$this, 'faq_delete_item']);
         }
 
         public function faq_settings($post_id) {
@@ -78,7 +78,7 @@ if( ! class_exists('MPWPB_Faq_Settings')){
                                 <p><?php echo esc_html($value['title']); ?></p>
                                 <div class="faq-action">
                                     <span class="mpwpb-sidebar-open" ><i class="fas fa-edit"></i></span>
-                                    <span><i class="fas fa-trash"></i></span>
+                                    <span class="mpwpb-faq-item-delete"><i class="fas fa-trash"></i></span>
                                 </div>
                             </label>
                         </section>
@@ -132,6 +132,20 @@ if( ! class_exists('MPWPB_Faq_Settings')){
 
             if(update_post_meta($post_id, 'mpwpb_faq', $mpwpb_faq)){
                 wp_send_json_success(__('Data updated successfully'.$_POST['itemId'], 'mptbm_plugin_pro'));
+            }
+            die;
+        }
+
+        public function faq_delete_item(){
+            $post_id = $_POST['mpwpb_faq_postID'];
+            $mpwpb_faq = get_post_meta($post_id,'mpwpb_faq',true)?:[];
+            if( ! empty($mpwpb_faq)){
+                if(isset($_POST['itemId'])){
+                    unset($mpwpb_faq[$_POST['itemId']]);
+                }
+            }
+            if(update_post_meta($post_id, 'mpwpb_faq', $mpwpb_faq)){
+                wp_send_json_success(__('Data Deleted successfully', 'mptbm_plugin_pro'));
             }
             die;
         }
