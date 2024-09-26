@@ -51,7 +51,12 @@ if( ! class_exists('MPWPB_Faq_Settings')){
                 </section>
                 <section class="mpwpb-faq <?php echo $active_class; ?>" data-collapse="#mpwpb_faq_active">
                     <?php 
-                        $this->show_faq_data($post_id);
+                        $mpwpb_faq = get_post_meta($post_id,'mpwpb_faq',true);
+                        if( ! empty($mpwpb_faq)){
+                            foreach ($mpwpb_faq as $key => $value) {
+                                $this->show_faq_data($key,$value['title'],$value['content']);
+                            }
+                        }
                     ?>
                     <br>
                     <button class="button mpwpb-sidebar-open">Add FAQ</button>
@@ -67,28 +72,24 @@ if( ! class_exists('MPWPB_Faq_Settings')){
             <?php
         }
 
-        public function show_faq_data($post_id){
-            $mpwpb_faq = get_post_meta($post_id,'mpwpb_faq',true);
-            if( ! empty($mpwpb_faq)){
-                foreach ($mpwpb_faq as $key => $value) {
-                    ?>
-                    <div class="mpwpb-faq-items" data-id="<?php echo esc_attr($key); ?>">
-                        <section class="faq-header" data-collapse-target="#faq-content-<?php echo esc_attr($key); ?>">
-                            <label class="label">
-                                <p><?php echo esc_html($value['title']); ?></p>
-                                <div class="faq-action">
-                                    <span class="mpwpb-sidebar-open" ><i class="fas fa-edit"></i></span>
-                                    <span class="mpwpb-faq-item-delete"><i class="fas fa-trash"></i></span>
-                                </div>
-                            </label>
-                        </section>
-                        <section class="faq-content mB" data-collapse="#faq-content-<?php echo esc_attr($key); ?>">
-                            <?php echo esc_html($value['content']); ?>
-                        </section>
+        public function show_faq_data($key,$title,$content){
+        ?>
+        <div class="mpwpb-faq-items" data-id="<?php echo esc_attr($key); ?>">
+            <section class="faq-header" data-collapse-target="#faq-content-<?php echo esc_attr($key); ?>">
+                <label class="label">
+                    <p><?php echo esc_html($title); ?></p>
+                    <div class="faq-action">
+                        <span class="mpwpb-sidebar-open" ><i class="fas fa-edit"></i></span>
+                        <span class="mpwpb-faq-item-delete"><i class="fas fa-trash"></i></span>
                     </div>
-                    <?php
-                }
-            }
+                </label>
+            </section>
+            <section class="faq-content mB" data-collapse="#faq-content-<?php echo esc_attr($key); ?>">
+                <?php echo esc_html($content); ?>
+            </section>
+        </div>
+        <?php
+
         }
 
         public function add_faq_form($post_id){
@@ -131,7 +132,14 @@ if( ! class_exists('MPWPB_Faq_Settings')){
             // $mpwpb_faq =[];
 
             if(update_post_meta($post_id, 'mpwpb_faq', $mpwpb_faq)){
-                wp_send_json_success(__('Data updated successfully'.$_POST['itemId'], 'mptbm_plugin_pro'));
+                ob_start();
+                $resultMessage = __('Data updated successfully', 'mptbm_plugin_pro');
+                $this->show_faq_data($count,$_POST['mpwpb_faq_title'],$_POST['mpwpb_faq_content']);
+                $html_output = ob_get_clean();
+                wp_send_json_success(array(
+                    'message' => $resultMessage,
+                    'html' => $html_output,
+                ));
             }
             die;
         }
@@ -142,6 +150,7 @@ if( ! class_exists('MPWPB_Faq_Settings')){
             if( ! empty($mpwpb_faq)){
                 if(isset($_POST['itemId'])){
                     unset($mpwpb_faq[$_POST['itemId']]);
+                    $mpwpb_faq = array_values($mpwpb_faq);
                 }
             }
             if(update_post_meta($post_id, 'mpwpb_faq', $mpwpb_faq)){

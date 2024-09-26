@@ -303,6 +303,7 @@
 			
 			$('.mpwpb-sidebar-close').on('click', function() {
 				$('.mpwpb-sidebar-container').removeClass('open');
+				location.reload();
 			});
 		}
 
@@ -361,8 +362,23 @@
 					itemId:itemId,
 				},
 				success: function(response) {
-					$('#mpwpb-faq-msg').html(response.data);
-					empty_faq_form();
+					
+					if(typeof itemId !== 'undefined'){
+						var existingItem = $('.mpwpb-faq-items[data-id="' + itemId + '"]');
+						if (existingItem.length > 0) {
+							existingItem.replaceWith(response.data.html);
+						}
+					}
+					else{
+						if ($('.mpwpb-faq-items').length > 0) {
+							$('.mpwpb-faq-items:last').after(response.data.html);
+						} else {
+							$('.mpwpb-faq').prepend(response.data.html);
+						}
+						$('#mpwpb-faq-msg').html(response.data.message);
+						empty_faq_form();
+					}
+					
 				},
 				error: function(error) {
 					console.log('Error:', error);
