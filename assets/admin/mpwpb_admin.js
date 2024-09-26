@@ -333,8 +333,13 @@
 			var parent = faqItem;
 			var headerText = parent.find('.faq-header p').text().trim();
 			var faqContentId = parent.find('.faq-content').text().trim();
+			var editorId = 'mpwpb_faq_content';
 			$('input[name="mpwpb_faq_title"]').val(headerText);
-			$('textarea[name="mpwpb_faq_content"]').val(faqContentId);
+			if (tinymce.get(editorId)) {
+				tinymce.get(editorId).setContent(faqContentId);
+			} else {
+				$('#' + editorId).val(faqContentId);
+			}
 		}
 
 		function prepare_faq_form(itemId,faqItem){
@@ -362,7 +367,7 @@
 					itemId:itemId,
 				},
 				success: function(response) {
-					
+					$('#mpwpb-faq-msg').html(response.data.message);
 					if(typeof itemId !== 'undefined'){
 						var existingItem = $('.mpwpb-faq-items[data-id="' + itemId + '"]');
 						if (existingItem.length > 0) {
@@ -375,7 +380,6 @@
 						} else {
 							$('.mpwpb-faq').prepend(response.data.html);
 						}
-						$('#mpwpb-faq-msg').html(response.data.message);
 						empty_faq_form();
 					}
 					

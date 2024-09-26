@@ -101,10 +101,24 @@ if( ! class_exists('MPWPB_Faq_Settings')){
                 <input type="hidden" name="mpwpb_post_id" value="<?php echo $post_id; ?>"> 
                 <input type="text"   name="mpwpb_faq_title"> 
                 <p><?php _e('Add Content','service-booking-manage'); ?></p>
-                <textarea name="mpwpb_faq_content" rows="5"></textarea><br>
+                <?php $this->show_editor($post_id); ?>
                 <p><input type="submit" name="mpwpb_faq_save" class="button button-primary button-large" value="save"><p>
             </div>
             <?php
+        }
+
+        public function show_editor($post_id) {
+            $content = 'data'; // You can set default content if needed.
+            $editor_id = 'mpwpb_faq_content'; // ID for the editor (used internally by wp_editor).
+            $settings = array(
+                'textarea_name' => 'mpwpb_faq_content', // This is the 'name' attribute for the textarea.
+                'media_buttons' => true, // Show media buttons (like "Add Media")
+                'textarea_rows' => 10, // Number of rows (height) for the editor
+                'teeny'         => false, // Use the minimal editor or not
+                'quicktags'     => true, // Enable quicktags for HTML mode
+            );
+
+            wp_editor( $content, $editor_id, $settings );
         }
 
         public function save_faq_settings($post_id) {
