@@ -329,12 +329,15 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
 }
 .mpwpb-sidebar-container .mpwpb-sidebar-content {
   background-color: #fff;
-  width: 450px;
+  width: 800px;
   height: 100%;
   position: absolute;
   top: 0;
   right: 0;
   padding: 80px 15px;
+}
+.mpwpb-sidebar-container .mpwpb-sidebar-content .mpwpb-faq-form p {
+  margin: 15px 0;
 }
 .mpwpb-sidebar-container .mpwpb-sidebar-content h4 {
   font-size: 18px;
