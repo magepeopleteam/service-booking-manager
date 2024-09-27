@@ -34,7 +34,6 @@
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/MPWPB_Price_Settings.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/MPWPB_Extra_service_Settings.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/MPWPB_Faq_Settings.php';
-				//require_once MPWPB_PLUGIN_DIR . '/Admin/settings/MPWPB_FAQ_Settings.php';
 				//****************Woocommerce Checkout*********************** */
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Settings.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Fields.php';
