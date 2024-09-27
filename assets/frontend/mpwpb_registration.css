@@ -381,5 +381,26 @@ div.registration_tab_item {
 .mpwpb_registration .template-header .header-content ul.features li i {
   margin-right: 10px;
 }
+.mpwpb_registration .main {
+  width: 1240px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+.mpwpb_registration .main nav ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+}
+.mpwpb_registration .main nav ul li {
+  margin: 0 10px;
+  background-color: #ddd;
+  border-radius: 3px;
+  padding: 10px;
+}
 
 /*# sourceMappingURL=mpwpb_registration.css.map */
