@@ -49,7 +49,7 @@
 					'public' => true,
 					'labels' => $labels,
 					'menu_icon' => $icon,
-					'supports' => ['title', 'thumbnail'],
+					'supports' => ['title','editor', 'thumbnail'],
 					'show_in_rest' => true,
 					'capability_type' => 'post',
 					'publicly_queryable' => true,  // you should be able to query it

@@ -38,6 +38,7 @@
 			}
 			public function frontend_script() {
 				$this->global_enqueue();
+				wp_enqueue_script('wc-checkout');
 				// custom
 				wp_enqueue_style('mpwpb', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb.css', [], time());
 				wp_enqueue_script('mpwpb', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb.js', ['jquery'], time(), true);

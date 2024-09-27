@@ -212,6 +212,8 @@
 				return apply_filters('mpwpb_get_date', $all_dates, $post_id);
 			}
 			public static function get_time_slot($post_id, $start_date) {
+				$now_full = current_time( 'Y-m-d H:i' );
+
 				$all_slots = [];
 				$slot_length = MP_Global_Function::get_post_info($post_id, 'mpwpb_time_slot_length', 30);
 				$slot_length = $slot_length * 60;
@@ -227,10 +229,22 @@
 				$end_time_break = MP_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_end_break_time', 0) * 3600;
 				for ($i = $start_time; $i <= $end_time; $i = $i + $slot_length) {
 					if ($i < $start_time_break || $i >= $end_time_break) {
-						$all_slots[] = $start_date . ' ' . date('H:i', $i);
+						$date_time=$start_date . ' ' . date('H:i', $i);
+						$slice_time = self::slice_buffer_time( $date_time );
+						if(strtotime($now_full)<strtotime($slice_time)){
+							$all_slots[] = $date_time;
+						}
+
 					}
 				}
 				return $all_slots;
+			}
+			public static function slice_buffer_time( $date ) {
+				$buffer_time = MP_Global_Function::get_settings( 'mpwpb_general_settings', 'buffer_time', 0 ) * 60;
+				if ( $buffer_time > 0 ) {
+					$date = date( 'Y-m-d H:i', strtotime( $date ) - $buffer_time );
+				}
+				return $date;
 			}
 			//*************Price*********************************//
 			public static function get_price($post_id, $service_name, $category_name = '', $sub_category_name = '', $date = '') {
