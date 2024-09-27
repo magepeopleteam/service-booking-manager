@@ -17,10 +17,16 @@ if( ! class_exists('MPWPB_Service_Details')){
 
         public function service_details($post_id) {
 
+            $service_overview_status = MP_Global_Function::get_post_info($post_id, 'mpwpb_service_overview_status', 'off');
             $service_details_status = MP_Global_Function::get_post_info($post_id, 'mpwpb_service_details_status', 'off');
+            
+            $service_overview_checked = $service_overview_status == 'on'? 'checked': '';
+            $service_overview_class = $service_overview_status == 'on'? 'mActive': '';
+
             $service_details_checked = $service_details_status == 'on'? 'checked': '';
             $active_class = $service_details_status == 'on'? 'mActive': '';
             
+            $service_overview_content = MP_Global_Function::get_post_info($post_id, 'mpwpb_service_overview_content', '');
             $mpwpb_service_details_content = MP_Global_Function::get_post_info($post_id, 'mpwpb_service_details_content', '');
 
             ?>
@@ -29,6 +35,29 @@ if( ! class_exists('MPWPB_Service_Details')){
                     <h2><?php esc_html_e('Service Details Settings', 'service-booking-manager'); ?></h2>
                     <span><?php esc_html_e('Service Details will be here.', 'service-booking-manager'); ?></span>
                 </header>
+
+                <!-- service overview -->
+                <section class="section">
+                        <h2><?php esc_html_e('Service Overview', 'service-booking-manager'); ?></h2>
+                        <span><?php esc_html_e('Service Overview', 'service-booking-manager'); ?></span>
+                </section>
+                <section>
+                    <label class="label">
+                        <div>
+                            <p><?php esc_html_e('Enable Service Overview', 'service-booking-manage'); ?></p>
+                            <span><?php esc_html_e('Enable Service Overview', 'service-booking-manage'); ?></span>
+                        </div>
+                        <div>
+                            <?php MP_Custom_Layout::switch_button('mpwpb_service_overview_status', $service_overview_checked); ?>
+                        </div>
+                    </label>
+                </section>
+                <section class="mpwpb-service-overview <?php echo $service_overview_class; ?>" data-collapse="#mpwpb_service_overview_status">
+                    <?php 
+                        $this->show_editor($service_overview_content,'mpwpb_service_overview_content');
+                    ?>
+                </section>
+                <!-- service details -->
                 <section class="section">
                         <h2><?php esc_html_e('Service Details', 'service-booking-manager'); ?></h2>
                         <span><?php esc_html_e('Service Details', 'service-booking-manager'); ?></span>
@@ -46,18 +75,19 @@ if( ! class_exists('MPWPB_Service_Details')){
                 </section>
                 <section class="mpwpb-service-details <?php echo $active_class; ?>" data-collapse="#mpwpb_service_details_status">
                     <?php 
-                        $this->show_editor($mpwpb_service_details_content);
+                        $this->show_editor($mpwpb_service_details_content,'mpwpb_service_details_content');
                     ?>
                 </section>
+                
             </div>
             <?php
         }
 
-        public function show_editor($mpwpb_service_details_content) {
-            $content = $mpwpb_service_details_content; // You can set default content if needed.
-            $editor_id = 'mpwpb_service_details_content'; // ID for the editor (used internally by wp_editor).
+        public function show_editor($content,$field_name) {
+            $content = $content; // You can set default content if needed.
+            $editor_id = $field_name; // ID for the editor (used internally by wp_editor).
             $settings = array(
-                'textarea_name' => 'mpwpb_service_details_content',
+                'textarea_name' => $field_name,
                 'media_buttons' => true,
                 'textarea_rows' => 10,
                 'teeny'         => true, // Enables a simpler editor
@@ -72,9 +102,16 @@ if( ! class_exists('MPWPB_Service_Details')){
 
         public function save_service_details($post_id) {
             if (get_post_type($post_id) == MPWPB_Function::get_cpt()) {
+                $service_overview_status = MP_Global_Function::get_submit_info('mpwpb_service_overview_status','off');
                 $service_details_status = MP_Global_Function::get_submit_info('mpwpb_service_details_status','off');
+
+                $service_overview_content = MP_Global_Function::get_submit_info('mpwpb_service_overview_content');
                 $mpwpb_service_details_content = MP_Global_Function::get_submit_info('mpwpb_service_details_content');
+                
+                update_post_meta($post_id, 'mpwpb_service_overview_status', $service_overview_status);
                 update_post_meta($post_id, 'mpwpb_service_details_status', $service_details_status);
+
+                update_post_meta($post_id, 'mpwpb_service_overview_content', $service_overview_content);
                 update_post_meta($post_id, 'mpwpb_service_details_content', $mpwpb_service_details_content);
             }
         }
