@@ -16,10 +16,13 @@ if( ! class_exists('MPWPB_Service_Details')){
         }
 
         public function service_details($post_id) {
-            $mpwpb_service_details_active = MP_Global_Function::get_post_info($post_id, 'mpwpb_service_details_active', 'off');
+
+            $service_details_status = MP_Global_Function::get_post_info($post_id, 'mpwpb_service_details_status', 'off');
+            $service_details_checked = $service_details_status == 'on'? 'checked': '';
+            $active_class = $service_details_status == 'on'? 'mActive': '';
+            
             $mpwpb_service_details_content = MP_Global_Function::get_post_info($post_id, 'mpwpb_service_details_content', '');
-            $active_class = $mpwpb_service_details_active == 'on' ? 'mActive' : '';
-            $mpwpb_service_details_checked = $mpwpb_service_details_active == 'on' ? 'checked' : '';
+
             ?>
             <div class="tabsItem" data-tabs="#mpwpb_service_details">
                 <header>
@@ -37,11 +40,11 @@ if( ! class_exists('MPWPB_Service_Details')){
                             <span><?php esc_html_e('Enable Service Details', 'service-booking-manage'); ?></span>
                         </div>
                         <div>
-                            <?php MP_Custom_Layout::switch_button('mpwpb_service_details_active', $mpwpb_service_details_checked); ?>
+                            <?php MP_Custom_Layout::switch_button('mpwpb_service_details_status', $service_details_checked); ?>
                         </div>
                     </label>
                 </section>
-                <section class="mpwpb-service-details <?php echo $active_class; ?>" data-collapse="#mpwpb_service_details_active">
+                <section class="mpwpb-service-details <?php echo $active_class; ?>" data-collapse="#mpwpb_service_details_status">
                     <?php 
                         $this->show_editor($mpwpb_service_details_content);
                     ?>
@@ -69,10 +72,10 @@ if( ! class_exists('MPWPB_Service_Details')){
 
         public function save_service_details($post_id) {
             if (get_post_type($post_id) == MPWPB_Function::get_cpt()) {
-                $mpwpb_service_details_active = MP_Global_Function::get_submit_info('mpwpb_service_details_active');
+                $service_details_status = MP_Global_Function::get_submit_info('mpwpb_service_details_status','off');
                 $mpwpb_service_details_content = MP_Global_Function::get_submit_info('mpwpb_service_details_content');
-                update_post_meta($post_id, 'mpwpb_service_details_active', $mpwpb_service_details_active);
-                update_post_meta($post_id, 'mpwpb_service_details_content', $mpwpb_service_details_content);;
+                update_post_meta($post_id, 'mpwpb_service_details_status', $service_details_status);
+                update_post_meta($post_id, 'mpwpb_service_details_content', $mpwpb_service_details_content);
             }
         }
     }
