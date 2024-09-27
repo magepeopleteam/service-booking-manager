@@ -15,6 +15,7 @@ if( ! class_exists('MPWPB_Faq_Settings')){
 
             add_action('mpwpb_settings_save', [$this, 'save_faq_settings'], 10, 1);
 
+            add_action('admin_enqueue_scripts',  [$this, 'my_custom_editor_enqueue']);
             // save faq data
             add_action('wp_ajax_mpwpb_faq_data_save', [$this, 'save_faq_data_settings']);
             add_action('wp_ajax_nopriv_mpwpb_faq_data_save', [$this, 'save_faq_data_settings']);
@@ -24,6 +25,17 @@ if( ! class_exists('MPWPB_Faq_Settings')){
             add_action('wp_ajax_nopriv_mpwpb_faq_delete_item', [$this, 'faq_delete_item']);
         }
 
+        public function my_custom_editor_enqueue() {
+            // Enqueue necessary scripts
+            wp_enqueue_script('jquery');
+            wp_enqueue_script('editor');
+            wp_enqueue_script('media-upload');
+            wp_enqueue_script('thickbox');
+            wp_enqueue_style('thickbox');
+        }
+        
+
+        
         public function faq_settings($post_id) {
             $mpwpb_faq_active = MP_Global_Function::get_post_info($post_id, 'mpwpb_faq_active', 'off');
             $active_class = $mpwpb_faq_active == 'on' ? 'mActive' : '';
@@ -108,16 +120,19 @@ if( ! class_exists('MPWPB_Faq_Settings')){
         }
 
         public function show_editor($post_id) {
-            $content = 'data'; // You can set default content if needed.
+            $content = ''; // You can set default content if needed.
             $editor_id = 'mpwpb_faq_content'; // ID for the editor (used internally by wp_editor).
             $settings = array(
-                'textarea_name' => 'mpwpb_faq_content', // This is the 'name' attribute for the textarea.
-                'media_buttons' => true, // Show media buttons (like "Add Media")
-                'textarea_rows' => 10, // Number of rows (height) for the editor
-                'teeny'         => false, // Use the minimal editor or not
-                'quicktags'     => true, // Enable quicktags for HTML mode
+                'textarea_name' => 'mpwpb_faq_content',
+                'media_buttons' => true,
+                'textarea_rows' => 10,
+                'teeny'         => true, // Enables a simpler editor
+                'quicktags'     => true, // Disables quicktags
+                'tinymce'       => array(
+                    'toolbar1' => 'bold,italic,underline,strikethrough,blockquote,alignleft,aligncenter,alignright,alignjustify,link,unlink,wp_more,spellchecker',
+                    'toolbar2' => 'pastetext,removeformat,wp_help', // Additional buttons in a second row
+                ),
             );
-
             wp_editor( $content, $editor_id, $settings );
         }
 
