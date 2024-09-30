@@ -331,7 +331,7 @@ div.registration_tab_item {
   top: 0;
   left: 0;
   content: "";
-  background: linear-gradient(to right, gray 60%, transparent);
+  background: linear-gradient(to right, var(--color_theme) 60%, transparent);
   height: 100%;
   position: absolute;
   z-index: 0;
@@ -353,14 +353,14 @@ div.registration_tab_item {
   font-size: 48px;
 }
 .mpwpb_registration .template-header .header-content h2, .mpwpb_registration .template-header .header-content p {
-  color: #fff;
+  color: var(--color_theme_alter);
 }
 .mpwpb_registration .template-header .header-content .ratings {
-  background-color: green;
+  background-color: var(--color_theme_alter);
   margin: 10px 0;
   padding: 5px 10px;
   border-radius: 5px;
-  color: #fff;
+  color: var(--color_theme);
   font-size: 16px;
   font-weight: bold;
 }
@@ -375,7 +375,7 @@ div.registration_tab_item {
 }
 .mpwpb_registration .template-header .header-content ul.features li {
   margin: 10px 0;
-  color: #fff;
+  color: var(--color_theme_alter);
   font-size: 18px;
 }
 .mpwpb_registration .template-header .header-content ul.features li i {
@@ -386,6 +386,9 @@ div.registration_tab_item {
   max-width: 1400px;
   margin: 0 auto;
   padding: 20px 0;
+}
+.mpwpb_registration .main nav {
+  margin-bottom: 20px;
 }
 .mpwpb_registration .main nav ul {
   margin: 0;
@@ -398,9 +401,57 @@ div.registration_tab_item {
 }
 .mpwpb_registration .main nav ul li {
   margin: 0 10px;
-  background-color: #ddd;
+  background-color: var(--color_theme_alter);
   border-radius: 3px;
+  border: 1px solid var(--color_theme);
+}
+.mpwpb_registration .main nav ul li:first-child {
+  margin-left: 0;
+}
+.mpwpb_registration .main nav ul li a {
+  display: block;
+  text-decoration: none;
+  height: 100%;
+  width: 100%;
   padding: 10px;
+  color: var(--color_theme);
+}
+.mpwpb_registration .main nav ul li a:hover {
+  background-color: var(--color_theme);
+  color: var(--color_theme_alter);
+}
+.mpwpb_registration .main section {
+  margin: 30px 0;
+}
+.mpwpb_registration .main section h2 {
+  margin: 20px 0;
+  border-bottom: 1px solid #ededed;
+}
+.mpwpb_registration .main section dd, .mpwpb_registration .main section dl, .mpwpb_registration .main section dt, .mpwpb_registration .main section li, .mpwpb_registration .main section ol, .mpwpb_registration .main section ul {
+  margin: 10px;
+  padding: 0;
+}
+.mpwpb_registration .main section ul, .mpwpb_registration .main section ol {
+  padding-left: 20px;
+  list-style-position: inside;
+}
+.mpwpb_registration .main section li {
+  margin: 5px 0;
+}
+.mpwpb_registration .main section ol {
+  list-style-type: decimal;
+}
+.mpwpb_registration .main section dl {
+  margin-bottom: 15px;
+}
+.mpwpb_registration .main section dt {
+  font-weight: bold;
+}
+.mpwpb_registration .main section dd {
+  margin-left: 20px;
+}
+.mpwpb_registration .main .mpwpb-serivice-faq .faq-content {
+  display: none;
 }
 
 /*# sourceMappingURL=mpwpb_registration.css.map */

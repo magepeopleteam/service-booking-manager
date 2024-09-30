@@ -17,32 +17,28 @@
     
 ?>
 <div class="mpStyle mpwpb_registration">
-    <header class="template-header" style="background-image: url('<?php echo get_the_post_thumbnail_url(); ?>');">
-        <div class="header-content">
-            <h2><?php the_title(); ?></h2>
-            <p class="ratings"><i class="fas fa-star"></i> 4.67 <span> out of 5</span></p>
-            <p>(8868 ratings on 3 services)</p>
-            <ul class="features">
-                <li><i class="fas fa-check-circle"></i> On Time Work Completion</li>
-                <li><i class="fas fa-check-circle"></i> Trusted and Experienced Plumbers</li>
-            </ul>
-        </div>
-    </header>
-    <section class="main">
-        <nav>
-            <ul>
-                <li>
-                    <a href="#">Service Overview</a>
-                </li>
-                <li>
-                    <a href="#">Service Overview</a>
-                </li>
-                <li>
-                    <a href="#">Service Overview</a>
-                </li>
-            </ul>
-        </nav>
-    </section>
+    <!-- dispaly service static page header using this hook -->
+    <?php do_action('mpwpb_service_header'); ?>
+    
+    <main class="main">
+        
+        <!-- dispaly service static page nav using this hook -->
+        <?php do_action('mpwpb_service_nav'); ?>
+        
+        <!-- dispaly service overview section using this hook -->
+        <?php do_action('mpwpb_service_overview'); ?>
+        
+        <!-- dispaly service FAQ section using this hook -->
+        <?php do_action('mpwpb_service_faq'); ?>
+
+        <!-- dispaly service Details section using this hook -->
+        <?php do_action('mpwpb_service_details'); ?>
+
+        <!-- dispaly service Reviews section using this hook -->
+        <?php do_action('mpwpb_service_reviews'); ?>
+        
+    </main>
+
     <div class="mpwpb_static_theme">
         <div class="mpwpb_static_area alignCenter">
             <div class="mpwpb_static ">

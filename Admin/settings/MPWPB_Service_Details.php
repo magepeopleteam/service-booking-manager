@@ -26,8 +26,8 @@ if( ! class_exists('MPWPB_Service_Details')){
             $service_details_checked = $service_details_status == 'on'? 'checked': '';
             $active_class = $service_details_status == 'on'? 'mActive': '';
             
-            $service_overview_content = MP_Global_Function::get_post_info($post_id, 'mpwpb_service_overview_content', '');
-            $mpwpb_service_details_content = MP_Global_Function::get_post_info($post_id, 'mpwpb_service_details_content', '');
+            $service_overview_content = get_post_meta($post_id,'mpwpb_service_overview_content',true);
+            $service_details_content = get_post_meta($post_id,'mpwpb_service_details_content',true);
 
             ?>
             <div class="tabsItem" data-tabs="#mpwpb_service_details">
@@ -75,7 +75,7 @@ if( ! class_exists('MPWPB_Service_Details')){
                 </section>
                 <section class="mpwpb-service-details <?php echo $active_class; ?>" data-collapse="#mpwpb_service_details_status">
                     <?php 
-                        $this->show_editor($mpwpb_service_details_content,'mpwpb_service_details_content');
+                        $this->show_editor($service_details_content,'mpwpb_service_details_content');
                     ?>
                 </section>
                 
@@ -86,17 +86,7 @@ if( ! class_exists('MPWPB_Service_Details')){
         public function show_editor($content,$field_name) {
             $content = $content; // You can set default content if needed.
             $editor_id = $field_name; // ID for the editor (used internally by wp_editor).
-            $settings = array(
-                'textarea_name' => $field_name,
-                'media_buttons' => true,
-                'textarea_rows' => 10,
-                'teeny'         => true, // Enables a simpler editor
-                'quicktags'     => true, // Disables quicktags
-                'tinymce'       => array(
-                    'toolbar1' => 'bold,italic,underline,strikethrough,blockquote,alignleft,aligncenter,alignright,alignjustify,link,unlink,wp_more,spellchecker',
-                    'toolbar2' => 'pastetext,removeformat,wp_help', // Additional buttons in a second row
-                ),
-            );
+            $settings = array();
             wp_editor( $content, $editor_id, $settings );
         }
 
@@ -105,14 +95,14 @@ if( ! class_exists('MPWPB_Service_Details')){
                 $service_overview_status = MP_Global_Function::get_submit_info('mpwpb_service_overview_status','off');
                 $service_details_status = MP_Global_Function::get_submit_info('mpwpb_service_details_status','off');
 
-                $service_overview_content = MP_Global_Function::get_submit_info('mpwpb_service_overview_content');
-                $mpwpb_service_details_content = MP_Global_Function::get_submit_info('mpwpb_service_details_content');
+                $service_overview_content = wp_kses_post($_POST['mpwpb_service_overview_content']);;
+                $service_details_content =  wp_kses_post($_POST['mpwpb_service_details_content']);
                 
                 update_post_meta($post_id, 'mpwpb_service_overview_status', $service_overview_status);
                 update_post_meta($post_id, 'mpwpb_service_details_status', $service_details_status);
 
                 update_post_meta($post_id, 'mpwpb_service_overview_content', $service_overview_content);
-                update_post_meta($post_id, 'mpwpb_service_details_content', $mpwpb_service_details_content);
+                update_post_meta($post_id, 'mpwpb_service_details_content', $service_details_content);
             }
         }
     }

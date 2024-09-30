@@ -64,6 +64,7 @@ if( ! class_exists('MPWPB_Faq_Settings')){
                 <section class="mpwpb-faq <?php echo $active_class; ?>" data-collapse="#mpwpb_faq_active">
                     <?php 
                         $mpwpb_faq = get_post_meta($post_id,'mpwpb_faq',true);
+                        print_r($mpwpb_faq);
                         if( ! empty($mpwpb_faq)){
                             foreach ($mpwpb_faq as $key => $value) {
                                 $this->show_faq_data($key,$value['title'],$value['content']);
@@ -159,7 +160,6 @@ if( ! class_exists('MPWPB_Faq_Settings')){
                 'content'=>$_POST['mpwpb_faq_content'],
             ];
             // $mpwpb_faq =[];
-
             if(update_post_meta($post_id, 'mpwpb_faq', $mpwpb_faq)){
                 ob_start();
                 $resultMessage = __('Data updated successfully', 'mptbm_plugin_pro');

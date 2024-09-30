@@ -379,4 +379,11 @@ function mpwpb_price_calculation($this) {
         mpwpb_price_calculation($(this));
     });
     //======================//
+    $(document).ready(function() {
+        $('.faq-header').on('click', function() {
+            console.log('test');
+            $(this).next('.faq-content').slideToggle(); 
+        });
+    });
 }(jQuery));
+
