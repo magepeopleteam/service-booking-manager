@@ -23,7 +23,7 @@ if(! class_exists('MPWPB_Static_Template') ){
                 <div class="template-header" >
                     <div class="header-content">
                         <h2><?php the_title(); ?></h2>
-                        <p class="ratings"><i class="fas fa-star"></i> 4.67 <span> out of 5</span></p>
+                        <?php self::get_ratings(); ?>
                         <p>(8868 ratings on 3 services)</p>
                         <ul class="features">
                             <li><i class="fas fa-check-circle"></i> On Time Work Completion</li>
@@ -32,6 +32,11 @@ if(! class_exists('MPWPB_Static_Template') ){
                     </div>
                 </div>
             </header>
+            <?php
+        }
+        public static function get_ratings(){
+            ?>
+            <div class="ratings"><i class="fas fa-star"></i> 4.67 <span> out of 5</span></div>
             <?php
         }
 
@@ -63,7 +68,6 @@ if(! class_exists('MPWPB_Static_Template') ){
                 <section id="service-overview">
                     <h2><?php _e('Servie Overview','service-booking-manager'); ?></h2>
                     <?php echo $service_overview_status === 'on' ? wp_kses_post($service_overview_content) : '';?>
-
                 </section>
             <?php
         }

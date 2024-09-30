@@ -38,20 +38,6 @@
                 h2,p{
                     color: var(--color_theme_alter);
                 }
-    
-                .ratings{
-                    background-color:var(--color_theme_alter);
-                    margin: 10px 0;
-                    padding:5px 10px;
-                    border-radius: 5px;
-                    color: var(--color_theme);
-                    font-size: 16px;
-                    font-weight: bold;
-                    span{
-                        font: 12px;
-                        font-weight: normal;
-                    }
-                }
                 ul.features{
                     margin:30px 0;
                     padding: 0;
@@ -76,9 +62,10 @@
         display:flex;
         justify-content: space-between;
         align-items: start;
+        padding:20px 0;
         .main{
             width: 73%;
-            padding:20px 0;
+            
             nav{
                 margin-bottom:20px;
                 ul{
@@ -172,10 +159,10 @@
         .sidebar{
             width:26%;
             .mpwpb_static_area {
-                position: relative; 
+                position: fixed; 
                 transform:translateY(-50%); 
                 width: 100%;  
-                z-index: 11111; 
+                z-index: 99999; 
                 .mpwpb_static {
                     background-color: var(--color_theme);
                     padding: 30px;
@@ -191,12 +178,55 @@
                             color: var(--color_theme_alter);
                             text-align: left;
                         }
+                        .ratings{
+                            background-color: #00000052;
+                            color: var(--color_theme_alter);
+                        }
                     }
+                    .mpwpb_item_box {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        cursor: pointer;
+                        padding: var(--dMP_xs);
+                        margin: 0 0 var(--dMP_xs) 0;
+                        position: relative;
+                        background-color: var(--color_theme_alter);
+                        color: var(--d_color);
+                        border-radius: 5px;
+                    
+                        h2 {
+                            font-weight: bold;
+                            font-size: 16px;
+                            color: #3f3f3f;
+                        }
+                    
+                        i {
+                            color: var(--color_theme);
+                        }
+                    }
+                    
+                    
                 }
                 
             }
             
         }
     }
+    .ratings{
+        background-color:var(--color_theme_alter);
+        margin: 10px 0;
+        padding:5px 10px;
+        border-radius: 5px;
+        color: var(--color_theme);
+        font-size: 16px;
+        font-weight: bold;
+        display: inline-block;
+        span{
+            font: 12px;
+            font-weight: normal;
+        }
+    }
     
 }
+

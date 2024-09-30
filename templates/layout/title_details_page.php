@@ -15,6 +15,7 @@
 			<h2><?php echo esc_html( $title ); ?></h2>
 			<?php if ( $sub_title ) { ?>
 				<p><?php echo esc_html( $sub_title ); ?></p>
+				<?php MPWPB_Static_Template::get_ratings(); ?>
 			<?php } ?>
 		</div>
 		<?php

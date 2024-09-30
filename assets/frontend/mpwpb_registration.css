@@ -355,19 +355,6 @@ div.registration_tab_item {
 .mpwpb_registration header .template-header .header-content h2, .mpwpb_registration header .template-header .header-content p {
   color: var(--color_theme_alter);
 }
-.mpwpb_registration header .template-header .header-content .ratings {
-  background-color: var(--color_theme_alter);
-  margin: 10px 0;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: var(--color_theme);
-  font-size: 16px;
-  font-weight: bold;
-}
-.mpwpb_registration header .template-header .header-content .ratings span {
-  font: 12px;
-  font-weight: normal;
-}
 .mpwpb_registration header .template-header .header-content ul.features {
   margin: 30px 0;
   padding: 0;
@@ -388,10 +375,10 @@ div.registration_tab_item {
   display: flex;
   justify-content: space-between;
   align-items: start;
+  padding: 20px 0;
 }
 .mpwpb_registration main .main {
   width: 73%;
-  padding: 20px 0;
 }
 .mpwpb_registration main .main nav {
   margin-bottom: 20px;
@@ -481,10 +468,10 @@ div.registration_tab_item {
   width: 26%;
 }
 .mpwpb_registration main .sidebar .mpwpb_static_area {
-  position: relative;
+  position: fixed;
   transform: translateY(-50%);
   width: 100%;
-  z-index: 11111;
+  z-index: 99999;
 }
 .mpwpb_registration main .sidebar .mpwpb_static_area .mpwpb_static {
   background-color: var(--color_theme);
@@ -500,6 +487,44 @@ div.registration_tab_item {
 .mpwpb_registration main .sidebar .mpwpb_static_area .mpwpb_static .mp_title p {
   color: var(--color_theme_alter);
   text-align: left;
+}
+.mpwpb_registration main .sidebar .mpwpb_static_area .mpwpb_static .mp_title .ratings {
+  background-color: rgba(0, 0, 0, 0.3215686275);
+  color: var(--color_theme_alter);
+}
+.mpwpb_registration main .sidebar .mpwpb_static_area .mpwpb_static .mpwpb_item_box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: var(--dMP_xs);
+  margin: 0 0 var(--dMP_xs) 0;
+  position: relative;
+  background-color: var(--color_theme_alter);
+  color: var(--d_color);
+  border-radius: 5px;
+}
+.mpwpb_registration main .sidebar .mpwpb_static_area .mpwpb_static .mpwpb_item_box h2 {
+  font-weight: bold;
+  font-size: 16px;
+  color: #3f3f3f;
+}
+.mpwpb_registration main .sidebar .mpwpb_static_area .mpwpb_static .mpwpb_item_box i {
+  color: var(--color_theme);
+}
+.mpwpb_registration .ratings {
+  background-color: var(--color_theme_alter);
+  margin: 10px 0;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: var(--color_theme);
+  font-size: 16px;
+  font-weight: bold;
+  display: inline-block;
+}
+.mpwpb_registration .ratings span {
+  font: 12px;
+  font-weight: normal;
 }
 
 /*# sourceMappingURL=mpwpb_registration.css.map */
