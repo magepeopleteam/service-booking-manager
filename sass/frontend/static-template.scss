@@ -1,5 +1,6 @@
 .mpwpb_registration{
-    .template-header{
+    
+    header{
         background-repeat: no-repeat;
         background-size: 800px;
         background-position: right;
@@ -17,139 +18,185 @@
             position: absolute;
             z-index: 0;
         }
-        .header-content{
-            z-index: 1;
-            position: relative;
-            width: 1240px;
+        .template-header{
+            width: 1360px;
             max-width: 1400px;
             margin: auto;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: start;
-            h2{
-                margin: 10px 0;
-                padding-top: 50px;
-                font-size: 48px;
-            }
-            h2,p{
-                color: var(--color_theme_alter);
-            }
-
-            .ratings{
-                background-color:var(--color_theme_alter);
-                margin: 10px 0;
-                padding:5px 10px;
-                border-radius: 5px;
-                color: var(--color_theme);
-                font-size: 16px;
-                font-weight: bold;
-                span{
-                    font: 12px;
-                    font-weight: normal;
-                }
-            }
-            ul.features{
-                margin:30px 0;
-                padding: 0;
-                list-style-type: none;
-                li{
-                    margin:10px 0;
-                    color: var(--color_theme_alter);
-                    font-size: 18px;
-                    i{
-                        margin-right: 10px;
-                    }
-                }
-            }
-        }
-    }
-    .main{
-        width: 1240px;
-        max-width: 1400px;
-        margin: 0 auto;
-        padding:20px 0;
-        nav{
-            margin-bottom:20px;
-            ul{
-                margin: 0;
-                padding: 0;
-                list-style-type: none;
+            .header-content{
+                z-index: 1;
+                position: relative;
+                
                 display: flex;
-                flex-direction: row;
-                justify-content: start;
-                align-items: center;
-                li{
-                    margin:0 10px ;
-                    background-color: var(--color_theme_alter);
-                    border-radius: 3px;
-                    border: 1px solid var(--color_theme);
-                    &:first-child{
-                        margin-left:0 ;
+                flex-direction: column;
+                justify-content: center;
+                align-items: start;
+                h2{
+                    margin: 10px 0;
+                    padding-top: 50px;
+                    font-size: 48px;
+                }
+                h2,p{
+                    color: var(--color_theme_alter);
+                }
+    
+                .ratings{
+                    background-color:var(--color_theme_alter);
+                    margin: 10px 0;
+                    padding:5px 10px;
+                    border-radius: 5px;
+                    color: var(--color_theme);
+                    font-size: 16px;
+                    font-weight: bold;
+                    span{
+                        font: 12px;
+                        font-weight: normal;
                     }
-                    a{
-                        display: block;
-                        text-decoration: none; height: 100%; width: 100%;padding: 10px;
-                        color: var(--color_theme);
-                        &:hover{
-                            background-color: var(--color_theme);
-                            color: var(--color_theme_alter);
+                }
+                ul.features{
+                    margin:30px 0;
+                    padding: 0;
+                    list-style-type: none;
+                    li{
+                        margin:10px 0;
+                        color: var(--color_theme_alter);
+                        font-size: 18px;
+                        i{
+                            margin-right: 10px;
                         }
                     }
                 }
             }
         }
-        section{
-            margin: 30px 0;
-            h2{
-                margin: 20px 0;
-                border-bottom: 1px solid #ededed;
-            }
-            dd, dl, dt, li, ol, ul {
-                margin: 10px; 
-                padding: 0; 
-            }
-            
-            ul, ol {
-                padding-left: 20px; 
-                list-style-position: inside; 
-            }
-            
-            li {
-                margin: 5px 0; 
-            }
-            
-            ol {
-                list-style-type: decimal; 
-            }
-            
-            dl {
-                margin-bottom: 15px; 
-            }
-            
-            dt {
-                font-weight: bold; 
-            }
-            
-            dd {
-                margin-left: 20px; 
-            }
-            
-        }
-        .mpwpb-serivice-faq{
-            margin-left: 30px;
-            .faq-header{
-                font-weight: bold;
-                margin-top:10px;
-                cursor: pointer;
-                i{
-                    margin: 0 10px;
+        
+    }
+    main{
+        max-width: 1400px;
+        width: 1360px;
+        margin: auto;
+        display:flex;
+        justify-content: space-between;
+        align-items: start;
+        .main{
+            width: 73%;
+            padding:20px 0;
+            nav{
+                margin-bottom:20px;
+                ul{
+                    margin: 0;
+                    padding: 0;
+                    list-style-type: none;
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: start;
+                    align-items: center;
+                    li{
+                        margin:0 10px ;
+                        background-color: var(--color_theme_alter);
+                        border-radius: 3px;
+                        border: 1px solid var(--color_theme);
+                        &:first-child{
+                            margin-left:0 ;
+                        }
+                        a{
+                            display: block;
+                            text-decoration: none; height: 100%; width: 100%;padding: 10px;
+                            color: var(--color_theme);
+                            &:hover{
+                                background-color: var(--color_theme);
+                                color: var(--color_theme_alter);
+                            }
+                        }
+                    }
                 }
             }
-            .faq-content{
-                display: none;
-                padding:10px 40px;
+            section{
+                margin: 30px 0;
+                
+                h2{
+                    margin: 20px 0;
+                    border-bottom: 1px solid #ededed;
+                    color: var(--color_theme);
+                }
+                dd, dl, dt, li, ol, ul {
+                    margin: 10px; 
+                    padding: 0; 
+                }
+                
+                ul, ol {
+                    padding-left: 20px; 
+                    list-style-position: inside; 
+                    list-style-type:disc;
+                }
+                
+                li {
+                    margin: 5px 0; 
+                }
+                
+                ol {
+                    list-style-type: decimal; 
+                    &::marker{
+                        background-color: var(--color_theme);
+                    }
+                }
+                
+                dl {
+                    margin-bottom: 15px; 
+                }
+                
+                dt {
+                    font-weight: bold; 
+                }
+                
+                dd {
+                    margin-left: 20px; 
+                }
+                
+            }
+            .mpwpb-serivice-faq{
+                margin-left: 30px;
+                .faq-header{
+                    font-weight: bold;
+                    margin-top:10px;
+                    cursor: pointer;
+                    i{
+                        margin: 0 10px;
+                        color:var(--color_theme);
+                    }
+                }
+                .faq-content{
+                    display: none;
+                    padding:10px 40px;
+                }
             }
         }
+        .sidebar{
+            width:26%;
+            .mpwpb_static_area {
+                position: relative; 
+                transform:translateY(-50%); 
+                width: 100%;  
+                z-index: 11111; 
+                .mpwpb_static {
+                    background-color: var(--color_theme);
+                    padding: 30px;
+                    border: 2px solid var(--color_theme_alter);
+                    border-radius: 10px;
+                    box-shadow: 0 0 5px #333;
+                    .mp_title {
+                        h2 {
+                            color: var(--color_theme_alter);
+                            text-align: left;
+                        }
+                        p {
+                            color: var(--color_theme_alter);
+                            text-align: left;
+                        }
+                    }
+                }
+                
+            }
+            
+        }
     }
+    
 }

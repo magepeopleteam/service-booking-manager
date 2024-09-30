@@ -13,8 +13,8 @@
 		foreach ($all_services as $all_service) {
 			$category_name = array_key_exists('category', $all_service) ? $all_service['category'] : ''; ?>
             <div class="mpwpb_item_box" data-category="<?php echo esc_attr($category_name); ?>" data-target-popup="#mpwpb_static_popup">
-                <h6><?php echo esc_html($category_name); ?></h6>
-                <span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
+                <h2><?php echo esc_html($category_name); ?></h2>
+                <i class="fas fa-chevron-right mpwpb_item_check"></i>
             </div>
 		<?php }
 	} else {
@@ -25,8 +25,8 @@
 				$sub_category_name = array_key_exists('sub_category', $service_item) ? $service_item['sub_category'] : '';
 				$service_name = array_key_exists('service', $service_item) ? $service_item['service'] : ''; ?>
                 <div class="mpwpb_item_box" data-target-popup="#mpwpb_static_popup" data-category="<?php echo esc_attr($category_name); ?>" data-sub-category="<?php echo esc_attr($sub_category_name); ?>" data-service="<?php echo esc_attr($service_name); ?>">
-                    <h6><?php echo esc_html($service_name); ?></h6>
-                    <span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
+                    <h2><?php echo esc_html($service_name); ?></h2>
+                    <i class="fas fa-chevron-right mpwpb_item_check"></i>
                 </div>
 			<?php }
 		}

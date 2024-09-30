@@ -47,7 +47,9 @@ div.registration_tab_item {
 	div.mpwpb_extra_service_area h5 {background-color: rgba(54, 85, 250, 0.06);border-bottom: 1px solid var(--color_border);padding: var(--dMP_xs);}
 	div.next_service_area {background-color: #FFF;}
 	div.mpwpb_date_time_area header {background-color: rgba(54, 85, 250, 0.06);padding: var(--dMP_xs);border-bottom: 1px solid var(--color_border);}
-	div.mpwpb_item_box {cursor: pointer;padding: var(--dMP_xs);margin: 0 0 var(--dMP_xs) 0;position: relative;border: 2px solid transparent;background-color: var(--color_light_2);}
+	div.mpwpb_item_box {display:flex;justify-content: space-between;align-items: center; cursor: pointer;padding: var(--dMP_xs);margin: 0 0 var(--dMP_xs) 0;position: relative;background-color: var(--color_theme_alter);color: var(--d_color);border-radius:5px;}
+	div.mpwpb_item_box h2{font-weight: bold;font-size: 16px;}
+	div.mpwpb_item_box i{color: var(--color_theme);}
 	div.mpwpb_item_box.mpActive {border-color: var(--color_theme);color: var(--color_theme);}
 	div.mpwpb_item_box.mpActive span.mpwpb_item_check {opacity: 1;}
 	div.mpwpb_item_box .bg_image_area {max-width: 50px;margin: 0 15px 0 0;}
@@ -72,8 +74,6 @@ div.registration_tab_item {
 /********************************************************************************************************************/
 /********************************************************************************************************************/
 @media only screen and (min-width: 10px) {
-	div.mpwpb_static_area {position: fixed; right: 0;top:0;bottom:0; max-width: 300px; width: 100%;  z-index: 11111; }
-	div.mpwpb_static {background-color: #CCC;  padding: var(--dMP_xs);}
 	div.mpwpb_static_theme div.mpwpb_summary_area_left {width: 400px; border-left: 2px solid var(--color_border);}
 	div.mpwpb_static_theme div.mpwpb_static_service {width: calc(100% - 400px);}
 	div.mpwpb_static_theme div.mpwpb_summary_area_left_content {border: none;position: absolute;}

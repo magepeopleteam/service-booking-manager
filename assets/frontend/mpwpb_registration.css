@@ -135,12 +135,23 @@ div.registration_tab_item {
     border-bottom: 1px solid var(--color_border);
   }
   div.mpwpb_item_box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     cursor: pointer;
     padding: var(--dMP_xs);
     margin: 0 0 var(--dMP_xs) 0;
     position: relative;
-    border: 2px solid transparent;
-    background-color: var(--color_light_2);
+    background-color: var(--color_theme_alter);
+    color: var(--d_color);
+    border-radius: 5px;
+  }
+  div.mpwpb_item_box h2 {
+    font-weight: bold;
+    font-size: 16px;
+  }
+  div.mpwpb_item_box i {
+    color: var(--color_theme);
   }
   div.mpwpb_item_box.mpActive {
     border-color: var(--color_theme);
@@ -224,19 +235,6 @@ div.registration_tab_item {
 /********************************************************************************************************************/
 /********************************************************************************************************************/
 @media only screen and (min-width: 10px) {
-  div.mpwpb_static_area {
-    position: fixed;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    max-width: 300px;
-    width: 100%;
-    z-index: 11111;
-  }
-  div.mpwpb_static {
-    background-color: #CCC;
-    padding: var(--dMP_xs);
-  }
   div.mpwpb_static_theme div.mpwpb_summary_area_left {
     width: 400px;
     border-left: 2px solid var(--color_border);
@@ -317,7 +315,7 @@ div.registration_tab_item {
     padding: 20px 0;
   }
 }
-.mpwpb_registration .template-header {
+.mpwpb_registration header {
   background-repeat: no-repeat;
   background-size: 800px;
   background-position: right;
@@ -325,7 +323,7 @@ div.registration_tab_item {
   display: flex;
   min-height: 200px;
 }
-.mpwpb_registration .template-header::before {
+.mpwpb_registration header::before {
   width: 100%;
   height: 100%;
   top: 0;
@@ -336,26 +334,28 @@ div.registration_tab_item {
   position: absolute;
   z-index: 0;
 }
-.mpwpb_registration .template-header .header-content {
-  z-index: 1;
-  position: relative;
-  width: 1240px;
+.mpwpb_registration header .template-header {
+  width: 1360px;
   max-width: 1400px;
   margin: auto;
+}
+.mpwpb_registration header .template-header .header-content {
+  z-index: 1;
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: start;
 }
-.mpwpb_registration .template-header .header-content h2 {
+.mpwpb_registration header .template-header .header-content h2 {
   margin: 10px 0;
   padding-top: 50px;
   font-size: 48px;
 }
-.mpwpb_registration .template-header .header-content h2, .mpwpb_registration .template-header .header-content p {
+.mpwpb_registration header .template-header .header-content h2, .mpwpb_registration header .template-header .header-content p {
   color: var(--color_theme_alter);
 }
-.mpwpb_registration .template-header .header-content .ratings {
+.mpwpb_registration header .template-header .header-content .ratings {
   background-color: var(--color_theme_alter);
   margin: 10px 0;
   padding: 5px 10px;
@@ -364,33 +364,39 @@ div.registration_tab_item {
   font-size: 16px;
   font-weight: bold;
 }
-.mpwpb_registration .template-header .header-content .ratings span {
+.mpwpb_registration header .template-header .header-content .ratings span {
   font: 12px;
   font-weight: normal;
 }
-.mpwpb_registration .template-header .header-content ul.features {
+.mpwpb_registration header .template-header .header-content ul.features {
   margin: 30px 0;
   padding: 0;
   list-style-type: none;
 }
-.mpwpb_registration .template-header .header-content ul.features li {
+.mpwpb_registration header .template-header .header-content ul.features li {
   margin: 10px 0;
   color: var(--color_theme_alter);
   font-size: 18px;
 }
-.mpwpb_registration .template-header .header-content ul.features li i {
+.mpwpb_registration header .template-header .header-content ul.features li i {
   margin-right: 10px;
 }
-.mpwpb_registration .main {
-  width: 1240px;
+.mpwpb_registration main {
   max-width: 1400px;
-  margin: 0 auto;
+  width: 1360px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+}
+.mpwpb_registration main .main {
+  width: 73%;
   padding: 20px 0;
 }
-.mpwpb_registration .main nav {
+.mpwpb_registration main .main nav {
   margin-bottom: 20px;
 }
-.mpwpb_registration .main nav ul {
+.mpwpb_registration main .main nav ul {
   margin: 0;
   padding: 0;
   list-style-type: none;
@@ -399,16 +405,16 @@ div.registration_tab_item {
   justify-content: start;
   align-items: center;
 }
-.mpwpb_registration .main nav ul li {
+.mpwpb_registration main .main nav ul li {
   margin: 0 10px;
   background-color: var(--color_theme_alter);
   border-radius: 3px;
   border: 1px solid var(--color_theme);
 }
-.mpwpb_registration .main nav ul li:first-child {
+.mpwpb_registration main .main nav ul li:first-child {
   margin-left: 0;
 }
-.mpwpb_registration .main nav ul li a {
+.mpwpb_registration main .main nav ul li a {
   display: block;
   text-decoration: none;
   height: 100%;
@@ -416,54 +422,84 @@ div.registration_tab_item {
   padding: 10px;
   color: var(--color_theme);
 }
-.mpwpb_registration .main nav ul li a:hover {
+.mpwpb_registration main .main nav ul li a:hover {
   background-color: var(--color_theme);
   color: var(--color_theme_alter);
 }
-.mpwpb_registration .main section {
+.mpwpb_registration main .main section {
   margin: 30px 0;
 }
-.mpwpb_registration .main section h2 {
+.mpwpb_registration main .main section h2 {
   margin: 20px 0;
   border-bottom: 1px solid #ededed;
+  color: var(--color_theme);
 }
-.mpwpb_registration .main section dd, .mpwpb_registration .main section dl, .mpwpb_registration .main section dt, .mpwpb_registration .main section li, .mpwpb_registration .main section ol, .mpwpb_registration .main section ul {
+.mpwpb_registration main .main section dd, .mpwpb_registration main .main section dl, .mpwpb_registration main .main section dt, .mpwpb_registration main .main section li, .mpwpb_registration main .main section ol, .mpwpb_registration main .main section ul {
   margin: 10px;
   padding: 0;
 }
-.mpwpb_registration .main section ul, .mpwpb_registration .main section ol {
+.mpwpb_registration main .main section ul, .mpwpb_registration main .main section ol {
   padding-left: 20px;
   list-style-position: inside;
+  list-style-type: disc;
 }
-.mpwpb_registration .main section li {
+.mpwpb_registration main .main section li {
   margin: 5px 0;
 }
-.mpwpb_registration .main section ol {
+.mpwpb_registration main .main section ol {
   list-style-type: decimal;
 }
-.mpwpb_registration .main section dl {
+.mpwpb_registration main .main section ol::marker {
+  background-color: var(--color_theme);
+}
+.mpwpb_registration main .main section dl {
   margin-bottom: 15px;
 }
-.mpwpb_registration .main section dt {
+.mpwpb_registration main .main section dt {
   font-weight: bold;
 }
-.mpwpb_registration .main section dd {
+.mpwpb_registration main .main section dd {
   margin-left: 20px;
 }
-.mpwpb_registration .main .mpwpb-serivice-faq {
+.mpwpb_registration main .main .mpwpb-serivice-faq {
   margin-left: 30px;
 }
-.mpwpb_registration .main .mpwpb-serivice-faq .faq-header {
+.mpwpb_registration main .main .mpwpb-serivice-faq .faq-header {
   font-weight: bold;
   margin-top: 10px;
   cursor: pointer;
 }
-.mpwpb_registration .main .mpwpb-serivice-faq .faq-header i {
+.mpwpb_registration main .main .mpwpb-serivice-faq .faq-header i {
   margin: 0 10px;
+  color: var(--color_theme);
 }
-.mpwpb_registration .main .mpwpb-serivice-faq .faq-content {
+.mpwpb_registration main .main .mpwpb-serivice-faq .faq-content {
   display: none;
   padding: 10px 40px;
+}
+.mpwpb_registration main .sidebar {
+  width: 26%;
+}
+.mpwpb_registration main .sidebar .mpwpb_static_area {
+  position: relative;
+  transform: translateY(-50%);
+  width: 100%;
+  z-index: 11111;
+}
+.mpwpb_registration main .sidebar .mpwpb_static_area .mpwpb_static {
+  background-color: var(--color_theme);
+  padding: 30px;
+  border: 2px solid var(--color_theme_alter);
+  border-radius: 10px;
+  box-shadow: 0 0 5px #333;
+}
+.mpwpb_registration main .sidebar .mpwpb_static_area .mpwpb_static .mp_title h2 {
+  color: var(--color_theme_alter);
+  text-align: left;
+}
+.mpwpb_registration main .sidebar .mpwpb_static_area .mpwpb_static .mp_title p {
+  color: var(--color_theme_alter);
+  text-align: left;
 }
 
 /*# sourceMappingURL=mpwpb_registration.css.map */

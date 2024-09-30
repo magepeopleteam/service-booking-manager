@@ -19,15 +19,17 @@ if(! class_exists('MPWPB_Static_Template') ){
 
         public function show_service_header() {
             ?>  
-            <header class="template-header" style="background-image: url('<?php echo get_the_post_thumbnail_url(); ?>');">
-                <div class="header-content">
-                    <h2><?php the_title(); ?></h2>
-                    <p class="ratings"><i class="fas fa-star"></i> 4.67 <span> out of 5</span></p>
-                    <p>(8868 ratings on 3 services)</p>
-                    <ul class="features">
-                        <li><i class="fas fa-check-circle"></i> On Time Work Completion</li>
-                        <li><i class="fas fa-check-circle"></i> Trusted and Experienced Plumbers</li>
-                    </ul>
+            <header style="background-image: url('<?php echo get_the_post_thumbnail_url(); ?>');">
+                <div class="template-header" >
+                    <div class="header-content">
+                        <h2><?php the_title(); ?></h2>
+                        <p class="ratings"><i class="fas fa-star"></i> 4.67 <span> out of 5</span></p>
+                        <p>(8868 ratings on 3 services)</p>
+                        <ul class="features">
+                            <li><i class="fas fa-check-circle"></i> On Time Work Completion</li>
+                            <li><i class="fas fa-check-circle"></i> Trusted and Experienced Plumbers</li>
+                        </ul>
+                    </div>
                 </div>
             </header>
             <?php
