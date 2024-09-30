@@ -450,8 +450,20 @@ div.registration_tab_item {
 .mpwpb_registration .main section dd {
   margin-left: 20px;
 }
+.mpwpb_registration .main .mpwpb-serivice-faq {
+  margin-left: 30px;
+}
+.mpwpb_registration .main .mpwpb-serivice-faq .faq-header {
+  font-weight: bold;
+  margin-top: 10px;
+  cursor: pointer;
+}
+.mpwpb_registration .main .mpwpb-serivice-faq .faq-header i {
+  margin: 0 10px;
+}
 .mpwpb_registration .main .mpwpb-serivice-faq .faq-content {
   display: none;
+  padding: 10px 40px;
 }
 
 /*# sourceMappingURL=mpwpb_registration.css.map */

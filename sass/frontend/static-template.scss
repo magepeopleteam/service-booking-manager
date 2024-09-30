@@ -137,8 +137,18 @@
             
         }
         .mpwpb-serivice-faq{
+            margin-left: 30px;
+            .faq-header{
+                font-weight: bold;
+                margin-top:10px;
+                cursor: pointer;
+                i{
+                    margin: 0 10px;
+                }
+            }
             .faq-content{
                 display: none;
+                padding:10px 40px;
             }
         }
     }

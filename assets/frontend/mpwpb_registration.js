@@ -383,6 +383,7 @@ function mpwpb_price_calculation($this) {
         $('.faq-header').on('click', function() {
             console.log('test');
             $(this).next('.faq-content').slideToggle(); 
+            $(this).find('i').toggleClass('fa-plus fa-minus');
         });
     });
 }(jQuery));

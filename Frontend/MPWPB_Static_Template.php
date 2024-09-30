@@ -87,7 +87,7 @@ if(! class_exists('MPWPB_Static_Template') ){
             ?>
             <div class="mpwpb-serivice-faq">
                 <div class="faq-header">
-                    <?php echo esc_html($title); ?>
+                    <i class="fas fa-plus"></i> <?php echo esc_html($title); ?>
                 </div>
                 <div class="faq-content">
                     <?php echo esc_html($content); ?>
