@@ -11,7 +11,7 @@
 	$sub_title = MP_Global_Function::get_post_info( $post_id, 'mpwpb_shortcode_sub_title' );
 	if ( $title ) {
 		?>
-		<div class="mp_title _mTB">
+		<div class="mp_title">
 			<h2><?php echo esc_html( $title ); ?></h2>
 			<?php if ( $sub_title ) { ?>
 				<p><?php echo esc_html( $sub_title ); ?></p>

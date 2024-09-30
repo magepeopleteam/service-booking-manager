@@ -467,10 +467,26 @@ div.registration_tab_item {
 .mpwpb_registration main .sidebar {
   width: 26%;
 }
+.mpwpb_registration main .sidebar .mpwpb_static_theme .popupMainArea {
+  border: 2px solid var(--color_theme);
+  box-shadow: 0 0 1px #000;
+}
+.mpwpb_registration main .sidebar .mpwpb_static_theme .popupMainArea .popupHeader {
+  background: #ddd;
+  padding: 20px;
+  color: #333;
+}
+.mpwpb_registration main .sidebar .mpwpb_static_theme .popupClose {
+  background-color: var(--color_theme);
+  color: #FFF;
+}
+.mpwpb_registration main .sidebar .mpwpb_static_theme .popupFooter {
+  border-top: 0;
+}
 .mpwpb_registration main .sidebar .mpwpb_static_area {
   position: fixed;
   transform: translateY(-50%);
-  width: 100%;
+  width: auto;
   z-index: 99999;
 }
 .mpwpb_registration main .sidebar .mpwpb_static_area .mpwpb_static {
@@ -479,6 +495,9 @@ div.registration_tab_item {
   border: 2px solid var(--color_theme_alter);
   border-radius: 10px;
   box-shadow: 0 0 5px #333;
+}
+.mpwpb_registration main .sidebar .mpwpb_static_area .mpwpb_static .mp_title {
+  margin-bottom: 20px;
 }
 .mpwpb_registration main .sidebar .mpwpb_static_area .mpwpb_static .mp_title h2 {
   color: var(--color_theme_alter);
