@@ -15,7 +15,6 @@ div.registration_tab_item {
 	div.mpwpb_registration #customer_details {background-color: #F7F7F7;padding: var(--dMP_xs);margin: 0;}
 	div.mpwpb_registration #order_review {background-color: #FFF;padding: 0 !important;margin: 0 !important; border: none !important;}
 	div.mpwpb_registration .mpwpb_order_details_area {background-color: #FFF;padding: var(--dMP_xs) var(--dMP_xs) var(--dMP_xs) var(--dMP);margin: 0;}
-	div.mpwpb_registration .woocommerce-page h3 {padding: 0 0 var(--dMP_xs) 0 !important;margin: 0 !important;font-size: var(--fs_h3) !important;}
 	div.mpwpb_registration .woocommerce-page input[type="radio"].shipping_method + label,
 	div.mpwpb_registration .woocommerce-page input[type="radio"][name="payment_method"] + label { display: inline-block; }
 	div.mpwpb_registration .woocommerce #payment #place_order,

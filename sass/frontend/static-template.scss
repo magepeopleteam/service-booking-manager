@@ -311,6 +311,57 @@
                                                 border-radius: 0;
                                                 margin-bottom: 2px;
                                             }
+                                            .booked{
+                                                font-size: 14px;
+                                            }
+                                        }
+                                    }
+                                    #customer_details{
+                                        margin-bottom: 20px;
+                                        .col-1{
+                                            width: 100%;
+                                        }
+                                        h3{
+                                            background-color: transparent;
+                                            font-size: 16px !important;
+                                            color: var(--color_theme);
+                                            font-weight: 700;
+                                            padding:10px 0;
+                                            border-bottom: 1px solid var(--color_theme);
+                                        }
+                                        label{
+                                            font-size: 14px;
+                                            color: #333;
+                                        }
+                                        input.input-text{
+                                            border-color: #d3d3d3;
+                                        }
+                                    }
+                                    #order_review_heading{
+                                        font-size: 16px !important;
+                                        margin-bottom: 10px;
+                                        color: var(--color_theme);
+                                    }
+                                    #order_review{
+                                        #payment{
+                                            background-color: #f4f5f8;
+                                            label{
+                                                font-size: 14px;
+                                                color: #333;
+                                            }
+                                            .payment_box{
+                                                background-color: #d3d3d3;
+                                                &::before{
+                                                    border: 1em solid #d3d3d3;
+                                                    border-right-color: transparent;
+                                                    border-left-color: transparent;
+                                                    border-top-color: transparent;
+                                                }
+                                            }
+                                            #place_order{
+                                                background-color: var(--color_theme);
+                                                border: 1px solid var(--color_theme);
+                                            }
                                         }
                                     }
                                 }
