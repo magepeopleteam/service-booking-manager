@@ -185,6 +185,7 @@ div.registration_tab_item {
   }
   /*************/
   div.mpwpb_extra_service_area div.mpwpb_item_box {
+    flex-direction: column;
     width: 100%;
     margin: var(--dMP_xs) 0 0 0;
     cursor: initial;
@@ -572,6 +573,26 @@ div.registration_tab_item {
   background-color: #f4f5f8;
   border-radius: 0;
 }
+.mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_extra_service_area .mpwpb_extra_service_item .mpwpb_price_calculation {
+  min-width: 100px;
+  width: 100px;
+  border: 1px solid var(--color_theme);
+  color: var(--color_theme);
+  background-color: var(--color_theme_alter);
+}
+.mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_extra_service_area .mpwpb_extra_service_item .mpwpb_price_calculation:hover {
+  background-color: var(--color_theme);
+  color: var(--color_theme_alter);
+}
+.mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_extra_service_area .mpwpb_extra_service_item .mpwpb_price_calculation:focus {
+  background-color: var(--color_theme);
+  color: var(--color_theme_alter);
+}
+.mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_extra_service_area .mpwpb_extra_service_item .mpwpb_price_calculation.mActive {
+  background-color: var(--color_theme);
+  color: var(--color_theme_alter);
+  width: 120px;
+}
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_date_carousel header {
   background-color: transparent;
   padding: 10px 0;
@@ -623,6 +644,9 @@ div.registration_tab_item {
   border-top: 0;
   padding: 10px;
   box-shadow: 2px 0px 5px 0 rgba(0, 0, 0, 0.1);
+}
+.mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupFooter button.mpwpb_date_time_next {
+  padding: 10px;
 }
 .mpwpb_registration main .sidebar .mpwpb_static_area {
   position: fixed;

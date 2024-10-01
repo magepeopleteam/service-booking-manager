@@ -59,7 +59,7 @@ div.registration_tab_item {
 	div.service_img_area {max-width: 120px;margin: 0 15px 0 0;width: 100%;}
 	div.mpwpb_icon_area {font-size: 60px;padding: var(--dMP);}
 	/*************/
-	div.mpwpb_extra_service_area div.mpwpb_item_box {width: 100%;margin: var(--dMP_xs) 0 0 0;cursor: initial;background-color: #FFF;}
+	div.mpwpb_extra_service_area div.mpwpb_item_box {flex-direction: column;width: 100%;margin: var(--dMP_xs) 0 0 0;cursor: initial;background-color: #FFF;}
 	div.mpwpb_extra_service_area div.mpwpb_item_box:hover {border-color: transparent;color: inherit;}
 	/*************/
 	div.mpwpb_summary_area_left {display: none;}

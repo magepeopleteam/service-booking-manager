@@ -255,7 +255,6 @@
                                         }
                                     }
                                     .mpwpb_extra_service_area{
-                                        
                                         h5{
                                             background-color: transparent;
                                             font-size: 16px;
@@ -267,6 +266,28 @@
                                         .mpwpb_item_box{
                                             background-color: #f4f5f8;
                                             border-radius: 0;
+                                        }
+                                        .mpwpb_extra_service_item{
+                                            .mpwpb_price_calculation{
+                                                min-width: 100px;
+                                                width: 100px;
+                                                border: 1px solid var(--color_theme);
+                                                color: var(--color_theme);
+                                                background-color: var(--color_theme_alter);
+                                                &:hover{
+                                                    background-color: var(--color_theme);
+                                                    color: var(--color_theme_alter);
+                                                }
+                                                &:focus{
+                                                    background-color: var(--color_theme);
+                                                    color: var(--color_theme_alter);
+                                                }
+                                                &.mActive{
+                                                    background-color: var(--color_theme);
+                                                    color: var(--color_theme_alter);
+                                                    width: 120px;
+                                                }
+                                            }
                                         }
                                     }
                                     .mpwpb_date_carousel{
@@ -330,8 +351,8 @@
                         border-top:0;
                         padding: 10px;
                         box-shadow: 2px 0px 5px 0 rgba(0, 0, 0, 0.1);
-                        .next_service_area{
-                            
+                        button.mpwpb_date_time_next{
+                            padding: 10px;
                         }
                     }
                 }

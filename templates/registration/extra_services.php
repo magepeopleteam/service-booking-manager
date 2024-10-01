@@ -70,7 +70,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- <span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span> -->
+                                <span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
 								<?php if ($ex_service_info['details']) { ?>
                                     <div data-collapse="<?php echo esc_attr($unique_id); ?>">
                                         <div class="divider"></div>
