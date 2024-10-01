@@ -34,7 +34,7 @@
 							$unique_id = '#service_' . uniqid();
 							?>
                             <div class="mpwpb_item_box mpwpb_extra_service_item">
-                                <div class="dFlex">
+                                <div class="dFlex" style="width: 100%;">
 									<?php if ($ex_service_image) { ?>
                                         <div class="service_img_area alignCenter">
                                             <div class="bg_image_area">
@@ -70,7 +70,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
+                                <!-- <span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span> -->
 								<?php if ($ex_service_info['details']) { ?>
                                     <div data-collapse="<?php echo esc_attr($unique_id); ?>">
                                         <div class="divider"></div>

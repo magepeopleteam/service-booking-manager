@@ -227,7 +227,6 @@
                                             }
                                         }
                                         .mpwpb_service_item{
-                                            border-bottom: 1px solid #f4f5f8;
                                             background-color: #f4f5f8;
 
                                             [data-collapse]{
@@ -250,6 +249,7 @@
                                                 &.mActive{
                                                     background-color: var(--color_theme);
                                                     color: var(--color_theme_alter);
+                                                    width: 120px;
                                                 }
                                             }
                                         }
@@ -263,6 +263,33 @@
                                             font-weight: 700;
                                             padding:10px 0;
                                             border-bottom: 1px solid var(--color_theme);
+                                        }
+                                        .mpwpb_item_box{
+                                            background-color: #f4f5f8;
+                                            border-radius: 0;
+                                        }
+                                    }
+                                    .mpwpb_date_carousel{
+                                        header{
+                                            background-color: transparent;
+                                            padding: 10px 0;
+                                            h3{
+                                                font-size: 16px;
+                                                color: var(--color_theme);
+                                                font-weight: 700;
+                                            }
+                                        }
+                                        .carousel_area{
+                                            color: var(--color_theme);
+                                            button{
+                                                border-radius: 0;
+                                            }
+                                        }
+                                        .mpwpb_date_time_line{
+                                            ._mpBtn{
+                                                border-radius: 0;
+                                                margin-bottom: 2px;
+                                            }
                                         }
                                     }
                                 }
@@ -302,9 +329,9 @@
                     .popupFooter{
                         border-top:0;
                         padding: 10px;
+                        box-shadow: 2px 0px 5px 0 rgba(0, 0, 0, 0.1);
                         .next_service_area{
-                            padding: 10px;
-                            border-top: 1px solid #f4f5f8;
+                            
                         }
                     }
                 }
