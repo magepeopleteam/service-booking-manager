@@ -46,14 +46,15 @@
                     </div>
                 </div>
                 <div class="mpPopup mpStyle" data-popup="#mpwpb_static_popup">
-                    <div class="popupMainArea max_800">
+                    <div class="popupMainArea max_900">
                         <div class="popupHeader">
-                            <?php include(MPWPB_Function::template_path('layout/title_details_page.php')); ?>
+                            <h5><?php echo esc_html( $title ); ?></h5>
+                            <p><?php echo esc_html( $sub_title ); ?></p>
                             <span class="fas fa-times popupClose"></span>
                         </div>
                         <div class="popupBody">
-                            <div class="_dFlex">
-                                <div class="mpwpb_static_service _padding_xs">
+                            <div class="mpwpb-popup-content">
+                                <div class="mpwpb_static_service">
                                     <div class="all_service_area ">
                                         <?php include(MPWPB_Function::template_path('registration/category_selection.php')); ?>
                                         <?php include(MPWPB_Function::template_path('registration/service_selection.php')); ?>
@@ -62,7 +63,7 @@
                                     <?php include(MPWPB_Function::template_path('registration/date_time_select.php')); ?>
                                     <div class="mpwpb_order_proceed_area"></div>
                                 </div>
-                                <div class="mpwpb_summary_area_left _padding_xs">
+                                <div class="mpwpb_summary_area_left">
                                     <div class="mpwpb_summary_area_left_content">
                                         <?php if (sizeof($all_category) > 0) { ?>
                                             <div class="mpwpb_summary_item" data-category>

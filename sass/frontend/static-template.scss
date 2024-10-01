@@ -19,8 +19,8 @@
             z-index: 0;
         }
         .template-header{
-            width: 1360px;
-            max-width: 1400px;
+            width: 1300px;
+            max-width: 1160px;
             margin: auto;
             .header-content{
                 z-index: 1;
@@ -56,15 +56,15 @@
         
     }
     main{
-        max-width: 1400px;
-        width: 1360px;
+        max-width: 1300px;
+        width: 1160px;
         margin: auto;
         display:flex;
         justify-content: space-between;
         align-items: start;
         padding:20px 0;
         .main{
-            width: 73%;
+            width: 80%;
             
             nav{
                 margin-bottom:20px;
@@ -157,29 +157,59 @@
             }
         }
         .sidebar{
-            width:26%;
+            // width:30%;
             .mpwpb_static_theme{
-                .popupMainArea{
-                    border:2px solid var(--color_theme);
-                    box-shadow: 0 0 1px #000;
-                    .popupHeader{
-                        background: #ddd;
-                        padding: 20px;
-                        color: #333;
+                .mpPopup{
+                    background-color: #00000094;
+                    .popupMainArea{
+                        border:0;
+                        box-shadow: 0 0 1px #000;
+                        border-radius: 5px;
+                        height: 50vh;
+                        .popupHeader{
+                            padding: 16px 16px 10px;
+                            color: #333;
+                            border-radius: 5px 5px 0 0;
+                            border: 0;
+                            box-shadow: 0 2px 5px 0 rgba(0,0,0,.1);
+                        }
+                        .popupBody {
+                            overflow: hidden;
+                            height: 50vh;
+                        
+                            .mpwpb-popup-content {   
+                                display: flex;  
+                                overflow: hidden;
+                        
+                                .mpwpb_static_service {
+                                    width: 60%;
+                                    overflow-y: scroll; 
+                                    padding: 10px;
+                                }
+                        
+                                .mpwpb_summary_area_left {
+                                    width: 40%; 
+                                    overflow-y: scroll;
+                                    padding: 10px;
+                                    background: #ddd;
+                                }
+                            }
+                        }                        
                     }
-                }
-                .popupClose{
-                    background-color: var(--color_theme);
-                    color: #FFF; 
-                }
-                .popupFooter{
-                    border-top: 0;
+                    .popupClose{
+                        background-color: var(--color_theme);
+                        color: #FFF; 
+                    }
+                    .popupFooter{
+                        border-top: 0;
+                    }
                 }
             }
             .mpwpb_static_area {
                 position: fixed; 
+                left: 70%;
                 transform:translateY(-50%); 
-                width: auto;  
+                width: 400px;  
                 z-index: 99999; 
                 .mpwpb_static {
                     background-color: var(--color_theme);
@@ -207,13 +237,15 @@
                         justify-content: space-between;
                         align-items: center;
                         cursor: pointer;
-                        padding: var(--dMP_xs);
-                        margin: 0 0 var(--dMP_xs) 0;
+                        padding: 15px 20px;
+                        margin-bottom: 20px;
                         position: relative;
                         background-color: var(--color_theme_alter);
                         color: var(--d_color);
                         border-radius: 5px;
-                    
+                        &:last-child{
+                            margin-bottom: 0;
+                        }
                         h2 {
                             font-weight: bold;
                             font-size: 16px;
