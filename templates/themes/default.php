@@ -11,10 +11,15 @@
 	$all_dates = $all_dates ?? MPWPB_Function::get_date($post_id);
 	$all_services = $all_services ?? MP_Global_Function::get_post_info($post_id, 'mpwpb_category_infos', array());
 	$extra_services = $extra_services ?? MP_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', array());
+    $sub_title = MP_Global_Function::get_post_info( $post_id, 'mpwpb_shortcode_sub_title' );
 ?>
 	<div class="mpStyle mpwpb_default_theme">
 		<div class="mpContainer">
-			<?php include( MPWPB_Function::template_path( 'layout/title_details_page.php' ) ); ?>
+            <h2><?php the_title(); ?></h2>
+			<?php if ( $sub_title ) { ?>
+				<p><?php echo esc_html( $sub_title ); ?></p>
+			<?php } ?>
+
             <div class="mpwpb_registration mp_sticky_section">
                 <div class="mpRow">
                     <div class="leftSidebar">
