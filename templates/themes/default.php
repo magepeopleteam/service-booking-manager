@@ -46,7 +46,7 @@
                             </div>
 							<?php include(MPWPB_Function::template_path('registration/date_time_select.php')); ?>
                             <div class="mpwpb_order_proceed_area"></div>
-                            <div class="_divider"></div>
+                            
 	                        <?php include(MPWPB_Function::template_path('registration/next_service.php')); ?>
 	                        <?php include(MPWPB_Function::template_path('registration/next_date_time.php')); ?>
                         </div>

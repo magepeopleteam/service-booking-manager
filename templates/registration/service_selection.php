@@ -66,7 +66,7 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <button type="button" class="_mpBtn_btLight_4 _min_125 mpwpb_service_button" data-open-icon="far fa-check-circle" data-close-icon="" data-open-text="<?php esc_attr_e('Select', 'service-booking-manager'); ?>" data-close-text="<?php esc_attr_e('Selected', 'service-booking-manager'); ?>" data-add-class="mActive">
+                                    <button type="button" class="_mpBtn_btLight_4 _min_125 mpwpb_service_button" data-open-icon="fas fa-check-circle" data-close-icon="" data-open-text="<?php esc_attr_e('Select', 'service-booking-manager'); ?>" data-close-text="<?php esc_attr_e('Selected', 'service-booking-manager'); ?>" data-add-class="mActive">
                                         <span data-text><?php esc_html_e('Select', 'service-booking-manager'); ?></span>
                                         <span data-icon class="mL_xs"></span>
                                         <input type="hidden" name="mpwpb_service[]" value="">
