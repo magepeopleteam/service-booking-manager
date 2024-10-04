@@ -15,10 +15,13 @@
 ?>
 	<div class="mpStyle mpwpb_default_theme">
 		<div class="mpContainer">
+            <div class="mp_title _mTB">
             <h2><?php the_title(); ?></h2>
 			<?php if ( $sub_title ) { ?>
 				<p><?php echo esc_html( $sub_title ); ?></p>
 			<?php } ?>
+            </div>
+            
 
             <div class="mpwpb_registration mp_sticky_section">
                 <div class="mpRow">
