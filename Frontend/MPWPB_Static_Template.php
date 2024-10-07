@@ -9,7 +9,8 @@ if( ! defined('ABSPATH') )die;
 if(! class_exists('MPWPB_Static_Template') ){
     class MPWPB_Static_Template{
         public function __construct() {
-            add_action('mpwpb_service_header',[$this, 'show_service_header']);
+            add_action('mpwpb_service_show_ratings',[$this, 'show_ratings']);
+            add_action('mpwpb_service_feature_heighlight',[$this, 'features_heighlight']);
             add_action('mpwpb_service_nav',[$this, 'show_service_nav']);
             add_action('mpwpb_service_overview',[$this, 'show_service_overview']);
             add_action('mpwpb_service_faq',[$this, 'show_service_faq']);
@@ -17,21 +18,25 @@ if(! class_exists('MPWPB_Static_Template') ){
             add_action('mpwpb_service_reviews',[$this, 'show_service_reviews']);
         }
 
-        public function show_service_header() {
+        public function features_heighlight() {
+            $features_heightlight = ['On Time Work Completion','Trusted and Experienced Plumbers','data Plumbers','list Plumbers','list Plumbers'];
             ?>  
-            <header style="background-image: url('<?php echo get_the_post_thumbnail_url(); ?>');">
-                <div class="template-header" >
-                    <div class="header-content">
-                        <h2><?php the_title(); ?></h2>
-                        <?php self::get_ratings(); ?>
-                        <p>(8868 ratings on 3 services)</p>
-                        <ul class="features">
-                            <li><i class="fas fa-check-circle"></i> On Time Work Completion</li>
-                            <li><i class="fas fa-check-circle"></i> Trusted and Experienced Plumbers</li>
-                        </ul>
-                    </div>
-                </div>
-            </header>
+                <ul class="features">
+                    <?php 
+                    foreach($features_heightlight as $key => $value): 
+                        if ( $key < 3 ) : ?>
+                        <li><i class="fas fa-check-circle"></i><?php echo esc_html($value); ?></li>
+                    <?php endif; 
+                    endforeach;?>
+                </ul>
+                <p><?php echo 'Veiew more!'; ?></p>
+            <?php
+        }
+
+        public static function show_ratings(){
+            ?>
+                <?php self::get_ratings(); ?>
+                <p>(8868 ratings on 3 services)</p>
             <?php
         }
         public static function get_ratings(){
