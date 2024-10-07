@@ -61,11 +61,8 @@ if( ! class_exists('MPWPB_Service_Details')){
                     </label>
                 </section>
                 <section class="mpwpb-service-features <?php echo $features_active_class; ?>" data-collapse="#mpwpb_features_status">
-                    <label class="_dFlex_justifyBetween">
-                        <p>
-                            <?php esc_html_e('Features list', 'service-booking-manager'); ?>
-                        </p>
-                        <div class="mp_settings_area">
+                    <label class="">
+                        <div class="mp_settings_area" style="width: 100%;">
                             <div class="mp_item_insert mp_sortable_area">
                                 <?php
                                     $features = MP_Global_Function::get_post_info($post_id, 'mpwpb_features', []);
@@ -172,7 +169,7 @@ if( ! class_exists('MPWPB_Service_Details')){
             ?>
             <div class="mp_remove_area  _mB_xs">
                 <div class="justifyBetween">
-                    <label class="col_8">
+                    <label class="col_12">
                         <input type="text" class="formControl" name="<?php echo esc_attr($name); ?>" value="<?php echo esc_attr($item); ?>"/>
                     </label>
                     <?php MP_Custom_Layout::move_remove_button(); ?>
