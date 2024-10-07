@@ -32,7 +32,21 @@ function mpwpb_active_carousel(target,qty) {
 	});
 }
 
+function remove_parent_classes($){
+	$(document).ready(function() {
+		$('.mpwpb_registration').each(function() {
+		var $this = $(this);
+		$this.parent().removeClass();
+		$this.parent().parent().removeClass();
+		});
+	});
+}
+
+
 (function ($) {
 	"use strict";
 	mpwpb_active_carousel($('.mpwpb_date_carousel'),5);
+	remove_parent_classes($);
 }(jQuery));
+
+// ***********static template********************
