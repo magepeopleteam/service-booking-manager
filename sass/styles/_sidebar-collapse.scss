@@ -1,0 +1,45 @@
+.mpwpb-sidebar-container{
+    position: fixed;
+    right: -100%; /* Initially hidden off-screen */
+    top: 0;
+    width: 100%; /* Width of the sidebar */
+    height: 100%; /* Full height */
+    background-color: #0000002c; /* Background color */
+    transition: right 0.3s ease; /* Animation effect */
+    z-index: 1000; /* Ensure it's above other content */
+    &.open {
+        right: 0; /* Slide in */
+    }
+    .mpwpb-sidebar-content{
+        background-color: #fff;
+        width: 800px;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 80px 15px;
+        
+        .mpwpb-faq-form{
+            p{
+                margin: 15px 0;
+            }
+        }
+
+        h4{
+            font-size: 18px;
+            padding: 0;
+            margin: 5px 0;
+        }
+        input[name='mpwpb_faq_title']{
+            width: 100%;
+        }
+        .mpwpb-sidebar-close{
+            position:absolute;
+            top: 40px;
+            right: 15px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+    }
+    
+}

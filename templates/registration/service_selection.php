@@ -53,8 +53,8 @@
                                         <h6><?php echo esc_html($service_name); ?></h6>
                                     </div>
                                     <div class="_equalChild">
-                                        <div data-collapse-target="<?php echo esc_attr($unique_id); ?>" data-read data-open-text="<?php esc_attr_e('Load More', 'service-booking-manager'); ?>" data-close-text="<?php esc_attr_e('Less More', 'service-booking-manager'); ?>">
-                                            <span data-text><?php esc_html_e('Load More', 'service-booking-manager'); ?></span>
+                                        <div data-collapse-target="<?php echo esc_attr($unique_id); ?>" data-read data-open-text="<?php esc_attr_e('Close Details', 'service-booking-manager'); ?>" data-close-text="<?php esc_attr_e('View Details', 'service-booking-manager'); ?>">
+                                            <span data-text><?php esc_html_e('View Details', 'service-booking-manager'); ?></span>
                                         </div>
 										<?php if ($service_duration) { ?>
                                             <h6 class="textTheme alignCenter">
@@ -66,7 +66,7 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <button type="button" class="_mpBtn_btLight_4 _min_125 mpwpb_service_button" data-open-icon="far fa-check-circle" data-close-icon="" data-open-text="<?php esc_attr_e('Select', 'service-booking-manager'); ?>" data-close-text="<?php esc_attr_e('Selected', 'service-booking-manager'); ?>" data-add-class="mActive">
+                                    <button type="button" class="_mpBtn_btLight_4 _min_125 mpwpb_service_button" data-open-icon="fas fa-check-circle" data-close-icon="" data-open-text="<?php esc_attr_e('Select', 'service-booking-manager'); ?>" data-close-text="<?php esc_attr_e('Selected', 'service-booking-manager'); ?>" data-add-class="mActive">
                                         <span data-text><?php esc_html_e('Select', 'service-booking-manager'); ?></span>
                                         <span data-icon class="mL_xs"></span>
                                         <input type="hidden" name="mpwpb_service[]" value="">

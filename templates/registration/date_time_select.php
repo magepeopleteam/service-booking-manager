@@ -44,7 +44,7 @@
                                                     <span data-icon></span><?php echo date_i18n('h:i A', strtotime($slot)); ?>
                                                 </button>
 									        <?php } else { ?>
-                                                <button type="button" class="_mpBtn"><?php esc_html_e('Fully Booked', 'service-booking-manager'); ?></button>
+                                                <button type="button" class="_mpBtn mActive booked"><?php esc_html_e('Booked', 'service-booking-manager'); ?></button>
 										        <?php
 									        }
 								        }

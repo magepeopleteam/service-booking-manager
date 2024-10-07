@@ -9,6 +9,5 @@
     --mage-white: #FFFFFF;
     --mage-border: #DDD;
 }
-@import 'styles/mp-style';
-@import 'styles/metabox';
-@import 'styles/sidebar-collapse';
+@import 'frontend/registration';
+@import 'frontend/static-template';

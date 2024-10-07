@@ -12,7 +12,7 @@
 ?>
     <div class="next_date_area">
         <div class="justifyBetween ">
-            <button class="_mpBtn_dBR_padding mpActive mpwpb_date_time_prev" type="button">
+            <button class="_mpBtn_dBR mpActive mpwpb_date_time_prev" type="button">
                 <i class="fas fa-long-arrow-alt-left _mR_xs"></i>
 				<?php echo esc_html__('Previous', 'service-booking-manager') . ' ' . $service_text; ?>
             </button>
@@ -20,7 +20,7 @@
 				<?php esc_html_e('Total :', 'service-booking-manager'); ?>&nbsp;&nbsp;
                 <span class="mpwpb_total_bill textTheme"><?php echo MP_Global_Function::wc_price($post_id, 0); ?></span>
             </h4>
-            <button class="_mpBtn_dBR_padding mActive mpwpb_date_time_next" type="button" data-wc_link_id="<?php echo esc_attr($link_wc_product); ?>" data-alert="<?php esc_html_e('Please Select Date & Time', 'service-booking-manager'); ?>">
+            <button class="_mpBtn_dBR mActive mpwpb_date_time_next" type="button" data-wc_link_id="<?php echo esc_attr($link_wc_product); ?>" data-alert="<?php esc_html_e('Please Select Date & Time', 'service-booking-manager'); ?>">
 				<?php esc_html_e('Next Summary', 'service-booking-manager'); ?>
                 <i class="fas fa-long-arrow-alt-right _mL_xs"></i>
             </button>

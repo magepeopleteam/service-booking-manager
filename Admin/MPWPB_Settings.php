@@ -39,6 +39,12 @@
 								<li  data-tabs-target="#mpwpb_extra_service_settings">
 									<i class="fas fa-funnel-dollar pe-1"></i><?php esc_html_e('Extra Service', 'service-booking-manager'); ?>
 								</li>
+								<li  data-tabs-target="#mpwpb_faq_settings">
+									<i class="fas fa-question-circle pe-1"></i><?php esc_html_e('FAQ', 'service-booking-manager'); ?>
+								</li>
+								<li  data-tabs-target="#mpwpb_service_details">
+									<i class="fas fa-wrench pe-1"></i><?php esc_html_e('Service Details', 'service-booking-manager'); ?>
+								</li>
 								<?php do_action('add_mpwpb_settings_tab_after_date', $post_id); ?>
 							</ul>
 						</div>
