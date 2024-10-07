@@ -16,7 +16,7 @@
 	$extra_services = $extra_services ?? MP_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', array());
     
 ?>
-<div class="mpStyle mpwpb_registration">
+<div class="mpStyle mpwpb-static-template mpwpb_registration">
     <!-- dispaly service static page header using this hook -->
     <?php do_action('mpwpb_service_header'); ?>
     
