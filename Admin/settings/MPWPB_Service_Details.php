@@ -17,8 +17,16 @@ if( ! class_exists('MPWPB_Service_Details')){
 
         public function service_details($post_id) {
 
+            $service_features_status = MP_Global_Function::get_post_info($post_id, 'mpwpb_features_status', 'on');
             $service_overview_status = MP_Global_Function::get_post_info($post_id, 'mpwpb_service_overview_status', 'off');
             $service_details_status = MP_Global_Function::get_post_info($post_id, 'mpwpb_service_details_status', 'off');
+            $service_ratings = MP_Global_Function::get_post_info($post_id, 'mpwpb_service_review_ratings', '');
+            $service_rating_scale = MP_Global_Function::get_post_info($post_id, 'mpwpb_service_rating_scale', '');
+            $service_rating_text = MP_Global_Function::get_post_info($post_id, 'mpwpb_service_rating_text', '');
+            
+
+            $service_features_checked = $service_features_status == 'on'? 'checked': '';
+            $features_active_class = $service_features_status == 'on'? 'mActive': '';
             
             $service_overview_checked = $service_overview_status == 'on'? 'checked': '';
             $service_overview_class = $service_overview_status == 'on'? 'mActive': '';
@@ -35,6 +43,47 @@ if( ! class_exists('MPWPB_Service_Details')){
                     <h2><?php esc_html_e('Service Details Settings', 'service-booking-manager'); ?></h2>
                     <span><?php esc_html_e('Service Details will be here.', 'service-booking-manager'); ?></span>
                 </header>
+
+                <!-- service heighlight -->
+                <section class="section">
+                        <h2><?php esc_html_e('Service Features', 'service-booking-manager'); ?></h2>
+                        <span><?php esc_html_e('Service Features', 'service-booking-manager'); ?></span>
+                </section>
+                <section>
+                    <label class="label">
+                        <div>
+                            <p><?php esc_html_e('Service Features', 'service-booking-manage'); ?></p>
+                            <span><?php esc_html_e('Service Features', 'service-booking-manage'); ?></span>
+                        </div>
+                        <div>
+                            <?php MP_Custom_Layout::switch_button('mpwpb_features_status', $service_features_checked); ?>
+                        </div>
+                    </label>
+                </section>
+                <section class="mpwpb-service-features <?php echo $features_active_class; ?>" data-collapse="#mpwpb_features_status">
+                    <label class="">
+                        <div class="mp_settings_area" style="width: 100%;">
+                            <div class="mp_item_insert mp_sortable_area">
+                                <?php
+                                    $features = MP_Global_Function::get_post_info($post_id, 'mpwpb_features', []);
+                                    if (sizeof($features)>0) {
+                                        foreach ($features as $item) {
+                                            if ($item) {
+                                                self::feature_lists('mpwpb_features[]', $item);
+                                            }
+                                        }
+                                    }
+                                ?>
+                            </div>
+                            <?php MP_Custom_Layout::add_new_button(esc_html__('Add New Feature', 'service-booking-manager')); ?>
+                            <div class="mp_hidden_content">
+                                <div class="mp_hidden_item">
+                                    <?php self::feature_lists('mpwpb_features[]'); ?>
+                                </div>
+                            </div>
+                        </div>
+                    </label>
+                </section>
 
                 <!-- service overview -->
                 <section class="section">
@@ -78,7 +127,53 @@ if( ! class_exists('MPWPB_Service_Details')){
                         $this->show_editor($service_details_content,'mpwpb_service_details_content');
                     ?>
                 </section>
+                 <!-- service review -->
+                 <section class="section">
+                        <h2><?php esc_html_e('Service Review', 'service-booking-manager'); ?></h2>
+                        <span><?php esc_html_e('Service Review Settings', 'service-booking-manager'); ?></span>
+                </section>
+                <section>
+                    <label class="label">
+                        <div>
+                            <p><?php esc_html_e('Service Review Rating', 'service-booking-manage'); ?></p>
+                            <span><?php esc_html_e('Service Review ', 'service-booking-manage'); ?></span>
+                        </div>
+                        <input type="text" name="mpwpb_service_review_ratings" value="<?php echo esc_html($service_ratings); ?>">
+                    </label>
+                </section>
+                <section>
+                    <label class="label">
+                        <div>
+                            <p><?php esc_html_e('Service Review Scale', 'service-booking-manage'); ?></p>
+                            <span><?php esc_html_e('Service Review Scale', 'service-booking-manage'); ?></span>
+                        </div>
+                        <input type="text" name="mpwpb_service_rating_scale" value="<?php echo esc_html($service_rating_scale); ?>">
+                    </label>
+                </section>
+                <section>
+                    <label class="label">
+                        <div>
+                            <p><?php esc_html_e('Service Review Text', 'service-booking-manage'); ?></p>
+                            <span><?php esc_html_e('Service Review Text', 'service-booking-manage'); ?></span>
+                        </div>
+                        <input type="text" name="mpwpb_service_rating_text" value="<?php echo esc_html($service_rating_text); ?>">
+                    </label>
+                </section>
                 
+            </div>
+            <?php
+        }
+
+        public static function feature_lists($name, $item='') {
+            $item = $item ? $item : '';
+            ?>
+            <div class="mp_remove_area  _mB_xs">
+                <div class="justifyBetween">
+                    <label class="col_12">
+                        <input type="text" class="formControl" name="<?php echo esc_attr($name); ?>" value="<?php echo esc_attr($item); ?>"/>
+                    </label>
+                    <?php MP_Custom_Layout::move_remove_button(); ?>
+                </div>
             </div>
             <?php
         }
@@ -92,17 +187,37 @@ if( ! class_exists('MPWPB_Service_Details')){
 
         public function save_service_details($post_id) {
             if (get_post_type($post_id) == MPWPB_Function::get_cpt()) {
+                $service_features_status = MP_Global_Function::get_submit_info('mpwpb_features_status','off');
                 $service_overview_status = MP_Global_Function::get_submit_info('mpwpb_service_overview_status','off');
                 $service_details_status = MP_Global_Function::get_submit_info('mpwpb_service_details_status','off');
+                $service_rating = MP_Global_Function::get_submit_info('mpwpb_service_review_ratings','');
+                $service_rating_scale = MP_Global_Function::get_submit_info('mpwpb_service_rating_scale','');
+                $service_rating_text = MP_Global_Function::get_submit_info('mpwpb_service_rating_text','');
 
                 $service_overview_content = wp_kses_post($_POST['mpwpb_service_overview_content']);;
                 $service_details_content =  wp_kses_post($_POST['mpwpb_service_details_content']);
-                
+
+                update_post_meta($post_id, 'mpwpb_features_status', $service_features_status);
                 update_post_meta($post_id, 'mpwpb_service_overview_status', $service_overview_status);
                 update_post_meta($post_id, 'mpwpb_service_details_status', $service_details_status);
 
                 update_post_meta($post_id, 'mpwpb_service_overview_content', $service_overview_content);
                 update_post_meta($post_id, 'mpwpb_service_details_content', $service_details_content);
+                
+                update_post_meta($post_id, 'mpwpb_service_review_ratings', $service_rating);
+                update_post_meta($post_id, 'mpwpb_service_rating_scale', $service_rating_scale);
+                update_post_meta($post_id, 'mpwpb_service_rating_text', $service_rating_text);
+
+                $features = MP_Global_Function::get_submit_info('mpwpb_features', array());
+                $features_lists = array();
+                if (sizeof($features) > 0) {
+                    foreach ($features as $feature) {
+                        if ($feature) {
+                            $features_lists[] = $feature;
+                        }
+                    }
+                }
+                update_post_meta($post_id, 'mpwpb_features', $features_lists);
             }
         }
     }

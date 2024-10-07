@@ -16,10 +16,21 @@
 	$extra_services = $extra_services ?? MP_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', array());
     
 ?>
-<div class="mpStyle mpwpb_registration">
+<div class="mpStyle mpwpb-static-template mpwpb_registration">
     <!-- dispaly service static page header using this hook -->
-    <?php do_action('mpwpb_service_header'); ?>
-    
+
+    <header style="background-image: url('<?php echo get_the_post_thumbnail_url(); ?>');">
+        <div class="template-header" >
+            <div class="header-content">
+                <h2><?php the_title(); ?></h2>
+                <!-- dispaly service static page reatings using this hook -->
+                <?php do_action('mpwpb_service_show_ratings'); ?>
+
+                <!-- dispaly service static page feature heighlight using this hook -->
+                <?php do_action('mpwpb_service_feature_heighlight'); ?>
+            </div>
+        </div>
+    </header>
     <main>
         <div class="main">
                     <!-- dispaly service static page nav using this hook -->
