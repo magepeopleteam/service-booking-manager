@@ -526,22 +526,15 @@ div.registration_tab_item {
   top: 0;
   right: -52px;
 }
-.mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .all_service_area {
-  overflow: auto;
-}
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody {
-  max-height: calc(100vh - 150px);
+  overflow: hidden;
 }
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content {
   display: flex;
   overflow: auto;
-  height: 100%;
-  max-height: calc(100vh - 150px);
-  min-height: 50vh;
 }
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items {
   width: 60%;
-  overflow-y: scroll;
   padding: 10px;
 }
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_category_section .mpwpb_item_box {
@@ -566,6 +559,17 @@ div.registration_tab_item {
   background-color: var(--color_theme_alter);
   color: var(--color_theme);
   margin: 0;
+}
+.mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_category_section .mpwpb_sub_category_area {
+  margin-left: 20px;
+}
+.mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_category_section .mpwpb_sub_category_area .mpwpb_sub_category_item {
+  background-color: #f4f5f8;
+  padding: 10px;
+  border: 1px solid var(--color_light_2);
+}
+.mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_category_section .mpwpb_sub_category_area .mpwpb_sub_category_item.mpActive {
+  background-color: var(--color_theme);
 }
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_service_area {
   margin-top: 20px;
