@@ -11,7 +11,7 @@ if(! class_exists('MPWPB_Static_Template') ){
         public function __construct() {
             add_action('mpwpb_service_show_ratings',[$this, 'show_ratings']);
             add_action('mpwpb_service_feature_heighlight',[$this, 'features_heighlight']);
-            add_action('mpwpb_service_feature_heighlight',[$this, 'err']);
+            add_action('mpwpb_service_feature_heighlight',[$this, 'popup_feature_lists']);
             add_action('mpwpb_service_nav',[$this, 'show_service_nav']);
             add_action('mpwpb_service_overview',[$this, 'show_service_overview']);
             add_action('mpwpb_service_faq',[$this, 'show_service_faq']);
@@ -22,6 +22,7 @@ if(! class_exists('MPWPB_Static_Template') ){
         public function features_heighlight($limit='') {
             $features_heightlight = MP_Global_Function::get_post_info(get_the_ID(), 'mpwpb_features', []);
             $limit= $limit ? $limit : 3;
+            if(!empty($features_heightlight)):
             ?>  
                 <ul class="features">
                     <?php 
@@ -34,9 +35,10 @@ if(! class_exists('MPWPB_Static_Template') ){
                 </ul>
                 
             <?php
+            endif;
         }
 
-        public function err(){
+        public function popup_feature_lists(){
             $features_heightlight = MP_Global_Function::get_post_info(get_the_ID(), 'mpwpb_features', []);
             ?>
             <div class="mpPopup mpStyle" data-popup="#mpwpb_view_more_popup">
@@ -63,15 +65,19 @@ if(! class_exists('MPWPB_Static_Template') ){
             $rating_text = get_post_meta(get_the_ID(),'mpwpb_service_rating_text',true);
             ?>
                 <?php self::get_ratings(); ?>
+                <?php if( $rating_text): ?>
                 <p><?php echo esc_html($rating_text); ?></p>
+                <?php endif; ?>
             <?php
         }
         public static function get_ratings(){
             $rating = get_post_meta(get_the_ID(),'mpwpb_service_review_ratings',true);
             $scale = get_post_meta(get_the_ID(),'mpwpb_service_rating_scale',true);
+            if($rating):
             ?>
-            <div class="ratings"><i class="fas fa-star"></i> <?php echo esc_html($rating); ?> <span><?php echo esc_html($scale); ?></span> </div>
+                <div class="ratings"><i class="fas fa-star"></i> <?php echo esc_html($rating); ?> <span><?php echo esc_html($scale); ?></span> </div>
             <?php
+            endif;
         }
 
         public function show_service_nav() {
