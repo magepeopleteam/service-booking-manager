@@ -11,6 +11,7 @@ if(! class_exists('MPWPB_Static_Template') ){
         public function __construct() {
             add_action('mpwpb_service_show_ratings',[$this, 'show_ratings']);
             add_action('mpwpb_service_feature_heighlight',[$this, 'features_heighlight']);
+            add_action('mpwpb_service_feature_heighlight',[$this, 'err']);
             add_action('mpwpb_service_nav',[$this, 'show_service_nav']);
             add_action('mpwpb_service_overview',[$this, 'show_service_overview']);
             add_action('mpwpb_service_faq',[$this, 'show_service_faq']);
@@ -19,7 +20,7 @@ if(! class_exists('MPWPB_Static_Template') ){
         }
 
         public function features_heighlight($limit='') {
-            $features_heightlight = MP_Global_Function::get_post_info(get_the_ID(), 'mpwpb_features', []);;
+            $features_heightlight = MP_Global_Function::get_post_info(get_the_ID(), 'mpwpb_features', []);
             $limit= $limit ? $limit : 3;
             ?>  
                 <ul class="features">
@@ -31,17 +32,25 @@ if(! class_exists('MPWPB_Static_Template') ){
                     <?php endforeach;?>
                         <h5 class="view_more" data-target-popup="#mpwpb_view_more_popup"><?php echo esc_html_e('View more!','service-booking-manager'); ?></h5>
                 </ul>
-                <div class="mpPopup mpStyle" data-popup="#mpwpb_view_more_popup">
+                
+            <?php
+        }
+
+        public function err(){
+            $features_heightlight = MP_Global_Function::get_post_info(get_the_ID(), 'mpwpb_features', []);
+            ?>
+            <div class="mpPopup mpStyle" data-popup="#mpwpb_view_more_popup">
                     <div class="popupMainArea">
                         <div class="popupHeader">
+                            <h3><?php echo esc_html_e('Features Heighlight','service-booking-manager'); ?></h3>
                             <span class="fas fa-times popupClose"></span>
                         </div>
                         <div class="popupBody">
-                            <ul>
+                            <ul class="features">
                                 <?php 
                                 foreach($features_heightlight as $key => $value): 
                                     ?>
-                                    <li><i class="fas fa-check-circle"></i><?php echo esc_html($value); ?></li>
+                                    <li style="color:#333"><i class="fas fa-check-circle"></i><?php echo esc_html($value); ?></li>
                                 <?php endforeach;?>
                             </ul>
                         </div>
