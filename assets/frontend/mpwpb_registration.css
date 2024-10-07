@@ -526,13 +526,18 @@ div.registration_tab_item {
   top: 0;
   right: -52px;
 }
+.mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .all_service_area {
+  overflow: auto;
+}
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody {
-  overflow: hidden;
+  max-height: calc(100vh - 150px);
 }
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content {
   display: flex;
-  overflow: hidden;
-  height: 50vh;
+  overflow: auto;
+  height: 100%;
+  max-height: calc(100vh - 150px);
+  min-height: 50vh;
 }
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items {
   width: 60%;
