@@ -18,30 +18,34 @@ if(! class_exists('MPWPB_Static_Template') ){
             add_action('mpwpb_service_reviews',[$this, 'show_service_reviews']);
         }
 
-        public function features_heighlight() {
-            $features_heightlight = ['On Time Work Completion','Trusted and Experienced Plumbers','data Plumbers','list Plumbers','list Plumbers'];
+        public function features_heighlight($limit='') {
+            $features_heightlight = MP_Global_Function::get_post_info(get_the_ID(), 'mpwpb_features', []);;
+            $limit= $limit ? $limit : 3;
             ?>  
                 <ul class="features">
                     <?php 
                     foreach($features_heightlight as $key => $value): 
-                        if ( $key < 3 ) : ?>
-                        <li><i class="fas fa-check-circle"></i><?php echo esc_html($value); ?></li>
-                    <?php endif; 
-                    endforeach;?>
+                        if ( $key < $limit ) : ?>
+                            <li><i class="fas fa-check-circle"></i><?php echo esc_html($value); ?></li>
+                        <?php endif; ?>
+                    <?php endforeach;?>
+                        <!-- <h5 class="view_more"><?php echo 'View more!'; ?></h5> -->
                 </ul>
-                <p><?php echo 'Veiew more!'; ?></p>
             <?php
         }
 
         public static function show_ratings(){
+            $rating_text = get_post_meta(get_the_ID(),'mpwpb_service_rating_text',true);
             ?>
                 <?php self::get_ratings(); ?>
-                <p>(8868 ratings on 3 services)</p>
+                <p><?php echo esc_html($rating_text); ?></p>
             <?php
         }
         public static function get_ratings(){
+            $rating = get_post_meta(get_the_ID(),'mpwpb_service_review_ratings',true);
+            $scale = get_post_meta(get_the_ID(),'mpwpb_service_rating_scale',true);
             ?>
-            <div class="ratings"><i class="fas fa-star"></i> 4.67 <span> out of 5</span></div>
+            <div class="ratings"><i class="fas fa-star"></i> <?php echo esc_html($rating); ?> <span><?php echo esc_html($scale); ?></span> </div>
             <?php
         }
 
