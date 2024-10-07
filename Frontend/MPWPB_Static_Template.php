@@ -31,8 +31,10 @@ if(! class_exists('MPWPB_Static_Template') ){
                             <li><i class="fas fa-check-circle"></i><?php echo esc_html($value); ?></li>
                         <?php endif; ?>
                     <?php endforeach;?>
+                    <?php if(count($features_heightlight) > $limit): ?>
                         <h5 class="view_more" data-target-popup="#mpwpb_view_more_popup"><?php echo esc_html_e('View more!','service-booking-manager'); ?></h5>
-                </ul>
+                    <?php endif; ?>
+                    </ul>
                 
             <?php
             endif;
