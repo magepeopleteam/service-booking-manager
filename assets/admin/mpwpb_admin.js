@@ -303,7 +303,7 @@
 			
 			$('.mpwpb-sidebar-close').on('click', function() {
 				$('.mpwpb-sidebar-container').removeClass('open');
-				location.reload();
+				// location.reload();
 			});
 		}
 
@@ -326,7 +326,7 @@
 		
 		function empty_faq_form(){
 			$('input[name="mpwpb_faq_title"]').val('');
-			$('textarea[name="mpwpb_faq_content"]').val('');
+			tinyMCE.get('mpwpb_faq_content').setContent('');
 		}
 
 		function set_faq_form_data(faqItem){
