@@ -40,8 +40,8 @@
 									        $available = MPWPB_Function::get_total_available($post_id, $slot);
 									        if ($available > 0) {
 										        ?>
-                                                <button type="button" class="_mpBtn" data-date="<?php echo MP_Global_Function::date_format($slot, 'full') ?>" data-radio-check="<?php echo esc_attr($slot); ?>" data-open-icon="fas fa-check" data-close-icon="">
-                                                    <span data-icon></span><?php echo date_i18n('h:i A', strtotime($slot)); ?>
+                                                <button type="button" class="_mpBtn to-book" data-date="<?php echo MP_Global_Function::date_format($slot, 'full') ?>" data-radio-check="<?php echo esc_attr($slot); ?>" data-open-icon="fas fa-check" data-close-icon="">
+                                                    <!-- <span data-icon></span> --><?php echo date_i18n('h:i A', strtotime($slot)); ?>
                                                 </button>
 									        <?php } else { ?>
                                                 <button type="button" class="_mpBtn mActive booked"><?php esc_html_e('Booked', 'service-booking-manager'); ?></button>

@@ -64,7 +64,6 @@ if( ! class_exists('MPWPB_Faq_Settings')){
                 <section class="mpwpb-faq <?php echo $active_class; ?>" data-collapse="#mpwpb_faq_active">
                     <?php 
                         $mpwpb_faq = get_post_meta($post_id,'mpwpb_faq',true);
-                        print_r($mpwpb_faq);
                         if( ! empty($mpwpb_faq)){
                             foreach ($mpwpb_faq as $key => $value) {
                                 $this->show_faq_data($key,$value['title'],$value['content']);
@@ -98,7 +97,7 @@ if( ! class_exists('MPWPB_Faq_Settings')){
                 </label>
             </section>
             <section class="faq-content mB" data-collapse="#faq-content-<?php echo esc_attr($key); ?>">
-                <?php echo esc_html($content); ?>
+                <?php echo wpautop(wp_kses_post($content)); ?>
             </section>
         </div>
         <?php
@@ -127,12 +126,6 @@ if( ! class_exists('MPWPB_Faq_Settings')){
                 'textarea_name' => 'mpwpb_faq_content',
                 'media_buttons' => true,
                 'textarea_rows' => 10,
-                'teeny'         => true, // Enables a simpler editor
-                'quicktags'     => true, // Disables quicktags
-                'tinymce'       => array(
-                    'toolbar1' => 'bold,italic,underline,strikethrough,blockquote,alignleft,aligncenter,alignright,alignjustify,link,unlink,wp_more,spellchecker',
-                    'toolbar2' => 'pastetext,removeformat,wp_help', // Additional buttons in a second row
-                ),
             );
             wp_editor( $content, $editor_id, $settings );
         }
@@ -156,8 +149,8 @@ if( ! class_exists('MPWPB_Faq_Settings')){
             }
 
             $mpwpb_faq[$count] = [
-                'title'=>$_POST['mpwpb_faq_title'],
-                'content'=>$_POST['mpwpb_faq_content'],
+                'title'=> sanitize_text_field($_POST['mpwpb_faq_title']),
+                'content'=> wp_kses_post($_POST['mpwpb_faq_content']),
             ];
             // $mpwpb_faq =[];
             if(update_post_meta($post_id, 'mpwpb_faq', $mpwpb_faq)){

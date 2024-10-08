@@ -516,9 +516,6 @@ div.registration_tab_item {
 .mpwpb_registration main .main section dd {
   margin-left: 20px;
 }
-.mpwpb_registration main .main .mpwpb-serivice-faq {
-  margin-left: 30px;
-}
 .mpwpb_registration main .main .mpwpb-serivice-faq .faq-header {
   font-weight: bold;
   margin-top: 10px;
@@ -556,7 +553,8 @@ div.registration_tab_item {
 }
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody {
   overflow: auto;
-  height: 60vh;
+  min-height: 40vh;
+  height: auto;
 }
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content {
   display: flex;
@@ -693,12 +691,20 @@ div.registration_tab_item {
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_date_carousel .carousel_area button {
   border-radius: 0;
 }
+.mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_date_carousel .mpwpb_date_time_line .to-book {
+  font-size: 14px;
+}
+.mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_date_carousel .mpwpb_date_time_line .to-book.mpActive {
+  background-color: var(--color_theme);
+  color: #fff;
+}
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_date_carousel .mpwpb_date_time_line ._mpBtn {
   border-radius: 0;
   margin-bottom: 2px;
 }
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_date_carousel .mpwpb_date_time_line .booked {
   font-size: 14px;
+  background-color: var(--color_theme_aa);
 }
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items #customer_details {
   margin-bottom: 20px;

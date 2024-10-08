@@ -53,9 +53,11 @@
                                         <h6><?php echo esc_html($service_name); ?></h6>
                                     </div>
                                     <div class="_equalChild">
-                                        <div data-collapse-target="<?php echo esc_attr($unique_id); ?>" data-read data-open-text="<?php esc_attr_e('Close Details', 'service-booking-manager'); ?>" data-close-text="<?php esc_attr_e('View Details', 'service-booking-manager'); ?>">
-                                            <span data-text><?php esc_html_e('View Details', 'service-booking-manager'); ?></span>
-                                        </div>
+                                        <?php if (isset($ex_service_info['details'])) { ?>
+                                            <div data-collapse-target="<?php echo esc_attr($unique_id); ?>" data-read data-open-text="<?php esc_attr_e('Close Details', 'service-booking-manager'); ?>" data-close-text="<?php esc_attr_e('View Details', 'service-booking-manager'); ?>">
+                                                <span data-text><?php esc_html_e('', 'service-booking-manager'); ?></span>
+                                            </div>
+                                        <?php } ?>
 										<?php if ($service_duration) { ?>
                                             <h6 class="textTheme alignCenter">
                                                 <span class="fas fa-clock mR_xs"></span>

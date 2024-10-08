@@ -51,8 +51,8 @@
 												<h6>
 													<?php echo esc_html($ex_service_info['name']); ?>
 												</h6>
-												<?php if ($ex_service_info['details']) { ?>
-												<div class="" data-collapse-target="<?php echo esc_attr($unique_id); ?>" data-read data-open-text="<?php esc_attr_e('Close Details', 'service-booking-manager'); ?>" data-close-text="<?php esc_attr_e('Less More', 'service-booking-manager'); ?>">
+												<?php if (isset($ex_service_info['details'])) { ?>
+												<div class="" data-collapse-target="<?php echo esc_attr($unique_id); ?>" data-read data-open-text="<?php esc_attr_e('Close Details', 'service-booking-manager'); ?>" data-close-text="<?php esc_attr_e('Close Details', 'service-booking-manager'); ?>">
 														<span data-text><?php esc_html_e('View Details', 'service-booking-manager'); ?></span>
 													</div>
 												<?php } ?>
@@ -75,7 +75,7 @@
                                     </div>
                                 </div>
 								
-								<?php if ($ex_service_info['details']) { ?>
+								<?php if (isset($ex_service_info['details'])) { ?>
                                     <div class="service-details" data-collapse="<?php echo esc_attr($unique_id); ?>">
                                         <div><?php echo esc_html($ex_service_info['details']); ?></div>
                                     </div>

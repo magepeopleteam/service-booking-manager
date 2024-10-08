@@ -197,11 +197,13 @@ function mpwpb_price_calculation($this) {
         if (!current.hasClass('mpActive')) {
             current.find('[name="mpwpb_service[]"]').val(current_service);
             parent.find('.mpwpb_summary_item[data-service]').each(function () {
+                loadBgImage();
                 let service = $(this).data('service');
                 let category = $(this).data('service-category');
                 let sub_category = $(this).data('service-sub-category');
                 if (service === current_service && category === current_category && sub_category === current_sub_category) {
                     $(this).slideDown('fast');
+                    loadBgImage();
                 }
             });
             current.addClass('mpActive');
