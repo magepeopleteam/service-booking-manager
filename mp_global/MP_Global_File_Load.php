@@ -38,7 +38,7 @@
 				wp_enqueue_script('jquery-ui-core');
 				wp_enqueue_script('jquery-ui-datepicker');
 				wp_enqueue_style('mp_jquery_ui', MP_GLOBAL_PLUGIN_URL . '/assets/jquery-ui.min.css', array(), '1.13.2');
-				wp_enqueue_style('mp_font_awesome', '//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css', array(), '5.15.4');
+				wp_enqueue_style('mp_font_awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css', array(), '5.15.3');
 				wp_enqueue_style('mp_select_2', MP_GLOBAL_PLUGIN_URL . '/assets/select_2/select2.min.css', array(), '4.0.13');
 				wp_enqueue_script('mp_select_2', MP_GLOBAL_PLUGIN_URL . '/assets/select_2/select2.min.js', array(), '4.0.13');
 				wp_enqueue_style('mp_owl_carousel', MP_GLOBAL_PLUGIN_URL . '/assets/owl_carousel/owl.carousel.min.css', array(), '2.3.4');
