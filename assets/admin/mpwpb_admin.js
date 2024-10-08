@@ -303,7 +303,7 @@
 			
 			$('.mpwpb-sidebar-close').on('click', function() {
 				$('.mpwpb-sidebar-container').removeClass('open');
-				// location.reload();
+				location.reload();
 			});
 		}
 
