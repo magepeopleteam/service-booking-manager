@@ -323,12 +323,21 @@
                                             }
                                         }
                                         .mpwpb_date_time_line{
+                                            .to-book{
+                                                font-size: 14px;
+                                                &.mpActive{
+                                                    background-color: var(--color_theme);
+                                                    color: #fff;
+                                                }
+                                            }
                                             ._mpBtn{
                                                 border-radius: 0;
                                                 margin-bottom: 2px;
                                             }
+                                            
                                             .booked{
                                                 font-size: 14px;
+                                                background-color: var(--color_theme_aa);
                                             }
                                         }
                                     }
