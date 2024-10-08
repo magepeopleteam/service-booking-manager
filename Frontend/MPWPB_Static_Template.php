@@ -154,7 +154,7 @@ if(! class_exists('MPWPB_Static_Template') ){
                     <i class="fas fa-plus"></i> <?php echo esc_html($title); ?>
                 </div>
                 <div class="faq-content">
-                    <?php echo esc_html($content); ?>
+                    <?php echo wpautop(wp_kses_post($content)); ?>
                 </div>
             </div>
             <?php
