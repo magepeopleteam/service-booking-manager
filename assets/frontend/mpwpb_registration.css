@@ -553,7 +553,8 @@ div.registration_tab_item {
 }
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody {
   overflow: auto;
-  height: 60vh;
+  min-height: 40vh;
+  height: auto;
 }
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content {
   display: flex;

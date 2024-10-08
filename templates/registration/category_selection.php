@@ -24,17 +24,17 @@
 				?>
                 <div class="mpwpb_category_section">
                     <div class="mpwpb_item_box mpwpb_category_item" data-category="<?php echo esc_attr($category_name); ?>">
-                        <h6 class="alignCenter">
+						<div   class="alignCenter _fullWidth">
 							<?php if ($category_icon) { ?>
-                                <span class="<?php echo esc_attr($category_icon); ?> _mR_xs"></span>
+								<span class="<?php echo esc_attr($category_icon); ?> _mR_xs"></span>
 							<?php } ?>
 							<?php if ($category_image) { ?>
-                                <div class="bg_image_area">
-                                    <div data-bg-image="<?php echo esc_attr(MP_Global_Function::get_image_url('', $category_image, 'medium')); ?>"></div>
-                                </div>
+								<div class="bg_image_area">
+									<div data-bg-image="<?php echo esc_attr(MP_Global_Function::get_image_url('', $category_image, 'medium')); ?>"></div>
+								</div>
 							<?php } ?>
-							<?php echo esc_html($category_name); ?>
-                        </h6>
+							<h6><?php echo esc_html($category_name); ?></h6>
+						</div>
                         <span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
                     </div>
 					<?php if (sizeof($all_sub_category) > 0 && $sub_category_active=='on') { ?>
@@ -45,19 +45,17 @@
 								$sub_category_image = array_key_exists('image', $sub_category_item) ? $sub_category_item['image'] : '';
 								?>
                                 <div class="mpwpb_item_box mpwpb_sub_category_item " data-category="<?php echo esc_attr($category_name); ?>" data-sub-category="<?php echo esc_attr($sub_category_name); ?>">
-									<?php if ($sub_category_image) { ?>
-                                        <div class="_mB_xs">
-                                            <div class="bg_image_area">
-                                                <div data-bg-image="<?php echo esc_attr(MP_Global_Function::get_image_url('', $sub_category_image, 'medium')); ?>"></div>
-                                            </div>
-                                        </div>
-									<?php } ?>
-                                    <h6 class="alignCenter">
-										<?php if ($sub_category_icon) { ?>
-                                            <span class="<?php echo esc_attr($sub_category_icon); ?> _mR_xs"></span>
+									<div class="alignCenter _fullWidth">
+										<?php if ($sub_category_image) { ?>
+											<div class="bg_image_area">
+												<div data-bg-image="<?php echo esc_attr(MP_Global_Function::get_image_url('', $sub_category_image, 'medium')); ?>"></div>
+											</div>
 										<?php } ?>
-										<?php echo esc_html($sub_category_name); ?>
-                                    </h6>
+										<?php if ($sub_category_icon) { ?>
+											<span class="<?php echo esc_attr($sub_category_icon); ?> _mR_xs"></span>
+										<?php } ?>
+										<h6><?php echo esc_html($sub_category_name); ?></h6>
+									</div>
                                     <span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
                                 </div>
 							<?php } ?>
