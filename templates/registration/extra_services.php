@@ -47,37 +47,41 @@
 											<?php if ($ex_service_icon) { ?>
                                                 <span class="<?php echo esc_attr($ex_service_icon); ?> _mR_xs"></span>
 											<?php } ?>
-                                            <h6>
-												<?php echo esc_html($ex_service_info['name']); ?>
-                                            </h6>
-											<?php if ($ex_service_info['details']) { ?>
-                                                <div class="_mL_xs" data-collapse-target="<?php echo esc_attr($unique_id); ?>" data-read data-open-text="<?php esc_attr_e('Load More', 'service-booking-manager'); ?>" data-close-text="<?php esc_attr_e('Less More', 'service-booking-manager'); ?>">
-                                                    <span data-text><?php esc_html_e('Load More', 'service-booking-manager'); ?></span>
-                                                </div>
-											<?php } ?>
+                                            <div>
+												<h6>
+													<?php echo esc_html($ex_service_info['name']); ?>
+												</h6>
+												<?php if ($ex_service_info['details']) { ?>
+												<div class="" data-collapse-target="<?php echo esc_attr($unique_id); ?>" data-read data-open-text="<?php esc_attr_e('Close Details', 'service-booking-manager'); ?>" data-close-text="<?php esc_attr_e('Less More', 'service-booking-manager'); ?>">
+														<span data-text><?php esc_html_e('View Details', 'service-booking-manager'); ?></span>
+													</div>
+												<?php } ?>
+											</div>
                                         </div>
+										
                                         <h6 class="_textTheme_min_100"><?php echo MP_Global_Function::esc_html($ex_service_price); ?></h6>
                                         <div class="alignCenter">
                                             <div class="mR_xs min_100" data-collapse="<?php echo esc_attr($ex_unique_id); ?>">
 												<?php MP_Custom_Layout::qty_input('mpwpb_extra_service_qty[]', $ex_service_price_raw, $ex_service_info['qty'], 1, 0, $ex_service_info['qty']); ?>
                                             </div>
-                                            <button type="button" class="_mpBtn_btLight_2_min_150 mpwpb_price_calculation" data-extra-item data-collapse-target="<?php echo esc_attr($ex_unique_id); ?>" data-open-icon="fas fa-check-circle" data-close-icon="" data-open-text="<?php esc_attr_e('Select', 'service-booking-manager'); ?>" data-close-text="<?php esc_attr_e('Selected', 'service-booking-manager'); ?>" data-add-class="mActive">
+                                            <button type="button" class="_mpBtn_btLight_2_min_150 mpwpb_price_calculation" data-extra-item data-collapse-target="<?php echo esc_attr($ex_unique_id); ?>" data-open-text="<?php esc_attr_e('Add', 'service-booking-manager'); ?>" data-close-text="<?php esc_attr_e('Added', 'service-booking-manager'); ?>" data-add-class="mActive">
                                                 <input type="hidden" name="mpwpb_extra_service[]" data-value="<?php echo esc_attr($group_service_name); ?>" value=""/>
                                                 <input type="hidden" name="mpwpb_extra_service_type[]" data-value="<?php echo esc_attr($ex_service_info['name']); ?>" value=""/>
-                                                <span data-text><?php esc_html_e('Select', 'service-booking-manager'); ?></span>
-                                                <span data-icon class="mL_xs"></span>
+                                                <span data-text><?php esc_html_e('Add', 'service-booking-manager'); ?></span>
+                                                <span data-icon="" class="mL_xs fas fa-plus"></span>
                                             </button>
                                         </div>
+										
                                     </div>
                                 </div>
-                                <span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
+								
 								<?php if ($ex_service_info['details']) { ?>
-                                    <div data-collapse="<?php echo esc_attr($unique_id); ?>">
-                                        <div class="divider"></div>
+                                    <div class="service-details" data-collapse="<?php echo esc_attr($unique_id); ?>">
                                         <div><?php echo esc_html($ex_service_info['details']); ?></div>
                                     </div>
 								<?php } ?>
                             </div>
+							
 							<?php
 						}
 					}

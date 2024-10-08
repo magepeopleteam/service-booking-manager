@@ -98,6 +98,9 @@ div.registration_tab_item {
     border-color: var(--color_theme);
     background-color: var(--color_theme);
   }
+  div.mpwpb_sub_category_area {
+    margin-left: 20px;
+  }
   div.mpwpb_sub_category_area,
   div.mpwpb_service_area,
   div.mpwpb_extra_service_area,
@@ -141,10 +144,15 @@ div.registration_tab_item {
     padding: 20px 10px;
     margin: 10px 0;
     position: relative;
-    background-color: var(--color_theme_alter);
+    background-color: var(--color_light_2);
     color: var(--d_color);
     border-radius: 5px;
-    border: 1px solid var(--color_theme);
+    border: 1px solid var(--color_light_3);
+  }
+  .mpwpb_item_box.mpwpb_extra_service_item {
+    display: block;
+    border: 1px solid var(--color_light_2);
+    background-color: #fff;
   }
   div.mpwpb_item_box h2 {
     font-weight: bold;
@@ -185,6 +193,11 @@ div.registration_tab_item {
     border: 1px solid var(--color_theme);
     background-color: #fff;
     min-width: 100px;
+    width: 100px;
+  }
+  div.mpwpb_service_area div.mpwpb_service_item .mpwpb_service_button.mActive {
+    background-color: var(--color_theme);
+    color: #fff;
   }
   div.mpwpb_service_area div.mpwpb_service_item .mpwpb_service_button:hover {
     background-color: var(--color_theme);
@@ -195,8 +208,12 @@ div.registration_tab_item {
     color: var(--color_theme_alter);
   }
   div.mpwpb_service_area div.mpwpb_service_item [data-collapse] {
-    margin-top: 15px;
-    color: #999;
+    margin-top: 5px;
+    color: #666;
+  }
+  .mpwpb_extra_service_item .service-details {
+    margin-top: 5px;
+    color: #666;
   }
   /*************/
   div.service_img_area {
@@ -221,6 +238,11 @@ div.registration_tab_item {
     border: 1px solid var(--color_theme);
     background-color: #fff;
     min-width: 100px;
+    width: 100px;
+  }
+  div.mpwpb_extra_service_area div.mpwpb_item_box .mpwpb_price_calculation.mActive {
+    background-color: var(--color_theme);
+    color: #fff;
   }
   div.mpwpb_extra_service_area div.mpwpb_item_box .mpwpb_price_calculation:hover {
     background-color: var(--color_theme);
@@ -323,6 +345,12 @@ div.registration_tab_item {
     color: #D0D0D0;
   }
 }
+.mpStyle .mainSection {
+  width: 100%;
+  max-width: var(--mainSection);
+  margin: 0 var(--dMP) 0 0;
+}
+
 /*************************************************Responsive*******************************************************************/
 @media only screen and (max-width: 900px) {
   div.mpwpb_item_box {
@@ -526,22 +554,16 @@ div.registration_tab_item {
   top: 0;
   right: -52px;
 }
-.mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .all_service_area {
-  overflow: auto;
-}
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody {
-  max-height: calc(100vh - 150px);
+  overflow: auto;
+  height: 60vh;
 }
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content {
   display: flex;
   overflow: auto;
-  height: 100%;
-  max-height: calc(100vh - 150px);
-  min-height: 50vh;
 }
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items {
   width: 60%;
-  overflow-y: scroll;
   padding: 10px;
 }
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_category_section .mpwpb_item_box {
@@ -566,6 +588,17 @@ div.registration_tab_item {
   background-color: var(--color_theme_alter);
   color: var(--color_theme);
   margin: 0;
+}
+.mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_category_section .mpwpb_sub_category_area {
+  margin-left: 20px;
+}
+.mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_category_section .mpwpb_sub_category_area .mpwpb_sub_category_item {
+  background-color: #f4f5f8;
+  padding: 10px;
+  border: 1px solid var(--color_light_2);
+}
+.mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_category_section .mpwpb_sub_category_area .mpwpb_sub_category_item.mpActive {
+  background-color: var(--color_theme);
 }
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_service_area {
   margin-top: 20px;
@@ -604,7 +637,8 @@ div.registration_tab_item {
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_service_area .mpwpb_service_item .mpwpb_service_button.mActive {
   background-color: var(--color_theme);
   color: var(--color_theme_alter);
-  width: 120px;
+  min-width: 100px;
+  width: 100px;
 }
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_extra_service_area h5 {
   background-color: transparent;
@@ -617,6 +651,13 @@ div.registration_tab_item {
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_extra_service_area .mpwpb_item_box {
   background-color: #f4f5f8;
   border-radius: 0;
+}
+.mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_extra_service_area .mpwpb_extra_service_item {
+  display: block;
+}
+.mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_extra_service_area .mpwpb_extra_service_item .service-details {
+  color: #999;
+  padding: 10px 0;
 }
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_extra_service_area .mpwpb_extra_service_item .mpwpb_price_calculation {
   min-width: 100px;
@@ -636,7 +677,6 @@ div.registration_tab_item {
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_extra_service_area .mpwpb_extra_service_item .mpwpb_price_calculation.mActive {
   background-color: var(--color_theme);
   color: var(--color_theme_alter);
-  width: 120px;
 }
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_date_carousel header {
   background-color: transparent;
