@@ -194,6 +194,11 @@ div.registration_tab_item {
 	.mpwpb_date_time_line [data-radio-check]:last-child {margin: 0;}
 	.mpwpb_date_time_line p {color: #D0D0D0;}
 }
+.mpStyle .mainSection {
+    width: 100%;
+    max-width: var(--mainSection);
+    margin: 0 var(--dMP) 0 0 ;
+  }
 /*************************************************Responsive*******************************************************************/
 @media only screen and (max-width: 900px) {
 	div.mpwpb_item_box {width: 100%;}
