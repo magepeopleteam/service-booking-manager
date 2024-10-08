@@ -74,6 +74,12 @@ div.registration_tab_item {
 		border-radius:5px;
 		border:1px solid var(--color_light_3);
 	}
+	.mpwpb_item_box.mpwpb_extra_service_item{
+		display: block;
+		border: 1px solid var(--color_light_2);
+		background-color: #fff;
+
+	}
 	div.mpwpb_item_box h2{font-weight: bold;font-size: 16px;}
 	div.mpwpb_item_box i{color: var(--color_theme);}
 	div.mpwpb_item_box.mpActive {
@@ -103,6 +109,7 @@ div.registration_tab_item {
 		border: 1px solid var(--color_theme);
 		background-color: #fff;
 		min-width: 100px;
+		width: 100px;
 	}
 	div.mpwpb_service_area div.mpwpb_service_item .mpwpb_service_button.mActive{
 		background-color:  var(--color_theme);
@@ -118,8 +125,12 @@ div.registration_tab_item {
 	}
 
 	div.mpwpb_service_area div.mpwpb_service_item [data-collapse]{
-		margin-top: 15px;
-  		color: #999;
+		margin-top:5px;
+  		color: #666;
+	}
+	.mpwpb_extra_service_item .service-details{
+		margin-top:5px;
+  		color: #666;
 	}
 	/*************/
 	div.service_img_area {max-width: 120px;margin: 0 15px 0 0;width: 100%;}
@@ -137,6 +148,7 @@ div.registration_tab_item {
 		border: 1px solid var(--color_theme);
 		background-color: #fff;
 		min-width: 100px;
+		width: 100px;
 	}
 	div.mpwpb_extra_service_area div.mpwpb_item_box  .mpwpb_price_calculation.mActive{
 		background-color: var(--color_theme);
@@ -199,6 +211,7 @@ div.registration_tab_item {
     max-width: var(--mainSection);
     margin: 0 var(--dMP) 0 0 ;
   }
+
 /*************************************************Responsive*******************************************************************/
 @media only screen and (max-width: 900px) {
 	div.mpwpb_item_box {width: 100%;}
