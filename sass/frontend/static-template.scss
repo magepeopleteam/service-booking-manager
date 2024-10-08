@@ -179,7 +179,8 @@
                             }
                         }
                         .popupBody {
-                            overflow: hidden;
+                            overflow: auto;
+                            height: 60vh;
                             .mpwpb-popup-content {
                                 display: flex;  
                                 overflow: auto;
@@ -258,7 +259,8 @@
                                                 &.mActive{
                                                     background-color: var(--color_theme);
                                                     color: var(--color_theme_alter);
-                                                    width: 120px;
+                                                    min-width: 100px;
+                                                    width: 100px;
                                                 }
                                             }
                                         }
@@ -277,6 +279,11 @@
                                             border-radius: 0;
                                         }
                                         .mpwpb_extra_service_item{
+                                            display: block;
+                                            .service-details{
+                                                color: #999;
+                                                padding: 10px 0;
+                                            }
                                             .mpwpb_price_calculation{
                                                 min-width: 100px;
                                                 width: 100px;
@@ -294,7 +301,6 @@
                                                 &.mActive{
                                                     background-color: var(--color_theme);
                                                     color: var(--color_theme_alter);
-                                                    width: 120px;
                                                 }
                                             }
                                         }

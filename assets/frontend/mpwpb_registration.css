@@ -538,7 +538,8 @@ div.registration_tab_item {
   right: -52px;
 }
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody {
-  overflow: hidden;
+  overflow: auto;
+  height: 60vh;
 }
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content {
   display: flex;
@@ -619,7 +620,8 @@ div.registration_tab_item {
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_service_area .mpwpb_service_item .mpwpb_service_button.mActive {
   background-color: var(--color_theme);
   color: var(--color_theme_alter);
-  width: 120px;
+  min-width: 100px;
+  width: 100px;
 }
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_extra_service_area h5 {
   background-color: transparent;
@@ -632,6 +634,13 @@ div.registration_tab_item {
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_extra_service_area .mpwpb_item_box {
   background-color: #f4f5f8;
   border-radius: 0;
+}
+.mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_extra_service_area .mpwpb_extra_service_item {
+  display: block;
+}
+.mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_extra_service_area .mpwpb_extra_service_item .service-details {
+  color: #999;
+  padding: 10px 0;
 }
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_extra_service_area .mpwpb_extra_service_item .mpwpb_price_calculation {
   min-width: 100px;
@@ -651,7 +660,6 @@ div.registration_tab_item {
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_extra_service_area .mpwpb_extra_service_item .mpwpb_price_calculation.mActive {
   background-color: var(--color_theme);
   color: var(--color_theme_alter);
-  width: 120px;
 }
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_date_carousel header {
   background-color: transparent;
