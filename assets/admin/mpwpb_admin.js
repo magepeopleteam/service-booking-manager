@@ -354,7 +354,7 @@
 		
 		function save_faq_form(itemId){
 			var title   = $('input[name="mpwpb_faq_title"]');
-			var content = $('textarea[name="mpwpb_faq_content"]');
+			var content = tinyMCE.get('mpwpb_faq_content').getContent();
 			var postID  = $('input[name="mpwpb_post_id"]');
 			$.ajax({
 				url: mp_ajax_url,
@@ -362,7 +362,7 @@
 				data: {
 					action: 'mpwpb_faq_data_save',
 					mpwpb_faq_title:title.val(),
-					mpwpb_faq_content:content.val(),
+					mpwpb_faq_content:content,
 					mpwpb_faq_postID:postID.val(),
 					itemId:itemId,
 				},
