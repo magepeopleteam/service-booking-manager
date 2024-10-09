@@ -34,7 +34,7 @@ if(! class_exists('MPWPB_Static_Template') ){
                     <?php if(count($features_heightlight) > $limit): ?>
                         <h5 class="view_more" data-target-popup="#mpwpb_view_more_popup"><?php echo esc_html_e('View more!','service-booking-manager'); ?></h5>
                     <?php endif; ?>
-                    </ul>
+                </ul>
                 
             <?php
             endif;
@@ -43,23 +43,23 @@ if(! class_exists('MPWPB_Static_Template') ){
         public function popup_feature_lists(){
             $features_heightlight = MP_Global_Function::get_post_info(get_the_ID(), 'mpwpb_features', []);
             ?>
-            <div class="mpPopup mpStyle" data-popup="#mpwpb_view_more_popup">
-                    <div class="popupMainArea">
-                        <div class="popupHeader">
-                            <h3><?php echo esc_html_e('Features Heighlight','service-booking-manager'); ?></h3>
-                            <span class="fas fa-times popupClose"></span>
-                        </div>
-                        <div class="popupBody">
-                            <ul class="features">
-                                <?php 
-                                foreach($features_heightlight as $key => $value): 
-                                    ?>
-                                    <li style="color:#333"><i class="fas fa-check-circle"></i><?php echo esc_html($value); ?></li>
-                                <?php endforeach;?>
-                            </ul>
-                        </div>
+            <div class="mpPopup mpStyle popup-features" data-popup="#mpwpb_view_more_popup">
+                <div class="popupMainArea">
+                    <div class="popupHeader">
+                        <h3><?php echo esc_html_e('Features Heighlight','service-booking-manager'); ?></h3>
+                        <span class="fas fa-times popupClose"></span>
+                    </div>
+                    <div class="popupBody">
+                        <ul class="features">
+                            <?php 
+                            foreach($features_heightlight as $key => $value): 
+                                ?>
+                                <li style="color:#333"><i class="fas fa-check-circle"></i><?php echo esc_html($value); ?></li>
+                            <?php endforeach;?>
+                        </ul>
                     </div>
                 </div>
+            </div>
             <?php
         }
 

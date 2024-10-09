@@ -48,6 +48,24 @@
                         }
                     }
                 }
+                .popup-features{
+                    .popupMainArea{
+                        background-color: #FFF;
+                        border: 2px solid #fff;
+                        .popupHeader{
+                            border-bottom: 1px solid var(--color_border);
+                            .popupClose{
+                                position:absolute;
+                                top: 0;
+                                right: 0;
+                                width: 35px;
+                                height:35px;
+                                background-color: transparent;
+                                color: var(--color_border);;
+                            }
+                        }
+                    }
+                }
             }
         }
         

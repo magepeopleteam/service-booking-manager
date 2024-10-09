@@ -435,6 +435,22 @@ div.registration_tab_item {
 .mpwpb_registration > header .template-header .header-content ul.features li i {
   margin-right: 10px;
 }
+.mpwpb_registration > header .template-header .header-content .popup-features .popupMainArea {
+  background-color: #FFF;
+  border: 2px solid #fff;
+}
+.mpwpb_registration > header .template-header .header-content .popup-features .popupMainArea .popupHeader {
+  border-bottom: 1px solid var(--color_border);
+}
+.mpwpb_registration > header .template-header .header-content .popup-features .popupMainArea .popupHeader .popupClose {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 35px;
+  height: 35px;
+  background-color: transparent;
+  color: var(--color_border);
+}
 .mpwpb_registration main {
   max-width: 1160px;
   width: 100%;
