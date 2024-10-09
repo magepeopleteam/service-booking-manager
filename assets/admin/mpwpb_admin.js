@@ -285,129 +285,115 @@
 
 // ============= sidebar collapsible ======================
 (function($) {
-	$(document).ready(function($){
+	$(document).on('click', '.mpwpb-sidebar-open', function (e) {
+		e.preventDefault();
+		e.stopPropagation();
+		$('.mpwpb-sidebar-container').addClass('open');
+		// after open sidebar toggle
+		var itemId = $(this).closest('.mpwpb-faq-items').data('id');
+		var faqItem = $(this).closest('.mpwpb-faq-items');
+		prepare_faq_form(itemId,faqItem);
+	});
+	$(document).on('click', '.mpwpb-faq-item-delete', function (e) {
+		e.preventDefault();
+		e.stopPropagation();
+		var itemId = $(this).closest('.mpwpb-faq-items').data('id');
+		var faqItem = $(this).closest('.mpwpb-faq-items');
 
-		mpwpb_sidebar_toggle_open_close();
-		mpwpb_faq_item_delete();
-
-		function  mpwpb_sidebar_toggle_open_close(){
-			$('.mpwpb-sidebar-open').on('click', function(e) {
-				e.preventDefault();
-				e.stopPropagation();
-				$('.mpwpb-sidebar-container').addClass('open');
-				// after open sidebar toggle
-				var itemId = $(this).closest('.mpwpb-faq-items').data('id');
-				var faqItem = $(this).closest('.mpwpb-faq-items');
-				prepare_faq_form(itemId,faqItem);
-			});
-			
-			$('.mpwpb-sidebar-close').on('click', function() {
-				$('.mpwpb-sidebar-container').removeClass('open');
-				location.reload();
-			});
-		}
-
-		function mpwpb_faq_item_delete(){
-			$('.mpwpb-faq-item-delete').on('click', function(e) {
-				e.preventDefault();
-				e.stopPropagation();
-				var itemId = $(this).closest('.mpwpb-faq-items').data('id');
-				var faqItem = $(this).closest('.mpwpb-faq-items');
-
-				var isConfirmed = confirm('Are you sure you want to delete this row?');
-				if (isConfirmed) {
-					delete_faq_item(itemId);
-					faqItem.remove();
-				} else {
-					console.log('Deletion canceled.'+itemId);
-				}
-			});
-		}
-		
-		function empty_faq_form(){
-			$('input[name="mpwpb_faq_title"]').val('');
-			tinyMCE.get('mpwpb_faq_content').setContent('');
-		}
-
-		function set_faq_form_data(faqItem){
-			var parent = faqItem;
-			var headerText = parent.find('.faq-header p').text().trim();
-			var faqContentId = parent.find('.faq-content').text().trim();
-			var editorId = 'mpwpb_faq_content';
-			$('input[name="mpwpb_faq_title"]').val(headerText);
-			if (tinymce.get(editorId)) {
-				tinymce.get(editorId).setContent(faqContentId);
-			} else {
-				$('#' + editorId).val(faqContentId);
-			}
-		}
-
-		function prepare_faq_form(itemId,faqItem){
-			empty_faq_form();
-			set_faq_form_data(faqItem);
-			
-			$('input[name="mpwpb_faq_save"]').click(function(event) {
-				event.preventDefault();
-				save_faq_form(itemId);
-			});
-		}
-		
-		function save_faq_form(itemId){
-			var title   = $('input[name="mpwpb_faq_title"]');
-			var content = tinyMCE.get('mpwpb_faq_content').getContent();
-			var postID  = $('input[name="mpwpb_post_id"]');
-			$.ajax({
-				url: mp_ajax_url,
-				type: 'POST',
-				data: {
-					action: 'mpwpb_faq_data_save',
-					mpwpb_faq_title:title.val(),
-					mpwpb_faq_content:content,
-					mpwpb_faq_postID:postID.val(),
-					itemId:itemId,
-				},
-				success: function(response) {
-					$('#mpwpb-faq-msg').html(response.data.message);
-					if(typeof itemId !== 'undefined'){
-						var existingItem = $('.mpwpb-faq-items[data-id="' + itemId + '"]');
-						if (existingItem.length > 0) {
-							existingItem.replaceWith(response.data.html);
-						}
-					}
-					else{
-						if ($('.mpwpb-faq-items').length > 0) {
-							$('.mpwpb-faq-items:last').after(response.data.html);
-						} else {
-							$('.mpwpb-faq').prepend(response.data.html);
-						}
-						empty_faq_form();
-					}
-					
-				},
-				error: function(error) {
-					console.log('Error:', error);
-				}
-			});
-		}
-
-		function delete_faq_item(itemId){
-			var postID  = $('input[name="mpwpb_post_id"]');
-			$.ajax({
-				url: mp_ajax_url,
-				type: 'POST',
-				data: {
-					action: 'mpwpb_faq_delete_item',
-					mpwpb_faq_postID:postID.val(),
-					itemId:itemId,
-				},
-				success: function(response) {
-					console.log(response.data);
-				},
-				error: function(error) {
-					console.log('Error:', error);
-				}
-			});
+		var isConfirmed = confirm('Are you sure you want to delete this row?');
+		if (isConfirmed) {
+			delete_faq_item(itemId);
+			faqItem.remove();
+		} else {
+			console.log('Deletion canceled.'+itemId);
 		}
 	});
+	$(document).on('click', '.mpwpb-sidebar-close', function () {
+		$('.mpwpb-sidebar-container').removeClass('open');
+	});
+	function empty_faq_form(){
+		$('input[name="mpwpb_faq_title"]').val('');
+		tinyMCE.get('mpwpb_faq_content').setContent('');
+	}
+
+	function set_faq_form_data(faqItem){
+		var parent = faqItem;
+		var headerText = parent.find('.faq-header p').text().trim();
+		var faqContentId = parent.find('.faq-content').text().trim();
+		var editorId = 'mpwpb_faq_content';
+		$('input[name="mpwpb_faq_title"]').val(headerText);
+		if (tinymce.get(editorId)) {
+			tinymce.get(editorId).setContent(faqContentId);
+		} else {
+			$('#' + editorId).val(faqContentId);
+		}
+	}
+
+	function prepare_faq_form(itemId,faqItem){
+		empty_faq_form();
+		set_faq_form_data(faqItem);
+		
+		$('input[name="mpwpb_faq_save"]').click(function(event) {
+			event.preventDefault();
+			save_faq_form(itemId);
+		});
+	}
+	
+	function save_faq_form(itemId){
+		var title   = $('input[name="mpwpb_faq_title"]');
+		var content = tinyMCE.get('mpwpb_faq_content').getContent();
+		var postID  = $('input[name="mpwpb_post_id"]');
+		$.ajax({
+			url: mp_ajax_url,
+			type: 'POST',
+			data: {
+				action: 'mpwpb_faq_data_save',
+				mpwpb_faq_title:title.val(),
+				mpwpb_faq_content:content,
+				mpwpb_faq_postID:postID.val(),
+				itemId:itemId,
+			},
+			success: function(response) {
+				$('#mpwpb-faq-msg').html(response.data.message);
+				if(typeof itemId !== 'undefined'){
+					var existingItem = $('.mpwpb-faq-items[data-id="' + itemId + '"]');
+					if (existingItem.length > 0) {
+						existingItem.replaceWith(response.data.html);
+					}
+				}
+				else{
+					if ($('.mpwpb-faq-items').length > 0) {
+						$('.mpwpb-faq-items:last').after(response.data.html);
+					} else {
+						$('.mpwpb-faq').prepend(response.data.html);
+					}
+					empty_faq_form();
+				}
+				
+			},
+			error: function(error) {
+				console.log('Error:', error);
+			}
+		});
+	}
+
+	function delete_faq_item(itemId){
+		var postID  = $('input[name="mpwpb_post_id"]');
+		$.ajax({
+			url: mp_ajax_url,
+			type: 'POST',
+			data: {
+				action: 'mpwpb_faq_delete_item',
+				mpwpb_faq_postID:postID.val(),
+				itemId:itemId,
+			},
+			success: function(response) {
+				console.log(response.data);
+			},
+			error: function(error) {
+				console.log('Error:', error);
+			}
+		});
+	}
 })(jQuery);
 

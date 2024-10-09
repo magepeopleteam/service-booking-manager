@@ -71,7 +71,7 @@ if( ! class_exists('MPWPB_Faq_Settings')){
                         }
                     ?>
                     <br>
-                    <button class="button mpwpb-sidebar-open">Add FAQ</button>
+                    <button class="button mpwpb-sidebar-open" type="button"><?php _e('Add FAQ','service-booking-manager'); ?></button>
                 </section>
                 <!-- sidebar collapse open -->
                 <div class="mpwpb-sidebar-container">
@@ -108,11 +108,11 @@ if( ! class_exists('MPWPB_Faq_Settings')){
             ?>
             <div class="mpwpb-faq-form">
                 <div id="mpwpb-faq-msg"></div>
-                <h4><?php _e('Add F.A.Q.','service-booking-manage'); ?></h4>
-                <p><?php _e('Add title','service-booking-manage'); ?></p>
+                <h4><?php _e('Add F.A.Q.','service-booking-manager'); ?></h4>
+                <p><?php _e('Add title','service-booking-manager'); ?></p>
                 <input type="hidden" name="mpwpb_post_id" value="<?php echo $post_id; ?>"> 
                 <input type="text"   name="mpwpb_faq_title"> 
-                <p><?php _e('Add Content','service-booking-manage'); ?></p>
+                <p><?php _e('Add Content','service-booking-manager'); ?></p>
                 <?php $this->show_editor($post_id); ?>
                 <p><input type="submit" name="mpwpb_faq_save" class="button button-primary button-large" value="save"><p>
             </div>

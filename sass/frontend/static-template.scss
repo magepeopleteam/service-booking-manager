@@ -18,21 +18,19 @@
             z-index: 0;
         }
         .template-header{
-            width: 1300px;
+            width: 100%;
             max-width: 1160px;
             margin: auto;
+            padding: 10px;
             .header-content{
                 z-index: 1;
                 position: relative;
-                
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
                 align-items: start;
                 h2{
                     margin: 10px 0;
-                    padding-top: 50px;
-                    font-size: 48px;
                 }
                 h2,p{
                     color: var(--color_theme_alter);
@@ -50,21 +48,45 @@
                         }
                     }
                 }
+                .popup-features{
+                    .popupMainArea{
+                        background-color: #FFF;
+                        border: 2px solid #fff;
+                        .popupHeader{
+                            border-bottom: 1px solid var(--color_border);
+                            .popupClose{
+                                position:absolute;
+                                top: 0;
+                                right: 0;
+                                width: 35px;
+                                height:35px;
+                                background-color: transparent;
+                                color: var(--color_border);;
+                            }
+                        }
+                    }
+                }
             }
         }
         
     }
     main{
-        max-width: 1300px;
-        width: 1160px;
+        max-width: 1160px;
+        width: 100%;
         margin: auto;
-        display:flex;
-        justify-content: space-between;
-        align-items: start;
-        padding:20px 0;
+        padding: 10px;
+        flex-direction: column;
+        display: flex;
+        @media (min-width:1024px) {
+            flex-direction: row;
+            justify-content: space-between;
+        }
         .main{
-            width: 80%;
-            
+
+            width: 100%;
+            @media (min-width:1024px) {
+                width: 80%;
+            }
             nav{
                 margin-bottom:20px;
                 ul{
@@ -139,7 +161,6 @@
                 
             }
             .mpwpb-serivice-faq{
-
                 .faq-header{
                     font-weight: bold;
                     margin-top:10px;
@@ -156,7 +177,14 @@
             }
         }
         .sidebar{
-            // width:30%;
+            width: 100%;
+            padding-bottom:300px;
+            @media (min-width:1024px) {
+                width: 20%;
+            }
+            [class*="_mpBtn"]{
+                padding: 10px;
+            }
             .mpwpb_static_theme{
                 .mpPopup{
                     background-color: #00000094;
@@ -164,8 +192,14 @@
                         border:0;
                         box-shadow: 0 0 1px #000;
                         border-radius: 5px;
-                        width:980px;
-                        max-width:1024px;
+                        width:100%;
+                        max-width:auto;
+                        min-width: 300px;
+                        max-width: 400px;
+                        @media (min-width:1024px) {
+                            width:980px;
+                            max-width:1024px;
+                        }
                         .popupHeader{
                             padding: 16px 16px 10px;
                             color: #333;
@@ -175,7 +209,12 @@
                             .popupClose{
                                 position: absolute;
                                 top: 0;
-                                right: -52px;
+                                right: 0;
+                                padding: 0;
+                                background: transparent;
+                                color: var(--color_d);
+                                width: 35px;
+                                height: 35px;
                             }
                         }
                         .popupBody {
@@ -185,9 +224,16 @@
                             .mpwpb-popup-content {
                                 display: flex;  
                                 overflow: auto;
+                                flex-direction: column;
+                                @media (min-width:1024px) {
+                                    flex-direction: row;
+                                }
                                 .service-items {
-                                    width: 60%; 
+                                    width: 100%; 
                                     padding: 10px;
+                                    @media (min-width:1024px) {
+                                        width: 60%; 
+                                    }
                                     .mpwpb_category_section{
                                         .mpwpb_item_box{
                                             margin: 0;
@@ -304,6 +350,14 @@
                                                     color: var(--color_theme_alter);
                                                 }
                                             }
+                                            @media (max-width:1024px) {
+                                                .quantity-box{
+                                                    display: flex;
+                                                    justify-content: space-between;
+                                                    flex-direction: column;
+                                                    gap: 5px;
+                                                }
+                                            }
                                         }
                                     }
                                     .mpwpb_date_carousel{
@@ -391,13 +445,16 @@
                                     }
                                 }
                                 .service-cart {
-                                    width: 40%; 
+                                    width: auto; 
                                     overflow-y: scroll; 
                                     padding: 10px;
                                     margin: 10px;
                                     border:2px solid #d3d3d3;
                                     border-radius: 10px;
                                     background-color: #f4f5f8;
+                                    @media (min-width:1024px) {
+                                        width: 40%; 
+                                    }
                                     .mpwpb_summary_area_left_content{
                                         background-color: transparent;
                                         position: relative;
@@ -428,6 +485,26 @@
                         border-top:0;
                         padding: 10px;
                         box-shadow: 2px 0px 5px 0 rgba(0, 0, 0, 0.1);
+                        @media (max-width:1024px) {
+                            .next_date_area{
+                                div:nth-child(1){
+                                    display: flex;
+                                    flex-direction: column;
+                                    h4{
+                                        margin: 10px auto;
+                                        order: 0;
+                                    }
+                                    button{
+                                        order: 1;
+                                        margin: 5px;
+                                    }
+                                    
+                                }
+                                .mpwpb-total{
+                                    padding: 0;
+                                }
+                            }
+                        }
                         button.mpwpb_date_time_next{
                             padding: 10px;
                         }
@@ -436,10 +513,17 @@
             }
             .mpwpb_static_area {
                 position: fixed; 
-                left: 70%;
-                transform:translateY(-50%); 
-                width: 400px;  
-                z-index: 99999; 
+                left:0;
+                bottom: 0;
+                width: 100%; 
+                z-index: 99999;
+                
+                @media (min-width:1024px) {
+                    position: fixed; 
+                    left: 70%;
+                    bottom: 10%;
+                    width: 400px; 
+                }
                 .mpwpb_static {
                     background-color: var(--color_theme);
                     padding: 30px;

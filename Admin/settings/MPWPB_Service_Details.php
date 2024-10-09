@@ -127,7 +127,7 @@ if( ! class_exists('MPWPB_Service_Details')){
                         $this->show_editor($service_details_content,'mpwpb_service_details_content');
                     ?>
                 </section>
-                 <!-- service review -->
+                 <!-- service review and ratings -->
                  <section class="section">
                         <h2><?php esc_html_e('Service Review', 'service-booking-manager'); ?></h2>
                         <span><?php esc_html_e('Service Review Settings', 'service-booking-manager'); ?></span>
@@ -138,7 +138,7 @@ if( ! class_exists('MPWPB_Service_Details')){
                             <p><?php esc_html_e('Service Review Rating', 'service-booking-manage'); ?></p>
                             <span><?php esc_html_e('Service Review ', 'service-booking-manage'); ?></span>
                         </div>
-                        <input type="text" name="mpwpb_service_review_ratings" value="<?php echo esc_html($service_ratings); ?>">
+                        <input type="text" name="mpwpb_service_review_ratings" value="<?php echo esc_html($service_ratings); ?>" placeholder="4.5">
                     </label>
                 </section>
                 <section>
@@ -147,7 +147,7 @@ if( ! class_exists('MPWPB_Service_Details')){
                             <p><?php esc_html_e('Service Review Scale', 'service-booking-manage'); ?></p>
                             <span><?php esc_html_e('Service Review Scale', 'service-booking-manage'); ?></span>
                         </div>
-                        <input type="text" name="mpwpb_service_rating_scale" value="<?php echo esc_html($service_rating_scale); ?>">
+                        <input type="text" name="mpwpb_service_rating_scale" value="<?php echo esc_html($service_rating_scale); ?>" placeholder="Out of 5">
                     </label>
                 </section>
                 <section>
@@ -156,7 +156,7 @@ if( ! class_exists('MPWPB_Service_Details')){
                             <p><?php esc_html_e('Service Review Text', 'service-booking-manage'); ?></p>
                             <span><?php esc_html_e('Service Review Text', 'service-booking-manage'); ?></span>
                         </div>
-                        <input type="text" name="mpwpb_service_rating_text" value="<?php echo esc_html($service_rating_text); ?>">
+                        <input type="text" name="mpwpb_service_rating_text" value="<?php echo esc_html($service_rating_text); ?>" placeholder="(8868 ratings on 3 services)">
                     </label>
                 </section>
                 
