@@ -303,14 +303,15 @@
 			
 			$('.mpwpb-sidebar-close').on('click', function() {
 				$('.mpwpb-sidebar-container').removeClass('open');
-				location.reload();
+				// location.reload();
 			});
 		}
 
+
 		function mpwpb_faq_item_delete(){
 			$('.mpwpb-faq-item-delete').on('click', function(e) {
-				e.preventDefault();
-				e.stopPropagation();
+				// e.preventDefault();
+				// e.stopImmediatePropagation();
 				var itemId = $(this).closest('.mpwpb-faq-items').data('id');
 				var faqItem = $(this).closest('.mpwpb-faq-items');
 

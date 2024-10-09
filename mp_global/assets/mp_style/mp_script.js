@@ -872,16 +872,7 @@ function mp_pagination_page_management(parent, pagination_page, total_item) {
 (function ($) {
     "use strict";
     $(document).click(function (e) {
-        let target = $(e.target);
-        let popup = target.closest('[data-popup]');
-        if (popup.length > 0) {
-            let hLength = target.closest('.popupHeader').length;
-            let bLength = target.closest('.popupBody').length;
-            let fLength = target.closest('.popupFooter').length;
-            if (hLength === 0 && bLength === 0 && fLength === 0) {
-                popup.find('.popupClose').trigger('click');
-            }
-        }
+        
         let mp_input_select_list = target.closest('.mp_input_select');
         if (mp_input_select_list.length === 0) {
             $('body').find('.mp_input_select_list').slideUp(250);
