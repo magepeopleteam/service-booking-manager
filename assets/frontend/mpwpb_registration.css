@@ -581,7 +581,7 @@ div.registration_tab_item {
   right: 0;
   padding: 0;
   background: transparent;
-  color: var(--color_theme);
+  color: var(--color_d);
   width: 35px;
   height: 35px;
 }
