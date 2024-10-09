@@ -547,6 +547,9 @@ div.registration_tab_item {
     width: 20%;
   }
 }
+.mpwpb_registration main .sidebar [class*=_mpBtn] {
+  padding: 10px;
+}
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup {
   background-color: rgba(0, 0, 0, 0.5803921569);
 }
@@ -575,7 +578,12 @@ div.registration_tab_item {
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupHeader .popupClose {
   position: absolute;
   top: 0;
-  right: -52px;
+  right: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--color_theme);
+  width: 35px;
+  height: 35px;
 }
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody {
   overflow: auto;
@@ -827,6 +835,23 @@ div.registration_tab_item {
   border-top: 0;
   padding: 10px;
   box-shadow: 2px 0px 5px 0 rgba(0, 0, 0, 0.1);
+}
+@media (max-width: 1024px) {
+  .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupFooter .next_date_area div:nth-child(1) {
+    display: flex;
+    flex-direction: column;
+  }
+  .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupFooter .next_date_area div:nth-child(1) h4 {
+    margin: 10px auto;
+    order: 0;
+  }
+  .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupFooter .next_date_area div:nth-child(1) button {
+    order: 1;
+    margin: 5px;
+  }
+  .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupFooter .next_date_area .mpwpb-total {
+    padding: 0;
+  }
 }
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupFooter button.mpwpb_date_time_next {
   padding: 10px;

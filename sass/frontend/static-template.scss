@@ -164,6 +164,9 @@
             @media (min-width:1024px) {
                 width: 20%;
             }
+            [class*="_mpBtn"]{
+                padding: 10px;
+            }
             .mpwpb_static_theme{
                 .mpPopup{
                     background-color: #00000094;
@@ -188,7 +191,12 @@
                             .popupClose{
                                 position: absolute;
                                 top: 0;
-                                right: -52px;
+                                right: 0;
+                                padding: 0;
+                                background: transparent;
+                                color: var(--color_theme);
+                                width: 35px;
+                                height: 35px;
                             }
                         }
                         .popupBody {
@@ -451,6 +459,26 @@
                         border-top:0;
                         padding: 10px;
                         box-shadow: 2px 0px 5px 0 rgba(0, 0, 0, 0.1);
+                        @media (max-width:1024px) {
+                            .next_date_area{
+                                div:nth-child(1){
+                                    display: flex;
+                                    flex-direction: column;
+                                    h4{
+                                        margin: 10px auto;
+                                        order: 0;
+                                    }
+                                    button{
+                                        order: 1;
+                                        margin: 5px;
+                                    }
+                                    
+                                }
+                                .mpwpb-total{
+                                    padding: 0;
+                                }
+                            }
+                        }
                         button.mpwpb_date_time_next{
                             padding: 10px;
                         }
