@@ -872,7 +872,7 @@ function mp_pagination_page_management(parent, pagination_page, total_item) {
 (function ($) {
     "use strict";
     $(document).click(function (e) {
-        
+        let target = $(e.target);        
         let mp_input_select_list = target.closest('.mp_input_select');
         if (mp_input_select_list.length === 0) {
             $('body').find('.mp_input_select_list').slideUp(250);
