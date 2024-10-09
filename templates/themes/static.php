@@ -1,8 +1,10 @@
 <?php
-	// Template Name: Default Theme
-	/*
-   * @Author 		engr.sumonazma@gmail.com
-   * Copyright: 	mage-people.com
+
+/**
+   * Tempalte Name: Static Template
+   * 
+   * @author Shahadat Hossain <raselsha@gmail.com>
+   * @copyright 2024 mage-people.com
    */
 	if (!defined('ABSPATH')) {
 		exit;
