@@ -332,6 +332,14 @@
                                                     color: var(--color_theme_alter);
                                                 }
                                             }
+                                            @media (max-width:1024px) {
+                                                .quantity-box{
+                                                    display: flex;
+                                                    justify-content: space-between;
+                                                    flex-direction: column;
+                                                    gap: 5px;
+                                                }
+                                            }
                                         }
                                     }
                                     .mpwpb_date_carousel{

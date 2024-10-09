@@ -60,7 +60,7 @@
                                         </div>
 										
                                         <h6 class="_textTheme_min_100"><?php echo MP_Global_Function::esc_html($ex_service_price); ?></h6>
-                                        <div class="alignCenter">
+                                        <div class="alignCenter quantity-box">
                                             <div class="mR_xs min_100" data-collapse="<?php echo esc_attr($ex_unique_id); ?>">
 												<?php MP_Custom_Layout::qty_input('mpwpb_extra_service_qty[]', $ex_service_price_raw, $ex_service_info['qty'], 1, 0, $ex_service_info['qty']); ?>
                                             </div>

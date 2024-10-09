@@ -721,6 +721,14 @@ div.registration_tab_item {
   background-color: var(--color_theme);
   color: var(--color_theme_alter);
 }
+@media (max-width: 1024px) {
+  .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_extra_service_area .mpwpb_extra_service_item .quantity-box {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    gap: 5px;
+  }
+}
 .mpwpb_registration main .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_date_carousel header {
   background-color: transparent;
   padding: 10px 0;
