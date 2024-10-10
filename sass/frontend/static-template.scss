@@ -552,6 +552,10 @@
                 border: 2px solid var(--color_theme_alter);
                 border-radius: 10px;
                 box-shadow: 0 0 5px #333;
+                margin: 10px;
+                @media (min-width:1024px) {
+                    margin: 0;
+                }
                 .mp_title {
                     margin-bottom: 20px;
                     h2 {
