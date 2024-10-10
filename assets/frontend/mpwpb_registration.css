@@ -390,11 +390,16 @@ div.registration_tab_item {
 }
 .mpwpb-default-template .sidebar {
   width: 100%;
-  padding-bottom: 300px;
 }
 @media (min-width: 1024px) {
   .mpwpb-default-template .sidebar {
     width: 40%;
+    top: 100px;
+    height: auto;
+    overflow-y: auto;
+    position: -webkit-sticky;
+    position: sticky;
+    height: calc(100vh - 100px);
   }
 }
 .mpwpb-default-template .sidebar [class*=_mpBtn] {

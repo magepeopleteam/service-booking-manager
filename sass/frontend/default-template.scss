@@ -7,9 +7,15 @@
     }
     .sidebar{
         width: 100%;
-        padding-bottom:300px;
+
         @media (min-width:1024px) {
             width: 40%;
+            top: 100px;
+            height: auto; 
+            overflow-y: auto;
+            position: -webkit-sticky;
+            position: sticky;
+            height: calc(100vh - 100px); 
         }
         [class*="_mpBtn"]{
             padding: 10px;
