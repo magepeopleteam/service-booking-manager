@@ -179,9 +179,11 @@
         padding: 10px;
         flex-direction: column;
         display: flex;
+        
         @media (min-width:1024px) {
             flex-direction: row;
             justify-content: space-between;
+            gap: 25px;
         }
     }
 }
