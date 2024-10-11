@@ -288,6 +288,9 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   margin-bottom: 5px;
   color: var(--mage-black);
 }
+#mp_meta_box_panel .metabox .tabsContent section label.label input, #mp_meta_box_panel .metabox .tabsContent section label.label select, #mp_meta_box_panel .metabox .tabsContent section label.label textarea {
+  width: 360px;
+}
 #mp_meta_box_panel .metabox .tabsContent section label.label span {
   font-size: 14px;
   font-weight: normal;
