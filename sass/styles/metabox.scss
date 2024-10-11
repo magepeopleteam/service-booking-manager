@@ -95,6 +95,9 @@
                         margin-bottom: 5px;
                         color: var(--mage-black); 
                     }
+                    input, select, textarea{
+                        width:360px;
+                    }
                     span{
                         font-size: 14px;
                         font-weight: normal;
