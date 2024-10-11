@@ -418,7 +418,6 @@ div.registration_tab_item {
   padding: 10px;
 }
 .mpwpb-default-template .sidebar .content .service-items .mpwpb_category_section {
-  background-color: #fff;
   margin-bottom: 5px;
 }
 .mpwpb-default-template .sidebar .content .service-items .mpwpb_category_section .mpwpb_item_box {
@@ -429,14 +428,15 @@ div.registration_tab_item {
   color: var(--color_theme);
   border: 1px solid var(--color_theme_77);
 }
-.mpwpb-default-template .sidebar .content .service-items .mpwpb_category_section .mpActive {
+.mpwpb-default-template .sidebar .content .service-items .mpwpb_category_section .mpwpb_category_item.mpActive {
   background-color: var(--color_theme);
   color: var(--color_theme_alter);
 }
-.mpwpb-default-template .sidebar .content .service-items .mpwpb_category_section .mpActive h6 {
+.mpwpb-default-template .sidebar .content .service-items .mpwpb_category_section .mpwpb_category_item.mpActive h6 {
   font-weight: 700;
+  color: var(--color_theme_alter);
 }
-.mpwpb-default-template .sidebar .content .service-items .mpwpb_category_section .mpActive .mpwpb_item_check {
+.mpwpb-default-template .sidebar .content .service-items .mpwpb_category_section .mpwpb_category_item.mpActive .mpwpb_item_check {
   position: relative;
   right: 0;
   top: 0;
@@ -445,7 +445,7 @@ div.registration_tab_item {
   margin: 0;
 }
 .mpwpb-default-template .sidebar .content .service-items .mpwpb_category_section .mpwpb_sub_category_area {
-  padding: 20px;
+  padding-left: 20px;
 }
 .mpwpb-default-template .sidebar .content .service-items .mpwpb_category_section .mpwpb_sub_category_area .mpwpb_sub_category_item {
   background-color: var(--color_theme_alter);
