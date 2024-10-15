@@ -16,7 +16,8 @@
 	$all_sub_category = $all_sub_category ?? MPWPB_Function::get_sub_category($post_id);
 	$all_service_list = $all_service_list ?? MPWPB_Function::get_all_service($post_id);
 	$extra_services = $extra_services ?? MP_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', array());
-    
+    $title     = MP_Global_Function::get_post_info( $post_id, 'mpwpb_shortcode_title' );
+	$sub_title = MP_Global_Function::get_post_info( $post_id, 'mpwpb_shortcode_sub_title' );
 ?>
 <div class="mpStyle mpwpb-default-template mpwpb_registration">
 
