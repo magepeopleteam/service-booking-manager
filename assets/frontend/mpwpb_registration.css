@@ -262,6 +262,7 @@ div.registration_tab_item {
   div.mpwpb_summary_area_left_content {
     border: 1px solid var(--color_border);
     padding: var(--dMP_xs) 20px;
+    padding-right: 5px;
     background-color: #FFF;
     overflow: auto;
   }
