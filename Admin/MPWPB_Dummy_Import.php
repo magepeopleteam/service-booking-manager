@@ -16,7 +16,7 @@
 			private function dummy_import() {
 				$dummy_post = get_option('mpwpb_dummy_already_inserted');
 				$all_post = MP_Global_Function::query_post_type('mpwpb_item');
-				if ($all_post->post_count == 0 && $dummy_post == 'yes') {
+				if ($all_post->post_count == 0 && $dummy_post != 'yes') {
 					$dummy_data = $this->dummy_import_xml();
 					foreach ($dummy_data as $type => $dummy) {
 						if ($type == 'taxonomy') {
