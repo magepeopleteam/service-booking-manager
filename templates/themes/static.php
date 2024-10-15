@@ -1,8 +1,10 @@
 <?php
-	// Template Name: Default Theme
-	/*
-   * @Author 		engr.sumonazma@gmail.com
-   * Copyright: 	mage-people.com
+
+/**
+   * Tempalte Name: Static Template
+   * 
+   * @author Shahadat Hossain <raselsha@gmail.com>
+   * @copyright 2024 mage-people.com
    */
 	if (!defined('ABSPATH')) {
 		exit;
@@ -14,18 +16,16 @@
 	$all_sub_category = $all_sub_category ?? MPWPB_Function::get_sub_category($post_id);
 	$all_service_list = $all_service_list ?? MPWPB_Function::get_all_service($post_id);
 	$extra_services = $extra_services ?? MP_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', array());
-    
+    $title     = MP_Global_Function::get_post_info( $post_id, 'mpwpb_shortcode_title' );
+	$sub_title = MP_Global_Function::get_post_info( $post_id, 'mpwpb_shortcode_sub_title' );
 ?>
 <div class="mpStyle mpwpb-static-template mpwpb_registration">
-    <!-- dispaly service static page header using this hook -->
-
     <header style="background-image: url('<?php echo get_the_post_thumbnail_url(); ?>');">
         <div class="template-header" >
             <div class="header-content">
                 <h2><?php the_title(); ?></h2>
                 <!-- dispaly service static page reatings using this hook -->
                 <?php do_action('mpwpb_service_show_ratings'); ?>
-
                 <!-- dispaly service static page feature heighlight using this hook -->
                 <?php do_action('mpwpb_service_feature_heighlight'); ?>
             </div>

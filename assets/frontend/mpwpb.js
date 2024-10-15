@@ -34,7 +34,7 @@ function mpwpb_active_carousel(target,qty) {
 
 function remove_parent_classes($){
 	$(document).ready(function() {
-		$('.mpwpb-static-template').each(function() {
+		$('.mpwpb_registration').each(function() {
 		var $this = $(this);
 		$this.parent().removeClass();
 		$this.parent().parent().removeClass();
