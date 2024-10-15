@@ -1693,9 +1693,68 @@
 										"Full Detailing Services"
 									],
 									'mpwpb_service_overview_status'=>'on',
-									'mpwpb_service_overview_content'=>'Our car wash service is dedicated to providing top-tier care for your vehicle, offering a wide range of cleaning options to suit all needs...',
+									'mpwpb_service_overview_content'=>'
+										Our car wash service is dedicated to providing top-tier care for your vehicle, offering a wide range of cleaning options to suit all needs. Whether you\'re looking for a quick wash to maintain your car’s shine or comprehensive detailing to restore your vehicle’s interior and exterior, we have the expertise and equipment to deliver outstanding results.
+										<strong>Services We Offer:</strong>
+										<ol>
+											<li><strong>Exterior Hand Wash:</strong>
+										<ul>
+											<li>A thorough hand wash using premium soaps that remove dirt, dust, and road grime without damaging the paint.</li>
+											<li>We take special care of delicate finishes, ensuring a spotless exterior and leaving your car with a brilliant shine.</li>
+										</ul>
+										</li>
+											<li><strong>Full-Service Car Wash (Interior &amp; Exterior):</strong>
+										<ul>
+											<li>Includes exterior hand wash plus an interior vacuum, wipe-down of surfaces, window cleaning, and tire dressing.</li>
+											<li>It’s the perfect option for regular upkeep, leaving both the inside and outside of your vehicle clean and fresh.</li>
+										</ul>
+										</li>
+											<li><strong>Detailing Services:</strong>
+										<ul>
+											<li><strong>Interior Detailing:</strong> A deep cleaning of the car’s cabin, including vacuuming, stain removal, conditioning of leather or vinyl surfaces, and deodorizing to leave the interior looking and smelling like new.</li>
+											<li><strong>Exterior Detailing:</strong> Polishing, waxing, and clay bar treatments to restore your vehicle’s paint and remove imperfections such as scratches, swirl marks, and water spots.</li>
+											<li><strong>Full Detailing:</strong> Combines both interior and exterior detailing for comprehensive vehicle care.</li>
+										</ul>
+										</li>
+											<li><strong>Wax &amp; Polish:</strong>
+										<ul>
+											<li>A high-quality wax application to protect your paint from environmental factors and bring out the vehicle’s natural gloss.</li>
+											<li>Polishing is available to remove minor scratches and restore the car’s original shine.</li>
+										</ul>
+										</li>
+											<li><strong>Engine Cleaning:</strong>
+										<ul>
+											<li>Gentle, thorough cleaning of the engine bay to remove dust, oil, and grime, improving both appearance and performance.</li>
+										</ul>
+										</li>
+											<li><strong>Tire &amp; Wheel Cleaning:</strong>
+										<ul>
+											<li>Deep cleaning of wheels and tires, including tire shine application for a polished look.</li>
+										</ul>
+										</li>
+											<li><strong>Undercarriage Cleaning:</strong>
+										<ul>
+											<li>Essential for vehicles exposed to salt, mud, or other corrosive elements, our undercarriage cleaning helps protect your vehicle from long-term damage.</li>
+										</ul>
+										</li>
+											<li><strong>Mobile Car Wash Services:</strong>
+										<ul>
+											<li>We bring our car wash services to your location! Whether at home or the office, enjoy the convenience of a professional clean without the hassle of travel.</li>
+										</ul>
+										</li>
+										</ol>
+									',
 									'mpwpb_service_details_status'=>'on',
-									'mpwpb_service_details_content'=>'<strong>Why Choose Us?</strong><ul><li><strong>Eco-Friendly Products:</strong> We use biodegradable, non-toxic cleaning agents...</li></ul>',
+									'mpwpb_service_details_content'=>'
+									<strong>Why Choose Us?</strong>
+									<ul>
+										<li><strong>Eco-Friendly Products:</strong> We use biodegradable, non-toxic cleaning agents to ensure the safety of your vehicle and the environment.</li>
+										<li><strong>Experienced Staff:</strong> Our skilled technicians are trained to handle all types of vehicles with care and precision.</li>
+										<li><strong>State-of-the-Art Equipment:</strong> We use modern tools and techniques to provide an efficient and thorough cleaning experience.</li>
+										<li><strong>Convenient Options:</strong> Choose from our in-shop service or mobile car wash options. We also offer monthly memberships for regular maintenance.</li>
+										<li><strong>Customer Satisfaction:</strong> We are committed to delivering exceptional results and ensuring that every customer leaves with a car that looks and feels brand new.</li>
+									</ul>
+									',
 									'mpwpb_service_review_ratings'=>'4.5',
 									'mpwpb_service_rating_scale'=>'out of 5',
 									'mpwpb_service_rating_text'=>'2888 total customer reviews',
