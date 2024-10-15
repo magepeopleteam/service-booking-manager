@@ -16,6 +16,7 @@
 			private function dummy_import() {
 				$dummy_post = get_option('mpwpb_dummy_already_inserted');
 				$all_post = MP_Global_Function::query_post_type('mpwpb_item');
+				
 				if ($all_post->post_count == 0 && $dummy_post != 'yes') {
 					$dummy_data = $this->dummy_import_xml();
 					foreach ($dummy_data as $type => $dummy) {
@@ -33,7 +34,7 @@
 							foreach ($dummy as $custom_post => $dummy_post) {
 								$post = MP_Global_Function::query_post_type($custom_post);
 								if ($post->post_count == 0) {
-									foreach ($dummy_post as $dummy_data) {
+									foreach ($dummy_post as $key => $dummy_data) {
 										$title = $dummy_data['name'];
 										$post_id = wp_insert_post([
 											'post_title' => $title,
@@ -45,6 +46,11 @@
 												update_post_meta($post_id, $meta_key, $data);
 											}
 										}
+
+										require_once(ABSPATH . "wp-admin" . '/includes/image.php');
+										$image = MPWPB_PLUGIN_DIR.'/assets/images/dummy-image-'.$key.'.png';
+										$image_attached = self::insert_media($image);
+                        				set_post_thumbnail( $post_id, $image_attached['id']??'' );
 									}
 								}
 							}
@@ -1281,12 +1287,7 @@
 
 			public function dummy_import_xml(){
 				return [
-					'taxonomy' => [
-						// 'mpwpb_category' => [
-						//     0 => ['name' => 'Fixed Tour'],
-						//     1 => ['name' => 'Flexible Tour']
-						// ],
-					],
+					'taxonomy' => [],
 					'custom_post' => [
 						'mpwpb_item' => [
 							0 => [
@@ -2320,11 +2321,11 @@
 								],
 							],
 							5 => [
-								'name' => 'YOGA INSTRUCTOR',
+								'name' => 'Rent Your Dream Car for Single Day long tour',
 								'post_data' => [
 									// General_settings
-									'mpwpb_shortcode_title' => 'Yoga Instructor',
-									'mpwpb_shortcode_sub_title' => 'Choose your yoga instructor easily with effordable price',
+									'mpwpb_shortcode_title' => 'Rent-A-Car Service',
+									'mpwpb_shortcode_sub_title' => 'Rent your dream car easily with affordable price',
 									// Date_settings
 									'mpwpb_service_start_date' => '2023-02-01',
 									'mpwpb_time_slot_length' => '60',
@@ -2357,14 +2358,14 @@
 									'mpwpb_sub_category_active' => 'off',
 									'mpwpb_service_details_active' => 'on',
 									'mpwpb_service_duration_active' => 'on',
-									'mpwpb_category_text' => 'Yoga Styles',
+									'mpwpb_category_text' => 'Car Type',
 									'mpwpb_sub_category_text' => 'Sub-Category',
-									'mpwpb_service_text' => 'Classes',
+									'mpwpb_service_text' => 'Service',
 									'mpwpb_category_infos' => [
 										0 => [
 											'icon' => '',
-											'image' => '',
-											'category' => 'Hatha Yoga',
+											'image' => '272',
+											'category' => 'Economy Car',
 											'sub_category' => [
 												0 => [
 													'icon' => '',
@@ -2372,52 +2373,28 @@
 													'name' => '',
 													'service' => [
 														0 => [
-															'name' => 'Back Body Space Posture',
+															'name' => 'Casinos',
 															'price' => '10',
-															'details' => 'Learn process about Back Body Space Posture',
+															'details' => '',
 															'duration' => '30m',
 															'icon' => '',
-															'image' => '264'
+															'image' => ''
 														],
 														1 => [
-															'name' => 'Hatha-Yin Stretch',
-															'price' => '12',
-															'details' => 'Learn process about Hatha-Yin Stretch',
+															'name' => 'Birthdays',
+															'price' => '20',
+															'details' => '',
 															'duration' => '30m',
 															'icon' => '',
-															'image' => '265'
+															'image' => ''
 														],
 														2 => [
-															'name' => 'Hands Free Yoga',
-															'price' => '14',
-															'details' => 'Learn process about Hands Free Yoga',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => '266'
-														],
-														3 => [
-															'name' => 'Shake It Off',
-															'price' => '15',
-															'details' => 'Learn process about Shake It Off',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => '267'
-														],
-														4 => [
-															'name' => 'Rotation Stretch',
+															'name' => 'Airport Transfer',
 															'price' => '20',
-															'details' => 'Learn process about Rotation Stretch',
+															'details' => '',
 															'duration' => '30m',
 															'icon' => '',
-															'image' => '268'
-														],
-														5 => [
-															'name' => 'Stretch Assist',
-															'price' => '25',
-															'details' => 'Learn process about Stretch Assist',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => '264'
+															'image' => ''
 														]
 													]
 												]
@@ -2425,8 +2402,8 @@
 										],
 										1 => [
 											'icon' => '',
-											'image' => '',
-											'category' => 'Vinyasa Yoga',
+											'image' => '275',
+											'category' => 'Standard Car',
 											'sub_category' => [
 												0 => [
 													'icon' => '',
@@ -2434,47 +2411,7 @@
 													'name' => '',
 													'service' => [
 														0 => [
-															'name' => 'Vinyasa For Backbends',
-															'price' => '10',
-															'details' => '',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => ''
-														],
-														1 => [
-															'name' => 'Full Body Power Flow',
-															'price' => '10',
-															'details' => '',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => ''
-														],
-														2 => [
-															'name' => 'Strong Flow',
-															'price' => '15',
-															'details' => '',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => ''
-														],
-														3 => [
-															'name' => 'Vinyasa Flow',
-															'price' => '30',
-															'details' => '',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => ''
-														],
-														4 => [
-															'name' => 'Intuitive Flexibility',
-															'price' => '45',
-															'details' => '',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => ''
-														],
-														5 => [
-															'name' => 'Sweat Ladder Flow',
+															'name' => 'Weddings',
 															'price' => '30',
 															'details' => '',
 															'duration' => '30m',
@@ -2487,8 +2424,8 @@
 										],
 										2 => [
 											'icon' => '',
-											'image' => '',
-											'category' => 'Kids Yoga',
+											'image' => '274',
+											'category' => 'SUV Car',
 											'sub_category' => [
 												0 => [
 													'icon' => '',
@@ -2496,78 +2433,8 @@
 													'name' => '',
 													'service' => [
 														0 => [
-															'name' => 'Tree Power',
-															'price' => '10',
-															'details' => '',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => ''
-														],
-														1 => [
-															'name' => 'Strong Inside',
-															'price' => '40',
-															'details' => '',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => ''
-														],
-														2 => [
-															'name' => 'Rainbow Power',
-															'price' => '20',
-															'details' => '',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => ''
-														],
-														3 => [
-															'name' => 'Mind Muscle',
+															'name' => 'Night Parties Long Drive',
 															'price' => '30',
-															'details' => '',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => ''
-														]
-													]
-												]
-											]
-										],
-										3 => [
-											'icon' => '',
-											'image' => '',
-											'category' => 'Kundalini Yoga',
-											'sub_category' => [
-												0 => [
-													'icon' => '',
-													'image' => '',
-													'name' => '',
-													'service' => [
-														0 => [
-															'name' => 'Mental Balance',
-															'price' => '30',
-															'details' => '',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => ''
-														],
-														1 => [
-															'name' => 'Access Your Inner Power',
-															'price' => '30',
-															'details' => '',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => ''
-														],
-														2 => [
-															'name' => 'Uplift Your Energy',
-															'price' => '30',
-															'details' => '',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => ''
-														],
-														3 => [
-															'name' => 'Clean Sweep Your Mind',
-															'price' => '40',
 															'details' => '',
 															'duration' => '30m',
 															'icon' => '',
@@ -2589,46 +2456,46 @@
 									'mpwpb_faq_active' => 'on',
 									'mpwpb_faq' => [
 										0 => [
-											'title' => 'What types of medical services are available?',
-											'content' => '<p>Medical services include primary care, emergency services, specialty care, preventive care, diagnostic services, surgical services, rehabilitation, mental health services, pediatric care, geriatric care, home healthcare, pharmacy services, and nutritional counseling.</p>'
+											'title' => 'What types of cars are available for rent?',
+											'content' => '<p>We offer a wide range of luxury vehicles, including high-performance sports cars, sleek sedans, and premium SUVs. Our fleet features top brands like Ferrari, Lamborghini, Porsche, Mercedes, BMW, and more.</p>'
 										],
 										1 => [
-											'title' => 'How do I choose a primary care provider?',
-											'content' => '<p>When selecting a primary care provider, consider factors such as location, insurance coverage, provider specialties, availability, and personal recommendations. Many facilities also offer online directories to help you find a suitable provider.</p>'
+											'title' => 'How long can I rent a car for a day tour?',
+											'content' => '<p>Our day tour rentals are typically available for a 24-hour period. However, we can accommodate shorter or longer rentals depending on your needs—just contact us for details.</p>'
 										],
 										2 => [
-											'title' => 'What should I expect during a primary care visit?',
-											'content' => '<p>During a primary care visit, you will typically undergo a health assessment, discuss any health concerns or symptoms, receive preventive care (such as vaccinations), and may be referred to specialists if necessary.</p>'
+											'title' => 'Do I need a special license to rent a luxury car?',
+											'content' => '<p>No, a standard driver\'s license is typically sufficient. However, drivers must meet age requirements (usually 25+), have a clean driving record, and present valid identification.</p>'
 										],
 										3 => [
-											'title' => 'How do I know if I need to go to the emergency room?',
-											'content' => '<p>You should go to the emergency room for severe or life-threatening conditions, such as difficulty breathing, chest pain, severe bleeding, head injuries, or signs of stroke. If unsure, consider calling your healthcare provider or a telehealth service for guidance.</p>'
+											'title' => 'Is insurance included in the rental?',
+											'content' => '<p>Basic insurance is included with all rentals, but we highly recommend upgrading to full coverage for added protection during your tour.</p>'
+										],
+										4 => [
+											'title' => 'Can I choose my own route and destinations?',
+											'content' => '<p>Yes! Our rentals offer complete flexibility for you to create your own itinerary. Explore scenic routes, city sights, or countryside escapes at your own pace.</p>'
 										]
 									],
 									'mpwpb_features_status'=>'on',
 									'mpwpb_features'=>[
-										'Wide Range of Courses',
-										'Expert Instructors',
-										'Flexible, Self-Paced Learning',
-										'Interactive Tools',
-										'Progress Tracking'
+										"Exclusive Luxury Fleet",
+										"Flexible Itinerary",
+										"24-Hour Rental Period",
+										"Hassle-Free Booking",
+										"Insurance and Safety Coverage"
 									],
 									'mpwpb_service_overview_status'=>'on',
-									'mpwpb_service_overview_content'=>'<ul>
-										<li><strong>Comprehensive Care</strong>: Medical services cover a broad spectrum of health needs, ensuring holistic care for patients.</li>
-										<li><strong>Access to Expertise</strong>: Patients receive specialized care from qualified professionals, improving health outcomes.</li>
-										<li><strong>Preventive Focus</strong>: Emphasis on prevention helps reduce the risk of diseases and promotes healthier lifestyles.</li>
-										<li><strong>Convenience</strong>: Services are offered in various settings, making it easier for patients to access the care they need.</li>
-									</ul>
-									Overall, medical services are essential for maintaining health, preventing illness, and providing treatment and support for various medical conditions, ensuring that individuals receive comprehensive and quality healthcare throughout their lives.',
+									'mpwpb_service_overview_content'=>'Transform your day trip into an extraordinary adventure with our exclusive <strong>Rent Your Dream Car for Day Tour</strong> service. Whether you want to indulge in a luxurious drive along scenic coastal roads, explore a bustling city in style, or enjoy a smooth countryside cruise, our premium car rental service is designed to provide an unparalleled experience.
+									<h3>Key Features:</h3>
+									<ul>
+										<li><strong>Luxury Fleet</strong>: Choose from an array of high-end vehicles, including sports cars, executive sedans, and spacious SUVs from world-renowned brands like Ferrari, Lamborghini, Porsche, Mercedes, BMW, and more.</li>
+										<li><strong>Flexible Itineraries</strong>: Enjoy complete freedom to create your own route. Whether it’s for a special occasion, a romantic getaway, or simply for fun, you can take the wheel and explore at your own pace.</li>
+										<li><strong>24-Hour Rentals</strong>: Our day tour package typically includes 24-hour rental periods. This allows you to maximize your experience, from sunrise to sunset, or even into the evening.</li>
+										<li><strong>Seamless Booking</strong>: Our user-friendly booking process allows you to easily select your vehicle, choose your desired dates, and confirm your rental in just a few steps. Book online or contact our team for personalized service.</li>
+										<li><strong>Insurance and Protection</strong>: We provide basic insurance with every rental and offer optional premium coverage for added peace of mind.</li>
+									</ul>',
 									'mpwpb_service_details_status'=>'on',
-									'mpwpb_service_details_content'=>'<ul>
-										<li><strong>Comprehensive Care</strong>: Medical services cover a broad spectrum of health needs, ensuring holistic care for patients.</li>
-										<li><strong>Access to Expertise</strong>: Patients receive specialized care from qualified professionals, improving health outcomes.</li>
-										<li><strong>Preventive Focus</strong>: Emphasis on prevention helps reduce the risk of diseases and promotes healthier lifestyles.</li>
-										<li><strong>Convenience</strong>: Services are offered in various settings, making it easier for patients to access the care they need.</li>
-									</ul>
-									Overall, medical services are essential for maintaining health, preventing illness, and providing treatment and support for various medical conditions, ensuring that individuals receive comprehensive and quality healthcare throughout their lives.',
+									'mpwpb_service_details_content'=> 'Our <strong>Rent Your Dream Car for Day Tour</strong> service is perfect for anyone looking to elevate their travel experience. Whether it\'s your first time behind the wheel of a luxury vehicle or you\'re a seasoned car enthusiast, we provide a unique opportunity to enjoy a world-class driving experience. With our top-tier service, impeccable fleet, and commitment to customer satisfaction, we aim to make your dream car tour truly unforgettable.',
 									'mpwpb_service_review_ratings'=>'4.5',
 									'mpwpb_service_rating_scale'=>'out of 5',
 									'mpwpb_service_rating_text'=>'2888 total customer reviews',
@@ -2639,6 +2506,88 @@
 					]
 				];
 				
+			}
+
+			public static function insert_media($file_path) {
+
+				$attachment = self::does_attachment_exist(basename($file_path));
+				
+				if( empty($attachment) ){
+					// Load necessary WordPress files
+					require_once(ABSPATH . 'wp-admin/includes/file.php');
+					require_once(ABSPATH . 'wp-admin/includes/media.php');
+					require_once(ABSPATH . 'wp-admin/includes/image.php');
+	
+					// Prepare the file
+					$file = array(
+						'name'     => basename($file_path),
+						'type'     => mime_content_type($file_path),
+						'tmp_name' => $file_path,
+						'error'    => 0,
+						'size'     => filesize($file_path),
+					);
+	
+					// Handle file upload
+					$upload = wp_handle_sideload($file, array('test_form' => false));
+					if (isset($upload['error'])) {
+						return 'File upload failed: ' . $upload['error'];
+					}
+	
+					// Add the file to the media library
+					$attachment = array(
+						'post_mime_type' => $upload['type'],
+						'post_title'     => sanitize_file_name(pathinfo($file_path, PATHINFO_FILENAME)),
+						'post_content'   => '',
+						'post_status'    => 'inherit',
+					);
+					$attachment_id = wp_insert_attachment($attachment, $upload['file']);
+					if (is_wp_error($attachment_id)) {
+						return 'Attachment insert failed: ' . $attachment_id->get_error_message();
+					}
+	
+					// Generate metadata and update attachment
+					$attachment_data = wp_generate_attachment_metadata($attachment_id, $upload['file']);
+					wp_update_attachment_metadata($attachment_id, $attachment_data);
+	
+					$attachment = array(
+						'id' => $attachment_id,
+						'url' => wp_get_attachment_url($attachment_id),
+					);
+	
+					return $attachment;
+				}
+				return $attachment;
+			}
+	
+			public static function does_attachment_exist($filename) {
+				global $wpdb;
+	
+				// Sanitize the filename
+				$filename = sanitize_text_field($filename);
+	
+				// Query to find attachments based on the filename in the post meta
+				$query = $wpdb->prepare(
+					"SELECT p.ID 
+					FROM $wpdb->posts p
+					JOIN $wpdb->postmeta pm ON p.ID = pm.post_id
+					WHERE p.post_type = 'attachment'
+					AND pm.meta_key = '_wp_attached_file'
+					AND pm.meta_value LIKE %s",
+					'%' . $wpdb->esc_like($filename) . '%'
+				);
+	
+				// Get the attachment ID
+				$attachment_id = $wpdb->get_var($query);
+	
+				// If attachment ID is found, check if the file exists
+				if ($attachment_id) {
+					$attachment = array(
+						'id' => $attachment_id,
+						'url' => wp_get_attachment_url($attachment_id),
+					);
+					return $attachment;
+				}
+				return false;
 			}
 
 		}
