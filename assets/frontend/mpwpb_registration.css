@@ -277,7 +277,7 @@ div.registration_tab_item {
     right: inherit;
     left: -14px;
     font-size: var(--fs_small);
-    top: -3px;
+    top: -2px;
     border: 1px solid var(--color_theme);
     background-color: #fff;
     color: var(--color_theme);
@@ -633,13 +633,13 @@ div.registration_tab_item {
   border-left: 1px solid var(--color_theme);
   padding: 0 5px 30px 24px;
 }
-.mpwpb-default-template .sidebar .content .service-cart .mpwpb_summary_area_left_content .mpwpb_summary_item:last-child {
-  border-left: 0;
-}
 .mpwpb-default-template .sidebar .content .service-cart .mpwpb_summary_area_left_content .mpwpb_summary_item .mpwpb_item_check {
   border: 1px solid var(--color_theme);
   background-color: #fff;
   color: var(--color_theme);
+}
+.mpwpb-default-template .sidebar .content .service-cart .mpwpb_summary_area_left_content .mpwpb_summary_item:last-child {
+  padding-bottom: 0;
 }
 .mpwpb-default-template .sidebar .footer {
   padding: 10px;
