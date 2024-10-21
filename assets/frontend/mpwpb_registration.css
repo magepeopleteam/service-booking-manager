@@ -951,10 +951,10 @@ div.registration_tab_item {
 .mpwpb-static-template .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_category_section .mpwpb_sub_category_area .mpwpb_sub_category_item {
   background-color: #f4f5f8;
   padding: 10px;
-  border: 1px solid var(--color_light_2);
+  border: 1px solid #d3d3d3;
 }
 .mpwpb-static-template .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_category_section .mpwpb_sub_category_area .mpwpb_sub_category_item.mpActive {
-  background-color: var(--color_theme);
+  background-color: var(--color_theme_aa);
 }
 .mpwpb-static-template .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_service_area {
   margin-top: 20px;
