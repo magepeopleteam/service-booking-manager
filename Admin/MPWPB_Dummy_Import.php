@@ -72,6 +72,7 @@
 									'mpwpb_shortcode_sub_title' => 'Cut your hair beautifully with affordable price',
 									// Date_settings
 									//'mpwpb_service_start_date' => '2023-03-01',
+									'mpwpb_template' => 'static.php',
 									'mpwpb_time_slot_length' => '60',
 									'mpwpb_capacity_per_session' => '1',
 									'mpwpb_default_start_time' => '10',
@@ -263,6 +264,7 @@
 									'mpwpb_shortcode_title' => 'Car Wash Service',
 									'mpwpb_shortcode_sub_title' => 'Wash your car easily with affordable price',
 									// Date_settings
+									'mpwpb_template' => 'static.php',
 									'mpwpb_service_start_date' => '2023-03-01',
 									'mpwpb_time_slot_length' => '60',
 									'mpwpb_capacity_per_session' => '1',
@@ -392,6 +394,44 @@
 																'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
 																'duration' => '',
 																'icon' => 'fas fa-tractor',
+																'image' => ''
+															]
+														]
+													]
+												]
+											],
+											[
+												'icon' => '',
+												'image' => '',
+												'category' => 'Car Detailing',
+												'sub_category' => [
+													[
+														'icon' => 'fas fa-otter',
+														'image' => '',
+														'name' => 'Car Type Sedan',
+														'service' => [
+															[
+																'name' => 'Standard Interior',
+																'price' => '750',
+																'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s...',
+																'duration' => '1h 30m',
+																'icon' => 'fas fa-taxi',
+																'image' => ''
+															],
+															[
+																'name' => 'Premium Interior',
+																'price' => '600',
+																'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s...',
+																'duration' => '1h 30m',
+																'icon' => 'fas fa-church',
+																'image' => ''
+															],
+															[
+																'name' => 'Complete Detail',
+																'price' => '500',
+																'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s...',
+																'duration' => '1h 30m',
+																'icon' => 'fas fa-place-of-worship',
 																'image' => ''
 															]
 														]
@@ -543,6 +583,7 @@
 									'mpwpb_shortcode_title' => 'Vehicle Repair Service',
 									'mpwpb_shortcode_sub_title' => 'Repair your vehicle easily with effordable price',
 									// Date_settings
+									'mpwpb_template' => 'static.php',
 									'mpwpb_service_start_date' => '2023-02-01',
 									'mpwpb_time_slot_length' => '60',
 									'mpwpb_capacity_per_session' => '1',
@@ -743,6 +784,7 @@
 									'mpwpb_shortcode_title' => 'Musical Service',
 									'mpwpb_shortcode_sub_title' => 'Find your musical instructor easily with affordable price.',
 									// Date_settings
+									'mpwpb_template' => 'static.php',
 									'mpwpb_service_start_date' => '2023-02-01',
 									'mpwpb_time_slot_length' => '60',
 									'mpwpb_capacity_per_session' => '1',
@@ -925,6 +967,7 @@
 									'mpwpb_shortcode_title' => 'Medical & Dental Service',
 									'mpwpb_shortcode_sub_title' => 'Choose your medical and dental services easily with affordable price.',
 									// Date_settings
+									'mpwpb_template' => 'static.php',
 									'mpwpb_service_start_date' => '2023-02-01',
 									'mpwpb_time_slot_length' => '60',
 									'mpwpb_capacity_per_session' => '1',
@@ -1101,6 +1144,7 @@
 									'mpwpb_shortcode_title' => 'Rent-A-Car Service',
 									'mpwpb_shortcode_sub_title' => 'Rent your dream car easily with affordable price',
 									// Date_settings
+									'mpwpb_template' => 'static.php',
 									'mpwpb_service_start_date' => '2023-02-01',
 									'mpwpb_time_slot_length' => '60',
 									'mpwpb_capacity_per_session' => '1',

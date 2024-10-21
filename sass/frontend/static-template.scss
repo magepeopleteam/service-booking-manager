@@ -543,7 +543,7 @@
             @media (min-width:1024px) {
                 position: fixed; 
                 left: 70%;
-                bottom: 10%;
+                bottom:7%;
                 width: 400px; 
             }
             .mpwpb_static {
@@ -553,8 +553,13 @@
                 border-radius: 10px;
                 box-shadow: 0 0 5px #333;
                 margin: 10px;
+                
                 @media (min-width:1024px) {
                     margin: 0;
+                }
+                .mpwpb_static_cateogry{
+                    max-height:70vh;
+                    overflow: scroll;
                 }
                 .mp_title {
                     margin-bottom: 20px;

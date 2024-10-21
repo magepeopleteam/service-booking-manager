@@ -53,7 +53,9 @@
                 <div class="mpwpb_static_area">
                     <div class="mpwpb_static ">
                         <?php include(MPWPB_Function::template_path('layout/title_details_page.php')); ?>
-                        <?php include(MPWPB_Function::template_path('registration/category_selection_static.php')); ?>
+                        <div class="mpwpb_static_cateogry">
+                            <?php include(MPWPB_Function::template_path('registration/category_selection_static.php')); ?>
+                        </div>
                     </div>
                 </div>
                 <div class="mpPopup mpStyle" data-popup="#mpwpb_static_popup">
