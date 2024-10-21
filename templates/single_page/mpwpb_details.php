@@ -26,7 +26,7 @@
 		$service_text      = $service_text ?? MPWPB_Function::get_service_text( $post_id );
 		$extra_services = MP_Global_Function::get_post_info( $post_id, 'mpwpb_extra_service', array() );
 		$short_date_format = MP_Global_Function::get_settings( 'mp_global_settings','date_format_short', 'M , Y' );
-		$template_name = MP_Global_Function::get_post_info( $post_id, 'mpwpb_theme_file', 'default.php' );
+		$template_name = MP_Global_Function::get_post_info( $post_id, 'mpwpb_template', 'default.php' );
 		include_once( MPWPB_Function::details_template_path($post_id) );
 	}
 	do_action( 'mpwpb_single_page_after_wrapper' );
