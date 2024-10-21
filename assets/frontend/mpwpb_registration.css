@@ -262,6 +262,7 @@ div.registration_tab_item {
   div.mpwpb_summary_area_left_content {
     border: 1px solid var(--color_border);
     padding: var(--dMP_xs) 20px;
+    padding-right: 5px;
     background-color: #FFF;
     overflow: auto;
   }
@@ -277,7 +278,7 @@ div.registration_tab_item {
     right: inherit;
     left: -14px;
     font-size: var(--fs_small);
-    top: -3px;
+    top: -2px;
     border: 1px solid var(--color_theme);
     background-color: #fff;
     color: var(--color_theme);
@@ -633,13 +634,13 @@ div.registration_tab_item {
   border-left: 1px solid var(--color_theme);
   padding: 0 5px 30px 24px;
 }
-.mpwpb-default-template .sidebar .content .service-cart .mpwpb_summary_area_left_content .mpwpb_summary_item:last-child {
-  border-left: 0;
-}
 .mpwpb-default-template .sidebar .content .service-cart .mpwpb_summary_area_left_content .mpwpb_summary_item .mpwpb_item_check {
   border: 1px solid var(--color_theme);
   background-color: #fff;
   color: var(--color_theme);
+}
+.mpwpb-default-template .sidebar .content .service-cart .mpwpb_summary_area_left_content .mpwpb_summary_item:last-child {
+  padding-bottom: 0;
 }
 .mpwpb-default-template .sidebar .footer {
   padding: 10px;
@@ -950,10 +951,10 @@ div.registration_tab_item {
 .mpwpb-static-template .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_category_section .mpwpb_sub_category_area .mpwpb_sub_category_item {
   background-color: #f4f5f8;
   padding: 10px;
-  border: 1px solid var(--color_light_2);
+  border: 1px solid #d3d3d3;
 }
 .mpwpb-static-template .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_category_section .mpwpb_sub_category_area .mpwpb_sub_category_item.mpActive {
-  background-color: var(--color_theme);
+  background-color: var(--color_theme_aa);
 }
 .mpwpb-static-template .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_service_area {
   margin-top: 20px;

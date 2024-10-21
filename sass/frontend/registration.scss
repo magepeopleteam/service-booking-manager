@@ -165,7 +165,7 @@ div.registration_tab_item {
 	/*************/
 	div.mpwpb_summary_area_left {display: none;}
 	div.mpwpb_summary_area_left .mpwpb_summary_area_left_title {background-color: var(--color_theme);color: var(--color_theme_alter);padding: var(--dMP_xs);text-align: center; }
-	div.mpwpb_summary_area_left_content {border: 1px solid var(--color_border);padding: var(--dMP_xs) 20px;background-color: #FFF;overflow: auto;}
+	div.mpwpb_summary_area_left_content {border: 1px solid var(--color_border);padding: var(--dMP_xs) 20px;padding-right: 5px; background-color: #FFF;overflow: auto;}
 	div.mpwpb_summary_item {
 		position: relative;
 		padding: 0 5px 15px 25px;
@@ -178,7 +178,7 @@ div.registration_tab_item {
 		right: inherit;
 		left: -14px;
 		font-size: var(--fs_small);
-		top: -3px; 
+		top: -2px; 
 		border: 1px solid var(--color_theme);
 		background-color: #fff;
 		color: var(--color_theme);

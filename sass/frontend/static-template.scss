@@ -285,9 +285,9 @@
                                         .mpwpb_sub_category_item{
                                             background-color: #f4f5f8;
                                             padding: 10px;
-                                            border: 1px solid var(--color_light_2);
+                                            border: 1px solid #d3d3d3;
                                             &.mpActive{
-                                                background-color: var(--color_theme);
+                                                background-color: var(--color_theme_aa);
                                             }
                                         }
                                     }

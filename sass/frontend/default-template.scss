@@ -258,14 +258,14 @@
                     .mpwpb_summary_item{
                         // border-left: 1px solid var(--color_theme);
                         border-left: 1px solid var(--color_theme);
-                        &:last-child{
-                            border-left: 0;
-                        }
                         padding: 0 5px 30px 24px;
                         .mpwpb_item_check{
                             border: 1px solid var(--color_theme);
                             background-color: #fff;
                             color: var(--color_theme);
+                        }
+                        &:last-child{
+                            padding-bottom:0;
                         }
                     }
                 }
