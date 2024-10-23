@@ -1207,7 +1207,7 @@ div.registration_tab_item {
 }
 .mpwpb-static-template .sidebar .mpwpb_static_area .mpwpb_static .mpwpb_static_cateogry {
   max-height: 80vh;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 .mpwpb-static-template .sidebar .mpwpb_static_area .mpwpb_static .mp_title {
   margin-bottom: 20px;
