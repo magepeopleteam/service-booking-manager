@@ -31,7 +31,7 @@
 			}
 			public static function details_template_path($post_id = ''): string {
 				$post_id = $post_id ?? get_the_id();
-				$template_name = MP_Global_Function::get_post_info($post_id, 'mpwpb_theme_file', 'default.php');
+				$template_name = MP_Global_Function::get_post_info($post_id, 'mpwpb_template', 'default.php');
 				$file_name = 'themes/' . $template_name;
 				$dir = MPWPB_PLUGIN_DIR . '/templates/' . $file_name;
 				if (!file_exists($dir)) {
