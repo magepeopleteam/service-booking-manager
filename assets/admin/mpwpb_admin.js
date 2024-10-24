@@ -290,10 +290,12 @@
 		e.stopPropagation();
 		$('.mpwpb-sidebar-container').addClass('open');
 		// after open sidebar toggle
+		
 		var itemId = $(this).closest('.mpwpb-faq-items').data('id');
 		var faqItem = $(this).closest('.mpwpb-faq-items');
 		prepare_faq_form(itemId,faqItem);
 	});
+
 	$(document).on('click', '.mpwpb-faq-item-delete', function (e) {
 		e.preventDefault();
 		e.stopPropagation();
@@ -329,7 +331,8 @@
 		}
 	}
 
-	function prepare_faq_form(itemId,faqItem){
+	function prepare_faq_form(itemId,faqItem,edit){
+		$('#mpwpb-faq-msg').html('');
 		empty_faq_form();
 		set_faq_form_data(faqItem);
 		
@@ -339,6 +342,12 @@
 		});
 	}
 	
+	function reorder_data_items(){
+		$('.mpwpb-faq-items').each(function(index) {
+			$(this).attr('data-id', index);
+		});
+	}
+
 	function save_faq_form(itemId){
 		var title   = $('input[name="mpwpb_faq_title"]');
 		var content = tinyMCE.get('mpwpb_faq_content').getContent();
@@ -355,10 +364,13 @@
 			},
 			success: function(response) {
 				$('#mpwpb-faq-msg').html(response.data.message);
-				if(typeof itemId !== 'undefined'){
-					var existingItem = $('.mpwpb-faq-items[data-id="' + itemId + '"]');
-					if (existingItem.length > 0) {
+				
+				if (itemId != undefined && itemId != null && itemId !== '') {
+					console.log(response.success);
+					if (response.data && response.data.html) {  // Ensure response.data.html exists
+						var existingItem = $('.mpwpb-faq-items[data-id="' + itemId + '"]');
 						existingItem.replaceWith(response.data.html);
+						reorder_data_items();  // Ensure this function works as expected
 					}
 				}
 				else{
@@ -388,7 +400,7 @@
 				itemId:itemId,
 			},
 			success: function(response) {
-				console.log(response.data);
+				reorder_data_items();
 			},
 			error: function(error) {
 				console.log('Error:', error);

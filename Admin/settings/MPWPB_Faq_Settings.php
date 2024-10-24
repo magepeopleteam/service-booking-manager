@@ -139,7 +139,7 @@ if( ! class_exists('MPWPB_Faq_Settings')){
 
         public function save_faq_data_settings() {
             $post_id = $_POST['mpwpb_faq_postID'];
-            $mpwpb_faq = get_post_meta($post_id,'mpwpb_faq',true)?:[];
+            $mpwpb_faq = get_post_meta($post_id,'mpwpb_faq',true)??[];
             $count = 0;
             if( ! empty($mpwpb_faq)){
                 $count = count($mpwpb_faq);
@@ -153,16 +153,19 @@ if( ! class_exists('MPWPB_Faq_Settings')){
                 'content'=> wp_kses_post($_POST['mpwpb_faq_content']),
             ];
             // $mpwpb_faq =[];
-            if(update_post_meta($post_id, 'mpwpb_faq', $mpwpb_faq)){
+            $result = update_post_meta($post_id, 'mpwpb_faq', $mpwpb_faq);
+            if($result){
                 ob_start();
                 $resultMessage = __('Data updated successfully', 'mptbm_plugin_pro');
                 $this->show_faq_data($count,$_POST['mpwpb_faq_title'],$_POST['mpwpb_faq_content']);
                 $html_output = ob_get_clean();
-                wp_send_json_success(array(
+                wp_send_json_success([
                     'message' => $resultMessage,
                     'html' => $html_output,
-                ));
+                ]);
             }
+            
+            
             die;
         }
 
