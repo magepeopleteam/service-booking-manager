@@ -21,6 +21,10 @@ if( ! class_exists('MPWPB_Faq_Settings')){
             add_action('wp_ajax_nopriv_mpwpb_faq_data_save', [$this, 'save_faq_data_settings']);
             
             // mpwpb_delete_faq_data
+            add_action('wp_ajax_mpwpb_faq_data_update', [$this, 'faq_data_update']);
+            add_action('wp_ajax_nopriv_mpwpb_faq_data_update', [$this, 'faq_data_update']);
+
+            // mpwpb_delete_faq_data
             add_action('wp_ajax_mpwpb_faq_delete_item', [$this, 'faq_delete_item']);
             add_action('wp_ajax_nopriv_mpwpb_faq_delete_item', [$this, 'faq_delete_item']);
         }
@@ -62,72 +66,69 @@ if( ! class_exists('MPWPB_Faq_Settings')){
                     </label>
                 </section>
                 <section class="mpwpb-faq <?php echo $active_class; ?>" data-collapse="#mpwpb_faq_active">
-                    <?php 
-                        $mpwpb_faq = get_post_meta($post_id,'mpwpb_faq',true);
-                        if( ! empty($mpwpb_faq)){
-                            foreach ($mpwpb_faq as $key => $value) {
-                                $this->show_faq_data($key,$value['title'],$value['content']);
+                    <div class="faq-lists">
+                        <?php 
+                            $mpwpb_faq = get_post_meta($post_id,'mpwpb_faq',true);
+                            $mpwpb_faq = !empty($mpwpb_faq) ? $mpwpb_faq : [];
+                            if( ! empty($mpwpb_faq)){
+                                foreach ($mpwpb_faq as $value) {
+                                    $this->show_faq_data($value);
+                                }
+                            }else{
+                                _e('No data available','service-booking-manager');
                             }
-                        }
-                    ?>
+                        ?>
+                    </div>
                     <br>
-                    <button class="button mpwpb-sidebar-open" type="button"><?php _e('Add FAQ','service-booking-manager'); ?></button>
+                    <button class="button create-new-faq" type="button"><?php _e('Add New FAQ','service-booking-manager'); ?></button>
                 </section>
                 <!-- sidebar collapse open -->
                 <div class="mpwpb-sidebar-container">
                     <div class="mpwpb-sidebar-content">
                         <span class="mpwpb-sidebar-close"><i class="fas fa-times"></i></span>
-                        <?php $this->add_faq_form($post_id); ?>
+                        <div class="mpwpb-faq-form">
+                            <div id="mpwpb-faq-msg"></div>
+                            <h4><?php _e('Add F.A.Q.','service-booking-manager'); ?></h4>
+                            <p><?php _e('Add title','service-booking-manager'); ?></p>
+                            <input type="hidden" name="faq_post_id" value="<?php echo $post_id; ?>"> 
+                            <input type="hidden" name="faq_id" value="<?php echo count($mpwpb_faq); ?>"> 
+                            <input type="text"   name="faq_title"> 
+                            <p><?php _e('Add Content','service-booking-manager'); ?></p>
+                            <?php 
+                                $content = ''; // You can set default content if needed.
+                                $editor_id = 'faq_content_id'; // ID for the editor (used internally by wp_editor).
+                                $settings = array(
+                                    'textarea_name' => 'faq_content_id',
+                                    'media_buttons' => true,
+                                    'textarea_rows' => 10,
+                                );
+                                wp_editor( $content, $editor_id, $settings );
+                            ?>
+                            <p><input type="submit" name="faq_save" class="button button-primary button-large faq_save" value="save"><p>
+                        </div>
                     </div>
                 </div>
             </div>
             <?php
         }
 
-        public function show_faq_data($key,$title,$content){
+        public function show_faq_data($value){
         ?>
-        <div class="mpwpb-faq-items" data-id="<?php echo esc_attr($key); ?>">
-            <section class="faq-header" data-collapse-target="#faq-content-<?php echo esc_attr($key); ?>">
+        <div class="mpwpb-faq-items" data-id="<?php echo esc_attr($value['id']); ?>">
+            <section class="faq-header" data-collapse-target="#faq-content-<?php echo esc_attr($value['id']); ?>">
                 <label class="label">
-                    <p><?php echo esc_html($title); ?></p>
+                    <p><?php echo esc_html($value['title']); ?></p>
                     <div class="faq-action">
-                        <span class="mpwpb-sidebar-open" ><i class="fas fa-edit"></i></span>
+                        <span class="mpwpb-faq-item-edit" ><i class="fas fa-edit"></i></span>
                         <span class="mpwpb-faq-item-delete"><i class="fas fa-trash"></i></span>
                     </div>
                 </label>
             </section>
-            <section class="faq-content mB" data-collapse="#faq-content-<?php echo esc_attr($key); ?>">
-                <?php echo wpautop(wp_kses_post($content)); ?>
+            <section class="faq-content mB" data-collapse="#faq-content-<?php echo esc_attr($value['id']); ?>">
+                <?php echo wpautop(wp_kses_post($value['content'])); ?>
             </section>
         </div>
         <?php
-
-        }
-
-        public function add_faq_form($post_id){
-            ?>
-            <div class="mpwpb-faq-form">
-                <div id="mpwpb-faq-msg"></div>
-                <h4><?php _e('Add F.A.Q.','service-booking-manager'); ?></h4>
-                <p><?php _e('Add title','service-booking-manager'); ?></p>
-                <input type="hidden" name="mpwpb_post_id" value="<?php echo $post_id; ?>"> 
-                <input type="text"   name="mpwpb_faq_title"> 
-                <p><?php _e('Add Content','service-booking-manager'); ?></p>
-                <?php $this->show_editor($post_id); ?>
-                <p><input type="submit" name="mpwpb_faq_save" class="button button-primary button-large" value="save"><p>
-            </div>
-            <?php
-        }
-
-        public function show_editor($post_id) {
-            $content = ''; // You can set default content if needed.
-            $editor_id = 'mpwpb_faq_content'; // ID for the editor (used internally by wp_editor).
-            $settings = array(
-                'textarea_name' => 'mpwpb_faq_content',
-                'media_buttons' => true,
-                'textarea_rows' => 10,
-            );
-            wp_editor( $content, $editor_id, $settings );
         }
 
         public function save_faq_settings($post_id) {
@@ -137,31 +138,58 @@ if( ! class_exists('MPWPB_Faq_Settings')){
             }
         }
 
-        public function save_faq_data_settings() {
-            $post_id = $_POST['mpwpb_faq_postID'];
+        public function faq_data_update() {
+            $post_id = $_POST['faq_post_id'];
             $mpwpb_faq = get_post_meta($post_id,'mpwpb_faq',true)??[];
-            $count = 0;
-            if( ! empty($mpwpb_faq)){
-                $count = count($mpwpb_faq);
-                if(isset($_POST['itemId'])){
-                    $count = $_POST['itemId'];
-                }
-            }
-
-            $mpwpb_faq[$count] = [
-                'title'=> sanitize_text_field($_POST['mpwpb_faq_title']),
-                'content'=> wp_kses_post($_POST['mpwpb_faq_content']),
+            $new_data = [
+                'id'=>$_POST['faq_id'],
+                'title'=> sanitize_text_field($_POST['faq_title']),
+                'content'=> wp_kses_post($_POST['faq_content']),
             ];
-            // $mpwpb_faq =[];
+            $mpwpb_faq[$_POST['faq_id']] =  $new_data;
+
+            $mpwpb_faq = array_values($mpwpb_faq);
             $result = update_post_meta($post_id, 'mpwpb_faq', $mpwpb_faq);
+            $mpwpb_faq = get_post_meta($post_id,'mpwpb_faq',true)??[];
             if($result){
                 ob_start();
-                $resultMessage = __('Data updated successfully', 'mptbm_plugin_pro');
-                $this->show_faq_data($count,$_POST['mpwpb_faq_title'],$_POST['mpwpb_faq_content']);
+                $resultMessage = __('Data inserted successfully', 'mptbm_plugin_pro');
+                foreach($mpwpb_faq as $value){
+                    $this->show_faq_data($value);
+                }
                 $html_output = ob_get_clean();
                 wp_send_json_success([
                     'message' => $resultMessage,
                     'html' => $html_output,
+                    'faq_id' => $_POST['faq_id'],
+                ]);
+            }
+            
+            
+            die;
+        }
+        public function save_faq_data_settings() {
+            $post_id = $_POST['faq_post_id'];
+            $mpwpb_faq = get_post_meta($post_id,'mpwpb_faq',true)??[];
+            $new_data = [
+                'id'=>$_POST['faq_id'],
+                'title'=> sanitize_text_field($_POST['faq_title']),
+                'content'=> wp_kses_post($_POST['faq_content']),
+            ];
+            array_push($mpwpb_faq,$new_data);
+            $result = update_post_meta($post_id, 'mpwpb_faq', $mpwpb_faq);
+            $mpwpb_faq = get_post_meta($post_id,'mpwpb_faq',true)??[];
+            if($result){
+                ob_start();
+                $resultMessage = __('Data inserted successfully', 'mptbm_plugin_pro');
+                foreach($mpwpb_faq as $value){
+                    $this->show_faq_data($value);
+                }
+                $html_output = ob_get_clean();
+                wp_send_json_success([
+                    'message' => $resultMessage,
+                    'html' => $html_output,
+                    'faq_id' => count($mpwpb_faq),
                 ]);
             }
             
@@ -170,15 +198,21 @@ if( ! class_exists('MPWPB_Faq_Settings')){
         }
 
         public function faq_delete_item(){
-            $post_id = $_POST['mpwpb_faq_postID'];
+            $post_id = $_POST['faq_post_id'];
             $mpwpb_faq = get_post_meta($post_id,'mpwpb_faq',true)?:[];
             if( ! empty($mpwpb_faq)){
-                if(isset($_POST['itemId'])){
-                    unset($mpwpb_faq[$_POST['itemId']]);
+                if(isset($_POST['faq_id'])){
+                    unset($mpwpb_faq[$_POST['faq_id']]);
                     $mpwpb_faq = array_values($mpwpb_faq);
+                    $result = update_post_meta($post_id, 'mpwpb_faq', $mpwpb_faq);
                 }
             }
-            if(update_post_meta($post_id, 'mpwpb_faq', $mpwpb_faq)){
+            else{
+                $result = update_post_meta($post_id, 'mpwpb_faq', []);
+            }
+            
+            
+            if($result){
                 wp_send_json_success(__('Data Deleted successfully', 'mptbm_plugin_pro'));
             }
             die;
