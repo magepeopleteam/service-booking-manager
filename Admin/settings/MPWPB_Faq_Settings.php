@@ -66,7 +66,7 @@ if( ! class_exists('MPWPB_Faq_Settings')){
                         $mpwpb_faq = get_post_meta($post_id,'mpwpb_faq',true);
                         if( ! empty($mpwpb_faq)){
                             foreach ($mpwpb_faq as $key => $value) {
-                                $this->show_faq_data($key,$value['title'],$value['content']);
+                                $this->show_faq_data($key,$value);
                             }
                         }
                     ?>
@@ -84,12 +84,12 @@ if( ! class_exists('MPWPB_Faq_Settings')){
             <?php
         }
 
-        public function show_faq_data($key,$title,$content){
+        public function show_faq_data($key,$value){
         ?>
         <div class="mpwpb-faq-items" data-id="<?php echo esc_attr($key); ?>">
             <section class="faq-header" data-collapse-target="#faq-content-<?php echo esc_attr($key); ?>">
                 <label class="label">
-                    <p><?php echo esc_html($title); ?></p>
+                    <p><?php echo esc_html($value['title']); ?></p>
                     <div class="faq-action">
                         <span class="mpwpb-sidebar-open" ><i class="fas fa-edit"></i></span>
                         <span class="mpwpb-faq-item-delete"><i class="fas fa-trash"></i></span>
@@ -97,7 +97,7 @@ if( ! class_exists('MPWPB_Faq_Settings')){
                 </label>
             </section>
             <section class="faq-content mB" data-collapse="#faq-content-<?php echo esc_attr($key); ?>">
-                <?php echo wpautop(wp_kses_post($content)); ?>
+                <?php echo wpautop(wp_kses_post($value['content'])); ?>
             </section>
         </div>
         <?php
