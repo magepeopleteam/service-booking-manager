@@ -162,6 +162,7 @@ if( ! class_exists('MPWPB_Faq_Settings')){
         }
 
         public function save_faq_data_settings() {
+            update_post_meta($_POST['mpwpb_faq_postID'], 'mpwpb_faq_active', 'on');
             $post_id = $_POST['mpwpb_faq_postID'];
             $mpwpb_faq = get_post_meta($post_id,'mpwpb_faq',true);
             $mpwpb_faq =!empty($mpwpb_faq)?$mpwpb_faq:[];
