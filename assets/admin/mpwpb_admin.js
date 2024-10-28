@@ -287,6 +287,7 @@
 (function($) {
 	$(document).on('click', '.mpwpb-faq-item-new', function (e) {
 		open_sidebar_modal(e);
+		$('#mpwpb-faq-msg').html('');
 		$('.mpwpb_faq_save_buttons').show();
 		$('.mpwpb_faq_update_buttons').hide();
 		empty_faq_form();
@@ -310,6 +311,7 @@
 
 	$(document).on('click', '.mpwpb-faq-item-edit', function (e) {
 		open_sidebar_modal(e);
+		$('#mpwpb-faq-msg').html('');
 		$('.mpwpb_faq_save_buttons').hide();
 		$('.mpwpb_faq_update_buttons').show();
 		var itemId = $(this).closest('.mpwpb-faq-item').data('id');
@@ -382,8 +384,11 @@
 				$('#mpwpb-faq-msg').html(response.data.message);
 				$('.mpwpb-faq-items').html('');
 				$('.mpwpb-faq-items').append(response.data.html);
-				$('.mpwpb-sidebar-container').removeClass('open');
-				empty_faq_form();
+				setTimeout(function(){
+					$('.mpwpb-sidebar-container').removeClass('open');
+					empty_faq_form();
+				},1000);
+				
 			},
 			error: function(error) {
 				console.log('Error:', error);
