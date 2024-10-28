@@ -118,6 +118,7 @@ if( ! class_exists('MPWPB_Faq_Settings')){
                     <label class="label">
                         <p><?php echo esc_html($value['title']); ?></p>
                         <div class="faq-action">
+                            <span class="" ><i class="fas fa-eye"></i></span>
                             <span class="mpwpb-faq-item-edit" ><i class="fas fa-edit"></i></span>
                             <span class="mpwpb-faq-item-delete"><i class="fas fa-trash"></i></span>
                         </div>
