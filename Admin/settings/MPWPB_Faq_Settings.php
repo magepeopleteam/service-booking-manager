@@ -52,7 +52,7 @@ if( ! class_exists('MPWPB_Faq_Settings')){
                 </header>
                 <section class="section">
                         <h2><?php esc_html_e('FAQ Settings', 'service-booking-manager'); ?></h2>
-                        <span><?php esc_html_e('FAQ Settings section one.', 'service-booking-manager'); ?></span>
+                        <span><?php esc_html_e('FAQ Settings', 'service-booking-manager'); ?></span>
                 </section>
                 <section>
                     <label class="label">
