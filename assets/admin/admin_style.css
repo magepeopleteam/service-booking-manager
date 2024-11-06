@@ -295,6 +295,36 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   font-size: 14px;
   font-weight: normal;
 }
+#mp_meta_box_panel table.extra-service-table thead tr th {
+  text-align: center;
+  font-weight: normal;
+  font-size: 16px;
+}
+#mp_meta_box_panel table.extra-service-table thead tr th:nth-child(2) {
+  text-align: left;
+  width: 200px;
+}
+#mp_meta_box_panel table.extra-service-table thead tr th:nth-child(3) {
+  text-align: left;
+  width: 300px;
+}
+#mp_meta_box_panel table.extra-service-table tbody tr td {
+  font-weight: normal;
+  text-align: center;
+}
+#mp_meta_box_panel table.extra-service-table tbody tr td:nth-child(2) {
+  text-align: left;
+  font-size: 12px;
+  font-weight: normal;
+}
+#mp_meta_box_panel table.extra-service-table tbody tr td:nth-child(3) {
+  text-align: left;
+  font-size: 12px;
+  font-weight: normal;
+}
+#mp_meta_box_panel table.extra-service-table tbody tr td:last-child {
+  color: var(--mage-primary);
+}
 
 .mpwpb-faq .faq-header, #mp_meta_box_panel .metabox .tabsContent .faq-header {
   position: relative;

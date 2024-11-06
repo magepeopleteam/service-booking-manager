@@ -108,8 +108,50 @@
             @extend .mpwpb-faq;
         }
     }
+    //=================== estra service table============
+    table.extra-service-table{
+        thead{
+            tr{
+                th{
+                    text-align: center;
+                    font-weight: normal;
+                    font-size: 16px;
+                    &:nth-child(2){
+                        text-align: left;
+                        width: 200px;
+                    }
+                    &:nth-child(3){
+                        text-align: left;
+                        width: 300px;
+                    }
+                }
+            }
+        }
+        tbody{
+            tr{
+                td{
+                    font-weight: normal;
+                    text-align: center;
+                    &:nth-child(2){
+                        text-align: left;
+                        font-size: 12px;
+                        font-weight: normal;
+                    }
+                    &:nth-child(3){
+                        text-align: left;
+                        font-size: 12px;
+                        font-weight: normal;
+                    }
+                    &:last-child{
+                        color: var(--mage-primary);
+                    }
+                }
+                
+            }
+        }
+    }
 }
-
+//=================== faq============
 .mpwpb-faq{
     .faq-header{
         position: relative;

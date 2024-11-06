@@ -285,6 +285,11 @@
 
 // ============= sidebar collapsible ======================
 (function($) {
+	$(document).on('click', '.mpwpb-extra-service-new', function (e) {
+		open_sidebar_modal(e);
+
+	});
+
 	$(document).on('click', '.mpwpb-faq-item-new', function (e) {
 		open_sidebar_modal(e);
 		$('#mpwpb-faq-msg').html('');
