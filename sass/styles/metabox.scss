@@ -174,3 +174,31 @@
         display: none;
     }
 }
+
+.mpwpb-sidebar-container{
+    .mpwpb-sidebar-content{
+        p{
+            margin: 15px 0;
+        }
+        h4{
+            font-size: 18px;
+            padding: 0;
+            margin: 5px 0;
+        }
+        input[type='text'],input[type='number'],textarea{
+            width: 100%;
+            display: block;
+            font-weight: normal;
+            margin: 5px 0;
+        }
+        label{
+            display: flex;
+            justify-content: start;
+            align-items: start;
+            flex-direction: column;
+            font-weight: normal;
+            font-size: 16px;
+        }
+    }
+}
+

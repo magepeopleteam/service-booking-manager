@@ -283,13 +283,8 @@
 	}
 }(jQuery));
 
-// ============= sidebar collapsible ======================
+// ============= Faq sidebar modal ======================
 (function($) {
-	$(document).on('click', '.mpwpb-extra-service-new', function (e) {
-		open_sidebar_modal(e);
-
-	});
-
 	$(document).on('click', '.mpwpb-faq-item-new', function (e) {
 		open_sidebar_modal(e);
 		$('#mpwpb-faq-msg').html('');
@@ -445,5 +440,51 @@
 			}
 		});
 	}
+	// ============= Extra service sidebar modal ======================
+	$(document).on('click', '.mpwpb-extra-service-new', function (e) {
+		open_sidebar_modal(e);
+		$('#mpwpb-ex-service-msg').html('');
+		empty_ex_service_form();
+	});
+	function empty_ex_service_form(){
+		$('input[name="service_name"]').val('');
+		$('input[name="service_price"]').val('');
+		$('input[name="service_qty"]').val('');
+		$('textarea[name="service_description"]').val('');
+	}
+	$(document).on('click', '#mpwpb_ex_service_save', function (e) {
+		e.preventDefault();
+		save_ex_service();
+	});
+	function save_ex_service(){
+		var service_name   = $('input[name="service_name"]');
+		var service_price = $('input[name="service_price"]');
+		var service_qty = $('input[name="service_qty"]');
+		var service_description = $('input[name="service_description"]');
+		var postID  = $('input[name="mpwpb_post_id"]');
+		$.ajax({
+			url: mp_ajax_url,
+			type: 'POST',
+			data: {
+				action: 'mpwpb_save_ex_service',
+				service_name:service_name.val(),
+				service_price:service_price.val(),
+				service_qty:service_qty.val(),
+				service_description:service_description.val(),
+				postID:postID.val(),
+			},
+			success: function(response) {
+				// $('#mpwpb-faq-msg').html(response.data.message);
+				// $('.mpwpb-faq-items').html('');
+				// $('.mpwpb-faq-items').append(response.data.html);
+				// empty_faq_form();
+				console.log(response);
+			},
+			error: function(error) {
+				console.log('Error:', error);
+			}
+		});
+	}
+
 })(jQuery);
 
