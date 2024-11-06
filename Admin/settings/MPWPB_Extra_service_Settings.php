@@ -11,6 +11,27 @@
 			public function __construct() {
 				add_action( 'add_mpwpb_settings_tab_content', [ $this, 'extra_service_settings' ], 10, 1 );
 				add_action( 'mpwpb_settings_save', [ $this, 'save_ex_service_settings' ], 10, 1 );
+				
+				add_action('wp_ajax_mpwpb_save_ex_service', [ $this,'save_ex_service']);
+				add_action('wp_ajax_nopriv_mpwpb_save_ex_service', [ $this,'save_ex_service']);
+			}
+
+			
+			public function save_ex_service() {
+				update_post_meta($_POST['postID'], 'mpwpb_extra_service_active', 'on');
+				$post_id = $_POST['postID'];
+				$extra_services = get_post_meta($post_id,'mpwpb_extra_service', array());
+				$extra_services =!empty($extra_services)?$extra_services:[];
+
+				$new_data = [ 
+					'name'=> sanitize_text_field($_POST['service_name']), 
+					'price'=> sanitize_text_field($_POST['service_price']),
+					'qty'=> sanitize_text_field($_POST['service_qty']),
+					'details'=> sanitize_text_field($_POST['service_description']),
+				];
+				update_post_meta($post_id, 'mpwpb_extra_service', $extra_services);
+				
+				die;
 			}
 			public function extra_service_settings( $post_id ) {
 				$extra_services                     = MP_Global_Function::get_post_info( $post_id, 'mpwpb_extra_service', array() );
@@ -57,8 +78,11 @@
 							</thead>
 							<tbody>
 								<?php
+								
+									echo '<pre>';
+									print_r($extra_services);
 									if (! empty($extra_services)  ) {
-										foreach ( $extra_services as $key => $value ) {
+										foreach ( $extra_services as $value ) {
 											$group_service_info =  $value['group_service_info'];
 										}
 										foreach ( $group_service_info as $key => $value ) {
@@ -75,43 +99,41 @@
 						<div class="mpwpb-sidebar-content">
 							<span class="mpwpb-sidebar-close"><i class="fas fa-times"></i></span>
 							<div class="mpwpb-extra-service-form">
-								<div class="mp_settings_area">
-									<div class="_oAuto">
-										<div class="mpwpb_category_area mpwpb_category_header">
-											<div class="mpwpb_category_item <?php echo esc_attr( $extra_service_group_active_class ); ?>" data-collapse="#mpwpb_group_extra_service_active">
-												<h6><?php esc_html_e( 'Group Service', 'service-booking-manager' ); ?><span class="textRequired">&nbsp;*</span></h6>
-											</div>
-											<div class="mpwpb_category_content">
-												<div class="mpwpb_service_area">
-													<div class="mpwpb_service_item"><h6><?php esc_html_e( 'Extra service', 'service-booking-manager' ); ?><span class="textRequired">&nbsp;*</span></h6></div>
-													<div class="mpwpb_service_content"><h6><?php esc_html_e( 'Quantity', 'service-booking-manager' ); ?><span class="textRequired">&nbsp;*</span></h6></div>
-													<div class="mpwpb_service_content"><h6><?php esc_html_e( 'Price', 'service-booking-manager' ); ?><span class="textRequired">&nbsp;*</span></h6></div>
-													<div class="mpwpb_service_content"><h6><?php esc_html_e( 'image', 'service-booking-manager' ); ?></h6></div>
-													<div class="mpwpb_service_item"><h6><?php esc_html_e( 'Details', 'service-booking-manager' ); ?></h6></div>
-												</div>
-											</div>
-										</div>
-										<div class="mp_item_insert mp_sortable_area">
-											<?php
-												if ( sizeof( $extra_services ) > 0 ) {
-													foreach ( $extra_services as $group_service ) {
-														$this->extra_service_group( $ex_count, $extra_service_group_active_class, $group_service );
-														$ex_count ++;
-													}
-												} else {
-													$this->extra_service_group( 0, $extra_service_group_active_class );
-												}
-											?>
-										</div>
-									</div>
-									<div class="<?php echo esc_attr( $extra_service_group_active_class ); ?>" data-collapse="#mpwpb_group_extra_service_active">
-										<?php MP_Custom_Layout::add_new_button( esc_html__( 'Add New Group service', 'service-booking-manager' ), 'mpwpb_add_group_service', '_successButton_xs_mT_xs my-2' ); ?>
-										<div class="mp_hidden_content">
-											<div class="mp_hidden_item">
-												<?php $this->extra_service_group( 1, $extra_service_group_active_class ); ?>
-											</div>
-										</div>
-									</div>
+								<div id="mpwpb-ex-service-msg"></div>
+								<h4><?php _e('Add Extra Service','service-booking-manager'); ?></h4>
+								<input type="hidden" name="mpwpb_post_id" value="<?php echo $post_id; ?>"> 
+								<input type="hidden" name="service_item_id" value="">
+								<label>
+									<?php _e('Service Name','service-booking-manager'); ?>
+									<input type="text"   name="service_name"> 
+								</label>
+
+								<label>
+									<?php _e('Price','service-booking-manager'); ?>
+									<input type="number"   name="service_price"> 
+								</label>
+
+								<label>
+									<?php _e('Quantity','service-booking-manager'); ?>
+									<input type="number"   name="service_qty"> 
+								</label>
+
+								<label>
+									<?php _e('Description','service-booking-manager'); ?>
+									<textarea name="service_description" rows="5"></textarea> 
+								</label>
+
+								<label>
+									<?php _e('Image/Icon','service-booking-manager'); ?>
+									<input type="hidden"   name="service_image"> 
+									<input type="hidden"   name="service_icon"> 
+								</label>
+
+								<div class="mpwpb_ex_service_save_button">
+									<p><button id="mpwpb_ex_service_save" class="button button-primary button-large"><?php _e('Save','service-booking-manager'); ?></button> <button id="mpwpb_faq_save_close" class="button button-primary button-large">save close</button><p>
+								</div>
+								<div class="mpwpb_ex_service_update_button" style="display: none;">
+									<p><button id="mpwpb_ex_service_update" class="button button-primary button-large"><?php _e('Update and Close','service-booking-manager'); ?></button><p>
 								</div>
 							</div>
 						</div>
