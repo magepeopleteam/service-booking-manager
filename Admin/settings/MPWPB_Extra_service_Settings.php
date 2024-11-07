@@ -11,9 +11,13 @@
 			public function __construct() {
 				add_action( 'add_mpwpb_settings_tab_content', [ $this, 'extra_service_settings' ], 10, 1 );
 				add_action( 'mpwpb_settings_save', [ $this, 'save_ex_service_settings' ], 10, 1 );
-				
+				// save extra service
 				add_action('wp_ajax_mpwpb_save_ex_service', [ $this,'save_ex_service']);
 				add_action('wp_ajax_nopriv_mpwpb_save_ex_service', [ $this,'save_ex_service']);
+
+				// mpwpb delete extra service
+				add_action('wp_ajax_mpwpb_ext_service_delete_item', [$this, 'extra_service_delete_item']);
+				add_action('wp_ajax_nopriv_mpwpb_ext_service_delete_item', [$this, 'extra_service_delete_item']);
 			}
 			
 			public function save_ex_service() {
@@ -107,7 +111,7 @@
 							<div class="mpwpb-extra-service-form">
 								<div id="mpwpb-ex-service-msg"></div>
 								<h4><?php _e('Add Extra Service','service-booking-manager'); ?></h4>
-								<input type="hidden" name="mpwpb_post_id" value="<?php echo $post_id; ?>"> 
+								<input type="hidden" name="mpwpb_ext_post_id" value="<?php echo $post_id; ?>"> 
 								<input type="hidden" name="service_item_id" value="">
 								<label>
 									<?php _e('Service Name','service-booking-manager'); ?>
@@ -159,11 +163,44 @@
 						<td><?php echo $value['details']; ?></td>
 						<td><?php echo $value['qty']; ?></td>
 						<td><?php echo $value['price']; ?></td>
-						<td><i class="fas fa-edit"></i> <i class="fas fa-trash"></i></td>
+						<td>
+							<span class="mpwpb-ext-service-edit" ><i class="fas fa-edit"></i></span>
+                            <span class="mpwpb-ext-service-delete"><i class="fas fa-trash"></i></span>
+						</td>
 					</tr>
 				<?php
 					endforeach;
 				endif;
+			}
+
+			public function extra_service_delete_item(){
+				$post_id = $_POST['service_postID'];
+				$extra_services = $this->get_extra_services($post_id);
+
+				if( ! empty($extra_services)){
+					if(isset($_POST['itemId'])){
+						unset($extra_services[$_POST['itemId']]);
+						$extra_services = array_values($extra_services);
+					}
+				}
+				$result = update_post_meta($post_id, 'mpwpb_extra_service', $extra_services);
+				if($result){
+					ob_start();
+					$resultMessage = __('Data Deleted Successfully', 'mptbm_plugin_pro');
+					$this->show_extra_service($post_id);
+					$html_output = ob_get_clean();
+					wp_send_json_success([
+						'message' => $resultMessage,
+						'html' => $html_output,
+					]);
+				}
+				else{
+					wp_send_json_success([
+						'message' => 'Data not deleted',
+						'html' => '',
+					]);
+				}
+				die;
 			}
 
 			public function extra_service_group( $ex_count, $extra_service_group_active_class, $group_service = array() ) {

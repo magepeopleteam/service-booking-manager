@@ -485,5 +485,37 @@
 		});
 	}
 
+	$(document).on('click', '.mpwpb-ext-service-delete', function (e) {
+		e.preventDefault();
+		e.stopPropagation();
+		var itemId = $(this).closest('tr').data('id');
+		var isConfirmed = confirm('Are you sure you want to delete this row?');
+		if (isConfirmed) {
+			delete_ext_service(itemId);
+		} else {
+			console.log('Deletion canceled.'+itemId);
+		}
+	});
+
+	function delete_ext_service(itemId){
+		var postID  = $('input[name="mpwpb_ext_post_id"]');
+		$.ajax({
+			url: mp_ajax_url,
+			type: 'POST',
+			data: {
+				action: 'mpwpb_ext_service_delete_item',
+				service_postID:postID.val(),
+				itemId:itemId,
+			},
+			success: function(response) {
+				$('.extra-service-table tbody').html('');
+				$('.extra-service-table tbody').append(response.data.html);
+			},
+			error: function(error) {
+				console.log('Error:', error);
+			}
+		});
+	}
+
 })(jQuery);
 
