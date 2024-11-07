@@ -524,5 +524,67 @@
 		});
 	}
 
+	$(document).on('click', '#mpwpb_ex_service_update', function (e) {
+		e.preventDefault();
+		update_ext_service();
+	});
+
+	function update_ext_service(){
+
+		var postID  = $('input[name="mpwpb_ext_post_id"]');
+		var itemId = $('input[name="service_item_id"]');
+		var service_name = $('input[name="service_name"]');
+		var service_price = $('input[name="service_price"]');
+		var service_qty = $('input[name="service_qty"]');
+		var service_description = $('textarea[name="service_description"]');
+
+		$.ajax({
+			url: mp_ajax_url,
+			type: 'POST',
+			data: {
+				action: 'mpwpb_ext_service_update',
+				service_name:service_name.val(),
+				service_price:service_price.val(),
+				service_qty:service_qty.val(),
+				service_description:service_description.val(),
+				service_postID:postID.val(),
+				service_itemId:itemId.val(),
+			},
+			success: function(response) {
+				$('#mpwpb-ex-service-msg').html(response.data.message);
+				$('.extra-service-table tbody').html('');
+				$('.extra-service-table tbody').append(response.data.html);
+				setTimeout(function(){
+					$('.mpwpb-sidebar-container').removeClass('open');
+					empty_ex_service_form();
+				},1000);
+				
+			},
+			error: function(error) {
+				console.log('Error:', error);
+			}
+		});
+	}
+
+	$(document).on('click', '.mpwpb-ext-service-edit', function (e) {
+		open_sidebar_modal(e);
+		$('#mpwpb-ex-service-msg').html('');
+		$('.mpwpb_ex_service_save_button').hide();
+		$('.mpwpb_ex_service_update_button').show();
+
+		var itemId = $(this).closest('tr').data('id');
+		var parent = $(this).closest('tr');
+		var name = parent.find('td:nth-child(2)').text().trim();
+		var details = parent.find('td:nth-child(3)').text().trim();
+		var qty = parent.find('td:nth-child(4)').text().trim();
+		var price = parent.find('td:nth-child(5)').text().trim();
+
+		$('input[name="service_item_id"]').val(itemId);
+		$('input[name="service_name"]').val(name);
+		$('input[name="service_price"]').val(price);
+		$('input[name="service_qty"]').val(qty);
+		$('textarea[name="service_description"]').val(details);
+	});
+
 })(jQuery);
 

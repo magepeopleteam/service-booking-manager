@@ -16,8 +16,40 @@
 				add_action('wp_ajax_nopriv_mpwpb_save_ex_service', [ $this,'save_ex_service']);
 
 				// mpwpb delete extra service
+				add_action('wp_ajax_mpwpb_ext_service_update', [$this, 'ext_service_update_item']);
+				add_action('wp_ajax_nopriv_mpwpb_ext_service_update', [$this, 'ext_service_update_item']);
+				
+				// mpwpb delete extra service
 				add_action('wp_ajax_mpwpb_ext_service_delete_item', [$this, 'extra_service_delete_item']);
 				add_action('wp_ajax_nopriv_mpwpb_ext_service_delete_item', [$this, 'extra_service_delete_item']);
+			}
+			
+			public function ext_service_update_item() {
+				$post_id = $_POST['service_postID'];
+				$ext_services = $this->get_extra_services($post_id);
+
+				$new_data = [ 
+					'name'=> sanitize_text_field($_POST['service_name']), 
+					'price'=> sanitize_text_field($_POST['service_price']),
+					'qty'=> sanitize_text_field($_POST['service_qty']),
+					'details'=> sanitize_text_field($_POST['service_description']),
+				];
+
+				if( ! empty($ext_services)){
+					if(isset($_POST['service_itemId'])){
+						$ext_services[$_POST['service_itemId']]=$new_data;
+					}
+				}
+				update_post_meta($post_id, 'mpwpb_extra_service', $ext_services);
+				ob_start();
+				$resultMessage = __('Data Updated Successfully', 'mptbm_plugin_pro');
+				$this->show_extra_service($post_id);
+				$html_output = ob_get_clean();
+				wp_send_json_success([
+					'message' => $resultMessage,
+					'html' => $html_output,
+				]);
+				die;
 			}
 			
 			public function save_ex_service() {
@@ -90,12 +122,12 @@
 						<table class="extra-service-table mB">
 							<thead>
 								<tr>
-									<th>Image</th>
-									<th>Service Title</th>
-									<th>Description</th>
-									<th>Quantity</th>
-									<th>Price</th>
-									<th>Action</th>
+									<th><?php _e('Image','service-booking-manager'); ?></th>
+									<th><?php _e('Service Title','service-booking-manager'); ?></th>
+									<th><?php _e('Description','service-booking-manager'); ?></th>
+									<th><?php _e('Quantity','service-booking-manager'); ?></th>
+									<th><?php _e('Price','service-booking-manager'); ?></th>
+									<th><?php _e('Action','service-booking-manager'); ?></th>
 								</tr>
 							</thead>
 							<tbody>
