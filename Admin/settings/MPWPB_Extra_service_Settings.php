@@ -27,13 +27,26 @@
 			public function ext_service_update_item() {
 				$post_id = $_POST['service_postID'];
 				$ext_services = $this->get_extra_services($post_id);
+				$iconClass = '';
+				$imageID = '';
+				if(isset($_POST['service_image_icon'])){
+					if(is_numeric($_POST['service_image_icon'])){
+						$imageID = sanitize_text_field($_POST['service_image_icon']);
+						$iconClass ='';
+					}
+					else{
+						$iconClass = sanitize_text_field($_POST['service_image_icon']);
+						$imageID = '';
+					}
+				}
 
 				$new_data = [ 
 					'name'=> sanitize_text_field($_POST['service_name']), 
 					'price'=> sanitize_text_field($_POST['service_price']),
 					'qty'=> sanitize_text_field($_POST['service_qty']),
 					'details'=> sanitize_text_field($_POST['service_description']),
-					'icon'=> sanitize_text_field($_POST['service_image_icon']),
+					'icon'=> $iconClass,
+					'image'=> $imageID,
 				];
 
 				if( ! empty($ext_services)){
@@ -57,12 +70,26 @@
 				$post_id = $_POST['service_postID'];
 				update_post_meta($post_id, 'mpwpb_extra_service_active', 'on');
 				$extra_services = $this->get_extra_services($post_id);
+				$iconClass = '';
+				$imageID = '';
+				if(isset($_POST['service_image_icon'])){
+					if(is_numeric($_POST['service_image_icon'])){
+						$imageID = sanitize_text_field($_POST['service_image_icon']);
+						$iconClass ='';
+					}
+					else{
+						$iconClass = sanitize_text_field($_POST['service_image_icon']);
+						$imageID = '';
+					}
+				}
+
 				$new_data = [ 
 					'name'=> sanitize_text_field($_POST['service_name']), 
 					'price'=> sanitize_text_field($_POST['service_price']),
 					'qty'=> sanitize_text_field($_POST['service_qty']),
 					'details'=> sanitize_text_field($_POST['service_description']),
-					'icon'=> sanitize_text_field($_POST['service_image_icon']),
+					'icon'=> $iconClass,
+					'image'=> $imageID,
 				];
 				array_push($extra_services,$new_data);
 				update_post_meta($post_id, 'mpwpb_extra_service', $extra_services);
@@ -211,7 +238,12 @@
 					foreach ($extra_services as $key => $value) : 
 				?>
 					<tr data-id='<?php echo $key; ?>'>
-						<td><i class="<?php echo $value['icon'] ? $value['icon'] : ''; ?>"></i></td>
+						<td>
+							<?php  if(isset($value['image'])): ?>
+								<img src="<?php echo esc_attr(wp_get_attachment_url($value['image'])); ?>" alt="">
+							<?php  endif; ?>
+							<i class="<?php echo $value['icon'] ? $value['icon'] : ''; ?>"></i>
+						</td>
 						<td><?php echo $value['name']; ?></td>
 						<td><?php echo $value['details']; ?></td>
 						<td><?php echo $value['qty']; ?></td>

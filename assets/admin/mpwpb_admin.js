@@ -467,12 +467,13 @@
 		close_sidebar_modal(e);
 	});
 	function save_ex_service(){
+
+		var postID  = $('input[name="mpwpb_ext_post_id"]');
 		var service_name   = $('input[name="service_name"]');
 		var service_price = $('input[name="service_price"]');
 		var service_qty = $('input[name="service_qty"]');
 		var service_description = $('textarea[name="service_description"]');
 		var service_image_icon = $('input[name="service_image_icon"]');
-		var postID  = $('input[name="mpwpb_ext_post_id"]');
 		$.ajax({
 			url: mp_ajax_url,
 			type: 'POST',
