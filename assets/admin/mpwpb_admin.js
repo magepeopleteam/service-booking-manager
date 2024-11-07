@@ -460,8 +460,8 @@
 		var service_name   = $('input[name="service_name"]');
 		var service_price = $('input[name="service_price"]');
 		var service_qty = $('input[name="service_qty"]');
-		var service_description = $('input[name="service_description"]');
-		var postID  = $('input[name="mpwpb_post_id"]');
+		var service_description = $('textarea[name="service_description"]');
+		var postID  = $('input[name="mpwpb_ext_post_id"]');
 		$.ajax({
 			url: mp_ajax_url,
 			type: 'POST',
@@ -471,7 +471,7 @@
 				service_price:service_price.val(),
 				service_qty:service_qty.val(),
 				service_description:service_description.val(),
-				postID:postID.val(),
+				service_postID:postID.val(),
 			},
 			success: function(response) {
 				$('#mpwpb-ex-service-msg').html(response.data.message);

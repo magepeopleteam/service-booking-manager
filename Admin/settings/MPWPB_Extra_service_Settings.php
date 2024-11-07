@@ -21,8 +21,8 @@
 			}
 			
 			public function save_ex_service() {
-				update_post_meta($_POST['postID'], 'mpwpb_extra_service_active', 'on');
-				$post_id = $_POST['postID'];
+				$post_id = $_POST['service_postID'];
+				update_post_meta($post_id, 'mpwpb_extra_service_active', 'on');
 				$extra_services = $this->get_extra_services($post_id);
 				$new_data = [ 
 					'name'=> sanitize_text_field($_POST['service_name']), 
