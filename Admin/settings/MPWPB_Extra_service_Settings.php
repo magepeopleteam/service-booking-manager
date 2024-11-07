@@ -37,10 +37,13 @@
 
 			public function get_extra_services($post_id){
 				$extra_services = MP_Global_Function::get_post_info( $post_id, 'mpwpb_extra_service', array() );
+				$extra_service = [];
 				foreach ( $extra_services as $value ) {
-					$extra_services =  $value['group_service_info'];
+					if (isset($value['group_service_info'])) {
+						$extra_service = array_merge($extra_service, $value['group_service_info']);
+					}
 				}
-				return $extra_services;
+				return $extra_service;
 			}
 
 			public function extra_service_settings( $post_id ) {
@@ -84,7 +87,7 @@
 							</thead>
 							<tbody>
 								<?php
-								
+									
 									echo '<pre>';
 									print_r($extra_services);
 									if (! empty($extra_services)  ) {
