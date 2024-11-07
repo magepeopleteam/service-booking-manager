@@ -452,9 +452,16 @@
 		$('input[name="service_qty"]').val('');
 		$('textarea[name="service_description"]').val('');
 	}
+
 	$(document).on('click', '#mpwpb_ex_service_save', function (e) {
 		e.preventDefault();
 		save_ex_service();
+	});
+
+	$(document).on('click', '#mpwpb_ex_service_save_close', function (e) {
+		e.preventDefault();
+		save_ex_service();
+		close_sidebar_modal(e);
 	});
 	function save_ex_service(){
 		var service_name   = $('input[name="service_name"]');
