@@ -10,7 +10,7 @@
 		class MPWPB_Extra_service_Settings {
 			public function __construct() {
 				add_action( 'add_mpwpb_settings_tab_content', [ $this, 'extra_service_settings' ], 10, 1 );
-				add_action( 'mpwpb_settings_save', [ $this, 'save_ex_service_settings' ], 10, 1 );
+				// add_action( 'mpwpb_settings_save', [ $this, 'save_ex_service_settings' ], 10, 1 );
 				// save extra service
 				add_action('wp_ajax_mpwpb_save_ex_service', [ $this,'save_ex_service']);
 				add_action('wp_ajax_nopriv_mpwpb_save_ex_service', [ $this,'save_ex_service']);
