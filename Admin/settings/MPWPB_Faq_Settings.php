@@ -111,25 +111,25 @@ if( ! class_exists('MPWPB_Faq_Settings')){
         public function show_faq_data($post_id){
             $mpwpb_faq = get_post_meta($post_id,'mpwpb_faq',true);
             if( ! empty($mpwpb_faq)):
-            foreach ($mpwpb_faq as $key => $value) : 
-        ?>
-            <div class="mpwpb-faq-item" data-id="<?php echo esc_attr($key); ?>">
-                <section class="faq-header" data-collapse-target="#faq-content-<?php echo esc_attr($key); ?>">
-                    <label class="label">
-                        <p><?php echo esc_html($value['title']); ?></p>
-                        <div class="faq-action">
-                            <span class="" ><i class="fas fa-eye"></i></span>
-                            <span class="mpwpb-faq-item-edit" ><i class="fas fa-edit"></i></span>
-                            <span class="mpwpb-faq-item-delete"><i class="fas fa-trash"></i></span>
+                foreach ($mpwpb_faq as $key => $value) : 
+                    ?>
+                        <div class="mpwpb-faq-item" data-id="<?php echo esc_attr($key); ?>">
+                            <section class="faq-header" data-collapse-target="#faq-content-<?php echo esc_attr($key); ?>">
+                                <label class="label">
+                                    <p><?php echo esc_html($value['title']); ?></p>
+                                    <div class="faq-action">
+                                        <span class="" ><i class="fas fa-eye"></i></span>
+                                        <span class="mpwpb-faq-item-edit" ><i class="fas fa-edit"></i></span>
+                                        <span class="mpwpb-faq-item-delete"><i class="fas fa-trash"></i></span>
+                                    </div>
+                                </label>
+                            </section>
+                            <section class="faq-content mB" data-collapse="#faq-content-<?php echo esc_attr($key); ?>">
+                                <?php echo wpautop(wp_kses_post($value['content'])); ?>
+                            </section>
                         </div>
-                    </label>
-                </section>
-                <section class="faq-content mB" data-collapse="#faq-content-<?php echo esc_attr($key); ?>">
-                    <?php echo wpautop(wp_kses_post($value['content'])); ?>
-                </section>
-            </div>
-        <?php
-            endforeach;
+                    <?php
+                endforeach;
             endif;
         }
 
@@ -150,7 +150,7 @@ if( ! class_exists('MPWPB_Faq_Settings')){
                     $mpwpb_faq[$_POST['mpwpb_faq_itemID']]=$new_data;
                 }
             }
-            $result = update_post_meta($post_id, 'mpwpb_faq', $mpwpb_faq);
+            update_post_meta($post_id, 'mpwpb_faq', $mpwpb_faq);
             ob_start();
             $resultMessage = __('Data Updated Successfully', 'mptbm_plugin_pro');
             $this->show_faq_data($post_id);

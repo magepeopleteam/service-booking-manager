@@ -15,25 +15,27 @@
 				add_action('wp_ajax_mpwpb_save_ex_service', [ $this,'save_ex_service']);
 				add_action('wp_ajax_nopriv_mpwpb_save_ex_service', [ $this,'save_ex_service']);
 			}
-
 			
 			public function save_ex_service() {
 				update_post_meta($_POST['postID'], 'mpwpb_extra_service_active', 'on');
 				$post_id = $_POST['postID'];
 				$extra_services = $this->get_extra_services($post_id);
-				$extra_services =!empty($extra_services)?$extra_services:[];
-
 				$new_data = [ 
 					'name'=> sanitize_text_field($_POST['service_name']), 
 					'price'=> sanitize_text_field($_POST['service_price']),
 					'qty'=> sanitize_text_field($_POST['service_qty']),
 					'details'=> sanitize_text_field($_POST['service_description']),
 				];
-
 				array_push($extra_services,$new_data);
-				print_r($extra_services);
-				// update_post_meta($post_id, 'mpwpb_extra_service', $extra_services);
-				
+				update_post_meta($post_id, 'mpwpb_extra_service', $extra_services);
+				ob_start();
+				$resultMessage = __('Data Updated Successfully', 'mptbm_plugin_pro');
+				$this->show_extra_service($post_id);
+				$html_output = ob_get_clean();
+				wp_send_json_success([
+					'message' => $resultMessage,
+					'html' => $html_output,
+				]);
 				die;
 			}
 
@@ -43,10 +45,10 @@
 				foreach ( $extra_services as $value ) {
 					if (isset($value['group_service_info'])) {
 						$services = array_merge($services, $value['group_service_info']);
-						$check = true;
 					}
 				}
-				if($check){
+				if(!empty($services)){
+					update_post_meta($post_id, 'mpwpb_extra_service', $services);
 					return $services;
 				}else{
 					return $extra_services;
@@ -55,7 +57,6 @@
 			}
 
 			public function extra_service_settings( $post_id ) {
-				$extra_services                     = $this->get_extra_services($post_id);
 				$extra_service_active               = MP_Global_Function::get_post_info( $post_id, 'mpwpb_extra_service_active', 'off' );
 				$active_class         				= $extra_service_active == 'on' ? 'mActive' : '';
 				$extra_service_checked       		= $extra_service_active == 'on' ? 'checked' : '';
@@ -94,16 +95,7 @@
 								</tr>
 							</thead>
 							<tbody>
-								<?php
-									
-									echo '<pre>';
-									print_r($extra_services);
-									if (! empty($extra_services)  ) {
-										foreach ( $extra_services as $key => $value ) {
-											$this->show_extra_service( $key, $value);
-										}
-									}
-								?>
+								<?php $this->show_extra_service($post_id); ?>
 							</tbody>
 						</table>
 						<button class="button mpwpb-extra-service-new" type="button"><?php _e('Add Extra Service','service-booking-manager'); ?></button>
@@ -155,18 +147,25 @@
 				</div>
 				<?php
 			}
-			public function show_extra_service( $key, $value){
-			?>
-				<tr data-id='<?php echo $key; ?>'>
-					<td><?php //echo $value['image']; ?><i class="<?php echo isset($value['icon'])?$value['icon']:''; ?>"></i></td>
-					<td><?php echo $value['name']; ?></td>
-					<td><?php echo $value['details']; ?></td>
-					<td><?php echo $value['qty']; ?></td>
-					<td><?php echo $value['price']; ?></td>
-					<td><i class="fas fa-edit"></i> <i class="fas fa-trash"></i></td>
-				</tr>
-			<?php
+
+			public function show_extra_service($post_id){
+				$extra_services  = $this->get_extra_services($post_id);
+				if( ! empty($extra_services)):
+					foreach ($extra_services as $key => $value) : 
+				?>
+					<tr data-id='<?php echo $key; ?>'>
+						<td><?php //echo $value['image']; ?><i class="<?php echo isset($value['icon'])?$value['icon']:''; ?>"></i></td>
+						<td><?php echo $value['name']; ?></td>
+						<td><?php echo $value['details']; ?></td>
+						<td><?php echo $value['qty']; ?></td>
+						<td><?php echo $value['price']; ?></td>
+						<td><i class="fas fa-edit"></i> <i class="fas fa-trash"></i></td>
+					</tr>
+				<?php
+					endforeach;
+				endif;
 			}
+
 			public function extra_service_group( $ex_count, $extra_service_group_active_class, $group_service = array() ) {
 				$unique_name = uniqid();
 				$services    = array_key_exists( 'group_service', $group_service ) ? $group_service['group_service'] : '';

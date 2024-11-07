@@ -474,11 +474,10 @@
 				postID:postID.val(),
 			},
 			success: function(response) {
-				// $('#mpwpb-faq-msg').html(response.data.message);
-				// $('.mpwpb-faq-items').html('');
-				// $('.mpwpb-faq-items').append(response.data.html);
-				// empty_faq_form();
-				console.log(response);
+				$('#mpwpb-ex-service-msg').html(response.data.message);
+				$('.extra-service-table tbody').html('');
+				$('.extra-service-table tbody').append(response.data.html);
+				empty_ex_service_form();
 			},
 			error: function(error) {
 				console.log('Error:', error);
