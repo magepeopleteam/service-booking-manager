@@ -537,6 +537,7 @@
 
 		var postID  = $('input[name="mpwpb_ext_post_id"]');
 		var itemId = $('input[name="service_item_id"]');
+		var service_image_icon = $('input[name="service_image_icon"]');
 		var service_name = $('input[name="service_name"]');
 		var service_price = $('input[name="service_price"]');
 		var service_qty = $('input[name="service_qty"]');
@@ -547,6 +548,7 @@
 			type: 'POST',
 			data: {
 				action: 'mpwpb_ext_service_update',
+				service_image_icon:service_image_icon.val(),
 				service_name:service_name.val(),
 				service_price:service_price.val(),
 				service_qty:service_qty.val(),
@@ -578,12 +580,16 @@
 
 		var itemId = $(this).closest('tr').data('id');
 		var parent = $(this).closest('tr');
+		var icon = parent.find('td:nth-child(1) i').attr('class');
 		var name = parent.find('td:nth-child(2)').text().trim();
 		var details = parent.find('td:nth-child(3)').text().trim();
 		var qty = parent.find('td:nth-child(4)').text().trim();
 		var price = parent.find('td:nth-child(5)').text().trim();
-
+		var price = parent.find('td:nth-child(5)').text().trim();
+		
+		console.log(icon);
 		$('input[name="service_item_id"]').val(itemId);
+		$('input[name="service_image_icon"]').val(icon);
 		$('input[name="service_name"]').val(name);
 		$('input[name="service_price"]').val(price);
 		$('input[name="service_qty"]').val(qty);
