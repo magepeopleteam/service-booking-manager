@@ -190,7 +190,7 @@
 					foreach ($extra_services as $key => $value) : 
 				?>
 					<tr data-id='<?php echo $key; ?>'>
-						<td><?php //echo $value['image']; ?><i class="<?php echo isset($value['icon'])?$value['icon']:''; ?>"></i></td>
+						<td><i class="<?php echo $value['icon'] ? $value['icon'] : ''; ?>"></i></td>
 						<td><?php echo $value['name']; ?></td>
 						<td><?php echo $value['details']; ?></td>
 						<td><?php echo $value['qty']; ?></td>
