@@ -444,6 +444,8 @@
 	$(document).on('click', '.mpwpb-extra-service-new', function (e) {
 		open_sidebar_modal(e);
 		$('#mpwpb-ex-service-msg').html('');
+		$('.mpwpb_ex_service_save_button').show();
+		$('.mpwpb_ex_service_update_button').hide();
 		empty_ex_service_form();
 	});
 	function empty_ex_service_form(){
