@@ -453,6 +453,7 @@
 		$('input[name="service_price"]').val('');
 		$('input[name="service_qty"]').val('');
 		$('textarea[name="service_description"]').val('');
+		$('textarea[name="service_image_icon"]').val('');
 	}
 
 	$(document).on('click', '#mpwpb_ex_service_save', function (e) {
