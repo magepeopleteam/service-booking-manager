@@ -20,7 +20,7 @@
 			public function save_ex_service() {
 				update_post_meta($_POST['postID'], 'mpwpb_extra_service_active', 'on');
 				$post_id = $_POST['postID'];
-				$extra_services = get_post_meta($post_id,'mpwpb_extra_service', array());
+				$extra_services = $this->get_extra_services($post_id);
 				$extra_services =!empty($extra_services)?$extra_services:[];
 
 				$new_data = [ 
@@ -29,19 +29,25 @@
 					'qty'=> sanitize_text_field($_POST['service_qty']),
 					'details'=> sanitize_text_field($_POST['service_description']),
 				];
+				array_push($extra_services,$new_data);
 				update_post_meta($post_id, 'mpwpb_extra_service', $extra_services);
 				
 				die;
 			}
+
+			public function get_extra_services($post_id){
+				$extra_services = MP_Global_Function::get_post_info( $post_id, 'mpwpb_extra_service', array() );
+				foreach ( $extra_services as $value ) {
+					$extra_services =  $value['group_service_info'];
+				}
+				return $extra_services;
+			}
+
 			public function extra_service_settings( $post_id ) {
-				$extra_services                     = MP_Global_Function::get_post_info( $post_id, 'mpwpb_extra_service', array() );
+				$extra_services                     = $this->get_extra_services($post_id);
 				$extra_service_active               = MP_Global_Function::get_post_info( $post_id, 'mpwpb_extra_service_active', 'off' );
 				$active_class         				= $extra_service_active == 'on' ? 'mActive' : '';
 				$extra_service_checked       		= $extra_service_active == 'on' ? 'checked' : '';
-				$extra_service_group_active         = MP_Global_Function::get_post_info( $post_id, 'mpwpb_group_extra_service_active', 'off' );
-				$extra_service_group_active_class   = $extra_service_group_active == 'on' ? 'mActive' : '';
-				$extra_service_group_active_checked = $extra_service_group_active == 'on' ? 'checked' : '';
-				$ex_count                           = 0;
 				?>
 				<div class="tabsItem mpwpb_extra_service_settings" data-tabs="#mpwpb_extra_service_settings">
 					<header>
@@ -82,10 +88,7 @@
 									echo '<pre>';
 									print_r($extra_services);
 									if (! empty($extra_services)  ) {
-										foreach ( $extra_services as $value ) {
-											$group_service_info =  $value['group_service_info'];
-										}
-										foreach ( $group_service_info as $key => $value ) {
+										foreach ( $extra_services as $key => $value ) {
 											$this->show_extra_service( $key, $value);
 										}
 									}
