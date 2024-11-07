@@ -29,21 +29,29 @@
 					'qty'=> sanitize_text_field($_POST['service_qty']),
 					'details'=> sanitize_text_field($_POST['service_description']),
 				];
+
 				array_push($extra_services,$new_data);
-				update_post_meta($post_id, 'mpwpb_extra_service', $extra_services);
+				print_r($extra_services);
+				// update_post_meta($post_id, 'mpwpb_extra_service', $extra_services);
 				
 				die;
 			}
 
 			public function get_extra_services($post_id){
-				$extra_services = MP_Global_Function::get_post_info( $post_id, 'mpwpb_extra_service', array() );
-				$extra_service = [];
+				$extra_services = MP_Global_Function::get_post_info( $post_id, 'mpwpb_extra_service',[]);
+				$services = [];
 				foreach ( $extra_services as $value ) {
 					if (isset($value['group_service_info'])) {
-						$extra_service = array_merge($extra_service, $value['group_service_info']);
+						$services = array_merge($services, $value['group_service_info']);
+						$check = true;
 					}
 				}
-				return $extra_service;
+				if($check){
+					return $services;
+				}else{
+					return $extra_services;
+				}
+				
 			}
 
 			public function extra_service_settings( $post_id ) {
