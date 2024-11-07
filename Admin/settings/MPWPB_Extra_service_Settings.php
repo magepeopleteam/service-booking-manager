@@ -33,6 +33,7 @@
 					'price'=> sanitize_text_field($_POST['service_price']),
 					'qty'=> sanitize_text_field($_POST['service_qty']),
 					'details'=> sanitize_text_field($_POST['service_description']),
+					'icon'=> sanitize_text_field($_POST['service_image_icon']),
 				];
 
 				if( ! empty($ext_services)){
@@ -61,6 +62,7 @@
 					'price'=> sanitize_text_field($_POST['service_price']),
 					'qty'=> sanitize_text_field($_POST['service_qty']),
 					'details'=> sanitize_text_field($_POST['service_description']),
+					'icon'=> sanitize_text_field($_POST['service_image_icon']),
 				];
 				array_push($extra_services,$new_data);
 				update_post_meta($post_id, 'mpwpb_extra_service', $extra_services);
@@ -167,9 +169,28 @@
 
 								<label>
 									<?php _e('Image/Icon','service-booking-manager'); ?>
-									<input type="hidden"   name="service_image"> 
-									<input type="hidden"   name="service_icon"> 
 								</label>
+								<div class="mpwpb_service_content">				
+									<div class="mp_add_icon_image_area fdColumn">
+										<input type="hidden" name="service_image_icon" value="">
+										<div class="mp_icon_item dNone">
+											<div class="allCenter">
+												<span class="" data-add-icon=""></span>
+											</div>
+											<span class="fas fa-times mp_remove_icon mp_icon_remove" title="Remove Icon"></span>
+										</div>
+										<div class="mp_image_item dNone">
+											<img class="" src="" alt="">
+											<span class="fas fa-times mp_remove_icon mp_image_remove" title="Remove Image"></span>
+										</div>
+										<div class="mp_add_icon_image_button_area ">
+											<button class="mp_image_add" type="button">
+												<span class="fas fa-images"></span>Image</button>
+											<button class="mp_icon_add" type="button" data-target-popup="#mp_add_icon_popup">
+												<span class="fas fa-plus"></span>Icon</button>
+										</div>
+									</div>
+								</div>
 
 								<div class="mpwpb_ex_service_save_button">
 									<p><button id="mpwpb_ex_service_save" class="button button-primary button-large"><?php _e('Save','service-booking-manager'); ?></button> <button id="mpwpb_ex_service_save_close" class="button button-primary button-large">save close</button><p>
