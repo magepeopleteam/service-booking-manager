@@ -426,18 +426,19 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
 }
 .mpwpb-sidebar-container .mpwpb-sidebar-content .mp_add_icon_image_area {
   position: relative;
-  margin: 10px 0 70px 0;
+  max-width: 202px;
+  margin: 10px 0;
 }
 .mpwpb-sidebar-container .mpwpb-sidebar-content .mp_add_icon_image_area .mp_add_icon_image_button_area {
-  position: absolute;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: start;
   border: 1px solid #8c8f94;
+  width: 100%;
   border-radius: 3px;
 }
 .mpwpb-sidebar-container .mpwpb-sidebar-content .mp_add_icon_image_area .mp_add_icon_image_button_area .mp_image_add, .mpwpb-sidebar-container .mpwpb-sidebar-content .mp_add_icon_image_area .mp_add_icon_image_button_area .mp_icon_add {
-  padding: 10px 20px;
+  padding: 10px 26px;
   border-radius: 0;
   margin: 1px;
 }
