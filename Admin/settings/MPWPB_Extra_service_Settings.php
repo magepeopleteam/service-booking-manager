@@ -197,25 +197,21 @@
 								<label>
 									<?php _e('Image/Icon','service-booking-manager'); ?>
 								</label>
-								<div class="mpwpb_service_content">				
-									<div class="mp_add_icon_image_area fdColumn">
-										<input type="hidden" name="service_image_icon" value="">
-										<div class="mp_icon_item dNone">
-											<div class="allCenter">
-												<span class="" data-add-icon=""></span>
-											</div>
-											<span class="fas fa-times mp_remove_icon mp_icon_remove" title="Remove Icon"></span>
-										</div>
-										<div class="mp_image_item dNone">
-											<img class="" src="" alt="">
-											<span class="fas fa-times mp_remove_icon mp_image_remove" title="Remove Image"></span>
-										</div>
-										<div class="mp_add_icon_image_button_area ">
-											<button class="mp_image_add" type="button">
-												<span class="fas fa-images"></span>Image</button>
-											<button class="mp_icon_add" type="button" data-target-popup="#mp_add_icon_popup">
-												<span class="fas fa-plus"></span>Icon</button>
-										</div>
+								<div class="mp_add_icon_image_area">
+									<input type="hidden" name="service_image_icon" value="">
+									<div class="mp_icon_item dNone">
+										<span class="" data-add-icon=""></span>
+										<span class="fas fa-times mp_remove_icon mp_icon_remove"></span>
+									</div>
+									<div class="mp_image_item dNone">
+										<img class="" src="" alt="">
+										<span class="fas fa-times mp_remove_icon mp_image_remove"></span>
+									</div>
+									<div class="mp_add_icon_image_button_area ">
+										<button class="mp_image_add" type="button">
+											<span class="fas fa-images"></span>Image</button>
+										<button class="mp_icon_add" type="button" data-target-popup="#mp_add_icon_popup">
+											<span class="fas fa-plus"></span>Icon</button>
 									</div>
 								</div>
 
@@ -239,10 +235,12 @@
 				?>
 					<tr data-id='<?php echo $key; ?>'>
 						<td>
-							<?php  if(isset($value['image'])): ?>
+							<?php  if(!empty($value['image'])): ?>
 								<img src="<?php echo esc_attr(wp_get_attachment_url($value['image'])); ?>" alt="">
 							<?php  endif; ?>
-							<i class="<?php echo $value['icon'] ? $value['icon'] : ''; ?>"></i>
+							<?php  if(!empty($value['icon'])): ?>
+								<i class="<?php echo $value['icon'] ? $value['icon'] : ''; ?>"></i>
+							<?php  endif; ?>
 						</td>
 						<td><?php echo $value['name']; ?></td>
 						<td><?php echo $value['details']; ?></td>
