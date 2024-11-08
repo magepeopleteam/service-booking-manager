@@ -597,6 +597,9 @@
 		$('input[name="service_qty"]').val(qty);
 		$('textarea[name="service_description"]').val(details);
 	});
-
+	// ==================icon add========================
+	$(document).on('click', '.mpwpb-icon-add', function (e) {
+		$('.mpwpb-show-icon-lists').slideToggle();
+	});	
 })(jQuery);
 

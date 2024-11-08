@@ -266,6 +266,20 @@
                 }
             }
         }
+        .mpwpb-show-icon-lists{
+            display:none;
+            overflow:auto;
+            height:400px;
+            border:1px solid;
+            padding: 10px;
+            .font-icons{
+                width: 30px;
+                height: 30px;
+                i{
+                    font-size: 20px;
+                }
+            }
+        }
     }
 }
 

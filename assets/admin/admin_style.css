@@ -442,6 +442,20 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   border-radius: 0;
   margin: 1px;
 }
+.mpwpb-sidebar-container .mpwpb-sidebar-content .mpwpb-show-icon-lists {
+  display: none;
+  overflow: auto;
+  height: 400px;
+  border: 1px solid;
+  padding: 10px;
+}
+.mpwpb-sidebar-container .mpwpb-sidebar-content .mpwpb-show-icon-lists .font-icons {
+  width: 30px;
+  height: 30px;
+}
+.mpwpb-sidebar-container .mpwpb-sidebar-content .mpwpb-show-icon-lists .font-icons i {
+  font-size: 20px;
+}
 
 .mpwpb-sidebar-container {
   position: fixed;
