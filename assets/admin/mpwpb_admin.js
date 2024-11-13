@@ -602,5 +602,48 @@
 		open_sidebar_modal(e);
 	});
 
+	function empty_category_service_form(){
+		$('input[name="mpwpb_category_service_name"]').val('');
+		$('input[name="mpwpb_category_image_icon"]').val('');
+	}
+
+	$(document).on('click', '#mpwpb_category_service_save', function (e) {
+		e.preventDefault();
+		save_category_service();
+	});
+
+	$(document).on('click', '#mpwpb_category_service_save_close', function (e) {
+		e.preventDefault();
+		save_category_service();
+		close_sidebar_modal(e);
+	});
+
+	function save_category_service(){
+		var postID  = $('input[name="mpwpb_category_post_id"]');
+		var category_name   = $('input[name="mpwpb_category_service_name"]');
+		var category_image_icon = $('input[name="mpwpb_category_image_icon"]');
+		$.ajax({
+			url: mp_ajax_url,
+			type: 'POST',
+			data: {
+				action: 'mpwpb_save_category_service',
+				category_name:category_name.val(),
+				category_image_icon:category_image_icon.val(),
+				category_postID:postID.val(),
+			},
+			success: function(response) {
+				console.log(response);
+				$('#mpwpb-category-service-msg').html(response.data.message);
+				$('.category-service-table tbody').html('');
+				$('.category-service-table tbody').append(response.data.html);
+				empty_category_service_form();
+			},
+			error: function(error) {
+				console.log('Error:', error);
+			}
+		});
+	}
+
+
 })(jQuery);
 

@@ -10,8 +10,47 @@
 		class MPWPB_Price_Settings {
 			public function __construct() {
 				add_action('add_mpwpb_settings_tab_content', [$this, 'price_settings'], 10, 1);
-				add_action('mpwpb_settings_save', [$this, 'save_price_settings'], 10, 1);
+				//add_action('mpwpb_settings_save', [$this, 'save_price_settings'], 10, 1);
+
+				// save category service
+				add_action('wp_ajax_mpwpb_save_category_service', [ $this,'save_category_service']);
+				add_action('wp_ajax_nopriv_mpwpb_save_category_service', [ $this,'save_category_service']);
 			}
+
+			public function save_category_service() {
+				$post_id = $_POST['category_postID'];
+				$categories = $this->get_categories($post_id);
+				$iconClass = '';
+				$imageID = '';
+				if(isset($_POST['category_image_icon'])){
+					if(is_numeric($_POST['category_image_icon'])){
+						$imageID = sanitize_text_field($_POST['category_image_icon']);
+						$iconClass ='';
+					}
+					else{
+						$iconClass = sanitize_text_field($_POST['category_image_icon']);
+						$imageID = '';
+					}
+				}
+
+				$new_data = [ 
+					'name'=> sanitize_text_field($_POST['category_name']), 
+					'icon'=> $iconClass,
+					'image'=> $imageID,
+				];
+				array_push($categories,$new_data);
+				update_post_meta($post_id, 'mpwpb_category_service', $categories);
+				ob_start();
+				$resultMessage = __('Data Updated Successfully', 'service-booking-manager');
+				$this->show_category_items($post_id);
+				$html_output = ob_get_clean();
+				wp_send_json_success([
+					'message' => $resultMessage,
+					'html' => $html_output,
+				]);
+				die;
+			}
+
 			public function price_settings($post_id) {
 				?>
 				<div class="tabsItem mpwpb_price_settings" data-tabs="#mpwpb_price_settings">
@@ -24,7 +63,7 @@
 						<span><?php esc_html_e('Service Category Settings', 'service-booking-manager'); ?></span>
                     </section>
 					<section>
-						<table class="service-category-table mB">
+						<table class="category-service-table mB">
 							<thead>
 								<tr>
 									<th>Image</th>
@@ -55,7 +94,7 @@
 									<?php _e('Category Image/Icon','service-booking-manager'); ?> 
 								</label>
 								<div class="mp_add_icon_image_area">
-									<input type="hidden" name="mpwpb_category_service_image_icon" value="">
+									<input type="hidden" name="mpwpb_category_image_icon" value="">
 									<div class="mp_icon_item dNone">
 										<span class="" data-add-icon=""></span>
 										<span class="fas fa-times mp_remove_icon mp_icon_remove"></span>
@@ -72,11 +111,11 @@
 									</div>
 								</div>
 
-								<div class="mpwpb_ex_service_save_button">
-									<p><button id="mpwpb_ex_service_save" class="button button-primary button-large"><?php _e('Save','service-booking-manager'); ?></button> <button id="mpwpb_ex_service_save_close" class="button button-primary button-large">save close</button><p>
+								<div class="mpwpb_category_service_save_button">
+									<p><button id="mpwpb_category_service_save" class="button button-primary button-large"><?php _e('Save','service-booking-manager'); ?></button> <button id="mpwpb_category_service_save_close" class="button button-primary button-large">save close</button><p>
 								</div>
-								<div class="mpwpb_ex_service_update_button" style="display: none;">
-									<p><button id="mpwpb_ex_service_update" class="button button-primary button-large"><?php _e('Update and Close','service-booking-manager'); ?></button><p>
+								<div class="mpwpb_category_service_update_button" style="display: none;">
+									<p><button id="mpwpb_category_service_update" class="button button-primary button-large"><?php _e('Update and Close','service-booking-manager'); ?></button><p>
 								</div>
 							</div>
 						</div>
@@ -103,16 +142,16 @@
 							if (isset($categoryData['category'])) {
 								$categories[] = [
 									'name' => $categoryData['category'],
-									'image' => $categoryData['image'],
 									'icon' => $categoryData['icon'],
+									'image' => $categoryData['image']
 								];
 							}
 						}
 					}
-					update_post_meta($post_id,'mpwpb_service_category',$categories);
-					$service_category = get_post_meta($post_id,'mpwpb_service_category');
+					update_post_meta($post_id,'mpwpb_category_service',$categories);
 				}
-				return $service_category;
+
+				return get_post_meta($post_id,'mpwpb_category_service',true);
 			}
 
 			public function show_category_items($post_id){
@@ -121,12 +160,17 @@
 			?>
 				<tr data-id="<?php echo $key; ?>">
 					<td>
-						<img src="" alt="">
+						<?php  if(!empty($value['image'])): ?>
+							<img src="<?php echo esc_attr(wp_get_attachment_url($value['image'])); ?>" alt="">
+						<?php  endif; ?>
+						<?php  if(!empty($value['icon'])): ?>
+							<i class="<?php echo $value['icon'] ? $value['icon'] : ''; ?>"></i>
+						<?php  endif; ?>
 					</td>
 					<td><?php echo $value['name']; ?></td>
 					<td>
-						<span class="mpwpb-ext-service-edit"><i class="fas fa-edit"></i></span>
-						<span class="mpwpb-ext-service-delete"><i class="fas fa-trash"></i></span>
+						<span class="mpwpb-category-service-edit"><i class="fas fa-edit"></i></span>
+						<span class="mpwpb-category-service-delete"><i class="fas fa-trash"></i></span>
 					</td>
 				</tr>
 			<?php
