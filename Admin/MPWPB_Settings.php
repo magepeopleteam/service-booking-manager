@@ -34,7 +34,7 @@
 									<i class="far fa-clock pe-1"></i><?php esc_html_e('Date & Time', 'service-booking-manager'); ?>
 								</li>
 								<li  data-tabs-target="#mpwpb_price_settings">
-									<i class="fas fa-hand-holding-usd pe-1"></i><?php esc_html_e('Pricing', 'service-booking-manager'); ?>
+									<i class="fas fa-hand-holding-usd pe-1"></i><?php esc_html_e('Service Pricing', 'service-booking-manager'); ?>
 								</li>
 								<li  data-tabs-target="#mpwpb_extra_service_settings">
 									<i class="fas fa-funnel-dollar pe-1"></i><?php esc_html_e('Extra Service', 'service-booking-manager'); ?>
