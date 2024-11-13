@@ -597,6 +597,10 @@
 		$('input[name="service_qty"]').val(qty);
 		$('textarea[name="service_description"]').val(details);
 	});
+	// =============Service Category sidebar modal ======================
+	$(document).on('click', '.mpwpb-category-service-new', function (e) {
+		open_sidebar_modal(e);
+	});
 
 })(jQuery);
 
