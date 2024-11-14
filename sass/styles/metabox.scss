@@ -109,9 +109,10 @@
         }
     }
     //=================== estra service table============
-    table.extra-service-table{
+    table.table{
         border: 1px solid var(--mage-border);
         border-collapse: collapse;
+        overflow: scroll;
         thead{
             tr{
                 th{
@@ -121,18 +122,6 @@
                     padding: 10px 5px;
                     border: 1px solid var(--mage-border);
                     border-collapse: collapse;
-                    &:first-child{
-                        width: 70px;
-                    }
-                    &:nth-child(2){
-                        width: 200px;
-                    }
-                    &:nth-child(3){
-                        width: 300px;
-                    }
-                    &:last-child{
-                        width: 97px;
-                    }
                 }
             }
         }
@@ -151,7 +140,7 @@
                     border: 1px solid var(--mage-border);
                     border-collapse: collapse;
                     &:first-child{
-                        text-align: left;
+                        text-align: center;
                         img{
                             display: block;
                             width: 60px;
@@ -159,32 +148,21 @@
                             object-fit: cover;
                             border-radius:2px;
                             border:1px solid var(--mage-border);
+                            margin: auto;
                         }
                         i{
                             font-size: 28px;
-                            text-align: center;
                             border: 1px solid var(--mage-border);
                             background-color: var(--mage-light);
                             color: var(--mage-dark);
-                            padding: 5px 17px;
-                            font-size: 23px;
-                            width: 60px;
+                            height:40px;
+                            font-size: 36px;
+                            width: 54px;
                             border-radius: 0;
                         }
                     }
-                    &:nth-child(2){
-                        text-align: left;
-                        font-size: 12px;
-                        font-weight: normal;
-                    }
-                    &:nth-child(3){
-                        text-align: left;
-                        font-size: 12px;
-                        font-weight: normal;
-                        vertical-align: top;
-                    }
+                    
                     &:last-child{
-                        text-align: right;
                         i{
                             background-color: #fff;
                             border:1px solid var(--mage-border);

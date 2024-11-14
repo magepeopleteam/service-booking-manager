@@ -297,11 +297,12 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   font-size: 14px;
   font-weight: normal;
 }
-#mp_meta_box_panel table.extra-service-table {
+#mp_meta_box_panel table.table {
   border: 1px solid var(--mage-border);
   border-collapse: collapse;
+  overflow: scroll;
 }
-#mp_meta_box_panel table.extra-service-table thead tr th {
+#mp_meta_box_panel table.table thead tr th {
   text-align: center;
   font-weight: normal;
   font-size: 16px;
@@ -309,26 +310,14 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   border: 1px solid var(--mage-border);
   border-collapse: collapse;
 }
-#mp_meta_box_panel table.extra-service-table thead tr th:first-child {
-  width: 70px;
-}
-#mp_meta_box_panel table.extra-service-table thead tr th:nth-child(2) {
-  width: 200px;
-}
-#mp_meta_box_panel table.extra-service-table thead tr th:nth-child(3) {
-  width: 300px;
-}
-#mp_meta_box_panel table.extra-service-table thead tr th:last-child {
-  width: 97px;
-}
-#mp_meta_box_panel table.extra-service-table tbody tr {
+#mp_meta_box_panel table.table tbody tr {
   height: 40px;
   padding: 5px;
 }
-#mp_meta_box_panel table.extra-service-table tbody tr:nth-child(even) {
+#mp_meta_box_panel table.table tbody tr:nth-child(even) {
   background-color: var(--mage-light-2);
 }
-#mp_meta_box_panel table.extra-service-table tbody tr td {
+#mp_meta_box_panel table.table tbody tr td {
   font-weight: normal;
   text-align: center;
   vertical-align: middle;
@@ -336,43 +325,29 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   border: 1px solid var(--mage-border);
   border-collapse: collapse;
 }
-#mp_meta_box_panel table.extra-service-table tbody tr td:first-child {
-  text-align: left;
+#mp_meta_box_panel table.table tbody tr td:first-child {
+  text-align: center;
 }
-#mp_meta_box_panel table.extra-service-table tbody tr td:first-child img {
+#mp_meta_box_panel table.table tbody tr td:first-child img {
   display: block;
   width: 60px;
   height: 40px;
   object-fit: cover;
   border-radius: 2px;
   border: 1px solid var(--mage-border);
+  margin: auto;
 }
-#mp_meta_box_panel table.extra-service-table tbody tr td:first-child i {
+#mp_meta_box_panel table.table tbody tr td:first-child i {
   font-size: 28px;
-  text-align: center;
   border: 1px solid var(--mage-border);
   background-color: var(--mage-light);
   color: var(--mage-dark);
-  padding: 5px 17px;
-  font-size: 23px;
-  width: 60px;
+  height: 40px;
+  font-size: 36px;
+  width: 54px;
   border-radius: 0;
 }
-#mp_meta_box_panel table.extra-service-table tbody tr td:nth-child(2) {
-  text-align: left;
-  font-size: 12px;
-  font-weight: normal;
-}
-#mp_meta_box_panel table.extra-service-table tbody tr td:nth-child(3) {
-  text-align: left;
-  font-size: 12px;
-  font-weight: normal;
-  vertical-align: top;
-}
-#mp_meta_box_panel table.extra-service-table tbody tr td:last-child {
-  text-align: right;
-}
-#mp_meta_box_panel table.extra-service-table tbody tr td:last-child i {
+#mp_meta_box_panel table.table tbody tr td:last-child i {
   background-color: #fff;
   border: 1px solid var(--mage-border);
   color: var(--mage-primary);

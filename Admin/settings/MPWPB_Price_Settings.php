@@ -63,12 +63,12 @@
 						<span><?php esc_html_e('Service Category Settings', 'service-booking-manager'); ?></span>
                     </section>
 					<section>
-						<table class="category-service-table mB">
+						<table class="table category-service-table mB">
 							<thead>
 								<tr>
-									<th>Image</th>
+									<th style="width:66px">Image</th>
 									<th>Name</th>
-									<th>Action</th>
+									<th style="width:92px">Action</th>
 								</tr>
 							</thead>
 							<tbody>

@@ -148,15 +148,15 @@
 						</label>
                     </section>
 					<section class="mpwpb-extra-section <?php echo $active_class; ?>" data-collapse="#mpwpb_extra_service_active">
-						<table class="extra-service-table mB">
+						<table class="table extra-service-table mB">
 							<thead>
 								<tr>
-									<th><?php _e('Image','service-booking-manager'); ?></th>
-									<th><?php _e('Service Title','service-booking-manager'); ?></th>
+									<th style="width:66px"><?php _e('Image','service-booking-manager'); ?></th>
+									<th style="width:150px"><?php _e('Service Title','service-booking-manager'); ?></th>
 									<th><?php _e('Description','service-booking-manager'); ?></th>
-									<th><?php _e('Quantity','service-booking-manager'); ?></th>
-									<th><?php _e('Price','service-booking-manager'); ?></th>
-									<th><?php _e('Action','service-booking-manager'); ?></th>
+									<th style="width:90px"><?php _e('Quantity','service-booking-manager'); ?></th>
+									<th style="width:90px"><?php _e('Price','service-booking-manager'); ?></th>
+									<th style="width:92px"><?php _e('Action','service-booking-manager'); ?></th>
 								</tr>
 							</thead>
 							<tbody>
