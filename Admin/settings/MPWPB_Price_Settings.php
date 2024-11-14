@@ -206,7 +206,23 @@
 							<span><?php esc_html_e('Service Pricing Settings', 'service-booking-manager'); ?></span>
                     </section>
 					<section>
-
+						<table class="table category-service-table mB">
+							<thead>
+								<tr>
+									<th style="width:66px">Image</th>
+									<th>Name</th>
+									<th>Details</th>
+									<th>Category</th>
+									<th>Price</th>
+									<th>Duration</th>
+									<th style="width:92px">Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php $this->show_service_items($post_id); ?>
+							</tbody>
+						</table>
+						<button class="button mpwpb-category-service-new" type="button"><?php _e('Add Service Category','service-booking-manager'); ?></button>
 					</section>
 				</div>
 				<?php
@@ -297,6 +313,42 @@
 							echo implode(', ',$names);
 						?>
 					</td>
+					<td>
+						<span class="mpwpb-category-service-edit"><i class="fas fa-edit"></i></span>
+						<span class="mpwpb-category-service-delete"><i class="fas fa-trash"></i></span>
+					</td>
+				</tr>
+			<?php
+				}
+			}
+
+			public function show_service_items($post_id){
+				$services = $this->get_services($post_id);
+				$sub_categories = $this->get_sub_categories($post_id);
+				foreach ($services as $key => $value){
+			?>
+				<tr data-id="<?php echo $key; ?>">
+					<td>
+						<?php  if(!empty($value['image'])): ?>
+							<img src="<?php echo esc_attr(wp_get_attachment_url($value['image'])); ?>" alt="" data-imageId="<?php echo $value['image']; ?>">
+						<?php  endif; ?>
+						<?php  if(!empty($value['icon'])): ?>
+							<i class="<?php echo $value['icon'] ? $value['icon'] : ''; ?>"></i>
+						<?php  endif; ?>
+					</td>
+					<td><?php echo $value['name']; ?></td>
+					<td><?php echo $value['details']; ?></td>
+					<td>
+						<?php 
+						foreach ($sub_categories as $data => $items){
+							if($value['cat_id']==$data){
+								echo $items['name'];
+							}
+						}
+						?>
+					</td>
+					<td><?php echo $value['price']; ?></td>
+					<td><?php echo $value['duration']; ?></td>
 					<td>
 						<span class="mpwpb-category-service-edit"><i class="fas fa-edit"></i></span>
 						<span class="mpwpb-category-service-delete"><i class="fas fa-trash"></i></span>
