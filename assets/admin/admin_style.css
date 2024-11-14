@@ -380,16 +380,19 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
 .mpwpb-sidebar-container .mpwpb-sidebar-content p {
   margin: 15px 0;
 }
-.mpwpb-sidebar-container .mpwpb-sidebar-content h4 {
+.mpwpb-sidebar-container .mpwpb-sidebar-content h3 {
   font-size: 18px;
   padding: 0;
   margin: 5px 0;
+  margin-bottom: 30px;
 }
 .mpwpb-sidebar-container .mpwpb-sidebar-content input[type=text], .mpwpb-sidebar-container .mpwpb-sidebar-content input[type=number], .mpwpb-sidebar-container .mpwpb-sidebar-content textarea {
   width: 100%;
   display: block;
   font-weight: normal;
-  margin: 5px 0;
+  padding: 10px;
+  font-size: 18px;
+  border: 1px solid #dfdfdf;
 }
 .mpwpb-sidebar-container .mpwpb-sidebar-content label {
   display: flex;
@@ -397,7 +400,9 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   align-items: start;
   flex-direction: column;
   font-weight: normal;
-  font-size: 16px;
+  font-size: 18px;
+  gap: 7px;
+  margin: 15px 0;
 }
 .mpwpb-sidebar-container .mpwpb-sidebar-content .mp_add_icon_image_area {
   position: relative;
@@ -438,7 +443,7 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   position: absolute;
   top: 0;
   right: 0;
-  padding: 80px 15px;
+  padding: 70px 40px;
 }
 .mpwpb-sidebar-container .mpwpb-sidebar-content .mpwpb-sidebar-close {
   position: absolute;

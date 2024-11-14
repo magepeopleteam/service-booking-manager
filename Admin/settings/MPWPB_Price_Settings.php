@@ -80,10 +80,10 @@
 					<!-- sidebar collapse open -->
 					<div class="mpwpb-sidebar-container">
 						<div class="mpwpb-sidebar-content">
+							<h3><?php _e('Add Category Service','service-booking-manager'); ?></h3>
 							<span class="mpwpb-sidebar-close"><i class="fas fa-times"></i></span>
 							<div class="mpwpb-category-service-form">
 								<div id="mpwpb-category-service-msg"></div>
-								<h4><?php _e('Add Category Service','service-booking-manager'); ?></h4>
 								<input type="hidden" name="mpwpb_category_post_id" value="<?php echo $post_id; ?>"> 
 								<input type="hidden" name="mpwpb_category_item_id" value="">
 								<label>
