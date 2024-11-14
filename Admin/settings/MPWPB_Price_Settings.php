@@ -10,6 +10,7 @@
 		class MPWPB_Price_Settings {
 			public function __construct() {
 				add_action('add_mpwpb_settings_tab_content', [$this, 'price_settings'], 10, 1);
+				add_action('add_mpwpb_settings_tab_content', [$this, 'set_category_service']);
 				//add_action('mpwpb_settings_save', [$this, 'save_price_settings'], 10, 1);
 
 				// save category service
@@ -210,30 +211,70 @@
 				<?php
 			}
 
-			public function get_categories($post_id){
-				$service_category = get_post_meta($post_id,'mpwpb_service_category');
+			public function set_category_service($post_id){
+				$service_category = get_post_meta($post_id,'mpwpb_service_category',true);
 				if(empty($service_category)){
-					$category_info = get_post_meta($post_id,'mpwpb_category_infos');
+					$category_info = get_post_meta($post_id,'mpwpb_category_infos',true);
 					$categories = [];
-					foreach ($category_info as $mainCategory) {
-						foreach ($mainCategory as $categoryData) {
-							if (isset($categoryData['category'])) {
-								$categories[] = [
-									'name' => $categoryData['category'],
-									'icon' => $categoryData['icon'],
-									'image' => $categoryData['image']
+					$sub_categories = [];
+					$service_items = [];
+					foreach ($category_info as $cat_index => $category) {
+						if (isset($category['category'])) {
+							$categories[] = [
+								'name' => $category['category'],
+								'icon' => $category['icon'],
+								'image' => $category['image']
+							];
+						}
+						if (isset($category['sub_category'])){
+							foreach ($category['sub_category'] as $sub_cat_index => $sub_category){
+								$sub_categories[]=[
+									'name' => $sub_category['name'],
+									'icon' => $sub_category['icon'],
+									'image' => $sub_category['image'],
+									'cat_id'=> $cat_index,
 								];
+								if(isset($sub_category['service'])){
+									foreach ($sub_category['service'] as $service_index => $service){
+										$service_items[]=[
+											'name' => $service['name'],
+											'icon' => $service['icon'],
+											'image' => $service['image'],
+											'details' => $service['details'],
+											'price' => $service['price'],
+											'duration' => $service['duration'],
+											'cat_id'=> $sub_cat_index,
+										];
+									}
+								}
 							}
 						}
 					}
 					update_post_meta($post_id,'mpwpb_category_service',$categories);
+					update_post_meta($post_id,'mpwpb_sub_category_service',$sub_categories);
+					update_post_meta($post_id,'mpwpb_service',$service_items);
 				}
+			}
+			
+			public function get_categories($post_id){
+				$service_category = get_post_meta($post_id,'mpwpb_category_service',true);
+				return $service_category;
+			}
 
-				return get_post_meta($post_id,'mpwpb_category_service',true);
+			public function get_sub_categories($post_id){
+				$sub_category = get_post_meta($post_id,'mpwpb_sub_category_service',true);
+				return $sub_category;
+			}
+
+			public function get_services($post_id){
+				$service = get_post_meta($post_id,'mpwpb_service',true);
+				return $service;
 			}
 
 			public function show_category_items($post_id){
 				$categories = $this->get_categories($post_id);
+				$sub_categories = $this->get_sub_categories($post_id);
+				print_r($sub_categories);
 				foreach ($categories as $key => $value){
 			?>
 				<tr data-id="<?php echo $key; ?>">
@@ -246,6 +287,11 @@
 						<?php  endif; ?>
 					</td>
 					<td><?php echo $value['name']; ?></td>
+					<td>
+						<?php 
+							
+						?>
+					</td>
 					<td>
 						<span class="mpwpb-category-service-edit"><i class="fas fa-edit"></i></span>
 						<span class="mpwpb-category-service-delete"><i class="fas fa-trash"></i></span>
