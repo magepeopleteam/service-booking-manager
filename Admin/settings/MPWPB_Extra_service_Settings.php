@@ -15,7 +15,7 @@
 				add_action('wp_ajax_mpwpb_save_ex_service', [ $this,'save_ex_service']);
 				add_action('wp_ajax_nopriv_mpwpb_save_ex_service', [ $this,'save_ex_service']);
 
-				// mpwpb delete extra service
+				// mpwpb update extra service
 				add_action('wp_ajax_mpwpb_ext_service_update', [$this, 'ext_service_update_item']);
 				add_action('wp_ajax_nopriv_mpwpb_ext_service_update', [$this, 'ext_service_update_item']);
 				

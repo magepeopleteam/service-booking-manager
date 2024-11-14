@@ -15,6 +15,54 @@
 				// save category service
 				add_action('wp_ajax_mpwpb_save_category_service', [ $this,'save_category_service']);
 				add_action('wp_ajax_nopriv_mpwpb_save_category_service', [ $this,'save_category_service']);
+				
+				// mpwpb update category service
+				add_action('wp_ajax_mpwpb_update_category_service', [$this, 'update_category_service']);
+				add_action('wp_ajax_nopriv_mpwpb_update_category_service', [$this, 'update_category_service']);
+				
+				// mpwpb delete category service
+				add_action('wp_ajax_mpwpb_category_service_delete_item', [$this, 'delete_category_service']);
+				add_action('wp_ajax_nopriv_mpwpb_category_service_delete_item', [$this, 'delete_category_service']);
+				
+			}
+
+			public function update_category_service() {
+				$post_id = $_POST['category_postID'];
+				$categories = $this->get_categories($post_id);
+				$iconClass = '';
+				$imageID = '';
+				if(isset($_POST['category_image_icon'])){
+					if(is_numeric($_POST['category_image_icon'])){
+						$imageID = sanitize_text_field($_POST['category_image_icon']);
+						$iconClass ='';
+					}
+					else{
+						$iconClass = sanitize_text_field($_POST['category_image_icon']);
+						$imageID = '';
+					}
+				}
+
+				$new_data = [ 
+					'name'=> sanitize_text_field($_POST['category_name']), 
+					'icon'=> $iconClass,
+					'image'=> $imageID,
+				];
+
+				if( ! empty($categories)){
+					if(isset($_POST['category_itemId'])){
+						$categories[$_POST['category_itemId']]=$new_data;
+					}
+				}
+				update_post_meta($post_id, 'mpwpb_category_service', $categories);
+				ob_start();
+				$resultMessage = __('Data Updated Successfully', 'mptbm_plugin_pro');
+				$this->show_category_items($post_id);
+				$html_output = ob_get_clean();
+				wp_send_json_success([
+					'message' => $resultMessage,
+					'html' => $html_output,
+				]);
+				die;
 			}
 
 			public function save_category_service() {
@@ -48,6 +96,36 @@
 					'message' => $resultMessage,
 					'html' => $html_output,
 				]);
+				die;
+			}
+
+			public function delete_category_service(){
+				$post_id = $_POST['category_postID'];
+				$categories = $this->get_categories($post_id);
+
+				if( ! empty($categories)){
+					if(isset($_POST['itemId'])){
+						unset($categories[$_POST['itemId']]);
+						$categories = array_values($categories);
+					}
+				}
+				$result = update_post_meta($post_id, 'mpwpb_category_service', $categories);
+				if($result){
+					ob_start();
+					$resultMessage = __('Data Deleted Successfully', 'service-booking-manager');
+					$this->show_category_items($post_id);
+					$html_output = ob_get_clean();
+					wp_send_json_success([
+						'message' => $resultMessage,
+						'html' => $html_output,
+					]);
+				}
+				else{
+					wp_send_json_success([
+						'message' => 'Data not deleted',
+						'html' => '',
+					]);
+				}
 				die;
 			}
 
