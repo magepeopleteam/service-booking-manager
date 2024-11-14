@@ -539,6 +539,7 @@
 		var itemId = $(this).closest('tr').data('id');
 		var parent = $(this).closest('tr');
 		var icon = parent.find('td:nth-child(1) i').attr('class');
+		var imageId = parent.find('td:nth-child(1) img').attr('data-imageId');
 		var name = parent.find('td:nth-child(2)').text().trim();
 		var details = parent.find('td:nth-child(3)').text().trim();
 		var qty = parent.find('td:nth-child(4)').text().trim();
@@ -547,7 +548,11 @@
 		
 		console.log(icon);
 		$('input[name="service_item_id"]').val(itemId);
-		$('input[name="service_image_icon"]').val(icon);
+		if (icon) {
+			$('input[name="service_image_icon"]').val(icon);
+		} else if (imageId) {
+			$('input[name="service_image_icon"]').val(imageId);
+		}
 		$('input[name="service_name"]').val(name);
 		$('input[name="service_price"]').val(price);
 		$('input[name="service_qty"]').val(qty);
@@ -601,6 +606,10 @@
 	// =============Service Category sidebar modal ======================
 	$(document).on('click', '.mpwpb-category-service-new', function (e) {
 		open_sidebar_modal(e);
+		$('#mpwpb-category-service-msg').html('');
+		$('.mpwpb_category_service_save_button').show();
+		$('.mpwpb_category_service_update_button').hide();
+		empty_category_service_form();
 	});
 
 	function empty_category_service_form(){
@@ -654,10 +663,15 @@
 		var itemId = $(this).closest('tr').data('id');
 		var parent = $(this).closest('tr');
 		var icon = parent.find('td:nth-child(1) i').attr('class');
+		var imageId = parent.find('td:nth-child(1) img').attr('data-imageId');
 		var name = parent.find('td:nth-child(2)').text().trim();
 
 		$('input[name="mpwpb_category_item_id"]').val(itemId);
-		$('input[name="mpwpb_category_image_icon"]').val(icon);
+		if (icon) {
+			$('input[name="mpwpb_category_image_icon"]').val(icon);
+		} else if (imageId) {
+			$('input[name="mpwpb_category_image_icon"]').val(imageId);
+		}
 		$('input[name="mpwpb_category_service_name"]').val(name);
 	});
 
@@ -704,13 +718,13 @@
 		var itemId = $(this).closest('tr').data('id');
 		var isConfirmed = confirm('Are you sure you want to delete this row?');
 		if (isConfirmed) {
-			delete_ext_service(itemId);
+			delete_category_service(itemId);
 		} else {
 			console.log('Deletion canceled.'+itemId);
 		}
 	});
 
-	function delete_ext_service(itemId){
+	function delete_category_service(itemId){
 		var postID  = $('input[name="mpwpb_category_post_id"]');
 		$.ajax({
 			url: mp_ajax_url,

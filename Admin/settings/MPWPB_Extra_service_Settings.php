@@ -236,7 +236,7 @@
 					<tr data-id='<?php echo $key; ?>'>
 						<td>
 							<?php  if(!empty($value['image'])): ?>
-								<img src="<?php echo esc_attr(wp_get_attachment_url($value['image'])); ?>" alt="">
+								<img src="<?php echo esc_attr(wp_get_attachment_url($value['image'])); ?>" alt="" data-imageId="<?php echo $value['image']; ?>">
 							<?php  endif; ?>
 							<?php  if(!empty($value['icon'])): ?>
 								<i class="<?php echo $value['icon'] ? $value['icon'] : ''; ?>"></i>
