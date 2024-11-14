@@ -147,6 +147,7 @@
 								<tr>
 									<th style="width:66px">Image</th>
 									<th>Name</th>
+									<th>Sub Category</th>
 									<th style="width:92px">Action</th>
 								</tr>
 							</thead>
@@ -274,7 +275,6 @@
 			public function show_category_items($post_id){
 				$categories = $this->get_categories($post_id);
 				$sub_categories = $this->get_sub_categories($post_id);
-				print_r($sub_categories);
 				foreach ($categories as $key => $value){
 			?>
 				<tr data-id="<?php echo $key; ?>">
@@ -289,7 +289,12 @@
 					<td><?php echo $value['name']; ?></td>
 					<td>
 						<?php 
-							
+							foreach($sub_categories as $value){
+								if($value['cat_id']==$key){
+									$names[] =$value['name'];
+								}
+							}
+							echo implode(', ',$names);
 						?>
 					</td>
 					<td>
