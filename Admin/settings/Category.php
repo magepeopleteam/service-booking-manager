@@ -38,8 +38,8 @@ if(!class_exists('MPWPB_Category')){
                         <span><?php esc_html_e('Category Settings', 'service-booking-manager'); ?></span>
                 </header>
                 <section class="section">
-                    <h2><?php esc_html_e('Service Category Settings', 'service-booking-manager'); ?></h2>
-                    <span><?php esc_html_e('Service Category Settings', 'service-booking-manager'); ?></span>
+                    <h2><?php esc_html_e('Category Settings', 'service-booking-manager'); ?></h2>
+                    <span><?php esc_html_e('Category Settings', 'service-booking-manager'); ?></span>
                 </section>
                 <section>
                     <table class="table category-service-table mB">
@@ -55,7 +55,7 @@ if(!class_exists('MPWPB_Category')){
                             <?php $this->show_category_items($post_id); ?>
                         </tbody>
                     </table>
-                    <button class="button mpwpb-category-service-new" type="button"><?php _e('Add Service Category','service-booking-manager'); ?></button>
+                    <button class="button mpwpb-category-service-new" type="button"><?php _e('Add Category','service-booking-manager'); ?></button>
                 </section>
                 <!-- sidebar collapse open -->
                 <div class="mpwpb-sidebar-container">

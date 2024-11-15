@@ -32,9 +32,9 @@
 									<th style="width:66px">Image</th>
 									<th>Name</th>
 									<th>Details</th>
-									<th>Category</th>
-									<th>Price</th>
-									<th>Duration</th>
+									<th style="width:100px">Category</th>
+									<th style="width:70px">Price</th>
+									<th style="width:90px">Duration</th>
 									<th style="width:92px">Action</th>
 								</tr>
 							</thead>
