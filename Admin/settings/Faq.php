@@ -79,12 +79,16 @@ if( ! class_exists('MPWPB_Faq_Settings')){
                         <span class="mpwpb-sidebar-close"><i class="fas fa-times"></i></span>
                         <div class="mpwpb-faq-form">
                             <div id="mpwpb-faq-msg"></div>
-                            <h4><?php _e('Add F.A.Q.','service-booking-manager'); ?></h4>
-                            <p><?php _e('Add title','service-booking-manager'); ?></p>
-                            <input type="hidden" name="mpwpb_post_id" value="<?php echo $post_id; ?>"> 
-                            <input type="text"   name="mpwpb_faq_title"> 
-                            <input type="hidden" name="mpwpb_faq_item_id">
-                            <p><?php _e('Add Content','service-booking-manager'); ?></p>
+                            <h3><?php _e('Add F.A.Q.','service-booking-manager'); ?></h3>
+                            <label>
+                                <?php _e('Add Title','service-booking-manager'); ?>
+                                <input type="hidden" name="mpwpb_post_id" value="<?php echo $post_id; ?>"> 
+                                <input type="text"   name="mpwpb_faq_title"> 
+                                <input type="hidden" name="mpwpb_faq_item_id">
+                            </label>
+                            <label>
+                                <?php _e('Add Content','service-booking-manager'); ?>
+                            </label>
                             <?php 
                                 $content = ''; 
                                 $editor_id = 'mpwpb_faq_content';
@@ -95,6 +99,7 @@ if( ! class_exists('MPWPB_Faq_Settings')){
                                 );
                                 wp_editor( $content, $editor_id, $settings );
                             ?>
+                            <div class="mT"></div>
                             <div class="mpwpb_faq_save_buttons">
                                 <p><button id="mpwpb_faq_save" class="button button-primary button-large"><?php _e('Save','service-booking-manager'); ?></button> <button id="mpwpb_faq_save_close" class="button button-primary button-large">save close</button><p>
                             </div>
