@@ -123,7 +123,7 @@ if(!class_exists('MPWPB_Category')){
 
         public function set_category_service($post_id){
             $service_category = get_post_meta($post_id, 'mpwpb_category_service', true);
-            if(empty($service_category) and $service_category==''){
+            if(empty($service_category) or $service_category==''){
                 $category_info = get_post_meta($post_id,'mpwpb_category_infos',true);
                 $categories = [];
                 $sub_categories = [];
