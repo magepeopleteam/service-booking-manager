@@ -45,19 +45,9 @@ if(!class_exists('MPWPB_Category')){
                     <span><?php esc_html_e('Category Settings', 'service-booking-manager'); ?></span>
                 </section>
                 <section>
-                    <table class="table category-service-table mB">
-                        <thead>
-                            <tr>
-                                <th style="width:66px">Image</th>
-                                <th>Name</th>
-                                <th>Sub Category</th>
-                                <th style="width:92px">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php $this->show_category_items($post_id); ?>
-                        </tbody>
-                    </table>
+                    <div class="category-service-lists mB">
+                        <?php $this->show_category_items($post_id); ?>
+                    </div>
                     <button class="button mpwpb-category-service-new" type="button"><?php _e('Add Category','service-booking-manager'); ?></button>
                 </section>
                 <!-- sidebar collapse open -->
@@ -171,31 +161,45 @@ if(!class_exists('MPWPB_Category')){
             $sub_categories = $this->get_sub_categories($post_id);
             foreach ($categories as $key => $value){
             ?>
-            <tr data-id="<?php echo $key; ?>">
-                <td>
-                    <?php  if(!empty($value['image'])): ?>
-                        <img src="<?php echo esc_attr(wp_get_attachment_url($value['image'])); ?>" alt="" data-imageId="<?php echo $value['image']; ?>">
-                    <?php  endif; ?>
-                    <?php  if(!empty($value['icon'])): ?>
-                        <i class="<?php echo $value['icon'] ? $value['icon'] : ''; ?>"></i>
-                    <?php  endif; ?>
-                </td>
-                <td><?php echo $value['name']; ?></td>
-                <td>
-                    <?php 
-                        foreach($sub_categories as $value){
-                            if($value['cat_id']==$key){
-                                $names[] =$value['name'];
-                            }
-                        }
-                        echo implode(', ',$names);
-                    ?>
-                </td>
-                <td>
-                    <span class="mpwpb-category-service-edit"><i class="fas fa-edit"></i></span>
-                    <span class="mpwpb-category-service-delete"><i class="fas fa-trash"></i></span>
-                </td>
-            </tr>
+            <div class="service-category-item" data-id="<?php echo $key; ?>" style="display:flex;justify-content:space-between">
+                <div class="category-item">
+                    <div class="image-icon">
+                        <?php  if(!empty($value['image'])): ?>
+                            <img src="<?php echo esc_attr(wp_get_attachment_url($value['image'])); ?>" alt="" data-imageId="<?php echo $value['image']; ?>">
+                        <?php  endif; ?>
+                        <?php  if(!empty($value['icon'])): ?>
+                            <i class="<?php echo $value['icon'] ? $value['icon'] : ''; ?>"></i>
+                        <?php  endif; ?>
+                    </div>
+                    <div class="cat-name"><?php echo $value['name']; ?></div>
+                    <div class="action">
+                        <span class="mpwpb-category-service-edit"><i class="fas fa-edit"></i></span>
+                        <span class="mpwpb-category-service-delete"><i class="fas fa-trash"></i></span>
+                    </div>
+                </div>
+                <div class="sub-category-lists">
+                    <?php foreach($sub_categories as $value): ?>
+                        <?php if($value['cat_id']==$key): ?>
+                            <div class="sub-category-item">
+                                <div class="image-icon">
+                                    <?php  if(!empty($value['image'])): ?>
+                                        <img src="<?php echo esc_attr(wp_get_attachment_url($value['image'])); ?>" alt="" data-imageId="<?php echo $value['image']; ?>">
+                                    <?php  endif; ?>
+                                    <?php  if(!empty($value['icon'])): ?>
+                                        <i class="<?php echo $value['icon'] ? $value['icon'] : ''; ?>"></i>
+                                    <?php  endif; ?>
+                                </div>
+                                <div class="cat-name"><?php echo $value['name']; ?></div>
+                                <div class="action">
+                                    <span class="mpwpb-category-service-edit"><i class="fas fa-edit"></i></span>
+                                    <span class="mpwpb-category-service-delete"><i class="fas fa-trash"></i></span>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            
         <?php
             }
         }

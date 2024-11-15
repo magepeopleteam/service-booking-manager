@@ -178,6 +178,79 @@
         }
     }
 }
+//=================== category service ============
+.category-service-lists{
+   
+    .service-category-item{
+        display: flex;
+        justify-content: space-between;
+        flex-direction: column;
+        margin-bottom: 20px;
+        .category-item{
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--mage-light);
+            padding:0 10px 0 0;
+            height: 60px;
+            .image-icon{
+                width:106px;
+                height:100%;
+                background-color: var(--mage-light);
+                img{
+                    display: block;
+                    width: 100%;
+                    object-fit: cover;
+                    border-radius:2px;
+                    margin: auto;
+                }
+                i{
+                    font-size: 28px;
+                    border: 1px solid var(--mage-border);
+                    background-color: var(--mage-light);
+                    color: var(--mage-dark);
+                    height:40px;
+                    font-size: 36px;
+                    width: 54px;
+                    border-radius: 0;
+                }
+            }   
+            .cat-name{
+        
+            }
+            .action{
+                i{
+                    background-color: #fff;
+                    border:1px solid var(--mage-border);
+                    color: var(--mage-primary);
+                    border-radius: 2px;
+                    padding: 7px 10px;
+                    cursor: pointer;
+                }
+            }
+        }
+        .sub-category-lists{
+            width: 80%;
+            margin: auto; 
+            border: 1px solid var(--mage-light);
+            padding: 10px;
+            margin-top: -1px;
+            .sub-category-item{
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                flex-direction: row;
+                align-items: center;
+                margin: 5px 0;
+                padding:0 10px 0 0;
+                height: 60px;
+                @extend .category-item;
+            }
+        }
+    }
+}
+
 //=================== faq============
 .mpwpb-faq{
     .faq-header{

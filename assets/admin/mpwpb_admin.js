@@ -644,8 +644,8 @@
 			success: function(response) {
 				console.log(response);
 				$('#mpwpb-category-service-msg').html(response.data.message);
-				$('.category-service-table tbody').html('');
-				$('.category-service-table tbody').append(response.data.html);
+				$('.category-service-lists').html('');
+				$('.category-service-lists').append(response.data.html);
 				empty_category_service_form();
 			},
 			error: function(error) {
@@ -660,11 +660,11 @@
 		$('.mpwpb_category_service_save_button').hide();
 		$('.mpwpb_category_service_update_button').show();
 
-		var itemId = $(this).closest('tr').data('id');
-		var parent = $(this).closest('tr');
-		var icon = parent.find('td:nth-child(1) i').attr('class');
-		var imageId = parent.find('td:nth-child(1) img').attr('data-imageId');
-		var name = parent.find('td:nth-child(2)').text().trim();
+		var itemId = $(this).closest('.service-category-item').data('id');
+		var parent = $(this).closest('.service-category-item');
+		var icon = parent.find('.image-icon i').attr('class');
+		var imageId = parent.find('.image-icon img').attr('data-imageId');
+		var name = parent.find('.cat-name').text().trim();
 
 		$('input[name="mpwpb_category_item_id"]').val(itemId);
 		if (icon) {
@@ -699,8 +699,8 @@
 			},
 			success: function(response) {
 				$('#mpwpb-category-service-msg').html(response.data.message);
-				$('.category-service-table tbody').html('');
-				$('.category-service-table tbody').append(response.data.html);
+				$('.category-service-lists').html('');
+				$('.category-service-lists').append(response.data.html);
 				setTimeout(function(){
 					$('.mpwpb-sidebar-container').removeClass('open');
 					empty_category_service_form();
@@ -715,7 +715,7 @@
 	$(document).on('click', '.mpwpb-category-service-delete', function (e) {
 		e.preventDefault();
 		e.stopPropagation();
-		var itemId = $(this).closest('tr').data('id');
+		var itemId = $(this).closest('.service-category-item').data('id');
 		var isConfirmed = confirm('Are you sure you want to delete this row?');
 		if (isConfirmed) {
 			delete_category_service(itemId);
@@ -735,8 +735,8 @@
 				itemId:itemId,
 			},
 			success: function(response) {
-				$('.category-service-table tbody').html('');
-				$('.category-service-table tbody').append(response.data.html);
+				$('.category-service-lists').html('');
+				$('.category-service-lists').append(response.data.html);
 			},
 			error: function(error) {
 				console.log('Error:', error);
