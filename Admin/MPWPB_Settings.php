@@ -31,7 +31,7 @@
 									<i class="fas fa-tools pe-1"></i><?php esc_html_e('General Info', 'service-booking-manager'); ?>
 								</li>
 								<li  data-tabs-target="#mpwpb_settings_date_time">
-									<i class="far fa-clock pe-1"></i><?php esc_html_e('Date & Time', 'service-booking-manager'); ?>
+									<i class="fas fa-clock pe-1"></i><?php esc_html_e('Date & Time', 'service-booking-manager'); ?>
 								</li>
 								<li  data-tabs-target="#mpwpb_category_settings">
 									<i class="fas fa-layer-group pe-1"></i><?php esc_html_e('Service Category', 'service-booking-manager'); ?>

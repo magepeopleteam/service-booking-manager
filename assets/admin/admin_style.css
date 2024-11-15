@@ -386,7 +386,7 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   margin: 5px 0;
   margin-bottom: 30px;
 }
-.mpwpb-sidebar-container .mpwpb-sidebar-content input[type=text], .mpwpb-sidebar-container .mpwpb-sidebar-content input[type=number], .mpwpb-sidebar-container .mpwpb-sidebar-content textarea {
+.mpwpb-sidebar-container .mpwpb-sidebar-content input[type=text], .mpwpb-sidebar-container .mpwpb-sidebar-content input[type=number], .mpwpb-sidebar-container .mpwpb-sidebar-content textarea, .mpwpb-sidebar-container .mpwpb-sidebar-content select {
   width: 100%;
   display: block;
   font-weight: normal;

@@ -17,13 +17,13 @@
 				?>
 				<div class="tabsItem mpwpb_price_settings" data-tabs="#mpwpb_price_settings">
 					<header>
-							<h2><?php esc_html_e('Service Settings', 'service-booking-manager'); ?></h2>
+							<h2><?php esc_html_e('Price Settings', 'service-booking-manager'); ?></h2>
 							<span><?php esc_html_e('Price Settings', 'service-booking-manager'); ?></span>
                     </header>
 
 					<section class="section">
-							<h2><?php esc_html_e('Service Pricing', 'service-booking-manager'); ?></h2>
-							<span><?php esc_html_e('Service Pricing Settings', 'service-booking-manager'); ?></span>
+							<h2><?php esc_html_e('Pricing Settings', 'service-booking-manager'); ?></h2>
+							<span><?php esc_html_e('Pricing Settings', 'service-booking-manager'); ?></span>
                     </section>
 					<section>
 						<table class="table mpwpb-service-table mB">
