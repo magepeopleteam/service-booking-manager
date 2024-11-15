@@ -33,6 +33,9 @@
 								<li  data-tabs-target="#mpwpb_settings_date_time">
 									<i class="far fa-clock pe-1"></i><?php esc_html_e('Date & Time', 'service-booking-manager'); ?>
 								</li>
+								<li  data-tabs-target="#mpwpb_category_settings">
+									<i class="fas fa-layer-group pe-1"></i><?php esc_html_e('Service Category', 'service-booking-manager'); ?>
+								</li>
 								<li  data-tabs-target="#mpwpb_price_settings">
 									<i class="fas fa-hand-holding-usd pe-1"></i><?php esc_html_e('Service Pricing', 'service-booking-manager'); ?>
 								</li>
