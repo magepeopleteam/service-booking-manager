@@ -361,38 +361,51 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   margin: auto;
   margin-bottom: 20px;
 }
-.mpwpb-category-lists .mpwpb-category-items {
+.mpwpb-category-lists .mpwpb-category-items, .mpwpb-category-lists .mpwpb-sub-category-items {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: -1px;
   border: 1px solid var(--mage-light);
-  padding: 10px;
-  position: relative;
-  overflow: hidden;
+  padding: 5px;
+  min-height: 50px;
 }
-.mpwpb-category-lists .mpwpb-category-items .image-block {
-  position: absolute;
-  top: 0;
-  left: 0;
+.mpwpb-category-lists .mpwpb-category-items .image-block, .mpwpb-category-lists .mpwpb-sub-category-items .image-block {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 10px;
+}
+.mpwpb-category-lists .mpwpb-category-items .image-block img, .mpwpb-category-lists .mpwpb-sub-category-items .image-block img {
   width: 70px;
   height: 100%;
-  background-color: #ddd;
-}
-.mpwpb-category-lists .mpwpb-category-items .image-block img {
   object-fit: cover;
-  height: 100%;
   object-position: center;
+  border-radius: 0;
 }
-.mpwpb-category-lists .mpwpb-category-items .title {
-  margin-left: 75px;
+.mpwpb-category-lists .mpwpb-category-items .image-block i, .mpwpb-category-lists .mpwpb-sub-category-items .image-block i {
+  background-color: var(--mage-light);
+  font-size: 40px;
+  width: 70px;
+  height: 38px;
+  color: var(--mage-primary);
+  text-align: center;
+}
+.mpwpb-category-lists .mpwpb-category-items .title, .mpwpb-category-lists .mpwpb-sub-category-items .title {
+  text-transform: capitalize;
   font-weight: bold;
   font-size: 16px;
 }
-.mpwpb-category-lists .mpwpb-category-items .action i {
+.mpwpb-category-lists .mpwpb-category-items .action i, .mpwpb-category-lists .mpwpb-sub-category-items .action i {
   color: var(--mage-primary);
   padding: 7px 10px;
   cursor: pointer;
+}
+.mpwpb-category-lists .mpwpb-sub-category-items {
+  margin-left: 70px;
+}
+.mpwpb-category-lists .mpwpb-sub-category-items:last-child {
+  margin-bottom: 20px;
 }
 
 .mpwpb-faq .faq-header, #mp_meta_box_panel .metabox .tabsContent .faq-header {

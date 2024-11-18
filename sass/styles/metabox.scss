@@ -189,24 +189,31 @@
         align-items: center;
         margin-bottom: -1px;
         border: 1px solid var(--mage-light);
-        padding: 10px;
-        position: relative;
-        overflow: hidden;
+        padding: 5px;
+        min-height: 50px;
         .image-block{
-            position: absolute;
-            top:0;
-            left: 0;
-            width: 70px;
-            height: 100%;
-            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: start;
+            gap: 10px;
             img{
-                object-fit: cover;
+                width: 70px;
                 height: 100%;
+                object-fit: cover;
                 object-position: center;
+                border-radius: 0;
+            }
+            i{
+                background-color: var(--mage-light);
+                font-size: 40px;
+                width: 70px;
+                height: 38px;
+                color: var(--mage-primary);
+                text-align: center;
             }
         }
         .title{
-            margin-left: 75px;
+            text-transform: capitalize;
             font-weight: bold;
             font-size: 16px;
         }
@@ -218,6 +225,13 @@
             }
         }
 
+    }
+    .mpwpb-sub-category-items{
+        @extend .mpwpb-category-items;
+        margin-left: 70px;
+        &:last-child{
+            margin-bottom: 20px;
+        }
     }
 }
 
