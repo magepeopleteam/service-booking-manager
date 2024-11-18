@@ -161,7 +161,7 @@ if(!class_exists('MPWPB_Category')){
             $sub_categories = $this->get_sub_categories($post_id);
             foreach ($categories as $key => $value){
             ?>
-            <div class="category-items" data-id="<?php echo $key; ?>">
+            <div class="mpwpb-category-items" data-id="<?php echo $key; ?>">
                 <div class="image-block">
                     <?php  if(!empty($value['image'])): ?>
                             <img src="<?php echo esc_attr(wp_get_attachment_url($value['image'])); ?>" alt="" data-imageId="<?php echo $value['image']; ?>">

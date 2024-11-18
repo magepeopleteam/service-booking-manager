@@ -660,11 +660,11 @@
 		$('.mpwpb_category_service_save_button').hide();
 		$('.mpwpb_category_service_update_button').show();
 
-		var itemId = $(this).closest('.service-category-item').data('id');
-		var parent = $(this).closest('.service-category-item');
-		var icon = parent.find('.image-icon i').attr('class');
-		var imageId = parent.find('.image-icon img').attr('data-imageId');
-		var name = parent.find('.cat-name').text().trim();
+		var itemId = $(this).closest('.mpwpb-category-items').data('id');
+		var parent = $(this).closest('.mpwpb-category-items');
+		var icon = parent.find('.image-block i').attr('class');
+		var imageId = parent.find('.image-block img').attr('data-imageId');
+		var name = parent.find('.title').text().trim();
 
 		$('input[name="mpwpb_category_item_id"]').val(itemId);
 		if (icon) {
@@ -715,7 +715,7 @@
 	$(document).on('click', '.mpwpb-category-service-delete', function (e) {
 		e.preventDefault();
 		e.stopPropagation();
-		var itemId = $(this).closest('.service-category-item').data('id');
+		var itemId = $(this).closest('.mpwpb-category-items').data('id');
 		var isConfirmed = confirm('Are you sure you want to delete this row?');
 		if (isConfirmed) {
 			delete_category_service(itemId);
