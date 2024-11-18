@@ -644,8 +644,8 @@
 			success: function(response) {
 				console.log(response);
 				$('#mpwpb-category-service-msg').html(response.data.message);
-				$('.category-service-lists').html('');
-				$('.category-service-lists').append(response.data.html);
+				$('.mpwpb-category-lists').html('');
+				$('.mpwpb-category-lists').append(response.data.html);
 				empty_category_service_form();
 			},
 			error: function(error) {
@@ -699,8 +699,8 @@
 			},
 			success: function(response) {
 				$('#mpwpb-category-service-msg').html(response.data.message);
-				$('.category-service-lists').html('');
-				$('.category-service-lists').append(response.data.html);
+				$('.mpwpb-category-lists').html('');
+				$('.mpwpb-category-lists').append(response.data.html);
 				setTimeout(function(){
 					$('.mpwpb-sidebar-container').removeClass('open');
 					empty_category_service_form();
@@ -735,8 +735,8 @@
 				itemId:itemId,
 			},
 			success: function(response) {
-				$('.category-service-lists').html('');
-				$('.category-service-lists').append(response.data.html);
+				$('.mpwpb-category-lists').html('');
+				$('.mpwpb-category-lists').append(response.data.html);
 			},
 			error: function(error) {
 				console.log('Error:', error);
