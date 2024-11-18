@@ -197,17 +197,17 @@
             justify-content: start;
             gap: 10px;
             img{
-                width: 70px;
-                height: 100%;
+                width: 50px;
+                height: 38px;
                 object-fit: cover;
                 object-position: center;
                 border-radius: 0;
             }
             i{
                 background-color: var(--mage-light);
-                font-size: 40px;
-                width: 70px;
-                height: 38px;
+                font-size: 36px;
+                width: 50px;
+                height: 100%;
                 color: var(--mage-primary);
                 text-align: center;
             }

@@ -377,17 +377,17 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   gap: 10px;
 }
 .mpwpb-category-lists .mpwpb-category-items .image-block img, .mpwpb-category-lists .mpwpb-sub-category-items .image-block img {
-  width: 70px;
-  height: 100%;
+  width: 50px;
+  height: 38px;
   object-fit: cover;
   object-position: center;
   border-radius: 0;
 }
 .mpwpb-category-lists .mpwpb-category-items .image-block i, .mpwpb-category-lists .mpwpb-sub-category-items .image-block i {
   background-color: var(--mage-light);
-  font-size: 40px;
-  width: 70px;
-  height: 38px;
+  font-size: 36px;
+  width: 50px;
+  height: 100%;
   color: var(--mage-primary);
   text-align: center;
 }
