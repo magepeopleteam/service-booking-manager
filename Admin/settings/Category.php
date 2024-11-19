@@ -18,7 +18,7 @@ if(!class_exists('MPWPB_Category')){
             // save category service
             add_action('wp_ajax_mpwpb_save_category_service', [ $this,'save_category_service']);
             add_action('wp_ajax_nopriv_mpwpb_save_category_service', [ $this,'save_category_service']);
-            
+
             // mpwpb update category service
             add_action('wp_ajax_mpwpb_update_category_service', [$this, 'update_category_service']);
             add_action('wp_ajax_nopriv_mpwpb_update_category_service', [$this, 'update_category_service']);
@@ -27,9 +27,16 @@ if(!class_exists('MPWPB_Category')){
             add_action('wp_ajax_mpwpb_category_service_delete_item', [$this, 'delete_category_service']);
             add_action('wp_ajax_nopriv_mpwpb_category_service_delete_item', [$this, 'delete_category_service']);
             
+            // Load sub category by ajax
+            add_action('wp_ajax_mpwpb_load_parent_category', [ $this,'load_parent_category']);
+            add_action('wp_ajax_nopriv_mpwpb_load_parent_category', [ $this,'load_parent_category']);
+            
         }
 
         public function category_settings_section($post_id){
+            $use_sub_category = MP_Global_Function::get_post_info($post_id, 'mpwpb_use_sub_category', 'off');
+            $active_class = $use_sub_category == 'on' ? 'mActive' : '';
+            $sub_category_checked = $use_sub_category == 'on' ? 'checked' : '';
             ?>
             <div class="tabsItem mpwpb_category_settings" data-tabs="#mpwpb_category_settings">
                 <header>
@@ -60,7 +67,16 @@ if(!class_exists('MPWPB_Category')){
                                 <?php _e('Category Name','service-booking-manager'); ?>
                                 <input type="text"   name="mpwpb_category_service_name"> 
                             </label>
-                            <?php $this->enable_sub_category($post_id); ?>
+                            <div class="mpwpb-sub-category-enable" style="display: none;">
+                                <label><?php _e('Use As Sub Category','service-booking-manager'); ?></label>
+                                <?php MP_Custom_Layout::switch_button('mpwpb_use_sub_category', $sub_category_checked); ?>
+                                <div class="<?php echo $active_class; ?>" data-collapse="#mpwpb_use_sub_category">
+                                    <label><?php _e('Select Parent Category','service-booking-manager'); ?> </label>
+                                    <div class="mpwpb-parent-category">
+                                        <?php $this->show_parent_category_lists($post_id); ?>
+                                    </div>
+                                </div>
+                            </div>
                             <label>
                                 <?php _e('Category Image/Icon','service-booking-manager'); ?> 
                             </label>
@@ -96,25 +112,37 @@ if(!class_exists('MPWPB_Category')){
         }
 
         public function enable_sub_category($post_id){
-            $use_sub_category = MP_Global_Function::get_post_info($post_id, 'mpwpb_use_sub_category', 'off');
-            $active_class = $use_sub_category == 'on' ? 'mActive' : '';
-            $sub_category_checked = $use_sub_category == 'on' ? 'checked' : '';
-            $categories = $this->get_categories($post_id);
+            
             ?>
-            <div class="mpwpb-sub-category-enable" style="display: none;">
-                <label><?php _e('Use As Sub Category','service-booking-manager'); ?></label>
-                <?php MP_Custom_Layout::switch_button('mpwpb_use_sub_category', $sub_category_checked); ?>
-                <div class="<?php echo $active_class; ?>" data-collapse="#mpwpb_use_sub_category">
-                    <label><?php _e('Select Parent Category','service-booking-manager'); ?> </label>
-                    <select name="mpwpb_parent_cat">
-                        <?php foreach($categories as $key => $category): ?>
-                        <option value="<?php echo $key; ?>"><?php echo $category['name']; ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-            </div>
+            
             <?php
         }
+
+        public function load_parent_category(){
+            $post_id = $_POST['postID'];
+            ob_start();
+            $resultMessage = __('Data Updated Successfully', 'service-booking-manager');
+            $this->show_parent_category_lists($post_id);
+            $html_output = ob_get_clean();
+            wp_send_json_success([
+                'message' => $resultMessage,
+                'html' => $html_output,
+            ]);
+            die;
+        }
+
+        public function show_parent_category_lists($post_id){
+            $categories = $this->get_categories($post_id);
+            ?>
+            <select name="mpwpb_parent_cat">
+                <?php foreach($categories as $key => $category): 
+                    ?>
+                    <option value="<?php echo $key; ?>"><?php echo $category['name']; ?></option>
+                <?php endforeach; ?>
+            </select>
+            <?php
+        }
+        
 
         public function set_category_service($post_id){
             $service_category = get_post_meta($post_id, 'mpwpb_category_service', true);

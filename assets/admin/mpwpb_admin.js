@@ -609,18 +609,17 @@
 		$('#mpwpb-category-service-msg').html('');
 		$('.mpwpb_category_service_save_button').show();
 		$('.mpwpb_category_service_update_button').hide();
-		
 		if($('.mpwpb-category-items').length > 0){
 			$('.mpwpb-sub-category-enable').show();
 		}
 		else{
 			$('.mpwpb-sub-category-enable').hide();
 		}
-
 		empty_category_service_form();
 	});
 
 	$('input[name="mpwpb_use_sub_category"]').on('change', function() {
+		mpwpb_load_parent_category();
         if ($(this).is(':checked')) {
 			$('input[name="mpwpb_use_sub_category"]').val('on');
         } else {
@@ -631,12 +630,30 @@
 	function empty_category_service_form(){
 		$('input[name="mpwpb_category_service_name"]').val('');
 		$('input[name="mpwpb_category_image_icon"]').val('');
-
+		mpwpb_load_parent_category();
 		if ($('input[name="mpwpb_use_sub_category"]').is(':checked')) {
 			$('input[name="mpwpb_use_sub_category"]').val('on');
         } else {
 			$('input[name="mpwpb_use_sub_category"]').val('off');
         }
+	}
+
+	function mpwpb_load_parent_category(){
+		$.ajax({
+			url:mp_ajax_url,
+			type:'POST',
+			data:{
+				action:'mpwpb_load_parent_category',
+				postID:$('input[name="mpwpb_category_post_id"]').val(),
+			},
+			success:function(response){
+				$('.mpwpb-parent-category').html('');
+				$('.mpwpb-parent-category').append(response.data.html);
+			},
+			error:function(error){
+				console.log('Error:', error);
+			}
+		});
 	}
 
 	$(document).on('click', '#mpwpb_category_service_save', function (e) {
@@ -668,7 +685,6 @@
 				category_postID:postID.val(),
 			},
 			success: function(response) {
-				console.log(response);
 				$('#mpwpb-category-service-msg').html(response.data.message);
 				$('.mpwpb-category-lists').html('');
 				$('.mpwpb-category-lists').append(response.data.html);
