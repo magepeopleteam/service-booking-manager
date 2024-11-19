@@ -111,13 +111,6 @@ if(!class_exists('MPWPB_Category')){
             <?php
         }
 
-        public function enable_sub_category($post_id){
-            
-            ?>
-            
-            <?php
-        }
-
         public function load_parent_category(){
             $post_id = $_POST['postID'];
             ob_start();
@@ -224,8 +217,8 @@ if(!class_exists('MPWPB_Category')){
                                 <div class="title"><?php echo $sub_category['name']; ?></div>
                             </div>
                             <div class="action">
-                                <span class="mpwpb-category-service-edit"><i class="fas fa-edit"></i></span>
-                                <span class="mpwpb-category-service-delete"><i class="fas fa-trash"></i></span>
+                                <span class="mpwpb-sub-category-service-edit"><i class="fas fa-edit"></i></span>
+                                <span class="mpwpb-sub-category-service-delete"><i class="fas fa-trash"></i></span>
                             </div>
                         </div>
                     <?php endif; ?>

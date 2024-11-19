@@ -609,12 +609,7 @@
 		$('#mpwpb-category-service-msg').html('');
 		$('.mpwpb_category_service_save_button').show();
 		$('.mpwpb_category_service_update_button').hide();
-		if($('.mpwpb-category-items').length > 0){
-			$('.mpwpb-sub-category-enable').show();
-		}
-		else{
-			$('.mpwpb-sub-category-enable').hide();
-		}
+		
 		empty_category_service_form();
 	});
 
@@ -631,6 +626,17 @@
 		$('input[name="mpwpb_category_service_name"]').val('');
 		$('input[name="mpwpb_category_image_icon"]').val('');
 		mpwpb_load_parent_category();
+		mpwpb_show_sub_category_section();
+	}
+
+	function  mpwpb_show_sub_category_section(){
+		if($('.mpwpb-category-items').length > 0){
+			$('.mpwpb-sub-category-enable').show();
+		}
+		else{
+			$('.mpwpb-sub-category-enable').hide();
+		}
+
 		if ($('input[name="mpwpb_use_sub_category"]').is(':checked')) {
 			$('input[name="mpwpb_use_sub_category"]').val('on');
         } else {
@@ -698,6 +704,8 @@
 
 	$(document).on('click', '.mpwpb-category-service-edit', function (e) {
 		open_sidebar_modal(e);
+
+		$('.mpwpb-sub-category-enable').hide();
 		$('#mpwpb-category-service-msg').html('');
 		$('.mpwpb_category_service_save_button').hide();
 		$('.mpwpb_category_service_update_button').show();
@@ -753,6 +761,35 @@
 			}
 		});
 	}
+
+	$(document).on('click', '.mpwpb-sub-category-service-edit', function (e) {
+		open_sidebar_modal(e);
+		mpwpb_show_sub_category_section();
+		$('input[name="mpwpb_use_sub_category"]').val('off');
+		$('input[name="mpwpb_use_sub_category"]').siblings('.roundSwitch').trigger('click');
+
+		$('#mpwpb-category-service-msg').html('');
+		$('.mpwpb_category_service_save_button').hide();
+		$('.mpwpb_category_service_update_button').show();
+
+		var itemId = $(this).closest('.mpwpb-sub-category-items').data('id');
+		var parentId = $(this).closest('.mpwpb-sub-category-items').data('parent-id');
+		var parent = $(this).closest('.mpwpb-sub-category-items');
+		console.log(parentId);
+		console.log(itemId);
+
+		var icon = parent.find('.image-block i').attr('class');
+		var imageId = parent.find('.image-block img').attr('data-imageId');
+		var name = parent.find('.title').text().trim();
+
+		$('input[name="mpwpb_category_item_id"]').val(itemId);
+		if (icon) {
+			$('input[name="mpwpb_category_image_icon"]').val(icon);
+		} else if (imageId) {
+			$('input[name="mpwpb_category_image_icon"]').val(imageId);
+		}
+		$('input[name="mpwpb_category_service_name"]').val(name);
+	});
 
 	$(document).on('click', '.mpwpb-category-service-delete', function (e) {
 		e.preventDefault();
