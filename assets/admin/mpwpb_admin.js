@@ -764,10 +764,10 @@
 
 	$(document).on('click', '.mpwpb-sub-category-service-edit', function (e) {
 		open_sidebar_modal(e);
-		mpwpb_show_sub_category_section();
-		$('input[name="mpwpb_use_sub_category"]').val('off');
-		$('input[name="mpwpb_use_sub_category"]').siblings('.roundSwitch').trigger('click');
-
+		$('.mpwpb-sub-category-enable').show();
+		$('input[name="mpwpb_use_sub_category"]').val('on');
+		$('input[name="mpwpb_use_sub_category"]').prop('checked', true);
+		$('[data-collapse="#mpwpb_use_sub_category"]').show();
 		$('#mpwpb-category-service-msg').html('');
 		$('.mpwpb_category_service_save_button').hide();
 		$('.mpwpb_category_service_update_button').show();
@@ -775,8 +775,6 @@
 		var itemId = $(this).closest('.mpwpb-sub-category-items').data('id');
 		var parentId = $(this).closest('.mpwpb-sub-category-items').data('parent-id');
 		var parent = $(this).closest('.mpwpb-sub-category-items');
-		console.log(parentId);
-		console.log(itemId);
 
 		var icon = parent.find('.image-block i').attr('class');
 		var imageId = parent.find('.image-block img').attr('data-imageId');
@@ -789,6 +787,8 @@
 			$('input[name="mpwpb_category_image_icon"]').val(imageId);
 		}
 		$('input[name="mpwpb_category_service_name"]').val(name);
+
+
 	});
 
 	$(document).on('click', '.mpwpb-category-service-delete', function (e) {
