@@ -779,6 +779,7 @@
 		var icon = parent.find('.image-block i').attr('class');
 		var imageId = parent.find('.image-block img').attr('data-imageId');
 		var name = parent.find('.title').text().trim();
+		$('select[name="mpwpb_parent_cat"]').val(parentId).change();
 
 		$('input[name="mpwpb_category_item_id"]').val(itemId);
 		if (icon) {
@@ -787,8 +788,6 @@
 			$('input[name="mpwpb_category_image_icon"]').val(imageId);
 		}
 		$('input[name="mpwpb_category_service_name"]').val(name);
-
-
 	});
 
 	$(document).on('click', '.mpwpb-category-service-delete', function (e) {
