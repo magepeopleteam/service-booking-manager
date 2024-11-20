@@ -23,6 +23,10 @@ if(!class_exists('MPWPB_Category')){
             add_action('wp_ajax_mpwpb_update_category_service', [$this, 'update_category_service']);
             add_action('wp_ajax_nopriv_mpwpb_update_category_service', [$this, 'update_category_service']);
             
+            // mpwpb update sub category service
+            add_action('wp_ajax_mpwpb_update_sub_category_service', [$this, 'update_sub_category_service']);
+            add_action('wp_ajax_nopriv_mpwpb_update_sub_category_service', [$this, 'update_sub_category_service']);
+            
             // mpwpb delete category service
             add_action('wp_ajax_mpwpb_category_service_delete_item', [$this, 'delete_category_service']);
             add_action('wp_ajax_nopriv_mpwpb_category_service_delete_item', [$this, 'delete_category_service']);
@@ -63,6 +67,7 @@ if(!class_exists('MPWPB_Category')){
                             
                             <input type="hidden" name="mpwpb_category_post_id" value="<?php echo $post_id; ?>"> 
                             <input type="hidden" name="mpwpb_category_item_id" value="">
+                            <input type="hidden" name="mpwpb_parent_item_id" value="">
                             <label>
                                 <?php _e('Category Name','service-booking-manager'); ?>
                                 <input type="text"   name="mpwpb_category_service_name"> 
@@ -289,6 +294,44 @@ if(!class_exists('MPWPB_Category')){
             die;
         }
 
+        public function update_sub_category_service() {
+            $post_id = $_POST['category_postID'];
+            $sub_categories = $this->get_sub_categories($post_id);
+            $iconClass = '';
+            $imageID = '';
+            if(isset($_POST['category_image_icon'])){
+                if(is_numeric($_POST['category_image_icon'])){
+                    $imageID = sanitize_text_field($_POST['category_image_icon']);
+                    $iconClass ='';
+                }
+                else{
+                    $iconClass = sanitize_text_field($_POST['category_image_icon']);
+                    $imageID = '';
+                }
+            }
+            $new_data = [ 
+                'name'=> sanitize_text_field($_POST['category_name']), 
+                'icon'=> $iconClass,
+                'image'=> $imageID,
+                'cat_id'=> $_POST['category_parentId'],
+            ];
+
+            if( ! empty($sub_categories)){
+                if(isset($_POST['category_itemId'])){
+                    $sub_categories[$_POST['category_itemId']]=$new_data;
+                }
+            }
+            update_post_meta($post_id, 'mpwpb_sub_category_service', $sub_categories);
+            ob_start();
+            $resultMessage = __('Data Updated Successfully', 'mptbm_plugin_pro');
+            $this->show_category_items($post_id);
+            $html_output = ob_get_clean();
+            wp_send_json_success([
+                'message' => $resultMessage,
+                'html' => $html_output,
+            ]);
+            die;
+        }
         public function update_category_service() {
             $post_id = $_POST['category_postID'];
             $categories = $this->get_categories($post_id);

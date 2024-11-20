@@ -622,9 +622,16 @@
         }
     });
 
+	$('select[name="mpwpb_parent_cat"]').on('change', function() {
+		console.log($(this).val());
+		$('input[name="mpwpb_parent_item_id"]').val($(this).val()); 
+    });
+
 	function empty_category_service_form(){
 		$('input[name="mpwpb_category_service_name"]').val('');
 		$('input[name="mpwpb_category_image_icon"]').val('');
+		$('input[name="mpwpb_category_item_id"]').val('');
+		$('input[name="mpwpb_parent_item_id"]').val('');
 		mpwpb_load_parent_category();
 		mpwpb_show_sub_category_section();
 	}
@@ -727,8 +734,49 @@
 
 	$(document).on('click', '#mpwpb_category_service_update', function (e) {
 		e.preventDefault();
-		update_category_service();
+		var use_sub_category = $('input[name="mpwpb_use_sub_category"]').val();
+		if(use_sub_category=='on'){
+			update_sub_category_service();
+		}
+		else{
+			update_category_service();
+		}
 	});
+
+	function update_sub_category_service(){
+		var postID  = $('input[name="mpwpb_category_post_id"]');
+		var itemId = $('input[name="mpwpb_category_item_id"]');
+		var parentId = $('input[name="mpwpb_parent_item_id"]');
+		var category_image_icon = $('input[name="mpwpb_category_image_icon"]');
+		var category_name = $('input[name="mpwpb_category_service_name"]');
+
+
+		$.ajax({
+			url: mp_ajax_url,
+			type: 'POST',
+			data: {
+				action: 'mpwpb_update_sub_category_service',
+				category_image_icon:category_image_icon.val(),
+				category_name:category_name.val(),
+				category_postID:postID.val(),
+				category_itemId:itemId.val(),
+				category_parentId:parentId.val(),
+			},
+			success: function(response) {
+				console.log(response);
+				$('#mpwpb-category-service-msg').html(response.data.message);
+				$('.mpwpb-category-lists').html('');
+				$('.mpwpb-category-lists').append(response.data.html);
+				setTimeout(function(){
+					$('.mpwpb-sidebar-container').removeClass('open');
+					empty_category_service_form();
+				},1000);
+			},
+			error: function(error) {
+				console.log('Error:', error);
+			}
+		});
+	}
 
 	function update_category_service(){
 
@@ -780,6 +828,7 @@
 		var imageId = parent.find('.image-block img').attr('data-imageId');
 		var name = parent.find('.title').text().trim();
 		$('select[name="mpwpb_parent_cat"]').val(parentId).change();
+		$('input[name="mpwpb_parent_item_id"]').val(parentId);
 
 		$('input[name="mpwpb_category_item_id"]').val(itemId);
 		if (icon) {
@@ -788,6 +837,7 @@
 			$('input[name="mpwpb_category_image_icon"]').val(imageId);
 		}
 		$('input[name="mpwpb_category_service_name"]').val(name);
+
 	});
 
 	$(document).on('click', '.mpwpb-category-service-delete', function (e) {
@@ -821,6 +871,5 @@
 			}
 		});
 	}
-
 })(jQuery);
 
