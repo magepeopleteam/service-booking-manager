@@ -11,6 +11,12 @@
 			public function __construct() {
 				add_action('add_mpwpb_settings_tab_content', [$this, 'price_settings'], 10, 1);
 				//add_action('mpwpb_settings_save', [$this, 'save_price_settings'], 10, 1);
+				//save service
+				add_action('wp_ajax_mpwpb_save_service', [$this, 'save_service']);
+				add_action('wp_ajax_nopriv_mpwpb_save_service', [$this, 'save_service']);
+				// delete service
+				add_action('wp_ajax_mpwpb_service_delete_item',[$this,'delete_service']);
+				add_action('wp_ajax_nopriv_mpwpb_service_delete_item',[$this,'delete_service']);
 			}
 
 			public function price_settings($post_id) {
@@ -42,10 +48,136 @@
 								<?php $this->show_service_items($post_id); ?>
 							</tbody>
 						</table>
-						<button class="button mpwpb-category-service-new" type="button"><?php _e('Add Service Category','service-booking-manager'); ?></button>
+						<button class="button mpwpb-service-new" type="button"><?php _e('Add Service Category','service-booking-manager'); ?></button>
 					</section>
+					<!-- sidebar collapse open -->
+					<div class="mpwpb-sidebar-container">
+						<div class="mpwpb-sidebar-content">
+							<h3><?php _e('Add Service','service-booking-manager'); ?></h3>
+							<span class="mpwpb-sidebar-close"><i class="fas fa-times"></i></span>
+							<div class="mpwpb-service-form">
+								<div id="mpwpb-service-msg"></div>
+								<input type="hidden" name="mpwpb_post_id" value="<?php echo $post_id; ?>"> 
+								<input type="hidden" name="service_item_id" value="">
+								<label>
+									<?php _e('Service Name','service-booking-manager'); ?>
+									<input type="text"   name="service_name"> 
+								</label>
+
+								<label>
+									<?php _e('Price','service-booking-manager'); ?>
+									<input type="number"   name="service_price"> 
+								</label>
+
+								<label>
+									<?php _e('Duration','service-booking-manager'); ?>
+									<input type="number"   name="service_duraton"> 
+								</label>
+
+								<label>
+									<?php _e('Description','service-booking-manager'); ?>
+									<textarea name="service_description" rows="5"></textarea> 
+								</label>
+
+								<label>
+									<?php _e('Image/Icon','service-booking-manager'); ?>
+								</label>
+								<div class="mp_add_icon_image_area">
+									<input type="hidden" name="service_image_icon" value="">
+									<div class="mp_icon_item dNone">
+										<span class="" data-add-icon=""></span>
+										<span class="fas fa-times mp_remove_icon mp_icon_remove"></span>
+									</div>
+									<div class="mp_image_item dNone">
+										<img class="" src="" alt="">
+										<span class="fas fa-times mp_remove_icon mp_image_remove"></span>
+									</div>
+									<div class="mp_add_icon_image_button_area ">
+										<button class="mp_image_add" type="button">
+											<span class="fas fa-images"></span>Image</button>
+										<button class="mp_icon_add" type="button" data-target-popup="#mp_add_icon_popup">
+											<span class="fas fa-plus"></span>Icon</button>
+									</div>
+								</div>
+
+								<div class="mpwpb_service_save_button">
+									<p><button id="mpwpb_service_save" class="button button-primary button-large"><?php _e('Save','service-booking-manager'); ?></button> <button id="mpwpb_service_save_close" class="button button-primary button-large">save close</button><p>
+								</div>
+								<div class="mpwpb_service_update_button" style="display: none;">
+									<p><button id="mpwpb_service_update" class="button button-primary button-large"><?php _e('Update and Close','service-booking-manager'); ?></button><p>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 				<?php
+			}
+
+			public function save_service(){
+				$post_id = $_POST['service_postID'];
+				$services = $this->get_services($post_id);
+				$iconClass = '';
+				$imageID = '';
+				if(isset($_POST['service_image_icon'])){
+					if(is_numeric($_POST['service_image_icon'])){
+						$imageID = sanitize_text_field($_POST['service_image_icon']);
+						$iconClass ='';
+					}
+					else{
+						$iconClass = sanitize_text_field($_POST['service_image_icon']);
+						$imageID = '';
+					}
+				}
+
+				$new_data = [ 
+					'name'=> sanitize_text_field($_POST['service_name']), 
+					'price'=> sanitize_text_field($_POST['service_price']),
+					'duration'=> sanitize_text_field($_POST['service_duration']),
+					'details'=> sanitize_text_field($_POST['service_description']),
+					'icon'=> $iconClass,
+					'image'=> $imageID,
+				];
+				array_push($services,$new_data);
+				update_post_meta($post_id, 'mpwpb_service', $services);
+				ob_start();
+				$resultMessage = __('Data Updated Successfully', 'mptbm_plugin_pro');
+				$this->show_service_items($post_id);
+				$html_output = ob_get_clean();
+				wp_send_json_success([
+					'message' => $resultMessage,
+					'html' => $html_output,
+				]);
+				die;
+			}
+
+			public function delete_service(){
+				$post_id = $_POST['service_postID'];
+				$services = $this->get_services($post_id);
+				
+				if( ! empty($services)){
+					if(isset($_POST['itemId'])){
+						unset($services[$_POST['itemId']]);
+						$services = array_values($services);
+					}
+				}
+				$result = update_post_meta($post_id, 'mpwpb_service', $services);
+				if($result){
+					ob_start();
+					$resultMessage = __('Data Deleted Successfully', 'mptbm_plugin_pro');
+					$this->show_service_items($post_id);
+					$html_output = ob_get_clean();
+					wp_send_json_success([
+						'message' => $resultMessage,
+						'html' => $html_output,
+					]);
+				}
+				else{
+					wp_send_json_success([
+						'message' => 'Data not deleted',
+						'html' => '',
+					]);
+				}
+				die;
 			}
 
 			public function get_services($post_id){
@@ -82,8 +214,8 @@
 					<td><?php echo $value['price']; ?></td>
 					<td><?php echo $value['duration']; ?></td>
 					<td>
-						<span class="mpwpb-category-service-edit"><i class="fas fa-edit"></i></span>
-						<span class="mpwpb-category-service-delete"><i class="fas fa-trash"></i></span>
+						<span class="mpwpb-service-edit"><i class="fas fa-edit"></i></span>
+						<span class="mpwpb-service-delete"><i class="fas fa-trash"></i></span>
 					</td>
 				</tr>
 			<?php
