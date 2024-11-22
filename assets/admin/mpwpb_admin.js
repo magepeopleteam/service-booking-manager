@@ -496,6 +496,34 @@
 			}
 		});
 	}
+	
+	$(document).on('click', '.mpwpb-service-edit', function (e) {
+		open_sidebar_modal(e);
+		$('#mpwpb-service-msg').html('');
+		$('.mpwpb_service_save_button').hide();
+		$('.mpwpb_service_update_button').show();
+
+		var itemId = $(this).closest('tr').data('id');
+		var parent = $(this).closest('tr');
+		var icon = parent.find('td:nth-child(1) i').attr('class');
+		var imageId = parent.find('td:nth-child(1) img').attr('data-imageId');
+		var name = parent.find('td:nth-child(2)').text().trim();
+		var details = parent.find('td:nth-child(3)').text().trim();
+		var duratoin = parent.find('td:nth-child(4)').text().trim();
+		var price = parent.find('td:nth-child(5)').text().trim();
+		var price = parent.find('td:nth-child(5)').text().trim();
+		
+		$('input[name="service_item_id"]').val(itemId);
+		if (icon) {
+			$('input[name="service_image_icon"]').val(icon);
+		} else if (imageId) {
+			$('input[name="service_image_icon"]').val(imageId);
+		}
+		$('input[name="service_name"]').val(name);
+		$('input[name="service_price"]').val(price);
+		$('input[name="service_duratoin"]').val(duratoin);
+		$('textarea[name="service_description"]').val(details);
+	});
 
 	$(document).on('click', '.mpwpb-service-delete', function (e) {
 		e.preventDefault();
@@ -523,6 +551,51 @@
 				console.log(response);
 				$('.mpwpb-service-table tbody').html('');
 				$('.mpwpb-service-table tbody').append(response.data.html);
+			},
+			error: function(error) {
+				console.log('Error:', error);
+			}
+		});
+	}
+
+	$(document).on('click', '#mpwpb_service_update', function (e) {
+		e.preventDefault();
+		update_service();
+	});
+
+	function update_service(){
+
+		var postID  = $('input[name="mpwpb_post_id"]');
+		var itemId = $('input[name="service_item_id"]');
+		var service_image_icon = $('input[name="service_image_icon"]');
+		var service_name = $('input[name="service_name"]');
+		var service_price = $('input[name="service_price"]');
+		var service_duration = $('input[name="service_duration"]');
+		var service_description = $('textarea[name="service_description"]');
+
+		$.ajax({
+			url: mp_ajax_url,
+			type: 'POST',
+			data: {
+				action: 'mpwpb_service_update',
+				service_image_icon:service_image_icon.val(),
+				service_name:service_name.val(),
+				service_price:service_price.val(),
+				service_duration:service_duration.val(),
+				service_description:service_description.val(),
+				service_postID:postID.val(),
+				service_itemId:itemId.val(),
+			},
+			success: function(response) {
+				console.log(response);
+				$('#mpwpb-service-msg').html(response.data.message);
+				$('.mpwpb-service-table tbody').html('');
+				$('.mpwpb-service-table tbody').append(response.data.html);
+				setTimeout(function(){
+					$('.mpwpb-sidebar-container').removeClass('open');
+					empty_service_form();
+				},1000);
+				
 			},
 			error: function(error) {
 				console.log('Error:', error);
@@ -636,7 +709,6 @@
 		var price = parent.find('td:nth-child(5)').text().trim();
 		var price = parent.find('td:nth-child(5)').text().trim();
 		
-		console.log(icon);
 		$('input[name="service_item_id"]').val(itemId);
 		if (icon) {
 			$('input[name="service_image_icon"]').val(icon);

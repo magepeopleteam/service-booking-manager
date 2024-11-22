@@ -14,6 +14,9 @@
 				//save service
 				add_action('wp_ajax_mpwpb_save_service', [$this, 'save_service']);
 				add_action('wp_ajax_nopriv_mpwpb_save_service', [$this, 'save_service']);
+				//update service
+				add_action('wp_ajax_mpwpb_service_update', [$this, 'update_service']);
+				add_action('wp_ajax_nopriv_mpwpb_service_update', [$this, 'update_service']);
 				// delete service
 				add_action('wp_ajax_mpwpb_service_delete_item',[$this,'delete_service']);
 				add_action('wp_ajax_nopriv_mpwpb_service_delete_item',[$this,'delete_service']);
@@ -113,6 +116,47 @@
 				<?php
 			}
 
+			public function update_service(){
+				$post_id = $_POST['service_postID'];
+				$services = $this->get_services($post_id);
+				$iconClass = '';
+				$imageID = '';
+				if(isset($_POST['service_image_icon'])){
+					if(is_numeric($_POST['service_image_icon'])){
+						$imageID = sanitize_text_field($_POST['service_image_icon']);
+						$iconClass ='';
+					}
+					else{
+						$iconClass = sanitize_text_field($_POST['service_image_icon']);
+						$imageID = '';
+					}
+				}
+
+				$new_data = [ 
+					'name'=> sanitize_text_field($_POST['service_name']), 
+					'price'=> sanitize_text_field($_POST['service_price']),
+					'duration'=> sanitize_text_field($_POST['service_duration']),
+					'details'=> sanitize_text_field($_POST['service_description']),
+					'icon'=> $iconClass,
+					'image'=> $imageID,
+				];
+
+				if( ! empty($services)){
+					if(isset($_POST['service_itemId'])){
+						$services[$_POST['service_itemId']]=$new_data;
+					}
+				}
+				update_post_meta($post_id, 'mpwpb_service', $services);
+				ob_start();
+				$resultMessage = __('Data Updated Successfully', 'mptbm_plugin_pro');
+				$this->show_service_items($post_id);
+				$html_output = ob_get_clean();
+				wp_send_json_success([
+					'message' => $resultMessage,
+					'html' => $html_output,
+				]);
+				die;
+			}
 			public function save_service(){
 				$post_id = $_POST['service_postID'];
 				$services = $this->get_services($post_id);
