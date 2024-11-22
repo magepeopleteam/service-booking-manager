@@ -452,7 +452,7 @@
 	function empty_service_form(){
 		$('input[name="service_name"]').val('');
 		$('input[name="service_price"]').val('');
-		$('input[name="service_duraton"]').val('');
+		$('input[name="service_duration"]').val('');
 		$('textarea[name="service_description"]').val('');
 		$('textarea[name="service_image_icon"]').val('');
 	}
@@ -509,9 +509,9 @@
 		var imageId = parent.find('td:nth-child(1) img').attr('data-imageId');
 		var name = parent.find('td:nth-child(2)').text().trim();
 		var details = parent.find('td:nth-child(3)').text().trim();
-		var duratoin = parent.find('td:nth-child(4)').text().trim();
+		var category = parent.find('td:nth-child(4)').text().trim();
 		var price = parent.find('td:nth-child(5)').text().trim();
-		var price = parent.find('td:nth-child(5)').text().trim();
+		var duratoin = parent.find('td:nth-child(6)').text().trim();
 		
 		$('input[name="service_item_id"]').val(itemId);
 		if (icon) {
@@ -521,7 +521,7 @@
 		}
 		$('input[name="service_name"]').val(name);
 		$('input[name="service_price"]').val(price);
-		$('input[name="service_duratoin"]').val(duratoin);
+		$('input[name="service_duration"]').val(duratoin);
 		$('textarea[name="service_description"]').val(details);
 	});
 

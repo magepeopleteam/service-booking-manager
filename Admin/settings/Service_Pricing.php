@@ -74,7 +74,7 @@
 
 								<label>
 									<?php _e('Duration','service-booking-manager'); ?>
-									<input type="number"   name="service_duraton"> 
+									<input type="number"   name="service_duration"> 
 								</label>
 
 								<label>
