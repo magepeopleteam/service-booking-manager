@@ -23,6 +23,9 @@
 			}
 
 			public function price_settings($post_id) {
+				$show_category_status = MP_Global_Function::get_post_info($post_id, 'mpwpb_show_category_status', 'off');
+				$active_class = $show_category_status == 'on' ? 'mActive' : '';
+				$show_category_status = $show_category_status == 'on' ? 'checked' : '';
 				?>
 				<div class="tabsItem mpwpb_price_settings" data-tabs="#mpwpb_price_settings">
 					<header>
@@ -62,6 +65,24 @@
 								<div id="mpwpb-service-msg"></div>
 								<input type="hidden" name="mpwpb_post_id" value="<?php echo $post_id; ?>"> 
 								<input type="hidden" name="service_item_id" value="">
+
+								<label><?php _e('Use Category','service-booking-manager'); ?></label>
+                                
+								<?php MP_Custom_Layout::switch_button('mpwpb_show_category_status', $show_category_status); ?>
+								<div class="<?php echo $active_class ?>" data-collapse="#mpwpb_show_category_status">
+									<div class="mpwpb-parent-category">
+										<label><?php _e('Select Category','service-booking-manager'); ?> </label>
+										<?php
+										$MPWPB_Service_Category = new MPWPB_Service_Category();
+										$MPWPB_Service_Category->show_parent_category_lists($post_id); ?>
+									</div>
+									<div class="mpwpb-parent-category">
+										<label><?php _e('Select Category','service-booking-manager'); ?> </label>
+										<?php
+										$MPWPB_Service_Category->show_sub_category_lists($post_id); ?>
+									</div>
+								</div>
+
 								<label>
 									<?php _e('Service Name','service-booking-manager'); ?>
 									<input type="text"   name="service_name"> 

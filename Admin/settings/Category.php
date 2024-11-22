@@ -140,6 +140,19 @@ if(!class_exists('MPWPB_Category')){
             </select>
             <?php
         }
+
+
+        public function show_sub_category_lists($post_id){
+            $sub_categories = $this->get_sub_categories($post_id);
+            ?>
+            <select name="mpwpb_sub_category">
+                <?php foreach($sub_categories as $key => $category): 
+                    ?>
+                    <option value="<?php echo $key; ?>"><?php echo $category['name']; ?></option>
+                <?php endforeach; ?>
+            </select>
+            <?php
+        }
         
 
         public function set_category_service($post_id){
