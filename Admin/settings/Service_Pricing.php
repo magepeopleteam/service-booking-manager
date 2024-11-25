@@ -72,7 +72,7 @@
 
 								<label><?php _e('Use Category','service-booking-manager'); ?></label>
 								<?php MP_Custom_Layout::switch_button('mpwpb_show_category_status', $show_category_status); ?>
-								<div class="<?php echo $active_class ?>" data-collapse="#mpwpb_show_category_status">
+								<div class="<?php echo $active_class ?>" data-collapse="#mpwpb_show_category_status" style="display:none;">
 									<div class="mpwpb-parent-category">
 										<label><?php _e('Select Category','service-booking-manager'); ?> </label>
 										<?php
@@ -155,6 +155,12 @@
 						$imageID = '';
 					}
 				}
+				$parent_cat ='';
+				$sub_cat ='';
+				if($_POST['service_category_status']=='on'){
+					$parent_cat = $_POST['service_parent_cat'];
+					$sub_cat = $_POST['service_sub_cat'];
+				}
 
 				$new_data = [ 
 					'name'=> sanitize_text_field($_POST['service_name']), 
@@ -163,6 +169,9 @@
 					'details'=> sanitize_text_field($_POST['service_description']),
 					'icon'=> $iconClass,
 					'image'=> $imageID,
+					'show_cat_status'=> $_POST['service_category_status'],
+					'parent_cat'=> $parent_cat,
+					'sub_cat'=> $sub_cat,
 				];
 
 				if( ! empty($services)){
@@ -215,8 +224,6 @@
 				];
 				array_push($services,$new_data);
 				update_post_meta($post_id, 'mpwpb_service', $services);
-				print_r($new_data);
-				die;
 				ob_start();
 				$resultMessage = __('Data Updated Successfully', 'mptbm_plugin_pro');
 				$this->show_service_items($post_id);
@@ -269,7 +276,7 @@
 				$sub_categories = $MPWPB_Category->get_sub_categories($post_id);
 				foreach ($services as $key => $value){
 			?>
-				<tr data-id="<?php echo $key; ?>">
+				<tr data-id="<?php echo $key; ?>" data-cat-status="<?php echo $value['show_cat_status'];?>" data-parent-cat="<?php echo $value['parent_cat'];?>" data-sub-cat="<?php echo $value['sub_cat'];?>">
 					<td>
 						<?php  if(!empty($value['image'])): ?>
 							<img src="<?php echo esc_attr(wp_get_attachment_url($value['image'])); ?>" alt="" data-imageId="<?php echo $value['image']; ?>">
@@ -282,6 +289,7 @@
 					<td><?php echo $value['details']; ?></td>
 					<td>
 						<?php echo $value['parent_cat']; ?>
+						<?php echo $value['sub_cat']; ?>
 					</td>
 					<td><?php echo $value['price']; ?></td>
 					<td><?php echo $value['duration']; ?></td>
