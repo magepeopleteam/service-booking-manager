@@ -190,7 +190,9 @@ if(!class_exists('MPWPB_Category')){
                                         'details' => $service['details'],
                                         'price' => $service['price'],
                                         'duration' => $service['duration'],
-                                        'cat_id'=> $sub_cat_index,
+                                        'show_cat_status'=> 'on',
+                                        'parent_cat'=> $cat_index,
+                                        'sub_cat'=> $sub_cat_index,
                                     ];
                                 }
                             }
