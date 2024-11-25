@@ -455,9 +455,11 @@
 		$('input[name="service_duration"]').val('');
 		$('textarea[name="service_description"]').val('');
 		$('textarea[name="service_image_icon"]').val('');
-
 		$('input[name="mpwpb_show_category_status"]').val('off');
 		$('input[name="mpwpb_show_category_status"]').prop('checked', false);
+		$('[data-collapse="#mpwpb_show_category_status"]').slideUp();
+		$('select[name="mpwpb_parent_cat"]').val(0).change();
+		$('select[name="mpwpb_sub_category"]').val(0).change();
 	}
 
 	$('input[name="mpwpb_show_category_status"]').on('change', function() {
@@ -555,6 +557,7 @@
 			$('input[name="mpwpb_show_category_status"]').val('off');
 			$('input[name="mpwpb_show_category_status"]').prop('checked', false);
 			$('[data-collapse="#mpwpb_show_category_status"]').slideUp();
+			
 		}
 	});
 
