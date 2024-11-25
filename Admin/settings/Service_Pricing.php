@@ -273,32 +273,53 @@
 			public function show_service_items($post_id){
 				$MPWPB_Category = new MPWPB_Service_Category();
 				$services = $this->get_services($post_id);
-				$sub_categories = $MPWPB_Category->get_sub_categories($post_id);
-				foreach ($services as $key => $value){
-			?>
-				<tr data-id="<?php echo $key; ?>" data-cat-status="<?php echo $value['show_cat_status'];?>" data-parent-cat="<?php echo $value['parent_cat'];?>" data-sub-cat="<?php echo $value['sub_cat'];?>">
-					<td>
-						<?php  if(!empty($value['image'])): ?>
-							<img src="<?php echo esc_attr(wp_get_attachment_url($value['image'])); ?>" alt="" data-imageId="<?php echo $value['image']; ?>">
-						<?php  endif; ?>
-						<?php  if(!empty($value['icon'])): ?>
-							<i class="<?php echo $value['icon'] ? $value['icon'] : ''; ?>"></i>
-						<?php  endif; ?>
-					</td>
-					<td><?php echo $value['name']; ?></td>
-					<td><?php echo $value['details']; ?></td>
-					<td>
-						<?php echo $value['parent_cat']; ?>
-						<?php echo $value['sub_cat']; ?>
-					</td>
-					<td><?php echo $value['price']; ?></td>
-					<td><?php echo $value['duration']; ?></td>
-					<td>
-						<span class="mpwpb-service-edit"><i class="fas fa-edit"></i></span>
-						<span class="mpwpb-service-delete"><i class="fas fa-trash"></i></span>
-					</td>
-				</tr>
-			<?php
+				$categories = $MPWPB_Category->get_categories($post_id);
+				$sub_category = $MPWPB_Category->get_sub_categories($post_id);
+				foreach ($categories as $category_index => $category) {
+					echo "Category: " . $category['name'] . "<br>";
+
+					// Filter sub-categories by category
+					$filtered_sub_categories = array_filter($sub_category, function ($sub_cat) use ($category_index) {
+						return $sub_cat['cat_id'] === $category_index;
+					});
+
+					// Loop through the sub-categories
+					foreach ($filtered_sub_categories as $sub_cat) {
+						echo "  Sub-Category: " . $sub_cat['name'] . "<br>";
+
+						// Filter services by sub-category
+						$filtered_services = array_filter($services, function ($service) use ($sub_cat) {
+							return $service['sub_cat'] === $sub_cat['cat_id'];
+						});
+
+						// Loop through the filtered services
+						foreach ($filtered_services as $key => $service) {
+							?>
+							<tr data-id="<?php echo $key; ?>" data-cat-status="<?php echo $service['show_cat_status'];?>" data-parent-cat="<?php echo $service['parent_cat'];?>" data-sub-cat="<?php echo $service['sub_cat'];?>">
+								<td>
+									<?php  if(!empty($service['image'])): ?>
+										<img src="<?php echo esc_attr(wp_get_attachment_url($service['image'])); ?>" alt="" data-imageId="<?php echo $service['image']; ?>">
+									<?php  endif; ?>
+									<?php  if(!empty($service['icon'])): ?>
+										<i class="<?php echo $service['icon'] ? $service['icon'] : ''; ?>"></i>
+									<?php  endif; ?>
+								</td>
+								<td><?php echo $service['name']; ?></td>
+								<td><?php echo $service['details']; ?></td>
+								<td>
+									<?php echo $service['parent_cat']; ?>
+									<?php echo $service['sub_cat']; ?>
+								</td>
+								<td><?php echo $service['price']; ?></td>
+								<td><?php echo $service['duration']; ?></td>
+								<td>
+									<span class="mpwpb-service-edit"><i class="fas fa-edit"></i></span>
+									<span class="mpwpb-service-delete"><i class="fas fa-trash"></i></span>
+								</td>
+							</tr>
+							<?php
+						}
+					}
 				}
 			}
 
