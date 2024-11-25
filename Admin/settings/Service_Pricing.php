@@ -60,14 +60,17 @@
 					<div class="mpwpb-sidebar-container">
 						<div class="mpwpb-sidebar-content">
 							<span class="mpwpb-sidebar-close"><i class="fas fa-times"></i></span>
-							<h3 class="title"><?php _e('Add Service','service-booking-manager'); ?></h3>
-							<div class="content">
+							<div class="title">
+								<h3 ><?php _e('Add Service','service-booking-manager'); ?></h3>
 								<div id="mpwpb-service-msg"></div>
+							</div>
+							<div class="content">
 								<input type="hidden" name="mpwpb_post_id" value="<?php echo $post_id; ?>"> 
 								<input type="hidden" name="service_item_id" value="">
+								<input type="hidden" name="mpwpb_parent_cat_id" value="">
+								<input type="hidden" name="mpwpb_sub_cat_id" value="">
 
 								<label><?php _e('Use Category','service-booking-manager'); ?></label>
-                                
 								<?php MP_Custom_Layout::switch_button('mpwpb_show_category_status', $show_category_status); ?>
 								<div class="<?php echo $active_class ?>" data-collapse="#mpwpb_show_category_status">
 									<div class="mpwpb-parent-category">
@@ -76,7 +79,7 @@
 										$MPWPB_Service_Category = new MPWPB_Service_Category();
 										$MPWPB_Service_Category->show_parent_category_lists($post_id); ?>
 									</div>
-									<div class="mpwpb-parent-category">
+									<div class="mpwpb-sub-category">
 										<label><?php _e('Select Category','service-booking-manager'); ?> </label>
 										<?php
 										$MPWPB_Service_Category->show_sub_category_lists($post_id); ?>
@@ -193,7 +196,12 @@
 						$imageID = '';
 					}
 				}
-
+				$parent_cat ='';
+				$sub_cat ='';
+				if($_POST['service_category_status']=='on'){
+					$parent_cat = $_POST['service_parent_cat'];
+					$sub_cat = $_POST['service_sub_cat'];
+				}
 				$new_data = [ 
 					'name'=> sanitize_text_field($_POST['service_name']), 
 					'price'=> sanitize_text_field($_POST['service_price']),
@@ -201,9 +209,14 @@
 					'details'=> sanitize_text_field($_POST['service_description']),
 					'icon'=> $iconClass,
 					'image'=> $imageID,
+					'show_cat_status'=> $_POST['service_category_status'],
+					'parent_cat'=> $parent_cat,
+					'sub_cat'=> $sub_cat,
 				];
 				array_push($services,$new_data);
 				update_post_meta($post_id, 'mpwpb_service', $services);
+				print_r($new_data);
+				die;
 				ob_start();
 				$resultMessage = __('Data Updated Successfully', 'mptbm_plugin_pro');
 				$this->show_service_items($post_id);
@@ -268,13 +281,7 @@
 					<td><?php echo $value['name']; ?></td>
 					<td><?php echo $value['details']; ?></td>
 					<td>
-						<?php 
-						foreach ($sub_categories as $data => $items){
-							if($value['cat_id']==$data){
-								echo $items['name'];
-							}
-						}
-						?>
+						<?php echo $value['parent_cat']; ?>
 					</td>
 					<td><?php echo $value['price']; ?></td>
 					<td><?php echo $value['duration']; ?></td>

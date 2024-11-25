@@ -60,11 +60,14 @@ if(!class_exists('MPWPB_Category')){
                 <!-- sidebar collapse open -->
                 <div class="mpwpb-sidebar-container">
                     <div class="mpwpb-sidebar-content">
-                        <h3><?php _e('Add Category Service','service-booking-manager'); ?></h3>
+                        
+                        
                         <span class="mpwpb-sidebar-close"><i class="fas fa-times"></i></span>
-                        <div class="mpwpb-category-service-form">
+                        <div class="title">
+                            <h3><?php _e('Add Category Service','service-booking-manager'); ?></h3>
                             <div id="mpwpb-category-service-msg"></div>
-                            
+                        </div>
+                        <div class="content">
                             <input type="hidden" name="mpwpb_category_post_id" value="<?php echo $post_id; ?>"> 
                             <input type="hidden" name="mpwpb_category_item_id" value="">
                             <input type="hidden" name="mpwpb_parent_item_id" value="">
