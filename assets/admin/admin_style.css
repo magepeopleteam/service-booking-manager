@@ -495,7 +495,10 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   position: absolute;
   top: 0;
   right: 0;
-  padding: 70px 40px;
+  padding: 70px 0px;
+}
+.mpwpb-sidebar-container .mpwpb-sidebar-content .title {
+  padding-left: 40px;
 }
 .mpwpb-sidebar-container .mpwpb-sidebar-content .mpwpb-sidebar-close {
   position: absolute;
@@ -503,6 +506,12 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   right: 15px;
   font-size: 20px;
   cursor: pointer;
+}
+.mpwpb-sidebar-container .mpwpb-sidebar-content .content {
+  height: 100%;
+  overflow-y: scroll;
+  padding: 0 40px;
+  padding-bottom: 40px;
 }
 
 /*# sourceMappingURL=admin_style.css.map */
