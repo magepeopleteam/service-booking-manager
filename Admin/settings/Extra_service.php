@@ -55,9 +55,6 @@
 					}
 				}
 
-				print_r($new_data);
-				die;
-
 				update_post_meta($post_id, 'mpwpb_extra_service', $ext_services);
 				ob_start();
 				$resultMessage = __('Data Updated Successfully', 'mptbm_plugin_pro');
@@ -180,32 +177,32 @@
 							<div class="content">
 								<div id="mpwpb-ex-service-msg"></div>
 								<input type="hidden" name="mpwpb_ext_post_id" value="<?php echo $post_id; ?>"> 
-								<input type="hidden" name="service_item_id" value="">
+								<input type="hidden" name="mpwpb_ext_service_item_id" value="">
 								<label>
 									<?php _e('Service Name','service-booking-manager'); ?>
-									<input type="text"   name="service_name"> 
+									<input type="text"   name="mpwpb_ext_service_name"> 
 								</label>
 
 								<label>
 									<?php _e('Price','service-booking-manager'); ?>
-									<input type="number"   name="service_price"> 
+									<input type="number"   name="mpwpb_ext_service_price"> 
 								</label>
 
 								<label>
 									<?php _e('Quantity','service-booking-manager'); ?>
-									<input type="number"   name="service_qty"> 
+									<input type="number"   name="mpwpb_ext_service_qty"> 
 								</label>
 
 								<label>
 									<?php _e('Description','service-booking-manager'); ?>
-									<textarea name="service_description" rows="5"></textarea> 
+									<textarea name="mpwpb_ext_service_description" rows="5"></textarea> 
 								</label>
 
 								<label>
 									<?php _e('Image/Icon','service-booking-manager'); ?>
 								</label>
 								<div class="mp_add_icon_image_area">
-									<input type="hidden" name="service_image_icon" value="">
+									<input type="hidden" name="mpwpb_ext_service_image_icon" value="">
 									<div class="mp_icon_item dNone">
 										<span class="" data-add-icon=""></span>
 										<span class="fas fa-times mp_remove_icon mp_icon_remove"></span>

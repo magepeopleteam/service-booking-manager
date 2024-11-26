@@ -644,11 +644,11 @@
 		empty_ex_service_form();
 	});
 	function empty_ex_service_form(){
-		$('input[name="service_name"]').val('');
-		$('input[name="service_price"]').val('');
-		$('input[name="service_qty"]').val('');
-		$('textarea[name="service_description"]').val('');
-		$('textarea[name="service_image_icon"]').val('');
+		$('input[name="mpwpb_ext_service_name"]').val('');
+		$('input[name="mpwpb_ext_service_price"]').val('');
+		$('input[name="mpwpb_ext_service_qty"]').val('');
+		$('textarea[name="mpwpb_ext_service_description"]').val('');
+		$('input[name="mpwpb_ext_service_image_icon"]').val('');
 	}
 
 	$(document).on('click', '#mpwpb_ex_service_save', function (e) {
@@ -664,11 +664,11 @@
 	function save_ex_service(){
 
 		var postID  = $('input[name="mpwpb_ext_post_id"]');
-		var service_name   = $('input[name="service_name"]');
-		var service_price = $('input[name="service_price"]');
-		var service_qty = $('input[name="service_qty"]');
-		var service_description = $('textarea[name="service_description"]');
-		var service_image_icon = $('input[name="service_image_icon"]');
+		var service_name   = $('input[name="mpwpb_ext_service_name"]');
+		var service_price = $('input[name="mpwpb_ext_service_price"]');
+		var service_qty = $('input[name="mpwpb_ext_service_qty"]');
+		var service_description = $('textarea[name="mpwpb_ext_service_description"]');
+		var service_image_icon = $('input[name="mpwpb_ext_service_image_icon"]');
 		$.ajax({
 			url: mp_ajax_url,
 			type: 'POST',
@@ -740,16 +740,16 @@
 		var price = parent.find('td:nth-child(5)').text().trim();
 		var price = parent.find('td:nth-child(5)').text().trim();
 		
-		$('input[name="service_item_id"]').val(itemId);
+		$('input[name="mpwpb_ext_service_item_id"]').val(itemId);
 		if (icon) {
-			$('input[name="service_image_icon"]').val(icon);
+			$('input[name="mpwpb_ext_service_image_icon"]').val(icon);
 		} else if (imageId) {
-			$('input[name="service_image_icon"]').val(imageId);
+			$('input[name="mpwpb_ext_service_image_icon"]').val(imageId);
 		}
-		$('input[name="service_name"]').val(name);
-		$('input[name="service_price"]').val(price);
-		$('input[name="service_qty"]').val(qty);
-		$('textarea[name="service_description"]').val(details);
+		$('input[name="mpwpb_ext_service_name"]').val(name);
+		$('input[name="mpwpb_ext_service_price"]').val(price);
+		$('input[name="mpwpb_ext_service_qty"]').val(qty);
+		$('textarea[name="mpwpb_ext_service_description"]').val(details);
 	});
 
 	$(document).on('click', '#mpwpb_ex_service_update', function (e) {
@@ -760,12 +760,12 @@
 	function update_ext_service(){
 
 		var postID  = $('input[name="mpwpb_ext_post_id"]');
-		var itemId = $('input[name="service_item_id"]');
-		var service_image_icon = $('input[name="service_image_icon"]');
-		var service_name = $('input[name="service_name"]');
-		var service_price = $('input[name="service_price"]');
-		var service_qty = $('input[name="service_qty"]');
-		var service_description = $('textarea[name="service_description"]');
+		var itemId = $('input[name="mpwpb_ext_service_item_id"]');
+		var service_name = $('input[name="mpwpb_ext_service_name"]');
+		var service_price = $('input[name="mpwpb_ext_service_price"]');
+		var service_qty = $('input[name="mpwpb_ext_service_qty"]');
+		var service_description = $('textarea[name="mpwpb_ext_service_description"]');
+		var service_image_icon = $('input[name="mpwpb_ext_service_image_icon"]');
 
 		$.ajax({
 			url: mp_ajax_url,
@@ -781,7 +781,6 @@
 				service_itemId:itemId.val(),
 			},
 			success: function(response) {
-				console.log(response);
 				$('#mpwpb-ex-service-msg').html(response.data.message);
 				$('.extra-service-table tbody').html('');
 				$('.extra-service-table tbody').append(response.data.html);
