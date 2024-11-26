@@ -274,7 +274,7 @@
 				$MPWPB_Category = new MPWPB_Service_Category();
 				$services = $this->get_services($post_id);
 				$categories = $MPWPB_Category->get_categories($post_id);
-				$sub_category = $MPWPB_Category->get_sub_categories($post_id);
+				$sub_categories = $MPWPB_Category->get_sub_categories($post_id);
 				foreach ($services as $key => $service) {
 					?>
 					<tr data-id="<?php echo $key; ?>" data-cat-status="<?php echo $service['show_cat_status'];?>" data-parent-cat="<?php echo $service['parent_cat'];?>" data-sub-cat="<?php echo $service['sub_cat'];?>">
@@ -289,8 +289,25 @@
 						<td><?php echo $service['name']; ?></td>
 						<td><?php echo $service['details']; ?></td>
 						<td>
-							<?php echo $service['parent_cat']; ?>
-							<?php echo $service['sub_cat']; ?>
+							<div>
+								<?php 
+									foreach($categories as $cat_key => $category){
+										if($service['parent_cat']==$cat_key){
+											echo $category['name'];
+										}
+									}
+								?>
+							</div>
+								<i class="fas fa-chevron-down"></i>
+							<div>
+							<?php
+								foreach($sub_categories as $sub_key => $sub_category){
+									if($service['sub_cat']==$sub_key){
+										echo $sub_category['name'];
+									}
+								}
+							?>
+							</div>
 						</td>
 						<td><?php echo $service['price']; ?></td>
 						<td><?php echo $service['duration']; ?></td>
