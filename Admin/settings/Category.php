@@ -59,7 +59,7 @@ if(!class_exists('MPWPB_Category')){
                     </div>
                     
                     <div class="action">
-                        <span class="mpwpb-category-service-edit"><i class="fas fa-edit"></i></span>
+                        <span class="mpwpb-category-service-edit" data-modal="mpwpb-category-service-new"><i class="fas fa-edit"></i></span>
                         <span class="mpwpb-category-service-delete"><i class="fas fa-trash"></i></span>
                     </div>
                 </div>
@@ -77,7 +77,7 @@ if(!class_exists('MPWPB_Category')){
                                     <div class="title"><?php echo $sub_category['name']; ?></div>
                                 </div>
                                 <div class="action">
-                                    <span class="mpwpb-sub-category-service-edit"><i class="fas fa-edit"></i></span>
+                                    <span class="mpwpb-sub-category-service-edit" data-modal="mpwpb-category-service-new"><i class="fas fa-edit"></i></span>
                                     <span class="mpwpb-sub-category-service-delete"><i class="fas fa-trash"></i></span>
                                 </div>
                             </div>

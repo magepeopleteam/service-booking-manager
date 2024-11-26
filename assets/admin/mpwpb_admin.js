@@ -907,8 +907,6 @@
 	}
 
 	$(document).on('click', '.mpwpb-category-service-edit', function (e) {
-		open_sidebar_modal(e);
-
 		$('.mpwpb-sub-category-enable').hide();
 		$('#mpwpb-category-service-msg').html('');
 		$('.mpwpb_category_service_save_button').hide();
@@ -1008,7 +1006,6 @@
 	}
 
 	$(document).on('click', '.mpwpb-sub-category-service-edit', function (e) {
-		open_sidebar_modal(e);
 		$('.mpwpb-sub-category-enable').show();
 		$('input[name="mpwpb_use_sub_category"]').val('on');
 		$('input[name="mpwpb_use_sub_category"]').prop('checked', true);
