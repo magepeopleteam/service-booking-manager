@@ -286,31 +286,21 @@
 // ============= Faq sidebar modal ======================
 (function($) {
 	$(document).on('click', '.mpwpb-faq-item-new', function (e) {
-		open_sidebar_modal(e);
 		$('#mpwpb-faq-msg').html('');
 		$('.mpwpb_faq_save_buttons').show();
 		$('.mpwpb_faq_update_buttons').hide();
 		empty_faq_form();
 	});
 
-	function open_sidebar_modal(e){
-		e.preventDefault();
-		e.stopPropagation();
-		$('.mpwpb-sidebar-container').addClass('open');
-	}
-
-	$(document).on('click', '.mpwpb-sidebar-close', function (e) {
-		close_sidebar_modal(e);
-	});
+	
 
 	function close_sidebar_modal(e){
 		e.preventDefault();
 		e.stopPropagation();
-		$('.mpwpb-sidebar-container').removeClass('open');
+		$('.mpwpb-modal-container').removeClass('open');
 	}
 
 	$(document).on('click', '.mpwpb-faq-item-edit', function (e) {
-		open_sidebar_modal(e);
 		$('#mpwpb-faq-msg').html('');
 		$('.mpwpb_faq_save_buttons').hide();
 		$('.mpwpb_faq_update_buttons').show();
@@ -385,7 +375,7 @@
 				$('.mpwpb-faq-items').html('');
 				$('.mpwpb-faq-items').append(response.data.html);
 				setTimeout(function(){
-					$('.mpwpb-sidebar-container').removeClass('open');
+					$('.mpwpb-modal-container').removeClass('open');
 					empty_faq_form();
 				},1000);
 				
@@ -648,7 +638,6 @@
 
 	// ============= Extra service sidebar modal ======================
 	$(document).on('click', '.mpwpb-extra-service-new', function (e) {
-		open_sidebar_modal(e);
 		$('#mpwpb-ex-service-msg').html('');
 		$('.mpwpb_ex_service_save_button').show();
 		$('.mpwpb_ex_service_update_button').hide();
@@ -737,7 +726,6 @@
 	}
 
 	$(document).on('click', '.mpwpb-ext-service-edit', function (e) {
-		open_sidebar_modal(e);
 		$('#mpwpb-ex-service-msg').html('');
 		$('.mpwpb_ex_service_save_button').hide();
 		$('.mpwpb_ex_service_update_button').show();
@@ -793,11 +781,12 @@
 				service_itemId:itemId.val(),
 			},
 			success: function(response) {
+				console.log(response);
 				$('#mpwpb-ex-service-msg').html(response.data.message);
 				$('.extra-service-table tbody').html('');
 				$('.extra-service-table tbody').append(response.data.html);
 				setTimeout(function(){
-					$('.mpwpb-sidebar-container').removeClass('open');
+					$('.mpwpb-modal-container').removeClass('open');
 					empty_ex_service_form();
 				},1000);
 				

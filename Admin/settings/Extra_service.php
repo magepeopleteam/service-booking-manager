@@ -54,6 +54,10 @@
 						$ext_services[$_POST['service_itemId']]=$new_data;
 					}
 				}
+
+				print_r($new_data);
+				die;
+
 				update_post_meta($post_id, 'mpwpb_extra_service', $ext_services);
 				ob_start();
 				$resultMessage = __('Data Updated Successfully', 'mptbm_plugin_pro');
@@ -163,12 +167,12 @@
 								<?php $this->show_extra_service($post_id); ?>
 							</tbody>
 						</table>
-						<button class="button mpwpb-extra-service-new" type="button"><?php _e('Add Extra Service','service-booking-manager'); ?></button>
+						<button class="button mpwpb-extra-service-new" data-modal="mpwpb-extra-service-new" type="button"><?php _e('Add Extra Service','service-booking-manager'); ?></button>
 					</section>
 					<!-- sidebar collapse open -->
-					<div class="mpwpb-sidebar-container">
-						<div class="mpwpb-sidebar-content">
-							<span class="mpwpb-sidebar-close"><i class="fas fa-times"></i></span>
+					<div class="mpwpb-modal-container" data-modal-target="mpwpb-extra-service-new">
+						<div class="mpwpb-modal-content">
+							<span class="mpwpb-modal-close"><i class="fas fa-times"></i></span>
 							<div class="title">
 								<h3><?php _e('Add Extra Service','service-booking-manager'); ?></h3>
 								<div id="mpwpb-service-msg"></div>
@@ -250,7 +254,7 @@
 						<td><?php echo $value['qty']; ?></td>
 						<td><?php echo $value['price']; ?></td>
 						<td>
-							<span class="mpwpb-ext-service-edit" ><i class="fas fa-edit"></i></span>
+							<span class="mpwpb-ext-service-edit" data-modal="mpwpb-extra-service-new"><i class="fas fa-edit"></i></span>
                             <span class="mpwpb-ext-service-delete"><i class="fas fa-trash"></i></span>
 						</td>
 					</tr>
