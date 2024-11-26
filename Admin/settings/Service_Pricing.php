@@ -47,7 +47,7 @@
 									<thead>
 										<tr>
 											<th style="width:66px">Image</th>
-											<th style="width:250px">Name</th>
+											<th style="width:250px;text-align:left">Name</th>
 											<th >Price</th>
 											<th >Duration</th>
 											<th style="width:65px"></th>
@@ -57,14 +57,14 @@
 										<?php $this->show_service_items($post_id); ?>
 									</tbody>
 								</table>
-								<button class="button mpwpb-service-new" type="button"><?php _e('Add Service Category','service-booking-manager'); ?></button>
+								<button class="button mpwpb-service-new" data-modal="mpwpb-service-new" type="button"><?php _e('Add Service Category','service-booking-manager'); ?></button>
 							</div>
 						</div>
 					</section>
 					<!-- sidebar collapse open -->
-					<div class="mpwpb-sidebar-container">
-						<div class="mpwpb-sidebar-content">
-							<span class="mpwpb-sidebar-close"><i class="fas fa-times"></i></span>
+					<div class="mpwpb-modal-container" data-modal-target="mpwpb-service-new">
+						<div class="mpwpb-modal-content">
+							<span class="mpwpb-modal-close"><i class="fas fa-times"></i></span>
 							<div class="title">
 								<h3 ><?php _e('Add Service','service-booking-manager'); ?></h3>
 								<div id="mpwpb-service-msg"></div>
@@ -291,7 +291,7 @@
 								<i class="<?php echo $service['icon'] ? $service['icon'] : ''; ?>"></i>
 							<?php  endif; ?>
 						</td>
-						<td><?php echo $service['name']; ?></td>
+						<td style="text-align:left"><?php echo $service['name']; ?></td>
 						<td><?php echo $service['price']; ?></td>
 						<td><?php echo $service['duration']; ?></td>
 						<td>

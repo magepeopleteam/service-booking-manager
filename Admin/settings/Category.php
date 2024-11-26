@@ -86,13 +86,11 @@ if(!class_exists('MPWPB_Category')){
                 </div>
                 <?php endforeach; ?>
             </div>
-            <button class="button mpwpb-category-service-new" type="button"><?php _e('Add Category','service-booking-manager'); ?></button>
+            <button class="button" data-modal="mpwpb-category-service-new" type="button"><?php _e('Add Category','service-booking-manager'); ?></button>
             <!-- sidebar collapse open -->
-            <div class="mpwpb-sidebar-container">
-                <div class="mpwpb-sidebar-content">
-                    
-                    
-                    <span class="mpwpb-sidebar-close"><i class="fas fa-times"></i></span>
+            <div class="mpwpb-modal-container" data-modal-target="mpwpb-category-service-new">
+                <div class="mpwpb-modal-content">
+                    <span class="mpwpb-modal-close"><i class="fas fa-times"></i></span>
                     <div class="title">
                         <h3><?php _e('Add Category Service','service-booking-manager'); ?></h3>
                         <div id="mpwpb-category-service-msg"></div>

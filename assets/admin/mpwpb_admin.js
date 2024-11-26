@@ -441,9 +441,8 @@
 		});
 	}
 	// ============= Service sidebar modal ======================
-	
+		
 	$(document).on('click', '.mpwpb-service-new', function (e) {
-		open_sidebar_modal(e);
 		$('#mpwpb-service-msg').html('');
 		$('.mpwpb_service_save_button').show();
 		$('.mpwpb_service_update_button').hide();
@@ -1081,5 +1080,16 @@
 			}
 		});
 	}
+
+	// =====================sidebar modal open close=============
+	$(document).on('click', '[data-modal]', function (e) {
+		const modalTarget = $(this).data('modal');
+		$(`[data-modal-target="${modalTarget}"]`).addClass('open');
+	});
+
+	$(document).on('click', '[data-modal-target] .mpwpb-modal-close', function (e) {
+		$(this).closest('[data-modal-target]').removeClass('open');
+	});
+
 })(jQuery);
 
