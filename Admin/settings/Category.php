@@ -66,7 +66,7 @@ if(!class_exists('MPWPB_Category')){
                         <input type="hidden" name="mpwpb_parent_item_id" value="">
                         <label>
                             <?php _e('Category Name','service-booking-manager'); ?>
-                            <input type="text"   name="mpwpb_category_name"> 
+                            <input type="text"   name="mpwpb_category_name" placeholder="Category"> 
                         </label>
                         <div class="mpwpb-sub-category-enable" style="display: none;">
                             <label><?php _e('Use As Sub Category','service-booking-manager'); ?></label>
@@ -128,6 +128,7 @@ if(!class_exists('MPWPB_Category')){
             $categories = $this->get_categories($post_id);
             ?>
             <select name="mpwpb_parent_cat">
+                <option value=""><?php _e('Select Category','service-booking-manager'); ?></option>
                 <?php foreach($categories as $key => $category): 
                     ?>
                     <option value="<?php echo $key; ?>"><?php echo $category['name']; ?></option>
@@ -172,6 +173,7 @@ if(!class_exists('MPWPB_Category')){
                                 'icon' => $sub_category['icon'],
                                 'image' => $sub_category['image'],
                                 'cat_id'=> $cat_index,
+                                'use_sub_category'=> 'on'
                             ];
                             if(isset($sub_category['service'])){
                                 foreach ($sub_category['service'] as $service_index => $service){
@@ -213,14 +215,14 @@ if(!class_exists('MPWPB_Category')){
                     </div>
                     
                     <div class="action">
-                        <span class="mpwpb-category-service-edit" data-modal="mpwpb-category-service-new"><i class="fas fa-edit"></i></span>
+                        <span class="mpwpb-category-edit" data-modal="mpwpb-category-new"><i class="fas fa-edit"></i></span>
                         <span class="mpwpb-category-service-delete"><i class="fas fa-trash"></i></span>
                     </div>
                 </div>
                 <div class="mpwpb-sub-category-lists">
                     <?php foreach($sub_categories as $child_key => $sub_category): ?>
                         <?php if($sub_category['cat_id']==$parent_key): ?>
-                            <div class="mpwpb-sub-category-items" data-parent-id="<?php echo $parent_key; ?>" data-id="<?php echo $child_key; ?>">
+                            <div class="mpwpb-sub-category-items" data-use-sub="<?php echo $sub_category['use_sub_category']; ?>" data-parent-id="<?php echo $parent_key; ?>" data-id="<?php echo $child_key; ?>">
                                 <div class="image-block">
                                     <?php if(!empty($sub_category['image'])): ?>
                                         <img src="<?php echo esc_attr(wp_get_attachment_url($sub_category['image'])); ?>" alt="" data-imageId="<?php echo $sub_category['image']; ?>">
@@ -231,7 +233,7 @@ if(!class_exists('MPWPB_Category')){
                                     <div class="title"><?php echo $sub_category['name']; ?></div>
                                 </div>
                                 <div class="action">
-                                    <span class="mpwpb-sub-category-service-edit" data-modal="mpwpb-category-service-new"><i class="fas fa-edit"></i></span>
+                                    <span class="mpwpb-sub-category-edit" data-modal="mpwpb-category-new"><i class="fas fa-edit"></i></span>
                                     <span class="mpwpb-sub-category-service-delete"><i class="fas fa-trash"></i></span>
                                 </div>
                             </div>
@@ -278,6 +280,7 @@ if(!class_exists('MPWPB_Category')){
                     'icon'=> $iconClass,
                     'image'=> $imageID,
                     'cat_id'=> $_POST['parent_category'],
+                    'use_sub_category'=> $_POST['use_sub_category'],
                 ];
                 array_push($sub_categories,$new_sub_data);
                 update_post_meta($post_id, 'mpwpb_sub_category_service', $sub_categories);
