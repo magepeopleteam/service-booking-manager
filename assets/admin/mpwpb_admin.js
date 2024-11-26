@@ -797,8 +797,7 @@
 	}
 
 	// =============Service Category sidebar modal ======================
-	$(document).on('click', '.mpwpb-category-service-new', function (e) {
-		open_sidebar_modal(e);
+	$(document).on('click', '.mpwpb-category-new', function (e) {
 		$('#mpwpb-category-service-msg').html('');
 		$('.mpwpb_category_service_save_button').show();
 		$('.mpwpb_category_service_update_button').hide();
@@ -825,27 +824,18 @@
     });
 
 	function empty_category_service_form(){
-		$('input[name="mpwpb_category_service_name"]').val('');
+		$('input[name="mpwpb_category_name"]').val('');
 		$('input[name="mpwpb_category_image_icon"]').val('');
 		$('input[name="mpwpb_category_item_id"]').val('');
 		$('input[name="mpwpb_parent_item_id"]').val('');
-		mpwpb_load_parent_category();
-		mpwpb_show_sub_category_section();
-	}
-
-	function  mpwpb_show_sub_category_section(){
+		$('input[name="mpwpb_use_sub_category"]').val('off');
 		if($('.mpwpb-category-items').length > 0){
 			$('.mpwpb-sub-category-enable').show();
 		}
 		else{
 			$('.mpwpb-sub-category-enable').hide();
 		}
-
-		if ($('input[name="mpwpb_use_sub_category"]').is(':checked')) {
-			$('input[name="mpwpb_use_sub_category"]').val('on');
-        } else {
-			$('input[name="mpwpb_use_sub_category"]').val('off');
-        }
+		//mpwpb_load_parent_category();
 	}
 
 	function mpwpb_load_parent_category(){
@@ -879,7 +869,7 @@
 
 	function save_category_service(){
 		var postID  = $('input[name="mpwpb_category_post_id"]');
-		var category_name   = $('input[name="mpwpb_category_service_name"]');
+		var category_name   = $('input[name="mpwpb_category_name"]');
 		var category_image_icon = $('input[name="mpwpb_category_image_icon"]');
 		var use_sub_category = $('input[name="mpwpb_use_sub_category"]');
 		var parent_category = $('select[name="mpwpb_parent_cat"]');

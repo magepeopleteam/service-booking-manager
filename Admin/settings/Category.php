@@ -13,7 +13,7 @@ if(!defined('ABSPATH'))die;
 if(!class_exists('MPWPB_Category')){
     class MPWPB_Service_Category{
         public function __construct() {
-            //add_action('add_mpwpb_settings_tab_content', [$this, 'category_settings_section']);
+            add_action('mpwpb_show_category',[$this,'category_settings_section']);
 
             // save category service
             add_action('wp_ajax_mpwpb_save_category_service', [ $this,'save_category_service']);
@@ -35,60 +35,25 @@ if(!class_exists('MPWPB_Category')){
             add_action('wp_ajax_mpwpb_load_parent_category', [ $this,'load_parent_category']);
             add_action('wp_ajax_nopriv_mpwpb_load_parent_category', [ $this,'load_parent_category']);
             
-            add_action('mpwpb_show_category',[$this,'category_settings_section']);
+           
         }
 
         public function category_settings_section($post_id){
             $use_sub_category = MP_Global_Function::get_post_info($post_id, 'mpwpb_use_sub_category', 'off');
             $active_class = $use_sub_category == 'on' ? 'mActive' : '';
             $sub_category_checked = $use_sub_category == 'on' ? 'checked' : '';
-            $categories = $this->get_categories($post_id);
-            $sub_categories = $this->get_sub_categories($post_id);
             ?>
-            <div class="mpwpb-category-lists">
-                <?php foreach ($categories as $parent_key => $category): ?>
-                <div class="mpwpb-category-items" data-id="<?php echo $parent_key; ?>">
-                    <div class="image-block">
-                        <?php  if(!empty($category['image'])): ?>
-                                <img src="<?php echo esc_attr(wp_get_attachment_url($category['image'])); ?>" alt="" data-imageId="<?php echo $category['image']; ?>">
-                            <?php  endif; ?>
-                            <?php  if(!empty($category['icon'])): ?>
-                                <i class="<?php echo $category['icon'] ? $category['icon'] : ''; ?>"></i>
-                            <?php  endif; ?>
-                        <div class="title"><?php echo $category['name']; ?></div>
-                    </div>
-                    
-                    <div class="action">
-                        <span class="mpwpb-category-service-edit" data-modal="mpwpb-category-service-new"><i class="fas fa-edit"></i></span>
-                        <span class="mpwpb-category-service-delete"><i class="fas fa-trash"></i></span>
-                    </div>
-                </div>
-                <div class="mpwpb-sub-category-lists">
-                    <?php foreach($sub_categories as $child_key => $sub_category): ?>
-                        <?php if($sub_category['cat_id']==$parent_key): ?>
-                            <div class="mpwpb-sub-category-items" data-parent-id="<?php echo $parent_key; ?>" data-id="<?php echo $child_key; ?>">
-                                <div class="image-block">
-                                    <?php if(!empty($sub_category['image'])): ?>
-                                        <img src="<?php echo esc_attr(wp_get_attachment_url($sub_category['image'])); ?>" alt="" data-imageId="<?php echo $sub_category['image']; ?>">
-                                        <?php  endif; ?>
-                                        <?php  if(!empty($sub_category['icon'])): ?>
-                                            <i class="<?php echo $sub_category['icon'] ? $sub_category['icon'] : ''; ?>"></i>
-                                        <?php  endif; ?>
-                                    <div class="title"><?php echo $sub_category['name']; ?></div>
-                                </div>
-                                <div class="action">
-                                    <span class="mpwpb-sub-category-service-edit" data-modal="mpwpb-category-service-new"><i class="fas fa-edit"></i></span>
-                                    <span class="mpwpb-sub-category-service-delete"><i class="fas fa-trash"></i></span>
-                                </div>
-                            </div>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
-                </div>
-                <?php endforeach; ?>
+            <div>
+                <h2><?php _e('Categories','service-booking-manager'); ?></h2>
+                <button><?php _e('Show All service','service-booking-manager'); ?></button>
             </div>
-            <button class="button" data-modal="mpwpb-category-service-new" type="button"><?php _e('Add Category','service-booking-manager'); ?></button>
+            <div class="mpwpb-category-lists">
+                <!-- load all category default -->
+                <?php $this->show_category_items($post_id); ?>
+            </div>
+            <button class="button mpwpb-category-new" data-modal="mpwpb-category-new" type="button"><?php _e('Add Category','service-booking-manager'); ?></button>
             <!-- sidebar collapse open -->
-            <div class="mpwpb-modal-container" data-modal-target="mpwpb-category-service-new">
+            <div class="mpwpb-modal-container" data-modal-target="mpwpb-category-new">
                 <div class="mpwpb-modal-content">
                     <span class="mpwpb-modal-close"><i class="fas fa-times"></i></span>
                     <div class="title">
@@ -101,7 +66,7 @@ if(!class_exists('MPWPB_Category')){
                         <input type="hidden" name="mpwpb_parent_item_id" value="">
                         <label>
                             <?php _e('Category Name','service-booking-manager'); ?>
-                            <input type="text"   name="mpwpb_category_service_name"> 
+                            <input type="text"   name="mpwpb_category_name"> 
                         </label>
                         <div class="mpwpb-sub-category-enable" style="display: none;">
                             <label><?php _e('Use As Sub Category','service-booking-manager'); ?></label>
@@ -143,14 +108,6 @@ if(!class_exists('MPWPB_Category')){
                     </div>
                 </div>
             </div>
-        <?php
-
-        }
-
-        public function category_view($post_id){
-        ?>
-            
-            
         <?php
         }
 
@@ -241,7 +198,48 @@ if(!class_exists('MPWPB_Category')){
         }
 
         public function show_category_items($post_id){
-            
+            $categories = $this->get_categories($post_id);
+            $sub_categories = $this->get_sub_categories($post_id);
+            foreach ($categories as $parent_key => $category): ?>
+                <div class="mpwpb-category-items" data-id="<?php echo $parent_key; ?>">
+                    <div class="image-block">
+                        <?php  if(!empty($category['image'])): ?>
+                                <img src="<?php echo esc_attr(wp_get_attachment_url($category['image'])); ?>" alt="" data-imageId="<?php echo $category['image']; ?>">
+                            <?php  endif; ?>
+                            <?php  if(!empty($category['icon'])): ?>
+                                <i class="<?php echo $category['icon'] ? $category['icon'] : ''; ?>"></i>
+                            <?php  endif; ?>
+                        <div class="title"><?php echo $category['name']; ?></div>
+                    </div>
+                    
+                    <div class="action">
+                        <span class="mpwpb-category-service-edit" data-modal="mpwpb-category-service-new"><i class="fas fa-edit"></i></span>
+                        <span class="mpwpb-category-service-delete"><i class="fas fa-trash"></i></span>
+                    </div>
+                </div>
+                <div class="mpwpb-sub-category-lists">
+                    <?php foreach($sub_categories as $child_key => $sub_category): ?>
+                        <?php if($sub_category['cat_id']==$parent_key): ?>
+                            <div class="mpwpb-sub-category-items" data-parent-id="<?php echo $parent_key; ?>" data-id="<?php echo $child_key; ?>">
+                                <div class="image-block">
+                                    <?php if(!empty($sub_category['image'])): ?>
+                                        <img src="<?php echo esc_attr(wp_get_attachment_url($sub_category['image'])); ?>" alt="" data-imageId="<?php echo $sub_category['image']; ?>">
+                                        <?php  endif; ?>
+                                        <?php  if(!empty($sub_category['icon'])): ?>
+                                            <i class="<?php echo $sub_category['icon'] ? $sub_category['icon'] : ''; ?>"></i>
+                                        <?php  endif; ?>
+                                    <div class="title"><?php echo $sub_category['name']; ?></div>
+                                </div>
+                                <div class="action">
+                                    <span class="mpwpb-sub-category-service-edit" data-modal="mpwpb-category-service-new"><i class="fas fa-edit"></i></span>
+                                    <span class="mpwpb-sub-category-service-delete"><i class="fas fa-trash"></i></span>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </div>
+                <?php endforeach; ?>
+            <?php
         }
 
         public function get_categories($post_id){
