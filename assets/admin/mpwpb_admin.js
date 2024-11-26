@@ -508,8 +508,8 @@
 			success: function(response) {
 				console.log(response);
 				$('#mpwpb-service-msg').html(response.data.message);
-				$('.mpwpb-service-table tbody').html('');
-				$('.mpwpb-service-table tbody').append(response.data.html);
+				$('.mpwpb-service-table').html('');
+				$('.mpwpb-service-table').append(response.data.html);
 				empty_service_form();
 			},
 			error: function(error) {
@@ -598,8 +598,8 @@
 			success: function(response) {
 				console.log(response);
 				$('#mpwpb-service-msg').html(response.data.message);
-				$('.mpwpb-service-table tbody').html('');
-				$('.mpwpb-service-table tbody').append(response.data.html);
+				$('.mpwpb-service-table').html('');
+				$('.mpwpb-service-table').append(response.data.html);
 				setTimeout(function(){
 					$('.mpwpb-sidebar-container').removeClass('open');
 					empty_service_form();
@@ -636,8 +636,8 @@
 			},
 			success: function(response) {
 				console.log(response);
-				$('.mpwpb-service-table tbody').html('');
-				$('.mpwpb-service-table tbody').append(response.data.html);
+				$('.mpwpb-service-table').html('');
+				$('.mpwpb-service-table').append(response.data.html);
 			},
 			error: function(error) {
 				console.log('Error:', error);
