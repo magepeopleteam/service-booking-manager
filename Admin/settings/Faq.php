@@ -77,9 +77,11 @@ if( ! class_exists('MPWPB_Faq_Settings')){
                 <div class="mpwpb-sidebar-container">
                     <div class="mpwpb-sidebar-content">
                         <span class="mpwpb-sidebar-close"><i class="fas fa-times"></i></span>
-                        <div class="mpwpb-faq-form">
-                            <div id="mpwpb-faq-msg"></div>
+                        <div class="title">
                             <h3><?php _e('Add F.A.Q.','service-booking-manager'); ?></h3>
+                            <div id="mpwpb-service-msg"></div>
+                        </div>
+                        <div class="content">
                             <label>
                                 <?php _e('Add Title','service-booking-manager'); ?>
                                 <input type="hidden" name="mpwpb_post_id" value="<?php echo $post_id; ?>"> 

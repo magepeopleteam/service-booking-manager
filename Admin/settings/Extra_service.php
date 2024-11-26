@@ -168,9 +168,12 @@
 					<!-- sidebar collapse open -->
 					<div class="mpwpb-sidebar-container">
 						<div class="mpwpb-sidebar-content">
-							<h3><?php _e('Add Extra Service','service-booking-manager'); ?></h3>
 							<span class="mpwpb-sidebar-close"><i class="fas fa-times"></i></span>
-							<div class="mpwpb-extra-service-form">
+							<div class="title">
+								<h3><?php _e('Add Extra Service','service-booking-manager'); ?></h3>
+								<div id="mpwpb-service-msg"></div>
+							</div>
+							<div class="content">
 								<div id="mpwpb-ex-service-msg"></div>
 								<input type="hidden" name="mpwpb_ext_post_id" value="<?php echo $post_id; ?>"> 
 								<input type="hidden" name="service_item_id" value="">

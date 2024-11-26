@@ -357,7 +357,7 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
 }
 
 .mpwpb-category-lists {
-  width: 600px;
+  width: 350px;
   margin: auto;
   margin-bottom: 20px;
 }
@@ -393,8 +393,6 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
 }
 .mpwpb-category-lists .mpwpb-category-items .title, .mpwpb-category-lists .mpwpb-sub-category-items .title {
   text-transform: capitalize;
-  font-weight: bold;
-  font-size: 16px;
 }
 .mpwpb-category-lists .mpwpb-category-items .action i, .mpwpb-category-lists .mpwpb-sub-category-items .action i {
   color: var(--mage-primary);
@@ -402,7 +400,7 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   cursor: pointer;
 }
 .mpwpb-category-lists .mpwpb-sub-category-items {
-  margin-left: 70px;
+  margin-left: 15px;
 }
 .mpwpb-category-lists .mpwpb-sub-category-items:last-child {
   margin-bottom: 20px;

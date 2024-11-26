@@ -180,7 +180,7 @@
 }
 //=================== category service ============
 .mpwpb-category-lists{
-    width:600px;
+    width:350px;
     margin: auto;
     margin-bottom: 20px; 
     .mpwpb-category-items{
@@ -214,8 +214,6 @@
         }
         .title{
             text-transform: capitalize;
-            font-weight: bold;
-            font-size: 16px;
         }
         .action{
             i{
@@ -228,7 +226,7 @@
     }
     .mpwpb-sub-category-items{
         @extend .mpwpb-category-items;
-        margin-left: 70px;
+        margin-left: 15px;
         &:last-child{
             margin-bottom: 20px;
         }
