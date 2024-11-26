@@ -120,7 +120,6 @@
                     font-weight: normal;
                     font-size: 16px;
                     padding: 10px 5px;
-                    border: 1px solid var(--mage-border);
                     border-collapse: collapse;
                 }
             }
@@ -129,15 +128,15 @@
             tr{
                 height: 40px;
                 padding:5px;
+                border: 1px solid var(--mage-light);
                 &:nth-child(even){
-                    background-color: var(--mage-light-2);
+                    background-color: #F9F9F96E;
                 }
                 td{
                     font-weight: normal;
                     text-align: center;
                     vertical-align: middle;
                     padding: 5px;
-                    border: 1px solid var(--mage-border);
                     border-collapse: collapse;
                     &:first-child{
                         text-align: center;
@@ -164,11 +163,8 @@
                     
                     &:last-child{
                         i{
-                            background-color: #fff;
-                            border:1px solid var(--mage-border);
                             color: var(--mage-primary);
-                            border-radius: 2px;
-                            padding: 7px 10px;
+                            padding:5px;
                             cursor: pointer;
                         }
                     }
@@ -180,14 +176,12 @@
 }
 //=================== category service ============
 .mpwpb-category-lists{
-    width:350px;
-    margin: auto;
     margin-bottom: 20px; 
     .mpwpb-category-items{
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: -1px;
+        margin-bottom: 5px;
         border: 1px solid var(--mage-light);
         padding: 5px;
         min-height: 50px;
@@ -306,4 +300,15 @@
         }
     }
 }
-
+// ============== category and service ==============
+.category-service-area{
+    display: flex;
+    justify-content: start;
+    gap: 20px;
+    .category-section{
+        width: 30%;
+    }
+    .service-sectoin{
+        width: 70%;
+    }   
+}

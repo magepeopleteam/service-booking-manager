@@ -38,23 +38,28 @@
 							<span><?php esc_html_e('Pricing Settings', 'service-booking-manager'); ?></span>
                     </section>
 					<section>
-						<table class="table mB">
-							<thead>
-								<tr>
-									<th style="width:66px">Image</th>
-									<th>Name</th>
-									<th>Details</th>
-									<th style="width:100px">Category</th>
-									<th style="width:70px">Price</th>
-									<th style="width:90px">Duration</th>
-									<th style="width:92px">Action</th>
-								</tr>
-							</thead>
-							<tbody class="mpwpb-service-table">
-								<?php $this->show_service_items($post_id); ?>
-							</tbody>
-						</table>
-						<button class="button mpwpb-service-new" type="button"><?php _e('Add Service Category','service-booking-manager'); ?></button>
+						<div class="category-service-area">
+							<div class="category-section">
+								<?php do_action('mpwpb_show_category',$post_id); ?>
+							</div>
+							<div class="service-sectoin">
+								<table class="table mB">
+									<thead>
+										<tr>
+											<th style="width:66px">Image</th>
+											<th style="width:250px">Name</th>
+											<th >Price</th>
+											<th >Duration</th>
+											<th style="width:65px"></th>
+										</tr>
+									</thead>
+									<tbody class="mpwpb-service-table">
+										<?php $this->show_service_items($post_id); ?>
+									</tbody>
+								</table>
+								<button class="button mpwpb-service-new" type="button"><?php _e('Add Service Category','service-booking-manager'); ?></button>
+							</div>
+						</div>
 					</section>
 					<!-- sidebar collapse open -->
 					<div class="mpwpb-sidebar-container">
@@ -287,28 +292,6 @@
 							<?php  endif; ?>
 						</td>
 						<td><?php echo $service['name']; ?></td>
-						<td><?php echo $service['details']; ?></td>
-						<td>
-							<div>
-								<?php 
-									foreach($categories as $cat_key => $category){
-										if($service['parent_cat']==$cat_key){
-											echo $category['name'];
-										}
-									}
-								?>
-							</div>
-								<i class="fas fa-chevron-down"></i>
-							<div>
-							<?php
-								foreach($sub_categories as $sub_key => $sub_category){
-									if($service['sub_cat']==$sub_key){
-										echo $sub_category['name'];
-									}
-								}
-							?>
-							</div>
-						</td>
 						<td><?php echo $service['price']; ?></td>
 						<td><?php echo $service['duration']; ?></td>
 						<td>
