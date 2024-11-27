@@ -1034,7 +1034,7 @@
 
 	});
 
-	$(document).on('click', '.mpwpb-category-service-delete', function (e) {
+	$(document).on('click', '.mpwpb-category-delete', function (e) {
 		e.preventDefault();
 		e.stopPropagation();
 		var itemId = $(this).closest('.mpwpb-category-items').data('id');
@@ -1053,6 +1053,38 @@
 			type: 'POST',
 			data: {
 				action: 'mpwpb_category_service_delete_item',
+				category_postID:postID.val(),
+				itemId:itemId,
+			},
+			success: function(response) {
+				$('.mpwpb-category-lists').html('');
+				$('.mpwpb-category-lists').append(response.data.html);
+			},
+			error: function(error) {
+				console.log('Error:', error);
+			}
+		});
+	}
+
+	$(document).on('click', '.mpwpb-sub-category-delete', function (e) {
+		e.preventDefault();
+		e.stopPropagation();
+		var itemId = $(this).closest('.mpwpb-sub-category-items').data('id');
+		var isConfirmed = confirm('Are you sure you want to delete this row?');
+		if (isConfirmed) {
+			delete_sub_category_service(itemId);
+		} else {
+			console.log('Deletion canceled.'+itemId);
+		}
+	});
+
+	function delete_sub_category_service(itemId){
+		var postID  = $('input[name="mpwpb_category_post_id"]');
+		$.ajax({
+			url: mp_ajax_url,
+			type: 'POST',
+			data: {
+				action: 'mpwpb_sub_category_delete',
 				category_postID:postID.val(),
 				itemId:itemId,
 			},

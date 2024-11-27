@@ -35,6 +35,10 @@ if(!class_exists('MPWPB_Category')){
             add_action('wp_ajax_mpwpb_load_parent_category', [ $this,'load_parent_category']);
             add_action('wp_ajax_nopriv_mpwpb_load_parent_category', [ $this,'load_parent_category']);
             
+            // Del sub category by ajax
+            add_action('wp_ajax_mpwpb_sub_category_delete', [ $this,'delete_sub_category']);
+            add_action('wp_ajax_nopriv_mpwpb_sub_category_delete', [ $this,'delete_sub_category']);
+            
            
         }
 
@@ -212,7 +216,7 @@ if(!class_exists('MPWPB_Category')){
                     
                     <div class="action">
                         <span class="mpwpb-category-edit" data-modal="mpwpb-category-new"><i class="fas fa-edit"></i></span>
-                        <span class="mpwpb-category-service-delete"><i class="fas fa-trash"></i></span>
+                        <span class="mpwpb-category-delete"><i class="fas fa-trash"></i></span>
                     </div>
                 </div>
                 <div class="mpwpb-sub-category-lists">
@@ -230,7 +234,7 @@ if(!class_exists('MPWPB_Category')){
                                 </div>
                                 <div class="action">
                                     <span class="mpwpb-sub-category-edit" data-modal="mpwpb-category-new"><i class="fas fa-edit"></i></span>
-                                    <span class="mpwpb-sub-category-service-delete"><i class="fas fa-trash"></i></span>
+                                    <span class="mpwpb-sub-category-delete"><i class="fas fa-trash"></i></span>
                                 </div>
                             </div>
                         <?php endif; ?>
@@ -391,6 +395,36 @@ if(!class_exists('MPWPB_Category')){
                 }
             }
             $result = update_post_meta($post_id, 'mpwpb_category_service', $categories);
+            if($result){
+                ob_start();
+                $resultMessage = __('Data Deleted Successfully', 'service-booking-manager');
+                $this->show_category_items($post_id);
+                $html_output = ob_get_clean();
+                wp_send_json_success([
+                    'message' => $resultMessage,
+                    'html' => $html_output,
+                ]);
+            }
+            else{
+                wp_send_json_success([
+                    'message' => 'Data not deleted',
+                    'html' => '',
+                ]);
+            }
+            die;
+        }
+
+        public function delete_sub_category(){
+            $post_id = $_POST['category_postID'];
+            $sub_categories = $this->get_sub_categories($post_id);
+
+            if( ! empty($sub_categories)){
+                if(isset($_POST['itemId'])){
+                    unset($sub_categories[$_POST['itemId']]);
+                    $sub_categories = array_values($sub_categories);
+                }
+            }
+            $result = update_post_meta($post_id, 'mpwpb_sub_category_service', $sub_categories);
             if($result){
                 ob_start();
                 $resultMessage = __('Data Deleted Successfully', 'service-booking-manager');
