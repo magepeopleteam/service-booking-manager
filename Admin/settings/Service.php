@@ -55,6 +55,7 @@ if(!class_exists('MPWPB_Services')){
 			]);
 			die;
 		}
+
 		public function show_service($post_id){
 			$show_category_status = MP_Global_Function::get_post_info($post_id, 'mpwpb_show_category_status', 'off');
 			$active_class = $show_category_status == 'on' ? 'mActive' : '';
@@ -159,7 +160,6 @@ if(!class_exists('MPWPB_Services')){
 		}
 
 		public function show_service_by_category($post_id,$category_id){
-			
 			?>
 				<table class="table mB">
 					<thead>

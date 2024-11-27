@@ -1115,6 +1115,12 @@
 
 	// ====================category show service===============
 	$(document).on('click','.mpwpb-category-items', function(){
+		show_service_by_cat()
+	});
+	$(document).on('click','.mpwpb-sub-category-items', function(){
+		show_service_by_cat();
+	});
+	function show_service_by_cat(){
 		var itemId =$(this).data('id');
 		var postID  = $('input[name="mpwpb_category_post_id"]');
 		$.ajax({
@@ -1134,12 +1140,8 @@
 
 			}
 		});
-	});
-
-	$(document).on('click','.mpwpb-sub-category-items', function(){
-		var itemId =$(this).data('id');
-		console.log(itemId);
-	});
+	}
+	
 
 	// =====================sidebar modal open close=============
 	$(document).on('click', '[data-modal]', function (e) {
