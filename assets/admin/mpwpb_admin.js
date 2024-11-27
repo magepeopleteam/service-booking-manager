@@ -631,7 +631,23 @@
 		});
 	}
 
-	
+	$(document).on('click','.show-all-services',function(){
+		var postID  = $('input[name="mpwpb_post_id"]');
+		$.ajax({
+			url:mp_ajax_url,
+			type:'POST',
+			data:{
+				action:'mpwpb_show_all_services',
+				postID:postID.val(),
+			},
+			success:function(response){
+				$('.load-service-items-area').html('');
+				$('.load-service-items-area').html(response.data.html);
+				
+			},
+			error:function(error){},
+		});
+	});
 
 	// ============= Extra service sidebar modal ======================
 	$(document).on('click', '.mpwpb-extra-service-new', function (e) {

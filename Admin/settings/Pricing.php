@@ -29,7 +29,7 @@
 							<div class="category-container">
 								<div class="header">
 									<h3><?php _e('Categories','service-booking-manager'); ?></h3>
-									<button class="button" type="button"><?php _e('Show All service','service-booking-manager'); ?></button>
+									<button class="button show-all-services" type="button"><?php _e('Show All service','service-booking-manager'); ?></button>
 								</div>
 								<?php do_action('mpwpb_show_category',$post_id); ?>
 							</div>

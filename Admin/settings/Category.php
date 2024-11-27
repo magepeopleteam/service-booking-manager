@@ -48,7 +48,6 @@ if(!class_exists('MPWPB_Category')){
             $sub_category_checked = $use_sub_category == 'on' ? 'checked' : '';
             ?>
             <div class="mpwpb-category-lists">
-                <!-- load all category default -->
                 <?php $this->show_category_items($post_id); ?>
             </div>
             <button class="button mpwpb-category-new" data-modal="mpwpb-category-new" type="button"><?php _e('Add Category','service-booking-manager'); ?></button>

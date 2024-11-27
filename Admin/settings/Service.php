@@ -12,7 +12,10 @@ if(!class_exists('MPWPB_Services')){
 	class MPWPB_Services{
 		public function __construct(){
 			add_action('mpwpb_show_service', [$this, 'show_service']);
-			
+			// show_all_services
+			add_action('wp_ajax_mpwpb_show_all_services',[$this,'show_all_services']);
+			add_action('wp_ajax_nopriv_mpwpb_show_all_services',[$this,'show_all_services']);
+			// save service
 			add_action('wp_ajax_mpwpb_save_service', [$this, 'save_service']);
 			add_action('wp_ajax_nopriv_mpwpb_save_service', [$this, 'save_service']);
 			//update service
@@ -25,6 +28,20 @@ if(!class_exists('MPWPB_Services')){
 			add_action('wp_ajax_mpwpb_load_service_by_category',[$this,'load_service_by_category']);
 			add_action('wp_ajax_nopriv_mpwpb_load_service_by_category',[$this,'load_service_by_category']);
 		}
+		
+		public function show_all_services(){
+			$post_id = $_POST['postID'];
+			ob_start();
+			$resultMessage = __('Data Updated Successfully', 'mptbm_plugin_pro');
+			$this->show_service($post_id);
+			$html_output = ob_get_clean();
+			wp_send_json_success([
+				'message'=>$resultMessage,
+				'html'=>$html_output
+			]);
+		}
+
+
 		public function load_service_by_category(){
 			$post_id = $_POST['postId'];
 			$category_id = $_POST['itemId'];
