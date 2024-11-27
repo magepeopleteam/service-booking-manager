@@ -495,7 +495,6 @@
 				service_sub_cat:sub_cat.val(),
 			},
 			success: function(response) {
-				console.log(response);
 				$('#mpwpb-service-msg').html(response.data.message);
 				$('.mpwpb-service-table').html('');
 				$('.mpwpb-service-table').append(response.data.html);
@@ -585,7 +584,6 @@
 				service_sub_cat:sub_cat.val(),
 			},
 			success: function(response) {
-				console.log(response);
 				$('#mpwpb-service-msg').html(response.data.message);
 				$('.mpwpb-service-table').html('');
 				$('.mpwpb-service-table').append(response.data.html);
@@ -624,7 +622,7 @@
 				itemId:itemId,
 			},
 			success: function(response) {
-				console.log(response);
+	
 				$('.mpwpb-service-table').html('');
 				$('.mpwpb-service-table').append(response.data.html);
 			},
@@ -805,7 +803,7 @@
 		empty_category_service_form();
 	});
 
-	$('input[name="mpwpb_use_sub_category"]').on('change', function() {
+	$(document).on('change', 'input[name="mpwpb_use_sub_category"]', function(){
 		mpwpb_load_parent_category();
         if ($(this).is(':checked')) {
 			$('input[name="mpwpb_use_sub_category"]').val('on');
@@ -814,12 +812,12 @@
         }
     });
 
-	$('select[name="mpwpb_parent_cat"]').on('change', function() {
+	$(document).on('change', '.load-parent-category', function(){
 		$('input[name="mpwpb_parent_item_id"]').val($(this).val()); 
 		$('input[name="mpwpb_parent_cat_id"]').val($(this).val()); 
     });
 
-	$('select[name="mpwpb_sub_category"]').on('change', function() {
+	$(document).on('change', 'select[name="mpwpb_sub_category"]', function(){
 		$('input[name="mpwpb_sub_cat_id"]').val($(this).val()); 
     });
 
@@ -947,14 +945,15 @@
 	function update_sub_category_service(){
 		var postID  = $('input[name="mpwpb_category_post_id"]');
 		var itemId = $('input[name="mpwpb_category_item_id"]');
-		var parentId = $('select[name="mpwpb_parent_item_id"]');
+		var parentId = $('input[name="mpwpb_parent_item_id"]');
 		var category_image_icon = $('input[name="mpwpb_category_image_icon"]');
 		var category_name = $('input[name="mpwpb_category_name"]');
+
 		$.ajax({
 			url: mp_ajax_url,
 			type: 'POST',
 			data: {
-				action: 'mpwpb_update_sub_category_service',
+				action: 'mpwpb_update_sub_category',
 				category_image_icon:category_image_icon.val(),
 				category_name:category_name.val(),
 				category_postID:postID.val(),
@@ -962,7 +961,6 @@
 				category_parentId:parentId.val(),
 			},
 			success: function(response) {
-				console.log(response);
 				$('#mpwpb-category-service-msg').html(response.data.message);
 				$('.mpwpb-category-lists').html('');
 				$('.mpwpb-category-lists').append(response.data.html);

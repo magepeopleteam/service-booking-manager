@@ -24,8 +24,8 @@ if(!class_exists('MPWPB_Category')){
             add_action('wp_ajax_nopriv_mpwpb_update_category_service', [$this, 'update_category_service']);
             
             // mpwpb update sub category service
-            add_action('wp_ajax_mpwpb_update_sub_category_service', [$this, 'update_sub_category_service']);
-            add_action('wp_ajax_nopriv_mpwpb_update_sub_category_service', [$this, 'update_sub_category_service']);
+            add_action('wp_ajax_mpwpb_update_sub_category', [$this, 'update_sub_category_service']);
+            add_action('wp_ajax_nopriv_mpwpb_update_sub_category', [$this, 'update_sub_category_service']);
             
             // mpwpb delete category service
             add_action('wp_ajax_mpwpb_category_service_delete_item', [$this, 'delete_category_service']);
@@ -60,6 +60,7 @@ if(!class_exists('MPWPB_Category')){
                         <input type="hidden" name="mpwpb_category_post_id" value="<?php echo $post_id; ?>"> 
                         <input type="hidden" name="mpwpb_category_item_id" value="">
                         <input type="hidden" name="mpwpb_parent_item_id" value="">
+                        <input type="hidden" name="mpwpb_parent_cat_id" value="">
                         <label>
                             <?php _e('Category Name','service-booking-manager'); ?>
                             <input type="text"   name="mpwpb_category_name" placeholder="Category"> 
@@ -123,7 +124,7 @@ if(!class_exists('MPWPB_Category')){
         public function show_parent_category_lists($post_id){
             $categories = $this->get_categories($post_id);
             ?>
-            <select name="mpwpb_parent_cat">
+            <select name="mpwpb_parent_cat" class="load-parent-category">
                 <option value=""><?php _e('Select Category','service-booking-manager'); ?></option>
                 <?php foreach($categories as $key => $category): 
                     ?>
@@ -169,7 +170,6 @@ if(!class_exists('MPWPB_Category')){
                                 'icon' => $sub_category['icon'],
                                 'image' => $sub_category['image'],
                                 'cat_id'=> $cat_index,
-                                'use_sub_category'=> 'on'
                             ];
                             if(isset($sub_category['service'])){
                                 foreach ($sub_category['service'] as $service_index => $service){
@@ -218,7 +218,7 @@ if(!class_exists('MPWPB_Category')){
                 <div class="mpwpb-sub-category-lists">
                     <?php foreach($sub_categories as $child_key => $sub_category): ?>
                         <?php if($sub_category['cat_id']==$parent_key): ?>
-                            <div class="mpwpb-sub-category-items" data-use-sub="<?php echo $sub_category['use_sub_category']; ?>" data-parent-id="<?php echo $parent_key; ?>" data-id="<?php echo $child_key; ?>">
+                            <div class="mpwpb-sub-category-items" data-parent-id="<?php echo $parent_key; ?>" data-id="<?php echo $child_key; ?>">
                                 <div class="image-block">
                                     <?php if(!empty($sub_category['image'])): ?>
                                         <img src="<?php echo esc_attr(wp_get_attachment_url($sub_category['image'])); ?>" alt="" data-imageId="<?php echo $sub_category['image']; ?>">
@@ -329,6 +329,7 @@ if(!class_exists('MPWPB_Category')){
                     $sub_categories[$_POST['category_itemId']]=$new_data;
                 }
             }
+
             update_post_meta($post_id, 'mpwpb_sub_category_service', $sub_categories);
             ob_start();
             $resultMessage = __('Data Updated Successfully', 'mptbm_plugin_pro');
