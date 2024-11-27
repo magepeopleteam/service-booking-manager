@@ -507,7 +507,6 @@
 	}
 	
 	$(document).on('click', '.mpwpb-service-edit', function (e) {
-		open_sidebar_modal(e);
 		$('#mpwpb-service-msg').html('');
 		$('.mpwpb_service_save_button').hide();
 		$('.mpwpb_service_update_button').show();
@@ -588,7 +587,7 @@
 				$('.mpwpb-service-table').html('');
 				$('.mpwpb-service-table').append(response.data.html);
 				setTimeout(function(){
-					$('.mpwpb-sidebar-container').removeClass('open');
+					$('.mpwpb-modal-container').removeClass('open');
 					empty_service_form();
 				},1000);
 				

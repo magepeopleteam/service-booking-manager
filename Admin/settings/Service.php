@@ -173,7 +173,7 @@ if(!class_exists('MPWPB_Services')){
 									<td><?php echo $service['price']; ?></td>
 									<td><?php echo $service['duration']; ?></td>
 									<td>
-										<span class="mpwpb-service-edit"><i class="fas fa-edit"></i></span>
+										<span class="mpwpb-service-edit" data-modal="mpwpb-service-new"><i class="fas fa-edit"></i></span>
 										<span class="mpwpb-service-delete"><i class="fas fa-trash"></i></span>
 									</td>
 								</tr>
@@ -336,7 +336,7 @@ if(!class_exists('MPWPB_Services')){
 					<td><?php echo $service['price']; ?></td>
 					<td><?php echo $service['duration']; ?></td>
 					<td>
-						<span class="mpwpb-service-edit"><i class="fas fa-edit"></i></span>
+						<span class="mpwpb-service-edit" data-modal="mpwpb-service-new"><i class="fas fa-edit"></i></span>
 						<span class="mpwpb-service-delete"><i class="fas fa-trash"></i></span>
 					</td>
 				</tr>
