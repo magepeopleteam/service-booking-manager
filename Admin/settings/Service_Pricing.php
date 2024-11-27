@@ -39,10 +39,18 @@
                     </section>
 					<section>
 						<div class="category-service-area">
-							<div class="category-section">
+							<div class="category-container">
+								<div class="header">
+									<h3><?php _e('Categories','service-booking-manager'); ?></h3>
+									<button class="button" type="button"><?php _e('Show All service','service-booking-manager'); ?></button>
+								</div>
 								<?php do_action('mpwpb_show_category',$post_id); ?>
 							</div>
-							<div class="service-sectoin">
+							<div class="service-container">
+								<div class="header">
+									<h3 class="service-title"><?php _e('All Services','service-booking-manager'); ?></h3>
+									<button class="button mpwpb-service-new" data-modal="mpwpb-service-new" type="button"><?php _e('Add Service Category','service-booking-manager'); ?></button>
+								</div>
 								<table class="table mB">
 									<thead>
 										<tr>
@@ -57,7 +65,6 @@
 										<?php $this->show_service_items($post_id); ?>
 									</tbody>
 								</table>
-								<button class="button mpwpb-service-new" data-modal="mpwpb-service-new" type="button"><?php _e('Add Service Category','service-booking-manager'); ?></button>
 							</div>
 						</div>
 					</section>

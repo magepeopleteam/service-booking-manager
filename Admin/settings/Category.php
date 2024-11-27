@@ -43,10 +43,6 @@ if(!class_exists('MPWPB_Category')){
             $active_class = $use_sub_category == 'on' ? 'mActive' : '';
             $sub_category_checked = $use_sub_category == 'on' ? 'checked' : '';
             ?>
-            <div>
-                <h2><?php _e('Categories','service-booking-manager'); ?></h2>
-                <button><?php _e('Show All service','service-booking-manager'); ?></button>
-            </div>
             <div class="mpwpb-category-lists">
                 <!-- load all category default -->
                 <?php $this->show_category_items($post_id); ?>
