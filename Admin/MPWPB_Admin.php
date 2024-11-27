@@ -31,8 +31,9 @@
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Settings.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/General.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Date_Time.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Pricing.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Category.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Service_Pricing.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Service.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Extra_service.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Faq.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Service_Details.php';
