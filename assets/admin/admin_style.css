@@ -363,6 +363,7 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   border: 1px solid var(--mage-light);
   padding: 5px;
   min-height: 50px;
+  cursor: pointer;
 }
 .mpwpb-category-lists .mpwpb-category-items .image-block, .mpwpb-category-lists .mpwpb-sub-category-items .image-block {
   display: flex;

@@ -1098,6 +1098,34 @@
 		});
 	}
 
+	// ====================category show service===============
+	$(document).on('click','.mpwpb-category-items', function(){
+		var itemId =$(this).data('id');
+		var postID  = $('input[name="mpwpb_category_post_id"]');
+		$.ajax({
+			url:mp_ajax_url,
+			type:'POST',
+			data:{
+				action:'mpwpb_load_service_by_category',
+				postId:postID.val(),
+				itemId:itemId,
+			},
+			success:function(response){
+				console.log(response);
+				$('.load-service-items-area').html('');
+				$('.load-service-items-area').html(response.data.html);
+			},
+			error:function(error){
+
+			}
+		});
+	});
+
+	$(document).on('click','.mpwpb-sub-category-items', function(){
+		var itemId =$(this).data('id');
+		console.log(itemId);
+	});
+
 	// =====================sidebar modal open close=============
 	$(document).on('click', '[data-modal]', function (e) {
 		const modalTarget = $(this).data('modal');
