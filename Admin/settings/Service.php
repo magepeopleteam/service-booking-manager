@@ -11,7 +11,7 @@ if(!defined('ABSPATH'))die;
 if(!class_exists('MPWPB_Services')){
 	class MPWPB_Services{
 		public function __construct(){
-			add_action('mpwpb_show_service', [$this, 'show_service']);
+			add_action('mpwpb_show_service', [$this, 'view_all_services']);
 			// show_all_services
 			add_action('wp_ajax_mpwpb_show_all_services',[$this,'show_all_services']);
 			add_action('wp_ajax_nopriv_mpwpb_show_all_services',[$this,'show_all_services']);
@@ -33,7 +33,7 @@ if(!class_exists('MPWPB_Services')){
 			$post_id = $_POST['postID'];
 			ob_start();
 			$resultMessage = __('Data Updated Successfully', 'mptbm_plugin_pro');
-			$this->show_service($post_id);
+			$this->view_all_services($post_id);
 			$html_output = ob_get_clean();
 			wp_send_json_success([
 				'message'=>$resultMessage,
@@ -56,24 +56,24 @@ if(!class_exists('MPWPB_Services')){
 			die;
 		}
 
-		public function show_service($post_id){
+		public function view_all_services($post_id){
 			$show_category_status = MP_Global_Function::get_post_info($post_id, 'mpwpb_show_category_status', 'off');
 			$active_class = $show_category_status == 'on' ? 'mActive' : '';
 			$show_category_status = $show_category_status == 'on' ? 'checked' : '';
 			?>
 				<div class="load-service-items-area">
-					<table class="table mB">
+					<table class="table">
 						<thead>
 							<tr>
-								<th style="width:66px">Image</th>
-								<th style="width:250px;text-align:left">Name</th>
-								<th >Price</th>
-								<th >Duration</th>
+								<th style="width:66px"><?php _e('Image','service-booking-manager') ?></th>
+								<th style="width:250px;text-align:left"><?php _e('Name','service-booking-manager') ?></th>
+								<th ><?php _e('Price','service-booking-manager') ?></th>
+								<th ><?php _e('Duration','service-booking-manager') ?></th>
 								<th style="width:65px"></th>
 							</tr>
 						</thead>
 						<tbody class="mpwpb-service-table">
-							<?php $this->show_service_items($post_id); ?>
+							<?php $this->get_all_service_items($post_id); ?>
 						</tbody>
 					</table>
 				</div>
@@ -245,7 +245,7 @@ if(!class_exists('MPWPB_Services')){
 			update_post_meta($post_id, 'mpwpb_service', $services);
 			ob_start();
 			$resultMessage = __('Data Updated Successfully', 'mptbm_plugin_pro');
-			$this->show_service_items($post_id);
+			$this->get_all_service_items($post_id);
 			$html_output = ob_get_clean();
 			wp_send_json_success([
 				'message' => $resultMessage,
@@ -289,7 +289,7 @@ if(!class_exists('MPWPB_Services')){
 			update_post_meta($post_id, 'mpwpb_service', $services);
 			ob_start();
 			$resultMessage = __('Data Updated Successfully', 'mptbm_plugin_pro');
-			$this->show_service_items($post_id);
+			$this->get_all_service_items($post_id);
 			$html_output = ob_get_clean();
 			wp_send_json_success([
 				'message' => $resultMessage,
@@ -312,7 +312,7 @@ if(!class_exists('MPWPB_Services')){
 			if($result){
 				ob_start();
 				$resultMessage = __('Data Deleted Successfully', 'mptbm_plugin_pro');
-				$this->show_service_items($post_id);
+				$this->get_all_service_items($post_id);
 				$html_output = ob_get_clean();
 				wp_send_json_success([
 					'message' => $resultMessage,
@@ -333,13 +333,15 @@ if(!class_exists('MPWPB_Services')){
 			return $service;
 		}
 
-		public function show_service_items($post_id){
+		public function get_all_service_items($post_id){
 			$MPWPB_Category = new MPWPB_Service_Category();
 			$services = $this->get_services($post_id);
-			$categories = $MPWPB_Category->get_categories($post_id);
-			$sub_categories = $MPWPB_Category->get_sub_categories($post_id);
 			foreach ($services as $key => $service) {
-				?>
+				$this->get_service_item($key,$service);
+			}
+		}
+		public function get_service_item($key,$service){
+			?>
 				<tr data-id="<?php echo $key; ?>" data-cat-status="<?php echo $service['show_cat_status'];?>" data-parent-cat="<?php echo $service['parent_cat'];?>" data-sub-cat="<?php echo $service['sub_cat'];?>">
 					<td>
 						<?php  if(!empty($service['image'])): ?>
@@ -349,16 +351,15 @@ if(!class_exists('MPWPB_Services')){
 							<i class="<?php echo $service['icon'] ? $service['icon'] : ''; ?>"></i>
 						<?php  endif; ?>
 					</td>
-					<td style="text-align:left"><?php echo $service['name']; ?></td>
-					<td><?php echo $service['price']; ?></td>
-					<td><?php echo $service['duration']; ?></td>
+					<td style="text-align:left"><?php echo esc_html($service['name']); ?></td>
+					<td><?php echo esc_html($service['price']); ?></td>
+					<td><?php echo esc_html($service['duration']); ?></td>
 					<td>
 						<span class="mpwpb-service-edit" data-modal="mpwpb-service-new"><i class="fas fa-edit"></i></span>
 						<span class="mpwpb-service-delete"><i class="fas fa-trash"></i></span>
 					</td>
 				</tr>
-				<?php
-			}
+			<?php
 		}
 	}
 	$MPWPB_Services  = new MPWPB_Services();

@@ -16,13 +16,13 @@
 				?>
 				<div class="tabsItem mpwpb_price_settings" data-tabs="#mpwpb_price_settings">
 					<header>
-							<h2><?php esc_html_e('Price Settings', 'service-booking-manager'); ?></h2>
-							<span><?php esc_html_e('Price Settings', 'service-booking-manager'); ?></span>
+							<h2><?php esc_html_e('Services and Price Settings', 'service-booking-manager'); ?></h2>
+							<span><?php esc_html_e('Manage and customize your offerings with ease! Create new services, organize them into categories, and set competitive prices to cater to your customers\' needs effectively.', 'service-booking-manager'); ?></span>
                     </header>
 
 					<section class="section">
-							<h2><?php esc_html_e('Pricing Settings', 'service-booking-manager'); ?></h2>
-							<span><?php esc_html_e('Pricing Settings', 'service-booking-manager'); ?></span>
+							<h2><?php esc_html_e('Category and Services', 'service-booking-manager'); ?></h2>
+							<span><?php esc_html_e('Create and organize service categories, adding services under each to keep everything structured and accessible.', 'service-booking-manager'); ?></span>
                     </section>
 					<section>
 						<div class="category-service-area">
@@ -36,7 +36,7 @@
 							<div class="service-container">
 								<div class="header">
 									<h3 class="service-title"><?php _e('All Services','service-booking-manager'); ?></h3>
-									<button class="button mpwpb-service-new" data-modal="mpwpb-service-new" type="button"><?php _e('Add Service Category','service-booking-manager'); ?></button>
+									<button class="button mpwpb-service-new" data-modal="mpwpb-service-new" type="button"><?php _e('Add New Service','service-booking-manager'); ?></button>
 								</div>
 								<?php do_action('mpwpb_show_service',$post_id); ?>
 							</div>
