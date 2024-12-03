@@ -177,6 +177,7 @@ if(!class_exists('MPWPB_Category')){
                     ?>
                     <option value="<?php echo $key; ?>"><?php echo $category['name']; ?></option>
                 <?php endif; endforeach; ?>
+                
             </select>
             <?php
         }
