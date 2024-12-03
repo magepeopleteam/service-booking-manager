@@ -110,16 +110,17 @@ if(!class_exists('MPWPB_Services')){
 							<label><?php _e('Use Category','service-booking-manager'); ?></label>
 							<?php MP_Custom_Layout::switch_button('mpwpb_show_category_status', $show_category_status); ?>
 							<div class="<?php echo $active_class ?>" data-collapse="#mpwpb_show_category_status" style="display:none;">
+								<label><?php _e('Select Category','service-booking-manager'); ?> </label>
 								<div class="mpwpb-parent-category">
-									<label><?php _e('Select Category','service-booking-manager'); ?> </label>
 									<?php
 									$MPWPB_Service_Category = new MPWPB_Service_Category();
 									$MPWPB_Service_Category->show_parent_category_lists($post_id); ?>
 								</div>
-								<div class="mpwpb-sub-category">
-									<label><?php _e('Select Category','service-booking-manager'); ?> </label>
-									<?php
-									$MPWPB_Service_Category->show_sub_category_lists($post_id); ?>
+								<div class="sub-category-container" style="display: none;">
+									<label><?php _e('Select Sub Category','service-booking-manager'); ?> </label>
+									<div class="mpwpb-sub-category">
+										<?php $MPWPB_Service_Category->show_sub_category_lists($post_id); ?>
+									</div>
 								</div>
 							</div>
 
