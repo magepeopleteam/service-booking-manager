@@ -496,8 +496,8 @@
 			},
 			success: function(response) {
 				$('#mpwpb-service-msg').html(response.data.message);
-				$('.mpwpb-service-table').html('');
-				$('.mpwpb-service-table').append(response.data.html);
+				$('.mpwpb-service-rows').html('');
+				$('.mpwpb-service-rows').append(response.data.html);
 				empty_service_form();
 			},
 			error: function(error) {
@@ -584,8 +584,8 @@
 			},
 			success: function(response) {
 				$('#mpwpb-service-msg').html(response.data.message);
-				$('.mpwpb-service-table').html('');
-				$('.mpwpb-service-table').append(response.data.html);
+				$('.mpwpb-service-rows').html('');
+				$('.mpwpb-service-rows').append(response.data.html);
 				setTimeout(function(){
 					$('.mpwpb-modal-container').removeClass('open');
 					empty_service_form();
@@ -622,8 +622,8 @@
 			},
 			success: function(response) {
 	
-				$('.mpwpb-service-table').html('');
-				$('.mpwpb-service-table').append(response.data.html);
+				$('.mpwpb-service-rows').html('');
+				$('.mpwpb-service-rows').append(response.data.html);
 			},
 			error: function(error) {
 				console.log('Error:', error);
@@ -641,8 +641,8 @@
 				postID:postID.val(),
 			},
 			success:function(response){
-				$('.load-service-items-area').html('');
-				$('.load-service-items-area').html(response.data.html);
+				$('.mpwpb-service-rows').html('');
+				$('.mpwpb-service-rows').html(response.data.html);
 				
 			},
 			error:function(error){},
@@ -1115,13 +1115,15 @@
 
 	// ====================category show service===============
 	$(document).on('click','.mpwpb-category-items', function(){
-		show_service_by_cat()
+		var itemId =$(this).data('id');
+		show_service_by_cat(itemId);
 	});
 	$(document).on('click','.mpwpb-sub-category-items', function(){
-		show_service_by_cat();
-	});
-	function show_service_by_cat(){
 		var itemId =$(this).data('id');
+		var parentId =$(this).data('parent-id');
+		show_service_by_sub_cat(itemId,parentId);
+	});
+	function show_service_by_cat(itemId){
 		var postID  = $('input[name="mpwpb_category_post_id"]');
 		$.ajax({
 			url:mp_ajax_url,
@@ -1133,8 +1135,29 @@
 			},
 			success:function(response){
 				console.log(response);
-				$('.load-service-items-area').html('');
-				$('.load-service-items-area').html(response.data.html);
+				$('.mpwpb-service-rows').html('');
+				$('.mpwpb-service-rows').html(response.data.html);
+			},
+			error:function(error){
+
+			}
+		});
+	}
+	function show_service_by_sub_cat(itemId,parentId){
+		var postID  = $('input[name="mpwpb_category_post_id"]');
+		$.ajax({
+			url:mp_ajax_url,
+			type:'POST',
+			data:{
+				action:'mpwpb_load_service_by_sub_category',
+				postId:postID.val(),
+				itemId:itemId,
+				parentId:parentId,
+			},
+			success:function(response){
+				console.log(response);
+				$('.mpwpb-service-rows').html('');
+				$('.mpwpb-service-rows').html(response.data.html);
 			},
 			error:function(error){
 

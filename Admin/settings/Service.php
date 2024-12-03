@@ -27,13 +27,16 @@ if(!class_exists('MPWPB_Services')){
 			// load service by category
 			add_action('wp_ajax_mpwpb_load_service_by_category',[$this,'load_service_by_category']);
 			add_action('wp_ajax_nopriv_mpwpb_load_service_by_category',[$this,'load_service_by_category']);
+			// load service by category
+			add_action('wp_ajax_mpwpb_load_service_by_sub_category',[$this,'load_service_by_sub_category']);
+			add_action('wp_ajax_nopriv_mpwpb_load_service_by_sub_category',[$this,'load_service_by_sub_category']);
 		}
 		
 		public function show_all_services(){
 			$post_id = $_POST['postID'];
 			ob_start();
-			$resultMessage = __('Data Updated Successfully', 'mptbm_plugin_pro');
-			$this->view_all_services($post_id);
+			$resultMessage = __('Data Updated Successfully', 'service-booking-manager');
+			$this->get_all_service_items($post_id);
 			$html_output = ob_get_clean();
 			wp_send_json_success([
 				'message'=>$resultMessage,
@@ -41,13 +44,27 @@ if(!class_exists('MPWPB_Services')){
 			]);
 		}
 
-
 		public function load_service_by_category(){
 			$post_id = $_POST['postId'];
 			$category_id = $_POST['itemId'];
 			ob_start();
-			$resultMessage = __('Data Updated Successfully', 'mptbm_plugin_pro');
+			$resultMessage = __('Data Updated Successfully', 'service-booking-manager');
 			$this->show_service_by_category($post_id,$category_id);
+			$html_output = ob_get_clean();
+			wp_send_json_success([
+				'message' => $resultMessage,
+				'html' => $html_output,
+			]);
+			die;
+		}
+
+		public function load_service_by_sub_category(){
+			$post_id = $_POST['postId'];
+			$sub_cat = $_POST['itemId'];
+			$parent_cat = $_POST['parentId'];
+			ob_start();
+			$resultMessage = __('Data Updated Successfully', 'service-booking-manager');
+			$this->show_service_by_sub_category($post_id,$sub_cat,$parent_cat);
 			$html_output = ob_get_clean();
 			wp_send_json_success([
 				'message' => $resultMessage,
@@ -61,7 +78,7 @@ if(!class_exists('MPWPB_Services')){
 			$active_class = $show_category_status == 'on' ? 'mActive' : '';
 			$show_category_status = $show_category_status == 'on' ? 'checked' : '';
 			?>
-				<div class="load-service-items-area">
+				<div class="mpwpb-service-table">
 					<table class="table">
 						<thead>
 							<tr>
@@ -72,7 +89,7 @@ if(!class_exists('MPWPB_Services')){
 								<th style="width:65px"></th>
 							</tr>
 						</thead>
-						<tbody class="mpwpb-service-table">
+						<tbody class="mpwpb-service-rows">
 							<?php $this->get_all_service_items($post_id); ?>
 						</tbody>
 					</table>
@@ -160,47 +177,21 @@ if(!class_exists('MPWPB_Services')){
 		}
 
 		public function show_service_by_category($post_id,$category_id){
-			?>
-				<table class="table mB">
-					<thead>
-						<tr>
-							<th style="width:66px">Image</th>
-							<th style="width:250px;text-align:left">Name</th>
-							<th >Price</th>
-							<th >Duration</th>
-							<th style="width:65px"></th>
-						</tr>
-					</thead>
-					<tbody class="mpwpb-service-table">
-						<?php 
-							$services = $this->get_services($post_id);
-							foreach ($services as $key => $service) {
-								if($service['parent_cat']==$category_id){
-							?>
-								<tr data-id="<?php echo $key; ?>" data-cat-status="<?php echo $service['show_cat_status'];?>" data-parent-cat="<?php echo $service['parent_cat'];?>" data-sub-cat="<?php echo $service['sub_cat'];?>">
-									<td>
-										<?php  if(!empty($service['image'])): ?>
-											<img src="<?php echo esc_attr(wp_get_attachment_url($service['image'])); ?>" alt="" data-imageId="<?php echo $service['image']; ?>">
-										<?php  endif; ?>
-										<?php  if(!empty($service['icon'])): ?>
-											<i class="<?php echo $service['icon'] ? $service['icon'] : ''; ?>"></i>
-										<?php  endif; ?>
-									</td>
-									<td style="text-align:left"><?php echo $service['name']; ?></td>
-									<td><?php echo $service['price']; ?></td>
-									<td><?php echo $service['duration']; ?></td>
-									<td>
-										<span class="mpwpb-service-edit" data-modal="mpwpb-service-new"><i class="fas fa-edit"></i></span>
-										<span class="mpwpb-service-delete"><i class="fas fa-trash"></i></span>
-									</td>
-								</tr>
-							<?php
-								}
-							}
-						?>
-					</tbody>
-				</table>
-			<?php
+			$services = $this->get_services($post_id);
+			foreach ($services as $key => $service) {
+				if($service['parent_cat']==$category_id){
+					$this->get_service_item($key,$service);
+				}
+			}
+		}
+
+		public function show_service_by_sub_category($post_id,$sub_cat,$parent_cat){
+			$services = $this->get_services($post_id);
+			foreach ($services as $key => $service) {
+				if(($service['parent_cat']==$parent_cat)&&($service['sub_cat']==$sub_cat)){
+					$this->get_service_item($key,$service);
+				}
+			}
 		}
 
 		public function update_service(){
@@ -244,7 +235,7 @@ if(!class_exists('MPWPB_Services')){
 			}
 			update_post_meta($post_id, 'mpwpb_service', $services);
 			ob_start();
-			$resultMessage = __('Data Updated Successfully', 'mptbm_plugin_pro');
+			$resultMessage = __('Data Updated Successfully', 'service-booking-manager');
 			$this->get_all_service_items($post_id);
 			$html_output = ob_get_clean();
 			wp_send_json_success([
@@ -288,7 +279,7 @@ if(!class_exists('MPWPB_Services')){
 			array_push($services,$new_data);
 			update_post_meta($post_id, 'mpwpb_service', $services);
 			ob_start();
-			$resultMessage = __('Data Updated Successfully', 'mptbm_plugin_pro');
+			$resultMessage = __('Data Updated Successfully', 'service-booking-manager');
 			$this->get_all_service_items($post_id);
 			$html_output = ob_get_clean();
 			wp_send_json_success([
@@ -311,7 +302,7 @@ if(!class_exists('MPWPB_Services')){
 			$result = update_post_meta($post_id, 'mpwpb_service', $services);
 			if($result){
 				ob_start();
-				$resultMessage = __('Data Deleted Successfully', 'mptbm_plugin_pro');
+				$resultMessage = __('Data Deleted Successfully', 'service-booking-manager');
 				$this->get_all_service_items($post_id);
 				$html_output = ob_get_clean();
 				wp_send_json_success([
