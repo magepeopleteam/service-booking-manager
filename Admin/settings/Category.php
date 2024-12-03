@@ -31,9 +31,13 @@ if(!class_exists('MPWPB_Category')){
             add_action('wp_ajax_mpwpb_category_service_delete_item', [$this, 'delete_category_service']);
             add_action('wp_ajax_nopriv_mpwpb_category_service_delete_item', [$this, 'delete_category_service']);
             
-            // Load sub category by ajax
+            // Load  category by ajax
             add_action('wp_ajax_mpwpb_load_parent_category', [ $this,'load_parent_category']);
             add_action('wp_ajax_nopriv_mpwpb_load_parent_category', [ $this,'load_parent_category']);
+            
+            // Load  category by ajax
+            add_action('wp_ajax_mpwpb_load_sub_category', [ $this,'load_sub_category']);
+            add_action('wp_ajax_nopriv_mpwpb_load_sub_category', [ $this,'load_sub_category']);
             
             // Del sub category by ajax
             add_action('wp_ajax_mpwpb_sub_category_delete', [ $this,'delete_sub_category']);
@@ -123,12 +127,25 @@ if(!class_exists('MPWPB_Category')){
             ]);
             die;
         }
+        public function load_sub_category(){
+            $post_id = $_POST['postID'];
+            $parentId = $_POST['parentId'];
+            ob_start();
+            $resultMessage = __('Data Updated Successfully', 'service-booking-manager');
+            $this->sub_category_by_parent_id($post_id,$parentId);
+            $html_output = ob_get_clean();
+            wp_send_json_success([
+                'message' => $resultMessage,
+                'html' => $html_output,
+            ]);
+            die;
+        }
 
         public function show_parent_category_lists($post_id){
             $categories = $this->get_categories($post_id);
             ?>
             <select name="mpwpb_parent_cat" class="load-parent-category">
-                <option value=""><?php _e('Select Category','service-booking-manager'); ?></option>
+                <option value="" selected><?php _e('Select Category','service-booking-manager'); ?></option>
                 <?php foreach($categories as $key => $category): 
                     ?>
                     <option value="<?php echo $key; ?>"><?php echo $category['name']; ?></option>
@@ -142,10 +159,24 @@ if(!class_exists('MPWPB_Category')){
             $sub_categories = $this->get_sub_categories($post_id);
             ?>
             <select name="mpwpb_sub_category">
+                <option value=""><?php _e('Select Sub Category','service-booking-manager'); ?></option>
                 <?php foreach($sub_categories as $key => $category): 
                     ?>
                     <option value="<?php echo $key; ?>"><?php echo $category['name']; ?></option>
                 <?php endforeach; ?>
+            </select>
+            <?php
+        }
+        public function sub_category_by_parent_id($post_id,$parentId){
+            $sub_categories = $this->get_sub_categories($post_id);
+            ?>
+            <select name="mpwpb_sub_category">
+                <option value=""><?php _e('Select Sub Category','service-booking-manager'); ?></option>
+                <?php foreach($sub_categories as $key => $category): 
+                    if($category['cat_id']==$parentId):
+                    ?>
+                    <option value="<?php echo $key; ?>"><?php echo $category['name']; ?></option>
+                <?php endif; endforeach; ?>
             </select>
             <?php
         }

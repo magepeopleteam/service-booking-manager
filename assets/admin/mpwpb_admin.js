@@ -447,17 +447,17 @@
 		$('input[name="mpwpb_show_category_status"]').val('off');
 		$('input[name="mpwpb_show_category_status"]').prop('checked', false);
 		$('[data-collapse="#mpwpb_show_category_status"]').slideUp();
-		$('select[name="mpwpb_parent_cat"]').val(0).change();
-		$('select[name="mpwpb_sub_category"]').val(0).change();
+		$('select[name="mpwpb_parent_cat"]').val('');
+		$('select[name="mpwpb_sub_category"]').val('');
 	}
 
-	$('input[name="mpwpb_show_category_status"]').on('change', function() {
-        if ($(this).is(':checked')) {
+	$(document).on('change','input[name="mpwpb_show_category_status"]',function(){
+		if ($(this).is(':checked')) {
 			$('input[name="mpwpb_show_category_status"]').val('on');
         } else {
 			$('input[name="mpwpb_show_category_status"]').val('off');
         }
-    });
+	});
 
 	$(document).on('click', '#mpwpb_service_save', function (e) {
 		e.preventDefault();
@@ -829,6 +829,13 @@
 	$(document).on('change', '.load-parent-category', function(){
 		$('input[name="mpwpb_parent_item_id"]').val($(this).val()); 
 		$('input[name="mpwpb_parent_cat_id"]').val($(this).val()); 
+		if ($(this).val() !== '') {
+			mpwpb_load_sub_category($(this).val());
+			$('.sub-category-container').slideDown(); 
+		} else {
+			$('.sub-category-container').slideUp();
+		}
+		
     });
 
 	$(document).on('change', 'select[name="mpwpb_sub_category"]', function(){
@@ -864,6 +871,26 @@
 			success:function(response){
 				$('.mpwpb-parent-category').html('');
 				$('.mpwpb-parent-category').append(response.data.html);
+			},
+			error:function(error){
+				console.log('Error:', error);
+			}
+		});
+	}
+
+	function mpwpb_load_sub_category(parentId){
+		var postID = $('input[name="mpwpb_category_post_id"]').val();
+		$.ajax({
+			url:mp_ajax_url,
+			type:'POST',
+			data:{
+				action:'mpwpb_load_sub_category',
+				postID:postID,
+				parentId:parentId,
+			},
+			success:function(response){
+				$('.mpwpb-sub-category').html('');
+				$('.mpwpb-sub-category').append(response.data.html);
 			},
 			error:function(error){
 				console.log('Error:', error);
