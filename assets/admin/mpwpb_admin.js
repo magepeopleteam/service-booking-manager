@@ -515,15 +515,14 @@
 		var catStatus = $(this).closest('tr').data('cat-status');
 		var parentCat = $(this).closest('tr').data('parent-cat');
 		var subCat = $(this).closest('tr').data('sub-cat');
+		var details = $(this).closest('tr').attr('title');
 		var parent = $(this).closest('tr');
 		var icon = parent.find('td:nth-child(1) i').attr('class');
 		var imageId = parent.find('td:nth-child(1) img').attr('data-imageId');
 		var name = parent.find('td:nth-child(2)').text().trim();
-		var details = parent.find('td:nth-child(3)').text().trim();
-		var category = parent.find('td:nth-child(4)').text().trim();
-		var price = parent.find('td:nth-child(5)').text().trim();
-		var duratoin = parent.find('td:nth-child(6)').text().trim();
-		
+		var price = parent.find('td:nth-child(3)').text().trim();
+		var duratoin = parent.find('td:nth-child(4)').text().trim();
+
 		$('input[name="service_item_id"]').val(itemId);
 		if (icon) {
 			$('input[name="service_image_icon"]').val(icon);

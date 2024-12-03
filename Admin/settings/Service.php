@@ -135,7 +135,7 @@ if(!class_exists('MPWPB_Services')){
 
 							<label>
 								<?php _e('Duration','service-booking-manager'); ?>
-								<input type="number"   name="service_duration"> 
+								<input type="text"   name="service_duration"> 
 							</label>
 
 							<label>
@@ -333,14 +333,15 @@ if(!class_exists('MPWPB_Services')){
 		}
 		public function get_service_item($key,$service){
 			?>
-				<tr data-id="<?php echo $key; ?>" data-cat-status="<?php echo $service['show_cat_status'];?>" data-parent-cat="<?php echo $service['parent_cat'];?>" data-sub-cat="<?php echo $service['sub_cat'];?>">
-					<td>
+				<tr data-id="<?php echo $key; ?>" data-cat-status="<?php echo $service['show_cat_status'];?>" data-parent-cat="<?php echo $service['parent_cat'];?>" data-sub-cat="<?php echo $service['sub_cat'];?>" title="<?php echo $service['details']; ?>">
+					<td >
 						<?php  if(!empty($service['image'])): ?>
 							<img src="<?php echo esc_attr(wp_get_attachment_url($service['image'])); ?>" alt="" data-imageId="<?php echo $service['image']; ?>">
 						<?php  endif; ?>
 						<?php  if(!empty($service['icon'])): ?>
 							<i class="<?php echo $service['icon'] ? $service['icon'] : ''; ?>"></i>
 						<?php  endif; ?>
+						<span style="display: none;"><?php echo $service['details']; ?></span>
 					</td>
 					<td style="text-align:left"><?php echo esc_html($service['name']); ?></td>
 					<td><?php echo esc_html($service['price']); ?></td>
