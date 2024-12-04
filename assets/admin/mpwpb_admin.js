@@ -537,8 +537,12 @@
 		if(catStatus=='on'){
 			$('input[name="mpwpb_show_category_status"]').prop('checked', true);
 			$('[data-collapse="#mpwpb_show_category_status"]').slideDown();
-			$('select[name="mpwpb_parent_cat"]').val(parentCat).change();
-			$('select[name="mpwpb_sub_category"]').val(subCat).change();
+			$('select[name="mpwpb_parent_cat"]').val(parentCat);
+			if(subCat!=''){
+				$('.sub-category-container').slideDown('fast');
+				$('select[name="mpwpb_sub_category"]').val(subCat);
+			}
+			
 		}else{
 			$('input[name="mpwpb_show_category_status"]').val('off');
 			$('input[name="mpwpb_show_category_status"]').prop('checked', false);
