@@ -10,6 +10,8 @@
         padding: 5px;
         min-height: 50px;
         cursor: pointer;
+        background-color: var(--mage-light);
+
         .image-block{
             display: flex;
             align-items: center;
@@ -36,15 +38,22 @@
         }
         .action{
             i{
-                color: var(--mage-primary);
+                
+                color: var(--mage-dark);
+                opacity: .6;
                 padding:5px;
                 cursor: pointer;
+                &:hover{
+                    color: var(--mage-primary);
+                    opacity: 1;
+                }
             }
         }
 
     }
     .mpwpb-sub-category-items{
         @extend .mpwpb-category-items;
+        background-color: #fff;
         margin-left: 15px;
         &:last-child{
             margin-bottom: 20px;
