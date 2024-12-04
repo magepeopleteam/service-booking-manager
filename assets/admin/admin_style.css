@@ -1,3 +1,9 @@
+/*
+    Author: Shahadat Hossain
+    Email: raselsha@gmail.com 
+    Version: 1.0.0
+    Descriptoin: this file is main sass file that will compile one main css into /assets/admin/mp_main_settings.css
+*/
 :root {
   --mage-primary:#f12971;
   --mage-light:#F2F2F2;
@@ -297,6 +303,28 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   font-size: 14px;
   font-weight: normal;
 }
+
+#mp_meta_box_panel .mpwpb-faq-section .faq-header {
+  position: relative;
+  z-index: 0;
+}
+#mp_meta_box_panel .mpwpb-faq-section .faq-header .faq-action {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  z-index: 1;
+}
+#mp_meta_box_panel .mpwpb-faq-section .faq-header .faq-action span {
+  padding: 5px 10px;
+  background-color: var(--mage-light);
+  color: var(--mage-primary);
+  border-radius: 2px;
+}
+#mp_meta_box_panel .mpwpb-faq-section .faq-content {
+  display: none;
+}
+
 #mp_meta_box_panel table.table {
   border: 1px solid var(--mage-border);
   border-collapse: collapse;
@@ -399,27 +427,6 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
 }
 .mpwpb-category-lists .mpwpb-sub-category-items:last-child {
   margin-bottom: 20px;
-}
-
-.mpwpb-faq .faq-header, #mp_meta_box_panel .metabox .tabsContent .faq-header {
-  position: relative;
-  z-index: 0;
-}
-.mpwpb-faq .faq-header .faq-action, #mp_meta_box_panel .metabox .tabsContent .faq-header .faq-action {
-  position: absolute;
-  top: 50%;
-  right: 0;
-  transform: translateY(-50%);
-  z-index: 1;
-}
-.mpwpb-faq .faq-header .faq-action span, #mp_meta_box_panel .metabox .tabsContent .faq-header .faq-action span {
-  padding: 5px 10px;
-  background-color: var(--mage-light);
-  color: var(--mage-primary);
-  border-radius: 2px;
-}
-.mpwpb-faq .faq-content, #mp_meta_box_panel .metabox .tabsContent .faq-content {
-  display: none;
 }
 
 .category-service-area {
