@@ -196,20 +196,23 @@
 
 								<label>
 									<?php _e('Image/Icon','service-booking-manager'); ?>
-									<button class="mpwpb-image-add" type="button">Add image</button>
-									<button class="mpwpb-icon-add" type="button">Add icon</button>
 								</label>
-								<div class="mpwpb-show-icon-lists">
-									<?php 
-										$Icon_image = new MP_Select_Icon_image();
-										$icons = $Icon_image->all_icon_array();
-										foreach ($icons as $icon) : ?>
-											<?php foreach ($icon['icon'] as $icon => $item) { ?>
-												<span class="font-icons" data-icon-class="<?php echo esc_attr($icon); ?>" data-icon-name="<?php echo esc_attr($item); ?>" title="<?php echo esc_attr($item); ?>">
-													<i class="<?php echo esc_attr($icon); ?>"></i>
-												</span>
-											<?php } ?>
-									<?php endforeach; ?>
+								<div class="mp_add_icon_image_area">
+									<input type="hidden" name="service_image_icon" value="">
+									<div class="mp_icon_item dNone">
+										<span class="" data-add-icon=""></span>
+										<span class="fas fa-times mp_remove_icon mp_icon_remove"></span>
+									</div>
+									<div class="mp_image_item dNone">
+										<img class="" src="" alt="">
+										<span class="fas fa-times mp_remove_icon mp_image_remove"></span>
+									</div>
+									<div class="mp_add_icon_image_button_area ">
+										<button class="mp_image_add" type="button">
+											<span class="fas fa-images"></span>Image</button>
+										<button class="mp_icon_add" type="button" data-target-popup="#mp_add_icon_popup">
+											<span class="fas fa-plus"></span>Icon</button>
+									</div>
 								</div>
 
 								<div class="mpwpb_ex_service_save_button">

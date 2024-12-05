@@ -71,20 +71,26 @@ if( ! class_exists('MPWPB_Faq_Settings')){
                             $this->show_faq_data($post_id);
                         ?>
                     </div>
-                    <button class="button mpwpb-faq-item-new" type="button"><?php _e('Add FAQ','service-booking-manager'); ?></button>
+                    <button class="button mpwpb-faq-item-new" data-modal="mpwpb-faq-item-new" type="button"><?php _e('Add FAQ','service-booking-manager'); ?></button>
                 </section>
                 <!-- sidebar collapse open -->
-                <div class="mpwpb-sidebar-container">
-                    <div class="mpwpb-sidebar-content">
-                        <span class="mpwpb-sidebar-close"><i class="fas fa-times"></i></span>
-                        <div class="mpwpb-faq-form">
-                            <div id="mpwpb-faq-msg"></div>
-                            <h4><?php _e('Add F.A.Q.','service-booking-manager'); ?></h4>
-                            <p><?php _e('Add title','service-booking-manager'); ?></p>
-                            <input type="hidden" name="mpwpb_post_id" value="<?php echo $post_id; ?>"> 
-                            <input type="text"   name="mpwpb_faq_title"> 
-                            <input type="hidden" name="mpwpb_faq_item_id">
-                            <p><?php _e('Add Content','service-booking-manager'); ?></p>
+                <div class="mpwpb-modal-container" data-modal-target="mpwpb-faq-item-new">
+                    <div class="mpwpb-modal-content">
+                        <span class="mpwpb-modal-close"><i class="fas fa-times"></i></span>
+                        <div class="title">
+                            <h3><?php _e('Add F.A.Q.','service-booking-manager'); ?></h3>
+                            <div id="mpwpb-service-msg"></div>
+                        </div>
+                        <div class="content">
+                            <label>
+                                <?php _e('Add Title','service-booking-manager'); ?>
+                                <input type="hidden" name="mpwpb_post_id" value="<?php echo $post_id; ?>"> 
+                                <input type="text"   name="mpwpb_faq_title"> 
+                                <input type="hidden" name="mpwpb_faq_item_id">
+                            </label>
+                            <label>
+                                <?php _e('Add Content','service-booking-manager'); ?>
+                            </label>
                             <?php 
                                 $content = ''; 
                                 $editor_id = 'mpwpb_faq_content';
@@ -95,6 +101,7 @@ if( ! class_exists('MPWPB_Faq_Settings')){
                                 );
                                 wp_editor( $content, $editor_id, $settings );
                             ?>
+                            <div class="mT"></div>
                             <div class="mpwpb_faq_save_buttons">
                                 <p><button id="mpwpb_faq_save" class="button button-primary button-large"><?php _e('Save','service-booking-manager'); ?></button> <button id="mpwpb_faq_save_close" class="button button-primary button-large">save close</button><p>
                             </div>
@@ -119,7 +126,7 @@ if( ! class_exists('MPWPB_Faq_Settings')){
                                     <p><?php echo esc_html($value['title']); ?></p>
                                     <div class="faq-action">
                                         <span class="" ><i class="fas fa-eye"></i></span>
-                                        <span class="mpwpb-faq-item-edit" ><i class="fas fa-edit"></i></span>
+                                        <span class="mpwpb-faq-item-edit" data-modal="mpwpb-faq-item-new" ><i class="fas fa-edit"></i></span>
                                         <span class="mpwpb-faq-item-delete"><i class="fas fa-trash"></i></span>
                                     </div>
                                 </label>
