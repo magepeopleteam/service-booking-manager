@@ -35,13 +35,14 @@
 					$all_service = [];
 					if (is_array($services) && sizeof($services)) {
 						foreach ($services as $key => $service) {
-							$all_service[$key]['name'] = $service;
-							$all_service[$key]['price'] = MPWPB_Function::get_price($product_id, $service, $category, $sub_category, $date);
+							//$all_service[$key]['name'] = $service;
+							$all_service[$key]['name'] = MPWPB_Function::get_service_name($product_id, $service-1);
+							$all_service[$key]['price'] = MPWPB_Function::get_price($product_id, $service-1, $date);
 						}
 					}
-					$total_price = self::get_cart_total_price($product_id,$all_service);
-					$cart_item_data['mpwpb_category'] = $category;
-					$cart_item_data['mpwpb_sub_category'] = $sub_category;
+					$total_price = self::get_cart_total_price($product_id, $all_service);
+					$cart_item_data['mpwpb_category'] = MPWPB_Function::get_category_name($product_id, $category-1);
+					$cart_item_data['mpwpb_sub_category'] = MPWPB_Function::get_sub_category_name($product_id, $sub_category-1);
 					$cart_item_data['mpwpb_service'] = $all_service;
 					$cart_item_data['mpwpb_date'] = $date;
 					$cart_item_data['mpwpb_extra_service_info'] = self::cart_extra_service_info($product_id);
@@ -115,18 +116,17 @@
 							$item->add_meta_data(MPWPB_Function::get_sub_category_text($post_id), $sub_category);
 						}
 					}
-                    if (is_array($services) && sizeof($services)){
-                        foreach ($services as $service){
-	                        $item->add_meta_data(MPWPB_Function::get_service_text($post_id), $service['name']);
-	                        $item->add_meta_data(esc_html__('Price ', 'service-booking-manager'), MP_Global_Function::wc_price($post_id, $service['price']));
-                        }
-                    }
+					if (is_array($services) && sizeof($services)) {
+						foreach ($services as $service) {
+							$item->add_meta_data(MPWPB_Function::get_service_text($post_id), $service['name']);
+							$item->add_meta_data(esc_html__('Price ', 'service-booking-manager'), MP_Global_Function::wc_price($post_id, $service['price']));
+						}
+					}
 					$item->add_meta_data(esc_html__('Date ', 'service-booking-manager'), esc_html(MP_Global_Function::date_format($date)));
 					$item->add_meta_data(esc_html__('Time ', 'service-booking-manager'), esc_html(MP_Global_Function::date_format($date, 'time')));
 					if (sizeof($extra_service) > 0) {
 						foreach ($extra_service as $ex_service) {
-							$ex_text = $ex_service['ex_group_name'] ? $ex_service['ex_name'] . ' (' . $ex_service['ex_group_name'] . ')' : $ex_service['ex_name'];
-							$item->add_meta_data(esc_html__('Services Name ', 'service-booking-manager'), $ex_text);
+							$item->add_meta_data(esc_html__('Services Name ', 'service-booking-manager'), $ex_service['ex_name']);
 							$item->add_meta_data(esc_html__('Quantity ', 'service-booking-manager'), $ex_service['ex_qty']);
 							$item->add_meta_data(esc_html__('Price ', 'service-booking-manager'), ' ( ' . MP_Global_Function::wc_price($post_id, $ex_service['ex_price']) . ' x ' . $ex_service['ex_qty'] . ') = ' . MP_Global_Function::wc_price($post_id, ($ex_service['ex_price'] * $ex_service['ex_qty'])));
 						}
@@ -281,12 +281,7 @@
                                 <div class="divider"></div>
                                 <div class="dFlex">
                                     <h6><?php esc_html_e('Services Name', 'service-booking-manager'); ?>&nbsp;:&nbsp;</h6>
-                                    <span><?php
-											echo esc_html($service['ex_name']);
-											if ($service['ex_group_name']) {
-												echo esc_html(' (' . $service['ex_group_name'] . ')');
-											}
-										?>
+                                    <span><?php echo esc_html($service['ex_name']); ?>
 									</span>
                                 </div>
                                 <div class="dFlex">
@@ -353,7 +348,6 @@
 			//**********************//
 			public static function cart_extra_service_info($post_id): array {
 				$date = MP_Global_Function::get_submit_info('mpwpb_date');
-				$ex_service_group = MP_Global_Function::get_submit_info('mpwpb_extra_service', array());
 				$ex_service_types = MP_Global_Function::get_submit_info('mpwpb_extra_service_type', array());
 				$ex_service_qty = MP_Global_Function::get_submit_info('mpwpb_extra_service_qty', array());
 				$extra_service = array();
@@ -362,9 +356,7 @@
 					$count = 0;
 					for ($i = 0; $i < $service_count; $i++) {
 						if ($ex_service_types[$i]) {
-							$group_name = array_key_exists($i, $ex_service_group) ? $ex_service_group[$i] : '';
-							$ex_price = MPWPB_Function::get_extra_price($post_id, $ex_service_types[$i], $group_name);
-							$extra_service[$count]['ex_group_name'] = $group_name;
+							$ex_price = MPWPB_Function::get_extra_price($post_id, $ex_service_types[$i]);
 							$extra_service[$count]['ex_name'] = $ex_service_types[$i];
 							$extra_service[$count]['ex_price'] = $ex_price;
 							$extra_service[$count]['ex_qty'] = $ex_service_qty[$i];
@@ -375,13 +367,13 @@
 				}
 				return $extra_service;
 			}
-			public static function get_cart_total_price($post_id,$all_service) {
-                $price=0;
-                if(is_array($all_service) && sizeof($all_service)){
-                    foreach ($all_service as $service){
-                        $price=$price+$service['price'];
-                    }
-                }
+			public static function get_cart_total_price($post_id, $all_service) {
+				$price = 0;
+				if (is_array($all_service) && sizeof($all_service)) {
+					foreach ($all_service as $service) {
+						$price = $price + $service['price'];
+					}
+				}
 				$ex_service_group = MP_Global_Function::get_submit_info('mpwpb_extra_service', array());
 				$ex_service_types = MP_Global_Function::get_submit_info('mpwpb_extra_service_type', array());
 				$ex_service_qty = MP_Global_Function::get_submit_info('mpwpb_extra_service_qty', array());
@@ -427,18 +419,7 @@
 				$product_status = get_post_status($product_id);
 				WC()->cart->empty_cart();
 				if ($passed_validation && WC()->cart->add_to_cart($product_id, 1) && 'publish' === $product_status) {
-					$checkout_system = MP_Global_Function::get_settings('mpwpb_general_settings', 'single_page_checkout', 'no');
-					if ($checkout_system == 'yes') {
-						echo wc_get_checkout_url();
-					} else {
-						?>
-                        <div class="woocommerce-page">
-                            <div class="woocommerce">
-								<?php echo do_shortcode('[woocommerce_checkout]'); ?>
-                            </div>
-                        </div>
-						<?php
-					}
+					echo wc_get_checkout_url();
 				}
 				die();
 			}

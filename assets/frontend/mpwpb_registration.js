@@ -59,10 +59,10 @@ function mpwpb_price_calculation($this) {
         parent.find('[name="mpwpb_sub_category"]').val('');
         if (target_sub_category.length > 0) {
             parent.find('.mpwpb_summary_item[data-sub-category]').slideUp('fast');
-            let category = parent.find('[name="mpwpb_category"]').val();
+            let category = parseInt(parent.find('[name="mpwpb_category"]').val());
             target_sub_category.find('.mpwpb_sub_category_item[data-category]').each(function () {
                 $(this).removeClass('mpActive');
-                if ($(this).data('category') === category) {
+                if (parseInt($(this).data('category')) === category) {
                     $(this).slideDown(350);
                 } else {
                     $(this).slideUp(350);
@@ -78,16 +78,16 @@ function mpwpb_price_calculation($this) {
             $(this).val('');
         });
         parent.find('.mpwpb_summary_item[data-service]').slideUp('fast');
-        let category = parent.find('[name="mpwpb_category"]').val();
-        let sub_category = parent.find('[name="mpwpb_sub_category"]').val();
+        let category = parseInt(parent.find('[name="mpwpb_category"]').val());
+        let sub_category = parseInt(parent.find('[name="mpwpb_sub_category"]').val());
         target_service.find('.mpwpb_service_item[data-category]').each(function () {
             $(this).removeClass('mpActive');
             $(this).find('.mpwpb_service_button.mActive').each(function (){
                 mp_all_content_change($(this));
             });
-            if ($(this).data('category') === category) {
+            if (parseInt($(this).data('category')) === category) {
                 if (target_sub_category.length > 0) {
-                    if ($(this).data('sub-category') === sub_category) {
+                    if (parseInt($(this).data('sub-category')) === sub_category) {
                         $(this).slideDown(350);
                     } else {
                         $(this).slideUp(350);
@@ -108,7 +108,7 @@ function mpwpb_price_calculation($this) {
             let target_sub_category = parent.find('.mpwpb_sub_category_area');
             let target_service = parent.find('.mpwpb_service_area');
             parent.find('.mpwpb_summary_area_left').slideDown('fast');
-            parent.find('.mpwpb_summary_item[data-category]').slideDown('fast').find('h6').html(category);
+            parent.find('.mpwpb_summary_item[data-category]').slideDown('fast').find('h6').html(current.find('h6').html());
             parent.find('[name="mpwpb_category"]').val(category).promise().done(function () {
                 refresh_sub_category(parent);
                 refresh_service(parent);
@@ -135,18 +135,19 @@ function mpwpb_price_calculation($this) {
     $(document).on('click', 'div.mpwpb_static .mpwpb_item_box', function () {
         let current = $(this);
         let parent = current.closest('div.mpwpb_registration');
-        let category = current.data('category');
+        let category = parseInt(current.data('category'));
+
         load_service_tab(parent);
-        if(category){
+        if(category && category>0){
             parent.find('.mpwpb_category_item').each(function () {
-                if ($(this).data('category') === category) {
+                if (parseInt($(this).data('category')) === category) {
                     $(this).trigger('click');
                 }
             });
         }else {
-            let service=current.data('service');
+            let service=parseInt(current.data('service'));
             parent.find('.mpwpb_service_item').each(function () {
-                if ($(this).data('service') === service) {
+                if (parseInt($(this).data('service')) === service) {
                     $(this).find('.mpwpb_service_button').trigger('click');
                 }
             });
@@ -162,7 +163,7 @@ function mpwpb_price_calculation($this) {
             //let target_sub_category = parent.find('.mpwpb_sub_category_area');
             let target_service = parent.find('.mpwpb_service_area');
             parent.find('.mpwpb_summary_area_left').slideDown('fast');
-            parent.find('.mpwpb_summary_item[data-sub-category]').slideDown('fast').find('h6').html(sub_category);
+            parent.find('.mpwpb_summary_item[data-sub-category]').slideDown('fast').find('h6').html(current.find('h6').html());
             parent.find('[name="mpwpb_sub_category"]').val(sub_category).promise().done(function () {
                 refresh_service(parent);
             }).promise().done(function () {
@@ -328,25 +329,7 @@ function mpwpb_price_calculation($this) {
                     dLoader(parent);
                 },
                 success: function (data) {
-                    if ($('<div />', {html: data}).find("div").length > 0) {
-                        target_checkout.html(data).promise().done(function () {
-                            target_checkout.find('.woocommerce-billing-fields .required').each(function () {
-                                $(this).closest('p').find('.input-text , select, textarea ').attr('required', 'required');
-                            });
-                            $(document.body).trigger('init_checkout');
-                            if ($('body select#billing_country').length > 0) {
-                                $('body select#billing_country').select2({});
-                            }
-                            if ($('body select#billing_state').length > 0) {
-                                $('body select#billing_state').select2({});
-                            }
-                            parent.find('.mpwpb_order_proceed_tab').addClass('mpActive').removeClass('mpDisabled');
-                            load_order_proceed_tab(parent);
-                            dLoaderRemove(parent);
-                        });
-                    } else {
-                        window.location.href = data;
-                    }
+                    window.location.href = data;
                 },
                 error: function (response) {
                     console.log(response);
