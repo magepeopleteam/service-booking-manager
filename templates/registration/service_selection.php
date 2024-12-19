@@ -28,6 +28,8 @@
 					$service_icon = array_key_exists('icon', $service_item) ? $service_item['icon'] : '';
 					$service_price = array_key_exists('price', $service_item) ? $service_item['price'] : 0;
 					//$service_price = MPWPB_Function::get_price($post_id, $service_key, $category_name, $sub_category_name);
+					$service_wc_price = MP_Global_Function::wc_price($post_id, $service_price);
+					$service_price = MP_Global_Function::price_convert_raw($service_wc_price);
 					$service_details = array_key_exists('details', $service_item) ? $service_item['details'] : '';
 					$service_duration = array_key_exists('duration', $service_item) ? $service_item['duration'] : '';
 					$unique_id = '#service_' . uniqid();
@@ -59,7 +61,7 @@
                                                 <span><?php echo MP_Global_Function::esc_html($service_duration); ?></span>
                                             </h6>
 										<?php } ?>
-                                        <h6 class="_textTheme_min_100"><?php echo wc_price($service_price); ?></h6>
+                                        <h6 class="_textTheme_min_100"><?php echo MP_Global_Function::esc_html($service_wc_price); ?></h6>
                                     </div>
                                 </div>
                                 <div>
