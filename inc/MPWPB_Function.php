@@ -248,36 +248,57 @@
 			}
 			//*************Price*********************************//
 			public static function get_price($post_id, $service_name, $category_name = '', $sub_category_name = '', $date = '') {
-				$all_service = MP_Global_Function::get_post_info($post_id, 'mpwpb_category_infos', []);
-				$price = 0;
-				if (sizeof($all_service) > 0) {
-					foreach ($all_service as $categories) {
-						$current_category_name = array_key_exists('category', $categories) ? $categories['category'] : '';
-						if (($current_category_name && $category_name && $current_category_name == $category_name) || (!$current_category_name && !$category_name)) {
-							$sub_categories = array_key_exists('sub_category', $categories) ? $categories['sub_category'] : [];
-							if (sizeof($sub_categories) > 0) {
-								foreach ($sub_categories as $sub_category) {
-									$current_sub_category_name = array_key_exists('name', $sub_category) ? $sub_category['name'] : '';
-									if (($current_sub_category_name && $sub_category_name && $current_sub_category_name == $sub_category_name) || (!$current_sub_category_name && !$sub_category_name)) {
-										$service_infos = array_key_exists('service', $sub_category) ? $sub_category['service'] : [];
-										if (sizeof($service_infos) > 0) {
-											foreach ($service_infos as $service_info) {
-												$current_service_name = array_key_exists('name', $service_info) ? $service_info['name'] : '';
-												if ($current_service_name == $service_name) {
-													$price = array_key_exists('price', $service_info) ? $service_info['price'] : 0;
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-				$price = MP_Global_Function::wc_price($post_id, $price);
-				$price = MP_Global_Function::price_convert_raw($price);
-				return apply_filters('mpwpb_price_filter', $price, $post_id, $category_name, $service_name, $date);
-			}
+    $all_service = MP_Global_Function::get_post_info($post_id, 'mpwpb_category_infos', []);
+    $price = 0;
+	$tax_amount = 0;
+    
+    if (sizeof($all_service) > 0) {
+        foreach ($all_service as $categories) {
+            $current_category_name = array_key_exists('category', $categories) ? $categories['category'] : '';
+            
+            if (($current_category_name && $category_name && $current_category_name == $category_name) || (!$current_category_name && !$category_name)) {
+                $sub_categories = array_key_exists('sub_category', $categories) ? $categories['sub_category'] : [];
+                
+                if (sizeof($sub_categories) > 0) {
+                    foreach ($sub_categories as $sub_category) {
+                        $current_sub_category_name = array_key_exists('name', $sub_category) ? $sub_category['name'] : '';
+                        
+                        if (($current_sub_category_name && $sub_category_name && $current_sub_category_name == $sub_category_name) || (!$current_sub_category_name && !$sub_category_name)) {
+                            $service_infos = array_key_exists('service', $sub_category) ? $sub_category['service'] : [];
+                            
+                            if (sizeof($service_infos) > 0) {
+                                foreach ($service_infos as $service_info) {
+                                    $current_service_name = array_key_exists('name', $service_info) ? $service_info['name'] : '';
+                                    
+									if ($current_service_name == $service_name) {
+                                        $price = array_key_exists('price', $service_info) ? $service_info['price'] : 0;
+
+                                        // Get tax settings
+                                        $taxes = WC_Tax::get_rates(get_option('woocommerce_tax_class'));
+                                        $tax_rate = array_sum(array_column($taxes, 'rate'));
+
+                                        // Calculate inclusive or exclusive of tax
+                                        if (get_option('woocommerce_prices_include_tax') === 'yes') {
+                                            $tax_amount = $price * ($tax_rate / (100 + $tax_rate)); // Calculate tax amount
+                                            $price = $price * ( 1 + ($tax_rate / 100)); // Exclude tax from price
+                                        } else {
+                                            $tax_amount = $price; // Calculate tax amount
+                                           
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    $price = MP_Global_Function::wc_price($post_id, $price);
+    $price = MP_Global_Function::price_convert_raw($price);
+    return apply_filters('mpwpb_price_filter', $price, $post_id, $category_name, $service_name, $date);
+}
 			public static function get_extra_price($post_id, $ex_service_types, $ex_service_category = '') {
 				$ex_price = 0;
 				$extra_services = MP_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', []);
