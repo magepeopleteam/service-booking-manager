@@ -91,11 +91,11 @@
 			}
 			//*******************************//
 			public static function get_category_name($post_id,$cat_id='') {
-				if($cat_id && $post_id){
+				if($cat_id && $cat_id>0 && $post_id){
 					$all_category = MP_Global_Function::get_post_info($post_id, 'mpwpb_category_service', array());
 					if (sizeof($all_category) > 0) {
 						foreach ($all_category as $cat_key => $category) {
-							if($cat_key == $cat_id){
+							if($cat_key+1 == $cat_id){
 								return array_key_exists('name', $category) ? $category['name'] : '';
 							}
 						}
@@ -104,11 +104,11 @@
 				return '';
 			}
 			public static function get_sub_category_name($post_id,$sub_cat_id='') {
-				if($sub_cat_id && $post_id){
+				if($sub_cat_id && $sub_cat_id>0 && $post_id){
 					$all_category = MP_Global_Function::get_post_info($post_id, 'mpwpb_sub_category_service', array());
 					if (sizeof($all_category) > 0) {
 						foreach ($all_category as $cat_key => $category) {
-							if($cat_key == $sub_cat_id){
+							if($cat_key+1 == $sub_cat_id){
 								return array_key_exists('name', $category) ? $category['name'] : '';
 							}
 						}
@@ -117,11 +117,11 @@
 				return '';
 			}
 			public static function get_service_name($post_id,$service_id='') {
-				if($service_id && $post_id){
+				if($service_id && $service_id>0 && $post_id){
 					$all_category = MP_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
 					if (sizeof($all_category) > 0) {
 						foreach ($all_category as $cat_key => $category) {
-							if($cat_key == $service_id){
+							if($cat_key+1 == $service_id){
 								return array_key_exists('name', $category) ? $category['name'] : '';
 							}
 						}
@@ -288,11 +288,11 @@
 			//*************Price*********************************//
 			public static function get_price($post_id, $service_id,$date = '') {
 				$price = 0;
-				if($service_id && $post_id){
+				if($service_id && $service_id>0 && $post_id){
 					$all_category = MP_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
 					if (sizeof($all_category) > 0) {
 						foreach ($all_category as $cat_key => $category) {
-							if($cat_key == $service_id){
+							if($cat_key+1 == $service_id){
 								$price= array_key_exists('price', $category) ? $category['price'] : 0;
 							}
 						}

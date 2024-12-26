@@ -281,16 +281,17 @@ function mpwpb_price_calculation($this) {
         let parent = $(this).closest('div.mpwpb_registration');
         let date = parent.find('[name="mpwpb_date"]').val();
         if (date) {
-            let target_checkout = parent.find('.mpwpb_order_proceed_area');
             let link_id = $(this).attr('data-wc_link_id');
             let mpwpb_category = parent.find('[name="mpwpb_category"]').val();
-            let mpwpb_sub_category = parent.find('[name="mpwpb_sub_category"]').val();
+            mpwpb_category = mpwpb_category?parseInt(mpwpb_category):'';
+            let mpwpb_sub_category =parent.find('[name="mpwpb_sub_category"]').val();
+            mpwpb_sub_category =mpwpb_sub_category?parseInt(mpwpb_sub_category):'';
             let mpwpb_service = {};
             let service_count = 0;
             parent.find('[name="mpwpb_service[]"]').each(function () {
                 let service = $(this).val();
                 if (service) {
-                    mpwpb_service[service_count] = service;
+                    mpwpb_service[service_count] = parseInt(service);
                     service_count++;
                 }
             });
