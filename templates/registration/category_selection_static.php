@@ -7,13 +7,13 @@
 		exit;
 	}
 	$post_id = $post_id ?? get_the_id();
-	$all_services = $all_services ?? MP_Global_Function::get_post_info($post_id, 'mpwpb_category_infos', array());
-	$all_category = $all_category ?? MPWPB_Function::get_category($post_id);
+	$all_category = $all_category??MP_Global_Function::get_post_info($post_id, 'mpwpb_category_service', array());
+	$all_sub_category = $all_sub_category??MP_Global_Function::get_post_info($post_id, 'mpwpb_sub_category_service', array());
+	$all_services = $all_services??MP_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
 	if (sizeof($all_category) > 0) {
-		foreach ($all_services as $all_service) {
-			$category_name = array_key_exists('category', $all_service) ? $all_service['category'] : ''; ?>
-            <div class="mpwpb_item_box" data-category="<?php echo esc_attr($category_name); ?>" data-target-popup="#mpwpb_static_popup">
-                <h2><?php echo esc_html($category_name); ?></h2>
+		foreach ($all_category as $cat_key=>$category) { ?>
+            <div class="mpwpb_item_box" data-category="<?php echo esc_attr($cat_key+1); ?>" data-target-popup="#mpwpb_static_popup">
+                <h2><?php echo esc_html($category['name']); ?></h2>
                 <i class="fas fa-chevron-right mpwpb_item_check"></i>
             </div>
 		<?php }

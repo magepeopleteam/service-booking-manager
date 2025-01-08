@@ -1,14 +1,14 @@
-// Author: Shahadat Hossain
-// Email: raselsha@gmail.com 
-// Version: 1.0.0
-// Descriptoin: this file is main sass file that will compile one main css into /assets/admin/mp_main_settings.css
-:root{
-    --mage-primary:#f12971;
-    --mage-light:#F2F2F2;
-    --mage-black: #000;
-    --mage-white: #FFFFFF;
-    --mage-border: #DDD;
-}
-@import 'styles/mp-style';
-@import 'styles/metabox';
-@import 'styles/sidebar-collapse';
+/*
+    Author: Shahadat Hossain
+    Email: raselsha@gmail.com 
+    Version: 1.0.0
+    Descriptoin: this file is main sass file that will compile one main css into /assets/admin/mp_main_settings.css
+*/
+@use 'styles/variable';
+@use 'styles/mp-style';
+@use 'styles/metabox';
+@use 'styles/faq';
+@use 'styles/table';
+@use 'styles/category';
+@use 'styles/category-service';
+@use 'styles/sidebar-collapse';

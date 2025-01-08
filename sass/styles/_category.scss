@@ -1,0 +1,62 @@
+//=================== category service ============
+.mpwpb-category-lists{
+    margin-bottom: 20px; 
+    .mpwpb-category-items{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 5px;
+        border: 1px solid var(--mage-light);
+        padding: 5px;
+        min-height: 50px;
+        cursor: pointer;
+        background-color: var(--mage-light);
+
+        .image-block{
+            display: flex;
+            align-items: center;
+            justify-content: start;
+            gap: 10px;
+            img{
+                width: 50px;
+                height: 38px;
+                object-fit: cover;
+                object-position: center;
+                border-radius: 0;
+            }
+            i{
+                background-color: var(--mage-light);
+                font-size: 36px;
+                width: 50px;
+                height: 100%;
+                color: var(--mage-primary);
+                text-align: center;
+            }
+        }
+        .title{
+            text-transform: capitalize;
+        }
+        .action{
+            i{
+                
+                color: var(--mage-dark);
+                opacity: .6;
+                padding:5px;
+                cursor: pointer;
+                &:hover{
+                    color: var(--mage-primary);
+                    opacity: 1;
+                }
+            }
+        }
+
+    }
+    .mpwpb-sub-category-items{
+        @extend .mpwpb-category-items;
+        background-color: #fff;
+        margin-left: 15px;
+        &:last-child{
+            margin-bottom: 20px;
+        }
+    }
+}

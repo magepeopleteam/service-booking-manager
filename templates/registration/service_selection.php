@@ -7,16 +7,11 @@
 		exit;
 	}
 	$post_id = $post_id ?? get_the_id();
-	$all_category = $all_category ?? MPWPB_Function::get_category($post_id);
-	$all_services = $all_services ?? MP_Global_Function::get_post_info($post_id, 'mpwpb_category_infos', array());
-	$all_sub_category = $all_sub_category ?? MPWPB_Function::get_sub_category($post_id);
-	$all_service_list = $all_service_list ?? MPWPB_Function::get_all_service($post_id);
-	$category_text = $category_text ?? MPWPB_Function::get_category_text($post_id);
-	$sub_category_text = $sub_category_text ?? MPWPB_Function::get_sub_category_text($post_id);
+
 	$service_text = $service_text ?? MPWPB_Function::get_service_text($post_id);
-	$extra_services = $extra_services ?? MP_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', array());
-	if (sizeof($all_service_list) > 0) {
-		//echo '<pre>';print_r($all_services);echo '</pre>';
+	$all_services = $all_services??MP_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
+	//echo '<pre>'; print_r($all_services); echo '</pre>';
+	if (sizeof($all_services) > 0) {
 		?>
         <div class="_dShadow_7_mB_xs mpwpb_service_area">
             <header>
@@ -25,19 +20,21 @@
                 <h5><?php echo esc_html__('Select', 'service-booking-manager') . ' ' . $service_text; ?></h5>
             </header>
 			<?php
-				foreach ($all_service_list as $service_item) {
-					$category_name = array_key_exists('category', $service_item) ? $service_item['category'] : '';
-					$sub_category_name = array_key_exists('sub_category', $service_item) ? $service_item['sub_category'] : '';
-					$service_name = array_key_exists('service', $service_item) ? $service_item['service'] : '';
+				foreach ($all_services as $service_key=>$service_item) {
+					$category_name = array_key_exists('parent_cat', $service_item) ? $service_item['parent_cat'] : '';
+					$sub_category_name = array_key_exists('sub_cat', $service_item) ? $service_item['sub_cat'] : '';
+					$service_name = array_key_exists('name', $service_item) ? $service_item['name'] : '';
 					$service_image = array_key_exists('image', $service_item) ? $service_item['image'] : '';
 					$service_icon = array_key_exists('icon', $service_item) ? $service_item['icon'] : '';
 					$service_price = array_key_exists('price', $service_item) ? $service_item['price'] : 0;
-					$service_price = MPWPB_Function::get_price($post_id, $service_name, $category_name, $sub_category_name);
+					//$service_price = MPWPB_Function::get_price($post_id, $service_key, $category_name, $sub_category_name);
+					$service_wc_price = MP_Global_Function::wc_price($post_id, $service_price);
+					$service_price = MP_Global_Function::price_convert_raw($service_wc_price);
 					$service_details = array_key_exists('details', $service_item) ? $service_item['details'] : '';
 					$service_duration = array_key_exists('duration', $service_item) ? $service_item['duration'] : '';
 					$unique_id = '#service_' . uniqid();
 					?>
-                    <div class="mpwpb_service_item" data-price="<?php echo esc_attr($service_price); ?>" data-category="<?php echo esc_attr($category_name); ?>" data-sub-category="<?php echo esc_attr($sub_category_name); ?>" data-service="<?php echo esc_attr($service_name); ?>">
+                    <div class="mpwpb_service_item" data-price="<?php echo esc_attr($service_price); ?>" data-category="<?php echo esc_attr($category_name+1); ?>" data-sub-category="<?php echo esc_attr($sub_category_name+1); ?>" data-service="<?php echo esc_attr($service_key+1); ?>">
                         <div class="_dFlex">
 							<?php if ($service_image) { ?>
                                 <div class="bg_image_area _w_75_mR_xs">
@@ -64,7 +61,7 @@
                                                 <span><?php echo MP_Global_Function::esc_html($service_duration); ?></span>
                                             </h6>
 										<?php } ?>
-                                        <h6 class="_textTheme_min_100"><?php echo wc_price($service_price); ?></h6>
+                                        <h6 class="_textTheme_min_100"><?php echo MP_Global_Function::esc_html($service_wc_price); ?></h6>
                                     </div>
                                 </div>
                                 <div>

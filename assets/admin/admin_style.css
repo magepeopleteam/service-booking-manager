@@ -1,9 +1,17 @@
+/*
+    Author: Shahadat Hossain
+    Email: raselsha@gmail.com 
+    Version: 1.0.0
+    Descriptoin: this file is main sass file that will compile one main css into /assets/admin/mp_main_settings.css
+*/
 :root {
   --mage-primary:#f12971;
   --mage-light:#F2F2F2;
   --mage-black: #000;
   --mage-white: #FFFFFF;
   --mage-border: #DDD;
+  --mage-light-2: #F9F9F9;
+  --mage-dark: #666;
 }
 
 .mpStyle button:hover, .mpStyle button:focus {
@@ -296,28 +304,182 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   font-weight: normal;
 }
 
-.mpwpb-faq .faq-header, #mp_meta_box_panel .metabox .tabsContent .faq-header {
+#mp_meta_box_panel .mpwpb-faq-section .faq-header {
   position: relative;
   z-index: 0;
 }
-.mpwpb-faq .faq-header .faq-action, #mp_meta_box_panel .metabox .tabsContent .faq-header .faq-action {
+#mp_meta_box_panel .mpwpb-faq-section .faq-header .faq-action {
   position: absolute;
   top: 50%;
   right: 0;
   transform: translateY(-50%);
   z-index: 1;
 }
-.mpwpb-faq .faq-header .faq-action span, #mp_meta_box_panel .metabox .tabsContent .faq-header .faq-action span {
+#mp_meta_box_panel .mpwpb-faq-section .faq-header .faq-action span {
   padding: 5px 10px;
   background-color: var(--mage-light);
   color: var(--mage-primary);
   border-radius: 2px;
 }
-.mpwpb-faq .faq-content, #mp_meta_box_panel .metabox .tabsContent .faq-content {
+#mp_meta_box_panel .mpwpb-faq-section .faq-content {
   display: none;
 }
 
-.mpwpb-sidebar-container {
+#mp_meta_box_panel table.table {
+  border: 1px solid var(--mage-border);
+  border-collapse: collapse;
+  overflow: scroll;
+}
+#mp_meta_box_panel table.table thead tr th {
+  text-align: center;
+  font-weight: normal;
+  font-size: 16px;
+  padding: 10px 5px;
+  border-collapse: collapse;
+}
+#mp_meta_box_panel table.table tbody tr {
+  height: 40px;
+  padding: 5px;
+  border: 1px solid var(--mage-light);
+}
+#mp_meta_box_panel table.table tbody tr:nth-child(even) {
+  background-color: rgba(249, 249, 249, 0.431372549);
+}
+#mp_meta_box_panel table.table tbody tr td {
+  font-weight: normal;
+  text-align: center;
+  vertical-align: middle;
+  padding: 5px;
+  border-collapse: collapse;
+}
+#mp_meta_box_panel table.table tbody tr td:first-child {
+  text-align: center;
+}
+#mp_meta_box_panel table.table tbody tr td:first-child img {
+  display: block;
+  width: 60px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 2px;
+  border: 1px solid var(--mage-border);
+  margin: auto;
+}
+#mp_meta_box_panel table.table tbody tr td:first-child i {
+  font-size: 28px;
+  border: 1px solid var(--mage-border);
+  background-color: var(--mage-light);
+  color: var(--mage-dark);
+  height: 40px;
+  font-size: 36px;
+  width: 54px;
+  border-radius: 0;
+}
+#mp_meta_box_panel table.table tbody tr td:last-child i {
+  color: var(--mage-primary);
+  padding: 5px;
+  cursor: pointer;
+}
+
+.mpwpb-category-lists {
+  margin-bottom: 20px;
+}
+.mpwpb-category-lists .mpwpb-category-items, .mpwpb-category-lists .mpwpb-sub-category-items {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+  border: 1px solid var(--mage-light);
+  padding: 5px;
+  min-height: 50px;
+  cursor: pointer;
+  background-color: var(--mage-light);
+}
+.mpwpb-category-lists .mpwpb-category-items .image-block, .mpwpb-category-lists .mpwpb-sub-category-items .image-block {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 10px;
+}
+.mpwpb-category-lists .mpwpb-category-items .image-block img, .mpwpb-category-lists .mpwpb-sub-category-items .image-block img {
+  width: 50px;
+  height: 38px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 0;
+}
+.mpwpb-category-lists .mpwpb-category-items .image-block i, .mpwpb-category-lists .mpwpb-sub-category-items .image-block i {
+  background-color: var(--mage-light);
+  font-size: 36px;
+  width: 50px;
+  height: 100%;
+  color: var(--mage-primary);
+  text-align: center;
+}
+.mpwpb-category-lists .mpwpb-category-items .title, .mpwpb-category-lists .mpwpb-sub-category-items .title {
+  text-transform: capitalize;
+}
+.mpwpb-category-lists .mpwpb-category-items .action i, .mpwpb-category-lists .mpwpb-sub-category-items .action i {
+  color: var(--mage-dark);
+  opacity: 0.6;
+  padding: 5px;
+  cursor: pointer;
+}
+.mpwpb-category-lists .mpwpb-category-items .action i:hover, .mpwpb-category-lists .mpwpb-sub-category-items .action i:hover {
+  color: var(--mage-primary);
+  opacity: 1;
+}
+.mpwpb-category-lists .mpwpb-sub-category-items {
+  background-color: #fff;
+  margin-left: 15px;
+}
+.mpwpb-category-lists .mpwpb-sub-category-items:last-child {
+  margin-bottom: 20px;
+}
+
+.category-service-area {
+  display: flex;
+  justify-content: start;
+  gap: 20px;
+}
+.category-service-area .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.category-service-area .header h3 {
+  font-weight: 600;
+  color: var(--mage-black);
+  padding: 0;
+  font-size: 16px;
+}
+.category-service-area .category-container {
+  width: 30%;
+  border-right: 1px solid var(--mage-border);
+  padding-right: 20px;
+}
+.category-service-area .category-container .header {
+  flex-direction: column;
+  align-items: start;
+  margin-bottom: 10px;
+}
+.category-service-area .category-container .header button {
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+  border: 1px solid var(--mage-light);
+  min-height: 45px;
+  width: 100%;
+  border-radius: 0;
+  font-weight: normal;
+}
+.category-service-area .service-container {
+  width: 70%;
+}
+
+.mpwpb-modal-container {
   position: fixed;
   right: -100%; /* Initially hidden off-screen */
   top: 0;
@@ -327,35 +489,78 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   transition: right 0.3s ease; /* Animation effect */
   z-index: 1000; /* Ensure it's above other content */
 }
-.mpwpb-sidebar-container.open {
+.mpwpb-modal-container.open {
   right: 0; /* Slide in */
 }
-.mpwpb-sidebar-container .mpwpb-sidebar-content {
+.mpwpb-modal-container .mpwpb-modal-content {
   background-color: #fff;
   width: 800px;
   height: 100%;
   position: absolute;
   top: 0;
   right: 0;
-  padding: 80px 15px;
+  padding: 70px 0px;
 }
-.mpwpb-sidebar-container .mpwpb-sidebar-content .mpwpb-faq-form p {
-  margin: 15px 0;
+.mpwpb-modal-container .mpwpb-modal-content .title {
+  padding-left: 40px;
 }
-.mpwpb-sidebar-container .mpwpb-sidebar-content h4 {
-  font-size: 18px;
-  padding: 0;
-  margin: 5px 0;
-}
-.mpwpb-sidebar-container .mpwpb-sidebar-content input[name=mpwpb_faq_title] {
-  width: 100%;
-}
-.mpwpb-sidebar-container .mpwpb-sidebar-content .mpwpb-sidebar-close {
+.mpwpb-modal-container .mpwpb-modal-content .mpwpb-modal-close {
   position: absolute;
   top: 40px;
   right: 15px;
   font-size: 20px;
   cursor: pointer;
+}
+.mpwpb-modal-container .mpwpb-modal-content .content {
+  height: 100%;
+  overflow-y: scroll;
+  padding: 0 40px;
+  padding-bottom: 40px;
+}
+.mpwpb-modal-container .mpwpb-modal-content p {
+  margin: 15px 0;
+}
+.mpwpb-modal-container .mpwpb-modal-content h3 {
+  font-size: 18px;
+  padding: 0;
+  margin: 5px 0;
+  margin-bottom: 30px;
+}
+.mpwpb-modal-container .mpwpb-modal-content input[type=text], .mpwpb-modal-container .mpwpb-modal-content input[type=number], .mpwpb-modal-container .mpwpb-modal-content textarea, .mpwpb-modal-container .mpwpb-modal-content select {
+  width: 100%;
+  display: block;
+  font-weight: normal;
+  padding: 10px;
+  font-size: 18px;
+  border: 1px solid #dfdfdf;
+}
+.mpwpb-modal-container .mpwpb-modal-content label {
+  display: flex;
+  justify-content: start;
+  align-items: start;
+  flex-direction: column;
+  font-weight: normal;
+  font-size: 18px;
+  gap: 7px;
+  margin: 15px 0;
+}
+.mpwpb-modal-container .mpwpb-modal-content .mp_add_icon_image_area {
+  position: relative;
+  max-width: 202px;
+  margin: 10px 0;
+}
+.mpwpb-modal-container .mpwpb-modal-content .mp_add_icon_image_area .mp_add_icon_image_button_area {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  border: 1px solid #8c8f94;
+  width: 100%;
+  border-radius: 3px;
+}
+.mpwpb-modal-container .mpwpb-modal-content .mp_add_icon_image_area .mp_add_icon_image_button_area .mp_image_add, .mpwpb-modal-container .mpwpb-modal-content .mp_add_icon_image_area .mp_add_icon_image_button_area .mp_icon_add {
+  padding: 10px 26px;
+  border-radius: 0;
+  margin: 1px;
 }
 
 /*# sourceMappingURL=admin_style.css.map */
