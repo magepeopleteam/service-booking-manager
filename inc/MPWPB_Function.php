@@ -11,24 +11,6 @@
 			public function __construct() {}
 			//************************************************************Partially custom Function******************************//
 			//***********Template********************//
-			public static function all_details_template() {
-				$template_path = get_stylesheet_directory() . '/mpwpb_templates/themes/';
-				$default_path = MPWPB_PLUGIN_DIR . '/templates/themes/';
-				$dir = is_dir($template_path) ? glob($template_path . "*") : glob($default_path . "*");
-				$names = [];
-				foreach ($dir as $filename) {
-					if (is_file($filename)) {
-						$file = basename($filename);
-						$name = str_replace("?>", "", strip_tags(file_get_contents($filename, false, null, 24, 16)));
-						$names[$file] = $name;
-					}
-				}
-				$name = [];
-				foreach ($names as $key => $value) {
-					$name[$key] = $value;
-				}
-				return apply_filters('filter_mpwpb_details_template', $name);
-			}
 			public static function details_template_path($post_id = ''): string {
 				$post_id = $post_id ?? get_the_id();
 				$template_name = MP_Global_Function::get_post_info($post_id, 'mpwpb_template', 'default.php');
@@ -219,7 +201,7 @@
 				$all_off_dates = MP_Global_Function::get_post_info($post_id, 'mpwpb_off_dates', array());
 				$off_dates = [];
 				foreach ($all_off_dates as $off_date) {
-					$off_dates[] = date('Y-m-d', strtotime($off_date));
+					$off_dates[] = date_i18n('Y-m-d', strtotime($off_date));
 				}
 				if ($date_type == 'repeated') {
 					$start_date = MP_Global_Function::get_post_info($post_id, 'mpwpb_repeated_start_date', $now);
@@ -228,11 +210,11 @@
 					}
 					$repeated_after = MP_Global_Function::get_post_info($post_id, 'mpwpb_repeated_after', 1);
 					$active_days = MP_Global_Function::get_post_info($post_id, 'mpwpb_active_days', 10) - 1;
-					$end_date = date('Y-m-d', strtotime($start_date . ' +' . $active_days . ' day'));
+					$end_date = date_i18n('Y-m-d', strtotime($start_date . ' +' . $active_days . ' day'));
 					$dates = MP_Global_Function::date_separate_period($start_date, $end_date, $repeated_after);
 					foreach ($dates as $date) {
 						$date = $date->format('Y-m-d');
-						$day = strtolower(date('l', strtotime($date)));
+						$day = strtolower(date_i18n('l', strtotime($date)));
 						if (!in_array($date, $off_dates) && !in_array($day, $all_off_days)) {
 							$all_dates[] = $date;
 						}
@@ -256,7 +238,7 @@
 				$all_slots = [];
 				$slot_length = MP_Global_Function::get_post_info($post_id, 'mpwpb_time_slot_length', 30);
 				$slot_length = $slot_length * 60;
-				$day_name = strtolower(date('l', strtotime($start_date)));
+				$day_name = strtolower(date_i18n('l', strtotime($start_date)));
 				$start_time = MP_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_start_time');
 				if (!$start_time) {
 					$day_name = 'default';
@@ -268,7 +250,7 @@
 				$end_time_break = MP_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_end_break_time', 0) * 3600;
 				for ($i = $start_time; $i <= $end_time; $i = $i + $slot_length) {
 					if ($i < $start_time_break || $i >= $end_time_break) {
-						$date_time=$start_date . ' ' . date('H:i', $i);
+						$date_time=$start_date . ' ' . date_i18n('H:i', $i);
 						$slice_time = self::slice_buffer_time( $date_time );
 						if(strtotime($now_full)<strtotime($slice_time)){
 							$all_slots[] = $date_time;
@@ -281,7 +263,7 @@
 			public static function slice_buffer_time( $date ) {
 				$buffer_time = MP_Global_Function::get_settings( 'mpwpb_general_settings', 'buffer_time', 0 ) * 60;
 				if ( $buffer_time > 0 ) {
-					$date = date( 'Y-m-d H:i', strtotime( $date ) - $buffer_time );
+					$date = date_i18n( 'Y-m-d H:i', strtotime( $date ) - $buffer_time );
 				}
 				return $date;
 			}

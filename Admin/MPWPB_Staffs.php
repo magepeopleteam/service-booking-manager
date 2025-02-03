@@ -38,10 +38,10 @@
                             <div class="mpTabs">
                                 <div class="tabLists">
                                     <div class="buttonGroup">
-                                        <button class="_mpBtn " data-tabs-target="#mpwpb_staff_list" type="button" title="<?php esc_attr_e('Staff Lists', ''); ?>">
+                                        <button class="_mpBtn " data-tabs-target="#mpwpb_staff_list" type="button" title="<?php esc_attr_e('Staff Lists', 'service-booking-manager'); ?>">
                                             <span class="fas fa-users"></span><?php esc_html_e('Staff Lists', 'service-booking-manager'); ?>
                                         </button>
-                                        <button class="_mpBtn mpwpb_add_new_staff" type="button" data-tabs-target="#mpwpb_add_new_staff" title="<?php esc_attr_e('Add New Staff', ''); ?>">
+                                        <button class="_mpBtn mpwpb_add_new_staff" type="button" data-tabs-target="#mpwpb_add_new_staff" title="<?php esc_attr_e('Add New Staff', 'service-booking-manager'); ?>">
                                             <span class="fas fa-plus-square"></span><?php esc_html_e('Add/Update Staff', 'service-booking-manager'); ?>
                                         </button>
                                     </div>
@@ -86,19 +86,14 @@
                             <tr>
                                 <th><?php echo esc_html($count . '.'); ?></th>
                                 <td><?php echo esc_html($staff->user_login); ?></td>
-                                <td>
-									<?php
-										echo esc_html($staff->display_name);
-										//echo '<pre>';	print_r(get_user_meta($staff->ID, 'date_type'));echo '</pre>';
-									?>
-                                </td>
+                                <td>                                    <?php echo esc_html($staff->display_name); ?>                                </td>
                                 <td><?php echo esc_html($staff->user_email); ?></td>
                                 <td>
                                     <div class="buttonGroup">
-                                        <button class="_mpBtn_xs_textGray" id="mpwpb_edit_staff" data-staff-id="<?php echo esc_attr($staff->ID); ?>" type="button" title="<?php esc_attr_e('edit Staff Details.', ''); ?>">
+                                        <button class="_mpBtn_xs_textGray" id="mpwpb_edit_staff" data-staff-id="<?php echo esc_attr($staff->ID); ?>" type="button" title="<?php esc_attr_e('edit Staff Details.', 'service-booking-manager'); ?>">
                                             <span class="fas fa-edit mp_zero"></span>
                                         </button>
-                                        <button class="_mpBtn_xs_textDanger" id="mpwpb_delete_staff" type="button" data-staff-id="<?php echo esc_attr($staff->ID); ?>" title="<?php echo esc_attr__('Remove staff.', '') . ' : ' . esc_attr($staff->display_name); ?>">
+                                        <button class="_mpBtn_xs_textDanger" id="mpwpb_delete_staff" type="button" data-staff-id="<?php echo esc_attr($staff->ID); ?>" title="<?php echo esc_attr__('Remove staff.', 'service-booking-manager') . ' : ' . esc_attr($staff->display_name); ?>">
                                             <span class="fas fa-trash-alt mp_zero"></span>
                                         </button>
                                     </div>
@@ -180,7 +175,7 @@
                         <div class="divider"></div>
                         <div class="justifyBetween _mT_xs">
                             <div></div>
-                            <button class="themeButton" type="submit" title="<?php esc_attr_e('Save Staff', ''); ?>">
+                            <button class="themeButton" type="submit" title="<?php esc_attr_e('Save Staff', 'service-booking-manager'); ?>">
                                 <span class="fas fa-plus-square _mR_xs"></span>
 								<?php
 									if ($user_id) {
@@ -203,7 +198,7 @@
 				$now = date_i18n($date_format, strtotime(current_time('Y-m-d')));
 				$repeated_start_date = $user_id ? get_user_meta($user_id, 'mpwpb_repeated_start_date') : [];
 				$repeated_start_date = sizeof($repeated_start_date) > 0 ? current($repeated_start_date) : '';
-				$hidden_repeated_start_date = $repeated_start_date ? date('Y-m-d', strtotime($repeated_start_date)) : '';
+				$hidden_repeated_start_date = $repeated_start_date ? date_i18n('Y-m-d', strtotime($repeated_start_date)) : '';
 				$visible_repeated_start_date = $repeated_start_date ? date_i18n($date_format, strtotime($repeated_start_date)) : '';
 				$repeated_after = $user_id ? get_user_meta($user_id, 'mpwpb_repeated_after') : [];
 				$repeated_after = sizeof($repeated_after) > 0 ? current($repeated_after) : 1;
@@ -454,7 +449,7 @@
 					for ($i = $time_count; $i <= $end_time; $i = $i + 0.5) {
 						if ($stat_time == 'yes' || $i > $time_count) {
 							?>
-                            <option value="<?php echo esc_attr($i); ?>" <?php echo esc_attr($time != '' && $time == $i ? 'selected' : ''); ?>><?php echo date_i18n('h:i A', $i * 3600); ?></option>
+                            <option value="<?php echo esc_attr($i); ?>" <?php echo esc_attr($time != '' && $time == $i ? 'selected' : ''); ?>><?php echo esc_html(date_i18n('h:i A', $i * 3600)); ?></option>
 							<?php
 						}
 					}
@@ -469,12 +464,18 @@
 			}
 			//*****************************//
 			public function get_mpwpb_get_staff_form() {
-				$user_id = isset($_POST['user_id']) ? absint($_POST['user_id']) : '';
+				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
+					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
+				}
+				$user_id = isset($_POST['user_id']) ? sanitize_text_field(wp_unslash($_POST['user_id'])) : '';
 				$this->staff_form($user_id);
 				die();
 			}
 			public function mpwpb_delete_staff() {
-				$staff_id = isset($_REQUEST['staff_id']) ? MP_Global_Function::data_sanitize($_REQUEST['staff_id']) : '';
+				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
+					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
+				}
+				$staff_id = isset($_POST['staff_id']) ? sanitize_text_field(wp_unslash($_POST['staff_id'])) : '';
 				if ($staff_id > 0) {
 					wp_delete_user($staff_id);
 					$this->staff_list();
@@ -482,25 +483,34 @@
 				die();
 			}
 			public function get_mpwpb_staff_end_time_slot() {
-				$user_id = isset($_REQUEST['user_id']) ? MP_Global_Function::data_sanitize($_REQUEST['user_id']) : '';
-				$day = isset($_REQUEST['day_name']) ? MP_Global_Function::data_sanitize($_REQUEST['day_name']) : '';
-				$start_time = isset($_REQUEST['start_time']) ? MP_Global_Function::data_sanitize($_REQUEST['start_time']) : '';
+				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
+					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
+				}
+				$user_id = isset($_POST['user_id']) ? sanitize_text_field(wp_unslash($_POST['user_id'])) : '';
+				$day = isset($_POST['day_name']) ? sanitize_text_field(wp_unslash($_POST['day_name'])) : '';
+				$start_time = isset($_POST['start_time']) ? sanitize_text_field(wp_unslash($_POST['start_time'])) : '';
 				$this->end_time_slot($day, $start_time, $user_id);
 				die();
 			}
 			public function get_mpwpb_staff_start_break_time() {
-				$user_id = isset($_REQUEST['user_id']) ? MP_Global_Function::data_sanitize($_REQUEST['user_id']) : '';
-				$day = isset($_REQUEST['day_name']) ? MP_Global_Function::data_sanitize($_REQUEST['day_name']) : '';
-				$start_time = isset($_REQUEST['start_time']) ? MP_Global_Function::data_sanitize($_REQUEST['start_time']) : '';
-				$end_time = isset($_REQUEST['end_time']) ? MP_Global_Function::data_sanitize($_REQUEST['end_time']) : '';
+				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
+					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
+				}
+				$user_id = isset($_POST['user_id']) ? sanitize_text_field(wp_unslash($_POST['user_id'])) : '';
+				$day = isset($_POST['day_name']) ? sanitize_text_field(wp_unslash($_POST['day_name'])) : '';
+				$start_time = isset($_POST['start_time']) ? sanitize_text_field(wp_unslash($_POST['start_time'])) : '';
+				$end_time = isset($_POST['end_time']) ? sanitize_text_field(wp_unslash($_POST['end_time'])) : '';
 				$this->start_break_time_slot($day, $start_time, $end_time, $user_id);
 				die();
 			}
 			public function get_mpwpb_staff_end_break_time() {
-				$user_id = isset($_REQUEST['user_id']) ? MP_Global_Function::data_sanitize($_REQUEST['user_id']) : '';
-				$day = isset($_REQUEST['day_name']) ? MP_Global_Function::data_sanitize($_REQUEST['day_name']) : '';
-				$start_time = isset($_REQUEST['start_time']) ? MP_Global_Function::data_sanitize($_REQUEST['start_time']) : '';
-				$end_time = isset($_REQUEST['end_time']) ? MP_Global_Function::data_sanitize($_REQUEST['end_time']) : '';
+				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
+					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
+				}
+				$user_id = isset($_POST['user_id']) ? sanitize_text_field(wp_unslash($_POST['user_id'])) : '';
+				$day = isset($_POST['day_name']) ? sanitize_text_field(wp_unslash($_POST['day_name'])) : '';
+				$start_time = isset($_POST['start_time']) ? sanitize_text_field(wp_unslash($_POST['start_time'])) : '';
+				$end_time = isset($_POST['end_time']) ? sanitize_text_field(wp_unslash($_POST['end_time'])) : '';
 				$this->end_break_time_slot($day, $start_time, $end_time, $user_id);
 				die();
 			}
@@ -509,11 +519,11 @@
 				if (!isset($_POST['mpwpb_add_staff_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['mpwpb_add_staff_nonce'])), 'mpwpb_add_staff_nonce') && defined('DOING_AUTOSAVE') && DOING_AUTOSAVE && !current_user_can('create_users')) {
 					return;
 				}
-				$user_id = isset($_POST['mpwpb_user']) ? absint($_POST['mpwpb_user']) : '';
+				$user_id = isset($_POST['mpwpb_user']) ? absint(wp_unslash($_POST['mpwpb_user'])) : '';
 				if (!$user_id) {
-					$user_name = isset($_POST['mpwpb_user_name']) ? sanitize_text_field($_POST['mpwpb_user_name']) : '';
-					$user_pass = isset($_POST['mpwpb_user_password']) ? sanitize_text_field($_POST['mpwpb_user_password']) : '';
-					$user_email = isset($_POST['mpwpb_user_password']) ? sanitize_email($_POST['mpwpb_user_mail']) : '';
+					$user_name = isset($_POST['mpwpb_user_name']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_user_name'])) : '';
+					$user_pass = isset($_POST['mpwpb_user_password']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_user_password'])) : '';
+					$user_email = isset($_POST['mpwpb_user_mail']) ? sanitize_email(wp_unslash($_POST['mpwpb_user_mail'])) : '';
 					if ($user_name && $user_pass && $user_email) {
 						$user_id = wp_create_user($user_name, $user_pass, $user_email);
 						if (!$user_id || is_wp_error($user_id)) {
@@ -522,8 +532,8 @@
 					}
 				}
 				if ($user_id) {
-					$first_name = isset($_POST['mpwpb_staff_first_name']) ? sanitize_text_field($_POST['mpwpb_staff_first_name']) : '';
-					$last_name = isset($_POST['mpwpb_staff_last_name']) ? sanitize_text_field($_POST['mpwpb_staff_last_name']) : '';
+					$first_name = isset($_POST['mpwpb_staff_first_name']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_staff_first_name'])) : '';
+					$last_name = isset($_POST['mpwpb_staff_last_name']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_staff_last_name'])) : '';
 					$userinfo = array(
 						'ID' => $user_id,
 						'first_name' => $first_name,
@@ -531,24 +541,24 @@
 						'role' => 'mpwpb_staff',
 					);
 					wp_update_user($userinfo);
-					$date_type = isset($_POST['mpwpb_date_type']) ? sanitize_text_field($_POST['mpwpb_date_type']) : 'repeated';
+					$date_type = isset($_POST['mpwpb_date_type']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_date_type'])) : 'repeated';
 					update_user_meta($user_id, 'date_type', $date_type);
 					//**********************//
-					$particular_dates = MP_Global_Function::get_submit_info('mpwpb_particular_dates', array());
+					$particular_dates = isset($_POST['mpwpb_particular_dates']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_particular_dates'])) : [];
 					$particular = array();
 					if (sizeof($particular_dates) > 0) {
 						foreach ($particular_dates as $particular_date) {
 							if ($particular_date) {
-								$particular[] = date('Y-m-d', strtotime($particular_date));
+								$particular[] = date_i18n('Y-m-d', strtotime($particular_date));
 							}
 						}
 					}
 					update_user_meta($user_id, 'mpwpb_particular_dates', $particular);
 					//*************************//
-					$repeated_start_date = MP_Global_Function::get_submit_info('mpwpb_repeated_start_date');
-					$repeated_start_date = $repeated_start_date ? date('Y-m-d', strtotime($repeated_start_date)) : '';
+					$repeated_start_date = isset($_POST['mpwpb_repeated_start_date']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_repeated_start_date'])) : '';
+					$repeated_start_date = $repeated_start_date ? date_i18n('Y-m-d', strtotime($repeated_start_date)) : '';
 					update_user_meta($user_id, 'mpwpb_repeated_start_date', $repeated_start_date);
-					$repeated_after = MP_Global_Function::get_submit_info('mpwpb_repeated_after', 1);
+					$repeated_after = isset($_POST['mpwpb_repeated_after']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_repeated_after'])) : 1;
 					update_user_meta($user_id, 'mpwpb_repeated_after', $repeated_after);
 					//**********************//
 					$this->save_schedule($user_id, 'default');
@@ -557,15 +567,15 @@
 						$this->save_schedule($user_id, $key);
 					}
 					//**********************//
-					$off_days = MP_Global_Function::get_submit_info('mpwpb_off_days', array());
+					$off_days = isset($_POST['mpwpb_off_days']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_off_days'])) : [];
 					update_user_meta($user_id, 'mpwpb_off_days', $off_days);
 					//**********************//
-					$off_dates = MP_Global_Function::get_submit_info('mpwpb_off_dates', array());
+					$off_dates = isset($_POST['mpwpb_off_dates']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_off_dates'])) : [];
 					$_off_dates = array();
 					if (sizeof($off_dates) > 0) {
 						foreach ($off_dates as $off_date) {
 							if ($off_date) {
-								$_off_dates[] = date('Y-m-d', strtotime($off_date));
+								$_off_dates[] = date_i18n('Y-m-d', strtotime($off_date));
 							}
 						}
 					}
@@ -573,17 +583,20 @@
 				}
 			}
 			public function save_schedule($user_id, $day) {
+				if (!isset($_POST['mpwpb_add_staff_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['mpwpb_add_staff_nonce'])), 'mpwpb_add_staff_nonce') && defined('DOING_AUTOSAVE') && DOING_AUTOSAVE && !current_user_can('create_users')) {
+					return;
+				}
 				$start_name = 'mpwpb_' . $day . '_start_time';
-				$start_time = MP_Global_Function::get_submit_info($start_name);
+				$start_time = isset($_POST[$start_name]) ? sanitize_text_field(wp_unslash($_POST[$start_name])) : '';
 				update_user_meta($user_id, $start_name, $start_time);
 				$end_name = 'mpwpb_' . $day . '_end_time';
-				$end_time = MP_Global_Function::get_submit_info($end_name);
+				$end_time = isset($_POST[$end_name]) ? sanitize_text_field(wp_unslash($_POST[$end_name])) : '';
 				update_user_meta($user_id, $end_name, $end_time);
 				$start_name_break = 'mpwpb_' . $day . '_start_break_time';
-				$start_time_break = MP_Global_Function::get_submit_info($start_name_break);
+				$start_time_break = isset($_POST[$start_name_break]) ? sanitize_text_field(wp_unslash($_POST[$start_name_break])) : '';
 				update_user_meta($user_id, $start_name_break, $start_time_break);
 				$end_name_break = 'mpwpb_' . $day . '_end_break_time';
-				$end_time_break = MP_Global_Function::get_submit_info($end_name_break);
+				$end_time_break = isset($_POST[$end_name_break]) ? sanitize_text_field(wp_unslash($_POST[$end_name_break])) : '';
 				update_user_meta($user_id, $end_name_break, $end_time_break);
 			}
 		}

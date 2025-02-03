@@ -65,10 +65,10 @@
 				if (!(isset($_GET['post']) || isset($_POST['post']) || (isset($_REQUEST['action']) && 'mpwpb_item_duplicate' == $_REQUEST['action']))) {
 					wp_die('No post to duplicate has been supplied!');
 				}
-				if (!isset($_GET['duplicate_nonce']) || !wp_verify_nonce($_GET['duplicate_nonce'], basename(__FILE__))) {
+				if (!isset($_GET['duplicate_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['duplicate_nonce'])), basename(__FILE__))) {
 					return;
 				}
-				$post_id = (isset($_GET['post']) ? absint($_GET['post']) : absint($_POST['post']));
+				$post_id = (isset($_GET['post']) ? absint(wp_unslash($_GET['post'])) : absint(wp_unslash($_POST['post'])));
 				$post = get_post($post_id);
 				$current_user = wp_get_current_user();
 				$new_post_author = $current_user->ID;
@@ -94,35 +94,35 @@
 						$post_terms = wp_get_object_terms($post_id, $taxonomy, array('fields' => 'slugs'));
 						wp_set_object_terms($new_post_id, $post_terms, $taxonomy, false);
 					}
-					$post_meta_infos = $wpdb->get_results("SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id=$post_id AND meta_key !='total_booking'");
+					$post_meta_infos = $wpdb->get_results(
+						$wpdb->prepare("SELECT meta_key, meta_value FROM {$wpdb->postmeta}  WHERE post_id = %d  AND meta_key != %s", $post_id, 'total_booking')
+					);
 					if (count($post_meta_infos) != 0) {
-						$sql_query = "INSERT INTO $wpdb->postmeta (post_id, meta_key, meta_value) ";
 						foreach ($post_meta_infos as $meta_info) {
 							$meta_key = $meta_info->meta_key;
 							if ($meta_key == '_wp_old_slug') {
 								continue;
 							}
 							$meta_value = addslashes($meta_info->meta_value);
-							$sql_query_sel[] = "SELECT $new_post_id, '$meta_key', '$meta_value'";
+							$wpdb->insert(
+								$wpdb->postmeta,
+								[
+									'post_id' => $new_post_id,
+									'meta_key' => $meta_key,
+									'meta_value' => $meta_value
+								],
+								[
+									'%d', // post_id is an integer
+									'%s', // meta_key is a string
+									'%s'  // meta_value is a string
+								]
+							);
 						}
-						$sql_query .= implode(" UNION ALL ", $sql_query_sel);
-						$wpdb->query($sql_query);
-						$table_name = $wpdb->prefix . 'postmeta';
-						$bi = $wpdb->insert($table_name, array(
-							'post_id' => $new_post_id,
-							'meta_key' => 'total_booking',
-							'meta_value' => 0
-						), array(
-							'%d',
-							'%s',
-							'%d'
-						));
 					}
 					wp_redirect(admin_url('post.php?action=edit&post=' . $new_post_id));
 					exit;
-				}
-				else {
-					wp_die('Post creation failed, could not find original post: ' . $post_id);
+				} else {
+					wp_die('Post creation failed, could not find original post: ' . esc_html($post_id));
 				}
 			}
 			public function post_duplicator($actions, $post) {

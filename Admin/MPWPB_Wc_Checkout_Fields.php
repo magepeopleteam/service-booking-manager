@@ -12,8 +12,6 @@
 		class MPWPB_Wc_Checkout_Fields {
 			private $error;
 			private $settings_options;
-			private $allowed_extensions;
-			private $allowed_mime_types;
 			public function __construct() {
 				$this->error = new WP_Error();
 				add_action('init', array($this, 'get_settings_options'));
@@ -21,24 +19,19 @@
 				add_action('add_mpwpb_frontend_script', array($this, 'frontend_enqueue'), 99);
 				add_action('admin_menu', array($this, 'checkout_menu'));
 				add_action('admin_notices', array($this, 'mp_admin_notice'));
-				add_action('admin_head', array($this, 'mpwpb_checkout_ajax_url'), 5);
 				add_action('add_switch_button', array($this, 'switch_button'), 10, 3);
 				add_action('wp_ajax_mpwpb_disable_field', array($this, 'mpwpb_disable_field'));
-			}
-			public function mpwpb_checkout_ajax_url() {
-				?>
-                <script type="text/javascript">
-                    let mpwpb_checkout_ajax_url = "<?php echo admin_url('admin-ajax.php'); ?>";
-                </script>
-				<?php
+				add_action('wp_ajax_nopriv_mpwpb_disable_field', [$this, 'mpwpb_disable_field']);
 			}
 			public function mpwpb_disable_field() {
+				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
+					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
+				}
 				$response = 'failed';
-				$key = isset($_POST['key']) ? sanitize_text_field($_POST['key']) : null;
-				$name = isset($_POST['name']) ? sanitize_text_field($_POST['name']) : null;
-				$isChecked = isset($_POST['isChecked']) ? sanitize_text_field($_POST['isChecked']) : null;
+				$key = isset($_POST['key']) ? sanitize_text_field(wp_unslash($_POST['key'])) : null;
+				$name = isset($_POST['name']) ? sanitize_text_field(wp_unslash($_POST['name'])) : null;
+				$isChecked = isset($_POST['isChecked']) ? sanitize_text_field(wp_unslash($_POST['isChecked'])) : null;
 				$checkout_fields = MPWPB_Wc_Checkout_Fields_Helper::get_checkout_fields_for_list();
-				$custom_checkout_fields = array();
 				$custom_checkout_fields = get_option('mpwpb_custom_checkout_fields');
 				if (isset($checkout_fields[$key][$name])) {
 					unset($custom_checkout_fields[$key][$name]);
@@ -52,7 +45,7 @@
 					update_option('mpwpb_custom_checkout_fields', $custom_checkout_fields);
 					$response = 'success';
 				}
-				echo $response;
+				echo esc_html($response);
 				die();
 			}
 			public static function switch_button($id, $class, $name, $status, $data) {
@@ -64,7 +57,7 @@
 				}
 				?>
                 <label class="switch">
-                    <input type="checkbox" id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($class); ?>" name="<?php echo esc_attr($name); ?>" <?php echo esc_attr($status); ?>  <?php echo $str_data; ?> >
+                    <input type="checkbox" id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($class); ?>" name="<?php echo esc_attr($name); ?>" <?php echo esc_attr($status); ?>  <?php echo esc_attr($str_data); ?> >
                     <span class="slider"></span>
                 </label>
 				<?php
@@ -73,11 +66,8 @@
 				$this->settings_options = get_option('mpwpb_custom_checkout_fields');
 			}
 			public function admin_enqueue() {
-				//wp_enqueue_style('mpwpb_checkout_common', MPWPB_PLUGIN_URL . '/assets/checkout/css/mpwpb-pro-styles.css', array(), time());
-				//wp_enqueue_script('mpwpb_checkout_common', MPWPB_PLUGIN_URL . '/assets/checkout/js/mpwpb-pro-styles.js', array('jquery'), time(), true);
 				wp_enqueue_style('mpwpb_checkout', MPWPB_PLUGIN_URL . '/assets/checkout/css/mpwpb-pro-checkout.css', array(), time());
 				wp_enqueue_script('mpwpb_checkout', MPWPB_PLUGIN_URL . '/assets/checkout/js/mpwpb-pro-checkout.js', array('jquery'), time(), true);
-				wp_enqueue_script('mpwpb_checkout_custom_script', 'https://code.jquery.com/ui/1.12.1/jquery-ui.js', array('jquery', 'jquery-ui-core', 'jquery-ui-sortable'), time(), true);
 			}
 			public function frontend_enqueue() {
 				wp_enqueue_style('mpwpb_checkout_front_style', MPWPB_PLUGIN_URL . '/assets/checkout/front/css/mpwpb-pro-checkout-front-style.css', array(), time());
@@ -85,11 +75,11 @@
 			}
 			public function checkout_menu() {
 				$cpt = MPWPB_Function::get_cpt();
-				add_submenu_page('edit.php?post_type=' . $cpt, esc_html__('Checkout Fields', 'mpwpb-service-booking-manager'), esc_html__('Checkout Fields', 'mpwpb-service-booking-manager'), 'manage_options', 'mpwpb_wc_checkout_fields', array($this, 'wc_checkout_fields'));
+				add_submenu_page('edit.php?post_type=' . $cpt, esc_html__('Checkout Fields', 'service-booking-manager'), esc_html__('Checkout Fields', 'service-booking-manager'), 'manage_options', 'mpwpb_wc_checkout_fields', array($this, 'wc_checkout_fields'));
 			}
 			public function wc_checkout_fields() {
 				if (!current_user_can('administrator')) {
-					wp_die(__('You do not have sufficient permissions to access this page.'));
+					wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'service-booking-manager'));
 				}
 				do_action('mpwpb_save_checkout_fields_settings');
 				do_action('mpwpb_wc_checkout_fields');

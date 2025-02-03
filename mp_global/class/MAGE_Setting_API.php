@@ -6,7 +6,7 @@
 		class MAGE_Setting_API {
 			protected $settings_sections = array();
 			protected $settings_fields = array();
-			public function __construct() {}
+			public function __construct() { }
 			function set_sections($sections) {
 				$this->settings_sections = $sections;
 				return $this;
@@ -39,13 +39,11 @@
 					if (isset($section['desc']) && !empty($section['desc'])) {
 						$section['desc'] = '<div class="inside">' . $section['desc'] . '</div>';
 						$callback = function () use ($section) {
-							echo str_replace('"', '\"', $section['desc']);
+							echo wp_kses_post(str_replace('"', '\"', $section['desc']));
 						};
-					}
-					else if (isset($section['callback'])) {
+					} else if (isset($section['callback'])) {
 						$callback = $section['callback'];
-					}
-					else {
+					} else {
 						$callback = null;
 					}
 					add_settings_section($section['id'], $section['title'], $callback, $section['id']);
@@ -86,8 +84,7 @@
 			public function get_field_description($args) {
 				if (!empty($args['desc'])) {
 					$desc = sprintf('<br/><i class="info_text"><span class="fas fa-info-circle"></span>%s</i>', $args['desc']);
-				}
-				else {
+				} else {
 					$desc = '';
 				}
 				return $desc;
@@ -97,52 +94,51 @@
 				$name = $args['section'] . '[' . $args['id'] . ']';
 				$placeholder = empty($args['placeholder']) ? '' : $args['placeholder'];
 				?>
-				<label>
-					<input type="text" name="<?php echo esc_attr($name); ?>" class="formControl" value="<?php echo esc_attr($value); ?>" placeholder="<?php echo esc_attr($placeholder); ?>"/>
-				</label>
+                <label>
+                    <input type="text" name="<?php echo esc_attr($name); ?>" class="formControl" value="<?php echo esc_attr($value); ?>" placeholder="<?php echo esc_attr($placeholder); ?>"/>
+                </label>
 				<?php
 			}
 			function callback_datepicker($args) {
 				$date_format = MP_Global_Function::date_picker_format();
 				$now = date_i18n($date_format, strtotime(current_time('Y-m-d')));
 				$date = MP_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
-				$hidden_date = $date ? date('Y-m-d', strtotime($date)) : '';
+				$hidden_date = $date ? date_i18n('Y-m-d', strtotime($date)) : '';
 				$visible_date = $date ? date_i18n($date_format, strtotime($date)) : '';
 				$name = $args['section'] . '[' . $args['id'] . ']';
 				?>
-				<label>
-					<input type="hidden" name="<?php echo esc_attr($name); ?>" value="<?php echo esc_attr($hidden_date); ?>"/>
-					<input type="text" readonly name="" class="formControl date_type" value="<?php echo esc_attr($visible_date); ?>" placeholder="<?php echo esc_attr($now); ?>"/>
-				</label>
+                <label>
+                    <input type="hidden" name="<?php echo esc_attr($name); ?>" value="<?php echo esc_attr($hidden_date); ?>"/>
+                    <input type="text" readonly name="" class="formControl date_type" value="<?php echo esc_attr($visible_date); ?>" placeholder="<?php echo esc_attr($now); ?>"/>
+                </label>
 				<?php
 			}
 			function callback_mp_select2($args) {
 				$value = MP_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
 				$name = $args['section'] . '[' . $args['id'] . ']';
-
 				?>
-				<label>
-					<select name="<?php echo esc_attr($name); ?>" class="formControl mp_select2">
+                <label>
+                    <select name="<?php echo esc_attr($name); ?>" class="formControl mp_select2">
 						<?php foreach ($args['options'] as $key => $label) { ?>
-							<option value="<?php echo esc_attr($key); ?>" <?php echo esc_attr($key == $value ? 'selected' : ''); ?>><?php echo esc_html($label); ?></option>
+                            <option value="<?php echo esc_attr($key); ?>" <?php echo esc_attr($key == $value ? 'selected' : ''); ?>><?php echo esc_html($label); ?></option>
 						<?php } ?>
-					</select>
-				</label>
+                    </select>
+                </label>
 				<?php
 			}
 			function callback_mp_select2_role($args) {
 				global $wp_roles;
 				$value = MP_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
 				$name = $args['section'] . '[' . $args['id'] . '][]';
-                $value=is_array($value)?$value:[$value];
+				$value = is_array($value) ? $value : [$value];
 				?>
-				<label>
-					<select name="<?php echo esc_attr($name); ?>" class="formControl mp_select2" multiple>
+                <label>
+                    <select name="<?php echo esc_attr($name); ?>" class="formControl mp_select2" multiple>
 						<?php foreach ($wp_roles->roles as $key => $label) { ?>
-							<option value="<?php echo esc_attr($key); ?>" <?php echo in_array($key, $value) ? 'selected' : ''; ?>><?php echo esc_html($label['name']); ?></option>
+                            <option value="<?php echo esc_attr($key); ?>" <?php echo in_array($key, $value) ? 'selected' : ''; ?>><?php echo esc_html($label['name']); ?></option>
 						<?php } ?>
-					</select>
-				</label>
+                    </select>
+                </label>
 				<?php
 			}
 			function callback_url($args) {
@@ -153,13 +149,13 @@
 				$name = $args['section'] . '[' . $args['id'] . ']';
 				$placeholder = empty($args['placeholder']) ? '' : $args['placeholder'];
 				?>
-				<label>
-					<input type="number" name="<?php echo esc_attr($name); ?>" class="formControl" value="<?php echo esc_attr($value); ?>" placeholder="<?php echo esc_attr($placeholder); ?>"
+                <label>
+                    <input type="number" name="<?php echo esc_attr($name); ?>" class="formControl" value="<?php echo esc_attr($value); ?>" placeholder="<?php echo esc_attr($placeholder); ?>"
 						<?php echo esc_attr(empty($args['min']) ? '' : ' min="' . $args['min'] . '"'); ?>
 						<?php echo esc_attr(empty($args['max']) ? '' : ' max="' . $args['max'] . '"'); ?>
 						<?php echo esc_attr(empty($args['step']) ? '' : ' step="' . $args['step'] . '"'); ?>
-					/>
-				</label>
+                    />
+                </label>
 				<?php
 			}
 			function callback_checkbox($args) {
@@ -167,61 +163,61 @@
 				$name = $args['section'] . '[' . $args['id'] . ']';
 				$checked = checked($value, 'on', false);
 				?>
-				<fieldset>
-					<label>
-						<input type="hidden" name="<?php echo esc_attr($name); ?>" value="off"/>
-						<input type="checkbox" class="checkbox" name="<?php echo esc_attr($name); ?>" value="on" <?php echo esc_attr($checked); ?> />
+                <fieldset>
+                    <label>
+                        <input type="hidden" name="<?php echo esc_attr($name); ?>" value="off"/>
+                        <input type="checkbox" class="checkbox" name="<?php echo esc_attr($name); ?>" value="on" <?php echo esc_attr($checked); ?> />
 						<?php echo esc_html($args['desc']); ?>
-					</label>
-				</fieldset>
+                    </label>
+                </fieldset>
 				<?php
 			}
 			function callback_multicheck($args) {
 				$value = MP_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
 				$name = $args['section'] . '[' . $args['id'] . ']';
 				?>
-				<fieldset>
-					<input type="hidden" name="<?php echo esc_attr($name); ?>" value=""/>
+                <fieldset>
+                    <input type="hidden" name="<?php echo esc_attr($name); ?>" value=""/>
 					<?php foreach ($args['options'] as $key => $label) { ?>
 						<?php
 						$checked = $value[$key] ?? '0';
 						$checked_data = checked($checked, $key, false);
 						$name_data = $args['section'] . '[' . $args['id'] . ']' . '[' . $key . ']';
 						?>
-						<label class="_min_200">
-							<input type="checkbox" class="checkbox" name="<?php echo esc_attr($name_data); ?>" value="<?php echo esc_attr($key); ?>" <?php echo esc_attr($checked_data); ?> />
+                        <label class="_min_200">
+                            <input type="checkbox" class="checkbox" name="<?php echo esc_attr($name_data); ?>" value="<?php echo esc_attr($key); ?>" <?php echo esc_attr($checked_data); ?> />
 							<?php echo esc_html($label); ?>
-						</label>
+                        </label>
 					<?php } ?>
-				</fieldset>
+                </fieldset>
 				<?php
 			}
 			function callback_radio($args) {
 				$value = MP_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
 				$name = $args['section'] . '[' . $args['id'] . ']';
 				?>
-				<fieldset>
+                <fieldset>
 					<?php foreach ($args['options'] as $key => $label) { ?>
 						<?php $checked_data = checked($value, $key, false); ?>
-						<label>
-							<input type="radio" class="radio" name="<?php echo esc_attr($name); ?>" value="<?php echo esc_attr($key); ?>" <?php echo esc_attr($checked_data); ?> />
+                        <label>
+                            <input type="radio" class="radio" name="<?php echo esc_attr($name); ?>" value="<?php echo esc_attr($key); ?>" <?php echo esc_attr($checked_data); ?> />
 							<?php echo esc_html($label); ?>
-						</label>
+                        </label>
 					<?php } ?>
-				</fieldset>
+                </fieldset>
 				<?php
 			}
 			function callback_select($args) {
 				$value = MP_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
 				$name = $args['section'] . '[' . $args['id'] . ']';
 				?>
-				<label>
-					<select name="<?php echo esc_attr($name); ?>" class="formControl">
+                <label>
+                    <select name="<?php echo esc_attr($name); ?>" class="formControl">
 						<?php foreach ($args['options'] as $key => $label) { ?>
-							<option value="<?php echo esc_attr($key); ?>" <?php echo esc_attr($key == $value ? 'selected' : ''); ?>><?php echo esc_html($label); ?></option>
+                            <option value="<?php echo esc_attr($key); ?>" <?php echo esc_attr($key == $value ? 'selected' : ''); ?>><?php echo esc_html($label); ?></option>
 						<?php } ?>
-					</select>
-				</label>
+                    </select>
+                </label>
 				<?php
 			}
 			function callback_textarea($args) {
@@ -229,25 +225,25 @@
 				$name = $args['section'] . '[' . $args['id'] . ']';
 				$placeholder = empty($args['placeholder']) ? '' : $args['placeholder'];
 				?>
-				<label>
-					<textarea name="<?php echo esc_attr($name); ?>" rows="5" cols="55" class="formControl" placeholder="<?php echo esc_attr($placeholder); ?>"><?php echo esc_html($value); ?></textarea>
-				</label>
+                <label>
+                    <textarea name="<?php echo esc_attr($name); ?>" rows="5" cols="55" class="formControl" placeholder="<?php echo esc_attr($placeholder); ?>"><?php echo esc_html($value); ?></textarea>
+                </label>
 				<?php
 			}
 			function callback_html($args) {
 				if (!empty($args['desc'])) {
 					?>
-					<i class="info_text">
-						<span class="fas fa-info-circle"></span>
+                    <i class="info_text">
+                        <span class="fas fa-info-circle"></span>
 						<?php echo esc_html($args['desc']); ?>
-					</i>
+                    </i>
 					<?php
 				}
 			}
 			function callback_wysiwyg($args) {
 				$value = MP_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
 				?>
-				<div>
+                <div>
 					<?php
 						$editor_settings = array(
 							'teeny' => true,
@@ -259,33 +255,33 @@
 						}
 						wp_editor($value, $args['section'] . '-' . $args['id'], $editor_settings);
 					?>
-				</div>
+                </div>
 				<?php
 			}
-			function callback_file( $args ) {
-				$value       = MP_Global_Function::get_settings( $args['section'], $args['id'], $args['std'] );
-				$name        = $args['section'] . '[' . $args['id'] . ']';
-				$placeholder = empty( $args['placeholder'] ) ? '' : $args['placeholder'];
-				$label       = $args['options']['button_label'] ?? esc_html__( 'Choose File' );
-				do_action( 'mp_add_single_image', $name, $value );
+			function callback_file($args) {
+				$value = MP_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
+				$name = $args['section'] . '[' . $args['id'] . ']';
+				$placeholder = empty($args['placeholder']) ? '' : $args['placeholder'];
+				$label = $args['options']['button_label'] ?? esc_html__('Choose File', 'service-booking-manager');
+				do_action('mp_add_single_image', $name, $value);
 			}
 			function callback_password($args) {
 				$value = MP_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
 				$name = $args['section'] . '[' . $args['id'] . ']';
 				$placeholder = empty($args['placeholder']) ? '' : $args['placeholder'];
 				?>
-				<label>
-					<input type="password" name="<?php echo esc_attr($name); ?>" class="formControl" value="<?php echo esc_attr($value); ?>" placeholder="<?php echo esc_attr($placeholder); ?>"/>
-				</label>
+                <label>
+                    <input type="password" name="<?php echo esc_attr($name); ?>" class="formControl" value="<?php echo esc_attr($value); ?>" placeholder="<?php echo esc_attr($placeholder); ?>"/>
+                </label>
 				<?php
 			}
 			function callback_color($args) {
 				$value = MP_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
 				$name = $args['section'] . '[' . $args['id'] . ']';
 				?>
-				<label>
-					<input type="text" name="<?php echo esc_attr($name); ?>" class="formControl wp-color-picker-field" value="<?php echo esc_attr($value); ?>" data-default-color="<?php echo esc_attr($args['std']); ?>"/>
-				</label>
+                <label>
+                    <input type="text" name="<?php echo esc_attr($name); ?>" class="formControl wp-color-picker-field" value="<?php echo esc_attr($value); ?>" data-default-color="<?php echo esc_attr($args['std']); ?>"/>
+                </label>
 				<?php
 			}
 			function callback_pages($args) {
@@ -293,9 +289,8 @@
 					'selected' => MP_Global_Function::get_settings($args['section'], $args['id'], $args['std']),
 					'name' => $args['section'] . '[' . $args['id'] . ']',
 					'id' => $args['section'] . '[' . $args['id'] . ']',
-					'echo' => 0
 				);
-				echo wp_dropdown_pages($dropdown_args);
+				wp_dropdown_pages(esc_attr($dropdown_args));
 			}
 			function sanitize_options($options) {
 				if (!$options) {
@@ -331,21 +326,21 @@
 				$count = count($this->settings_sections);
 				if ($count > 1) {
 					?>
-					<ul class="tabLists bgLight">
+                    <ul class="tabLists bgLight">
 						<?php foreach ($this->settings_sections as $tab) { ?>
-							<li data-tabs-target="#<?php echo esc_attr($tab['id']); ?>">
-								<span class="<?php echo esc_attr(array_key_exists('icon',$tab)?$tab['icon']:''); ?>"></span><?php echo esc_html($tab['title']); ?>
-							</li>
+                            <li data-tabs-target="#<?php echo esc_attr($tab['id']); ?>">
+                                <span class="<?php echo esc_attr(array_key_exists('icon', $tab) ? $tab['icon'] : ''); ?>"></span><?php echo esc_html($tab['title']); ?>
+                            </li>
 						<?php } ?>
-					</ul>
+                    </ul>
 					<?php
 				}
 			}
 			function show_forms() {
 				?>
 				<?php foreach ($this->settings_sections as $form) { ?>
-					<div class="tabsItem" data-tabs="#<?php echo esc_attr($form['id']); ?>">
-						<form method="post" action="options.php">
+                    <div class="tabsItem" data-tabs="#<?php echo esc_attr($form['id']); ?>">
+                        <form method="post" action="options.php">
 							<?php
 								do_action('wsa_form_top_' . $form['id'], $form);
 								settings_fields($form['id']);
@@ -353,43 +348,42 @@
 								do_action('wsa_form_bottom_' . $form['id'], $form);
 								if (isset($this->settings_fields[$form['id']])):
 									?>
-									<div class="justifyBetween _mT">
-										<div></div>
+                                    <div class="justifyBetween _mT">
+                                        <div></div>
 										<?php submit_button(); ?>
-									</div>
+                                    </div>
 								<?php endif; ?>
-						</form>
-					</div>
+                        </form>
+                    </div>
 				<?php } ?>
 				<?php
 				$this->script();
 			}
 			function script() {
 				?>
-				<script>
-					jQuery(document).ready(function ($) {
-						//Initiate Color Picker
-						$('.wp-color-picker-field').wpColorPicker();
-						$('.wpsa-browse').on('click', function (event) {
-							
-							var self = $(this);
-							// Create the media frame.
-							var file_frame = wp.media.frames.file_frame = wp.media({
-								title: self.data('uploader_title'),
-								button: {
-									text: self.data('uploader_button_text'),
-								},
-								multiple: false
-							});
-							file_frame.on('select', function () {
-								attachment = file_frame.state().get('selection').first().toJSON();
-								self.prev('.wpsa-url').val(attachment.url).change();
-							});
-							// Finally, open the modal
-							file_frame.open();
-						});
-					});
-				</script>
+                <script>
+                    jQuery(document).ready(function ($) {
+                        //Initiate Color Picker
+                        $('.wp-color-picker-field').wpColorPicker();
+                        $('.wpsa-browse').on('click', function (event) {
+                            var self = $(this);
+                            // Create the media frame.
+                            var file_frame = wp.media.frames.file_frame = wp.media({
+                                title: self.data('uploader_title'),
+                                button: {
+                                    text: self.data('uploader_button_text'),
+                                },
+                                multiple: false
+                            });
+                            file_frame.on('select', function () {
+                                attachment = file_frame.state().get('selection').first().toJSON();
+                                self.prev('.wpsa-url').val(attachment.url).change();
+                            });
+                            // Finally, open the modal
+                            file_frame.open();
+                        });
+                    });
+                </script>
 				<?php
 			}
 		}
