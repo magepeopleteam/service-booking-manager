@@ -1365,24 +1365,33 @@
 				$like_filename = '%' . $wpdb->esc_like($filename) . '%';
 
 				// Prepare the SQL query using placeholders
-				$query = $wpdb->prepare(
-					"SELECT ID 
-        FROM {$wpdb->posts} 
-        WHERE post_type = %s 
-        AND (guid LIKE %s 
-        OR ID IN (
-            SELECT post_id FROM {$wpdb->postmeta} 
-            WHERE meta_key = %s 
-            AND meta_value LIKE %s
-        ))",
-					'attachment',    // %s -> post_type
-					$like_filename,  // %s -> guid LIKE search
-					'_wp_attached_file',  // %s -> meta_key
-					$like_filename   // %s -> meta_value LIKE search
-				);
+				// Prepare search arguments
+				$args = [
+					'post_type'      => 'attachment',
+					'posts_per_page' => 1, // We only need one result
+					'fields'         => 'ids', // Get only post IDs
+					'meta_query'     => [
+						'relation' => 'OR',
+						[
+							'key'     => '_wp_attached_file',
+							'value'   => $like_filename,
+							'compare' => 'LIKE',
+						],
+					],
+					's' => $like_filename, // Search in GUID (not ideal, but works)
+				];
 
-				// Execute the query and get the result
-				$attachment_id = $wpdb->get_var($wpdb->prepare($query));
+				// Try to fetch cached result first
+				$cache_key = 'attachment_id_' . md5(json_encode($args));
+				$attachment_id = wp_cache_get($cache_key, 'custom_cache_group');
+
+				if ($attachment_id === false) {
+					$attachments 	= get_posts($args);
+					$attachment_id 	= !empty($attachments) ? $attachments[0] : null;
+
+					// Store result in cache for 1 hour
+					wp_cache_set($cache_key, $attachment_id, 'custom_cache_group', HOUR_IN_SECONDS);
+				}
 
 				// If attachment exists, return its details
 				if ($attachment_id) {

@@ -1,6 +1,6 @@
 <?php
 	/**
-	 * Plugin Name: WordPress Service Booking & Scheduling Plugin | All-in-one Booking Systems -WpBookingly
+	 * Plugin Name: Service Booking & Scheduling Solution | All-in-one Booking Systems
 	 * Plugin URI: http://mage-people.com
 	 * Description: A complete solution for Any kind of service booking.
 	 * Version: 1.1.3
@@ -8,6 +8,8 @@
 	 * Author URI: http://www.mage-people.com/
 	 * Text Domain: service-booking-manager
 	 * Domain Path: /languages/
+	 * License: GPLv2 or later
+ 	 * License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	 */
 	if (!defined('ABSPATH'))
 		die;
