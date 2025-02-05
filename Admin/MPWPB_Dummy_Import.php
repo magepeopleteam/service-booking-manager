@@ -10,13 +10,10 @@
 		class MPWPB_Dummy_Import {
 			public function __construct() {
 				$this->dummy_import();
-				//$this->dummy_import_xml();
-
 			}
 			private function dummy_import() {
 				$dummy_post = get_option('mpwpb_dummy_already_inserted');
 				$all_post = MP_Global_Function::query_post_type('mpwpb_item');
-				
 				if ($all_post->post_count == 0 && $dummy_post != 'yes') {
 					$dummy_data = $this->dummy_data();
 					foreach ($dummy_data as $type => $dummy) {
@@ -46,11 +43,10 @@
 												update_post_meta($post_id, $meta_key, $data);
 											}
 										}
-
 										require_once(ABSPATH . "wp-admin" . '/includes/image.php');
-										$image = MPWPB_PLUGIN_DIR.'/assets/images/dummy-image-'.$key.'.png';
+										$image = MPWPB_PLUGIN_DIR . '/assets/images/dummy-image-' . $key . '.png';
 										$image_attached = self::insert_media($image);
-                        				set_post_thumbnail( $post_id, $image_attached['id']??'' );
+										set_post_thumbnail($post_id, $image_attached['id'] ?? '');
 									}
 								}
 							}
@@ -97,7 +93,7 @@
 									'mpwpb_thursday_end_break_time' => '',
 									'mpwpb_off_days' => 'saturday,sunday',
 									'mpwpb_off_dates' => [],
-									'mpwpb_service_type'=>'car_wash',
+									'mpwpb_service_type' => 'car_wash',
 									// Price_settings
 									'mpwpb_category_active' => 'off',
 									'mpwpb_sub_category_active' => 'off',
@@ -191,7 +187,7 @@
 										0 => ''
 									],
 									'mpwpb_faq_active' => 'on',
-									'mpwpb_faq' =>  [
+									'mpwpb_faq' => [
 										[
 											'title' => 'What services can I book?',
 											'content' => '<p>You can book a variety of services, including haircuts, coloring, styling, manicures, pedicures, facials, and massages.</p>',
@@ -209,16 +205,16 @@
 											'content' => '<ul><li><p>You can easily cancel or reschedule your appointment online, ideally 24 hours in advance.</p></li></ul>',
 										]
 									],
-									'mpwpb_features_status'=>'on',
-									'mpwpb_features'=>[
+									'mpwpb_features_status' => 'on',
+									'mpwpb_features' => [
 										"Wide Range of Courses",
 										"General Health Checkups",
 										"What types of repair services can I book?",
 										"Wide Range of Courses",
 										"Wide Range of Courses"
 									],
-									'mpwpb_service_overview_status'=>'on',
-									'mpwpb_service_overview_content'=>'<ol>
+									'mpwpb_service_overview_status' => 'on',
+									'mpwpb_service_overview_content' => '<ol>
 										<li><strong>Select Service</strong>: Choose from our extensive list of salon services.</li>
 										<li><strong>Choose Date and Time</strong>: Pick a date and time that works best for you.</li>
 										<li><strong>Select Stylist</strong>: If desired, select your preferred stylist based on their availability and expertise.</li>
@@ -226,8 +222,8 @@
 										<li><strong>Receive Confirmation</strong>: Get an email or text confirmation with your appointment details.</li>
 									</ol>
 									With our <strong>Salon Booking</strong> system, experiencing top-notch beauty and wellness services is just a few clicks away. Enjoy a seamless appointment process and a relaxing salon experience tailored to your needs!',
-									'mpwpb_service_details_status'=>'on',
-									'mpwpb_service_details_content'=>'<strong>Salon Booking</strong> is a streamlined and user-friendly system designed to enhance your salon experience by making it easy to schedule appointments for a wide range of beauty and wellness services. Whether you need a haircut, manicure, facial, or massage, our platform simplifies the booking process, allowing you to secure your desired time and service with just a few clicks.
+									'mpwpb_service_details_status' => 'on',
+									'mpwpb_service_details_content' => '<strong>Salon Booking</strong> is a streamlined and user-friendly system designed to enhance your salon experience by making it easy to schedule appointments for a wide range of beauty and wellness services. Whether you need a haircut, manicure, facial, or massage, our platform simplifies the booking process, allowing you to secure your desired time and service with just a few clicks.
 									<h3>Key Features:</h3>
 									<ol>
 										<li><strong>User-Friendly Interface</strong>
@@ -251,10 +247,10 @@
 										<li><strong>Feedback and Reviews</strong>
 									After your appointment, you have the opportunity to leave feedback and reviews for your stylist and the services received, helping us maintain high standards and improve our offerings.</li>
 									</ol>',
-									'mpwpb_service_review_ratings'=>'4.8',
-									'mpwpb_service_rating_scale'=>'out of 5',
-									'mpwpb_service_rating_text'=>'total 200 review',
-									'_thumbnail_id'=>'597',
+									'mpwpb_service_review_ratings' => '4.8',
+									'mpwpb_service_rating_scale' => 'out of 5',
+									'mpwpb_service_rating_text' => 'total 200 review',
+									'_thumbnail_id' => '597',
 								],
 							],
 							1 => [
@@ -290,7 +286,6 @@
 									'mpwpb_thursday_end_break_time' => '',
 									'mpwpb_off_days' => 'saturday,sunday',
 									'mpwpb_off_dates' => [],
-									
 									// Price_settings
 									'mpwpb_category_active' => 'on',
 									'mpwpb_sub_category_active' => 'on',
@@ -300,145 +295,145 @@
 									'mpwpb_sub_category_text' => 'Car Type',
 									'mpwpb_service_text' => 'Service',
 									'mpwpb_category_infos' => [
-											[
-												'icon' => '',
-												'image' => '',
-												'category' => 'Car Wash Polish',
-												'sub_category' => [
-													[
-														'icon' => 'fas fa-dog',
-														'image' => '',
-														'name' => 'Car Type SUV',
-														'service' => [
-															[
-																'name' => 'Hand Wash',
-																'price' => 450,
-																'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-																'duration' => '1h 30m',
-																'icon' => 'fas fa-frog',
-																'image' => ''
-															],
-															[
-																'name' => 'Exterior Handwax',
-																'price' => 200,
-																'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-																'duration' => '1 Hour',
-																'icon' => 'fas fa-paw',
-																'image' => ''
-															],
-															[
-																'name' => 'Hand Wash Wax',
-																'price' => 650,
-																'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-																'duration' => '1h 30m',
-																'icon' => 'fas fa-dragon',
-																'image' => ''
-															]
-														]
-													],
-													[
-														'icon' => 'fas fa-dragon',
-														'image' => '',
-														'name' => 'Car Type Zeep',
-														'service' => [
-															[
-																'name' => 'Hand Wash',
-																'price' => 450,
-																'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-																'duration' => '',
-																'icon' => 'fas fa-spider',
-																'image' => ''
-															],
-															[
-																'name' => 'Exterior Handwax',
-																'price' => 600,
-																'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-																'duration' => '',
-																'icon' => 'fas fa-crow',
-																'image' => ''
-															],
-															[
-																'name' => 'Hand Wash Wax',
-																'price' => 500,
-																'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-																'duration' => '',
-																'icon' => 'fas fa-dog',
-																'image' => ''
-															]
-														]
-													],
-													[
-														'icon' => 'fas fa-truck-monster',
-														'image' => '',
-														'name' => 'Car Type Sedan',
-														'service' => [
-															[
-																'name' => 'Hand Wash',
-																'price' => 450,
-																'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-																'duration' => '',
-																'icon' => 'fas fa-microphone-alt',
-																'image' => ''
-															],
-															[
-																'name' => 'Exterior Handwax',
-																'price' => 450,
-																'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-																'duration' => '',
-																'icon' => 'fas fa-cocktail',
-																'image' => ''
-															],
-															[
-																'name' => 'Hand Wash Wax',
-																'price' => 500,
-																'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-																'duration' => '',
-																'icon' => 'fas fa-tractor',
-																'image' => ''
-															]
+										[
+											'icon' => '',
+											'image' => '',
+											'category' => 'Car Wash Polish',
+											'sub_category' => [
+												[
+													'icon' => 'fas fa-dog',
+													'image' => '',
+													'name' => 'Car Type SUV',
+													'service' => [
+														[
+															'name' => 'Hand Wash',
+															'price' => 450,
+															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+															'duration' => '1h 30m',
+															'icon' => 'fas fa-frog',
+															'image' => ''
+														],
+														[
+															'name' => 'Exterior Handwax',
+															'price' => 200,
+															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+															'duration' => '1 Hour',
+															'icon' => 'fas fa-paw',
+															'image' => ''
+														],
+														[
+															'name' => 'Hand Wash Wax',
+															'price' => 650,
+															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+															'duration' => '1h 30m',
+															'icon' => 'fas fa-dragon',
+															'image' => ''
 														]
 													]
-												]
-											],
-											[
-												'icon' => '',
-												'image' => '',
-												'category' => 'Car Detailing',
-												'sub_category' => [
-													[
-														'icon' => 'fas fa-otter',
-														'image' => '',
-														'name' => 'Car Type Sedan',
-														'service' => [
-															[
-																'name' => 'Standard Interior',
-																'price' => '750',
-																'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s...',
-																'duration' => '1h 30m',
-																'icon' => 'fas fa-taxi',
-																'image' => ''
-															],
-															[
-																'name' => 'Premium Interior',
-																'price' => '600',
-																'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s...',
-																'duration' => '1h 30m',
-																'icon' => 'fas fa-church',
-																'image' => ''
-															],
-															[
-																'name' => 'Complete Detail',
-																'price' => '500',
-																'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s...',
-																'duration' => '1h 30m',
-																'icon' => 'fas fa-place-of-worship',
-																'image' => ''
-															]
+												],
+												[
+													'icon' => 'fas fa-dragon',
+													'image' => '',
+													'name' => 'Car Type Zeep',
+													'service' => [
+														[
+															'name' => 'Hand Wash',
+															'price' => 450,
+															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+															'duration' => '',
+															'icon' => 'fas fa-spider',
+															'image' => ''
+														],
+														[
+															'name' => 'Exterior Handwax',
+															'price' => 600,
+															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+															'duration' => '',
+															'icon' => 'fas fa-crow',
+															'image' => ''
+														],
+														[
+															'name' => 'Hand Wash Wax',
+															'price' => 500,
+															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+															'duration' => '',
+															'icon' => 'fas fa-dog',
+															'image' => ''
+														]
+													]
+												],
+												[
+													'icon' => 'fas fa-truck-monster',
+													'image' => '',
+													'name' => 'Car Type Sedan',
+													'service' => [
+														[
+															'name' => 'Hand Wash',
+															'price' => 450,
+															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+															'duration' => '',
+															'icon' => 'fas fa-microphone-alt',
+															'image' => ''
+														],
+														[
+															'name' => 'Exterior Handwax',
+															'price' => 450,
+															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+															'duration' => '',
+															'icon' => 'fas fa-cocktail',
+															'image' => ''
+														],
+														[
+															'name' => 'Hand Wash Wax',
+															'price' => 500,
+															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+															'duration' => '',
+															'icon' => 'fas fa-tractor',
+															'image' => ''
 														]
 													]
 												]
 											]
 										],
+										[
+											'icon' => '',
+											'image' => '',
+											'category' => 'Car Detailing',
+											'sub_category' => [
+												[
+													'icon' => 'fas fa-otter',
+													'image' => '',
+													'name' => 'Car Type Sedan',
+													'service' => [
+														[
+															'name' => 'Standard Interior',
+															'price' => '750',
+															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s...',
+															'duration' => '1h 30m',
+															'icon' => 'fas fa-taxi',
+															'image' => ''
+														],
+														[
+															'name' => 'Premium Interior',
+															'price' => '600',
+															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s...',
+															'duration' => '1h 30m',
+															'icon' => 'fas fa-church',
+															'image' => ''
+														],
+														[
+															'name' => 'Complete Detail',
+															'price' => '500',
+															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s...',
+															'duration' => '1h 30m',
+															'icon' => 'fas fa-place-of-worship',
+															'image' => ''
+														]
+													]
+												]
+											]
+										]
+									],
 									'mpwpb_extra_service_active' => 'on',
 									'mpwpb_group_extra_service_active' => 'off',
 									'mpwpb_extra_service' => [
@@ -478,7 +473,7 @@
 										0 => ''
 									],
 									'mpwpb_faq_active' => 'on',
-									'mpwpb_faq' =>  [
+									'mpwpb_faq' => [
 										[
 											"title" => "What types of car wash services do you offer?",
 											"content" => ""
@@ -500,15 +495,15 @@
 											"content" => ""
 										]
 									],
-									'mpwpb_features_status'=>'on',
-									'mpwpb_features'=>[
+									'mpwpb_features_status' => 'on',
+									'mpwpb_features' => [
 										"Hand Wash Expertise",
 										"Eco-Friendly Cleaning Products",
 										"Mobile Car Wash Convenience",
 										"Full Detailing Services"
 									],
-									'mpwpb_service_overview_status'=>'on',
-									'mpwpb_service_overview_content'=>'
+									'mpwpb_service_overview_status' => 'on',
+									'mpwpb_service_overview_content' => '
 										Our car wash service is dedicated to providing top-tier care for your vehicle, offering a wide range of cleaning options to suit all needs. Whether you\'re looking for a quick wash to maintain your car’s shine or comprehensive detailing to restore your vehicle’s interior and exterior, we have the expertise and equipment to deliver outstanding results.
 										<strong>Services We Offer:</strong>
 										<ol>
@@ -559,8 +554,8 @@
 										</li>
 										</ol>
 									',
-									'mpwpb_service_details_status'=>'on',
-									'mpwpb_service_details_content'=>'
+									'mpwpb_service_details_status' => 'on',
+									'mpwpb_service_details_content' => '
 									<strong>Why Choose Us?</strong>
 									<ul>
 										<li><strong>Eco-Friendly Products:</strong> We use biodegradable, non-toxic cleaning agents to ensure the safety of your vehicle and the environment.</li>
@@ -570,10 +565,10 @@
 										<li><strong>Customer Satisfaction:</strong> We are committed to delivering exceptional results and ensuring that every customer leaves with a car that looks and feels brand new.</li>
 									</ul>
 									',
-									'mpwpb_service_review_ratings'=>'4.5',
-									'mpwpb_service_rating_scale'=>'out of 5',
-									'mpwpb_service_rating_text'=>'2888 total customer reviews',
-									'_thumbnail_id'=>'1431',
+									'mpwpb_service_review_ratings' => '4.5',
+									'mpwpb_service_rating_scale' => 'out of 5',
+									'mpwpb_service_rating_text' => '2888 total customer reviews',
+									'_thumbnail_id' => '1431',
 								],
 							],
 							2 => [
@@ -609,7 +604,6 @@
 									'mpwpb_thursday_end_break_time' => '',
 									'mpwpb_off_days' => 'saturday,sunday',
 									'mpwpb_off_dates' => [],
-									
 									// Price_settings
 									'mpwpb_category_active' => 'on',
 									'mpwpb_sub_category_active' => 'off',
@@ -706,7 +700,7 @@
 									],
 									'mpwpb_extra_service_active' => 'on',
 									'mpwpb_group_extra_service_active' => 'off',
-									'mpwpb_extra_service' =>[
+									'mpwpb_extra_service' => [
 										[
 											'group_service' => '',
 											'group_service_info' => [
@@ -753,17 +747,17 @@
 											'content' => '<p>Yes, you can reschedule or cancel your appointment through our online booking system. Please do so at least 24 hours in advance to avoid any cancellation fees.</p>'
 										]
 									],
-									'mpwpb_features_status'=>'on',
-									'mpwpb_features'=>[
+									'mpwpb_features_status' => 'on',
+									'mpwpb_features' => [
 										'Wide Range of Courses',
 										'General Health Checkups',
 										'What types of repair services can I book?',
 										'General Health Checkups'
 									],
-									'mpwpb_service_overview_status'=>'on',
-									'mpwpb_service_overview_content'=>'Experience hassle-free repair services with our <strong>Repair Service Booking</strong> system, designed to cater to your repair needs quickly and efficiently. Whether you’re dealing with a malfunctioning appliance, electronics, plumbing issues, or vehicle repairs, our user-friendly platform makes scheduling a repair simple and convenient.',
-									'mpwpb_service_details_status'=>'on',
-									'mpwpb_service_details_content'=>'<ol>
+									'mpwpb_service_overview_status' => 'on',
+									'mpwpb_service_overview_content' => 'Experience hassle-free repair services with our <strong>Repair Service Booking</strong> system, designed to cater to your repair needs quickly and efficiently. Whether you’re dealing with a malfunctioning appliance, electronics, plumbing issues, or vehicle repairs, our user-friendly platform makes scheduling a repair simple and convenient.',
+									'mpwpb_service_details_status' => 'on',
+									'mpwpb_service_details_content' => '<ol>
 											<li><strong>Select Service</strong>: Choose the type of repair service you need.</li>
 											<li><strong>Schedule Appointment</strong>: Pick a date and time that works for you.</li>
 											<li><strong>Provide Details</strong>: Share relevant information about the repair issue.</li>
@@ -771,10 +765,10 @@
 											<li><strong>Service Completion</strong>: Our technician will arrive at your scheduled time to complete the repair.</li>
 										</ol>
 										With our <strong>Repair Service Booking</strong>, getting the help you need is easier than ever. Say goodbye to stress and hello to quick, reliable repairs!',
-									'mpwpb_service_review_ratings'=>'4.5',
-									'mpwpb_service_rating_scale'=>'out of 5',
-									'mpwpb_service_rating_text'=>'2888 total customer reviews',
-									'_thumbnail_id'=>'261',
+									'mpwpb_service_review_ratings' => '4.5',
+									'mpwpb_service_rating_scale' => 'out of 5',
+									'mpwpb_service_rating_text' => '2888 total customer reviews',
+									'_thumbnail_id' => '261',
 								],
 							],
 							3 => [
@@ -810,7 +804,6 @@
 									'mpwpb_thursday_end_break_time' => '',
 									'mpwpb_off_days' => 'saturday,sunday',
 									'mpwpb_off_dates' => [],
-									
 									// Price_settings
 									'mpwpb_category_active' => 'off',
 									'mpwpb_sub_category_active' => 'off',
@@ -907,7 +900,7 @@
 									],
 									'mpwpb_extra_service_active' => 'off',
 									'mpwpb_group_extra_service_active' => 'off',
-									'mpwpb_extra_service' =>[],
+									'mpwpb_extra_service' => [],
 									// Gallery Settings
 									'mpwpb_display_slider' => 'on',
 									'mpwpb_slider_images' => [
@@ -932,18 +925,18 @@
 											'content' => '<p>All lessons are available online, so you can access them anytime from your computer, tablet, or smartphone. There are no fixed schedules, allowing you to learn at your convenience.</p>'
 										]
 									],
-									'mpwpb_features_status'=>'on',
-									'mpwpb_features'=>[
+									'mpwpb_features_status' => 'on',
+									'mpwpb_features' => [
 										'Wide Range of Courses',
 										'Expert Instructors',
 										'Flexible, Self-Paced Learning',
 										'Interactive Tools',
 										'Progress Tracking'
 									],
-									'mpwpb_service_overview_status'=>'on',
-									'mpwpb_service_overview_content'=>'<strong>Music Learning Online</strong> is a dynamic and user-friendly platform designed to help learners of all levels develop their musical skills from anywhere in the world. Whether you’re a beginner eager to pick up an instrument or a seasoned musician looking to refine your abilities, our online courses cater to every type of student.',
-									'mpwpb_service_details_status'=>'on',
-									'mpwpb_service_details_content'=>'Discover the joy of learning music from the comfort of your home with <strong>Music Learning Online</strong>. Our platform offers a comprehensive, flexible, and interactive way to master your favorite instrument, improve your vocals, or explore music theory—all at your own pace.
+									'mpwpb_service_overview_status' => 'on',
+									'mpwpb_service_overview_content' => '<strong>Music Learning Online</strong> is a dynamic and user-friendly platform designed to help learners of all levels develop their musical skills from anywhere in the world. Whether you’re a beginner eager to pick up an instrument or a seasoned musician looking to refine your abilities, our online courses cater to every type of student.',
+									'mpwpb_service_details_status' => 'on',
+									'mpwpb_service_details_content' => 'Discover the joy of learning music from the comfort of your home with <strong>Music Learning Online</strong>. Our platform offers a comprehensive, flexible, and interactive way to master your favorite instrument, improve your vocals, or explore music theory—all at your own pace.
 										<h3>Key Features:</h3>
 										<ul>
 											<li><strong>Wide Range of Courses</strong>: Learn various instruments, including guitar, piano, drums, violin, and more. Plus, access courses on music theory, songwriting, music production, and vocal training.</li>
@@ -954,10 +947,10 @@
 											<li><strong>Progress Tracking</strong>: Monitor your growth with structured lessons, quizzes, and performance tracking to stay motivated and on course.</li>
 										</ul>
 										With <strong>Music Learning Online</strong>, you can cultivate your musical talents and achieve your goals, whether you\'re looking to play for fun, perform professionally, or simply expand your creative horizons.',
-									'mpwpb_service_review_ratings'=>'4.5',
-									'mpwpb_service_rating_scale'=>'out of 5',
-									'mpwpb_service_rating_text'=>'2888 total customer reviews',
-									'_thumbnail_id'=>'261',
+									'mpwpb_service_review_ratings' => '4.5',
+									'mpwpb_service_rating_scale' => 'out of 5',
+									'mpwpb_service_rating_text' => '2888 total customer reviews',
+									'_thumbnail_id' => '261',
 								],
 							],
 							4 => [
@@ -993,7 +986,6 @@
 									'mpwpb_thursday_end_break_time' => '',
 									'mpwpb_off_days' => 'saturday,sunday',
 									'mpwpb_off_dates' => [],
-									
 									// Price_settings
 									'mpwpb_category_active' => 'off',
 									'mpwpb_sub_category_active' => 'off',
@@ -1082,7 +1074,7 @@
 									],
 									'mpwpb_extra_service_active' => 'off',
 									'mpwpb_group_extra_service_active' => 'off',
-									'mpwpb_extra_service' =>[],
+									'mpwpb_extra_service' => [],
 									// Gallery Settings
 									'mpwpb_display_slider' => 'on',
 									'mpwpb_slider_images' => [
@@ -1107,34 +1099,34 @@
 											'content' => '<p>You should go to the emergency room for severe or life-threatening conditions, such as difficulty breathing, chest pain, severe bleeding, head injuries, or signs of stroke. If unsure, consider calling your healthcare provider or a telehealth service for guidance.</p>'
 										]
 									],
-									'mpwpb_features_status'=>'on',
-									'mpwpb_features'=>[
+									'mpwpb_features_status' => 'on',
+									'mpwpb_features' => [
 										'Wide Range of Courses',
 										'Expert Instructors',
 										'Flexible, Self-Paced Learning',
 										'Interactive Tools',
 										'Progress Tracking'
 									],
-									'mpwpb_service_overview_status'=>'on',
-									'mpwpb_service_overview_content'=>'<ul>
+									'mpwpb_service_overview_status' => 'on',
+									'mpwpb_service_overview_content' => '<ul>
 										<li><strong>Comprehensive Care</strong>: Medical services cover a broad spectrum of health needs, ensuring holistic care for patients.</li>
 										<li><strong>Access to Expertise</strong>: Patients receive specialized care from qualified professionals, improving health outcomes.</li>
 										<li><strong>Preventive Focus</strong>: Emphasis on prevention helps reduce the risk of diseases and promotes healthier lifestyles.</li>
 										<li><strong>Convenience</strong>: Services are offered in various settings, making it easier for patients to access the care they need.</li>
 									</ul>
 									Overall, medical services are essential for maintaining health, preventing illness, and providing treatment and support for various medical conditions, ensuring that individuals receive comprehensive and quality healthcare throughout their lives.',
-									'mpwpb_service_details_status'=>'on',
-									'mpwpb_service_details_content'=>'<ul>
+									'mpwpb_service_details_status' => 'on',
+									'mpwpb_service_details_content' => '<ul>
 										<li><strong>Comprehensive Care</strong>: Medical services cover a broad spectrum of health needs, ensuring holistic care for patients.</li>
 										<li><strong>Access to Expertise</strong>: Patients receive specialized care from qualified professionals, improving health outcomes.</li>
 										<li><strong>Preventive Focus</strong>: Emphasis on prevention helps reduce the risk of diseases and promotes healthier lifestyles.</li>
 										<li><strong>Convenience</strong>: Services are offered in various settings, making it easier for patients to access the care they need.</li>
 									</ul>
 									Overall, medical services are essential for maintaining health, preventing illness, and providing treatment and support for various medical conditions, ensuring that individuals receive comprehensive and quality healthcare throughout their lives.',
-									'mpwpb_service_review_ratings'=>'4.5',
-									'mpwpb_service_rating_scale'=>'out of 5',
-									'mpwpb_service_rating_text'=>'2888 total customer reviews',
-									'_thumbnail_id'=>'1450',
+									'mpwpb_service_review_ratings' => '4.5',
+									'mpwpb_service_rating_scale' => 'out of 5',
+									'mpwpb_service_rating_text' => '2888 total customer reviews',
+									'_thumbnail_id' => '1450',
 								],
 							],
 							5 => [
@@ -1170,7 +1162,6 @@
 									'mpwpb_thursday_end_break_time' => '',
 									'mpwpb_off_days' => 'saturday,sunday',
 									'mpwpb_off_dates' => [],
-									
 									// Price_settings
 									'mpwpb_category_active' => 'off',
 									'mpwpb_sub_category_active' => 'off',
@@ -1265,7 +1256,7 @@
 									],
 									'mpwpb_extra_service_active' => 'off',
 									'mpwpb_group_extra_service_active' => 'off',
-									'mpwpb_extra_service' =>[],
+									'mpwpb_extra_service' => [],
 									// Gallery Settings
 									'mpwpb_display_slider' => 'on',
 									'mpwpb_slider_images' => [
@@ -1294,16 +1285,16 @@
 											'content' => '<p>Yes! Our rentals offer complete flexibility for you to create your own itinerary. Explore scenic routes, city sights, or countryside escapes at your own pace.</p>'
 										]
 									],
-									'mpwpb_features_status'=>'on',
-									'mpwpb_features'=>[
+									'mpwpb_features_status' => 'on',
+									'mpwpb_features' => [
 										"Exclusive Luxury Fleet",
 										"Flexible Itinerary",
 										"24-Hour Rental Period",
 										"Hassle-Free Booking",
 										"Insurance and Safety Coverage"
 									],
-									'mpwpb_service_overview_status'=>'on',
-									'mpwpb_service_overview_content'=>'Transform your day trip into an extraordinary adventure with our exclusive <strong>Rent Your Dream Car for Day Tour</strong> service. Whether you want to indulge in a luxurious drive along scenic coastal roads, explore a bustling city in style, or enjoy a smooth countryside cruise, our premium car rental service is designed to provide an unparalleled experience.
+									'mpwpb_service_overview_status' => 'on',
+									'mpwpb_service_overview_content' => 'Transform your day trip into an extraordinary adventure with our exclusive <strong>Rent Your Dream Car for Day Tour</strong> service. Whether you want to indulge in a luxurious drive along scenic coastal roads, explore a bustling city in style, or enjoy a smooth countryside cruise, our premium car rental service is designed to provide an unparalleled experience.
 									<h3>Key Features:</h3>
 									<ul>
 										<li><strong>Luxury Fleet</strong>: Choose from an array of high-end vehicles, including sports cars, executive sedans, and spacious SUVs from world-renowned brands like Ferrari, Lamborghini, Porsche, Mercedes, BMW, and more.</li>
@@ -1312,169 +1303,96 @@
 										<li><strong>Seamless Booking</strong>: Our user-friendly booking process allows you to easily select your vehicle, choose your desired dates, and confirm your rental in just a few steps. Book online or contact our team for personalized service.</li>
 										<li><strong>Insurance and Protection</strong>: We provide basic insurance with every rental and offer optional premium coverage for added peace of mind.</li>
 									</ul>',
-									'mpwpb_service_details_status'=>'on',
-									'mpwpb_service_details_content'=> 'Our <strong>Rent Your Dream Car for Day Tour</strong> service is perfect for anyone looking to elevate their travel experience. Whether it\'s your first time behind the wheel of a luxury vehicle or you\'re a seasoned car enthusiast, we provide a unique opportunity to enjoy a world-class driving experience. With our top-tier service, impeccable fleet, and commitment to customer satisfaction, we aim to make your dream car tour truly unforgettable.',
-									'mpwpb_service_review_ratings'=>'4.5',
-									'mpwpb_service_rating_scale'=>'out of 5',
-									'mpwpb_service_rating_text'=>'2888 total customer reviews',
-									'_thumbnail_id'=>'1450',
+									'mpwpb_service_details_status' => 'on',
+									'mpwpb_service_details_content' => 'Our <strong>Rent Your Dream Car for Day Tour</strong> service is perfect for anyone looking to elevate their travel experience. Whether it\'s your first time behind the wheel of a luxury vehicle or you\'re a seasoned car enthusiast, we provide a unique opportunity to enjoy a world-class driving experience. With our top-tier service, impeccable fleet, and commitment to customer satisfaction, we aim to make your dream car tour truly unforgettable.',
+									'mpwpb_service_review_ratings' => '4.5',
+									'mpwpb_service_rating_scale' => 'out of 5',
+									'mpwpb_service_rating_text' => '2888 total customer reviews',
+									'_thumbnail_id' => '1450',
 								],
 							]
 						]
 					]
 				];
 			}
-
-			public function dummy_import_xml(){
-				// Disable a time limit
-				set_time_limit(0);
-
-				$xml_data = MPWPB_PLUGIN_DIR . '/magepeople.xml';
-				$data = simplexml_load_file($xml_data);
-				$json_string = json_encode($data);    
-				$data = json_decode($json_string, TRUE);
-	
-				$dummy_post = get_option('mpwpb_dummy_already_inserted');
-
-				if($dummy_post == 'yes'){
-					return;
-				}
-
-
-				// $data_array = !empty($data['item']) ? $data['item'] : [];
-				
-				if(!empty($data)){
-	
-					$counter = count($data['item']);
-	
-					$i = 1;
-
-
-					foreach($data as $item){
-	
-						if($i <= $counter){
-							
-							$title = !empty($item['title']) ? $item['title'] : '';
-							$content = !empty($item['content']) ? $item['content'] : '';
-	
-							$rent_args = array(
-								'post_title' 	=> $title,
-								'post_content' 	=> $content,
-								'post_status' => 'publish',
-								'post_type' => 'mpwpb_item'
-							);
-	
-							$post_id  = wp_insert_post( $rent_args );
-	
-							$rent_post_metas = !empty($item['postmeta']) ? $item['postmeta'] : '';
-	
-							if(!empty($post_id )){
-	
-								foreach($rent_post_metas as $value){
-	
-									$meta_key = $value['meta_key'];
-	
-									if(!empty($value['meta_value'])){
-										$meta_value = maybe_unserialize($value['meta_value']);
-									}else{
-										$meta_value = '';
-									}
-									
-									update_post_meta( $post_id, $meta_key, $meta_value );
-								}
-							}   
-						}
-						$i++;
-					}
-					update_option('mpwpb_dummy_already_inserted', 'yes');
-
-				}
-			}
-
 			public static function insert_media($file_path) {
-
 				$attachment = self::does_attachment_exist(basename($file_path));
-				
-				if( empty($attachment) ){
+				if (empty($attachment)) {
 					// Load necessary WordPress files
 					require_once(ABSPATH . 'wp-admin/includes/file.php');
 					require_once(ABSPATH . 'wp-admin/includes/media.php');
 					require_once(ABSPATH . 'wp-admin/includes/image.php');
-	
 					// Prepare the file
 					$file = array(
-						'name'     => basename($file_path),
-						'type'     => mime_content_type($file_path),
+						'name' => basename($file_path),
+						'type' => mime_content_type($file_path),
 						'tmp_name' => $file_path,
-						'error'    => 0,
-						'size'     => filesize($file_path),
+						'error' => 0,
+						'size' => filesize($file_path),
 					);
-	
 					// Handle file upload
 					$upload = wp_handle_sideload($file, array('test_form' => false));
 					if (isset($upload['error'])) {
 						return 'File upload failed: ' . $upload['error'];
 					}
-	
 					// Add the file to the media library
 					$attachment = array(
 						'post_mime_type' => $upload['type'],
-						'post_title'     => sanitize_file_name(pathinfo($file_path, PATHINFO_FILENAME)),
-						'post_content'   => '',
-						'post_status'    => 'inherit',
+						'post_title' => sanitize_file_name(pathinfo($file_path, PATHINFO_FILENAME)),
+						'post_content' => '',
+						'post_status' => 'inherit',
 					);
 					$attachment_id = wp_insert_attachment($attachment, $upload['file']);
 					if (is_wp_error($attachment_id)) {
 						return 'Attachment insert failed: ' . $attachment_id->get_error_message();
 					}
-	
 					// Generate metadata and update attachment
 					$attachment_data = wp_generate_attachment_metadata($attachment_id, $upload['file']);
 					wp_update_attachment_metadata($attachment_id, $attachment_data);
-	
 					$attachment = array(
 						'id' => $attachment_id,
 						'url' => wp_get_attachment_url($attachment_id),
 					);
-	
 					return $attachment;
 				}
 				return $attachment;
 			}
-	
 			public static function does_attachment_exist($filename) {
 				global $wpdb;
-	
-				// Sanitize the filename
-				$filename = sanitize_text_field($filename);
-	
-				// Query to find attachments based on the filename in the post meta
+
+				// Properly sanitize the filename
+				$filename = sanitize_file_name($filename);
+				$like_filename = '%' . $wpdb->esc_like($filename) . '%';
+
+				// Prepare the SQL query using placeholders
 				$query = $wpdb->prepare(
-					"SELECT p.ID 
-					FROM $wpdb->posts p
-					JOIN $wpdb->postmeta pm ON p.ID = pm.post_id
-					WHERE p.post_type = 'attachment'
-					AND pm.meta_key = '_wp_attached_file'
-					AND pm.meta_value LIKE %s",
-					'%' . $wpdb->esc_like($filename) . '%'
+					"SELECT ID 
+        FROM {$wpdb->posts} 
+        WHERE post_type = %s 
+        AND (guid LIKE %s 
+        OR ID IN (
+            SELECT post_id FROM {$wpdb->postmeta} 
+            WHERE meta_key = %s 
+            AND meta_value LIKE %s
+        ))",
+					'attachment',    // %s -> post_type
+					$like_filename,  // %s -> guid LIKE search
+					'_wp_attached_file',  // %s -> meta_key
+					$like_filename   // %s -> meta_value LIKE search
 				);
-	
-				// Get the attachment ID
-				$attachment_id = $wpdb->get_var($query);
-	
-				// If attachment ID is found, check if the file exists
+
+				// Execute the query and get the result
+				$attachment_id = $wpdb->get_var($wpdb->prepare($query));
+
+				// If attachment exists, return its details
 				if ($attachment_id) {
-					$attachment = array(
-						'id' => $attachment_id,
+					return [
+						'id'  => (int) $attachment_id,
 						'url' => wp_get_attachment_url($attachment_id),
-					);
-					return $attachment;
+					];
 				}
+
 				return false;
 			}
-
 		}
 	}
-
-
-	

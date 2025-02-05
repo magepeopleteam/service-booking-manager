@@ -10,7 +10,6 @@
 		class MPWPB_Gallery_Settings {
 			public function __construct() {
 				add_action('add_mpwpb_settings_tab_content', [$this, 'gallery_settings'], 10, 1);
-				add_action('mpwpb_settings_save', [$this, 'save_gallery_settings'], 10, 1);
 			}
 			public function gallery_settings($post_id) {
 				$display = MP_Global_Function::get_post_info($post_id, 'mpwpb_display_slider', 'off');
@@ -40,15 +39,6 @@
 					</div>
 				</div>
 				<?php
-			}
-			public function save_gallery_settings($post_id) {
-				if (get_post_type($post_id) == MPWPB_Function::get_cpt()) {
-					$slider = MP_Global_Function::get_submit_info('mpwpb_display_slider') ? 'on' : 'off';
-					update_post_meta($post_id, 'mpwpb_display_slider', $slider);
-					$images = MP_Global_Function::get_submit_info('mpwpb_slider_images');
-					$all_images = explode(',', $images);
-					update_post_meta($post_id, 'mpwpb_slider_images', $all_images);
-				}
 			}
 		}
 		new MPWPB_Gallery_Settings();

@@ -313,7 +313,7 @@ function mpwpb_price_calculation($this) {
             });
             $.ajax({
                 type: 'POST',
-                url: mp_ajax_url,
+                url: mpwpb_ajax.ajax_ur,
                 data: {
                     "action": "mpwpb_add_to_cart",
                     //"product_id": post_id,
@@ -325,6 +325,7 @@ function mpwpb_price_calculation($this) {
                     "mpwpb_extra_service": mpwpb_extra_service,
                     "mpwpb_extra_service_type": mpwpb_extra_service_type,
                     "mpwpb_extra_service_qty": mpwpb_extra_service_qty,
+                    nonce: mpwpb_ajax.nonce
                 },
                 beforeSend: function () {
                     dLoader(parent);

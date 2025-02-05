@@ -28,30 +28,35 @@
 			public function add_cart_item_data($cart_item_data, $product_id) {
 				$linked_id = MP_Global_Function::get_post_info($product_id, 'link_mpwpb_id', $product_id);
 				$product_id = is_string(get_post_status($linked_id)) ? $linked_id : $product_id;
-				if (get_post_type($product_id) == MPWPB_Function::get_cpt()) {
-					$category = MP_Global_Function::get_submit_info('mpwpb_category');
-					$sub_category = MP_Global_Function::get_submit_info('mpwpb_sub_category');
-					$services = MP_Global_Function::get_submit_info('mpwpb_service');
-					$date = MP_Global_Function::get_submit_info('mpwpb_date');
-					$all_service = [];
-					if (is_array($services) && sizeof($services)) {
-						foreach ($services as $key => $service) {
-							$all_service[$key]['name'] = MPWPB_Function::get_service_name($product_id, $service);
-							$all_service[$key]['price'] = MPWPB_Function::get_price($product_id, $service, $date);
+				if (isset($_POST['nonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_nonce')) {
+					if (get_post_type($product_id) == MPWPB_Function::get_cpt()) {
+						$category = isset($_POST['mpwpb_category']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_category'])) : '';
+						$sub_category = isset($_POST['mpwpb_sub_category']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_sub_category'])) : '';
+						$services = isset($_POST['mpwpb_service']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_service'])) : [];
+						$date = isset($_POST['mpwpb_date']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_date'])) : '';
+						$all_service = [];
+						if (is_array($services) && sizeof($services)) {
+							foreach ($services as $key => $service) {
+								$all_service[$key]['name'] = MPWPB_Function::get_service_name($product_id, $service);
+								$all_service[$key]['price'] = MPWPB_Function::get_price($product_id, $service, $date);
+							}
 						}
+						$ex_service_types = isset($_POST['mpwpb_extra_service_type']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_extra_service_type'])) : [];
+						$ex_service_qty = isset($_POST['mpwpb_extra_service_qty']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_extra_service_qty'])) : [];
+						$ex_service_group = isset($_POST['mpwpb_extra_service']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_extra_service'])) : [];
+						$total_price = self::get_cart_total_price($product_id, $all_service, $ex_service_types, $ex_service_qty, $ex_service_group);
+						$cart_item_data['mpwpb_category'] = MPWPB_Function::get_category_name($product_id, $category);
+						$cart_item_data['mpwpb_sub_category'] = MPWPB_Function::get_sub_category_name($product_id, $sub_category);
+						$cart_item_data['mpwpb_service'] = $all_service;
+						$cart_item_data['mpwpb_date'] = $date;
+						$cart_item_data['mpwpb_extra_service_info'] = self::cart_extra_service_info($product_id, $date, $ex_service_types, $ex_service_qty);
+						$cart_item_data['mpwpb_tp'] = $total_price;
+						$cart_item_data['line_total'] = $total_price;
+						$cart_item_data['line_subtotal'] = $total_price;
+						$cart_item_data = apply_filters('mpwpb_add_cart_item', $cart_item_data, $product_id);
 					}
-					$total_price = self::get_cart_total_price($product_id, $all_service);
-					$cart_item_data['mpwpb_category'] = MPWPB_Function::get_category_name($product_id, $category);
-					$cart_item_data['mpwpb_sub_category'] = MPWPB_Function::get_sub_category_name($product_id, $sub_category);
-					$cart_item_data['mpwpb_service'] = $all_service;
-					$cart_item_data['mpwpb_date'] = $date;
-					$cart_item_data['mpwpb_extra_service_info'] = self::cart_extra_service_info($product_id);
-					$cart_item_data['mpwpb_tp'] = $total_price;
-					$cart_item_data['line_total'] = $total_price;
-					$cart_item_data['line_subtotal'] = $total_price;
-					$cart_item_data = apply_filters('mpwpb_add_cart_item', $cart_item_data, $product_id);
+					$cart_item_data['mpwpb_id'] = $product_id;
 				}
-				$cart_item_data['mpwpb_id'] = $product_id;
 				//echo '<pre>'; print_r( $cart_item_data ); echo '</pre>'; die();
 				return $cart_item_data;
 			}
@@ -84,10 +89,6 @@
 				}
 				$item_data[] = array('key' => esc_html__('Booking Details ', 'service-booking-manager'), 'value' => ob_get_clean());
 				return $item_data;
-			}
-			//**************//
-			public function add_to_cart_redirect($url, $adding_to_cart) {
-				return wc_get_checkout_url();
 			}
 			//**************//
 			public function after_checkout_validation() {
@@ -147,27 +148,24 @@
 			}
 			public function checkout_order_processed($order) {
 				if ($order) {
-					//$order = wc_get_order($order_id);
 					$order_id = $order->get_id();
-					//echo '<pre>';print_r($order_id->get_status());echo '</pre>';
-					//echo '<pre>';print_r($order_id->get_id());echo '</pre>';die();
 					$order_status = $order->get_status();
 					if ($order_status != 'failed') {
 						//$item_id = current( array_keys( $order->get_items() ) );
 						foreach ($order->get_items() as $item_id => $item) {
-							$post_id = MP_Global_Function::get_order_item_meta($item_id, '_mpwpb_id');
+							$post_id = wc_get_order_item_meta($item_id, '_mpwpb_id');
 							if (get_post_type($post_id) == MPWPB_Function::get_cpt()) {
-								$date = MP_Global_Function::get_order_item_meta($item_id, '_mpwpb_date');
+								$date = wc_get_order_item_meta($item_id, '_mpwpb_date');
 								$date = $date ? MP_Global_Function::data_sanitize($date) : '';
-								$category = MP_Global_Function::get_order_item_meta($item_id, '_mpwpb_category');
+								$category = wc_get_order_item_meta($item_id, '_mpwpb_category');
 								$category = $category ? MP_Global_Function::data_sanitize($category) : '';
-								$sub_category = MP_Global_Function::get_order_item_meta($item_id, '_mpwpb_sub_category');
+								$sub_category = wc_get_order_item_meta($item_id, '_mpwpb_sub_category');
 								$sub_category = $sub_category ? MP_Global_Function::data_sanitize($sub_category) : '';
-								$service = MP_Global_Function::get_order_item_meta($item_id, '_mpwpb_service');
+								$service = wc_get_order_item_meta($item_id, '_mpwpb_service');
 								$service = $service ? MP_Global_Function::data_sanitize($service) : [];
-								$total_price = MP_Global_Function::get_order_item_meta($item_id, '_mpwpb_tp');
+								$total_price = wc_get_order_item_meta($item_id, '_mpwpb_tp');
 								$total_price = $total_price ? MP_Global_Function::data_sanitize($total_price) : '';
-								$ex_service = MP_Global_Function::get_order_item_meta($item_id, '_mpwpb_extra_service_info');
+								$ex_service = wc_get_order_item_meta($item_id, '_mpwpb_extra_service_info');
 								$ex_service_infos = $ex_service ? MP_Global_Function::data_sanitize($ex_service) : [];
 								$data['mpwpb_id'] = $post_id;
 								$data['mpwpb_date'] = $date;
@@ -217,9 +215,8 @@
 				$order = wc_get_order($order_id);
 				$order_status = $order->get_status();
 				foreach ($order->get_items() as $item_id => $item_values) {
-					$post_id = MP_Global_Function::get_order_item_meta($item_id, '_mpwpb_id');
+					$post_id = wc_get_order_item_meta($item_id, '_mpwpb_id');
 					if (get_post_type($post_id) == MPWPB_Function::get_cpt()) {
-						//echo '<pre>';print_r(MPWPB_Function::get_cpt());echo '</pre>';die();
 						$this->wc_order_status_change($order_status, $post_id, $order_id);
 					}
 				}
@@ -255,7 +252,7 @@
                                         </li>
                                         <li>
                                             <h6><?php esc_html_e('Price', 'service-booking-manager'); ?>&nbsp;:&nbsp;</h6>
-                                            <span><?php echo MP_Global_Function::esc_html(' ( ' . MP_Global_Function::wc_price($post_id, $service['price']) . ' x 1 ) = ' . MP_Global_Function::wc_price($post_id, ($service['price'] * 1))); ?></span>
+                                            <span><?php echo wp_kses_post(' ( ' . MP_Global_Function::wc_price($post_id, $service['price']) . ' x 1 ) = ' . MP_Global_Function::wc_price($post_id, ($service['price'] * 1))); ?></span>
                                         </li>
 										<?php
 									}
@@ -285,7 +282,7 @@
                                 </div>
                                 <div class="dFlex">
                                     <h6><?php esc_html_e('Price', 'service-booking-manager'); ?>&nbsp;:&nbsp;</h6>
-                                    <span><?php echo ' ( ' . MP_Global_Function::wc_price($post_id, $service['ex_price']) . ' x ' . $service['ex_qty'] . ' ) = ' . MP_Global_Function::wc_price($post_id, ($service['ex_price'] * $service['ex_qty'])); ?></span>
+                                    <span><?php echo wp_kses_post(' ( ' . MP_Global_Function::wc_price($post_id, $service['ex_price']) . ' x ' . $service['ex_qty'] . ' ) = ' . MP_Global_Function::wc_price($post_id, ($service['ex_price'] * $service['ex_qty']))); ?></span>
                                 </div>
 							<?php } ?>
                         </div>
@@ -344,16 +341,9 @@
 					$user_id = $user->ID;
 					update_post_meta($user_id, 'mpwpb_order_status', $order_status);
 				}
-//				echo '<pre>';print_r($order_status);echo '</pre>';
-//				echo '<pre>';print_r($order_id);echo '</pre>';
-//				echo '<pre>';print_r($post_id);echo '</pre>';
-				//echo '<pre>';print_r($loop->post_count);echo '</pre>';die();
 			}
 			//**********************//
-			public static function cart_extra_service_info($post_id): array {
-				$date = MP_Global_Function::get_submit_info('mpwpb_date');
-				$ex_service_types = MP_Global_Function::get_submit_info('mpwpb_extra_service_type', array());
-				$ex_service_qty = MP_Global_Function::get_submit_info('mpwpb_extra_service_qty', array());
+			public static function cart_extra_service_info($post_id, $date, $ex_service_types, $ex_service_qty): array {
 				$extra_service = array();
 				$service_count = sizeof($ex_service_types);
 				if ($service_count > 0) {
@@ -371,16 +361,13 @@
 				}
 				return $extra_service;
 			}
-			public static function get_cart_total_price($post_id, $all_service) {
+			public static function get_cart_total_price($post_id, $all_service, $ex_service_types, $ex_service_qty, $ex_service_group) {
 				$price = 0;
 				if (is_array($all_service) && sizeof($all_service)) {
 					foreach ($all_service as $service) {
 						$price = $price + $service['price'];
 					}
 				}
-				$ex_service_group = MP_Global_Function::get_submit_info('mpwpb_extra_service', array());
-				$ex_service_types = MP_Global_Function::get_submit_info('mpwpb_extra_service_type', array());
-				$ex_service_qty = MP_Global_Function::get_submit_info('mpwpb_extra_service_qty', array());
 				$ex_price = 0;
 				$service_count = sizeof($ex_service_types);
 				if ($service_count > 0) {
@@ -418,14 +405,16 @@
 			}
 			/****************************/
 			public function mpwpb_add_to_cart() {
-				$link_id = MP_Global_Function::data_sanitize($_POST['link_id']);
-				$product_id = apply_filters('woocommerce_add_to_cart_product_id', $link_id);
-				$quantity = 1;
-				$passed_validation = apply_filters('woocommerce_add_to_cart_validation', true, $product_id, $quantity);
-				$product_status = get_post_status($product_id);
-				WC()->cart->empty_cart();
-				if ($passed_validation && WC()->cart->add_to_cart($product_id, 1) && 'publish' === $product_status) {
-					echo wc_get_checkout_url();
+				if (isset($_POST['nonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_nonce')) {
+					$link_id = isset($_POST['link_id']) ? sanitize_text_field(wp_unslash($_POST['link_id'])) : '';
+					$product_id = apply_filters('woocommerce_add_to_cart_product_id', $link_id);
+					$quantity = 1;
+					$passed_validation = apply_filters('woocommerce_add_to_cart_validation', true, $product_id, $quantity);
+					$product_status = get_post_status($product_id);
+					WC()->cart->empty_cart();
+					if ($passed_validation && WC()->cart->add_to_cart($product_id, 1) && 'publish' === $product_status) {
+						echo esc_url(wc_get_checkout_url());
+					}
 				}
 				die();
 			}

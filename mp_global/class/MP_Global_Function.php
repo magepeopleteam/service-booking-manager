@@ -53,30 +53,21 @@
 				return $all_data;
 			}
 			//***********************************//
-			public static function get_submit_info($key, $default = '') {
-				return self::data_sanitize($_POST[$key] ?? $default);
-			}
-			public static function get_submit_info_get_method($key, $default = '') {
-				return self::data_sanitize($_GET[$key] ?? $default);
-			}
 			public static function data_sanitize($data) {
 				$data = maybe_unserialize($data);
 				if (is_string($data)) {
 					$data = maybe_unserialize($data);
 					if (is_array($data)) {
 						$data = self::data_sanitize($data);
+					} else {
+						$data = sanitize_text_field(stripslashes(wp_strip_all_tags($data)));
 					}
-					else {
-						$data = sanitize_text_field(stripslashes(strip_tags($data)));
-					}
-				}
-				elseif (is_array($data)) {
+				} elseif (is_array($data)) {
 					foreach ($data as &$value) {
 						if (is_array($value)) {
 							$value = self::data_sanitize($value);
-						}
-						else {
-							$value = sanitize_text_field(stripslashes(strip_tags($value)));
+						} else {
+							$value = sanitize_text_field(stripslashes(wp_strip_all_tags($value)));
 						}
 					}
 				}
@@ -115,44 +106,44 @@
 			}
 			public function date_picker_js($selector, $dates) {
 				$start_date = $dates[0];
-				$start_year = date('Y', strtotime($start_date));
-				$start_month = (date('n', strtotime($start_date)) - 1);
-				$start_day = date('j', strtotime($start_date));
+				$start_year = date_i18n('Y', strtotime($start_date));
+				$start_month = (date_i18n('n', strtotime($start_date)) - 1);
+				$start_day = date_i18n('j', strtotime($start_date));
 				$end_date = end($dates);
-				$end_year = date('Y', strtotime($end_date));
-				$end_month = (date('n', strtotime($end_date)) - 1);
-				$end_day = date('j', strtotime($end_date));
+				$end_year = date_i18n('Y', strtotime($end_date));
+				$end_month = (date_i18n('n', strtotime($end_date)) - 1);
+				$end_day = date_i18n('j', strtotime($end_date));
 				$all_date = [];
 				foreach ($dates as $date) {
-					$all_date[] = '"' . date('j-n-Y', strtotime($date)) . '"';
+					$all_date[] = '"' . date_i18n('j-n-Y', strtotime($date)) . '"';
 				}
 				?>
-				<script>
-					jQuery(document).ready(function () {
-						jQuery("<?php echo esc_attr($selector); ?>").datepicker({
-							dateFormat: mp_date_format,
-							minDate: new Date(<?php echo esc_attr($start_year); ?>, <?php echo esc_attr($start_month); ?>, <?php echo esc_attr($start_day); ?>),
-							maxDate: new Date(<?php echo esc_attr($end_year); ?>, <?php echo esc_attr($end_month); ?>, <?php echo esc_attr($end_day); ?>),
-							autoSize: true,
-							changeMonth: true,
-							changeYear: true,
-							beforeShowDay: WorkingDates,
-							onSelect: function (dateString, data) {
-								let date = data.selectedYear + '-' + ('0' + (parseInt(data.selectedMonth) + 1)).slice(-2) + '-' + ('0' + parseInt(data.selectedDay)).slice(-2);
-								jQuery(this).closest('label').find('input[type="hidden"]').val(date).trigger('change');
-							}
-						});
-						function WorkingDates(date) {
-							let availableDates = [<?php echo implode(',', $all_date); ?>];
-							let dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
-							if (jQuery.inArray(dmy, availableDates) !== -1) {
-								return [true, "", "Available"];
-							} else {
-								return [false, "", "unAvailable"];
-							}
-						}
-					});
-				</script>
+                <script>
+                    jQuery(document).ready(function () {
+                        jQuery("<?php echo esc_attr($selector); ?>").datepicker({
+                            dateFormat: mp_date_format,
+                            minDate: new Date(<?php echo esc_attr($start_year); ?>, <?php echo esc_attr($start_month); ?>, <?php echo esc_attr($start_day); ?>),
+                            maxDate: new Date(<?php echo esc_attr($end_year); ?>, <?php echo esc_attr($end_month); ?>, <?php echo esc_attr($end_day); ?>),
+                            autoSize: true,
+                            changeMonth: true,
+                            changeYear: true,
+                            beforeShowDay: WorkingDates,
+                            onSelect: function (dateString, data) {
+                                let date = data.selectedYear + '-' + ('0' + (parseInt(data.selectedMonth) + 1)).slice(-2) + '-' + ('0' + parseInt(data.selectedDay)).slice(-2);
+                                jQuery(this).closest('label').find('input[type="hidden"]').val(date).trigger('change');
+                            }
+                        });
+                        function WorkingDates(date) {
+                            let availableDates = [<?php echo esc_attr(implode(',', $all_date)); ?>];
+                            let dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
+                            if (jQuery.inArray(dmy, availableDates) !== -1) {
+                                return [true, "", "Available"];
+                            } else {
+                                return [false, "", "unAvailable"];
+                            }
+                        }
+                    });
+                </script>
 				<?php
 			}
 			public static function date_format($date, $format = 'date') {
@@ -163,23 +154,17 @@
 				$timestamp = strtotime($date);
 				if ($format == 'date') {
 					$date = date_i18n($date_format, $timestamp);
-				}
-				elseif ($format == 'time') {
+				} elseif ($format == 'time') {
 					$date = date_i18n($time_format, $timestamp);
-				}
-				elseif ($format == 'full') {
+				} elseif ($format == 'full') {
 					$date = date_i18n($wp_settings, $timestamp);
-				}
-				elseif ($format == 'day') {
+				} elseif ($format == 'day') {
 					$date = date_i18n('d', $timestamp);
-				}
-				elseif ($format == 'month') {
+				} elseif ($format == 'month') {
 					$date = date_i18n('M', $timestamp);
-				}
-				elseif ($format == 'year') {
+				} elseif ($format == 'year') {
 					$date = date_i18n('Y', $timestamp);
-				}
-				else {
+				} else {
 					$date = date_i18n($format, $timestamp);
 				}
 				return $date;
@@ -187,7 +172,7 @@
 			public static function date_separate_period($start_date, $end_date, $repeat = 1): DatePeriod {
 				$repeat = max($repeat, 1);
 				$_interval = "P" . $repeat . "D";
-				$end_date = date('Y-m-d', strtotime($end_date . ' +1 day'));
+				$end_date = date_i18n('Y-m-d', strtotime($end_date . ' +1 day'));
 				return new DatePeriod(new DateTime($start_date), new DateInterval($_interval), new DateTime($end_date));
 			}
 			public static function check_time_exit_date($date) {
@@ -199,20 +184,6 @@
 				}
 				return false;
 			}
-			public static function check_licensee_date($date) {
-				if ($date) {
-					if ($date == 'lifetime') {
-						return esc_html__('Lifetime', 'service-booking-manager');
-					}
-					else if (strtotime(current_time('Y-m-d H:i')) < strtotime(date('Y-m-d H:i', strtotime($date)))) {
-						return MP_Global_Function::date_format($date, 'full');
-					}
-					else {
-						return esc_html__('Expired', 'service-booking-manager');
-					}
-				}
-				return $date;
-			}
 			public static function sort_date($a, $b) {
 				return strtotime($a) - strtotime($b);
 			}
@@ -221,11 +192,9 @@
 				$dateB = strtotime($b['time']);
 				if ($dateA == $dateB) {
 					return 0;
-				}
-				elseif ($dateA > $dateB) {
+				} elseif ($dateA > $dateB) {
 					return 1;
-				}
-				else {
+				} else {
 					return -1;
 				}
 			}
@@ -269,8 +238,7 @@
 				$tax_with_price = get_option('woocommerce_tax_display_shop');
 				if ('' === $price) {
 					return '';
-				}
-				elseif (empty($qty)) {
+				} elseif (empty($qty)) {
 					return 0.0;
 				}
 				$line_price = (float)$price * (int)$qty;
@@ -281,34 +249,29 @@
 						$taxes = WC_Tax::calc_tax($line_price, $tax_rates);
 						if ('yes' === get_option('woocommerce_tax_round_at_subtotal')) {
 							$taxes_total = array_sum($taxes);
-						}
-						else {
+						} else {
 							$taxes_total = array_sum(array_map('wc_round_tax_total', $taxes));
 						}
 						$return_price = $tax_with_price == 'excl' ? round($line_price, $num_of_decimal) : round($line_price + $taxes_total, $num_of_decimal);
-					}
-					else {
+					} else {
 						$tax_rates = WC_Tax::get_rates($product->get_tax_class());
 						$base_tax_rates = WC_Tax::get_base_tax_rates($product->get_tax_class('unfiltered'));
 						if (!empty(WC()->customer) && WC()->customer->get_is_vat_exempt()) { // @codingStandardsIgnoreLine.
 							$remove_taxes = apply_filters('woocommerce_adjust_non_base_location_prices', true) ? WC_Tax::calc_tax($line_price, $base_tax_rates, true) : WC_Tax::calc_tax($line_price, $tax_rates, true);
 							if ('yes' === get_option('woocommerce_tax_round_at_subtotal')) {
 								$remove_taxes_total = array_sum($remove_taxes);
-							}
-							else {
+							} else {
 								$remove_taxes_total = array_sum(array_map('wc_round_tax_total', $remove_taxes));
 							}
 							// $return_price = round( $line_price, $num_of_decimal);
 							$return_price = round($line_price - $remove_taxes_total, $num_of_decimal);
-						}
-						else {
+						} else {
 							$base_taxes = WC_Tax::calc_tax($line_price, $base_tax_rates, true);
 							$modded_taxes = WC_Tax::calc_tax($line_price - array_sum($base_taxes), $tax_rates);
 							if ('yes' === get_option('woocommerce_tax_round_at_subtotal')) {
 								$base_taxes_total = array_sum($base_taxes);
 								$modded_taxes_total = array_sum($modded_taxes);
-							}
-							else {
+							} else {
 								$base_taxes_total = array_sum(array_map('wc_round_tax_total', $base_taxes));
 								$modded_taxes_total = array_sum(array_map('wc_round_tax_total', $modded_taxes));
 							}
@@ -348,11 +311,9 @@
 				$plugin_dir = ABSPATH . 'wp-content/plugins/' . $plugin_dir_name;
 				if (is_plugin_active($plugin_dir_name . '/' . $plugin_file)) {
 					return 1;
-				}
-				elseif (is_dir($plugin_dir)) {
+				} elseif (is_dir($plugin_dir)) {
 					return 2;
-				}
-				else {
+				} else {
 					return 0;
 				}
 			}
@@ -361,22 +322,11 @@
 				$plugin_dir = ABSPATH . 'wp-content/plugins/woocommerce';
 				if (is_plugin_active('woocommerce/woocommerce.php')) {
 					return 1;
-				}
-				elseif (is_dir($plugin_dir)) {
+				} elseif (is_dir($plugin_dir)) {
 					return 2;
-				}
-				else {
+				} else {
 					return 0;
 				}
-			}
-			public static function get_order_item_meta($item_id, $key): string {
-				global $wpdb;
-				$table_name = $wpdb->prefix . "woocommerce_order_itemmeta";
-				$results = $wpdb->get_results($wpdb->prepare("SELECT meta_value FROM $table_name WHERE order_item_id = %d AND meta_key = %s", $item_id, $key));
-				foreach ($results as $result) {
-					$value = $result->meta_value;
-				}
-				return $value ?? '';
 			}
 			public static function check_product_in_cart($post_id) {
 				$status = MP_Global_Function::check_woocommerce();
@@ -397,16 +347,6 @@
 				return null;
 			}
 			//***********************************//
-			public static function all_tax_list(): array {
-				global $wpdb;
-				$table_name = $wpdb->prefix . 'wc_tax_rate_classes';
-				$result = $wpdb->get_results("SELECT * FROM $table_name");
-				$tax_list = [];
-				foreach ($result as $tax) {
-					$tax_list[$tax->slug] = $tax->name;
-				}
-				return $tax_list;
-			}
 			public static function week_day(): array {
 				return [
 					'monday' => esc_html__('Monday', 'service-booking-manager'),
@@ -432,419 +372,6 @@
 					}
 				}
 				return $ids;
-			}
-			public static function esc_html($string): string {
-				$allow_attr = array(
-					'input' => [
-						'type' => [],
-						'class' => [],
-						'id' => [],
-						'name' => [],
-						'value' => [],
-						'size' => [],
-						'placeholder' => [],
-						'min' => [],
-						'max' => [],
-						'checked' => [],
-						'required' => [],
-						'disabled' => [],
-						'readonly' => [],
-						'step' => [],
-						'data-default-color' => [],
-						'data-price' => [],
-					],
-					'p' => ['class' => []],
-					'img' => ['class' => [], 'id' => [], 'src' => [], 'alt' => [],],
-					'fieldset' => [
-						'class' => []
-					],
-					'label' => [
-						'for' => [],
-						'class' => []
-					],
-					'select' => [
-						'class' => [],
-						'name' => [],
-						'id' => [],
-						'data-price' => [],
-					],
-					'option' => [
-						'class' => [],
-						'value' => [],
-						'id' => [],
-						'selected' => [],
-					],
-					'textarea' => [
-						'class' => [],
-						'rows' => [],
-						'id' => [],
-						'cols' => [],
-						'name' => [],
-					],
-					'h1' => ['class' => [], 'id' => [],],
-					'h2' => ['class' => [], 'id' => [],],
-					'h3' => ['class' => [], 'id' => [],],
-					'h4' => ['class' => [], 'id' => [],],
-					'h5' => ['class' => [], 'id' => [],],
-					'h6' => ['class' => [], 'id' => [],],
-					'a' => ['class' => [], 'id' => [], 'href' => [],],
-					'div' => [
-						'class' => [],
-						'id' => [],
-						'data-ticket-type-name' => [],
-					],
-					'span' => [
-						'class' => [],
-						'id' => [],
-						'data' => [],
-						'data-input-change' => [],
-					],
-					'i' => [
-						'class' => [],
-						'id' => [],
-						'data' => [],
-					],
-					'table' => [
-						'class' => [],
-						'id' => [],
-						'data' => [],
-					],
-					'tr' => [
-						'class' => [],
-						'id' => [],
-						'data' => [],
-					],
-					'td' => [
-						'class' => [],
-						'id' => [],
-						'data' => [],
-					],
-					'thead' => [
-						'class' => [],
-						'id' => [],
-						'data' => [],
-					],
-					'tbody' => [
-						'class' => [],
-						'id' => [],
-						'data' => [],
-					],
-					'th' => [
-						'class' => [],
-						'id' => [],
-						'data' => [],
-					],
-					'svg' => [
-						'class' => [],
-						'id' => [],
-						'width' => [],
-						'height' => [],
-						'viewBox' => [],
-						'xmlns' => [],
-					],
-					'g' => [
-						'fill' => [],
-					],
-					'path' => [
-						'd' => [],
-					],
-					'br' => array(),
-					'em' => array(),
-					'strong' => array(),
-				);
-				return wp_kses($string, $allow_attr);
-			}
-			//***********************************//
-			public static function license_error_text($response, $license_data, $plugin_name) {
-				if (is_wp_error($response) || 200 !== wp_remote_retrieve_response_code($response)) {
-					$message = (is_wp_error($response) && !empty($response->get_error_message())) ? $response->get_error_message() : esc_html__('An error occurred, please try again.', 'service-booking-manager');
-				}
-				else {
-					if (false === $license_data->success) {
-						switch ($license_data->error) {
-							case 'expired':
-								$message = esc_html__('Your license key expired on ') . ' ' . date_i18n(get_option('date_format'), strtotime($license_data->expires, current_time('timestamp')));
-								break;
-							case 'revoked':
-								$message = esc_html__('Your license key has been disabled.', 'service-booking-manager');
-								break;
-							case 'missing':
-								$message = esc_html__('Missing license.', 'service-booking-manager');
-								break;
-							case 'invalid':
-								$message = esc_html__('Invalid license.', 'service-booking-manager');
-								break;
-							case 'site_inactive':
-								$message = esc_html__('Your license is not active for this URL.', 'service-booking-manager');
-								break;
-							case 'item_name_mismatch':
-								$message = esc_html__('This appears to be an invalid license key for .', 'service-booking-manager') . ' ' . $plugin_name;
-								break;
-							case 'no_activations_left':
-								$message = esc_html__('Your license key has reached its activation limit.', 'service-booking-manager');
-								break;
-							default:
-								$message = esc_html__('An error occurred, please try again.', 'service-booking-manager');
-								break;
-						}
-					}
-					else {
-						$payment_id = $license_data->payment_id;
-						$expire = $license_data->expires;
-						$message = esc_html__('Success, License Key is valid for the plugin', 'service-booking-manager') . ' ' . $plugin_name . ' ' . esc_html__('Your Order id is', 'service-booking-manager') . ' ' . $payment_id . ' ' . $plugin_name . ' ' . esc_html__('Validity of this licenses is', 'service-booking-manager') . ' ' . MP_Global_Function::check_licensee_date($expire);
-					}
-				}
-				return $message;
-			}
-			//***********************************//
-			public static function get_country_list() {
-				return array(
-					'AF' => 'Afghanistan',
-					'AX' => 'Aland Islands',
-					'AL' => 'Albania',
-					'DZ' => 'Algeria',
-					'AS' => 'American Samoa',
-					'AD' => 'Andorra',
-					'AO' => 'Angola',
-					'AI' => 'Anguilla',
-					'AQ' => 'Antarctica',
-					'AG' => 'Antigua And Barbuda',
-					'AR' => 'Argentina',
-					'AM' => 'Armenia',
-					'AW' => 'Aruba',
-					'AU' => 'Australia',
-					'AT' => 'Austria',
-					'AZ' => 'Azerbaijan',
-					'BS' => 'Bahamas',
-					'BH' => 'Bahrain',
-					'BD' => 'Bangladesh',
-					'BB' => 'Barbados',
-					'BY' => 'Belarus',
-					'BE' => 'Belgium',
-					'BZ' => 'Belize',
-					'BJ' => 'Benin',
-					'BM' => 'Bermuda',
-					'BT' => 'Bhutan',
-					'BO' => 'Bolivia',
-					'BA' => 'Bosnia And Herzegovina',
-					'BW' => 'Botswana',
-					'BV' => 'Bouvet Island',
-					'BR' => 'Brazil',
-					'IO' => 'British Indian Ocean Territory',
-					'BN' => 'Brunei Darussalam',
-					'BG' => 'Bulgaria',
-					'BF' => 'Burkina Faso',
-					'BI' => 'Burundi',
-					'KH' => 'Cambodia',
-					'CM' => 'Cameroon',
-					'CA' => 'Canada',
-					'CV' => 'Cape Verde',
-					'KY' => 'Cayman Islands',
-					'CF' => 'Central African Republic',
-					'TD' => 'Chad',
-					'CL' => 'Chile',
-					'CN' => 'China',
-					'CX' => 'Christmas Island',
-					'CC' => 'Cocos (Keeling) Islands',
-					'CO' => 'Colombia',
-					'KM' => 'Comoros',
-					'CG' => 'Congo',
-					'CD' => 'Congo, Democratic Republic',
-					'CK' => 'Cook Islands',
-					'CR' => 'Costa Rica',
-					'CI' => 'Cote D\'Ivoire',
-					'HR' => 'Croatia',
-					'CU' => 'Cuba',
-					'CY' => 'Cyprus',
-					'CZ' => 'Czech Republic',
-					'DK' => 'Denmark',
-					'DJ' => 'Djibouti',
-					'DM' => 'Dominica',
-					'DO' => 'Dominican Republic',
-					'EC' => 'Ecuador',
-					'EG' => 'Egypt',
-					'SV' => 'El Salvador',
-					'GQ' => 'Equatorial Guinea',
-					'ER' => 'Eritrea',
-					'EE' => 'Estonia',
-					'ET' => 'Ethiopia',
-					'FK' => 'Falkland Islands (Malvinas)',
-					'FO' => 'Faroe Islands',
-					'FJ' => 'Fiji',
-					'FI' => 'Finland',
-					'FR' => 'France',
-					'GF' => 'French Guiana',
-					'PF' => 'French Polynesia',
-					'TF' => 'French Southern Territories',
-					'GA' => 'Gabon',
-					'GM' => 'Gambia',
-					'GE' => 'Georgia',
-					'DE' => 'Germany',
-					'GH' => 'Ghana',
-					'GI' => 'Gibraltar',
-					'GR' => 'Greece',
-					'GL' => 'Greenland',
-					'GD' => 'Grenada',
-					'GP' => 'Guadeloupe',
-					'GU' => 'Guam',
-					'GT' => 'Guatemala',
-					'GG' => 'Guernsey',
-					'GN' => 'Guinea',
-					'GW' => 'Guinea-Bissau',
-					'GY' => 'Guyana',
-					'HT' => 'Haiti',
-					'HM' => 'Heard Island & Mcdonald Islands',
-					'VA' => 'Holy See (Vatican City State)',
-					'HN' => 'Honduras',
-					'HK' => 'Hong Kong',
-					'HU' => 'Hungary',
-					'IS' => 'Iceland',
-					'IN' => 'India',
-					'ID' => 'Indonesia',
-					'IR' => 'Iran, Islamic Republic Of',
-					'IQ' => 'Iraq',
-					'IE' => 'Ireland',
-					'IM' => 'Isle Of Man',
-					'IL' => 'Israel',
-					'IT' => 'Italy',
-					'JM' => 'Jamaica',
-					'JP' => 'Japan',
-					'JE' => 'Jersey',
-					'JO' => 'Jordan',
-					'KZ' => 'Kazakhstan',
-					'KE' => 'Kenya',
-					'KI' => 'Kiribati',
-					'KR' => 'Korea',
-					'KW' => 'Kuwait',
-					'KG' => 'Kyrgyzstan',
-					'LA' => 'Lao People\'s Democratic Republic',
-					'LV' => 'Latvia',
-					'LB' => 'Lebanon',
-					'LS' => 'Lesotho',
-					'LR' => 'Liberia',
-					'LY' => 'Libyan Arab Jamahiriya',
-					'LI' => 'Liechtenstein',
-					'LT' => 'Lithuania',
-					'LU' => 'Luxembourg',
-					'MO' => 'Macao',
-					'MK' => 'Macedonia',
-					'MG' => 'Madagascar',
-					'MW' => 'Malawi',
-					'MY' => 'Malaysia',
-					'MV' => 'Maldives',
-					'ML' => 'Mali',
-					'MT' => 'Malta',
-					'MH' => 'Marshall Islands',
-					'MQ' => 'Martinique',
-					'MR' => 'Mauritania',
-					'MU' => 'Mauritius',
-					'YT' => 'Mayotte',
-					'MX' => 'Mexico',
-					'FM' => 'Micronesia, Federated States Of',
-					'MD' => 'Moldova',
-					'MC' => 'Monaco',
-					'MN' => 'Mongolia',
-					'ME' => 'Montenegro',
-					'MS' => 'Montserrat',
-					'MA' => 'Morocco',
-					'MZ' => 'Mozambique',
-					'MM' => 'Myanmar',
-					'NA' => 'Namibia',
-					'NR' => 'Nauru',
-					'NP' => 'Nepal',
-					'NL' => 'Netherlands',
-					'AN' => 'Netherlands Antilles',
-					'NC' => 'New Caledonia',
-					'NZ' => 'New Zealand',
-					'NI' => 'Nicaragua',
-					'NE' => 'Niger',
-					'NG' => 'Nigeria',
-					'NU' => 'Niue',
-					'NF' => 'Norfolk Island',
-					'MP' => 'Northern Mariana Islands',
-					'NO' => 'Norway',
-					'OM' => 'Oman',
-					'PK' => 'Pakistan',
-					'PW' => 'Palau',
-					'PS' => 'Palestinian Territory, Occupied',
-					'PA' => 'Panama',
-					'PG' => 'Papua New Guinea',
-					'PY' => 'Paraguay',
-					'PE' => 'Peru',
-					'PH' => 'Philippines',
-					'PN' => 'Pitcairn',
-					'PL' => 'Poland',
-					'PT' => 'Portugal',
-					'PR' => 'Puerto Rico',
-					'QA' => 'Qatar',
-					'RE' => 'Reunion',
-					'RO' => 'Romania',
-					'RU' => 'Russian Federation',
-					'RW' => 'Rwanda',
-					'BL' => 'Saint Barthelemy',
-					'SH' => 'Saint Helena',
-					'KN' => 'Saint Kitts And Nevis',
-					'LC' => 'Saint Lucia',
-					'MF' => 'Saint Martin',
-					'PM' => 'Saint Pierre And Miquelon',
-					'VC' => 'Saint Vincent And Grenadines',
-					'WS' => 'Samoa',
-					'SM' => 'San Marino',
-					'ST' => 'Sao Tome And Principe',
-					'SA' => 'Saudi Arabia',
-					'SN' => 'Senegal',
-					'RS' => 'Serbia',
-					'SC' => 'Seychelles',
-					'SL' => 'Sierra Leone',
-					'SG' => 'Singapore',
-					'SK' => 'Slovakia',
-					'SI' => 'Slovenia',
-					'SB' => 'Solomon Islands',
-					'SO' => 'Somalia',
-					'ZA' => 'South Africa',
-					'GS' => 'South Georgia And Sandwich Isl.',
-					'ES' => 'Spain',
-					'LK' => 'Sri Lanka',
-					'SD' => 'Sudan',
-					'SR' => 'Suriname',
-					'SJ' => 'Svalbard And Jan Mayen',
-					'SZ' => 'Swaziland',
-					'SE' => 'Sweden',
-					'CH' => 'Switzerland',
-					'SY' => 'Syrian Arab Republic',
-					'TW' => 'Taiwan',
-					'TJ' => 'Tajikistan',
-					'TZ' => 'Tanzania',
-					'TH' => 'Thailand',
-					'TL' => 'Timor-Leste',
-					'TG' => 'Togo',
-					'TK' => 'Tokelau',
-					'TO' => 'Tonga',
-					'TT' => 'Trinidad And Tobago',
-					'TN' => 'Tunisia',
-					'TR' => 'Turkey',
-					'TM' => 'Turkmenistan',
-					'TC' => 'Turks And Caicos Islands',
-					'TV' => 'Tuvalu',
-					'UG' => 'Uganda',
-					'UA' => 'Ukraine',
-					'AE' => 'United Arab Emirates',
-					'GB' => 'United Kingdom',
-					'US' => 'United States',
-					'UM' => 'United States Outlying Islands',
-					'UY' => 'Uruguay',
-					'UZ' => 'Uzbekistan',
-					'VU' => 'Vanuatu',
-					'VE' => 'Venezuela',
-					'VN' => 'Viet Nam',
-					'VG' => 'Virgin Islands, British',
-					'VI' => 'Virgin Islands, U.S.',
-					'WF' => 'Wallis And Futuna',
-					'EH' => 'Western Sahara',
-					'YE' => 'Yemen',
-					'ZM' => 'Zambia',
-					'ZW' => 'Zimbabwe',
-				);
 			}
 		}
 		new MP_Global_Function();

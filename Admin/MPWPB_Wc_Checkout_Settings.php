@@ -25,9 +25,11 @@
 				<?php
 			}
 			public function tab_content($contents) {
+				$check_order_additional_information_section = '';
 				if (MPWPB_Wc_Checkout_Fields_Helper::hide_checkout_order_additional_information_section()) {
 					$check_order_additional_information_section = 'checked';
 				}
+				$check_order_review_section = '';
 				if (MPWPB_Wc_Checkout_Fields_Helper::hide_checkout_order_review_section()) {
 					$check_order_review_section = 'checked';
 				}
@@ -41,11 +43,11 @@
                             <table class="wc_gateways wp-list-table widefat striped">
                                 <tbody>
                                 <tr>
-                                    <td><label for="hide_checkout_order_additional_information"><span class="span-checkout-setting">Hide Order Additional Information Section</span></label></td>
+                                    <td><label for="hide_checkout_order_additional_information"><span class="span-checkout-setting"><?php esc_html_e('Hide Order Additional Information Section', 'service-booking-manager') ?></span></label></td>
                                     <td><?php MPWPB_Wc_Checkout_Fields::switch_button('hide_checkout_order_additional_information', 'checkoutSettingsSwitchButton', 'hide_checkout_order_additional_information', $check_order_additional_information_section, null); ?></td>
                                 </tr>
                                 <tr>
-                                    <td><label for="hide_checkout_order_review"><span class="span-checkout-setting">Hide Order Review Section</span></label></td>
+                                    <td><label for="hide_checkout_order_review"><span class="span-checkout-setting"><?php esc_html_e('Hide Order Review Section', 'service-booking-manager') ?></span></label></td>
                                     <td><?php MPWPB_Wc_Checkout_Fields::switch_button('hide_checkout_order_review', 'checkoutSettingsSwitchButton', 'hide_checkout_order_review', $check_order_review_section, null); ?></td>
                                 </tr>
                                 </tbody>
@@ -63,13 +65,13 @@
 			}
 			public function mpwpb_save_checkout_fields_settings() {
 				if (!current_user_can('administrator')) {
-					wp_die(__('You do not have sufficient permissions to access this page.'));
+					wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'service-booking-manager'));
 				}
-				$action = isset($_POST['action']) ? sanitize_text_field($_POST['action']) : null;
+				$action = isset($_POST['action']) ? sanitize_text_field(wp_unslash($_POST['action'])) : null;
 				if (isset($action) && $action == 'mpwpb_wc_checkout_settings') {
 					if (check_admin_referer('mpwpb_wc_checkout_settings', 'mpwpb_wc_checkout_settings_nonce')) {
-						$hide_checkout_order_additional_information = isset($_POST['hide_checkout_order_additional_information']) ? sanitize_text_field($_POST['hide_checkout_order_additional_information']) : null;
-						$hide_checkout_order_review = isset($_POST['hide_checkout_order_review']) ? sanitize_text_field($_POST['hide_checkout_order_review']) : null;
+						$hide_checkout_order_additional_information = isset($_POST['hide_checkout_order_additional_information']) ? sanitize_text_field(wp_unslash($_POST['hide_checkout_order_additional_information'])) : null;
+						$hide_checkout_order_review = isset($_POST['hide_checkout_order_review']) ? sanitize_text_field(wp_unslash($_POST['hide_checkout_order_review'])) : null;
 						$options = get_option('mpwpb_custom_checkout_fields');
 						if (!is_array($options)) {
 							$options = array();

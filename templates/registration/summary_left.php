@@ -37,7 +37,7 @@
                             <span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
                             <div class="flexWrap justifyBetween">
                                 <h6 class="mR_xs"><?php echo esc_html($service_list['service']); ?></h6>
-                                <p><span class="textTheme">x1</span>&nbsp;|&nbsp; <span class="textTheme service_price"><?php echo MP_Global_Function::wc_price($post_id, $service_list['price']); ?></span></p>
+                                <p><span class="textTheme">x1</span>&nbsp;|&nbsp; <span class="textTheme service_price"><?php echo wp_kses_post(MP_Global_Function::wc_price($post_id, $service_list['price'])); ?></span></p>
                             </div>
                         </div>
 					<?php } ?>
@@ -64,7 +64,7 @@
                                             </h6>
                                             <p>
                                                 <span class="textTheme ex_service_qty">x1</span>&nbsp;|&nbsp;
-                                                <span class="textTheme"><?php echo MP_Global_Function::wc_price($post_id, $ex_service_price); ?></span>
+                                                <span class="textTheme"><?php echo wp_kses_post(MP_Global_Function::wc_price($post_id, $ex_service_price)); ?></span>
                                             </p>
                                         </div>
                                     </div>
@@ -75,12 +75,12 @@
 					}
 				?>
                 <div class="mpwpb_summary_item">
-                                            <span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
-                                            <div class="flexWrap justifyBetween">
-                                                <h5 class="mR_xs"><?php esc_html_e('Total :', 'service-booking-manager'); ?></h5>
-                                                <h5><span class="mpwpb_total_bill textTheme"><?php echo MP_Global_Function::wc_price($post_id, 0); ?></span></h5>
-                                            </div>
-                                        </div>
+                    <span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
+                    <div class="flexWrap justifyBetween">
+                        <h5 class="mR_xs"><?php esc_html_e('Total :', 'service-booking-manager'); ?></h5>
+                        <h5><span class="mpwpb_total_bill textTheme"><?php echo wp_kses_post(MP_Global_Function::wc_price($post_id, 0)); ?></span></h5>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

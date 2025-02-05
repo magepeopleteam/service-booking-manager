@@ -9,8 +9,8 @@
 	 * Text Domain: service-booking-manager
 	 * Domain Path: /languages/
 	 */
-	if (!defined('ABSPATH')) die;
-		
+	if (!defined('ABSPATH'))
+		die;
 	if (!class_exists('MPWPB_Plugin')) {
 		class MPWPB_Plugin {
 			public function __construct() {
@@ -45,26 +45,25 @@
 						));
 					}
 					flush_rewrite_rules();
-					exit(wp_redirect(admin_url('edit.php?post_type=mpwpb_item&page=mpwpb_quick_setup')));
+					exit(esc_url_raw(wp_redirect(admin_url('edit.php?post_type=mpwpb_item&page=mpwpb_quick_setup'))));
 				}
 			}
 			public function activation_redirect_setup($plugin) {
 				if ($plugin == plugin_basename(__FILE__)) {
-					exit(wp_redirect(admin_url('admin.php?post_type=mpwpb_item&page=mpwpb_quick_setup')));
+					exit(esc_url_raw(wp_redirect(admin_url('admin.php?post_type=mpwpb_item&page=mpwpb_quick_setup'))));
 				}
 			}
 			public function woocommerce_not_active() {
 				$wc_install_url = get_admin_url() . 'plugin-install.php?s=woocommerce&tab=search&type=term';
-				printf('<div class="error" style="background:red; color:#fff;"><p>%s</p></div>', __('You Must Install WooCommerce Plugin before activating Service Booking Manager, Because It is dependent on Woocommerce Plugin. <a class="btn button" href=' . $wc_install_url . '>Click Here to Install</a>'));
+				$text = esc_html__('You Must Install WooCommerce Plugin before activating Service Booking Manager, Because It is dependent on Woocommerce Plugin.', 'service-booking-manager') . '<a class="btn button" href="' . esc_html($wc_install_url) . '">' . esc_html__('Click Here to Install', 'service-booking-manager') . '</a>';
+				printf('<div class="error" style="background:red; color:#fff;"><p>%s</p></div>', wp_kses_post($text));
 			}
-
 			public static function activate() {
-				update_option('rewrite_rules','');
+				update_option('rewrite_rules', '');
 			}
 		}
-		
 	}
 	if (class_exists('MPWPB_Plugin')) {
-		register_activation_hook( __FILE__, array( 'MPWPB_Plugin','activate' ));
+		register_activation_hook(__FILE__, array('MPWPB_Plugin', 'activate'));
 		new MPWPB_Plugin();
 	}
