@@ -94,9 +94,35 @@
 						$post_terms = wp_get_object_terms($post_id, $taxonomy, array('fields' => 'slugs'));
 						wp_set_object_terms($new_post_id, $post_terms, $taxonomy, false);
 					}
-					$post_meta_infos = $wpdb->get_results(
-						$wpdb->prepare("SELECT meta_key, meta_value FROM {$wpdb->postmeta}  WHERE post_id = %d  AND meta_key != %s", $post_id, 'total_booking')
-					);
+
+					// $post_meta_infos = $wpdb->get_results(
+					// 	$wpdb->prepare("SELECT meta_key, meta_value FROM {$wpdb->postmeta}  WHERE post_id = %d  AND meta_key != %s", $post_id, 'total_booking')
+					// );
+
+					// Generate a unique cache key based on the post ID
+					$cache_key = 'post_meta_' . $post_id;
+					$post_meta_infos = wp_cache_get($cache_key, 'custom_cache_group');
+
+					if ($post_meta_infos === false) {
+						// Fetch all post meta
+						$all_meta = get_post_meta($post_id);
+
+						// Remove the "total_booking" meta key
+						unset($all_meta['total_booking']);
+
+						// Convert to expected format (array of objects with meta_key and meta_value)
+						$post_meta_infos = [];
+						foreach ($all_meta as $key => $value) {
+							$post_meta_infos[] = (object) [
+								'meta_key'   => $key,
+								'meta_value' => is_array($value) ? $value[0] : $value, // Handle multiple values
+							];
+						}
+
+						// Store the result in cache for 1 hour
+						wp_cache_set($cache_key, $post_meta_infos, 'custom_cache_group', HOUR_IN_SECONDS);
+					}
+
 					if (count($post_meta_infos) != 0) {
 						foreach ($post_meta_infos as $meta_info) {
 							$meta_key = $meta_info->meta_key;
@@ -104,19 +130,22 @@
 								continue;
 							}
 							$meta_value = addslashes($meta_info->meta_value);
-							$wpdb->insert(
-								$wpdb->postmeta,
-								[
-									'post_id' => $new_post_id,
-									'meta_key' => $meta_key,
-									'meta_value' => $meta_value
-								],
-								[
-									'%d', // post_id is an integer
-									'%s', // meta_key is a string
-									'%s'  // meta_value is a string
-								]
-							);
+							
+							// $wpdb->insert(
+							// 	$wpdb->postmeta,
+							// 	[
+							// 		'post_id' => $new_post_id,
+							// 		'meta_key' => $meta_key,
+							// 		'meta_value' => $meta_value
+							// 	],
+							// 	[
+							// 		'%d', // post_id is an integer
+							// 		'%s', // meta_key is a string
+							// 		'%s'  // meta_value is a string
+							// 	]
+							// );
+
+							add_post_meta($new_post_id, $meta_key, $meta_value, false);
 						}
 					}
 					wp_redirect(admin_url('post.php?action=edit&post=' . $new_post_id));

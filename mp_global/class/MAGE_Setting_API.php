@@ -78,7 +78,15 @@
 				}
 				// creates our settings in the options table
 				foreach ($this->settings_sections as $section) {
-					register_setting($section['id'], $section['id'], array($this, 'sanitize_options'));
+					// register_setting($section['id'], $section['id'], array($this, 'sanitize_options'));
+					$option_name = sanitize_key($section['id']);
+						register_setting(
+							$option_name, 
+							$option_name, 
+							[
+								'sanitize_callback' => [$this, 'sanitize_options'] // Explicit sanitization callback
+							]
+						);
 				}
 			}
 			public function get_field_description($args) {
@@ -292,19 +300,22 @@
 				);
 				wp_dropdown_pages(esc_attr($dropdown_args));
 			}
-			function sanitize_options($options) {
-				if (!$options) {
-					return $options;
-				}
-				foreach ($options as $option_slug => $option_value) {
-					$sanitize_callback = $this->get_sanitize_callback($option_slug);
-					// If callback is set, call it
-					if ($sanitize_callback) {
-						$options[$option_slug] = call_user_func($sanitize_callback, $option_value);
-						continue;
-					}
-				}
-				return $options;
+			// function sanitize_options($options) {
+			// 	if (!$options) {
+			// 		return $options;
+			// 	}
+			// 	foreach ($options as $option_slug => $option_value) {
+			// 		$sanitize_callback = $this->get_sanitize_callback($option_slug);
+			// 		// If callback is set, call it
+			// 		if ($sanitize_callback) {
+			// 			$options[$option_slug] = call_user_func($sanitize_callback, $option_value);
+			// 			continue;
+			// 		}
+			// 	}
+			// 	return $options;
+			// }
+			public function sanitize_options($input) {
+				return is_array($input) ? array_map('sanitize_text_field', $input) : sanitize_text_field($input);
 			}
 			function get_sanitize_callback($slug = '') {
 				if (empty($slug)) {
