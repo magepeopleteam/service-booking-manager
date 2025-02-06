@@ -252,6 +252,7 @@
 				}
 				$post_id = isset($_POST['service_postID']) ? sanitize_text_field(wp_unslash($_POST['service_postID'])) : '';
 				$services = $this->get_services($post_id);
+				$services = !empty($services) ? $services : [];
 				$iconClass = '';
 				$imageID = '';
 				if (isset($_POST['service_image_icon'])) {
@@ -281,6 +282,7 @@
 					'sub_cat' => $sub_cat,
 				];
 				array_push($services, $new_data);
+				
 				update_post_meta($post_id, 'mpwpb_service', $services);
 				ob_start();
 				$resultMessage = esc_html__('Data Updated Successfully', 'service-booking-manager');
