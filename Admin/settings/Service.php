@@ -47,10 +47,10 @@
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
 				}
-				$post_id = isset($_POST['postID']) ? sanitize_text_field(wp_unslash($_POST['postID'])) : '';
+				$post_id = isset($_POST['postId']) ? sanitize_text_field(wp_unslash($_POST['postId'])) : '';
 				$category_id = isset($_POST['itemId']) ? sanitize_text_field(wp_unslash($_POST['itemId'])) : '';
 				ob_start();
-				$resultMessage = __('Data Updated Successfully', 'service-booking-manager');
+				$resultMessage = __('Data Loaded Successfully', 'service-booking-manager');
 				$this->show_service_by_category($post_id, $category_id);
 				$html_output = ob_get_clean();
 				wp_send_json_success([

@@ -1126,7 +1126,6 @@
                 nonce: mpwpb_admin_ajax.nonce
             },
             success: function (response) {
-                console.log(response);
                 $('.mpwpb-service-rows').html('');
                 $('.mpwpb-service-rows').html(response.data.html);
             },
