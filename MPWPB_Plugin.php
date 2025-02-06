@@ -32,7 +32,7 @@
 					require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Dependencies.php';
 				} else {
 					require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Quick_Setup.php';
-					add_action('admin_notices', [$this, 'woocommerce_not_active']);
+					// add_action('admin_notices', [$this, 'woocommerce_not_active']);
 					add_action('activated_plugin', array($this, 'activation_redirect_setup'), 90, 1);
 				}
 			}

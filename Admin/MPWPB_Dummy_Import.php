@@ -102,50 +102,52 @@
 									'mpwpb_category_text' => 'Category',
 									'mpwpb_sub_category_text' => 'Sub-Category',
 									'mpwpb_service_text' => 'Service',
-									'mpwpb_category_infos' => [
+									'mpwpb_category_service' => [
 										[
-											'category' => '',
-											'sub_category' => [
-												[
-													'icon' => '',
-													'image' => '',
-													'name' => '',
-													'service' => [
-														[
-															'name' => 'Fade Haircut',
-															'price' => '10',
-															'details' => 'Shampooing can strip your hair of all its natural oils, leaving it dry and brittle. Pre-pooing acts as a base or protective barrier against over-cleansing',
-															'duration' => '60m',
-															'icon' => '',
-															'image' => '236',
-														],
-														[
-															'name' => 'Taper Haircut',
-															'price' => '15',
-															'details' => 'Shampooing can strip your hair of all its natural oils, leaving it dry and brittle. Pre-pooing acts as a base or protective barrier against over-cleansing',
-															'duration' => '60m',
-															'icon' => '',
-															'image' => '237',
-														],
-														[
-															'name' => 'Buzz Cut',
-															'price' => '20',
-															'details' => 'Shampooing can strip your hair of all its natural oils, leaving it dry and brittle. Pre-pooing acts as a base or protective barrier against over-cleansing',
-															'duration' => '60m',
-															'icon' => '',
-															'image' => '238',
-														],
-														[
-															'name' => 'Crew Cut',
-															'price' => '30',
-															'details' => 'Shampooing can strip your hair of all its natural oils, leaving it dry and brittle. Pre-pooing acts as a base or protective barrier against over-cleansing',
-															'duration' => '60m',
-															'icon' => '',
-															'image' => '239',
-														]
-													]
-												]
-											]
+											'name'  => 'Economy Car',
+											'icon'  => '',
+											'image' => '',
+										],
+										[
+											'name'  => 'Standard Car',
+											'icon'  => '',
+											'image' => '',
+										],
+									],
+									'mpwpb_sub_category_service'=>'',
+									'mpwpb_service'=>[
+										[
+											'name' => 'Casinos',
+											'icon' => '',
+											'image' => '',
+											'details' => '',
+											'price' => 10,
+											'duration' => '30m',
+											'show_cat_status' => 'on',
+											'parent_cat' => 0,
+											'sub_cat' => '',
+										],
+										[
+											'name' => 'Birthdays',
+											'icon' => '',
+											'image' => '',
+											'details' => '',
+											'price' => 10,
+											'duration' => '30m',
+											'show_cat_status' => 'on',
+											'parent_cat' => 0,
+											'sub_cat' => '',
+										],
+										[
+											'name' => 'Airport Transfer',
+											'icon' => '',
+											'image' => '',
+											'details' => '',
+											'price' => 10,
+											'duration' => '30m',
+											'show_cat_status' => 'on',
+											'parent_cat' => 1,
+											'sub_cat' => '',
 										]
 									],
 									'mpwpb_extra_service_active' => 'on',
@@ -294,146 +296,54 @@
 									'mpwpb_category_text' => 'Wash Type',
 									'mpwpb_sub_category_text' => 'Car Type',
 									'mpwpb_service_text' => 'Service',
-									'mpwpb_category_infos' => [
+									'mpwpb_category_service' => [
 										[
-											'icon' => '',
+											'name'  => 'Economy Car',
+											'icon'  => '',
 											'image' => '',
-											'category' => 'Car Wash Polish',
-											'sub_category' => [
-												[
-													'icon' => 'fas fa-dog',
-													'image' => '',
-													'name' => 'Car Type SUV',
-													'service' => [
-														[
-															'name' => 'Hand Wash',
-															'price' => 450,
-															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-															'duration' => '1h 30m',
-															'icon' => 'fas fa-frog',
-															'image' => ''
-														],
-														[
-															'name' => 'Exterior Handwax',
-															'price' => 200,
-															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-															'duration' => '1 Hour',
-															'icon' => 'fas fa-paw',
-															'image' => ''
-														],
-														[
-															'name' => 'Hand Wash Wax',
-															'price' => 650,
-															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-															'duration' => '1h 30m',
-															'icon' => 'fas fa-dragon',
-															'image' => ''
-														]
-													]
-												],
-												[
-													'icon' => 'fas fa-dragon',
-													'image' => '',
-													'name' => 'Car Type Zeep',
-													'service' => [
-														[
-															'name' => 'Hand Wash',
-															'price' => 450,
-															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-															'duration' => '',
-															'icon' => 'fas fa-spider',
-															'image' => ''
-														],
-														[
-															'name' => 'Exterior Handwax',
-															'price' => 600,
-															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-															'duration' => '',
-															'icon' => 'fas fa-crow',
-															'image' => ''
-														],
-														[
-															'name' => 'Hand Wash Wax',
-															'price' => 500,
-															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-															'duration' => '',
-															'icon' => 'fas fa-dog',
-															'image' => ''
-														]
-													]
-												],
-												[
-													'icon' => 'fas fa-truck-monster',
-													'image' => '',
-													'name' => 'Car Type Sedan',
-													'service' => [
-														[
-															'name' => 'Hand Wash',
-															'price' => 450,
-															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-															'duration' => '',
-															'icon' => 'fas fa-microphone-alt',
-															'image' => ''
-														],
-														[
-															'name' => 'Exterior Handwax',
-															'price' => 450,
-															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-															'duration' => '',
-															'icon' => 'fas fa-cocktail',
-															'image' => ''
-														],
-														[
-															'name' => 'Hand Wash Wax',
-															'price' => 500,
-															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-															'duration' => '',
-															'icon' => 'fas fa-tractor',
-															'image' => ''
-														]
-													]
-												]
-											]
 										],
 										[
+											'name'  => 'Standard Car',
+											'icon'  => '',
+											'image' => '',
+										],
+									],
+									'mpwpb_sub_category_service'=>'',
+									'mpwpb_service'=>[
+										[
+											'name' => 'Casinos',
 											'icon' => '',
 											'image' => '',
-											'category' => 'Car Detailing',
-											'sub_category' => [
-												[
-													'icon' => 'fas fa-otter',
-													'image' => '',
-													'name' => 'Car Type Sedan',
-													'service' => [
-														[
-															'name' => 'Standard Interior',
-															'price' => '750',
-															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s...',
-															'duration' => '1h 30m',
-															'icon' => 'fas fa-taxi',
-															'image' => ''
-														],
-														[
-															'name' => 'Premium Interior',
-															'price' => '600',
-															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s...',
-															'duration' => '1h 30m',
-															'icon' => 'fas fa-church',
-															'image' => ''
-														],
-														[
-															'name' => 'Complete Detail',
-															'price' => '500',
-															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s...',
-															'duration' => '1h 30m',
-															'icon' => 'fas fa-place-of-worship',
-															'image' => ''
-														]
-													]
-												]
-											]
+											'details' => '',
+											'price' => 10,
+											'duration' => '30m',
+											'show_cat_status' => 'on',
+											'parent_cat' => 0,
+											'sub_cat' => '',
+										],
+										[
+											'name' => 'Birthdays',
+											'icon' => '',
+											'image' => '',
+											'details' => '',
+											'price' => 10,
+											'duration' => '30m',
+											'show_cat_status' => 'on',
+											'parent_cat' => 0,
+											'sub_cat' => '',
+										],
+										[
+											'name' => 'Airport Transfer',
+											'icon' => '',
+											'image' => '',
+											'details' => '',
+											'price' => 10,
+											'duration' => '30m',
+											'show_cat_status' => 'on',
+											'parent_cat' => 1,
+											'sub_cat' => '',
 										]
-									],
+									],									
 									'mpwpb_extra_service_active' => 'on',
 									'mpwpb_group_extra_service_active' => 'off',
 									'mpwpb_extra_service' => [
@@ -612,92 +522,54 @@
 									'mpwpb_category_text' => 'Service Type',
 									'mpwpb_sub_category_text' => 'Sub-Category',
 									'mpwpb_service_text' => 'Service Details',
-									'mpwpb_category_infos' => [
+									'mpwpb_category_service' => [
 										[
-											'icon' => '',
-											'image' => '260',
-											'category' => 'Car Maintenance',
-											'sub_category' => [
-												[
-													'icon' => '',
-													'image' => '',
-													'name' => '',
-													'service' => [
-														[
-															'name' => 'Auto Maintenance Services​',
-															'price' => '500',
-															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book',
-															'duration' => '1 hour',
-															'icon' => 'fas fa-air-freshener',
-															'image' => ''
-														],
-														[
-															'name' => 'Oil Filter Change',
-															'price' => '300',
-															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book',
-															'duration' => '1 hour',
-															'icon' => 'fas fa-tape',
-															'image' => ''
-														],
-														[
-															'name' => 'Cabin Air Filter Replacement',
-															'price' => '200',
-															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book',
-															'duration' => '1 hour',
-															'icon' => 'fas fa-ship',
-															'image' => ''
-														],
-														[
-															'name' => 'Engine Performance',
-															'price' => '300',
-															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-															'duration' => '30m',
-															'icon' => 'fas fa-truck-monster',
-															'image' => ''
-														]
-													]
-												]
-											]
+											'name'  => 'Economy Car',
+											'icon'  => '',
+											'image' => '',
 										],
 										[
-											'icon' => '',
-											'image' => '261',
-											'category' => 'Car Repair',
-											'sub_category' => [
-												[
-													'icon' => '',
-													'image' => '',
-													'name' => '',
-													'service' => [
-														[
-															'name' => 'Brake Repair Pads Rotors',
-															'price' => '200',
-															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => ''
-														],
-														[
-															'name' => 'Air Conditioning Services​​',
-															'price' => '100',
-															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => ''
-														],
-														[
-															'name' => 'Body Repair Painting',
-															'price' => '30',
-															'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => ''
-														]
-													]
-												]
-											]
-										]
+											'name'  => 'Standard Car',
+											'icon'  => '',
+											'image' => '',
+										],
 									],
+									'mpwpb_sub_category_service'=>'',
+									'mpwpb_service'=>[
+										[
+											'name' => 'Casinos',
+											'icon' => '',
+											'image' => '',
+											'details' => '',
+											'price' => 10,
+											'duration' => '30m',
+											'show_cat_status' => 'on',
+											'parent_cat' => 0,
+											'sub_cat' => '',
+										],
+										[
+											'name' => 'Birthdays',
+											'icon' => '',
+											'image' => '',
+											'details' => '',
+											'price' => 10,
+											'duration' => '30m',
+											'show_cat_status' => 'on',
+											'parent_cat' => 0,
+											'sub_cat' => '',
+										],
+										[
+											'name' => 'Airport Transfer',
+											'icon' => '',
+											'image' => '',
+											'details' => '',
+											'price' => 10,
+											'duration' => '30m',
+											'show_cat_status' => 'on',
+											'parent_cat' => 1,
+											'sub_cat' => '',
+										]
+									],									
 									'mpwpb_extra_service_active' => 'on',
 									'mpwpb_group_extra_service_active' => 'off',
 									'mpwpb_extra_service' => [
@@ -812,92 +684,54 @@
 									'mpwpb_category_text' => 'Category',
 									'mpwpb_sub_category_text' => 'Sub-Category',
 									'mpwpb_service_text' => 'Service',
-									'mpwpb_category_infos' => [
+									'mpwpb_category_service' => [
 										[
-											'category' => '',
-											'sub_category' => [
-												[
-													'icon' => '',
-													'image' => '',
-													'name' => '',
-													'service' => [
-														[
-															'name' => 'Classical Class (3 Months)',
-															'price' => '10',
-															'details' => 'derived from the Latin word classics, which originally referred to the highest class of Ancient Roman citizens',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => '243'
-														],
-														[
-															'name' => 'Jazz Classes (2 Months)',
-															'price' => '15',
-															'details' => 'Classical music, strictly defined, means music produced in the Western',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => '244'
-														],
-														[
-															'name' => 'Classical Private Tutor',
-															'price' => '20',
-															'details' => 'derived from the Latin word classics, which originally referred to the highest class of Ancient Roman citizens',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => '245'
-														],
-														[
-															'name' => 'Pop Songs Classes',
-															'price' => '30',
-															'details' => 'Classical music, strictly defined, means music produced in the Western',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => '246'
-														],
-														[
-															'name' => 'Rock Music Piano Class',
-															'price' => '40',
-															'details' => 'derived from the Latin word classics, which originally referred to the highest class of Ancient Roman citizens',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => '247'
-														],
-														[
-															'name' => 'Classical Advance Class',
-															'price' => '78',
-															'details' => 'Classical music, strictly defined, means music produced in the Western',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => '248'
-														],
-														[
-															'name' => 'Classical Private tutor',
-															'price' => '10',
-															'details' => 'derived from the Latin word classics, which originally referred to the highest class of Ancient Roman citizens',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => '249'
-														],
-														[
-															'name' => 'Pop Songs Advance (Annually)',
-															'price' => '10',
-															'details' => 'Classical music, strictly defined, means music produced in the Western',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => '250'
-														],
-														[
-															'name' => 'Rock Music Piano Advance',
-															'price' => '45',
-															'details' => 'Classical music, strictly defined, means music produced in the Western',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => '251'
-														]
-													]
-												]
-											]
-										]
+											'name'  => 'Economy Car',
+											'icon'  => '',
+											'image' => '',
+										],
+										[
+											'name'  => 'Standard Car',
+											'icon'  => '',
+											'image' => '',
+										],
 									],
+									'mpwpb_sub_category_service'=>'',
+									'mpwpb_service'=>[
+										[
+											'name' => 'Casinos',
+											'icon' => '',
+											'image' => '',
+											'details' => '',
+											'price' => 10,
+											'duration' => '30m',
+											'show_cat_status' => 'on',
+											'parent_cat' => 0,
+											'sub_cat' => '',
+										],
+										[
+											'name' => 'Birthdays',
+											'icon' => '',
+											'image' => '',
+											'details' => '',
+											'price' => 10,
+											'duration' => '30m',
+											'show_cat_status' => 'on',
+											'parent_cat' => 0,
+											'sub_cat' => '',
+										],
+										[
+											'name' => 'Airport Transfer',
+											'icon' => '',
+											'image' => '',
+											'details' => '',
+											'price' => 10,
+											'duration' => '30m',
+											'show_cat_status' => 'on',
+											'parent_cat' => 1,
+											'sub_cat' => '',
+										]
+									],									
 									'mpwpb_extra_service_active' => 'off',
 									'mpwpb_group_extra_service_active' => 'off',
 									'mpwpb_extra_service' => [],
@@ -994,82 +828,52 @@
 									'mpwpb_category_text' => 'Category',
 									'mpwpb_sub_category_text' => 'Sub-Category',
 									'mpwpb_service_text' => 'Service',
-									'mpwpb_category_infos' => [
-										0 => [
-											'category' => '',
-											'sub_category' => [
-												0 => [
-													'icon' => '',
-													'image' => '',
-													'name' => '',
-													'service' => [
-														0 => [
-															'name' => 'Fever​',
-															'price' => '10',
-															'details' => 'Nisl tempus, sollicitudin amet, porttitor erat magna congue dui malesuada vestibulum.',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => '253'
-														],
-														1 => [
-															'name' => 'Tiredness',
-															'price' => '15',
-															'details' => 'Ultrices et ultrices enim nunc, quis pellentesque sit mauris turpis augue vitae',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => '254'
-														],
-														2 => [
-															'name' => 'Dry Cough​',
-															'price' => '30',
-															'details' => 'Nisl tempus, metus, sollicitudin amet, porttitor erat magna congue dui malesuada vestibulum.',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => '255'
-														],
-														3 => [
-															'name' => 'Shortness of Breath​',
-															'price' => '10',
-															'details' => 'Nisl tempus, metus, sollicitudin amet, porttitor erat magna congue dui malesuada vestibulum.',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => '256'
-														],
-														4 => [
-															'name' => 'Aches and Pains​',
-															'price' => '20',
-															'details' => 'Nisl tempus, metus, sollicitudin amet, porttitor erat magna congue dui malesuada vestibulum.',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => '257'
-														],
-														5 => [
-															'name' => 'Sore Throat​',
-															'price' => '30',
-															'details' => 'Nisl tempus, metus, sollicitudin amet, porttitor erat magna congue dui malesuada vestibulum.',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => '258'
-														],
-														6 => [
-															'name' => 'Sexual Disease',
-															'price' => '30',
-															'details' => 'Nisl tempus, metus, sollicitudin amet, porttitor erat magna congue dui malesuada vestibulum.',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => '256'
-														],
-														7 => [
-															'name' => 'Sleep Apnea',
-															'price' => '50',
-															'details' => 'Nisl tempus, metus, sollicitudin amet, porttitor erat magna congue dui malesuada vestibulum.',
-															'duration' => '60m',
-															'icon' => '',
-															'image' => '253'
-														]
-													]
-												]
-											]
+									'mpwpb_category_service' => [
+										[
+											'name'  => 'Economy Car',
+											'icon'  => '',
+											'image' => '',
+										],
+										[
+											'name'  => 'Standard Car',
+											'icon'  => '',
+											'image' => '',
+										],
+									],
+									'mpwpb_sub_category_service'=>'',
+									'mpwpb_service'=>[
+										[
+											'name' => 'Casinos',
+											'icon' => '',
+											'image' => '',
+											'details' => '',
+											'price' => 10,
+											'duration' => '30m',
+											'show_cat_status' => 'on',
+											'parent_cat' => 0,
+											'sub_cat' => '',
+										],
+										[
+											'name' => 'Birthdays',
+											'icon' => '',
+											'image' => '',
+											'details' => '',
+											'price' => 10,
+											'duration' => '30m',
+											'show_cat_status' => 'on',
+											'parent_cat' => 0,
+											'sub_cat' => '',
+										],
+										[
+											'name' => 'Airport Transfer',
+											'icon' => '',
+											'image' => '',
+											'details' => '',
+											'price' => 10,
+											'duration' => '30m',
+											'show_cat_status' => 'on',
+											'parent_cat' => 1,
+											'sub_cat' => '',
 										]
 									],
 									'mpwpb_extra_service_active' => 'off',
@@ -1170,88 +974,52 @@
 									'mpwpb_category_text' => 'Car Type',
 									'mpwpb_sub_category_text' => 'Sub-Category',
 									'mpwpb_service_text' => 'Service',
-									'mpwpb_category_infos' => [
-										0 => [
-											'icon' => '',
-											'image' => '272',
-											'category' => 'Economy Car',
-											'sub_category' => [
-												0 => [
-													'icon' => '',
-													'image' => '',
-													'name' => '',
-													'service' => [
-														0 => [
-															'name' => 'Casinos',
-															'price' => '10',
-															'details' => '',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => ''
-														],
-														1 => [
-															'name' => 'Birthdays',
-															'price' => '20',
-															'details' => '',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => ''
-														],
-														2 => [
-															'name' => 'Airport Transfer',
-															'price' => '20',
-															'details' => '',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => ''
-														]
-													]
-												]
-											]
+									'mpwpb_category_service' => [
+										[
+											'name'  => 'Economy Car',
+											'icon'  => '',
+											'image' => '',
 										],
-										1 => [
-											'icon' => '',
-											'image' => '275',
-											'category' => 'Standard Car',
-											'sub_category' => [
-												0 => [
-													'icon' => '',
-													'image' => '',
-													'name' => '',
-													'service' => [
-														0 => [
-															'name' => 'Weddings',
-															'price' => '30',
-															'details' => '',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => ''
-														]
-													]
-												]
-											]
+										[
+											'name'  => 'Standard Car',
+											'icon'  => '',
+											'image' => '',
 										],
-										2 => [
+									],
+									'mpwpb_sub_category_service'=>'',
+									'mpwpb_service'=>[
+										[
+											'name' => 'Casinos',
 											'icon' => '',
-											'image' => '274',
-											'category' => 'SUV Car',
-											'sub_category' => [
-												0 => [
-													'icon' => '',
-													'image' => '',
-													'name' => '',
-													'service' => [
-														0 => [
-															'name' => 'Night Parties Long Drive',
-															'price' => '30',
-															'details' => '',
-															'duration' => '30m',
-															'icon' => '',
-															'image' => ''
-														]
-													]
-												]
-											]
+											'image' => '',
+											'details' => '',
+											'price' => 10,
+											'duration' => '30m',
+											'show_cat_status' => 'on',
+											'parent_cat' => 0,
+											'sub_cat' => '',
+										],
+										[
+											'name' => 'Birthdays',
+											'icon' => '',
+											'image' => '',
+											'details' => '',
+											'price' => 10,
+											'duration' => '30m',
+											'show_cat_status' => 'on',
+											'parent_cat' => 0,
+											'sub_cat' => '',
+										],
+										[
+											'name' => 'Airport Transfer',
+											'icon' => '',
+											'image' => '',
+											'details' => '',
+											'price' => 10,
+											'duration' => '30m',
+											'show_cat_status' => 'on',
+											'parent_cat' => 1,
+											'sub_cat' => '',
 										]
 									],
 									'mpwpb_extra_service_active' => 'off',
