@@ -186,8 +186,8 @@
 						if (isset($category['category'])) {
 							$categories[] = [
 								'name' => $category['category'],
-								'icon' => $category['icon'],
-								'image' => $category['image']
+								'icon' => $category['icon']?? '',
+								'image' => $category['image']?? ''
 							];
 						}
 						if (isset($category['sub_category'])) {
