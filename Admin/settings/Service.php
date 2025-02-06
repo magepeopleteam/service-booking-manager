@@ -328,6 +328,7 @@
 			}
 			public function get_all_service_items($post_id) {
 				$services = $this->get_services($post_id);
+				$services = $services??[];
 				foreach ($services as $key => $service) {
 					$this->get_service_item($key, $service);
 				}
