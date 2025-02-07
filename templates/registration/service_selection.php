@@ -20,13 +20,12 @@
             </header>
 			<?php
 				foreach ($all_services as $service_key => $service_item) {
-					$category_name = array_key_exists('parent_cat', $service_item) ? (int)$service_item['parent_cat']+1 : '';
-					$sub_category_name = array_key_exists('sub_cat', $service_item) ?(int) $service_item['sub_cat']+1 : '';
+					$category_name = array_key_exists('parent_cat', $service_item) && $service_item['parent_cat']? (int)$service_item['parent_cat']+1 : '';
+					$sub_category_name = array_key_exists('sub_cat', $service_item)&& $service_item['sub_cat'] ?(int) $service_item['sub_cat']+1 : '';
 					$service_name = array_key_exists('name', $service_item) ? $service_item['name'] : '';
 					$service_image = array_key_exists('image', $service_item) ? $service_item['image'] : '';
 					$service_icon = array_key_exists('icon', $service_item) ? $service_item['icon'] : '';
 					$service_price = array_key_exists('price', $service_item) ? $service_item['price'] : 0;
-					//$service_price = MPWPB_Function::get_price($post_id, $service_key, $category_name, $sub_category_name);
 					$service_wc_price = MP_Global_Function::wc_price($post_id, $service_price);
 					$service_price = MP_Global_Function::price_convert_raw($service_wc_price);
 					$service_details = array_key_exists('details', $service_item) ? $service_item['details'] : '';
@@ -34,7 +33,7 @@
 					$unique_id = '#service_' . uniqid();;
 					//echo '<pre>'; print_r($sub_category_name); echo '</pre>';
 					?>
-                    <div class="mpwpb_service_item" data-price="<?php echo esc_attr($service_price); ?>" data-category="<?php echo esc_attr($category_name); ?>" data-sub-category="<?php echo esc_attr($sub_category_name); ?>" data-service="<?php echo esc_attr($service_key); ?>">
+                    <div class="mpwpb_service_item" data-price="<?php echo esc_attr($service_price); ?>" data-category="<?php echo esc_attr($category_name); ?>" data-sub-category="<?php echo esc_attr($sub_category_name); ?>" data-service="<?php echo esc_attr($service_key+1); ?>">
                         <div class="_dFlex">
 							<?php if ($service_image) { ?>
                                 <div class="bg_image_area _w_75_mR_xs">

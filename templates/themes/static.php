@@ -10,9 +10,10 @@
 	}
 	$post_id = $post_id ?? get_the_id();
 	$service_text = $service_text ?? MPWPB_Function::get_service_text($post_id);
-	$all_category = $all_category ?? MP_Global_Function::get_post_info($post_id, 'mpwpb_category_service', array());
-	$all_sub_category = $all_sub_category ?? MP_Global_Function::get_post_info($post_id, 'mpwpb_sub_category_service', array());
 	$all_services = $all_services ?? MP_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
+	$all_category = $all_category ?? MPWPB_Function::get_category($post_id);
+	$all_sub_category = $all_sub_category ?? MPWPB_Function::get_sub_category($post_id);
+	$all_service_list = $all_service_list ?? MPWPB_Function::get_all_service($post_id);
 	$extra_services = $extra_services ?? MP_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', array());
 	$title = MP_Global_Function::get_post_info($post_id, 'mpwpb_shortcode_title');
 	$sub_title = MP_Global_Function::get_post_info($post_id, 'mpwpb_shortcode_sub_title');
@@ -87,15 +88,19 @@
 											<?php } ?>
 
 											<?php if (sizeof($all_services) > 0) { ?>
-												<?php foreach ($all_services as $service_key => $service_list) {
-													$category_name = array_key_exists('parent_cat', $service_list) ? (int)$service_list['parent_cat']+1: '';
-													$sub_category_name = array_key_exists('sub_cat', $service_list) ? (int)$service_list['sub_cat']+1 : '';
+												<?php foreach ($all_services as $service_key => $service_item) {
+													$category_name = array_key_exists('parent_cat', $service_item) && $service_item['parent_cat']? (int)$service_item['parent_cat']+1 : '';
+													$sub_category_name = array_key_exists('sub_cat', $service_item)&& $service_item['sub_cat'] ?(int) $service_item['sub_cat']+1 : '';
+													$service_name = array_key_exists('name', $service_item) ? $service_item['name'] : '';
+													$service_price = array_key_exists('price', $service_item) ? $service_item['price'] : 0;
+													$service_wc_price = MP_Global_Function::wc_price($post_id, $service_price);
+													$service_price = MP_Global_Function::price_convert_raw($service_wc_price);
 													?>
                                                     <div class="mpwpb_summary_item" data-service="<?php echo esc_attr($service_key + 1); ?>" data-service-category="<?php echo esc_attr($category_name); ?>" data-service-sub-category="<?php echo esc_attr($sub_category_name); ?>">
                                                         <span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
                                                         <div class="flexWrap justifyBetween">
-                                                            <h6 class="mR_xs"><?php echo esc_html($service_list['name']); ?></h6>
-                                                            <p><span class="textTheme">x1</span>&nbsp;|&nbsp; <span class="textTheme service_price"><?php echo wp_kses_post(MP_Global_Function::wc_price($post_id, $service_list['price'])); ?></span></p>
+                                                            <h6 class="mR_xs"><?php echo esc_html($service_name); ?></h6>
+                                                            <p><span class="textTheme">x1</span>&nbsp;|&nbsp; <span class="textTheme service_price"><?php echo wp_kses_post($service_wc_price); ?></span></p>
                                                         </div>
                                                     </div>
 												<?php } ?>
