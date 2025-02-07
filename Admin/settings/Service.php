@@ -128,15 +128,15 @@
                             </div>
                             <label>
 								<?php esc_html_e('Service Name', 'service-booking-manager'); ?>
-                                <input type="text" name="service_name">
+                                <input type="text" name="service_name" placeholder="Service Name">
                             </label>
                             <label>
 								<?php esc_html_e('Price', 'service-booking-manager'); ?>
-                                <input type="number" name="service_price">
+                                <input type="number" name="service_price" placeholder="10">
                             </label>
                             <label>
 								<?php esc_html_e('Duration', 'service-booking-manager'); ?>
-                                <input type="text" name="service_duration">
+                                <input type="text" name="service_duration" placeholder="10min">
                             </label>
                             <label>
 								<?php esc_html_e('Description', 'service-booking-manager'); ?>
