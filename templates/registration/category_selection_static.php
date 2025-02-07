@@ -20,8 +20,8 @@
 	} else {
 		if (sizeof($all_services) > 0) {
 			foreach ($all_services as $key=>$service_item) {
-				$category_name = array_key_exists('parent_cat', $service_item) && $service_item['parent_cat']? (int)$service_item['parent_cat']+1 : '';
-				$sub_category_name = array_key_exists('sub_cat', $service_item)&& $service_item['sub_cat'] ?(int) $service_item['sub_cat']+1 : '';
+				$category_name = array_key_exists('parent_cat', $service_item) && ($service_item['parent_cat'] || $service_item['parent_cat']==0)? (int)$service_item['parent_cat']+1 : '';
+				$sub_category_name = array_key_exists('sub_cat', $service_item)&& ($service_item['sub_cat']|| $service_item['sub_cat']==0)  ?(int) $service_item['sub_cat']+1 : '';
 				$service_name = array_key_exists('name', $service_item) ? $service_item['name'] : ''; ?>
                 <div class="mpwpb_item_box" data-target-popup="#mpwpb_static_popup" data-category="<?php echo esc_attr($category_name); ?>" data-sub-category="<?php echo esc_attr($sub_category_name); ?>" data-service="<?php echo esc_attr($key+1); ?>">
                     <h2><?php echo esc_html($service_name); ?></h2>
