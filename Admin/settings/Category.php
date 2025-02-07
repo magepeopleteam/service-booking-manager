@@ -59,7 +59,7 @@
                             <input type="hidden" name="mpwpb_parent_item_id" value="">
                             <input type="hidden" name="mpwpb_parent_cat_id" value="">
                             <label>
-								<?php esc_html_e('Category Name', 'service-booking-manager'); ?>
+								<?php esc_html_e('Category Name *', 'service-booking-manager'); ?>
                                 <input type="text" name="mpwpb_category_name" placeholder="Category">
                             </label>
                             <div class="mpwpb-sub-category-enable" style="display: none;">

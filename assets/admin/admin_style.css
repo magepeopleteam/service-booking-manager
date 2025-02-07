@@ -303,6 +303,9 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   font-size: 14px;
   font-weight: normal;
 }
+#mp_meta_box_panel .required {
+  border: 1px solid red;
+}
 
 #mp_meta_box_panel .mpwpb-faq-section .faq-header {
   position: relative;
