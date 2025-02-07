@@ -82,8 +82,7 @@
                                     <span class="fas fa-times mp_remove_icon mp_icon_remove"></span>
                                 </div>
                                 <div class="mp_image_item dNone">
-	                                <?php echo wp_get_attachment_image(0, 'medium'); ?>
-									<img src="">
+	                                <?php echo wp_get_attachment_image(0, 'medium'); ?>								
                                     <span class="fas fa-times mp_remove_icon mp_image_remove"></span>
                                 </div>
                                 <div class="mp_add_icon_image_button_area ">
