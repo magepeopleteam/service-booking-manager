@@ -6,7 +6,7 @@
 	if (!defined('ABSPATH')) {
 		die;
 	} // Cannot access pages directly.
-<?php if ( wp_is_block_theme() ) {  ?>
+if ( wp_is_block_theme() ) {  ?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
 <head>
