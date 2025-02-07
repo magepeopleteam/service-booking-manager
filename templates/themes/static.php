@@ -88,10 +88,10 @@
 
 											<?php if (sizeof($all_services) > 0) { ?>
 												<?php foreach ($all_services as $service_key => $service_list) {
-													$category_name = array_key_exists('parent_cat', $service_list) ? $service_list['parent_cat'] : '';
-													$sub_category_name = array_key_exists('sub_cat', $service_list) ? $service_list['sub_cat'] : '';
+													$category_name = array_key_exists('parent_cat', $service_list) ? (int)$service_list['parent_cat']+1: '';
+													$sub_category_name = array_key_exists('sub_cat', $service_list) ? (int)$service_list['sub_cat']+1 : '';
 													?>
-                                                    <div class="mpwpb_summary_item" data-service="<?php echo esc_attr($service_key + 1); ?>" data-service-category="<?php echo esc_attr($category_name + 1); ?>" data-service-sub-category="<?php echo esc_attr($sub_category_name + 1); ?>">
+                                                    <div class="mpwpb_summary_item" data-service="<?php echo esc_attr($service_key + 1); ?>" data-service-category="<?php echo esc_attr($category_name); ?>" data-service-sub-category="<?php echo esc_attr($sub_category_name); ?>">
                                                         <span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
                                                         <div class="flexWrap justifyBetween">
                                                             <h6 class="mR_xs"><?php echo esc_html($service_list['name']); ?></h6>

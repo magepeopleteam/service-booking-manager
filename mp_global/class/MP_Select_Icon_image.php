@@ -150,7 +150,8 @@
                         <span class="fas fa-times mp_remove_icon mp_icon_remove" title="<?php esc_html_e('Remove Icon', 'service-booking-manager'); ?>"></span>
                     </div>
                     <div class="mp_image_item <?php echo esc_attr($image_class); ?>">
-	                    <?php echo wp_get_attachment_image($image, 'medium'); ?>
+	                    <?php echo $image?wp_get_attachment_image($image, 'medium'):'<img  src="" alt=""/>'; ?>
+
                         <span class="fas fa-times mp_remove_icon mp_image_remove" title="<?php esc_html_e('Remove Image', 'service-booking-manager'); ?>"></span>
                     </div>
                     <div class="mp_add_icon_image_button_area <?php echo esc_attr($button_active_class); ?>">

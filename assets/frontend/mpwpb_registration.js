@@ -74,7 +74,7 @@ function mpwpb_price_calculation($this) {
         parent.find('.mpwpb_extra_service_area,.next_service_area,.mpwpb_date_time_area,.mpwpb_order_proceed_area').slideUp(350);
         let target_sub_category = parent.find('.mpwpb_sub_category_area');
         let target_service = parent.find('.mpwpb_service_area');
-        parent.find('[name="mpwpb_service[]"]').each(function (){
+        parent.find('[name="mpwpb_service[]"]').each(function () {
             $(this).val('');
         });
         parent.find('.mpwpb_summary_item[data-service]').slideUp('fast');
@@ -82,7 +82,7 @@ function mpwpb_price_calculation($this) {
         let sub_category = parseInt(parent.find('[name="mpwpb_sub_category"]').val());
         target_service.find('.mpwpb_service_item[data-category]').each(function () {
             $(this).removeClass('mpActive');
-            $(this).find('.mpwpb_service_button.mActive').each(function (){
+            $(this).find('.mpwpb_service_button.mActive').each(function () {
                 mp_all_content_change($(this));
             });
             if (parseInt($(this).data('category')) === category) {
@@ -136,16 +136,15 @@ function mpwpb_price_calculation($this) {
         let current = $(this);
         let parent = current.closest('div.mpwpb_registration');
         let category = parseInt(current.data('category'));
-
         load_service_tab(parent);
-        if(category && category>0){
+        if (category && category > 0) {
             parent.find('.mpwpb_category_item').each(function () {
                 if (parseInt($(this).data('category')) === category) {
                     $(this).trigger('click');
                 }
             });
-        }else {
-            let service=parseInt(current.data('service'));
+        } else {
+            let service = parseInt(current.data('service'));
             parent.find('.mpwpb_service_item').each(function () {
                 if (parseInt($(this).data('service')) === service) {
                     $(this).find('.mpwpb_service_button').trigger('click');
@@ -176,7 +175,7 @@ function mpwpb_price_calculation($this) {
                     loadBgImage();
                 });
             });
-        }else{
+        } else {
             $(this).removeClass('mpActive');
             parent.find('.mpwpb_summary_item[data-sub-category]').slideUp('fast').find('h6').html('');
             parent.find('[name="mpwpb_sub_category"]').val('').promise().done(function () {
@@ -243,7 +242,7 @@ function mpwpb_price_calculation($this) {
                 service_count++;
             }
         });
-        if (service_count>0) {
+        if (service_count > 0) {
             parent.find('.all_service_area').slideUp(350);
             parent.find('.mpwpb_date_time_tab').addClass('mpActive').removeClass('mpDisabled');
             load_date_time_tab(parent);
@@ -251,17 +250,17 @@ function mpwpb_price_calculation($this) {
             mp_alert($(this));
         }
     });
-    function load_date_time_tab(parent){
+    function load_date_time_tab(parent) {
         parent.find('.mpwpb_date_time_area,.next_date_area').slideDown(350);
         parent.find('.all_service_area,.mpwpb_order_proceed_area,.next_service_area').slideUp(300)
         loadBgImage();
     }
-    function load_service_tab(parent){
+    function load_service_tab(parent) {
         parent.find('.all_service_area,.next_service_area').slideDown(350);
         parent.find('.mpwpb_date_time_area,.mpwpb_order_proceed_area,.next_date_area').slideUp(300);
         loadBgImage();
     }
-    function load_order_proceed_tab(parent){
+    function load_order_proceed_tab(parent) {
         parent.find('.mpwpb_order_proceed_area').slideDown(350);
         parent.find('.all_service_area,.mpwpb_date_time_area,.next_date_area,.next_service_area').slideUp(300)
         loadBgImage();
@@ -283,9 +282,9 @@ function mpwpb_price_calculation($this) {
         if (date) {
             let link_id = $(this).attr('data-wc_link_id');
             let mpwpb_category = parent.find('[name="mpwpb_category"]').val();
-            mpwpb_category = mpwpb_category?parseInt(mpwpb_category):'';
-            let mpwpb_sub_category =parent.find('[name="mpwpb_sub_category"]').val();
-            mpwpb_sub_category =mpwpb_sub_category?parseInt(mpwpb_sub_category):'';
+            mpwpb_category = mpwpb_category ? parseInt(mpwpb_category) : '';
+            let mpwpb_sub_category = parent.find('[name="mpwpb_sub_category"]').val();
+            mpwpb_sub_category = mpwpb_sub_category ? parseInt(mpwpb_sub_category) : '';
             let mpwpb_service = {};
             let service_count = 0;
             parent.find('[name="mpwpb_service[]"]').each(function () {
@@ -313,7 +312,7 @@ function mpwpb_price_calculation($this) {
             });
             $.ajax({
                 type: 'POST',
-                url: mpwpb_ajax.ajax_ur,
+                url: mpwpb_ajax.ajax_url,
                 data: {
                     "action": "mpwpb_add_to_cart",
                     //"product_id": post_id,
@@ -366,10 +365,10 @@ function mpwpb_price_calculation($this) {
         mpwpb_price_calculation($(this));
     });
     //======================//
-    $(document).ready(function() {
-        $('.faq-header').on('click', function() {
+    $(document).ready(function () {
+        $('.faq-header').on('click', function () {
             console.log('test');
-            $(this).next('.faq-content').slideToggle(); 
+            $(this).next('.faq-content').slideToggle();
             $(this).find('i').toggleClass('fa-plus fa-minus');
         });
     });
