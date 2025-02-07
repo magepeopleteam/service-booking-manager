@@ -89,8 +89,8 @@
 
 											<?php if (sizeof($all_services) > 0) { ?>
 												<?php foreach ($all_services as $service_key => $service_item) {
-													$category_name = array_key_exists('parent_cat', $service_item) && $service_item['parent_cat']? (int)$service_item['parent_cat']+1 : '';
-													$sub_category_name = array_key_exists('sub_cat', $service_item)&& $service_item['sub_cat'] ?(int) $service_item['sub_cat']+1 : '';
+													$category_name = array_key_exists('parent_cat', $service_item) && ($service_item['parent_cat'] || $service_item['parent_cat']==0)? (int)$service_item['parent_cat']+1 : '';
+													$sub_category_name = array_key_exists('sub_cat', $service_item)&& ($service_item['sub_cat']|| $service_item['sub_cat']==0)  ?(int) $service_item['sub_cat']+1 : '';
 													$service_name = array_key_exists('name', $service_item) ? $service_item['name'] : '';
 													$service_price = array_key_exists('price', $service_item) ? $service_item['price'] : 0;
 													$service_wc_price = MP_Global_Function::wc_price($post_id, $service_price);
