@@ -10,7 +10,7 @@
 	}
 	$post_id = $post_id ?? get_the_id();
 	$service_text = $service_text ?? MPWPB_Function::get_service_text($post_id);
-	$all_services = $all_services ?? MP_Global_Function::get_post_info($post_id, 'mpwpb_category_infos', array());
+	$all_services = $all_services ?? MP_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
 	$all_category = $all_category ?? MPWPB_Function::get_category($post_id);
 	$all_sub_category = $all_sub_category ?? MPWPB_Function::get_sub_category($post_id);
 	$all_service_list = $all_service_list ?? MPWPB_Function::get_all_service($post_id);

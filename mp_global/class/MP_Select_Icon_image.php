@@ -99,7 +99,7 @@
 					<?php if ($image_id) { ?>
                         <div class="mp_single_image_item" data-image-id="<?php echo esc_attr($image_id); ?>'">
                             <span class="fas fa-times circleIcon_xs mp_remove_single_image"></span>
-	                        <?php echo wp_get_attachment_image($image_id, 'medium'); ?>
+							<?php echo wp_get_attachment_image($image_id, 'medium'); ?>
                         </div>
 					<?php } ?>
                     <button type="button" class="_dButton_xs_bgColor_1_fullWidth <?php echo esc_attr($image_id ? 'dNone' : ''); ?>">
@@ -121,7 +121,7 @@
 									?>
                                     <div class="mp_multi_image_item" data-image-id="<?php esc_attr($image); ?>">
                                         <span class="fas fa-times circleIcon_xs mp_remove_multi_image"></span>
-	                                    <?php echo wp_get_attachment_image($image, 'medium'); ?>
+										<?php echo wp_get_attachment_image($image, 'medium'); ?>
                                     </div>
 									<?php
 								}
@@ -150,16 +150,13 @@
                         <span class="fas fa-times mp_remove_icon mp_icon_remove" title="<?php esc_html_e('Remove Icon', 'service-booking-manager'); ?>"></span>
                     </div>
                     <div class="mp_image_item <?php echo esc_attr($image_class); ?>">
-	                    <?php echo $image?wp_get_attachment_image($image, 'medium'):'<img  src="" alt=""/>'; ?>
-
+						<?php echo $image ? wp_get_attachment_image($image, 'medium') : '<img  src="" alt=""/>'; ?>
                         <span class="fas fa-times mp_remove_icon mp_image_remove" title="<?php esc_html_e('Remove Image', 'service-booking-manager'); ?>"></span>
                     </div>
                     <div class="mp_add_icon_image_button_area <?php echo esc_attr($button_active_class); ?>">
                         <div class="flexEqual d-flex flex-column">
-                            <button class="_mpBtn_xs mp_image_add m-1" type="button">
-                                <span class="fas fa-images"></span><?php esc_html_e('Image', 'service-booking-manager'); ?></button>
-                            <button class="_mpBtn_xs mp_icon_add m-1" type="button" data-target-popup="#mp_add_icon_popup">
-                                <span class="fas fa-plus"></span><?php esc_html_e('Icon', 'service-booking-manager'); ?></button>
+                            <button class="_mpBtn_xs mp_image_add m-1" type="button"><span class="fas fa-images"></span><?php esc_html_e('Image', 'service-booking-manager'); ?></button>
+                            <button class="_mpBtn_xs mp_icon_add m-1" type="button" data-target-popup="#mp_add_icon_popup"><span class="fas fa-plus"></span><?php esc_html_e('Icon', 'service-booking-manager'); ?></button>
                         </div>
                     </div>
                 </div>
