@@ -154,34 +154,29 @@
 									'mpwpb_group_extra_service_active' => 'off',
 									'mpwpb_extra_service' => [
 										[
-											'group_service' => '',
-											'group_service_info' => [
-												[
-													'name' => 'Pre Hair Wash',
-													'qty' => '10',
-													'price' => '10',
-													'details' => 'A pre-shampoo treatment (also referred to as a pre-poo) is exactly what it says on the tin, a treatment that is applied to the hair before jumping into the shower to give your hair a good suds and rinse.',
-													'icon' => '',
-													'image' => ''
-												],
-												[
-													'name' => 'After Hair Wash',
-													'qty' => '15',
-													'price' => '15',
-													'details' => 'A pre-shampoo treatment (also referred to as a pre-poo) is exactly what it says on the tin, a treatment that is applied to the hair before jumping into the shower to give your hair a good suds and rinse.',
-													'icon' => '',
-													'image' => ''
-												],
-												[
-													'name' => 'Face Wash',
-													'qty' => '45',
-													'price' => '45',
-													'details' => 'A pre-shampoo treatment (also referred to as a pre-poo) is exactly what it says on the tin, a treatment that is applied to the hair before jumping into the shower to give your hair a good suds and rinse.',
-													'icon' => '',
-													'image' => ''
-												]
+											'name' => 'Pre Hair Wash',
+											'qty' => '10',
+											'price' => '10',
+											'details' => 'A pre-shampoo treatment (also referred to as a pre-poo) is exactly what it says on the tin, a treatment that is applied to the hair before jumping into the shower to give your hair a good suds and rinse.',
+											'icon' => '',
+											'image' => ''
+										],
+											[
+												'name' => 'After Hair Wash',
+												'qty' => '15',
+												'price' => '15',
+												'details' => 'A pre-shampoo treatment (also referred to as a pre-poo) is exactly what it says on the tin, a treatment that is applied to the hair before jumping into the shower to give your hair a good suds and rinse.',
+												'icon' => '',
+												'image' => ''
+											],
+											[
+												'name' => 'Face Wash',
+												'qty' => '45',
+												'price' => '45',
+												'details' => 'A pre-shampoo treatment (also referred to as a pre-poo) is exactly what it says on the tin, a treatment that is applied to the hair before jumping into the shower to give your hair a good suds and rinse.',
+												'icon' => '',
+												'image' => ''
 											]
-										]
 									],
 									// Gallery Settings
 									'mpwpb_display_slider' => 'on',
@@ -472,33 +467,28 @@
 									'mpwpb_group_extra_service_active' => 'off',
 									'mpwpb_extra_service' => [
 										[
-											'group_service' => '',
-											'group_service_info' => [
-												[
-													'name' => 'Tyre Pressure Checking',
-													'qty' => 10,
-													'price' => 10,
-													'details' => 'A gentle but detailed hand wash procedure that keeps your car looking its best, longer.',
-													'icon' => 'fas fa-tractor',
-													'image' => ''
-												],
-												[
-													'name' => 'Tyre Changing',
-													'qty' => 5,
-													'price' => 5,
-													'details' => 'A gentle but detailed hand wash procedure that keeps your car looking its best, longer.',
-													'icon' => 'fas fa-torii-gate',
-													'image' => ''
-												],
-												[
-													'name' => 'Odor Removal',
-													'qty' => 10,
-													'price' => 10,
-													'details' => 'A gentle but detailed hand wash procedure that keeps your car looking its best, longer.',
-													'icon' => 'fas fa-user-secret',
-													'image' => ''
-												]
-											]
+											'name' => 'Tyre Pressure Checking',
+											'qty' => 10,
+											'price' => 10,
+											'details' => 'A gentle but detailed hand wash procedure that keeps your car looking its best, longer.',
+											'icon' => 'fas fa-tractor',
+											'image' => ''
+										],
+										[
+											'name' => 'Tyre Changing',
+											'qty' => 5,
+											'price' => 5,
+											'details' => 'A gentle but detailed hand wash procedure that keeps your car looking its best, longer.',
+											'icon' => 'fas fa-torii-gate',
+											'image' => ''
+										],
+										[
+											'name' => 'Odor Removal',
+											'qty' => 10,
+											'price' => 10,
+											'details' => 'A gentle but detailed hand wash procedure that keeps your car looking its best, longer.',
+											'icon' => 'fas fa-user-secret',
+											'image' => ''
 										]
 									],
 									// Gallery Settings
@@ -742,25 +732,20 @@
 									'mpwpb_group_extra_service_active' => 'off',
 									'mpwpb_extra_service' => [
 										[
-											'group_service' => '',
-											'group_service_info' => [
-												[
-													'name' => 'Driver Seating Chair',
-													'qty' => '200',
-													'price' => '200',
-													'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book',
-													'icon' => 'fas fa-ship',
-													'image' => ''
-												],
-												[
-													'name' => 'Lunch box for driver',
-													'qty' => '300',
-													'price' => '300',
-													'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book',
-													'icon' => 'fas fa-hamburger',
-													'image' => ''
-												]
-											]
+											'name' => 'Driver Seating Chair',
+											'qty' => '200',
+											'price' => '200',
+											'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book',
+											'icon' => 'fas fa-ship',
+											'image' => ''
+										],
+										[
+											'name' => 'Lunch box for driver',
+											'qty' => '300',
+											'price' => '300',
+											'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book',
+											'icon' => 'fas fa-hamburger',
+											'image' => ''
 										]
 									],
 									// Gallery Settings
