@@ -14,6 +14,8 @@ div.registration_tab_item {
 }
 
 /******************************************************************** ************************************************/
+.mpwpb_registration_short_code.mpwpb-static-template .sidebar{width: 100%;}
+.mpwpb_registration_short_code.mpwpb-static-template .sidebar .mpwpb_static_area{width: 100%;position: relative;left: inherit;  bottom: inherit;}
 @media only screen and (min-width: 10px) {
   div.mpwpb_registration .woocommerce-page span.woocommerce-input-wrapper,
   div.mpwpb_registration .woocommerce-page table span {
