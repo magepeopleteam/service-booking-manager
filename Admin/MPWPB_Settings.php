@@ -103,9 +103,7 @@
 						$this->save_schedule($post_id, $key);
 					}
 					//**********************//
-					$off_days = isset($_POST['mpwpb_off_days']) && is_array($_POST['mpwpb_off_days']) 
-					? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_off_days'])) 
-					: [];
+					$off_days = isset($_POST['mpwpb_off_days']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_off_days'])):'';
 
 					update_post_meta($post_id, 'mpwpb_off_days', $off_days);
 					//**********************//
