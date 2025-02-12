@@ -29,14 +29,11 @@
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Settings_Global.php';
 				//*************Service Settings*****************//
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Settings.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/General.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Date_Time.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Pricing.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Category.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Service.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Extra_service.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Faq.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Service_Details.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/MPWPB_General_Settings.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/MPWPB_Date_Time_Settings.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/MPWPB_Price_Settings.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/MPWPB_Extra_service_Settings.php';
+				//require_once MPWPB_PLUGIN_DIR . '/Admin/settings/MPWPB_FAQ_Settings.php';
 				//****************Woocommerce Checkout*********************** */
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Settings.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Fields.php';
@@ -65,10 +62,10 @@
 				if (!(isset($_GET['post']) || isset($_POST['post']) || (isset($_REQUEST['action']) && 'mpwpb_item_duplicate' == $_REQUEST['action']))) {
 					wp_die('No post to duplicate has been supplied!');
 				}
-				if (!isset($_GET['duplicate_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['duplicate_nonce'])), basename(__FILE__))) {
+				if (!isset($_GET['duplicate_nonce']) || !wp_verify_nonce($_GET['duplicate_nonce'], basename(__FILE__))) {
 					return;
 				}
-				$post_id = (isset($_GET['post']) ? absint(wp_unslash($_GET['post'])) : absint(wp_unslash($_POST['post'])));
+				$post_id = (isset($_GET['post']) ? absint($_GET['post']) : absint($_POST['post']));
 				$post = get_post($post_id);
 				$current_user = wp_get_current_user();
 				$new_post_author = $current_user->ID;
@@ -94,64 +91,35 @@
 						$post_terms = wp_get_object_terms($post_id, $taxonomy, array('fields' => 'slugs'));
 						wp_set_object_terms($new_post_id, $post_terms, $taxonomy, false);
 					}
-
-					// $post_meta_infos = $wpdb->get_results(
-					// 	$wpdb->prepare("SELECT meta_key, meta_value FROM {$wpdb->postmeta}  WHERE post_id = %d  AND meta_key != %s", $post_id, 'total_booking')
-					// );
-
-					// Generate a unique cache key based on the post ID
-					$cache_key = 'post_meta_' . $post_id;
-					$post_meta_infos = wp_cache_get($cache_key, 'custom_cache_group');
-
-					if ($post_meta_infos === false) {
-						// Fetch all post meta
-						$all_meta = get_post_meta($post_id);
-
-						// Remove the "total_booking" meta key
-						unset($all_meta['total_booking']);
-
-						// Convert to expected format (array of objects with meta_key and meta_value)
-						$post_meta_infos = [];
-						foreach ($all_meta as $key => $value) {
-							$post_meta_infos[] = (object) [
-								'meta_key'   => $key,
-								'meta_value' => is_array($value) ? $value[0] : $value, // Handle multiple values
-							];
-						}
-
-						// Store the result in cache for 1 hour
-						wp_cache_set($cache_key, $post_meta_infos, 'custom_cache_group', HOUR_IN_SECONDS);
-					}
-
+					$post_meta_infos = $wpdb->get_results("SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id=$post_id AND meta_key !='total_booking'");
 					if (count($post_meta_infos) != 0) {
+						$sql_query = "INSERT INTO $wpdb->postmeta (post_id, meta_key, meta_value) ";
 						foreach ($post_meta_infos as $meta_info) {
 							$meta_key = $meta_info->meta_key;
 							if ($meta_key == '_wp_old_slug') {
 								continue;
 							}
 							$meta_value = addslashes($meta_info->meta_value);
-							
-							// $wpdb->insert(
-							// 	$wpdb->postmeta,
-							// 	[
-							// 		'post_id' => $new_post_id,
-							// 		'meta_key' => $meta_key,
-							// 		'meta_value' => $meta_value
-							// 	],
-							// 	[
-							// 		'%d', // post_id is an integer
-							// 		'%s', // meta_key is a string
-							// 		'%s'  // meta_value is a string
-							// 	]
-							// );
-
-							add_post_meta($new_post_id, $meta_key, $meta_value, false);
+							$sql_query_sel[] = "SELECT $new_post_id, '$meta_key', '$meta_value'";
 						}
+						$sql_query .= implode(" UNION ALL ", $sql_query_sel);
+						$wpdb->query($sql_query);
+						$table_name = $wpdb->prefix . 'postmeta';
+						$bi = $wpdb->insert($table_name, array(
+							'post_id' => $new_post_id,
+							'meta_key' => 'total_booking',
+							'meta_value' => 0
+						), array(
+							'%d',
+							'%s',
+							'%d'
+						));
 					}
 					wp_redirect(admin_url('post.php?action=edit&post=' . $new_post_id));
 					exit;
-				} else {
-					wp_die('Post creation failed, could not find original post: ' . esc_html($post_id));
+				}
+				else {
+					wp_die('Post creation failed, could not find original post: ' . $post_id);
 				}
 			}
 			public function post_duplicator($actions, $post) {

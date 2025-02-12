@@ -9,7 +9,7 @@
 	if ( ! class_exists( 'MPWPB_Query' ) ) {
 		class MPWPB_Query {
 			public function __construct() {}
-			public static function query_all_sold( $post_id, $date) {
+			public static function query_all_sold( $post_id, $date): WP_Query {
 				$_seat_booked_status      = MP_Global_Function::get_settings('mp_global_settings', 'set_book_status', array('processing', 'completed'));
 				$seat_booked_status       = ! empty( $_seat_booked_status ) ? $_seat_booked_status : [];
 
@@ -58,6 +58,20 @@
 							$on_hold_status_filter,
 							$processing_status_filter,
 							$completed_status_filter
+						)
+					)
+				);
+				return new WP_Query( $args );
+			}
+			public static function get_order_info( $order_id ): WP_Query {
+				$args = array(
+					'posts_per_page' => - 1,
+					'post_type'      => 'mpwpb_booking',
+					'meta_query'     => array(
+						array(
+							'key'     => 'mpwpb_order_id',
+							'value'   => $order_id,
+							'compare' => '=',
 						)
 					)
 				);

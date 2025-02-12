@@ -246,9 +246,9 @@
 	.mpStyle .mpBtn, .mpStyle [class*="_mpBtn"],
 	.mpStyle button { position: relative; font-size: var(--button_fs); font-weight: var(--fw-medium); line-height: 1; cursor: pointer; overflow: visible; border: none; -webkit-appearance: button; text-transform: capitalize; }
 	.mpStyle button[disabled] { cursor: not-allowed; opacity: 0.8; background-color: #DDD; }
-	.mpStyle button:hover, .mpStyle button:focus { text-decoration: none; opacity: 0.8; background-color: var(--color_theme_cc); color: #FFF; }
+	.mpStyle button:hover, .mpStyle button:focus { text-decoration: none; opacity: 0.8; background-color: var(--d_color); color: #FFF; }
 	.mpStyle button:hover span, .mpStyle button:focus span { color: #FFF; }
-	.mpStyle .mpBtn, .mpStyle [class*="_mpBtn"] { padding: var(--dMP_xs) var(--dMP); color: var(--d_color); background-color: transparent; border: 1px solid var(--color_border); font-weight: var(--fw-thin);}
+	.mpStyle .mpBtn, .mpStyle [class*="_mpBtn"] { padding: var(--dMP_xs) var(--dMP); color: var(--d_color); background-color: transparent; border: 1px solid var(--color_border); }
 	.mpStyle .mpBtn_xs, .mpStyle [class*="_mpBtn_xs"] { padding: 7px var(--dMP_xs); }
 	.mpStyle .mpBtn.mpActive, .mpStyle [class*="_mpBtn"].mpActive { border-color: var(--color_theme); color: var(--color_theme); }
 	.mpStyle .mpBtn.mActive, .mpStyle [class*="_mpBtn"].mActive,
@@ -262,7 +262,7 @@
 	/***/
 	.mpStyle .themeButton, .mpStyle [class*="_themeButton"] { background-color: var(--color_theme); color: var(--color_theme_alter); padding: var(--dMP_xs) var(--dMP); border: 2px solid var(--color_theme); }
 	.mpStyle .themeButton span, .mpStyle [class*="_themeButton"] span { color: var(--color_theme_alter); }
-	.mpStyle .themeButton:hover, .mpStyle [class*="_themeButton"]:hover { background-color: var(--color_theme_cc); color: var(--color_theme_alter); border-color: var(--color_theme_cc); }
+	.mpStyle .themeButton:hover, .mpStyle [class*="_themeButton"]:hover { background-color: #000; color: var(--color_theme_alter); border-color: #000; }
 	.mpStyle .themeButton:hover span, .mpStyle [class*="_themeButton"]:hover span { color: var(--color_theme_alter); }
 	/****/
 	.mpStyle .warningButton, .mpStyle [class*="_warningButton"] { background-color: var(--color_warning); color: var(--color_theme_alter); padding: var(--dMP_xs) var(--dMP); border: 2px solid var(--color_warning); }
@@ -808,15 +808,8 @@
 	/****************/
 	.mpStyle .title_on_border { line-height: 1; height: 40px; position: absolute; top: -20px; left: 30px; color: var(--color_theme); background-color: var(--color_theme_alter); padding: 0 var(--dMP); border-radius: var(--dBR); }
 	/********fixed Content********/
-	div.mpStyle .mp_sticky_area.mpSticky {
-		position: fixed;top: 100px;
-	}
-	div.mpStyle .mp_sticky_area.mpSticky .mp_sticky_on_scroll {
-		overflow: auto;
-		z-index: 1111;
-	}
-	div.mpStyle .mp_sticky_on_scroll {width: 100%;}
-	div.mpStyle .mp_sticky_area.stickyFixed {display: flex; flex-direction: column;		justify-content: end;height: 100%;}
+	div.mpStyle .mp_sticky_area.mpSticky { position: fixed; }
+	div.mpStyle .mp_sticky_area.mpSticky .mp_sticky_on_scroll { overflow: auto;z-index: 1111; }
 }
 /******************************************************************** Form section ************************************************/
 @media only screen and (min-width: 10px) {
@@ -905,9 +898,9 @@
 	.mpStyle .customCheckbox::before {
 		content: ""; position: absolute; left: 0; top: 0; height: 20px; width: 20px;
 		background-color: var(--color_theme_alter);
-		border: 2px solid var(--color_theme); border-radius: 2px; }
-	.mpStyle .customCheckboxLabel { padding: 0 0 10px 0; cursor: pointer; font-weight: var(--fw-medium); width: 130px;}
-	.mpStyle .customCheckboxLabel input:checked ~ .customCheckbox::before { background: var(--color_theme_cc); }
+		border: 2px solid var(--d_color); border-radius: 2px; }
+	.mpStyle .customCheckboxLabel { padding: 0 0 10px 0; cursor: pointer; font-weight: var(--fw-medium); }
+	.mpStyle .customCheckboxLabel input:checked ~ .customCheckbox::before { background: var(--d_color); }
 	/*******************/
 	div.mpStyle .selectCheckbox { min-width: 150px; padding: var(--dMP_xs); width: auto; border: 1px solid var(--color_border); cursor: pointer; }
 	div.mpStyle .customCheckboxLabel input[type="checkbox"],
@@ -927,18 +920,18 @@
 	/*********Input Switch*******/
 	.mpStyle .roundSwitchLabel input[type='checkbox'] { display: none; }
 	.mpStyle .roundSwitch {
-		width: 52px; height: 25px; min-width: auto;
+		width: 60px; height: 25px; min-width: auto;
 		position: relative; background-color: #CCC; border-radius: 30px;
 		-webkit-transition: .4s; transition: .4s;
 	}
 	.mpStyle .roundSwitch::before {
-		position: absolute; content: "";height: 23px; width: 23px; left: 1px; bottom: 1px;
+		position: absolute; content: "";height: 17px; width: 17px; left: 4px; bottom: 4px;
 		background-color: white; border-radius: 50%;
 		-webkit-transition: .4s; transition: .4s;
 	}
-	.mpStyle .roundSwitchLabel input:checked + .roundSwitch { background-color: var(--color_theme); }
+	.mpStyle .roundSwitchLabel input:checked + .roundSwitch { background-color: var(--color_success); }
 	.mpStyle .roundSwitchLabel input:focus + .roundSwitch { box-shadow: 0 0 1px #2276D2; }
-	.mpStyle .roundSwitchLabel input:checked + .roundSwitch:before { -ms-transform: translateX(27px); transform: translateX(27px); }
+	.mpStyle .roundSwitchLabel input:checked + .roundSwitch:before { -ms-transform: translateX(35px); transform: translateX(35px); }
 	/*********Group radio check*******/
 	.groupRadioCheck [data-radio-check] { cursor: pointer; -webkit-justify-content: flex-start; justify-content: flex-start; }
 	.groupRadioCheck button[data-radio-check] { -webkit-justify-content: center; justify-content: center; }
@@ -947,7 +940,7 @@
 	/*********Group Content*******/
 	.mpStyle .groupContent {
 		font-size: var(--fs); border: 1px solid var(--color_border);
-		background-color: var(--color_light); color: var(--color_theme_alter);
+		background-color: var(--color_theme); color: var(--color_theme_alter);
 		text-align: center; position: relative;
 	}
 	div.mpStyle div.groupContent > * { border-left: 1px solid var(--color_border); margin: 0; }
@@ -1039,7 +1032,7 @@
 		position: relative; text-align: left; cursor: pointer;
 		padding: var(--dMP_xs); color: var(--d_color);
 	}
-	.mpStyle [data-tabs-target]:hover { font-weight: var(--fw-medium); border-color: var(--color_theme); color: var(--color_white) }
+	.mpStyle [data-tabs-target]:hover { font-weight: var(--fw-medium); border-color: var(--color_theme); color: var(--color_theme) }
 	.mpStyle [data-tabs-target].active { font-weight: var(--fw-medium); background-color: var(--color_theme); color: var(--color_theme_alter); }
 	.topTabs [data-tabs-target] { border-right: 1px solid var(--color_border); -webkit-justify-content: center; justify-content: center; }
 	.topTabs [data-tabs-target]:last-child { border-right: none; }

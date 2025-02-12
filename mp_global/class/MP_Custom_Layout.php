@@ -24,6 +24,7 @@
 				<?php
 			}
 			public function pagination($params, $total_item, $active_page = 0) {
+				ob_start();
 				$per_page = $params['show'] > 1 ? $params['show'] : $total_item;
 				?>
 				<input type="hidden" name="pagination_per_page" value="<?php echo esc_attr($per_page); ?>"/>
@@ -76,6 +77,7 @@
 					</div>
 					<?php
 				}
+				echo ob_get_clean();
 			}
 			/*****************************/
 			public static function switch_button($name, $checked = '') {
@@ -107,7 +109,7 @@
 				?>
 				<button class="<?php echo esc_attr($button_class . ' ' . $class); ?>" type="button">
 					<span class="<?php echo esc_attr($icon_class); ?>"></span>
-					<span class="mL_xs"><?php echo wp_kses_post($button_text); ?></span>
+					<span class="mL_xs"><?php echo MP_Global_Function::esc_html($button_text); ?></span>
 				</button>
 				<?php
 			}
@@ -125,14 +127,14 @@
 			}
 			public static function remove_button() {
 				?>
-				<button class="_themeButton_xs mp_item_remove" type="button">
+				<button class="_warningButton_xs mp_item_remove" type="button">
 					<span class="fas fa-trash-alt mp_zero"></span>
 				</button>
 				<?php
 			}
 			public static function move_button() {
 				?>
-				<div class="_themeButton_xs mp_sortable_button" type="">
+				<div class="_mpBtn_navy_blueButton_xs mp_sortable_button" type="">
 					<span class="fas fa-expand-arrows-alt mp_zero"></span>
 				</div>
 				<?php
@@ -197,13 +199,13 @@
 						?>
 						<label>
 							<select name="<?php echo esc_attr($input_name); ?>" data-price="<?php echo esc_attr($price); ?>" class="formControl">
-								<option selected value="0"><?php echo esc_html__('Please select', 'service-booking-manager').' '.esc_html($text); ?></option>
+								<option selected value="0"><?php echo esc_html__('Please select', 'service-booking-manager').' '.$text; ?></option>
 								<?php
 									$max_total = $max_qty > 0 ? $max_qty : $available_seat;
 									$min_value=max(1,$min_qty);
 									for ($i = $min_value; $i <= $max_total; $i++) {
 										?>
-										<option value="<?php echo esc_html($i); ?>"> <?php echo esc_html($i).' '.esc_html($text); ?> </option>
+										<option value="<?php echo esc_html($i); ?>"> <?php echo esc_html($i).' '.$text; ; ?> </option>
 									<?php } ?>
 							</select>
 						</label>

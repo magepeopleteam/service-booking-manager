@@ -136,25 +136,6 @@
 							'type' => 'text',
 							'default' => esc_html__('Service', 'service-booking-manager')
 						),
-						array(
-							'name' => 'single_page_checkout',
-							'label' => esc_html__('Disable single page checkout', 'service-booking-manager'),
-							'desc' => esc_html__('If you want to disable single page checkout, please select Yes.That means active woocommerce checkout page active', 'service-booking-manager'),
-							'type' => 'select',
-							'default' => 'no',
-							'options' => array(
-								'yes' => esc_html__('Yes', 'service-booking-manager'),
-								'no' => esc_html__('No', 'service-booking-manager')
-							)
-						),
-						array(
-							'name' => 'buffer_time',
-							'label' => esc_html__('Buffer Time', 'service-booking-manager'),
-							'desc' => esc_html__('Please enter here  buffer time in minute. By default is 0', 'service-booking-manager'),
-							'type' => 'number',
-							'default' => 0,
-							'placeholder' => esc_html__('Ex:50', 'service-booking-manager'),
-						),
 					))
 				);
 				return array_merge($default_fields, $settings_fields);
