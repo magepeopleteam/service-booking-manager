@@ -163,7 +163,7 @@
 			 */
 			public static function copy_old_category_data($post_id) {
 				$category_info = get_post_meta($post_id, 'mpwpb_category_infos', true);
-				$cat_service_copy =  get_post_meta($post_id, 'mpwpb_service', true);
+				$cat_service_copy =  get_post_meta($post_id, 'mpwpb_old_cat_service_copy', true);
 				$cat_service_copy =$cat_service_copy?$cat_service_copy:'no';
 				if (!empty($category_info) and $cat_service_copy=='no') {
 					$categories = [];
