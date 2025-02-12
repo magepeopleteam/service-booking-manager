@@ -171,20 +171,29 @@
 					$service_items = [];
 					foreach ($category_info as $cat_index => $category) {
 						// Add category
-						$categories[] = [
-							'name'  => $category['category'] ?? '',
-							'icon'  => $category['icon'] ?? '',
-							'image' => $category['image'] ?? '',
-						];
+						if (!empty($category['category']) || !empty($category['icon']) || !empty($category['image'])) {
+							$categories[] = [
+								'name'  => $category['category'] ?? '',
+								'icon'  => $category['icon'] ?? '',
+								'image' => $category['image'] ?? '',
+							];
+						}
+						
 						if (!empty($category['sub_category'])) {
 							foreach ($category['sub_category'] as $sub_cat_index => $sub_category) {
 								// Add sub-category
-								$sub_categories[] = [
-									'name'   => $sub_category['name'] ?? '',
-									'icon'   => $sub_category['icon'] ?? '',
-									'image'  => $sub_category['image'] ?? '',
-									'cat_id' => $cat_index,
-								];
+								if (
+									(!empty($sub_category['name']) || !empty($sub_category['icon']) || !empty($sub_category['image'])) 
+									&& !empty($sub_category['service'])
+								) {
+									$sub_categories[] = [
+										'name'   => $sub_category['name'] ?? '',
+										'icon'   => $sub_category['icon'] ?? '',
+										'image'  => $sub_category['image'] ?? '',
+										'cat_id' => $cat_index,
+									];
+								}
+								
 								if (!empty($sub_category['service'])) {
 									foreach ($sub_category['service'] as $service_index => $service) {
 										// Add service items
