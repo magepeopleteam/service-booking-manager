@@ -218,13 +218,6 @@
 					update_post_meta($post_id, 'mpwpb_sub_category_service', $sub_categories);
 					update_post_meta($post_id, 'mpwpb_service', $service_items);
 					update_post_meta($post_id, 'mpwpb_old_cat_service_copy', 'yes');
-					$post_data = [
-						'ID'           => $post_id,
-						'post_type'      => 'mpwpb_item',
-						'post_status'  => 'publish', 
-						'post_title'   => get_the_title($post_id), 
-					];
-					wp_update_post($post_data);
 				}
 			}
 			public function show_category_items($post_id) {
