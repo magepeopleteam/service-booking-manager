@@ -1155,6 +1155,25 @@
             }
         });
     }
+    // =====================import old category data=============
+    $(document).on('click','.mpwpb-import-old-data',function(e){
+        e.preventDefault();
+        let postId = $(this).data('id');
+        $.ajax({
+            url: mpwpb_admin_ajax.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'mpwpb_import_old_data',
+                postId: postId,
+                nonce: mpwpb_admin_ajax.nonce
+            },
+            success: function (response) {
+                console.log(response);
+            },
+            error: function (error) {
+            }
+        });
+    });
     // =====================sidebar modal open close=============
     $(document).on('click', '[data-modal]', function (e) {
         const modalTarget = $(this).data('modal');
