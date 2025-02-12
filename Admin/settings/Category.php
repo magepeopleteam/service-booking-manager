@@ -220,6 +220,7 @@
 					update_post_meta($post_id, 'mpwpb_old_cat_service_copy', 'yes');
 					$post_data = [
 						'ID'           => $post_id,
+						'post_type'      => 'mpwpb_item',
 						'post_status'  => 'publish', 
 						'post_title'   => get_the_title($post_id), 
 					];
