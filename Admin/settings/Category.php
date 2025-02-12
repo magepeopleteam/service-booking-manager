@@ -161,51 +161,63 @@
 			 * set_category_service() will adjust old category data in new array structure
 			 *
 			 */
-			public function copy_old_category_data($post_id) {
+			public static function copy_old_category_data($post_id) {
 				$category_info = get_post_meta($post_id, 'mpwpb_category_infos', true);
-				if (!empty($category_info)) {
-					$category_info = get_post_meta($post_id, 'mpwpb_category_infos', true);
+				$cat_service_copy =  get_post_meta($post_id, 'mpwpb_old_cat_service_copy', true);
+				$cat_service_copy =$cat_service_copy?$cat_service_copy:'no';
+				if (!empty($category_info) and $cat_service_copy=='no') {
 					$categories = [];
 					$sub_categories = [];
 					$service_items = [];
 					foreach ($category_info as $cat_index => $category) {
-						if (isset($category['category'])) {
+						// Add category
+						if (!empty($category['category']) || !empty($category['icon']) || !empty($category['image'])) {
 							$categories[] = [
-								'name' => $category['category'],
-								'icon' => $category['icon']?? '',
-								'image' => $category['image']?? ''
+								'name'  => $category['category'] ?? '',
+								'icon'  => $category['icon'] ?? '',
+								'image' => $category['image'] ?? '',
 							];
 						}
-						if (isset($category['sub_category'])) {
+						
+						if (!empty($category['sub_category'])) {
 							foreach ($category['sub_category'] as $sub_cat_index => $sub_category) {
-								$sub_categories[] = [
-									'name' => $sub_category['name'],
-									'icon' => $sub_category['icon'],
-									'image' => $sub_category['image'],
-									'cat_id' => $cat_index,
-								];
-								if (isset($sub_category['service'])) {
+								// Add sub-category
+								if (
+									(!empty($sub_category['name']) || !empty($sub_category['icon']) || !empty($sub_category['image'])) 
+									&& !empty($sub_category['service'])
+								) {
+									$sub_categories[] = [
+										'name'   => $sub_category['name'] ?? '',
+										'icon'   => $sub_category['icon'] ?? '',
+										'image'  => $sub_category['image'] ?? '',
+										'cat_id' => $cat_index,
+									];
+								}
+								
+								if (!empty($sub_category['service'])) {
 									foreach ($sub_category['service'] as $service_index => $service) {
+										// Add service items
 										$service_items[] = [
-											'name' => $service['name'],
-											'icon' => $service['icon'],
-											'image' => $service['image'],
-											'details' => $service['details'],
-											'price' => $service['price'],
-											'duration' => $service['duration'],
+											'name'           => $service['name'] ?? '',
+											'icon'           => $service['icon'] ?? '',
+											'image'          => $service['image'] ?? '',
+											'details'        => $service['details'] ?? '',
+											'price'          => $service['price'] ?? 0,
+											'duration'       => $service['duration'] ?? '',
 											'show_cat_status' => 'on',
-											'parent_cat' => $cat_index,
-											'sub_cat' => $sub_cat_index,
+											'parent_cat'     => $cat_index,
+											'sub_cat'        => $sub_cat_index,
 										];
 									}
 								}
 							}
 						}
 					}
+
 					update_post_meta($post_id, 'mpwpb_category_service', $categories);
 					update_post_meta($post_id, 'mpwpb_sub_category_service', $sub_categories);
 					update_post_meta($post_id, 'mpwpb_service', $service_items);
-					update_option('mpwpb_old_cat_service_copy','yes');
+					update_post_meta($post_id, 'mpwpb_old_cat_service_copy', 'yes');
 				}
 			}
 			public function show_category_items($post_id) {
@@ -259,7 +271,7 @@
 			public function get_categories($post_id) {
 				$old_cat_service = get_option('mpwpb_old_cat_service_copy','no');
 				if($old_cat_service=='no'){
-					$this->copy_old_category_data($post_id);
+					self::copy_old_category_data($post_id);
 				}
 				$service_category = get_post_meta($post_id, 'mpwpb_category_service', true);
 				$service_category = !empty($service_category) ? $service_category : [];
