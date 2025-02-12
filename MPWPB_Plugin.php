@@ -60,34 +60,9 @@
 				$text = esc_html__('You Must Install WooCommerce Plugin before activating Service Booking Manager, Because It is dependent on Woocommerce Plugin.', 'service-booking-manager') . '<a class="btn button" href="' . esc_html($wc_install_url) . '">' . esc_html__('Click Here to Install', 'service-booking-manager') . '</a>';
 				printf('<div class="error" style="background:red; color:#fff;"><p>%s</p></div>', wp_kses_post($text));
 			}
-			public function update_posts_on_update() {
-				$args = array(
-					'post_type'      => 'mpwpb_item',
-					'posts_per_page' => -1,
-					'post_status'    => 'publish',
-				);
-		
-				$query = new WP_Query($args);
-		
-				if ($query->have_posts()) {
-					while ($query->have_posts()) {
-						$query->the_post();
-						$post_id = get_the_ID();
-						wp_update_post([
-							'ID'           => $post_id,
-							'post_content' => get_the_content(),
-						]);
-					}
-				}
-		
-				wp_reset_postdata();
-			}
-			
 			public static function activate() {
-				self::update_posts_on_update();
 				update_option('rewrite_rules', '');
 			}
-
 		}
 	}
 	if (class_exists('MPWPB_Plugin')) {
