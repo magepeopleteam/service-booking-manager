@@ -488,6 +488,9 @@
                     service_sub_cat: sub_cat.val(),
                     nonce: mpwpb_admin_ajax.nonce
                 },
+                beforeSend: function () {
+                    $('.mpwpb-service-rows').html('<tr><td colspan="4">'+mpwpb_admin_ajax.loadingTxt+'</td></div>');
+                },
                 success: function (response) {
                     $('#mpwpb-service-msg').html(response.data.message);
                     $('.mpwpb-service-rows').html('');
@@ -515,7 +518,7 @@
         var parent = $(this).closest('tr');
         var icon = parent.find('td:nth-child(1) i').attr('class');
         var imageId = parent.find('td:nth-child(1) img').attr('data-imageId');
-        var name = parent.find('td:nth-child(2)').text().trim();
+        var name = parent.find('td .service-name').text().trim();
         var price = parent.find('td:nth-child(3)').text().trim();
         var duratoin = parent.find('td:nth-child(4)').text().trim();
         $('input[name="service_item_id"]').val(itemId);
@@ -576,6 +579,9 @@
                     service_sub_cat: sub_cat.val(),
                     nonce: mpwpb_admin_ajax.nonce
                 },
+                beforeSend: function () {
+                    $('.mpwpb-service-rows').html('<tr><td colspan="4">'+mpwpb_admin_ajax.loadingTxt+'</td></div>');
+                },
                 success: function (response) {
                     $('#mpwpb-service-msg').html(response.data.message);
                     $('.mpwpb-service-rows').html('');
@@ -616,6 +622,9 @@
                 itemId: itemId,
                 nonce: mpwpb_admin_ajax.nonce
             },
+            beforeSend: function () {
+                $('.mpwpb-service-rows').html('<tr class="mpwpb-preloader"><td colspan="4">'+mpwpb_admin_ajax.loadingTxt+'</td></tr>');
+            },
             success: function (response) {
                 $('.mpwpb-service-rows').html('');
                 $('.mpwpb-service-rows').append(response.data.html);
@@ -634,6 +643,10 @@
                 action: 'mpwpb_show_all_services',
                 postID: postID.val(),
                 nonce: mpwpb_admin_ajax.nonce
+            },
+            beforeSend: function () {
+                // Show preloader before sending the request
+                $('.mpwpb-service-rows').html('<tr class="mpwpb-preloader"><td colspan="4">'+mpwpb_admin_ajax.loadingTxt+'</td></tr>');
             },
             success: function (response) {
                 $('.mpwpb-service-rows').html('');
@@ -906,6 +919,9 @@
                     category_postID: postID.val(),
                     nonce: mpwpb_admin_ajax.nonce
                 },
+                beforeSend: function () {
+                    $('.mpwpb-category-lists').html('<div class="mpwpb-category-items">'+mpwpb_admin_ajax.loadingTxt+'</div>');
+                },
                 success: function (response) {
                     $('#mpwpb-category-service-msg').html(response.data.message);
                     $('.mpwpb-category-lists').html('');
@@ -1005,6 +1021,9 @@
                 category_itemId: itemId.val(),
                 nonce: mpwpb_admin_ajax.nonce
             },
+            beforeSend: function () {
+                $('.mpwpb-category-lists').html('<div class="mpwpb-category-items">'+mpwpb_admin_ajax.loadingTxt+'</div>');
+            },
             success: function (response) {
                 $('#mpwpb-category-service-msg').html(response.data.message);
                 $('.mpwpb-category-lists').html('');
@@ -1065,6 +1084,9 @@
                 itemId: itemId,
                 nonce: mpwpb_admin_ajax.nonce
             },
+            beforeSend: function () {
+                $('.mpwpb-category-lists').html('<div class="mpwpb-category-items">'+mpwpb_admin_ajax.loadingTxt+'</div>');
+            },
             success: function (response) {
                 $('.mpwpb-category-lists').html('');
                 $('.mpwpb-category-lists').append(response.data.html);
@@ -1096,6 +1118,9 @@
                 itemId: itemId,
                 nonce: mpwpb_admin_ajax.nonce
             },
+            beforeSend: function () {
+                $('.mpwpb-category-lists').html('<div class="mpwpb-sub-category-items">'+mpwpb_admin_ajax.loadingTxt+'</div>');
+            },
             success: function (response) {
                 $('.mpwpb-category-lists').html('');
                 $('.mpwpb-category-lists').append(response.data.html);
@@ -1126,10 +1151,15 @@
                 itemId: itemId,
                 nonce: mpwpb_admin_ajax.nonce
             },
+            beforeSend: function () {
+                // Show preloader before sending the request
+                $('.mpwpb-service-rows').html('<tr class="mpwpb-preloader"><td colspan="4">'+mpwpb_admin_ajax.loadingTxt+'</td></tr>');
+            },
             success: function (response) {
                 console.log(response);
                 $('.mpwpb-service-rows').html('');
                 $('.mpwpb-service-rows').html(response.data.html);
+                console.log(response.data.html);
             },
             error: function (error) {
             }
@@ -1146,6 +1176,9 @@
                 itemId: itemId,
                 parentId: parentId,
                 nonce: mpwpb_admin_ajax.nonce
+            },
+            beforeSend: function () {
+                $('.mpwpb-service-rows').html('<tr class="mpwpb-preloader"><td colspan="4">'+mpwpb_admin_ajax.loadingTxt+'</td></tr>');
             },
             success: function (response) {
                 $('.mpwpb-service-rows').html('');

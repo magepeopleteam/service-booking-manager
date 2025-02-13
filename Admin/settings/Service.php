@@ -336,6 +336,15 @@
 				}
 			}
 			public function get_service_item($key, $service) {
+				$MPWPB_Category = new MPWPB_Service_Category();
+				$parent_cat_id = isset($service['parent_cat'])?$service['parent_cat']:'';
+				$sub_cat_id = isset($service['sub_cat'])?$service['sub_cat']:'';
+				if(isset($service['parent_cat'])){
+					$parent_cat = $MPWPB_Category->get_category_by_id($parent_cat_id);
+				}
+				if(isset($service['sub_cat'])){
+					$sub_cat = $MPWPB_Category->get_sub_category_by_id($sub_cat_id);
+				}
 				?>
                 <tr data-id="<?php echo esc_attr($key); ?>" data-cat-status="<?php echo esc_attr($service['show_cat_status']); ?>" data-parent-cat="<?php echo esc_attr($service['parent_cat']); ?>" data-sub-cat="<?php echo esc_attr($service['sub_cat']); ?>" title="<?php echo esc_attr($service['details']); ?>">
                     <td>
@@ -347,7 +356,10 @@
 						<?php endif; ?>
                         <span style="display: none;"><?php echo esc_html($service['details']); ?></span>
                     </td>
-                    <td style="text-align:left"><?php echo esc_html($service['name']); ?></td>
+                    <td style="text-align:left">
+						<strong class="service-name"><?php echo esc_html($service['name']); ?></strong><br>
+						<?php echo esc_html(isset($parent_cat['name']))?$parent_cat['name']:''; ?><?php echo esc_html(isset($sub_cat['name']))?' > '.$sub_cat['name']:''; ?>
+					</td>
                     <td><?php echo esc_html($service['price']); ?></td>
                     <td><?php echo esc_html($service['duration']); ?></td>
                     <td>

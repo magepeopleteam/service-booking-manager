@@ -36,7 +36,8 @@
 				wp_enqueue_script('mpwpb_admin', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_admin.js', ['jquery'], time(), true);
 				wp_localize_script('mpwpb_admin', 'mpwpb_admin_ajax', array(
 					'ajax_url' => admin_url('admin-ajax.php'),
-					'nonce'    => wp_create_nonce('mpwpb_admin_nonce')
+					'nonce'    => wp_create_nonce('mpwpb_admin_nonce'),
+					'loadingTxt'    => __('Loading...','service-booking-manager'),
 				));
 				do_action('add_mpwpb_admin_script');
 			}

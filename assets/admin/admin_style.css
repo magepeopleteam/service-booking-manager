@@ -373,7 +373,8 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   background-color: var(--mage-light);
   color: var(--mage-dark);
   height: 40px;
-  font-size: 36px;
+  font-size: 24px;
+  line-height: 36px;
   width: 54px;
   border-radius: 0;
 }
