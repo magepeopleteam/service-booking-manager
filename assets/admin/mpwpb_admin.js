@@ -622,6 +622,10 @@
                 itemId: itemId,
                 nonce: mpwpb_admin_ajax.nonce
             },
+            beforeSend: function () {
+                // Show preloader before sending the request
+                $('.mpwpb-service-rows').html('<tr class="mpwpb-preloader"><td colspan="4">'+mpwpb_admin_ajax.loadingTxt+'</td></tr>');
+            },
             success: function (response) {
                 $('.mpwpb-service-rows').html('');
                 $('.mpwpb-service-rows').append(response.data.html);
@@ -1080,6 +1084,9 @@
                 category_postID: postID.val(),
                 itemId: itemId,
                 nonce: mpwpb_admin_ajax.nonce
+            },
+            beforeSend: function () {
+                $('.mpwpb-category-lists').html('<div class="mpwpb-category-items">'+mpwpb_admin_ajax.loadingTxt+'</div>');
             },
             success: function (response) {
                 $('.mpwpb-category-lists').html('');
