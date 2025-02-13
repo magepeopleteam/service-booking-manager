@@ -339,10 +339,10 @@
 				$MPWPB_Category = new MPWPB_Service_Category();
 				$parent_cat_id = isset($service['parent_cat'])?$service['parent_cat']:'';
 				$sub_cat_id = isset($service['sub_cat'])?$service['sub_cat']:'';
-				if(isset($service['parent_cat'])){
+				if(!empty($service['parent_cat'])){
 					$parent_cat = $MPWPB_Category->get_category_by_id($parent_cat_id);
 				}
-				if(isset($service['sub_cat'])){
+				if(!empty($service['sub_cat'])){
 					$sub_cat = $MPWPB_Category->get_sub_category_by_id($sub_cat_id);
 				}
 				?>
