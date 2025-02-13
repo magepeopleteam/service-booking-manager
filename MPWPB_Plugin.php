@@ -32,7 +32,7 @@
 					require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Dependencies.php';
 				} else {
 					require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Quick_Setup.php';
-					// add_action('admin_notices', [$this, 'woocommerce_not_active']);
+					 //add_action('admin_notices', [$this, 'woocommerce_not_active']);
 					add_action('activated_plugin', array($this, 'activation_redirect_setup'), 90, 1);
 				}
 			}
@@ -57,15 +57,20 @@
 			}
 			public function woocommerce_not_active() {
 				$wc_install_url = get_admin_url() . 'plugin-install.php?s=woocommerce&tab=search&type=term';
-				$text = esc_html__('You Must Install WooCommerce Plugin before activating Service Booking Manager, Because It is dependent on Woocommerce Plugin.', 'service-booking-manager') . '<a class="btn button" href="' . esc_html($wc_install_url) . '">' . esc_html__('Click Here to Install', 'service-booking-manager') . '</a>';
-				printf('<div class="error" style="background:red; color:#fff;"><p>%s</p></div>', wp_kses_post($text));
+				?>
+				<div class="error" style="background-color: #ffe0e0;">
+					<p>
+						<?php esc_html_e('You Must Install WooCommerce Plugin before activating Service Booking Manager, Because It is dependent on Woocommerce Plugin.', 'service-booking-manager');?>
+						<a class="btn button" href="<?php esc_html($wc_install_url); ?>"><?php esc_html_e('Click Here to Install', 'service-booking-manager'); ?></a>
+					</p>
+				</div>
+				<?php
 			}
-			public static function activate() {
-				update_option('rewrite_rules', '');
+			public static function plugin_activate() {
+				error_log('MPWPB_Plugin activated.', 0);
+				flush_rewrite_rules();
 			}
 		}
-	}
-	if (class_exists('MPWPB_Plugin')) {
-		register_activation_hook(__FILE__, array('MPWPB_Plugin', 'activate'));
+		register_activation_hook(__FILE__, ['MPWPB_Plugin', 'plugin_activate']);
 		new MPWPB_Plugin();
 	}
