@@ -518,7 +518,7 @@
         var parent = $(this).closest('tr');
         var icon = parent.find('td:nth-child(1) i').attr('class');
         var imageId = parent.find('td:nth-child(1) img').attr('data-imageId');
-        var name = parent.find('td:nth-child(2)').text().trim();
+        var name = parent.find('td .service-name').text().trim();
         var price = parent.find('td:nth-child(3)').text().trim();
         var duratoin = parent.find('td:nth-child(4)').text().trim();
         $('input[name="service_item_id"]').val(itemId);
