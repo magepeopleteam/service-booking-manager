@@ -623,7 +623,6 @@
                 nonce: mpwpb_admin_ajax.nonce
             },
             beforeSend: function () {
-                // Show preloader before sending the request
                 $('.mpwpb-service-rows').html('<tr class="mpwpb-preloader"><td colspan="4">'+mpwpb_admin_ajax.loadingTxt+'</td></tr>');
             },
             success: function (response) {
@@ -1119,6 +1118,9 @@
                 itemId: itemId,
                 nonce: mpwpb_admin_ajax.nonce
             },
+            beforeSend: function () {
+                $('.mpwpb-category-lists').html('<div class="mpwpb-sub-category-items">'+mpwpb_admin_ajax.loadingTxt+'</div>');
+            },
             success: function (response) {
                 $('.mpwpb-category-lists').html('');
                 $('.mpwpb-category-lists').append(response.data.html);
@@ -1174,6 +1176,9 @@
                 itemId: itemId,
                 parentId: parentId,
                 nonce: mpwpb_admin_ajax.nonce
+            },
+            beforeSend: function () {
+                $('.mpwpb-service-rows').html('<tr class="mpwpb-preloader"><td colspan="4">'+mpwpb_admin_ajax.loadingTxt+'</td></tr>');
             },
             success: function (response) {
                 $('.mpwpb-service-rows').html('');
