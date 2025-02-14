@@ -344,7 +344,7 @@
 				
 				?>
                 <tr data-id="<?php echo esc_attr($key); ?>" data-cat-status="<?php echo esc_attr($service['show_cat_status']); ?>" data-parent-cat="<?php echo esc_attr($service['parent_cat']); ?>" data-sub-cat="<?php echo esc_attr($service['sub_cat']); ?>" title="<?php echo esc_attr($service['details']); ?>">
-                    <td>
+                    <td data-imageid="<?php echo esc_attr($service['image']); ?>">
 						<?php if (!empty($service['image'])): ?>
 							<?php echo wp_get_attachment_image($service['image'], 'medium'); ?>
 						<?php endif; ?>

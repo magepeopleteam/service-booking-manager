@@ -444,6 +444,7 @@
         $('[data-collapse="#mpwpb_show_category_status"]').slideUp();
         $('select[name="mpwpb_parent_cat"]').val('');
         $('select[name="mpwpb_sub_category"]').val('');
+        $('input[name="mpwpb_category_image_icon"]').val('');
 
         $('.mp_icon_item').hide();
         $('.mp_image_item').hide();
@@ -522,16 +523,25 @@
         var details = $(this).closest('tr').attr('title');
         var parent = $(this).closest('tr');
         var icon = parent.find('td:nth-child(1) i').attr('class');
-        var imageId = parent.find('td:nth-child(1) img').attr('data-imageId');
+        var imageSrc = parent.find('td:nth-child(1) img').attr('src');
+        var imageId = parent.find('td:nth-child(1)').data('imageid');
         var name = parent.find('td .service-name').text().trim();
         var price = parent.find('td:nth-child(3)').text().trim();
         var duratoin = parent.find('td:nth-child(4)').text().trim();
+        $('.mp_icon_item').hide();
+        $('.mp_image_item').hide();
         $('input[name="service_item_id"]').val(itemId);
         if (icon) {
             $('input[name="service_image_icon"]').val(icon);
+            $('.mp_icon_item').show();
+            $('.mp_icon_item span').addClass(icon);
         } else if (imageId) {
             $('input[name="service_image_icon"]').val(imageId);
+            $('.mp_image_item').show();
+            $('.mp_image_item img').attr('src',imageSrc);
         }
+        $('.mp_add_icon_image_button_area').show();
+
         $('input[name="service_name"]').val(name);
         $('input[name="service_price"]').val(price);
         $('input[name="service_duration"]').val(duratoin);
