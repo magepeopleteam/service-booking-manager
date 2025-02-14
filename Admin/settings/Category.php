@@ -246,7 +246,7 @@
 								<?php foreach ($sub_categories as $child_key => $sub_category): ?>
 									<?php if ($sub_category['cat_id'] == $parent_key): ?>
 										<div class="mpwpb-sub-category-items" data-parent-id="<?php echo esc_attr($parent_key); ?>" data-id="<?php echo esc_attr($child_key); ?>">
-											<div class="image-block">
+											<div class="image-block" data-imageid="<?php echo esc_attr($sub_category['image']); ?>">
 												<?php if (!empty($sub_category['image'])): ?>
 													<?php echo wp_get_attachment_image($sub_category['image'], 'medium'); ?>
 												<?php endif; ?>
