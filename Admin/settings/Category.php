@@ -227,7 +227,7 @@
 				if(!empty($categories)):
 					foreach ($categories as $parent_key => $category): ?>
 						<div class="mpwpb-category-items" data-id="<?php echo esc_attr($parent_key); ?>">
-							<div class="image-block">
+							<div class="image-block" data-imageid="<?php echo esc_attr($category['image']); ?>">
 								<?php if (!empty($category['image'])): ?>
 									<?php echo wp_get_attachment_image($category['image'], 'medium'); ?>
 								<?php endif; ?>
@@ -246,7 +246,7 @@
 								<?php foreach ($sub_categories as $child_key => $sub_category): ?>
 									<?php if ($sub_category['cat_id'] == $parent_key): ?>
 										<div class="mpwpb-sub-category-items" data-parent-id="<?php echo esc_attr($parent_key); ?>" data-id="<?php echo esc_attr($child_key); ?>">
-											<div class="image-block">
+											<div class="image-block" data-imageid="<?php echo esc_attr($sub_category['image']); ?>">
 												<?php if (!empty($sub_category['image'])): ?>
 													<?php echo wp_get_attachment_image($sub_category['image'], 'medium'); ?>
 												<?php endif; ?>
@@ -274,15 +274,20 @@
 				
 				return $service_category;
 			}
-			public function get_category_by_id($cat_id) {
-				$service_category = get_post_meta(get_the_ID(), 'mpwpb_category_service', true);
-				$service_category = !empty($service_category) ? $service_category : [];
-				return $service_category[$cat_id];
+			public function get_category_by_id($post_id,$cat_id) {
+				if($cat_id!=''){
+					$service_category = get_post_meta($post_id, 'mpwpb_category_service', true);
+					$service_category = !empty($service_category) ? $service_category : [];
+					return $service_category[$cat_id];
+				}
 			}
-			public function get_sub_category_by_id($cat_id) {
-				$sub_category = get_post_meta(get_the_ID(), 'mpwpb_sub_category_service', true);
-				$sub_category = !empty($sub_category) ? $sub_category : [];
-				return $sub_category[$cat_id];
+			public function get_sub_category_by_id($post_id,$cat_id) {
+				if($cat_id!=''){
+					$sub_category = get_post_meta($post_id, 'mpwpb_sub_category_service', true);
+					$sub_category = !empty($sub_category) ? $sub_category : [];
+					return $sub_category[$cat_id];
+				}
+				
 			}
 			public function get_sub_categories($post_id) {
 				$sub_category = get_post_meta($post_id, 'mpwpb_sub_category_service', true);
