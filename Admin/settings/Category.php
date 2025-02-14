@@ -274,13 +274,13 @@
 				
 				return $service_category;
 			}
-			public function get_category_by_id($cat_id) {
-				$service_category = get_post_meta(get_the_ID(), 'mpwpb_category_service', true);
+			public function get_category_by_id($post_id,$cat_id) {
+				$service_category = get_post_meta($post_id, 'mpwpb_category_service', true);
 				$service_category = !empty($service_category) ? $service_category : [];
 				return $service_category[$cat_id];
 			}
-			public function get_sub_category_by_id($cat_id) {
-				$sub_category = get_post_meta(get_the_ID(), 'mpwpb_sub_category_service', true);
+			public function get_sub_category_by_id($post_id,$cat_id) {
+				$sub_category = get_post_meta($post_id, 'mpwpb_sub_category_service', true);
 				$sub_category = !empty($sub_category) ? $sub_category : [];
 				return $sub_category[$cat_id];
 			}

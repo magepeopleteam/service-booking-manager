@@ -184,7 +184,7 @@
 				$services = $this->get_services($post_id);
 				foreach ($services as $key => $service) {
 					if ($service['parent_cat'] == $category_id) {
-						$this->get_service_item($key, $service);
+						$this->get_service_item($post_id,$key, $service);
 					}
 				}
 			}
@@ -192,7 +192,7 @@
 				$services = $this->get_services($post_id);
 				foreach ($services as $key => $service) {
 					if (($service['parent_cat'] == $parent_cat) && ($service['sub_cat'] == $sub_cat)) {
-						$this->get_service_item($key, $service);
+						$this->get_service_item($post_id, $key, $service);
 					}
 				}
 			}
@@ -332,19 +332,16 @@
 				$services = $this->get_services($post_id);
 				$services = is_array($services) ? $services : [];
 				foreach ($services as $key => $service) {
-					$this->get_service_item($key, $service);
+					$this->get_service_item($post_id,$key, $service);
 				}
 			}
-			public function get_service_item($key, $service) {
+			public function get_service_item($post_id,$key, $service) {
 				$MPWPB_Category = new MPWPB_Service_Category();
-				$parent_cat_id = isset($service['parent_cat'])?$service['parent_cat']:'';
-				$sub_cat_id = isset($service['sub_cat'])?$service['sub_cat']:'';
-				if(!empty($service['parent_cat'])){
-					$parent_cat = $MPWPB_Category->get_category_by_id($parent_cat_id);
-				}
-				if(!empty($service['sub_cat'])){
-					$sub_cat = $MPWPB_Category->get_sub_category_by_id($sub_cat_id);
-				}
+				$parent_cat_id = $service['parent_cat'];
+				$sub_cat_id =  $service['sub_cat'];
+				$parent_cat = $MPWPB_Category->get_category_by_id($post_id,$parent_cat_id);
+				$sub_cat = $MPWPB_Category->get_sub_category_by_id($post_id,$sub_cat_id);
+				
 				?>
                 <tr data-id="<?php echo esc_attr($key); ?>" data-cat-status="<?php echo esc_attr($service['show_cat_status']); ?>" data-parent-cat="<?php echo esc_attr($service['parent_cat']); ?>" data-sub-cat="<?php echo esc_attr($service['sub_cat']); ?>" title="<?php echo esc_attr($service['details']); ?>">
                     <td>
