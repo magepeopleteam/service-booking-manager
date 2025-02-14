@@ -227,7 +227,7 @@
 				if(!empty($categories)):
 					foreach ($categories as $parent_key => $category): ?>
 						<div class="mpwpb-category-items" data-id="<?php echo esc_attr($parent_key); ?>">
-							<div class="image-block">
+							<div class="image-block" data-imageid="<?php echo esc_attr($category['image']); ?>">
 								<?php if (!empty($category['image'])): ?>
 									<?php echo wp_get_attachment_image($category['image'], 'medium'); ?>
 								<?php endif; ?>

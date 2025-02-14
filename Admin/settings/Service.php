@@ -157,10 +157,10 @@
                                 </div>
                                 <div class="mp_add_icon_image_button_area ">
                                     <button class="mp_image_add" type="button">
-                                        <span class="fas fa-images"></span>Image
+                                        <span class="fas fa-images"></span> <?php _e('Image','service-booking-manager'); ?>
                                     </button>
                                     <button class="mp_icon_add" type="button" data-target-popup="#mp_add_icon_popup">
-                                        <span class="fas fa-plus"></span>Icon
+                                        <span class="fas fa-plus"></span><?php _e('Icon','service-booking-manager'); ?>
                                     </button>
                                 </div>
                             </div>

@@ -444,6 +444,11 @@
         $('[data-collapse="#mpwpb_show_category_status"]').slideUp();
         $('select[name="mpwpb_parent_cat"]').val('');
         $('select[name="mpwpb_sub_category"]').val('');
+
+        $('.mp_icon_item').hide();
+        $('.mp_image_item').hide();
+        $('.mp_add_icon_image_button_area').show();
+        
     }
     $(document).on('change', 'input[name="mpwpb_show_category_status"]', function () {
         if ($(this).is(':checked')) {
@@ -844,6 +849,11 @@
         $('input[name="mpwpb_use_sub_category"]').prop('checked', false);
         $('[data-collapse="#mpwpb_use_sub_category"]').slideUp();
         $('select[name="mpwpb_parent_cat"]').val('').change();
+
+        $('.mp_icon_item').hide();
+        $('.mp_image_item').hide();
+        $('.mp_add_icon_image_button_area').show();
+
         if ($('.mpwpb-category-items').length > 0) {
             $('.mpwpb-sub-category-enable').show();
         } else {
@@ -954,15 +964,23 @@
         var itemId = $(this).closest('.mpwpb-category-items').data('id');
         var parent = $(this).closest('.mpwpb-category-items');
         var icon = parent.find('.image-block i').attr('class');
-        var imageId = parent.find('.image-block img').attr('data-imageId');
+        var imageId = parent.find('.image-block').data('imageid');
         var name = parent.find('.title').text().trim();
         $('input[name="mpwpb_category_item_id"]').val(itemId);
+
+        $('.mp_icon_item').hide();
+        $('.mp_image_item').hide();
         if (icon) {
             $('input[name="mpwpb_category_image_icon"]').val(icon);
+            $('.mp_icon_item').show();
+            $('.mp_icon_item div span').addClass(icon);
         } else if (imageId) {
             $('input[name="mpwpb_category_image_icon"]').val(imageId);
+            $('.mp_image_item').show();
         }
         $('input[name="mpwpb_category_name"]').val(name);
+
+        $('.mp_add_icon_image_button_area').show();
     });
     $(document).on('click', '#mpwpb_category_service_update', function (e) {
         e.preventDefault();
