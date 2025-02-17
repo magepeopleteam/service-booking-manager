@@ -15,7 +15,12 @@
 	$sub_category_active = MP_Global_Function::get_post_info($post_id, 'mpwpb_sub_category_active', 'off');
 	if (sizeof($all_category) > 0) {
 		?>
+
+
         <div class="_dShadow_7 mpwpb_category_area">
+            <header>
+                <h5><?php esc_html_e('Select Type', 'service-booking-manager'); ?></h5>
+            </header>
 			<?php foreach ($all_category as $cat_key => $category) {
 				$category_name = array_key_exists('name', $category) ? $category['name'] : '';
 				$category_icon = array_key_exists('icon', $category) ? $category['icon'] : '';
