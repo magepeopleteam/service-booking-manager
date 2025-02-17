@@ -195,15 +195,15 @@
                                         <span class="fas fa-times mp_remove_icon mp_icon_remove"></span>
                                     </div>
                                     <div class="mp_image_item dNone">
-	                                    <?php echo wp_get_attachment_image(0, 'medium'); ?>
+	                                    <img alt="">
                                         <span class="fas fa-times mp_remove_icon mp_image_remove"></span>
                                     </div>
                                     <div class="mp_add_icon_image_button_area ">
                                         <button class="mp_image_add" type="button">
-                                            <span class="fas fa-images"></span>Image
+                                            <span class="fas fa-images"></span><?php _e('Image','service-booking-manager'); ?>
                                         </button>
                                         <button class="mp_icon_add" type="button" data-target-popup="#mp_add_icon_popup">
-                                            <span class="fas fa-plus"></span>Icon
+                                            <span class="fas fa-plus"></span><?php _e('Icon','service-booking-manager'); ?>
                                         </button>
                                     </div>
                                 </div>
@@ -230,7 +230,7 @@
 					foreach ($extra_services as $key => $value) :
 						?>
                         <tr data-id='<?php echo esc_attr($key); ?>'>
-                            <td>
+                            <td data-imageId="<?php echo esc_attr($value['image']); ?>">
 								<?php if (!empty($value['image'])): ?>
 									<?php echo wp_get_attachment_image($value['image'], 'medium'); ?>
 								<?php endif; ?>
