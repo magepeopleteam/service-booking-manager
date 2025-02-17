@@ -966,6 +966,7 @@ div.registration_tab_item {
   border-bottom: 1px solid var(--color_theme);
   padding: 10px 0;
 }
+.mpwpb-static-template .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody  .mpwpb_category_area header h5,
 .mpwpb-static-template .sidebar .mpwpb_static_theme .mpPopup .popupMainArea .popupBody .mpwpb-popup-content .service-items .mpwpb_service_area header h5 {
   font-size: 16px;
   color: var(--color_theme);
@@ -1241,6 +1242,7 @@ div.registration_tab_item {
 .mpwpb-static-template .sidebar .mpwpb_static_area .mpwpb_static .mpwpb_item_box:last-child {
   margin-bottom: 0;
 }
+.mpwpb-static-template .sidebar .mpwpb_static_area .mpwpb_static .mpwpb_item_box .alignCenter{width: 95%;}
 .mpwpb-static-template .sidebar .mpwpb_static_area .mpwpb_static .mpwpb_item_box h2 {
   font-weight: bold;
   font-size: 16px;
