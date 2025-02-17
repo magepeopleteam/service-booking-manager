@@ -684,6 +684,10 @@
         $('input[name="mpwpb_ext_service_qty"]').val('');
         $('textarea[name="mpwpb_ext_service_description"]').val('');
         $('input[name="mpwpb_ext_service_image_icon"]').val('');
+
+        $('.mp_icon_item').hide();
+        $('.mp_image_item').hide();
+        $('.mp_add_icon_image_button_area').show();
     }
     $(document).on('click', '#mpwpb_ex_service_save', function (e) {
         e.preventDefault();
@@ -763,17 +767,26 @@
         var itemId = $(this).closest('tr').data('id');
         var parent = $(this).closest('tr');
         var icon = parent.find('td:nth-child(1) i').attr('class');
-        var imageId = parent.find('td:nth-child(1) img').attr('data-imageId');
+        var imageId = parent.find('td:nth-child(1)').attr('data-imageId');
+        var imageSrc = parent.find('td:nth-child(1) img').attr('src');
         var name = parent.find('td:nth-child(2)').text().trim();
         var details = parent.find('td:nth-child(3)').text().trim();
         var qty = parent.find('td:nth-child(4)').text().trim();
         var price = parent.find('td:nth-child(5)').text().trim();
         var price = parent.find('td:nth-child(5)').text().trim();
         $('input[name="mpwpb_ext_service_item_id"]').val(itemId);
+        
+        $('.mp_icon_item').hide();
+        $('.mp_image_item').hide();
         if (icon) {
             $('input[name="mpwpb_ext_service_image_icon"]').val(icon);
+            $('.mp_icon_item').show();
+            $('.mp_icon_item span').addClass(icon);
+            console.log(icon);
         } else if (imageId) {
             $('input[name="mpwpb_ext_service_image_icon"]').val(imageId);
+            $('.mp_image_item').show();
+            $('.mp_image_item img').attr('src',imageSrc);
         }
         $('input[name="mpwpb_ext_service_name"]').val(name);
         $('input[name="mpwpb_ext_service_price"]').val(price);
