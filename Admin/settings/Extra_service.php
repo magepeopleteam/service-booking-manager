@@ -27,7 +27,7 @@
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
 				}
 				$post_id = isset($_POST['postID']) ? sanitize_text_field(wp_unslash($_POST['postID'])) : '';
-				$sorted_ids = isset($_POST['sortedIDs']) ? $_POST['sortedIDs'] : [];
+				$sorted_ids = isset($_POST['sortedIDs']) ? array_map('intval', $_POST['sortedIDs']) : [];
 				$ext_services = $this->get_extra_services($post_id);
 				$new_ordered = [];
 				foreach ($sorted_ids as $id) {

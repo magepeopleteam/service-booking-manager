@@ -66,14 +66,17 @@
         }
     }
     table.table.extra-service-table{
+        tr{
+            cursor:  move;
+        }
         .ui-sortable-helper{
             display: flex;
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            background: #e4e4e4; /* Light gray to indicate placeholder */
-            visibility: visible !important;
-            cursor: move;
+            background: var(--mage-light);
+            visibility: visible;
+            cursor:  grabbing;
         }
     }
 }

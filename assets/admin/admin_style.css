@@ -383,14 +383,17 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   padding: 5px;
   cursor: pointer;
 }
+#mp_meta_box_panel table.table.extra-service-table tr {
+  cursor: move;
+}
 #mp_meta_box_panel table.table.extra-service-table .ui-sortable-helper {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  background: #e4e4e4; /* Light gray to indicate placeholder */
-  visibility: visible !important;
-  cursor: move;
+  background: var(--mage-light);
+  visibility: visible;
+  cursor: grabbing;
 }
 
 .mpwpb-category-lists {
