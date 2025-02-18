@@ -1136,13 +1136,6 @@
     $(document).on("ready", function(e) {
         $(".mpwpb-category-lists").sortable({
             items: ".mpwpb-category-items",
-            connectWith: ".mpwpb-category-lists",
-            start: function(event, ui) {
-                ui.item.addClass("dragging");
-            },
-            stop: function(event, ui) {
-                ui.item.removeClass("dragging");
-            },
             update: function(event, ui) {
                 var sortedIDs = $(this).sortable("toArray", { attribute: "data-id" });
                 $.ajax({
@@ -1165,14 +1158,7 @@
             }
         });
     });
-    $(".mpwpb-sub-category-lists").sortable({
-        items: ".mpwpb-sub-category-items", // Only make .mpwpb-sub-category-items sortable
-        connectWith: ".mpwpb-sub-category-lists", // Allow sub-category items to be dragged between lists
-        update: function(event, ui) {
-            // Optional: Handle the updated sub-category order
-            console.log('Updated sub-category order:', $(this).sortable('toArray'));
-        }
-    });
+
     // ===========================sub category=====================
     $(document).on('click', '.mpwpb-sub-category-edit', function (e) {
         $('.mpwpb-sub-category-enable').show();

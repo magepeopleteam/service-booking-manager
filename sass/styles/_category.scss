@@ -2,6 +2,14 @@
 .mpwpb-category-lists{
     margin-bottom: 20px; 
     .mpwpb-category-items{
+        cursor:  move;
+        padding-bottom: 0;
+        &.ui-sortable-helper{
+            background: #fff;
+            border:1px dashed var(--mage-dark);
+            visibility: visible;
+            cursor:  grabbing;
+        }
         .parent-category-items{
             display: flex;
             justify-content: space-between;
