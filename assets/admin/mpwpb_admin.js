@@ -1132,6 +1132,48 @@
             }
         });
     }
+    //sortable parent category
+    $(document).on("ready", function(e) {
+        $(".mpwpb-category-lists").sortable({
+            items: ".mpwpb-category-items",
+            connectWith: ".mpwpb-category-lists",
+            start: function(event, ui) {
+                ui.item.addClass("dragging");
+            },
+            stop: function(event, ui) {
+                ui.item.removeClass("dragging");
+            },
+            update: function(event, ui) {
+                var sortedIDs = $(this).sortable("toArray", { attribute: "data-id" });
+                $.ajax({
+                    url: mpwpb_admin_ajax.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'mpwpb_sort_category',
+                        postID: $('input[name="mpwpb_category_post_id"]').val(),
+                        sortedIDs: sortedIDs,
+                        nonce: mpwpb_admin_ajax.nonce
+                    },
+                    success: function (response) {
+                        $('.mpwpb-category-lists').html('');
+                        $('.mpwpb-category-lists').append(response.data.html);
+                    },
+                    error: function (error) {
+                        console.log('Error:', error);
+                    }
+                })
+            }
+        });
+    });
+    $(".mpwpb-sub-category-lists").sortable({
+        items: ".mpwpb-sub-category-items", // Only make .mpwpb-sub-category-items sortable
+        connectWith: ".mpwpb-sub-category-lists", // Allow sub-category items to be dragged between lists
+        update: function(event, ui) {
+            // Optional: Handle the updated sub-category order
+            console.log('Updated sub-category order:', $(this).sortable('toArray'));
+        }
+    });
+    // ===========================sub category=====================
     $(document).on('click', '.mpwpb-sub-category-edit', function (e) {
         $('.mpwpb-sub-category-enable').show();
         $('input[name="mpwpb_use_sub_category"]').val('on');
