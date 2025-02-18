@@ -65,7 +65,8 @@
             }
         }
     }
-    table.table.extra-service-table{
+    // service and extra service table sorting order
+    table.table.extra-service-table,tbody.mpwpb-service-rows{
         tr{
             cursor:  move;
         }

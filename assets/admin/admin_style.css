@@ -383,10 +383,10 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   padding: 5px;
   cursor: pointer;
 }
-#mp_meta_box_panel table.table.extra-service-table tr {
+#mp_meta_box_panel table.table.extra-service-table tr, #mp_meta_box_panel tbody.mpwpb-service-rows tr {
   cursor: move;
 }
-#mp_meta_box_panel table.table.extra-service-table .ui-sortable-helper {
+#mp_meta_box_panel table.table.extra-service-table .ui-sortable-helper, #mp_meta_box_panel tbody.mpwpb-service-rows .ui-sortable-helper {
   display: flex;
   justify-content: space-between;
   align-items: center;

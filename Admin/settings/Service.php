@@ -28,7 +28,34 @@
 				// load service by category
 				add_action('wp_ajax_mpwpb_load_service_by_sub_category', [$this, 'load_service_by_sub_category']);
 				add_action('wp_ajax_nopriv_mpwpb_load_service_by_sub_category', [$this, 'load_service_by_sub_category']);
+				// service order
+				add_action('wp_ajax_mpwpb_sort_service',[$this,'sort_service']);
 			}
+			public function sort_service() {
+				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
+					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
+				}
+				$post_id = isset($_POST['postID']) ? sanitize_text_field(wp_unslash($_POST['postID'])) : '';
+				$sorted_ids = isset($_POST['sortedIDs']) ? array_map('intval', $_POST['sortedIDs']) : [];
+				$services = $this->get_services($post_id);
+				$new_ordered = [];
+				foreach ($sorted_ids as $id) {
+					if (isset($services[$id])) {
+						$new_ordered[$id] = $services[$id];
+					}
+				}
+				update_post_meta($post_id, 'mpwpb_service', $new_ordered);
+				ob_start();
+				$resultMessage = esc_html__('Data Updated Successfully', 'service-booking-manager');
+				$this->get_all_service_items($post_id);
+				$html_output = ob_get_clean();
+				wp_send_json_success([
+					'message' => $resultMessage,
+					'html' => $html_output,
+				]);
+				die;
+			}
+
 			public function show_all_services() {
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access

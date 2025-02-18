@@ -671,6 +671,31 @@
             },
         });
     });
+    //sortable service
+    $(document).on("ready", function(e) {
+        $(".mpwpb-service-table tbody.mpwpb-service-rows").sortable({
+            update: function(event, ui) {
+                var sortedIDs = $(this).sortable("toArray", { attribute: "data-id" });
+                $.ajax({
+                    url: mpwpb_admin_ajax.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'mpwpb_sort_service',
+                        postID: $('input[name="mpwpb_ext_post_id"]').val(),
+                        sortedIDs: sortedIDs,
+                        nonce: mpwpb_admin_ajax.nonce
+                    },
+                    success: function (response) {
+                        $('.mpwpb-service-rows').html('');
+                        $('.mpwpb-service-rows').html(response.data.html);
+                    },
+                    error: function (error) {
+                        console.log('Error:', error);
+                    }
+                })
+            }
+        });
+    });
     // ============= Extra service sidebar modal ======================
     $(document).on('click', '.mpwpb-extra-service-new', function (e) {
         $('#mpwpb-ex-service-msg').html('');
@@ -835,7 +860,6 @@
     }
 
     $(document).on("ready", function(e) {
-        // $(".extra-service-table tbody").sortable();
         $(".extra-service-table tbody").sortable({
             update: function(event, ui) {
                 var sortedIDs = $(this).sortable("toArray", { attribute: "data-id" });
