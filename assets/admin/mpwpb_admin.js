@@ -833,6 +833,33 @@
             }
         });
     }
+
+    $(document).on("ready", function(e) {
+        // $(".extra-service-table tbody").sortable();
+        $(".extra-service-table tbody").sortable({
+            update: function(event, ui) {
+                var sortedIDs = $(this).sortable("toArray", { attribute: "data-id" });
+                $.ajax({
+                    url: mpwpb_admin_ajax.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'mpwpb_sort_extra_service',
+                        postID: $('input[name="mpwpb_ext_post_id"]').val(),
+                        sortedIDs: sortedIDs,
+                        nonce: mpwpb_admin_ajax.nonce
+                    },
+                    success: function (response) {
+                        // console.log(response);
+                        $('.extra-service-table tbody').html('');
+                        $('.extra-service-table tbody').append(response.data.html);
+                    },
+                    error: function (error) {
+                        console.log('Error:', error);
+                    }
+                })
+            }
+        });
+    });
     // =============Service Category sidebar modal ======================
     $(document).on('click', '.mpwpb-category-new', function (e) {
         $('#mpwpb-category-service-msg').html('');
