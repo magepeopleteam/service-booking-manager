@@ -671,6 +671,31 @@
             },
         });
     });
+    //sortable service
+    $(document).on("ready", function(e) {
+        $(".mpwpb-service-table tbody.mpwpb-service-rows").sortable({
+            update: function(event, ui) {
+                var sortedIDs = $(this).sortable("toArray", { attribute: "data-id" });
+                $.ajax({
+                    url: mpwpb_admin_ajax.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'mpwpb_sort_service',
+                        postID: $('input[name="mpwpb_ext_post_id"]').val(),
+                        sortedIDs: sortedIDs,
+                        nonce: mpwpb_admin_ajax.nonce
+                    },
+                    success: function (response) {
+                        $('.mpwpb-service-rows').html('');
+                        $('.mpwpb-service-rows').html(response.data.html);
+                    },
+                    error: function (error) {
+                        console.log('Error:', error);
+                    }
+                })
+            }
+        });
+    });
     // ============= Extra service sidebar modal ======================
     $(document).on('click', '.mpwpb-extra-service-new', function (e) {
         $('#mpwpb-ex-service-msg').html('');
@@ -833,6 +858,32 @@
             }
         });
     }
+
+    $(document).on("ready", function(e) {
+        $(".extra-service-table tbody").sortable({
+            update: function(event, ui) {
+                var sortedIDs = $(this).sortable("toArray", { attribute: "data-id" });
+                $.ajax({
+                    url: mpwpb_admin_ajax.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'mpwpb_sort_extra_service',
+                        postID: $('input[name="mpwpb_ext_post_id"]').val(),
+                        sortedIDs: sortedIDs,
+                        nonce: mpwpb_admin_ajax.nonce
+                    },
+                    success: function (response) {
+                        // console.log(response);
+                        $('.extra-service-table tbody').html('');
+                        $('.extra-service-table tbody').append(response.data.html);
+                    },
+                    error: function (error) {
+                        console.log('Error:', error);
+                    }
+                })
+            }
+        });
+    });
     // =============Service Category sidebar modal ======================
     $(document).on('click', '.mpwpb-category-new', function (e) {
         $('#mpwpb-category-service-msg').html('');
@@ -1081,6 +1132,39 @@
             }
         });
     }
+    //sortable parent category
+
+    function mpwpbCategorySort(){
+        $(".mpwpb-category-lists").sortable({
+            items: ".mpwpb-category-items",
+            update: function(event, ui) {
+                var sortedIDs = $(this).sortable("toArray", { attribute: "data-id" });
+                $.ajax({
+                    url: mpwpb_admin_ajax.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'mpwpb_sort_category',
+                        postID: $('input[name="mpwpb_category_post_id"]').val(),
+                        sortedIDs: sortedIDs,
+                        nonce: mpwpb_admin_ajax.nonce
+                    },
+                    success: function (response) {
+                        $('.mpwpb-category-lists').html('');
+                        $('.mpwpb-category-lists').append(response.data.html);
+                        mpwpbCategorySort();
+                        mpwpbSubCategorySort();
+                    },
+                    error: function (error) {
+                        console.log('Error:', error);
+                    }
+                })
+            }
+        });
+    }
+    mpwpbCategorySort();
+
+
+    // ===========================sub category=====================
     $(document).on('click', '.mpwpb-sub-category-edit', function (e) {
         $('.mpwpb-sub-category-enable').show();
         $('input[name="mpwpb_use_sub_category"]').val('on');
@@ -1179,6 +1263,37 @@
             }
         });
     }
+
+    //sortable sub category
+    function mpwpbSubCategorySort(){
+        $(".mpwpb-sub-category-lists").sortable({
+            items: ".mpwpb-sub-category-items",
+            update: function(event, ui) {
+                event.preventDefault();
+                var sortedIDs = $(this).sortable("toArray", { attribute: "data-id" });
+                $.ajax({
+                    url: mpwpb_admin_ajax.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'mpwpb_sort_sub_category',
+                        postID: $('input[name="mpwpb_category_post_id"]').val(),
+                        sortedIDs: sortedIDs,
+                        nonce: mpwpb_admin_ajax.nonce
+                    },
+                    success: function (response) {
+                        $('.mpwpb-category-lists').html('');
+                        $('.mpwpb-category-lists').append(response.data.html);
+                        mpwpbSubCategorySort();
+                    },
+                    error: function (error) {
+                        console.log('Error:', error);
+                    }
+                })
+            }
+        });
+    }
+    mpwpbSubCategorySort();
+
     // ====================category show service===============
     $(document).on('click', '.mpwpb-category-items', function () {
         var itemId = $(this).data('id');

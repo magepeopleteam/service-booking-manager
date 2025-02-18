@@ -65,4 +65,19 @@
             }
         }
     }
+    // service and extra service table sorting order
+    table.table.extra-service-table,tbody.mpwpb-service-rows{
+        tr{
+            cursor:  move;
+        }
+        .ui-sortable-helper{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            background: var(--mage-light);
+            visibility: visible;
+            cursor:  grabbing;
+        }
+    }
 }

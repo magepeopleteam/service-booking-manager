@@ -35,6 +35,58 @@
 				// Del sub category by ajax
 				add_action('wp_ajax_mpwpb_sub_category_delete', [$this, 'delete_sub_category']);
 				add_action('wp_ajax_nopriv_mpwpb_sub_category_delete', [$this, 'delete_sub_category']);
+				// Category sort order
+				add_action('wp_ajax_mpwpb_sort_category',[$this,'sort_category']);
+				// Sub Category sort order
+				add_action('wp_ajax_mpwpb_sort_sub_category',[$this,'sort_sub_category']);
+			}
+			public function sort_category() {
+				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
+					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
+				}
+				$post_id = isset($_POST['postID']) ? sanitize_text_field(wp_unslash($_POST['postID'])) : '';
+				$sorted_ids = isset($_POST['sortedIDs']) ? array_map('intval', $_POST['sortedIDs']) : [];
+				$categories = $this->get_categories($post_id);
+				$new_ordered = [];
+				foreach ($sorted_ids as $id) {
+					if (isset($categories[$id])) {
+						$new_ordered[$id] = $categories[$id];
+					}
+				}
+				update_post_meta($post_id, 'mpwpb_category_service', $new_ordered);
+				ob_start();
+				$resultMessage = esc_html__('Data Updated Successfully', 'service-booking-manager');
+				$this->show_category_items($post_id);
+				$html_output = ob_get_clean();
+				wp_send_json_success([
+					'message' => $resultMessage,
+					'html' => $html_output,
+				]);
+				die;
+			}
+			public function sort_sub_category() {
+				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
+					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
+				}
+				$post_id = isset($_POST['postID']) ? sanitize_text_field(wp_unslash($_POST['postID'])) : '';
+				$sorted_ids = isset($_POST['sortedIDs']) ? array_map('intval', $_POST['sortedIDs']) : [];
+				$categories = $this->get_sub_categories($post_id);
+				$new_ordered = [];
+				foreach ($sorted_ids as $id) {
+					if (isset($categories[$id])) {
+						$new_ordered[$id] = $categories[$id];
+					}
+				}
+				update_post_meta($post_id, 'mpwpb_sub_category_service', $new_ordered);
+				ob_start();
+				$resultMessage = esc_html__('Data Updated Successfully', 'service-booking-manager');
+				$this->show_category_items($post_id);
+				$html_output = ob_get_clean();
+				wp_send_json_success([
+					'message' => $resultMessage,
+					'html' => $html_output,
+				]);
+				die;
 			}
 			public function category_settings_section($post_id) {
 				$use_sub_category = MP_Global_Function::get_post_info($post_id, 'mpwpb_use_sub_category', 'off');
@@ -227,43 +279,46 @@
 				if(!empty($categories)):
 					foreach ($categories as $parent_key => $category): ?>
 						<div class="mpwpb-category-items" data-id="<?php echo esc_attr($parent_key); ?>">
-							<div class="image-block" data-imageid="<?php echo esc_attr($category['image']); ?>">
-								<?php if (!empty($category['image'])): ?>
-									<?php echo wp_get_attachment_image($category['image'], 'medium'); ?>
-								<?php endif; ?>
-								<?php if (!empty($category['icon'])): ?>
-									<i class="<?php echo esc_attr($category['icon']); ?>"></i>
-								<?php endif; ?>
-								<div class="title"><?php echo esc_html($category['name']); ?></div>
-							</div>
-							<div class="action">
-								<span class="mpwpb-category-edit" data-modal="mpwpb-category-new"><i class="fas fa-edit"></i></span>
-								<span class="mpwpb-category-delete"><i class="fas fa-trash"></i></span>
-							</div>
-						</div>
-						<?php if(!empty($sub_categories)): ?>
-							<div class="mpwpb-sub-category-lists">
-								<?php foreach ($sub_categories as $child_key => $sub_category): ?>
-									<?php if ($sub_category['cat_id'] == $parent_key): ?>
-										<div class="mpwpb-sub-category-items" data-parent-id="<?php echo esc_attr($parent_key); ?>" data-id="<?php echo esc_attr($child_key); ?>">
-											<div class="image-block" data-imageid="<?php echo esc_attr($sub_category['image']); ?>">
-												<?php if (!empty($sub_category['image'])): ?>
-													<?php echo wp_get_attachment_image($sub_category['image'], 'medium'); ?>
-												<?php endif; ?>
-												<?php if (!empty($sub_category['icon'])): ?>
-													<i class="<?php echo esc_attr($sub_category['icon']); ?>"></i>
-												<?php endif; ?>
-												<div class="title"><?php echo esc_attr($sub_category['name']); ?></div>
-											</div>
-											<div class="action">
-												<span class="mpwpb-sub-category-edit" data-modal="mpwpb-category-new"><i class="fas fa-edit"></i></span>
-												<span class="mpwpb-sub-category-delete"><i class="fas fa-trash"></i></span>
-											</div>
-										</div>
+							<div class="parent-category-items">
+								<div class="image-block" data-imageid="<?php echo esc_attr($category['image']); ?>">
+									<?php if (!empty($category['image'])): ?>
+										<?php echo wp_get_attachment_image($category['image'], 'medium'); ?>
 									<?php endif; ?>
-								<?php endforeach; ?>
+									<?php if (!empty($category['icon'])): ?>
+										<i class="<?php echo esc_attr($category['icon']); ?>"></i>
+									<?php endif; ?>
+									<div class="title"><?php echo esc_html($category['name']); ?></div>
+								</div>
+								<div class="action">
+									<span class="mpwpb-category-edit" data-modal="mpwpb-category-new"><i class="fas fa-edit"></i></span>
+									<span class="mpwpb-category-delete"><i class="fas fa-trash"></i></span>
+								</div>
 							</div>
-						<?php endif; ?>
+							<?php if(!empty($sub_categories)): ?>
+								<div class="mpwpb-sub-category-lists">
+									<?php foreach ($sub_categories as $child_key => $sub_category): ?>
+										<?php if ($sub_category['cat_id'] == $parent_key): ?>
+											<div class="mpwpb-sub-category-items" data-parent-id="<?php echo esc_attr($parent_key); ?>" data-id="<?php echo esc_attr($child_key); ?>">
+												<div class="image-block" data-imageid="<?php echo esc_attr($sub_category['image']); ?>">
+													<?php if (!empty($sub_category['image'])): ?>
+														<?php echo wp_get_attachment_image($sub_category['image'], 'medium'); ?>
+													<?php endif; ?>
+													<?php if (!empty($sub_category['icon'])): ?>
+														<i class="<?php echo esc_attr($sub_category['icon']); ?>"></i>
+													<?php endif; ?>
+													<div class="title"><?php echo esc_attr($sub_category['name']); ?></div>
+												</div>
+												<div class="action">
+													<span class="mpwpb-sub-category-edit" data-modal="mpwpb-category-new"><i class="fas fa-edit"></i></span>
+													<span class="mpwpb-sub-category-delete"><i class="fas fa-trash"></i></span>
+												</div>
+											</div>
+										<?php endif; ?>
+									<?php endforeach; ?>
+								</div>
+							<?php endif; ?>
+						</div>
+						
 					<?php endforeach; ?>
 				<?php endif; ?>
 				<?php
