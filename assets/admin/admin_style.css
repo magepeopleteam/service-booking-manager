@@ -401,7 +401,7 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
 }
 .mpwpb-category-lists .mpwpb-category-items {
   cursor: move;
-  padding-bottom: 0;
+  padding-bottom: 1px;
 }
 .mpwpb-category-lists .mpwpb-category-items.ui-sortable-helper {
   background: #fff;

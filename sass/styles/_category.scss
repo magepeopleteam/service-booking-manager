@@ -3,7 +3,7 @@
     margin-bottom: 20px; 
     .mpwpb-category-items{
         cursor:  move;
-        padding-bottom: 0;
+        padding-bottom: 1px;
         &.ui-sortable-helper{
             background: #fff;
             border:1px dashed var(--mage-dark);
