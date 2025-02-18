@@ -1133,7 +1133,8 @@
         });
     }
     //sortable parent category
-    $(document).on("ready", function(e) {
+
+    function mpwpbCategorySort(){
         $(".mpwpb-category-lists").sortable({
             items: ".mpwpb-category-items",
             update: function(event, ui) {
@@ -1150,6 +1151,8 @@
                     success: function (response) {
                         $('.mpwpb-category-lists').html('');
                         $('.mpwpb-category-lists').append(response.data.html);
+                        mpwpbCategorySort();
+                        mpwpbSubCategorySort();
                     },
                     error: function (error) {
                         console.log('Error:', error);
@@ -1157,7 +1160,9 @@
                 })
             }
         });
-    });
+    }
+    mpwpbCategorySort();
+
 
     // ===========================sub category=====================
     $(document).on('click', '.mpwpb-sub-category-edit', function (e) {
@@ -1260,36 +1265,34 @@
     }
 
     //sortable sub category
-    $(document).on("ready", function() {
-        function mpwpbSubCategorySort(){
-            $(".mpwpb-sub-category-lists").sortable({
-                items: ".mpwpb-sub-category-items",
-                update: function(event, ui) {
-                    event.preventDefault();
-                    var sortedIDs = $(this).sortable("toArray", { attribute: "data-id" });
-                    $.ajax({
-                        url: mpwpb_admin_ajax.ajax_url,
-                        type: 'POST',
-                        data: {
-                            action: 'mpwpb_sort_sub_category',
-                            postID: $('input[name="mpwpb_category_post_id"]').val(),
-                            sortedIDs: sortedIDs,
-                            nonce: mpwpb_admin_ajax.nonce
-                        },
-                        success: function (response) {
-                            $('.mpwpb-category-lists').html('');
-                            $('.mpwpb-category-lists').append(response.data.html);
-                            mpwpbSubCategorySort();
-                        },
-                        error: function (error) {
-                            console.log('Error:', error);
-                        }
-                    })
-                }
-            });
-        }
-        mpwpbSubCategorySort();
-    });
+    function mpwpbSubCategorySort(){
+        $(".mpwpb-sub-category-lists").sortable({
+            items: ".mpwpb-sub-category-items",
+            update: function(event, ui) {
+                event.preventDefault();
+                var sortedIDs = $(this).sortable("toArray", { attribute: "data-id" });
+                $.ajax({
+                    url: mpwpb_admin_ajax.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'mpwpb_sort_sub_category',
+                        postID: $('input[name="mpwpb_category_post_id"]').val(),
+                        sortedIDs: sortedIDs,
+                        nonce: mpwpb_admin_ajax.nonce
+                    },
+                    success: function (response) {
+                        $('.mpwpb-category-lists').html('');
+                        $('.mpwpb-category-lists').append(response.data.html);
+                        mpwpbSubCategorySort();
+                    },
+                    error: function (error) {
+                        console.log('Error:', error);
+                    }
+                })
+            }
+        });
+    }
+    mpwpbSubCategorySort();
 
     // ====================category show service===============
     $(document).on('click', '.mpwpb-category-items', function () {
