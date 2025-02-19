@@ -27,8 +27,8 @@
 				$time_slot = MP_Global_Function::get_post_info($post_id, 'mpwpb_time_slot_length');
 				$capacity = MP_Global_Function::get_post_info($post_id, 'mpwpb_capacity_per_session', 1);
 				$repeated_start_date = MP_Global_Function::get_post_info($post_id, 'mpwpb_repeated_start_date');
-				$hidden_repeated_start_date = $repeated_start_date ? date_i18n('Y-m-d', strtotime($repeated_start_date)) : '';
-				$visible_repeated_start_date = $repeated_start_date ? date_i18n($date_format, strtotime($repeated_start_date)) : date_i18n($date_format, date('Y-m-d'));
+				$hidden_repeated_start_date = $repeated_start_date ? date_i18n('Y-m-d', strtotime($repeated_start_date)) : date_i18n('Y-m-d', strtotime($now)) ;
+				$visible_repeated_start_date = $repeated_start_date ? date_i18n($date_format, strtotime($repeated_start_date)) : $now;
 				$repeated_after = MP_Global_Function::get_post_info($post_id, 'mpwpb_repeated_after', 1);
 				$active_days = MP_Global_Function::get_post_info($post_id, 'mpwpb_active_days', 10);
 				?>
@@ -80,25 +80,25 @@
                             </div>
                         </label>
                     </section>
-                    <!-- <section class="<?php //echo esc_attr($date_type == 'repeated' ? 'mActive' : ''); ?>" data-collapse="#mp_repeated">
+                    <section style="display: none;" class="<?php echo esc_attr($date_type == 'repeated' ? 'mActive' : ''); ?>" data-collapse="#mp_repeated">
                         <label class="label">
                             <div>
-                                <p><?php //esc_html_e('Repeated Start Date', 'service-booking-manager'); ?> <span class="textRequired">&nbsp;*</span></p>
+                                <p><?php esc_html_e('Repeated Start Date', 'service-booking-manager'); ?> <span class="textRequired">&nbsp;*</span></p>
                             </div>
                             <div>
                                 <input type="hidden" name="mpwpb_repeated_start_date" value="<?php echo esc_attr($hidden_repeated_start_date); ?>" required/>
                                 <input type="text" readonly required name="" class="date_type" value="<?php echo esc_attr($visible_repeated_start_date); ?>" placeholder="<?php echo esc_attr($now); ?>"/>
                             </div>
                         </label>
-                    </section> -->
-                    <!-- <section class="<?php //echo esc_attr($date_type == 'repeated' ? 'mActive' : ''); ?>" data-collapse="#mp_repeated">
+                    </section> 
+                    <section style="display: none;"  class="<?php echo esc_attr($date_type == 'repeated' ? 'mActive' : ''); ?>" data-collapse="#mp_repeated">
                         <label class="label">
                             <div>
-                                <p><?php //esc_html_e('Repeated after', 'service-booking-manager'); ?> <span class="textRequired">&nbsp;*</span></p>
+                                <p><?php esc_html_e('Repeated after', 'service-booking-manager'); ?> <span class="textRequired">&nbsp;*</span></p>
                             </div>
                             <input type="text" name="mpwpb_repeated_after" class="mp_number_validation" value="<?php echo esc_attr($repeated_after); ?>"/>
                         </label>
-                    </section> -->
+                    </section>
                     <section class="<?php echo esc_attr($date_type == 'repeated' ? 'mActive' : ''); ?>" data-collapse="#mp_repeated">
                         <label class="label">
                             <div>
