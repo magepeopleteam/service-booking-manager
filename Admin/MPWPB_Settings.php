@@ -84,8 +84,8 @@
 					}
 					update_post_meta($post_id, 'mpwpb_particular_dates', $particular);
 					//*************************//
-					$repeated_start_date = isset($_POST['mpwpb_repeated_start_date']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_repeated_start_date'])) : '';
-					$repeated_start_date = $repeated_start_date ? date_i18n('Y-m-d', strtotime($repeated_start_date)) : '';
+					$repeated_start_date = isset($_POST['mpwpb_repeated_start_date']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_repeated_start_date'])) : date_i18n('Y-m-d', strtotime(date('Y-m-d')));
+					$repeated_start_date = $repeated_start_date ? date_i18n('Y-m-d', strtotime($repeated_start_date)) : date_i18n('Y-m-d', strtotime(date('Y-m-d'))) ;
 					update_post_meta($post_id, 'mpwpb_repeated_start_date', $repeated_start_date);
 					$repeated_after = isset($_POST['mpwpb_repeated_after']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_repeated_after'])) : 1;
 					update_post_meta($post_id, 'mpwpb_repeated_after', $repeated_after);
