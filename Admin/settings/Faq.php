@@ -20,7 +20,35 @@
 				// mpwpb_delete_faq_data
 				add_action('wp_ajax_mpwpb_faq_delete_item', [$this, 'faq_delete_item']);
 				add_action('wp_ajax_nopriv_mpwpb_faq_delete_item', [$this, 'faq_delete_item']);
+				// FAQ sort_faq
+				add_action('wp_ajax_mpwpb_sort_faq', [$this, 'sort_faq']);
 			}
+
+			public function sort_faq() {
+				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
+					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
+				}
+				$post_id = isset($_POST['postID']) ? sanitize_text_field(wp_unslash($_POST['postID'])) : '';
+				$sorted_ids = isset($_POST['sortedIDs']) ? array_map('intval', $_POST['sortedIDs']) : [];
+				$mpwpb_faq = get_post_meta($post_id, 'mpwpb_faq', true);;
+				$new_ordered = [];
+				foreach ($sorted_ids as $id) {
+					if (isset($mpwpb_faq[$id])) {
+						$new_ordered[$id] = $mpwpb_faq[$id];
+					}
+				}
+				update_post_meta($post_id, 'mpwpb_faq', $new_ordered);
+				ob_start();
+				$resultMessage = esc_html__('Data Updated Successfully', 'service-booking-manager');
+				$this->show_faq_data($post_id);
+				$html_output = ob_get_clean();
+				wp_send_json_success([
+					'message' => $resultMessage,
+					'html' => $html_output,
+				]);
+				die;
+			}
+
 			public function my_custom_editor_enqueue() {
 				// Enqueue necessary scripts
 				wp_enqueue_script('jquery');

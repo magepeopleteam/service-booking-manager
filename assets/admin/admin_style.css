@@ -307,6 +307,15 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   border: 1px solid red;
 }
 
+#mp_meta_box_panel .mpwpb-faq-section .mpwpb-faq-item {
+  background-color: #fff;
+  cursor: grabbing;
+}
+#mp_meta_box_panel .mpwpb-faq-section .mpwpb-faq-item.ui-sortable-helper {
+  background: var(--mage-light);
+  visibility: visible;
+  cursor: grabbing;
+}
 #mp_meta_box_panel .mpwpb-faq-section .faq-header {
   position: relative;
   z-index: 0;
