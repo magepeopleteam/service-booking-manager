@@ -1,5 +1,14 @@
 #mp_meta_box_panel{
     .mpwpb-faq-section{
+        .mpwpb-faq-item{
+            background-color: #fff;
+            cursor:  grabbing;
+            &.ui-sortable-helper{
+                background: var(--mage-light);
+                visibility: visible;
+                cursor:  grabbing;
+            }
+        }
         .faq-header{
             position: relative;
             z-index: 0;

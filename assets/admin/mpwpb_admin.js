@@ -422,6 +422,34 @@
             }
         });
     }
+
+    // faq sorting
+    $(document).on("ready", function(e) {
+        $(".mpwpb-faq-items").sortable({
+            update: function(event, ui) {
+                event.preventDefault();
+                var sortedIDs = $(this).sortable("toArray", { attribute: "data-id" });
+                $.ajax({
+                    url: mpwpb_admin_ajax.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'mpwpb_sort_faq',
+                        postID: $('input[name="mpwpb_post_id"]').val(),
+                        sortedIDs: sortedIDs,
+                        nonce: mpwpb_admin_ajax.nonce
+                    },
+                    success: function (response) {
+                        $('.mpwpb-faq-items').html('');
+                        $('.mpwpb-faq-items').append(response.data.html);
+                    },
+                    error: function (error) {
+                        console.log('Error:', error);
+                    }
+                })
+            }
+        });
+    });
+
     // ============= Service sidebar modal ======================
     $(document).on('click', '.mpwpb-service-new', function (e) {
         $('#mpwpb-service-msg').html('');
@@ -858,7 +886,7 @@
             }
         });
     }
-
+    // extra service sort
     $(document).on("ready", function(e) {
         $(".extra-service-table tbody").sortable({
             update: function(event, ui) {
