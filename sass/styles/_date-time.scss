@@ -67,14 +67,14 @@
     #mp_meta_box_panel .metabox .tabsContent section .date-time-schedule{
         section{
             padding:10px 20px;
-            background-color: var(--mage-light);
-            margin: 3px 0;
+            background-color: var(--mage-light-2);
+            margin: 10px 0;
         }
         select.formControl:focus{
             background-color:transparent;
         }
         table tr:nth-child(2n){
-            background-color: var(--mage-light);
+            background-color: var(--mage-light-2);
         }
         table td{
             vertical-align: middle;

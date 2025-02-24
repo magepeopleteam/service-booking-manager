@@ -134,7 +134,8 @@
                                         <th style="text-align: left;"><?php esc_html_e('Day', 'service-booking-manager'); ?></th>
                                         <th><?php esc_html_e('Start Time', 'service-booking-manager'); ?></th>
                                         <th><?php esc_html_e('End Time', 'service-booking-manager'); ?></th>
-                                        <th colspan="2"><?php esc_html_e('Break Time', 'service-booking-manager'); ?></th>
+                                        <th colspan="2"><?php esc_html_e('Break Time (Start - End)', 'service-booking-manager'); ?></th>
+                                        
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -154,7 +155,7 @@
                     <!-- ================ -->
                     <section class="section">
                         <h2><?php esc_html_e('Offdays and date settings', 'service-booking-manager'); ?></h2>
-                        <span><?php MPWPB_Settings::info_text('general_date_time_desc'); ?></span>
+                        <span><?php esc_html_e('Offdays and date settings', 'service-booking-manager'); ?></span>
                     </section>
                     <section>
                         <label class="label">
