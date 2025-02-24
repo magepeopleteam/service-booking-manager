@@ -58,6 +58,9 @@
         }
         .schedule-container{
             width: 60%;
+            .formControl{
+                font-weight: normal;
+            }
         }   
     }
     // section spacing override
@@ -67,4 +70,15 @@
             background-color: var(--mage-light);
             margin: 3px 0;
         }
+        select.formControl:focus{
+            background-color:transparent;
+        }
+        table tr:nth-child(2n){
+            background-color: var(--mage-light);
+        }
+        table td{
+            vertical-align: middle;
+            padding: 2px 5px;
+        }
     }
+    

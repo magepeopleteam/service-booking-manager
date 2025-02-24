@@ -658,11 +658,24 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
 .date-time-schedule .schedule-container {
   width: 60%;
 }
+.date-time-schedule .schedule-container .formControl {
+  font-weight: normal;
+}
 
 #mp_meta_box_panel .metabox .tabsContent section .date-time-schedule section {
   padding: 10px 20px;
   background-color: var(--mage-light);
   margin: 3px 0;
+}
+#mp_meta_box_panel .metabox .tabsContent section .date-time-schedule select.formControl:focus {
+  background-color: transparent;
+}
+#mp_meta_box_panel .metabox .tabsContent section .date-time-schedule table tr:nth-child(2n) {
+  background-color: var(--mage-light);
+}
+#mp_meta_box_panel .metabox .tabsContent section .date-time-schedule table td {
+  vertical-align: middle;
+  padding: 2px 5px;
 }
 
 /*# sourceMappingURL=admin_style.css.map */

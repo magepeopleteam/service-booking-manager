@@ -82,14 +82,14 @@
                                         </div>
                                     </label>
                                 </section>
-                                <section style="display: none;" class="<?php echo esc_attr($date_type == 'repeated' ? 'mActive' : ''); ?>" data-collapse="#mp_repeated">
+                                <section style="display: none;" >
                                     <label>
                                         <p><?php esc_html_e('Repeated Start Date', 'service-booking-manager'); ?> <span class="textRequired">&nbsp;*</span></p>
                                         <input type="hidden" name="mpwpb_repeated_start_date" value="<?php echo esc_attr($hidden_repeated_start_date); ?>" required/>
                                         <input type="text" readonly required name="" class="date_type" value="<?php echo esc_attr($visible_repeated_start_date); ?>" placeholder="<?php echo esc_attr($now); ?>" />
                                     </label>
                                 </section> 
-                                <section style="display: none;"  class="<?php echo esc_attr($date_type == 'repeated' ? 'mActive' : ''); ?>" data-collapse="#mp_repeated">
+                                <section style="display: none;">
                                     <label>
                                         <p><?php esc_html_e('Repeated after', 'service-booking-manager'); ?> <span class="textRequired">&nbsp;*</span></p>
                                         <input type="text" name="mpwpb_repeated_after" class="mp_number_validation" value="<?php echo esc_attr($repeated_after); ?>"/>
@@ -133,9 +133,8 @@
                                     <tr>
                                         <th style="text-align: left;"><?php esc_html_e('Day', 'service-booking-manager'); ?></th>
                                         <th><?php esc_html_e('Start Time', 'service-booking-manager'); ?></th>
-                                        <th><?php esc_html_e('To', 'service-booking-manager'); ?></th>
                                         <th><?php esc_html_e('End Time', 'service-booking-manager'); ?></th>
-                                        <th colspan="3" class="bg-sky-light"><?php esc_html_e('Break Time', 'service-booking-manager'); ?></th>
+                                        <th colspan="2"><?php esc_html_e('Break Time', 'service-booking-manager'); ?></th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -233,7 +232,7 @@
 				$start_time_break = MP_Global_Function::get_post_info($post_id, $start_name_break);
 				?>
                 <tr>
-                    <th style="text-transform: capitalize;"><?php echo esc_html($day); ?></th>
+                    <td style="text-transform: capitalize;"><?php echo esc_html($day); ?></td>
                     <td class="mpwpb_start_time" data-day-name="<?php echo esc_attr($day); ?>">
 						<?php //echo '<pre>'; print_r( $start_time );echo '</pre>'; ?>
                         <label>
@@ -245,19 +244,13 @@
                             </select>
                         </label>
                     </td>
-                    <td class="textCenter">
-                        <strong><?php esc_html_e('To', 'service-booking-manager'); ?></strong>
-                    </td>
                     <td class="mpwpb_end_time">
 						<?php $this->end_time_slot($post_id, $day, $start_time); ?>
                     </td>
-                    <td class="bg-sky-light" class="mpwpb_start_break_time">
+                    <td class="mpwpb_start_break_time">
 						<?php $this->start_break_time_slot($post_id, $day, $start_time, $end_time) ?>
                     </td>
-                    <td class="textCenter bg-sky-light">
-                        <strong><?php esc_html_e('To', 'service-booking-manager'); ?></strong>
-                    </td>
-                    <td class="bg-sky-light" class="mpwpb_end_break_time">
+                    <td class="mpwpb_end_break_time">
 						<?php $this->end_break_time_slot($post_id, $day, $start_time_break, $end_time) ?>
                     </td>
                 </tr>
