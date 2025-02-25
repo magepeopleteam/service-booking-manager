@@ -21,6 +21,8 @@
 				add_action('wp_ajax_nopriv_mpwpb_ext_service_delete_item', [$this, 'extra_service_delete_item']);
 				// sort extra service
 				add_action('wp_ajax_mpwpb_sort_extra_service',[$this,'sort_extra_service']);
+				// clone extra service
+				add_action('wp_ajax_mpwpb_clone_ext_service',[$this,'clone_ext_service']);
 			}
 			public function sort_extra_service() {
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
@@ -39,6 +41,47 @@
 				ob_start();
 				$resultMessage = esc_html__('Data Updated Successfully', 'service-booking-manager');
 				$this->show_extra_service($post_id);
+				$html_output = ob_get_clean();
+				wp_send_json_success([
+					'message' => $resultMessage,
+					'html' => $html_output,
+				]);
+				die;
+			}
+
+			public function clone_ext_service() {
+				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
+					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
+				}
+				$post_id = isset($_POST['service_postID']) ? sanitize_text_field(wp_unslash($_POST['service_postID'])) : '';
+				$ext_services = $this->get_extra_services($post_id);
+				$iconClass = '';
+				$imageID = '';
+				if (isset($_POST['service_image_icon'])) {
+					if (is_numeric($_POST['service_image_icon'])) {
+						$imageID = sanitize_text_field(wp_unslash($_POST['service_image_icon']));
+						$iconClass = '';
+					} else {
+						$iconClass = sanitize_text_field(wp_unslash($_POST['service_image_icon']));
+						$imageID = '';
+					}
+				}
+				$new_data = [
+					'name' => isset($_POST['service_name']) ?sanitize_text_field(wp_unslash($_POST['service_name'])):'',
+					'price' => isset($_POST['service_price']) ?sanitize_text_field(wp_unslash($_POST['service_price'])):'',
+					'qty' => isset($_POST['service_qty']) ?sanitize_text_field(wp_unslash($_POST['service_qty'])):'',
+					'details' => isset($_POST['service_description']) ?sanitize_text_field(wp_unslash($_POST['service_description'])):'',
+					'icon' => $iconClass,
+					'image' => $imageID,
+				];
+				if (!empty($ext_services)) {
+					if (isset($_POST['service_itemId'])) {
+						$ext_services[sanitize_text_field(wp_unslash($_POST['service_itemId']))] = $new_data;
+					}
+				}
+				update_post_meta($post_id, 'mpwpb_extra_service', $ext_services);
+				ob_start();
+				$resultMessage = esc_html__('Data Updated Successfully', 'service-booking-manager');
 				$html_output = ob_get_clean();
 				wp_send_json_success([
 					'message' => $resultMessage,
@@ -167,7 +210,7 @@
                         </label>
                     </section>
                     <section class="mpwpb-extra-section <?php echo esc_attr($active_class); ?>" data-collapse="#mpwpb_extra_service_active">
-                        <table class="table extra-service-table mB">
+                        <table class="table extra-service-table mB" data-post-id="<?php echo esc_attr($post_id); ?>">
                             <thead>
                             <tr>
                                 <th style="width:66px"><?php esc_html_e('Image', 'service-booking-manager'); ?></th>
@@ -270,8 +313,9 @@
                             <td><?php echo esc_html($value['qty']); ?></td>
                             <td><?php echo esc_html($value['price']); ?></td>
                             <td>
-                                <span class="mpwpb-ext-service-edit" data-modal="mpwpb-extra-service-new"><i class="fas fa-edit"></i></span>
-                                <span class="mpwpb-ext-service-delete"><i class="fas fa-trash"></i></span>
+								<span class="mpwpb-ext-service-clone" title="Clone"><i class="far fa-copy"></i></span>
+                                <span class="mpwpb-ext-service-edit" title="Edit" data-modal="mpwpb-extra-service-new"><i class="fas fa-edit"></i></span>
+                                <span class="mpwpb-ext-service-delete" title="Delete"><i class="fas fa-trash"></i></span>
                             </td>
                         </tr>
 					<?php

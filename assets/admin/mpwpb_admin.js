@@ -813,6 +813,59 @@
             }
         });
     }
+
+    $(document).on('click', '.mpwpb-ext-service-clone', function (e) {
+        let originalRow = $(this).closest('tr'); // Get the original row
+        let row = originalRow.clone(); // Clone the row
+        
+        // Get the row count
+        let rowCount = $('.extra-service-table tbody tr').length;
+        let itemId = rowCount++; // Generate a new ID
+        row.attr('data-id', itemId);
+        let sortedIDs = [];
+        $('.extra-service-table tbody tr').each(function() {
+            sortedIDs.push($(this).attr('data-id'));
+        });
+        console.log(sortedIDs);
+        // Extract values from each <td> in the original 
+        let postId =  $('.extra-service-table').data('post-id');
+        let imageId = originalRow.find('td[data-imageid]').attr('data-imageid');
+        var icon = originalRow.find('td:nth-child(1) i').attr('class');
+        let serviceName = originalRow.find('td:nth-child(2)').text();
+        let description = originalRow.find('td:nth-child(3)').text();
+        let quantity = originalRow.find('td:nth-child(4)').text();
+        let price = originalRow.find('td:nth-child(5)').text();
+        // Insert the cloned row right below the original row
+        row.insertAfter(originalRow);
+        let service_image_icon;
+        if (icon) {
+            service_image_icon=icon;
+        } else if (imageId) {
+            service_image_icon=imageId;
+        }
+        $.ajax({
+            url: mpwpb_admin_ajax.ajax_url,
+            type: 'POST',                   
+            data: {
+                action: 'mpwpb_clone_ext_service',
+                service_image_icon: service_image_icon,
+                service_name: serviceName,
+                service_price: price,
+                service_qty: quantity,
+                service_description: description,
+                service_postID:postId,
+                service_itemId: itemId,
+                nonce: mpwpb_admin_ajax.nonce
+            },
+            success: function (response) {
+                mpwpb_sort_extra_service();
+            },
+            error: function (error) {
+                console.log('Error:', error);
+            }
+        });
+    });
+
     $(document).on('click', '.mpwpb-ext-service-edit', function (e) {
         $('#mpwpb-ex-service-msg').html('');
         $('.mpwpb_ex_service_save_button').hide();
@@ -887,7 +940,7 @@
         });
     }
     // extra service sort
-    $(document).on("ready", function(e) {
+    function mpwpb_sort_extra_service() {
         $(".extra-service-table tbody").sortable({
             update: function(event, ui) {
                 var sortedIDs = $(this).sortable("toArray", { attribute: "data-id" });
@@ -911,7 +964,8 @@
                 })
             }
         });
-    });
+    }
+    mpwpb_sort_extra_service();
     // =============Service Category sidebar modal ======================
     $(document).on('click', '.mpwpb-category-new', function (e) {
         $('#mpwpb-category-service-msg').html('');
