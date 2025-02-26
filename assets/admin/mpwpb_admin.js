@@ -700,7 +700,7 @@
         });
     });
     //sortable service
-    $(document).on("ready", function(e) {
+    function mpwpb_sort_service(){
         $(".mpwpb-service-table tbody.mpwpb-service-rows").sortable({
             update: function(event, ui) {
                 var sortedIDs = $(this).sortable("toArray", { attribute: "data-id" });
@@ -723,7 +723,67 @@
                 })
             }
         });
+    }
+    mpwpb_sort_service();
+
+    $(document).on('click', '.mpwpb-service-clone', function (e) {
+        let originalRow = $(this).closest('tr');
+        let row = originalRow.clone();
+        
+        // Get the row count
+        let rowCount = $('.mpwpb-service-table tbody tr').length;
+        let itemId = rowCount++; // Generate a new ID
+        row.attr('data-id', itemId);
+        let sortedIDs = [];
+        $('.mpwpb-service-table tbody tr').each(function() {
+            sortedIDs.push($(this).attr('data-id'));
+        });
+        console.log(sortedIDs);
+        // Extract values from each <td> in the original 
+        let postId =  $('.mpwpb-service-table').data('post-id');
+        let imageId = originalRow.find('td[data-imageid]').attr('data-imageid');
+        var icon = originalRow.find('td:nth-child(1) i').attr('class');
+        let serviceName = originalRow.find('td:nth-child(2) .service-name').text();
+        let descriptoin = originalRow.attr('title');
+        let cat_status = originalRow.attr('data-cat-status');
+        let parent_cat = originalRow.attr('data-parent-cat');
+        let sub_cat = originalRow.attr('data-sub-cat');
+        let price = originalRow.find('td:nth-child(3)').text();
+        let duration = originalRow.find('td:nth-child(4)').text();
+        // Insert the cloned row right below the original row
+        row.insertAfter(originalRow);
+        let service_image_icon;
+        if (icon) {
+            service_image_icon=icon;
+        } else if (imageId) {
+            service_image_icon=imageId;
+        }
+        $.ajax({
+            url: mpwpb_admin_ajax.ajax_url,
+            type: 'POST',                   
+            data: {
+                action: 'mpwpb_clone_service',
+                service_image_icon: service_image_icon,
+                service_name: serviceName,
+                service_price: price,
+                service_duration: duration,
+                service_description: descriptoin,
+                service_postID: postId,
+                service_itemId: itemId,
+                service_category_status: cat_status,
+                service_parent_cat: parent_cat,
+                service_sub_cat: sub_cat,
+                nonce: mpwpb_admin_ajax.nonce
+            },
+            success: function (response) {
+                // mpwpb_sort_service();
+            },
+            error: function (error) {
+                console.log('Error:', error);
+            }
+        });
     });
+
     // ============= Extra service sidebar modal ======================
     $(document).on('click', '.mpwpb-extra-service-new', function (e) {
         $('#mpwpb-ex-service-msg').html('');
@@ -826,7 +886,6 @@
         $('.extra-service-table tbody tr').each(function() {
             sortedIDs.push($(this).attr('data-id'));
         });
-        console.log(sortedIDs);
         // Extract values from each <td> in the original 
         let postId =  $('.extra-service-table').data('post-id');
         let imageId = originalRow.find('td[data-imageid]').attr('data-imageid');

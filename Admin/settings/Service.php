@@ -30,6 +30,8 @@
 				add_action('wp_ajax_nopriv_mpwpb_load_service_by_sub_category', [$this, 'load_service_by_sub_category']);
 				// service order
 				add_action('wp_ajax_mpwpb_sort_service',[$this,'sort_service']);
+				// service order
+				add_action('wp_ajax_mpwpb_clone_service',[$this,'clone_services']);
 			}
 			public function sort_service() {
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
@@ -48,6 +50,56 @@
 				ob_start();
 				$resultMessage = esc_html__('Data Updated Successfully', 'service-booking-manager');
 				$this->get_all_service_items($post_id);
+				$html_output = ob_get_clean();
+				wp_send_json_success([
+					'message' => $resultMessage,
+					'html' => $html_output,
+				]);
+				die;
+			}
+
+			public function clone_services() {
+				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
+					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
+				}
+				$post_id = isset($_POST['service_postID']) ? sanitize_text_field(wp_unslash($_POST['service_postID'])) : '';
+				$services = $this->get_services($post_id);
+				$iconClass = '';
+				$imageID = '';
+				if (isset($_POST['service_image_icon'])) {
+					if (is_numeric($_POST['service_image_icon'])) {
+						$imageID = sanitize_text_field(wp_unslash($_POST['service_image_icon']));
+						$iconClass = '';
+					} else {
+						$iconClass = sanitize_text_field(wp_unslash($_POST['service_image_icon']));
+						$imageID = '';
+					}
+				}
+				$parent_cat = '';
+				$sub_cat = '';
+				if (isset($_POST['service_category_status']) && $_POST['service_category_status'] == 'on') {
+					$parent_cat = isset($_POST['service_parent_cat'])?sanitize_text_field(wp_unslash($_POST['service_parent_cat'])):'';
+					$sub_cat = isset($_POST['service_sub_cat'])?sanitize_text_field(wp_unslash($_POST['service_sub_cat'])):'';
+				}
+				$new_data = [
+					'name' => isset($_POST['service_name'])?sanitize_text_field(wp_unslash($_POST['service_name'])):'',
+					'price' =>isset($_POST['service_price'])? sanitize_text_field(wp_unslash($_POST['service_price'])):'',
+					'duration' => isset($_POST['service_duration'])?sanitize_text_field(wp_unslash($_POST['service_duration'])):'',
+					'details' => isset($_POST['service_description'])?sanitize_text_field(wp_unslash($_POST['service_description'])):'',
+					'icon' => $iconClass,
+					'image' => $imageID,
+					'show_cat_status' => isset($_POST['service_category_status'])?sanitize_text_field(wp_unslash($_POST['service_category_status'])):'',
+					'parent_cat' => $parent_cat,
+					'sub_cat' => $sub_cat,
+				];
+				if (!empty($services)) {
+					if (isset($_POST['service_itemId'])) {
+						$services[sanitize_text_field(wp_unslash($_POST['service_itemId']))] = $new_data;
+					}
+				}
+				update_post_meta($post_id, 'mpwpb_service', $services);
+				ob_start();
+				$resultMessage = esc_html__('Data Updated Successfully', 'service-booking-manager');
 				$html_output = ob_get_clean();
 				wp_send_json_success([
 					'message' => $resultMessage,
@@ -108,7 +160,7 @@
 				$active_class = $show_category_status == 'on' ? 'mActive' : '';
 				$show_category_status = $show_category_status == 'on' ? 'checked' : '';
 				?>
-                <div class="mpwpb-service-table">
+                <div class="mpwpb-service-table" data-post-id="<?php echo esc_attr($post_id); ?>">
                     <table class="table">
                         <thead>
                         <tr>
@@ -116,7 +168,7 @@
                             <th style="width:250px;text-align:left"><?php esc_html_e('Name', 'service-booking-manager') ?></th>
                             <th><?php esc_html_e('Price', 'service-booking-manager') ?></th>
                             <th><?php esc_html_e('Duration', 'service-booking-manager') ?></th>
-                            <th style="width:65px"></th>
+                            <th style="width:95px"></th>
                         </tr>
                         </thead>
                         <tbody class="mpwpb-service-rows">
@@ -387,6 +439,7 @@
                     <td><?php echo esc_html($service['price']); ?></td>
                     <td><?php echo esc_html($service['duration']); ?></td>
                     <td>
+						<span class="mpwpb-service-clone" title="Clone"><i class="far fa-copy"></i></span>
                         <span class="mpwpb-service-edit" data-modal="mpwpb-service-new"><i class="fas fa-edit"></i></span>
                         <span class="mpwpb-service-delete"><i class="fas fa-trash"></i></span>
                     </td>
