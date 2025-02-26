@@ -738,7 +738,7 @@
         $('.mpwpb-service-table tbody tr').each(function() {
             sortedIDs.push($(this).attr('data-id'));
         });
-        console.log(sortedIDs);
+
         // Extract values from each <td> in the original 
         let postId =  $('.mpwpb-service-table').data('post-id');
         let imageId = originalRow.find('td[data-imageid]').attr('data-imageid');
@@ -773,10 +773,11 @@
                 service_category_status: cat_status,
                 service_parent_cat: parent_cat,
                 service_sub_cat: sub_cat,
+                service_sortedIDs: sortedIDs,
                 nonce: mpwpb_admin_ajax.nonce
             },
             success: function (response) {
-                // mpwpb_sort_service();
+                mpwpb_sort_service();
             },
             error: function (error) {
                 console.log('Error:', error);

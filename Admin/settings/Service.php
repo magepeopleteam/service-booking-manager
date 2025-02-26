@@ -100,6 +100,7 @@
 				update_post_meta($post_id, 'mpwpb_service', $services);
 				ob_start();
 				$resultMessage = esc_html__('Data Updated Successfully', 'service-booking-manager');
+				// $this->get_all_service_items($post_id);
 				$html_output = ob_get_clean();
 				wp_send_json_success([
 					'message' => $resultMessage,
