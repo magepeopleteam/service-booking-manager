@@ -16,12 +16,38 @@ function mpwpb_price_calculation($this) {
             price = price + parseFloat(ex_price) * ex_qty;
         }
     });
+
+    // Check if recurring booking is enabled
+    if (parent.find('#mpwpb_enable_recurring_booking').is(':checked')) {
+        let recurringCount = parseInt(parent.find('#mpwpb_recurring_count').val()) || 0;
+        let recurringDiscount = parseFloat(parent.find('.mpwpb_recurring_discount p').data('discount')) || 0;
+
+        if (recurringCount > 1) {
+            // Apply discount to recurring bookings if available
+            if (recurringDiscount > 0) {
+                let discountAmount = (price * recurringDiscount) / 100;
+                let discountedPrice = price - discountAmount;
+
+                // First booking at full price, subsequent bookings with discount
+                price = price + (discountedPrice * (recurringCount - 1));
+            } else {
+                // No discount, just multiply by count
+                price = price * recurringCount;
+            }
+        }
+    }
+
     parent.find('.mpwpb_total_bill').html(mp_price_format(price));
 }
 //Registration
 (function ($) {
     "use strict";
     $(document).ready(function () {
+        // Initialize recurring booking script if it exists
+        if (typeof initRecurringBooking === 'function') {
+            initRecurringBooking();
+        }
+
         $('div.mpwpb_registration').each(function () {
             let parent = $(this);
             let target = parent.find('.all_service_area');
@@ -36,6 +62,22 @@ function mpwpb_price_calculation($this) {
                     loadBgImage();
                     dLoaderRemove(target);
                 });
+            }
+
+            // Store post ID in data attribute for recurring booking
+            if (!parent.data('post-id')) {
+                let postId = 0;
+                // Try to get post ID from URL
+                let urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.has('id')) {
+                    postId = urlParams.get('id');
+                } else if (typeof mpwpb_ajax !== 'undefined' && mpwpb_ajax.post_id) {
+                    postId = mpwpb_ajax.post_id;
+                }
+
+                if (postId) {
+                    parent.attr('data-post-id', postId);
+                }
             }
         });
     });

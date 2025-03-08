@@ -24,6 +24,11 @@
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_CPT.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Quick_Setup.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Status.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Reviews_Admin.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Analytics_Dashboard.php';
+		require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Extended_Settings.php';
+	
+
 				//require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Staffs.php';
 				//*************Global Settings*****************//
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Settings_Global.php';
@@ -37,6 +42,7 @@
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Extra_service.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Faq.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Service_Details.php';
+	
 				//****************Woocommerce Checkout*********************** */
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Settings.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Fields.php';
