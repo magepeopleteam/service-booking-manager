@@ -178,8 +178,6 @@
 			}
 			public static function description_array($key) {
 				$des = array(
-					'mpwpb_category_active' => esc_html__('By default Category  is ON but you can keep it off by switching this option', 'service-booking-manager'),
-					'mpwpb_sub_category_active' => esc_html__('By default Sub-Category  is ON but you can keep it off by switching this option', 'service-booking-manager'),
 					'mpwpb_service_details_active' => esc_html__('By default Service Details  is OFF but you can keep it ON by switching this option', 'service-booking-manager'),
 					'mpwpb_service_duration_active' => esc_html__('By default Service Duration  is ON but you can keep it OFF by switching this option', 'service-booking-manager'),
 					'mpwpb_service_multi_select_active' => esc_html__('By default Multi Select  is OFF but you can keep it ON by switching this option', 'service-booking-manager'),
@@ -203,9 +201,7 @@
 			public static function info_text($key) {
 				$data = self::description_array($key);
 				if ($data) {
-					?>
-					<?php echo esc_html($data); ?>
-					<?php
+					 echo esc_html($data);
 				}
 			}
 		}

@@ -19,13 +19,26 @@
 				$params = shortcode_atts($defaults, $attribute);
 				$post_id = $params['post_id'];
 				if ($post_id) {
+					// Check if the current theme is a block theme
+					if (function_exists('wp_is_block_theme') && wp_is_block_theme()) {
+						?>
+                        <div class="wp-block-group has-global-padding is-layout-constrained wp-block-group-is-layout-constrained">
+                        <div class="entry-content wp-block-post-content has-global-padding is-layout-constrained wp-block-post-content-is-layout-constrained">
+						<?php
+					}
 					?>
-                    <div class="mpStyle mpwpb_registration_short_code  mpwpb_registration mpwpb-static-template">
+                    <div class="mpStyle mpwpb_registration_short_code mpwpb_registration mpwpb-static-template">
                         <div class="sidebar">
 							<?php include(MPWPB_Function::template_path('registration/static_registration.php')); ?>
                         </div>
                     </div>
 					<?php
+					if (function_exists('wp_is_block_theme') && wp_is_block_theme()) {
+						?>
+                        </div>
+                        </div>
+						<?php
+					}
 				}
 				return ob_get_clean();
 			}

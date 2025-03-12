@@ -114,8 +114,7 @@
 			public static function get_category($post_id, $all_services = []) {
 				$categories = [];
 				$all_services = $all_services ?: MP_Global_Function::get_post_info($post_id, 'mpwpb_category_infos', []);
-				$category_active = MP_Global_Function::get_post_info($post_id, 'mpwpb_category_active', 'on');
-				if ($category_active == 'on' && sizeof($all_services) > 0) {
+				if (sizeof($all_services) > 0) {
 					$count = 0;
 					foreach ($all_services as $service) {
 						if (array_key_exists('category', $service) && $service['category']) {
@@ -130,21 +129,17 @@
 			}
 			public static function get_sub_category($post_id, $all_services = []) {
 				$sub_category_list = [];
-				$category_active = MP_Global_Function::get_post_info($post_id, 'mpwpb_category_active', 'on');
-				$sub_category_active = MP_Global_Function::get_post_info($post_id, 'mpwpb_sub_category_active', 'off');
 				$all_services = $all_services ?: MP_Global_Function::get_post_info($post_id, 'mpwpb_category_infos', []);
 				$count = 0;
 				if (sizeof($all_services) > 0) {
 					foreach ($all_services as $category_info) {
 						$category_name = array_key_exists('category', $category_info) ? $category_info['category'] : '';
-						$category_name = $category_active == 'on' ? $category_name : '';
 						$sub_categories = array_key_exists('sub_category', $category_info) ? $category_info['sub_category'] : [];
 						if ($category_name && sizeof($sub_categories) > 0) {
 							foreach ($sub_categories as $sub_category) {
 								$sub_category_name = array_key_exists('name', $sub_category) ? $sub_category['name'] : '';
 								$sub_category_icon = array_key_exists('icon', $sub_category) ? $sub_category['icon'] : '';
 								$sub_category_image = array_key_exists('image', $sub_category) ? $sub_category['image'] : '';
-								$sub_category_name = $category_active == 'on' && $sub_category_active == 'on' ? $sub_category_name : '';
 								if ($sub_category_name) {
 									$sub_category_list[$count]['category'] = $category_name;
 									$sub_category_list[$count]['sub_category'] = $sub_category_name;
@@ -160,8 +155,6 @@
 			}
 			public static function get_all_service($post_id) {
 				$all_service_item = [];
-				$category_active = MP_Global_Function::get_post_info($post_id, 'mpwpb_category_active', 'on');
-				$sub_category_active = MP_Global_Function::get_post_info($post_id, 'mpwpb_sub_category_active', 'off');
 				$all_services = MP_Global_Function::get_post_info($post_id, 'mpwpb_category_infos', []);
 				$count = 0;
 				if (sizeof($all_services) > 0) {
@@ -174,8 +167,8 @@
 								$services = array_key_exists('service', $sub_category) ? $sub_category['service'] : [];
 								if (sizeof($services) > 0) {
 									foreach ($services as $service) {
-										$all_service_item[$count]['category'] = $category_active == 'on' ? $category_name : '';
-										$all_service_item[$count]['sub_category'] = $category_active == 'on' && $sub_category_active == 'on' ? $sub_category_name : '';
+										$all_service_item[$count]['category'] = $category_name;
+										$all_service_item[$count]['sub_category'] = $sub_category_name;
 										$all_service_item[$count]['service'] = array_key_exists('name', $service) ? $service['name'] : '';
 										$all_service_item[$count]['price'] = array_key_exists('price', $service) ? $service['price'] : '';
 										$all_service_item[$count]['image'] = array_key_exists('image', $service) ? $service['image'] : '';

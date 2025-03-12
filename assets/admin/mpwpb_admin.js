@@ -29,15 +29,6 @@
         target_item.find('[name*="mpwpb_service_price_"]').attr('name', 'mpwpb_service_price_' + unique_id + '[]');
         target_item.find('[name*="mpwpb_service_duration_"]').attr('name', 'mpwpb_service_duration_' + unique_id + '[]');
     });
-    $(document).on('change', '[name="mpwpb_category_active"]', function () {
-        let parent = $(this).closest('.mpwpb_price_settings');
-        if (!$(this).is(":checked")) {
-            let target = parent.find('[name="mpwpb_sub_category_active"]');
-            if (target.is(":checked")) {
-                target.next($('span')).trigger('click');
-            }
-        }
-    });
     //========extra service settings===============//
     $(document).on('click', '.mpwpb_add_group_service', function () {
         let parent = $(this).closest('.mp_settings_area');

@@ -87,7 +87,7 @@ function mpwpb_price_calculation($this) {
             });
             if (parseInt($(this).data('category')) === category) {
                 if (target_sub_category.length > 0) {
-                    if (parseInt($(this).data('sub-category')) === sub_category) {
+                    if (parseInt($(this).data('sub-category')) === sub_category || isNaN(sub_category)) {
                         $(this).slideDown(350);
                     } else {
                         $(this).slideUp(350);
@@ -105,7 +105,7 @@ function mpwpb_price_calculation($this) {
         let category = current.data('category');
         if (category && !current.hasClass('mpActive')) {
             let parent = current.closest('div.mpwpb_registration');
-            let target_sub_category = parent.find('.mpwpb_sub_category_area');
+            let target_sub_category = current.closest('.mpwpb_category_section').find('.mpwpb_sub_category_area');
             let target_service = parent.find('.mpwpb_service_area');
             parent.find('.mpwpb_summary_area_left').slideDown('fast');
             parent.find('.mpwpb_summary_item[data-category]').slideDown('fast').find('h6').html(current.find('h6').html());
