@@ -1,0 +1,84 @@
+// ============== category and service ==============
+
+    .date-time-schedule{
+        display: flex;
+        justify-content: start;
+        gap: 20px;
+        .header{
+            margin-bottom: 20px;
+            h3{
+                font-weight: 600;
+                color: var(--mage-black);
+                padding: 0;
+                font-size: 16px;
+            }
+        }
+        .date-time-container{
+            width: 40%;
+            border-right: 1px solid var(--mage-border);
+            padding-right: 20px;
+            label{
+                display: flex;
+                flex-direction: column;
+                align-items: start;
+                input,select{
+                    width: 100%;
+                    box-sizing: border-box;
+                    margin: 10px 0;
+                    font-weight: normal;
+                }
+                .formControl{
+                    margin:2px 0;
+                    border-radius: 5px 0 0 5px;
+                    &.date_type{
+                        font-weight: normal;
+                    }
+                }
+                .buttonGroup{
+                    border-radius: 0 5px 5px 0;
+                    border: 1px solid var(--mage-border);
+                    [class*="_themeButton"]{
+                        background-color: var(--mage-border);
+                        color: var(--mage-primary);
+                        padding:10px;
+                        border: 1px solid var(--mage-border);
+                        border-radius: 0 ;
+                        span{
+                            color: var(--mage-primary);
+                        }
+                    }
+                }
+                .mp_settings_area,.mp_add_item{
+                    width: 100%;
+                }
+                .mp_settings_area{
+                    margin-top: 10px;
+                }
+            }
+        }
+        .schedule-container{
+            width: 60%;
+            .formControl{
+                font-weight: normal;
+            }
+        }   
+    }
+    // section spacing override
+    #mp_meta_box_panel .metabox .tabsContent section .date-time-schedule{
+        section{
+            padding:10px 20px;
+            background-color: var(--mage-light-2);
+            margin: 10px 0;
+        }
+        select.formControl:focus{
+            background-color:transparent;
+        }
+        table tr:nth-child(2n){
+            background-color: var(--mage-light-2);
+        }
+        table td{
+            vertical-align: middle;
+            padding: 2px 5px;
+        }
+    }
+    
