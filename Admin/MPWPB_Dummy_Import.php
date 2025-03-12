@@ -95,8 +95,6 @@
 									'mpwpb_off_dates' => [],
 									'mpwpb_service_type' => 'car_wash',
 									// Price_settings
-									'mpwpb_category_active' => 'off',
-									'mpwpb_sub_category_active' => 'off',
 									'mpwpb_service_details_active' => 'on',
 									'mpwpb_service_duration_active' => 'on',
 									'mpwpb_category_text' => 'Category',
@@ -284,8 +282,6 @@
 									'mpwpb_off_days' => 'saturday,sunday',
 									'mpwpb_off_dates' => [],
 									// Price_settings
-									'mpwpb_category_active' => 'on',
-									'mpwpb_sub_category_active' => 'on',
 									'mpwpb_service_details_active' => 'on',
 									'mpwpb_service_duration_active' => 'on',
 									'mpwpb_category_text' => 'Wash Type',
@@ -629,8 +625,6 @@
 									'mpwpb_off_days' => 'saturday,sunday',
 									'mpwpb_off_dates' => [],
 									// Price_settings
-									'mpwpb_category_active' => 'on',
-									'mpwpb_sub_category_active' => 'off',
 									'mpwpb_service_details_active' => 'on',
 									'mpwpb_service_duration_active' => 'on',
 									'mpwpb_category_text' => 'Service Type',
@@ -830,8 +824,6 @@
 									'mpwpb_off_days' => 'saturday,sunday',
 									'mpwpb_off_dates' => [],
 									// Price_settings
-									'mpwpb_category_active' => 'off',
-									'mpwpb_sub_category_active' => 'off',
 									'mpwpb_service_details_active' => 'on',
 									'mpwpb_service_duration_active' => 'on',
 									'mpwpb_category_text' => 'Category',
@@ -1029,8 +1021,6 @@
 									'mpwpb_off_days' => 'saturday,sunday',
 									'mpwpb_off_dates' => [],
 									// Price_settings
-									'mpwpb_category_active' => 'off',
-									'mpwpb_sub_category_active' => 'off',
 									'mpwpb_service_details_active' => 'on',
 									'mpwpb_service_duration_active' => 'on',
 									'mpwpb_category_text' => 'Category',
@@ -1208,8 +1198,6 @@
 									'mpwpb_off_days' => 'saturday,sunday',
 									'mpwpb_off_dates' => [],
 									// Price_settings
-									'mpwpb_category_active' => 'off',
-									'mpwpb_sub_category_active' => 'off',
 									'mpwpb_service_details_active' => 'on',
 									'mpwpb_service_duration_active' => 'on',
 									'mpwpb_category_text' => 'Car Type',

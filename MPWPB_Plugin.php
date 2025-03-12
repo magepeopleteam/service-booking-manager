@@ -3,7 +3,7 @@
 	 * Plugin Name: Service Booking & Scheduling Solution | All-in-one Booking Systems
 	 * Plugin URI: http://mage-people.com
 	 * Description: A complete solution for Any kind of service booking.
-	 * Version: 1.1.3
+	 * Version: 1.1.8
 	 * Author: MagePeople Team
 	 * Author URI: http://www.mage-people.com/
 	 * Text Domain: service-booking-manager
