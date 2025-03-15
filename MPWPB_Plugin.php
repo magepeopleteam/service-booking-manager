@@ -30,6 +30,16 @@
 				if (MP_Global_Function::check_woocommerce() == 1) {
 					add_action('activated_plugin', array($this, 'activation_redirect'), 90, 1);
 					require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Dependencies.php';
+
+					// Load Block Editor Integration
+					if (function_exists('register_block_type')) {
+						require_once MPWPB_PLUGIN_DIR . '/blocks/class-mpwpb-blocks.php';
+					}
+
+					// Load Elementor Integration
+					if (did_action('elementor/loaded')) {
+						require_once MPWPB_PLUGIN_DIR . '/elementor/class-mpwpb-elementor.php';
+					}
 				} else {
 					require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Quick_Setup.php';
 					 //add_action('admin_notices', [$this, 'woocommerce_not_active']);

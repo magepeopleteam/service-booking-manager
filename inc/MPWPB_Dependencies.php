@@ -24,6 +24,7 @@
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Layout.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Admin.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Frontend.php';
+				
 			}
 			public function global_enqueue() {
 				do_action('add_mpwpb_common_script');
