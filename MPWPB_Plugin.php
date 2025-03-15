@@ -27,6 +27,12 @@
 					define('MPWPB_PLUGIN_URL', plugins_url() . '/' . plugin_basename(dirname(__FILE__)));
 				}
 				require_once MPWPB_PLUGIN_DIR . '/mp_global/MP_Global_File_Load.php';
+				
+				// Load support files for blocks and widgets
+				if (file_exists(MPWPB_PLUGIN_DIR . '/support/loader.php')) {
+					require_once MPWPB_PLUGIN_DIR . '/support/loader.php';
+				}
+
 				if (MP_Global_Function::check_woocommerce() == 1) {
 					add_action('activated_plugin', array($this, 'activation_redirect'), 90, 1);
 					require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Dependencies.php';
