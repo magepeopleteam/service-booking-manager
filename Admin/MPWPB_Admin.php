@@ -16,6 +16,9 @@
 				add_action('admin_action_mpwpb_item_duplicate', [$this, 'mpwpb_item_duplicate']);
 				add_filter('post_row_actions', [$this, 'post_duplicator'], 10, 2);
 				add_filter('wp_mail_content_type', array($this, 'email_content_type'));
+				add_filter('post_row_actions', array($this, 'add_clone_action'), 10, 2);
+				add_action('admin_action_mpwpb_clone_service', array($this, 'clone_service'));
+				add_action('admin_notices', array($this, 'admin_notices'));
 			}
 			private function load_file(): void {
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Taxonomy.php';
@@ -163,6 +166,68 @@
 			//*************************//
 			public function email_content_type() {
 				return "text/html";
+			}
+			public function add_clone_action($actions, $post) {
+				if ($post->post_type === MPWPB_Function::get_cpt()) {
+					$actions['clone'] = sprintf(
+						'<a href="%s">%s</a>',
+						wp_nonce_url(
+							add_query_arg(
+								array(
+									'action' => 'mpwpb_clone_service',
+									'post' => $post->ID,
+								),
+								admin_url('admin.php')
+							),
+							'mpwpb_clone_service'
+						),
+						esc_html__('Clone', 'service-booking-manager')
+					);
+				}
+				return $actions;
+			}
+			public function clone_service() {
+				// Check if user is capable of cloning
+				if (!current_user_can('edit_posts')) {
+					wp_die(esc_html__('You do not have permission to clone this service.', 'service-booking-manager'));
+				}
+
+				// Verify nonce
+				if (!isset($_GET['_wpnonce']) || !wp_verify_nonce($_GET['_wpnonce'], 'mpwpb_clone_service')) {
+					wp_die(esc_html__('Invalid request.', 'service-booking-manager'));
+				}
+
+				// Get the post ID
+				$post_id = isset($_GET['post']) ? absint($_GET['post']) : 0;
+				if (!$post_id) {
+					wp_die(esc_html__('No service to clone.', 'service-booking-manager'));
+				}
+
+				// Clone the service
+				$new_post_id = MPWPB_Function::clone_service($post_id);
+
+				if ($new_post_id) {
+					// Redirect to the edit page of the new service
+					wp_redirect(add_query_arg(
+						array(
+							'post_type' => MPWPB_Function::get_cpt(),
+							'cloned' => 1
+						),
+						admin_url('edit.php')
+					));
+					exit;
+				} else {
+					wp_die(esc_html__('Service clone failed.', 'service-booking-manager'));
+				}
+			}
+			public function admin_notices() {
+				if (isset($_GET['cloned']) && $_GET['cloned'] == 1 && isset($_GET['post_type']) && $_GET['post_type'] === MPWPB_Function::get_cpt()) {
+					?>
+					<div class="notice notice-success is-dismissible">
+						<p><?php esc_html_e('Service cloned successfully.', 'service-booking-manager'); ?></p>
+					</div>
+					<?php
+				}
 			}
 		}
 		new MPWPB_Admin();

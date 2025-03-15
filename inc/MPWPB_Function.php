@@ -299,6 +299,75 @@
 				$available = $total - $sold;
 				return max(0, $available);
 			}
+			public static function clone_service($post_id) {
+				// Get the post to clone
+				$post = get_post($post_id);
+				if (!$post) {
+					return false;
+				}
+
+				// Get all current post meta
+				$meta_keys = get_post_custom_keys($post_id);
+				$meta_values = array();
+				if ($meta_keys) {
+					foreach ($meta_keys as $key) {
+						$meta_values[$key] = get_post_meta($post_id, $key, true);
+					}
+				}
+
+				// Create new post data array
+				$args = array(
+					'post_title'    => $post->post_title . ' ' . esc_html__('(Clone)', 'service-booking-manager'),
+					'post_content'  => $post->post_content,
+					'post_status'   => 'draft',
+					'post_type'     => self::get_cpt(),
+					'post_author'   => get_current_user_id(),
+					'post_excerpt'  => $post->post_excerpt,
+					'menu_order'    => $post->menu_order
+				);
+
+				// Insert the new post
+				$new_post_id = wp_insert_post($args);
+
+				if (!is_wp_error($new_post_id)) {
+					// Copy all meta fields
+					foreach ($meta_values as $key => $value) {
+						if ($key !== 'check_if_run_once' && $key !== 'link_wc_product') {
+							update_post_meta($new_post_id, $key, $value);
+						}
+					}
+
+					// Create a new WooCommerce product for the cloned service
+					if (class_exists('WooCommerce')) {
+						$product_args = array(
+							'post_title'    => $post->post_title . ' ' . esc_html__('(Clone)', 'service-booking-manager'),
+							'post_content'  => '',
+							'post_status'   => 'publish',
+							'post_type'     => 'product',
+							'post_author'   => get_current_user_id(),
+						);
+
+						$product_id = wp_insert_post($product_args);
+						
+						if (!is_wp_error($product_id)) {
+							update_post_meta($product_id, '_price', '0.01');
+							update_post_meta($product_id, '_sold_individually', 'yes');
+							update_post_meta($product_id, '_virtual', 'yes');
+							update_post_meta($product_id, 'link_mpwpb_id', $new_post_id);
+							update_post_meta($new_post_id, 'link_wc_product', $product_id);
+							update_post_meta($new_post_id, 'check_if_run_once', true);
+
+							// Set product visibility
+							$terms = array('exclude-from-catalog', 'exclude-from-search');
+							wp_set_object_terms($product_id, $terms, 'product_visibility');
+						}
+					}
+
+					return $new_post_id;
+				}
+
+				return false;
+			}
 		}
 		new MPWPB_Function();
 	}
