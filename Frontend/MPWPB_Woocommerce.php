@@ -146,9 +146,12 @@
 					do_action('mpwpb_checkout_create_order_line_item', $item, $values);
 				}
 			}
-			public function checkout_order_processed($order) {
-				if ($order) {
-					$order_id = $order->get_id();
+			public function checkout_order_processed($order_id) {
+				if (is_object($order_id)) {
+					$order_id = $order_id->get_id();
+				}
+				if ($order_id) {
+					$order = wc_get_order($order_id);
 					$order_status = $order->get_status();
 					if ($order_status != 'failed') {
 						//$item_id = current( array_keys( $order->get_items() ) );
@@ -195,9 +198,6 @@
 										$ex_data['mpwpb_date'] = $date;
 										$ex_data['mpwpb_order_id'] = $order_id;
 										$ex_data['mpwpb_order_status'] = $order_status;
-										if ($ex_service_info['ex_group_name']) {
-											$ex_data['mpwpb_ex_group_name'] = $ex_service_info['ex_group_name'];
-										}
 										$ex_data['mpwpb_ex_name'] = $ex_service_info['ex_name'];
 										$ex_data['mpwpb_ex_price'] = $ex_service_info['ex_price'];
 										$ex_data['mpwpb_ex_qty'] = $ex_service_info['ex_qty'];
