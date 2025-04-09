@@ -24,6 +24,12 @@
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Layout.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Admin.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Frontend.php';
+				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Form_Hook.php';
+				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Checkout_Form_Modifier.php';
+				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Direct_Form_Modifier.php';
+				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Ajax_File_Upload.php';
+				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_File_Display_Helper.php';
+				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Display_Fixer.php';
 			}
 			public function global_enqueue() {
 				do_action('add_mpwpb_common_script');

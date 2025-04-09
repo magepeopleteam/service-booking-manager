@@ -1,0 +1,150 @@
+/* Custom styling for the modal form elements */
+#mpwpb-custom-modal-body form {
+    margin: 0;
+    padding: 0;
+}
+
+#mpwpb-custom-modal-body h2 {
+    display: none; /* Hide the original heading as we have it in the modal header */
+}
+
+#mpwpb-custom-modal-body label {
+    display: block;
+    margin: 10px 0 5px;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+#mpwpb-custom-modal-body input[type="text"],
+#mpwpb-custom-modal-body input[type="email"],
+#mpwpb-custom-modal-body select,
+#mpwpb-custom-modal-body textarea {
+    width: 100%;
+    padding: 6px 8px;
+    margin-bottom: 8px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.07);
+    background-color: #fff;
+    color: #32373c;
+    font-size: 13px;
+    line-height: 1.4;
+    box-sizing: border-box;
+}
+
+#mpwpb-custom-modal-body input[type="text"]:focus,
+#mpwpb-custom-modal-body input[type="email"]:focus,
+#mpwpb-custom-modal-body select:focus,
+#mpwpb-custom-modal-body textarea:focus {
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+    outline: 2px solid transparent;
+}
+
+#mpwpb-custom-modal-body input[type="checkbox"] {
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+#mpwpb-custom-modal-body button[type="submit"] {
+    background: #2271b1;
+    border-color: #2271b1;
+    color: #fff;
+    text-decoration: none;
+    text-shadow: none;
+    padding: 6px 12px;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 13px;
+    line-height: 2;
+    min-height: 30px;
+    margin-top: 15px;
+}
+
+#mpwpb-custom-modal-body button[type="submit"]:hover {
+    background: #135e96;
+    border-color: #135e96;
+}
+
+#mpwpb-custom-modal-body .custom-var-attr-section {
+    margin-bottom: 10px;
+}
+
+#mpwpb-custom-modal-body table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#mpwpb-custom-modal-body .option-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+#mpwpb-custom-modal-body .input-cell {
+    flex: 1;
+    margin-right: 5px;
+}
+
+#mpwpb-custom-modal-body .action-cell {
+    display: flex;
+    align-items: center;
+}
+
+#mpwpb-custom-modal-body .action-cell a {
+    margin: 0 3px;
+    color: #2271b1;
+    text-decoration: none;
+}
+
+#mpwpb-custom-modal-body .action-cell a:hover {
+    color: #135e96;
+}
+
+/* Fix for checkboxes */
+#mpwpb-custom-modal-body label:has(input[type="checkbox"]) {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 15px;
+}
+
+/* Add spacing between form sections */
+#mpwpb-custom-modal-body .add-nonce,
+#mpwpb-custom-modal-body .edit-nonce {
+    margin: 0;
+    padding: 0;
+}
+
+/* Make sure the modal is on top of everything */
+#mpwpb-custom-modal {
+    z-index: 999999 !important;
+}
+
+/* Fix for modal positioning and scrolling */
+body.has-mpwpb-modal-open {
+    overflow: hidden;
+}
+
+/* Ensure modal content is scrollable if it's too tall */
+#mpwpb-custom-modal-body {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+/* Prevent text selection in the modal header */
+#mpwpb-custom-modal-content > div:first-child {
+    user-select: none;
+}
+
+/* Style the delete button */
+.button-link-delete {
+    color: #b32d2e !important;
+    border-color: #b32d2e !important;
+}
+
+.button-link-delete:hover {
+    background: #b32d2e !important;
+    color: #fff !important;
+}
