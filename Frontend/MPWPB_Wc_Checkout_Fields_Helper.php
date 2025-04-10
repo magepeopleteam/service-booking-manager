@@ -460,46 +460,114 @@
 				<?php
 			}
 			public function file_upload_field_element($fields) {
+				// Add a hidden field to indicate file upload fields are present
+				?>
+				<input type="hidden" name="mpwpb_has_file_upload" value="1">
+				<?php
 				foreach ($fields as $key => $field) {
+					// Determine if the field is required
+					$is_required = isset($field['required']) && $field['required'] == '1';
 					?>
-                    <p class="form-row form-row-wide <?php echo esc_attr(isset($field['required']) && $field['required'] == '1' ? ' validate-required ' : ''); ?> <?php echo esc_attr(isset($field['validate']) && is_array($field['validate']) && count($field['validate']) ? implode(' validate-', $field['validate']) : ''); ?>" id="<?php echo esc_attr($key . '_field'); ?>" data-priority="<?php echo esc_attr(isset($field['priority']) ? $field['priority'] : ''); ?>">
-                        <label for="<?php echo esc_attr($key); ?>"><?php echo esc_html($field['label']); ?>
+                    <p class="form-row form-row-wide <?php echo esc_attr($is_required ? ' validate-required ' : ''); ?> <?php echo esc_attr(isset($field['validate']) && is_array($field['validate']) && count($field['validate']) ? implode(' validate-', $field['validate']) : ''); ?>" id="<?php echo esc_attr($key . '_field'); ?>" data-priority="<?php echo esc_attr(isset($field['priority']) ? $field['priority'] : ''); ?>">
+                        <label for="<?php echo esc_attr($key . '_file'); ?>"><?php echo esc_html($field['label']); ?>
 
 							<?php
-								if (isset($field['required']) && $field['required'] == '1') {
+								if ($is_required) {
 									?><abbr class="required" title="required">*</abbr><?php
 								}
 							?>
                         </label>
                         <span class="woocommerce-input-wrapper">
-                    <input type="file" id="<?php echo esc_attr($key . '_file'); ?>" name="<?php echo esc_attr($key . '_file'); ?>" <?php echo esc_attr(isset($field['required']) && $field['required'] == '1' ? 'required' : ''); ?> accept=".jpe?g,.png,.pdf"/>
-                    <input type="hidden" id="<?php echo esc_attr($key); ?>" name="<?php echo esc_attr($key); ?>" <?php echo esc_attr(isset($field['required']) && $field['required'] == '1' ? 'required' : ''); ?> value=""/>
-                    </span>
+                            <input type="file" id="<?php echo esc_attr($key . '_file'); ?>" name="<?php echo esc_attr($key . '_file'); ?>" <?php echo esc_attr($is_required ? 'required' : ''); ?> accept=".jpg,.jpeg,.png,.pdf" class="mpwpb-ajax-file-upload"/>
+                            <input type="hidden" id="<?php echo esc_attr($key); ?>" name="<?php echo esc_attr($key); ?>" value=""/>
+                            <div class="upload-status"></div>
+                        </span>
                     </p>
 					<?php
 				}
 			}
 			function save_custom_checkout_fields_to_order($order_id, $data) {
+				error_log('Saving custom checkout fields for order ID: ' . $order_id);
 				if (!isset($_POST['mp_checkout_nonce_action']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['mp_checkout_nonce_action'])), 'mp_checkout_nonce_action')) {
+					error_log('Nonce verification failed for saving custom checkout fields');
 					return;
 				}
+
+				// Get all checkout fields
 				$checkout_key_fields = $this->get_checkout_fields_for_checkout();
+
+				// Debug POST data
+				error_log('POST data: ' . print_r($_POST, true));
+
+				// Process each section (billing, shipping, order)
 				foreach ($checkout_key_fields as $key => $checkout_fields) {
 					if (is_array($checkout_fields) && count($checkout_fields)) {
+						// Process regular fields (not file uploads)
 						$checkout_other_fields = array_filter($checkout_fields, array($this, 'get_other_fields'));
-						foreach ($checkout_other_fields as $q => $file_fields) {
-                            $value=isset($_POST[$q])?sanitize_text_field(wp_unslash($_POST[$q])):'';
+						foreach ($checkout_other_fields as $q => $field) {
+                            $value = isset($_POST[$q]) ? sanitize_text_field(wp_unslash($_POST[$q])) : '';
 							update_post_meta($order_id, '_' . $q, $value);
+							error_log('Saved regular field ' . $q . ' with value: ' . $value);
 						}
+
+						// Process file upload fields
 						if (in_array('file', array_column($checkout_fields, 'type'))) {
+							error_log('Found file fields in ' . $key . ' section');
 							$checkout_file_fields = array_filter($checkout_fields, array($this, 'get_file_fields'));
-							foreach ($checkout_file_fields as $p => $file_fields) {
-								$image_url = $this->get_uploaded_image_link($p . '_file');
-								update_post_meta($order_id, '_' . $p, esc_url($image_url));
+							error_log('File fields: ' . print_r($checkout_file_fields, true));
+
+							foreach ($checkout_file_fields as $p => $file_field) {
+								error_log('Processing file field: ' . $p);
+
+								// Check if this is a required field
+								$is_required = isset($file_field['required']) && $file_field['required'] == '1';
+
+								// Check if we have a file URL from the AJAX upload
+								$file_url = isset($_POST[$p]) ? esc_url_raw($_POST[$p]) : '';
+
+								if (!empty($file_url)) {
+									// We have a file URL from the AJAX upload
+									error_log('Found file URL in POST data for field ' . $p . ': ' . $file_url);
+									update_post_meta($order_id, '_' . $p, $file_url);
+
+									// Extract the filename from the URL
+									$filename = basename($file_url);
+									update_post_meta($order_id, '_' . $p . '_filename', sanitize_text_field($filename));
+									error_log('Saved filename for field ' . $p . ': ' . $filename);
+								} else {
+									// Try the old method as a fallback
+									$image_url = $this->get_uploaded_image_link($p . '_file');
+
+									if ($image_url) {
+										error_log('Saving file URL from fallback method for field ' . $p . ': ' . $image_url);
+										update_post_meta($order_id, '_' . $p, esc_url($image_url));
+
+										// Save the original filename if available
+										if (session_id() && isset($_SESSION['mpwpb_file_original_names'][$p])) {
+											$original_filename = $_SESSION['mpwpb_file_original_names'][$p];
+											update_post_meta($order_id, '_' . $p . '_filename', sanitize_text_field($original_filename));
+											error_log('Saved original filename for field ' . $p . ': ' . $original_filename);
+										}
+									} else {
+										error_log('No file URL found for field: ' . $p);
+
+										// If no file was uploaded but the field is not required, that's okay
+										if (!$is_required) {
+											error_log('Field ' . $p . ' is not required, so no file upload is acceptable');
+										}
+									}
+								}
 							}
 						}
 					}
 				}
+
+				// Clean up session data
+				if (session_id() && isset($_SESSION['mpwpb_file_original_names'])) {
+					unset($_SESSION['mpwpb_file_original_names']);
+				}
+
+				error_log('Finished saving custom checkout fields for order ID: ' . $order_id);
 			}
 			function get_post($order_id) {
 				$args = array(
@@ -525,25 +593,86 @@
 				return $post_ids;
 			}
 			function get_uploaded_image_link($file_field_name) {
+				// Log the function call for debugging
+				error_log('Attempting to upload file from field: ' . $file_field_name);
+
+				// Debug information about the form submission
+				error_log('Form method: ' . $_SERVER['REQUEST_METHOD']);
+				error_log('Content-Type: ' . $_SERVER['CONTENT_TYPE']);
+
 				if (!isset($_POST['mp_checkout_nonce_action']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['mp_checkout_nonce_action'])), 'mp_checkout_nonce_action')) {
+					error_log('Nonce verification failed for file upload');
 					return false;
 				}
+
 				$file_field_name = sanitize_key($file_field_name);
-				$upload_dir = wp_upload_dir();
 				$image_url = '';
+
+				// Debug all $_FILES data
+				error_log('All $_FILES data: ' . print_r($_FILES, true));
+
+				// Check if a file was uploaded
 				if (isset($_FILES[$file_field_name]) && !empty($_FILES[$file_field_name]['name'])) {
-					$file = array_map('sanitize_text_field',$_FILES[$file_field_name]);
-					$file_name = $file['name'];
-					$file_extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
-					$file_type = wp_check_filetype($file_name, $this->allowed_mime_types);
-					if (in_array($file_extension, $this->allowed_extensions) && $file_type['type']) {
-						$path = $upload_dir['path'] . '/' . $file_name;
-						if (wp_handle_upload($file['tmp_name'], $path)) {
-							$image_url = $upload_dir['url'] . '/' . $file_name;
+					error_log('File found in $_FILES: ' . $file_field_name . ' - Name: ' . $_FILES[$file_field_name]['name']);
+
+					// Check if the file has a valid size (not zero)
+					if ($_FILES[$file_field_name]['size'] > 0) {
+					// Create proper upload overrides
+					$upload_overrides = array(
+						'test_form' => false,
+						'mimes' => $this->allowed_mime_types
+					);
+
+					// Use WordPress's built-in file handling
+					$movefile = wp_handle_upload($_FILES[$file_field_name], $upload_overrides);
+
+					if ($movefile && !isset($movefile['error'])) {
+						$image_url = $movefile['url'];
+						error_log('File uploaded successfully: ' . $image_url);
+
+							// Store the file in the media library for better management
+							$filename = basename($movefile['file']);
+							$wp_filetype = wp_check_filetype($filename, null);
+							$attachment = array(
+								'post_mime_type' => $wp_filetype['type'],
+								'post_title' => sanitize_file_name($filename),
+								'post_content' => '',
+								'post_status' => 'inherit'
+							);
+
+							$attach_id = wp_insert_attachment($attachment, $movefile['file']);
+							if (!is_wp_error($attach_id)) {
+								require_once(ABSPATH . 'wp-admin/includes/image.php');
+								$attach_data = wp_generate_attachment_metadata($attach_id, $movefile['file']);
+								wp_update_attachment_metadata($attach_id, $attach_data);
+								error_log('File added to media library with ID: ' . $attach_id);
+							}
+					} else {
+						$error = isset($movefile['error']) ? $movefile['error'] : 'Unknown error';
+						error_log('File upload failed: ' . $error);
 						}
+					} else {
+						error_log('File has zero size: ' . $file_field_name);
+					}
+				} else {
+					error_log('No file found in $_FILES for: ' . $file_field_name);
+					if (isset($_FILES)) {
+						error_log('Available files in $_FILES: ' . print_r(array_keys($_FILES), true));
 					}
 				}
+
 				if ($image_url) {
+					// Store the original filename in a separate meta field for display purposes
+					$original_filename = isset($_FILES[$file_field_name]) ? sanitize_text_field($_FILES[$file_field_name]['name']) : '';
+					if (!empty($original_filename)) {
+						// Store the original filename in a session variable to be used when saving order meta
+						if (!session_id()) {
+							session_start();
+						}
+						$field_base_name = str_replace('_file', '', $file_field_name);
+						$_SESSION['mpwpb_file_original_names'][$field_base_name] = $original_filename;
+						error_log('Stored original filename for ' . $field_base_name . ': ' . $original_filename);
+					}
 					return $image_url;
 				} else {
 					return false;
@@ -556,27 +685,20 @@
 				$shipping_fields = $checkout_fields['shipping'];
 				$order_fields = $checkout_fields['order'];
 				$current_action = current_filter();
+
+				// Only display non-file fields in the original locations
 				if ($current_action == 'woocommerce_admin_order_data_after_billing_address') {
 					$checkout_billing_other_fields = array_filter($billing_fields, array($this, 'get_other_fields'));
 					$this->prepare_other_field($checkout_billing_other_fields, 'billing', $order);
-					if (in_array('file', array_column($billing_fields, 'type'))) {
-						$checkout_billing_file_fields = array_filter($billing_fields, array($this, 'get_file_fields'));
-						$this->prepare_file_field($checkout_billing_file_fields, 'billing', $order);
-					}
+					// File fields are now handled by MPWPB_Display_Fixer
 				} else if ($current_action == 'woocommerce_admin_order_data_after_shipping_address') {
 					$checkout_shipping_other_fields = array_filter($shipping_fields, array($this, 'get_other_fields'));
 					$this->prepare_other_field($checkout_shipping_other_fields, 'shipping', $order);
-					if (in_array('file', array_column($shipping_fields, 'type'))) {
-						$checkout_shipping_file_fields = array_filter($shipping_fields, array($this, 'get_file_fields'));
-						$this->prepare_file_field($checkout_shipping_file_fields, 'shipping', $order);
-					}
+					// File fields are now handled by MPWPB_Display_Fixer
 				} else if ($current_action == 'woocommerce_admin_order_data_after_order_address') {
 					$checkout_order_other_fields = array_filter($order_fields, array($this, 'get_other_fields'));
 					$this->prepare_other_field($checkout_order_other_fields, 'order', $order);
-					if (in_array('file', array_column($order_fields, 'type'))) {
-						$checkout_order_file_fields = array_filter($order_fields, array($this, 'get_file_fields'));
-						$this->prepare_file_field($checkout_order_file_fields, 'order', $order);
-					}
+					// File fields are now handled by MPWPB_Display_Fixer
 				}
 			}
 			function prepare_other_field($custom_fields, $key, $order) {
@@ -616,6 +738,12 @@
 								$key_value = esc_url($key_value);
 								$field_label = isset($field_array['label']) ? esc_html($field_array['label'] . ' :') : '';
 								$field_name = esc_attr($name);
+
+								// Get the original filename if available
+								$original_filename = get_post_meta($order->get_id(), '_' . $name . '_filename', true);
+
+								// Only proceed if we have a valid URL
+								if (!empty($key_value)) {
 								$file_extension = strtolower(pathinfo($key_value, PATHINFO_EXTENSION));
 								$file_type = wp_check_filetype($key_value, $this->allowed_mime_types);
 								?>
@@ -623,13 +751,27 @@
                                     <strong><?php echo esc_html($field_label); ?></strong>
 									<?php if (in_array($file_extension, $this->allowed_extensions) && $file_type['type']) : ?>
 										<?php if ($file_extension !== 'pdf') : ?>
-                                            <img src="<?php echo esc_url($key_value); ?>" alt="<?php echo esc_attr($field_name); ?> image" width="100" height="100">
+                                            <img src="<?php echo esc_url($key_value); ?>" alt="<?php echo esc_attr($field_name); ?> image" width="100" height="100"><br>
+                                            <?php if (!empty($original_filename)) : ?>
+                                                <strong><?php esc_html_e('File:', 'service-booking-manager'); ?></strong> <?php echo esc_html($original_filename); ?><br>
+                                            <?php endif; ?>
                                             <a class="button button-tiny button-primary" href="<?php echo esc_url($key_value); ?>" download>Download</a>
 										<?php else : ?>
+                                            <?php if (!empty($original_filename)) : ?>
+                                                <strong><?php esc_html_e('File:', 'service-booking-manager'); ?></strong> <?php echo esc_html($original_filename); ?><br>
+                                            <?php endif; ?>
                                             <a class="button button-tiny button-primary" href="<?php echo esc_url($key_value); ?>" download>Download PDF</a>
+											<?php endif; ?>
+										<?php else : ?>
+                                            <span class="description"><?php esc_html_e('No valid file found', 'service-booking-manager'); ?></span>
 										<?php endif; ?>
-									<?php endif; ?>
                                 </p>
+								<?php } else { ?>
+                                <p class="form-field form-field-wide">
+                                    <strong><?php echo esc_html($field_label); ?></strong>
+                                    <span class="description"><?php esc_html_e('No file uploaded', 'service-booking-manager'); ?></span>
+                                </p>
+								<?php } ?>
 							<?php endforeach; ?>
                         </div>
 					<?php endif; ?>
@@ -637,5 +779,6 @@
 				<?php
 			}
 		}
-		new MPWPB_Wc_Checkout_Fields_Helper();
 	}
+	new MPWPB_Wc_Checkout_Fields_Helper();
+?>

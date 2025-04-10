@@ -169,6 +169,7 @@
         function () {
             init();
             $('.mpStyles .checkout .open-modal').click(function () {
+                // Original modal functionality - now handled by mpwpb-modal-fix.js
                 $('.mpStyles .checkout #field-modal').css('display', 'block');
                 $('.mpStyles .checkout #field-modal input[name="action"]').val($(this).data('action'));
                 $('.mpStyles .checkout #field-modal input[name="key"]').val($(this).data('key'));
@@ -227,6 +228,7 @@
             window.thwcfdAddNewOptionRow = thwcfdAddNewOptionRow;
             window.thwcfdRemoveOptionRow = thwcfdRemoveOptionRow;
             $('.mpStyles .checkout .close,.mpStyles .checkout .modal').click(function () {
+                // Original close functionality - now handled by mpwpb-modal-fix.js
                 $('.mpStyles .checkout #field-modal').css('display', 'none');
             });
             $('.mpStyles .checkout .modal-content').click(function (e) {
