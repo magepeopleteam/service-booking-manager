@@ -1,8 +1,8 @@
 (function ($) {
     "use strict";
     function init() {
-        const tabItems = document.querySelectorAll('.mpStyles .checkout .tab-item');
-        const tabContents = document.querySelectorAll('.mpStyles .checkout .tab-content');
+        const tabItems = document.querySelectorAll('.mpwpb_styles .checkout .tab-item');
+        const tabContents = document.querySelectorAll('.mpwpb_styles .checkout .tab-content');
         tabItems.forEach((tabItem) => {
             tabItem.addEventListener('click', () => {
                 tabItems.forEach((item) => {
@@ -40,12 +40,12 @@
     }
     function reset_type_select() {
         var option = {'text': "text", 'select': "select", 'file': "file"};
-        $('.mpStyles .checkout select#type option').remove();
+        $('.mpwpb_styles .checkout select#type option').remove();
         $.each(option, function (key, value) {
-            $('.mpStyles .checkout select#type').append($("<option></option>").attr("value", key).text(value));
+            $('.mpwpb_styles .checkout select#type').append($("<option></option>").attr("value", key).text(value));
         });
-        $('.mpStyles .checkout select#type').prop('disabled', false);
-        type_rendering($('.mpStyles .checkout select#type').find(":selected").val(), $('.mpStyles .checkout .open-modal').data('action'));
+        $('.mpwpb_styles .checkout select#type').prop('disabled', false);
+        type_rendering($('.mpwpb_styles .checkout select#type').find(":selected").val(), $('.mpwpb_styles .checkout .open-modal').data('action'));
     }
     function type_rendering(type, action, field = null) {
         if (type == 'text') {
@@ -60,24 +60,24 @@
     }
     function prepare_text(action, field = null) {
         if (action === 'add') {
-            $('.mpStyles .checkout .custom-var-attr-section').empty();
-            $('.mpStyles .checkout .custom-var-attr-section').html(
+            $('.mpwpb_styles .checkout .custom-var-attr-section').empty();
+            $('.mpwpb_styles .checkout .custom-var-attr-section').html(
                 '<label for="placeholder">Placeholder:</label>' +
                 '<input type="text" name="placeholder" id="placeholder">'
             );
         } else if (action === 'edit') {
-            $('.mpStyles .checkout .custom-var-attr-section').empty();
-            $('.mpStyles .checkout .custom-var-attr-section').html(
+            $('.mpwpb_styles .checkout .custom-var-attr-section').empty();
+            $('.mpwpb_styles .checkout .custom-var-attr-section').html(
                 '<label for="placeholder">Placeholder:</label>' +
                 '<input type="text" name="placeholder" id="placeholder">'
             );
-            $('.mpStyles .checkout input[name="placeholder"]').val(field.attributes.placeholder);
+            $('.mpwpb_styles .checkout input[name="placeholder"]').val(field.attributes.placeholder);
         }
     }
     function prepare_select(action, field = null) {
         if (action === 'add') {
-            $('.mpStyles .checkout .custom-var-attr-section').empty();
-            $('.mpStyles .checkout .custom-var-attr-section').html(
+            $('.mpwpb_styles .checkout .custom-var-attr-section').empty();
+            $('.mpwpb_styles .checkout .custom-var-attr-section').html(
                 '<table>' +
                 '<tbody class="ui-sortable">' +
                 '<tr>' +
@@ -127,91 +127,91 @@
                 html += ('</tbody>' +
                     '</table>');
             }
-            $('.mpStyles .checkout .custom-var-attr-section').empty();
-            $('.mpStyles .checkout .custom-var-attr-section').html(html);
+            $('.mpwpb_styles .checkout .custom-var-attr-section').empty();
+            $('.mpwpb_styles .checkout .custom-var-attr-section').html(html);
         }
         $(".ui-sortable").sortable();
     }
     function prepare_file(action, field = null) {
         if (action === 'add') {
-            $('.mpStyles .checkout input[name="validate"]').val('');
-            $('.mpStyles .checkout .custom-var-attr-section').empty();
-            $('.mpStyles .checkout .custom-var-attr-section').html(
+            $('.mpwpb_styles .checkout input[name="validate"]').val('');
+            $('.mpwpb_styles .checkout .custom-var-attr-section').empty();
+            $('.mpwpb_styles .checkout .custom-var-attr-section').html(
                 '<label for="placeholder">Placeholder:</label>' +
                 '<input type="text" name="placeholder" id="placeholder">'
             );
         } else if (action === 'edit') {
-            $('.mpStyles .checkout .custom-var-attr-section').empty();
-            $('.mpStyles .checkout .custom-var-attr-section').html(
+            $('.mpwpb_styles .checkout .custom-var-attr-section').empty();
+            $('.mpwpb_styles .checkout .custom-var-attr-section').html(
                 '<label for="placeholder">Placeholder:</label>' +
                 '<input type="text" name="placeholder" id="placeholder">'
             );
-            $('.mpStyles .checkout input[name="placeholder"]').val(field.attributes.placeholder);
+            $('.mpwpb_styles .checkout input[name="placeholder"]').val(field.attributes.placeholder);
         }
     }
     function prepare_other(action, field = null) {
         if (action === 'add') {
-            $('.mpStyles .checkout .custom-var-attr-section').empty();
-            $('.mpStyles .checkout .custom-var-attr-section').html(
+            $('.mpwpb_styles .checkout .custom-var-attr-section').empty();
+            $('.mpwpb_styles .checkout .custom-var-attr-section').html(
                 '<label for="placeholder">Placeholder:</label>' +
                 '<input type="text" name="placeholder" id="placeholder">'
             );
         } else if (action === 'edit') {
-            $('.mpStyles .checkout .custom-var-attr-section').empty();
-            $('.mpStyles .checkout .custom-var-attr-section').html(
+            $('.mpwpb_styles .checkout .custom-var-attr-section').empty();
+            $('.mpwpb_styles .checkout .custom-var-attr-section').html(
                 '<label for="placeholder">Placeholder:</label>' +
                 '<input type="text" name="placeholder" id="placeholder">'
             );
-            $('.mpStyles .checkout input[name="placeholder"]').val(field.attributes.placeholder);
+            $('.mpwpb_styles .checkout input[name="placeholder"]').val(field.attributes.placeholder);
         }
     }
     $(document).ready(
         function () {
             init();
-            $('.mpStyles .checkout .open-modal').click(function () {
+            $('.mpwpb_styles .checkout .open-modal').click(function () {
                 // Original modal functionality - now handled by mpwpb-modal-fix.js
-                $('.mpStyles .checkout #field-modal').css('display', 'block');
-                $('.mpStyles .checkout #field-modal input[name="action"]').val($(this).data('action'));
-                $('.mpStyles .checkout #field-modal input[name="key"]').val($(this).data('key'));
+                $('.mpwpb_styles .checkout #field-modal').css('display', 'block');
+                $('.mpwpb_styles .checkout #field-modal input[name="action"]').val($(this).data('action'));
+                $('.mpwpb_styles .checkout #field-modal input[name="key"]').val($(this).data('key'));
                 if ($(this).data('action') == 'add') {
-                    $('.mpStyles .checkout #field-modal #mpwpb_pro_checkout_field_edit_nonce').prop("disabled", true);
-                    $('.mpStyles .checkout #field-modal #mpwpb_pro_checkout_field_add_nonce').prop("disabled", false);
-                    $('.mpStyles .checkout input[name="old_name"]').val('');
-                    $('.mpStyles .checkout input[name="new_name"]').val('');
-                    $('.mpStyles .checkout input[name="new_type"]').val('');
-                    $('.mpStyles .checkout input[name="name"]').val('');
-                    $('.mpStyles .checkout input[name="name"]').prop('disabled', false);
+                    $('.mpwpb_styles .checkout #field-modal #mpwpb_pro_checkout_field_edit_nonce').prop("disabled", true);
+                    $('.mpwpb_styles .checkout #field-modal #mpwpb_pro_checkout_field_add_nonce').prop("disabled", false);
+                    $('.mpwpb_styles .checkout input[name="old_name"]').val('');
+                    $('.mpwpb_styles .checkout input[name="new_name"]').val('');
+                    $('.mpwpb_styles .checkout input[name="new_type"]').val('');
+                    $('.mpwpb_styles .checkout input[name="name"]').val('');
+                    $('.mpwpb_styles .checkout input[name="name"]').prop('disabled', false);
                     reset_type_select();
-                    $('.mpStyles .checkout input[name="label"]').val('');
-                    $('.mpStyles .checkout input[name="priority"]').val('');
-                    $('.mpStyles .checkout input[name="class"]').val('');
-                    $('.mpStyles .checkout input[name="validate"]').val('');
-                    $('.mpStyles .checkout input[name="required"]').prop('checked', true);
-                    $('.mpStyles .checkout input[name="disabled"]').prop('checked', false);
-                    type_rendering($('.mpStyles .checkout select#type').find(":selected").val(), $('.mpStyles .checkout #field-modal input[name="action"]').val());
+                    $('.mpwpb_styles .checkout input[name="label"]').val('');
+                    $('.mpwpb_styles .checkout input[name="priority"]').val('');
+                    $('.mpwpb_styles .checkout input[name="class"]').val('');
+                    $('.mpwpb_styles .checkout input[name="validate"]').val('');
+                    $('.mpwpb_styles .checkout input[name="required"]').prop('checked', true);
+                    $('.mpwpb_styles .checkout input[name="disabled"]').prop('checked', false);
+                    type_rendering($('.mpwpb_styles .checkout select#type').find(":selected").val(), $('.mpwpb_styles .checkout #field-modal input[name="action"]').val());
                 } else if ($(this).data('action') == 'edit') {
-                    $('.mpStyles .checkout #field-modal #mpwpb_pro_checkout_field_edit_nonce').prop("disabled", false);
-                    $('.mpStyles .checkout #field-modal #mpwpb_pro_checkout_field_add_nonce').prop("disabled", true);
+                    $('.mpwpb_styles .checkout #field-modal #mpwpb_pro_checkout_field_edit_nonce').prop("disabled", false);
+                    $('.mpwpb_styles .checkout #field-modal #mpwpb_pro_checkout_field_add_nonce').prop("disabled", true);
                     let field = JSON.parse($('input[name="' + $(this).data('name') + '"]').val());
-                    $('.mpStyles .checkout input[name="old_name"]').val(field.name);
-                    $('.mpStyles .checkout input[name="new_name"]').val(field.name);
-                    $('.mpStyles .checkout input[name="name"]').val(field.name);
-                    $('.mpStyles .checkout input[name="name"]').prop('disabled', true);
+                    $('.mpwpb_styles .checkout input[name="old_name"]').val(field.name);
+                    $('.mpwpb_styles .checkout input[name="new_name"]').val(field.name);
+                    $('.mpwpb_styles .checkout input[name="name"]').val(field.name);
+                    $('.mpwpb_styles .checkout input[name="name"]').prop('disabled', true);
                     var option = new Option(field.attributes.type, field.attributes.type, '1', '1');
-                    $('.mpStyles .checkout select#type').append(option);
-                    $('.mpStyles .checkout select#type').prop('disabled', true);
-                    $('.mpStyles .checkout input[name="new_type"]').val(field.attributes.type);
-                    $('.mpStyles .checkout input[name="label"]').val(field.attributes.label);
-                    $('.mpStyles .checkout input[name="priority"]').val(field.attributes.priority);
-                    $('.mpStyles .checkout input[name="class"]').val(field.attributes.class);
-                    $('.mpStyles .checkout input[name="validate"]').val(field.attributes.validate);
-                    $('.mpStyles .checkout input[name="required"]').prop('checked', field.attributes.required == 1 ? true : false);
-                    $('.mpStyles .checkout input[name="disabled"]').prop('checked', field.attributes.disabled == 1 ? true : false);
-                    type_rendering($('.mpStyles .checkout input[name="new_type"]').val(), $('.mpStyles .checkout #field-modal input[name="action"]').val(), field);
+                    $('.mpwpb_styles .checkout select#type').append(option);
+                    $('.mpwpb_styles .checkout select#type').prop('disabled', true);
+                    $('.mpwpb_styles .checkout input[name="new_type"]').val(field.attributes.type);
+                    $('.mpwpb_styles .checkout input[name="label"]').val(field.attributes.label);
+                    $('.mpwpb_styles .checkout input[name="priority"]').val(field.attributes.priority);
+                    $('.mpwpb_styles .checkout input[name="class"]').val(field.attributes.class);
+                    $('.mpwpb_styles .checkout input[name="validate"]').val(field.attributes.validate);
+                    $('.mpwpb_styles .checkout input[name="required"]').prop('checked', field.attributes.required == 1 ? true : false);
+                    $('.mpwpb_styles .checkout input[name="disabled"]').prop('checked', field.attributes.disabled == 1 ? true : false);
+                    type_rendering($('.mpwpb_styles .checkout input[name="new_type"]').val(), $('.mpwpb_styles .checkout #field-modal input[name="action"]').val(), field);
                 }
             });
-            $('.mpStyles .checkout select#type').on('change', function () {
-                type_rendering(this.value, $('.mpStyles .checkout .open-modal').data('action'));
+            $('.mpwpb_styles .checkout select#type').on('change', function () {
+                type_rendering(this.value, $('.mpwpb_styles .checkout .open-modal').data('action'));
             });
             $(".ui-sortable").sortable();
             function thwcfdAddNewOptionRow(button) {
@@ -227,14 +227,14 @@
             }
             window.thwcfdAddNewOptionRow = thwcfdAddNewOptionRow;
             window.thwcfdRemoveOptionRow = thwcfdRemoveOptionRow;
-            $('.mpStyles .checkout .close,.mpStyles .checkout .modal').click(function () {
+            $('.mpwpb_styles .checkout .close,.mpwpb_styles .checkout .modal').click(function () {
                 // Original close functionality - now handled by mpwpb-modal-fix.js
-                $('.mpStyles .checkout #field-modal').css('display', 'none');
+                $('.mpwpb_styles .checkout #field-modal').css('display', 'none');
             });
-            $('.mpStyles .checkout .modal-content').click(function (e) {
+            $('.mpwpb_styles .checkout .modal-content').click(function (e) {
                 e.stopPropagation();
             });
-            $('.mpStyles .checkout .checkoutSwitchButton').on('change', function () {
+            $('.mpwpb_styles .checkout .checkoutSwitchButton').on('change', function () {
                 var element = $(this);
                 var key = $(this).data('key');
                 var name = $(this).data('name');

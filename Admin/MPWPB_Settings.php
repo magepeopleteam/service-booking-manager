@@ -23,8 +23,8 @@
 				$post_id = get_the_id();
 				wp_nonce_field('mpwpb_nonce', 'mpwpb_nonce');
 				?>
-				<div class="mpStyle">
-					<div class="mpTabs metabox">
+				<div class="mpwpb_style">
+					<div class="mpwpb_tabs metabox">
 						<div class="tabLists">
 							<ul>
 								<li  data-tabs-target="#mpwpb_general_info">
@@ -98,7 +98,7 @@
 					update_post_meta($post_id, 'mpwpb_capacity_per_session', $capacity_per_session);
 					//**********************//
 					$this->save_schedule($post_id, 'default');
-					$days = MP_Global_Function::week_day();
+					$days = MPWPB_Global_Function::week_day();
 					foreach ($days as $key => $day) {
 						$this->save_schedule($post_id, $key);
 					}

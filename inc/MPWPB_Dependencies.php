@@ -11,6 +11,7 @@
 			public function __construct() {
 				add_action('init', [$this, 'language_load']);
 				$this->load_file();
+				add_action( 'admin_init', array( $this, 'mpwpb_upgrade' ) );
 				add_action('wp_enqueue_scripts', [$this, 'frontend_script'], 90);
 				add_action('admin_enqueue_scripts', [$this, 'admin_scripts'], 90);
 			}
@@ -30,6 +31,21 @@
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Ajax_File_Upload.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_File_Display_Helper.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Display_Fixer.php';
+			}
+			public function mpwpb_upgrade() {
+				if ( get_option( 'mpwpb_conflict_update' ) != 'completed' ) {
+					$global_settings = get_option( 'mp_global_settings' );
+					update_option( 'mpwpb_global_settings', $global_settings );
+					$style_settings = get_option( 'mp_style_settings' );
+					update_option( 'mpwpb_style_settings', $style_settings );
+					$slider_settings = get_option( 'mp_slider_settings' );
+					update_option( 'mpwpb_slider_settings', $slider_settings );
+					$custom_css = get_option( 'mp_add_custom_css' );
+					update_option( 'mpwpb_custom_css', $custom_css );
+					$license_settings = get_option( 'mp_basic_license_settings' );
+					update_option( 'mpwpb_license_settings', $license_settings );
+					update_option( 'mpwpb_conflict_update', 'completed' );
+				}
 			}
 			public function global_enqueue() {
 				do_action('add_mpwpb_common_script');

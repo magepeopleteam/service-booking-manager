@@ -13,10 +13,10 @@
 				$label = MPWPB_Function::get_name();
 				?>
                 <label class="min_400 mpwpb_id">
-                    <select name="mpwpb_id" class="formControl mp_select2" id="mpwpb_id" required>
+                    <select name="mpwpb_id" class="formControl mpwpb_select2" id="mpwpb_id" required>
                         <option value="0"><?php esc_html_e('Select', 'service-booking-manager') . ' ' . esc_html($label); ?></option>
 						<?php
-							$loop = MP_Global_Function::query_post_type(MPWPB_Function::get_cpt());
+							$loop = MPWPB_Global_Function::query_post_type(MPWPB_Function::get_cpt());
 							$posts = $loop->posts;
 							foreach ($posts as $post) {
 								?>

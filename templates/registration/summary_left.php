@@ -7,10 +7,10 @@
 		exit;
 	}
 	$post_id = $post_id ?? get_the_id();
-	$all_category = $all_category??MP_Global_Function::get_post_info($post_id, 'mpwpb_category_service', array());
-	$all_sub_category = $all_sub_category??MP_Global_Function::get_post_info($post_id, 'mpwpb_sub_category_service', array());
-	$all_services = $all_services??MP_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
-	$extra_services = $extra_services ?? MP_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', array());
+	$all_category = $all_category??MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_category_service', array());
+	$all_sub_category = $all_sub_category??MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_sub_category_service', array());
+	$all_services = $all_services??MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
+	$extra_services = $extra_services ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', array());
 ?>
     <div class="mpwpb_summary_area_left dShadow ">
         <div class="fdColumn">
@@ -36,8 +36,8 @@
 						$sub_category_name = array_key_exists('sub_cat', $service_item)&& ($service_item['sub_cat']|| $service_item['sub_cat']==0)  ?(int) $service_item['sub_cat']+1 : '';
 						$service_name = array_key_exists('name', $service_item) ? $service_item['name'] : '';
 						$service_price = array_key_exists('price', $service_item) ? $service_item['price'] : 0;
-						$service_wc_price = MP_Global_Function::wc_price($post_id, $service_price);
-						$service_price = MP_Global_Function::price_convert_raw($service_wc_price);
+						$service_wc_price = MPWPB_Global_Function::wc_price($post_id, $service_price);
+						$service_price = MPWPB_Global_Function::price_convert_raw($service_wc_price);
                         ?>
                         <div class="mpwpb_summary_item" data-service="<?php echo esc_attr($key+1); ?>" data-service-category="<?php echo esc_attr($category_name); ?>" data-service-sub-category="<?php echo esc_attr($sub_category_name); ?>">
                             <span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
@@ -70,7 +70,7 @@
                                             </h6>
                                             <p>
                                                 <span class="textTheme ex_service_qty">x1</span>&nbsp;|&nbsp;
-                                                <span class="textTheme"><?php echo wp_kses_post(MP_Global_Function::wc_price($post_id, $ex_service_price)); ?></span>
+                                                <span class="textTheme"><?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, $ex_service_price)); ?></span>
                                             </p>
                                         </div>
                                     </div>
@@ -84,7 +84,7 @@
                     <span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
                     <div class="flexWrap justifyBetween">
                         <h5 class="mR_xs"><?php esc_html_e('Total :', 'service-booking-manager'); ?></h5>
-                        <h5><span class="mpwpb_total_bill textTheme"><?php echo wp_kses_post(MP_Global_Function::wc_price($post_id, 0)); ?></span></h5>
+                        <h5><span class="mpwpb_total_bill textTheme"><?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, 0)); ?></span></h5>
                     </div>
                 </div>
             </div>

@@ -21,16 +21,16 @@
 				add_action('wp_ajax_nopriv_get_mpwpb_end_break_time', array($this, 'get_mpwpb_end_break_time'));
 			}
 			public function date_time_settings($post_id) {
-				$date_format = MP_Global_Function::date_picker_format();
+				$date_format = MPWPB_Global_Function::date_picker_format();
 				$now = date_i18n($date_format, strtotime(current_time('Y-m-d')));
-				$date_type = MP_Global_Function::get_post_info($post_id, 'mpwpb_date_type', 'repeated');
-				$time_slot = MP_Global_Function::get_post_info($post_id, 'mpwpb_time_slot_length');
-				$capacity = MP_Global_Function::get_post_info($post_id, 'mpwpb_capacity_per_session', 1);
-				$repeated_start_date = MP_Global_Function::get_post_info($post_id, 'mpwpb_repeated_start_date');
+				$date_type = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_date_type', 'repeated');
+				$time_slot = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_time_slot_length');
+				$capacity = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_capacity_per_session', 1);
+				$repeated_start_date = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_repeated_start_date');
 				$hidden_repeated_start_date = $repeated_start_date ? date_i18n('Y-m-d', strtotime($repeated_start_date)) : date_i18n('Y-m-d', strtotime($now)) ;
 				$visible_repeated_start_date = $repeated_start_date ? date_i18n($date_format, strtotime($repeated_start_date)) : $now;
-				$repeated_after = MP_Global_Function::get_post_info($post_id, 'mpwpb_repeated_after', 1);
-				$active_days = MP_Global_Function::get_post_info($post_id, 'mpwpb_active_days', 10);
+				$repeated_after = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_repeated_after', 1);
+				$active_days = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_active_days', 10);
 				?>
                 <div class="tabsItem mpwpb_settings_date_time" data-tabs="#mpwpb_settings_date_time">
                     <header>
@@ -63,7 +63,7 @@
                                         <div class="mp_settings_area">
                                             <div class="mp_item_insert mp_sortable_area">
                                                 <?php
-                                                    $particular_date_lists = MP_Global_Function::get_post_info($post_id, 'mpwpb_particular_dates', array());
+                                                    $particular_date_lists = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_particular_dates', array());
                                                     if (sizeof($particular_date_lists)) {
                                                         foreach ($particular_date_lists as $particular_date) {
                                                             if ($particular_date) {
@@ -73,9 +73,9 @@
                                                     }
                                                 ?>
                                             </div>
-                                            <?php MP_Custom_Layout::add_new_button(esc_html__('Add New Particular date', 'service-booking-manager')); ?>
-                                            <div class="mp_hidden_content">
-                                                <div class="mp_hidden_item">
+                                            <?php MPWPB_Custom_Layout::add_new_button(esc_html__('Add New Particular date', 'service-booking-manager')); ?>
+                                            <div class="mpwpb_hidden_content">
+                                                <div class="mpwpb_hidden_item">
                                                     <?php self::particular_date_item('mpwpb_particular_dates[]'); ?>
                                                 </div>
                                             </div>
@@ -92,13 +92,13 @@
                                 <section style="display: none;">
                                     <label>
                                         <p><?php esc_html_e('Repeated after', 'service-booking-manager'); ?> <span class="textRequired">&nbsp;*</span></p>
-                                        <input type="text" name="mpwpb_repeated_after" class="mp_number_validation" value="<?php echo esc_attr($repeated_after); ?>"/>
+                                        <input type="text" name="mpwpb_repeated_after" class="mpwpb_number_validation" value="<?php echo esc_attr($repeated_after); ?>"/>
                                     </label>
                                 </section>
                                 <section class="<?php echo esc_attr($date_type == 'repeated' ? 'mActive' : ''); ?>" data-collapse="#mp_repeated">
                                     <label>
                                         <p><?php esc_html_e('Maximum advanced day booking', 'service-booking-manager'); ?> <span class="textRequired">&nbsp;*</span></p>
-                                        <input type="text" name="mpwpb_active_days" class="mp_number_validation" value="<?php echo esc_attr($active_days); ?>"/>
+                                        <input type="text" name="mpwpb_active_days" class="mpwpb_number_validation" value="<?php echo esc_attr($active_days); ?>"/>
                                     </label>
                                 </section>
                                 <section>
@@ -141,7 +141,7 @@
                                     <tbody>
                                     <?php
                                         $this->time_slot_tr($post_id, 'default');
-                                        $days = MP_Global_Function::week_day();
+                                        $days = MPWPB_Global_Function::week_day();
                                         foreach ($days as $key => $day) {
                                             $this->time_slot_tr($post_id, $key);
                                         }
@@ -161,8 +161,8 @@
                         <label class="label">
                             <div class="groupCheckBox flexWrap">
 								<?php
-									$off_days = MP_Global_Function::get_post_info($post_id, 'mpwpb_off_days');
-									$days = MP_Global_Function::week_day();
+									$off_days = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_off_days');
+									$days = MPWPB_Global_Function::week_day();
 									$off_day_array = explode(',', $off_days);
 								?>
                                 <input type="hidden" name="mpwpb_off_days" value="<?php echo esc_attr($off_days); ?>"/>
@@ -183,7 +183,7 @@
                             <div class="mp_settings_area">
                                 <div class="mp_item_insert mp_sortable_area">
 									<?php
-										$off_day_lists = MP_Global_Function::get_post_info($post_id, 'mpwpb_off_dates', array());
+										$off_day_lists = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_off_dates', array());
 										if (sizeof($off_day_lists) > 0) {
 											foreach ($off_day_lists as $off_day) {
 												if ($off_day) {
@@ -193,9 +193,9 @@
 										}
 									?>
                                 </div>
-								<?php MP_Custom_Layout::add_new_button(esc_html__('Add New Off date', 'service-booking-manager')); ?>
-                                <div class="mp_hidden_content">
-                                    <div class="mp_hidden_item">
+								<?php MPWPB_Custom_Layout::add_new_button(esc_html__('Add New Off date', 'service-booking-manager')); ?>
+                                <div class="mpwpb_hidden_content">
+                                    <div class="mpwpb_hidden_item">
 										<?php MPWPB_Date_Time_Settings::particular_date_item('mpwpb_off_dates[]'); ?>
                                     </div>
                                 </div>
@@ -206,7 +206,7 @@
 				<?php
 			}
 			public static function particular_date_item($name, $date = '') {
-				$date_format = MP_Global_Function::date_picker_format();
+				$date_format = MPWPB_Global_Function::date_picker_format();
 				$now = date_i18n($date_format, strtotime(current_time('Y-m-d')));
 				$hidden_date = $date ? date_i18n('Y-m-d', strtotime($date)) : '';
 				$visible_date = $date ? date_i18n($date_format, strtotime($date)) : '';
@@ -217,7 +217,7 @@
                             <input type="hidden" name="<?php echo esc_attr($name); ?>" value="<?php echo esc_attr($hidden_date); ?>"/>
                             <input value="<?php echo esc_attr($visible_date); ?>" class="formControl date_type" placeholder="<?php echo esc_attr($now); ?>"/>
                         </label>
-						<?php MP_Custom_Layout::move_remove_button(); ?>
+						<?php MPWPB_Custom_Layout::move_remove_button(); ?>
                     </div>
                 </div>
 				<?php
@@ -225,12 +225,12 @@
 			public function time_slot_tr($post_id, $day) {
 				$start_name = 'mpwpb_' . $day . '_start_time';
 				$default_start_time = $day == 'default' ? 10 : '';
-				$start_time = MP_Global_Function::get_post_info($post_id, $start_name, $default_start_time);
+				$start_time = MPWPB_Global_Function::get_post_info($post_id, $start_name, $default_start_time);
 				$end_name = 'mpwpb_' . $day . '_end_time';
 				$default_end_time = $day == 'default' ? 18 : '';
-				$end_time = MP_Global_Function::get_post_info($post_id, $end_name, $default_end_time);
+				$end_time = MPWPB_Global_Function::get_post_info($post_id, $end_name, $default_end_time);
 				$start_name_break = 'mpwpb_' . $day . '_start_break_time';
-				$start_time_break = MP_Global_Function::get_post_info($post_id, $start_name_break);
+				$start_time_break = MPWPB_Global_Function::get_post_info($post_id, $start_name_break);
 				?>
                 <tr>
                     <td style="text-transform: capitalize;"><?php echo esc_html($day); ?></td>
@@ -260,7 +260,7 @@
 			public function end_time_slot($post_id, $day, $start_time) {
 				$end_name = 'mpwpb_' . $day . '_end_time';
 				$default_end_time = $day == 'default' ? 18 : '';
-				$end_time = MP_Global_Function::get_post_info($post_id, $end_name, $default_end_time);
+				$end_time = MPWPB_Global_Function::get_post_info($post_id, $end_name, $default_end_time);
 				?>
                 <label>
                     <select class="formControl " name="<?php echo esc_attr($end_name); ?>">
@@ -274,7 +274,7 @@
 			}
 			public function start_break_time_slot($post_id, $day, $start_time, $end_time = '') {
 				$start_name_break = 'mpwpb_' . $day . '_start_break_time';
-				$start_time_break = MP_Global_Function::get_post_info($post_id, $start_name_break);
+				$start_time_break = MPWPB_Global_Function::get_post_info($post_id, $start_name_break);
 				?>
                 <label>
                     <select class="formControl" name="<?php echo esc_attr($start_name_break); ?>">
@@ -286,7 +286,7 @@
 			}
 			public function end_break_time_slot($post_id, $day, $start_time_break, $end_time) {
 				$end_name_break = 'mpwpb_' . $day . '_end_break_time';
-				$end_time_break = MP_Global_Function::get_post_info($post_id, $end_name_break);
+				$end_time_break = MPWPB_Global_Function::get_post_info($post_id, $end_name_break);
 				?>
                 <label>
                     <select class="formControl" name="<?php echo esc_attr($end_name_break); ?>">

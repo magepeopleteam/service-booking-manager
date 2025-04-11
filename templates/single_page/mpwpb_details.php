@@ -41,16 +41,16 @@ if ( wp_is_block_theme() ) {  ?>
 		$post_id = get_the_id();
 		$all_dates = MPWPB_Function::get_date($post_id);
 		//echo '<pre>';print_r($all_dates);echo '</pre>';
-		$product_id = MP_Global_Function::get_post_info($post_id, 'link_wc_product');
-		$all_category = MP_Global_Function::get_post_info($post_id, 'mpwpb_category_service', array());
-		$all_sub_category = MP_Global_Function::get_post_info($post_id, 'mpwpb_sub_category_service', array());
-		$all_services = MP_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
+		$product_id = MPWPB_Global_Function::get_post_info($post_id, 'link_wc_product');
+		$all_category = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_category_service', array());
+		$all_sub_category = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_sub_category_service', array());
+		$all_services = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
 		$category_text = $category_text ?? MPWPB_Function::get_category_text($post_id);
 		$sub_category_text = $sub_category_text ?? MPWPB_Function::get_sub_category_text($post_id);;
 		$service_text = $service_text ?? MPWPB_Function::get_service_text($post_id);
-		$extra_services = MP_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', array());
-		$short_date_format = MP_Global_Function::get_settings('mp_global_settings', 'date_format_short', 'M , Y');
-		$template_name = MP_Global_Function::get_post_info($post_id, 'mpwpb_template', 'default.php');
+		$extra_services = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', array());
+		$short_date_format = MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'date_format_short', 'M , Y');
+		$template_name = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_template', 'default.php');
 
 		include_once(MPWPB_Function::details_template_path($post_id));
 	}

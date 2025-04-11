@@ -8,8 +8,8 @@
 	}
 	$post_id = $post_id ?? get_the_id();
 	$all_dates = $all_dates ?? MPWPB_Function::get_date($post_id);
-	$short_date_format = $short_date_format ?? MP_Global_Function::get_settings('mp_global_settings', 'date_format_short', 'M , Y');
-	$extra_services = $extra_services ?? MP_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', array());
+	$short_date_format = $short_date_format ?? MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'date_format_short', 'M , Y');
+	$extra_services = $extra_services ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', array());
 ?>
     <div class="_dShadow_7_mB_xs mpwpb_date_time_area">
         <div class="mpwpb_date_carousel groupRadioCheck">
@@ -27,7 +27,7 @@
 							?>
                             <div class="fdColumn mpwpb_date_time_line">
                                 <div class="_bgTheme_mB_xs_padding_xs fdColumn">
-                                    <strong><?php echo esc_html(MP_Global_Function::date_format($start_date)); ?></strong>
+                                    <strong><?php echo esc_html(MPWPB_Global_Function::date_format($start_date)); ?></strong>
                                 </div>
 								<?php if (!in_array($start_date, $all_dates)) { ?>
                                     <div class="_mpBtn_mpDisabled_fullHeight_bgLight">
@@ -40,7 +40,7 @@
 											$available = MPWPB_Function::get_total_available($post_id, $slot);
 											if ($available > 0) {
 												?>
-                                                <button type="button" class="_mpBtn to-book" data-date="<?php echo esc_attr(MP_Global_Function::date_format($slot, 'full')); ?>" data-radio-check="<?php echo esc_attr($slot); ?>" data-open-icon="fas fa-check" data-close-icon="">
+                                                <button type="button" class="_mpBtn to-book" data-date="<?php echo esc_attr(MPWPB_Global_Function::date_format($slot, 'full')); ?>" data-radio-check="<?php echo esc_attr($slot); ?>" data-open-icon="fas fa-check" data-close-icon="">
                                                     <!-- <span data-icon></span> --><?php echo esc_html(date_i18n('h:i A', strtotime($slot))); ?>
                                                 </button>
 											<?php } else { ?>

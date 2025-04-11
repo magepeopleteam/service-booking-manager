@@ -89,7 +89,7 @@
 				die;
 			}
 			public function category_settings_section($post_id) {
-				$use_sub_category = MP_Global_Function::get_post_info($post_id, 'mpwpb_use_sub_category', 'off');
+				$use_sub_category = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_use_sub_category', 'off');
 				$active_class = $use_sub_category == 'on' ? 'mActive' : '';
 				$sub_category_checked = $use_sub_category == 'on' ? 'checked' : '';
 				?>
@@ -116,7 +116,7 @@
                             </label>
                             <div class="mpwpb-sub-category-enable" style="display: none;">
                                 <label><?php esc_html_e('Use As Sub Category', 'service-booking-manager'); ?></label>
-								<?php MP_Custom_Layout::switch_button('mpwpb_use_sub_category', $sub_category_checked); ?>
+								<?php MPWPB_Custom_Layout::switch_button('mpwpb_use_sub_category', $sub_category_checked); ?>
                                 <div class="<?php echo esc_attr($active_class); ?>" data-collapse="#mpwpb_use_sub_category">
                                     <label><?php esc_html_e('Select Parent Category', 'service-booking-manager'); ?> </label>
                                     <div class="mpwpb-parent-category">
@@ -127,7 +127,7 @@
                             <label>
 								<?php esc_html_e('Category Image/Icon', 'service-booking-manager'); ?>
                             </label>
-                            <?php do_action('mp_add_icon_image','mpwpb_category_image_icon'); ?>
+                            <?php do_action('mpwpb_add_icon_image','mpwpb_category_image_icon'); ?>
                             <div class="mpwpb_category_service_save_button">
                                 <p>
                                     <button id="mpwpb_category_service_save" class="button button-primary button-large"><?php esc_html_e('Save', 'service-booking-manager'); ?></button>
