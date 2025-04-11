@@ -12,7 +12,7 @@
             top: 0;
             left: 0;
             content: '';
-            background: linear-gradient(to right, var(--color_theme) 60%, transparent);
+            background: linear-gradient(to right, var(--mpwpb_color_theme) 60%, transparent);
             height: 100%;
             position: absolute;
             z-index: 0;
@@ -33,7 +33,7 @@
                     margin: 10px 0;
                 }
                 h2,p{
-                    color: var(--color_theme_alter);
+                    color: var(--mpwpb_color_theme_alter);
                 }
                 ul.features{
                     margin:30px 0;
@@ -41,7 +41,7 @@
                     list-style-type: none;
                     li{
                         margin:10px 0;
-                        color: var(--color_theme_alter);
+                        color: var(--mpwpb_color_theme_alter);
                         font-size: 18px;
                         i{
                             margin-right: 10px;
@@ -49,19 +49,19 @@
                     }
                 }
                 .popup-features{
-                    .popupMainArea{
+                    .mpwpb_popup_main_area{
                         background-color: #FFF;
                         border: 2px solid #fff;
-                        .popupHeader{
-                            border-bottom: 1px solid var(--color_border);
-                            .popupClose{
+                        .mpwpb_popup_header{
+                            border-bottom: 1px solid var(--mpwpb_color_border);
+                            .mpwpb_popup_close{
                                 position:absolute;
                                 top: 0;
                                 right: 0;
                                 width: 35px;
                                 height:35px;
                                 background-color: transparent;
-                                color: var(--color_border);;
+                                color: var(--mpwpb_color_border);;
                             }
                         }
                     }
@@ -71,11 +71,11 @@
         
     }
     .ratings{
-        background-color:var(--color_theme_alter);
+        background-color:var(--mpwpb_color_theme_alter);
         margin: 10px 0;
         padding:5px 10px;
         border-radius: 5px;
-        color: var(--color_theme);
+        color: var(--mpwpb_color_theme);
         font-size: 16px;
         font-weight: bold;
         display: inline-block;
@@ -96,19 +96,19 @@
             align-items: center;
             li{
                 margin:0 10px ;
-                background-color: var(--color_theme_alter);
+                background-color: var(--mpwpb_color_theme_alter);
                 border-radius: 3px;
-                border: 1px solid var(--color_theme);
+                border: 1px solid var(--mpwpb_color_theme);
                 &:first-child{
                     margin-left:0 ;
                 }
                 a{
                     display: block;
                     text-decoration: none; height: 100%; width: 100%;padding: 10px;
-                    color: var(--color_theme);
+                    color: var(--mpwpb_color_theme);
                     &:hover{
-                        background-color: var(--color_theme);
-                        color: var(--color_theme_alter);
+                        background-color: var(--mpwpb_color_theme);
+                        color: var(--mpwpb_color_theme_alter);
                     }
                 }
             }
@@ -120,7 +120,7 @@
         h2{
             margin: 20px 0;
             border-bottom: 1px solid #ededed;
-            color: var(--color_theme);
+            color: var(--mpwpb_color_theme);
         }
         dd, dl, dt, li, ol, ul {
             margin: 10px; 
@@ -140,7 +140,7 @@
         ol {
             list-style-type: decimal; 
             &::marker{
-                background-color: var(--color_theme);
+                background-color: var(--mpwpb_color_theme);
             }
         }
         
@@ -164,7 +164,7 @@
             cursor: pointer;
             i{
                 margin: 0 10px;
-                color:var(--color_theme);
+                color:var(--mpwpb_color_theme);
             }
         }
         .faq-content{
@@ -208,9 +208,9 @@
             padding: 10px;
         }
         .mpwpb_static_theme{
-            .mpPopup{
+            .mpwpb_popup{
                 background-color: #00000094;
-                .popupMainArea{
+                .mpwpb_popup_main_area{
                     border:0;
                     box-shadow: 0 0 1px #000;
                     border-radius: 5px;
@@ -222,24 +222,24 @@
                         width:980px;
                         max-width:1024px;
                     }
-                    .popupHeader{
+                    .mpwpb_popup_header{
                         padding: 16px 16px 10px;
                         color: #333;
                         border-radius: 5px 5px 0 0;
                         border: 0;
                         box-shadow: 0 2px 5px 0 rgba(0,0,0,.1);
-                        .popupClose{
+                        .mpwpb_popup_close{
                             position: absolute;
                             top: 0;
                             right: 0;
                             padding: 0;
                             background: transparent;
-                            color: var(--color_d);
+                            color: var(--mpwpb_color_d);
                             width: 35px;
                             height: 35px;
                         }
                     }
-                    .popupBody {
+                    .mpwpb_popup_body {
                         overflow: auto;
                         min-height: 40vh;
                         height: auto;
@@ -263,11 +263,11 @@
                                         background-color: #f4f5f8;
                                         margin: 10px 0;
                                         align-items: center;
-                                        border: 1px solid var(--color_theme);
+                                        border: 1px solid var(--mpwpb_color_theme);
                                     }
                                     .mpActive{
-                                        background-color: var(--color_theme);
-                                        color: var(--color_theme_alter);
+                                        background-color: var(--mpwpb_color_theme);
+                                        color: var(--mpwpb_color_theme_alter);
                                         h6{
                                             font-weight: 700;
                                         }
@@ -275,8 +275,8 @@
                                             position: relative;
                                             right: 0;
                                             top: 0;
-                                            background-color: var(--color_theme_alter);
-                                            color: var(--color_theme);
+                                            background-color: var(--mpwpb_color_theme_alter);
+                                            color: var(--mpwpb_color_theme);
                                             margin: 0;
                                         }
                                     }
@@ -287,7 +287,7 @@
                                             padding: 10px;
                                             border: 1px solid #d3d3d3;
                                             &.mpActive{
-                                                background-color: var(--color_theme_aa);
+                                                background-color: var(--mpwpb_color_theme_aa);
                                             }
                                         }
                                     }
@@ -296,11 +296,11 @@
                                     margin-top: 20px;
                                     header{
                                         background-color: transparent;
-                                        border-bottom: 1px solid var(--color_theme);
+                                        border-bottom: 1px solid var(--mpwpb_color_theme);
                                         padding:10px 0;
                                         h5{
                                             font-size: 16px;
-                                            color: var(--color_theme);
+                                            color: var(--mpwpb_color_theme);
                                             font-weight: 700;
                                             
                                         }
@@ -313,21 +313,21 @@
                                             color: #999;
                                         }
                                         .mpwpb_service_button{
-                                            color: var(--color_theme);
-                                            border: 1px solid var(--color_theme);
+                                            color: var(--mpwpb_color_theme);
+                                            border: 1px solid var(--mpwpb_color_theme);
                                             background-color: #fff;
                                             min-width: 100px;
                                             &:hover{
-                                                background-color: var(--color_theme);
-                                                color: var(--color_theme_alter);
+                                                background-color: var(--mpwpb_color_theme);
+                                                color: var(--mpwpb_color_theme_alter);
                                             }
                                             &:focus{
-                                                background-color: var(--color_theme);
-                                                color: var(--color_theme_alter);
+                                                background-color: var(--mpwpb_color_theme);
+                                                color: var(--mpwpb_color_theme_alter);
                                             }
                                             &.mActive{
-                                                background-color: var(--color_theme);
-                                                color: var(--color_theme_alter);
+                                                background-color: var(--mpwpb_color_theme);
+                                                color: var(--mpwpb_color_theme_alter);
                                                 min-width: 100px;
                                                 width: 100px;
                                             }
@@ -338,10 +338,10 @@
                                     h5{
                                         background-color: transparent;
                                         font-size: 16px;
-                                        color: var(--color_theme);
+                                        color: var(--mpwpb_color_theme);
                                         font-weight: 700;
                                         padding:10px 0;
-                                        border-bottom: 1px solid var(--color_theme);
+                                        border-bottom: 1px solid var(--mpwpb_color_theme);
                                     }
                                     .mpwpb_item_box{
                                         background-color: #f4f5f8;
@@ -356,20 +356,20 @@
                                         .mpwpb_price_calculation{
                                             min-width: 100px;
                                             width: 100px;
-                                            border: 1px solid var(--color_theme);
-                                            color: var(--color_theme);
-                                            background-color: var(--color_theme_alter);
+                                            border: 1px solid var(--mpwpb_color_theme);
+                                            color: var(--mpwpb_color_theme);
+                                            background-color: var(--mpwpb_color_theme_alter);
                                             &:hover{
-                                                background-color: var(--color_theme);
-                                                color: var(--color_theme_alter);
+                                                background-color: var(--mpwpb_color_theme);
+                                                color: var(--mpwpb_color_theme_alter);
                                             }
                                             &:focus{
-                                                background-color: var(--color_theme);
-                                                color: var(--color_theme_alter);
+                                                background-color: var(--mpwpb_color_theme);
+                                                color: var(--mpwpb_color_theme_alter);
                                             }
                                             &.mActive{
-                                                background-color: var(--color_theme);
-                                                color: var(--color_theme_alter);
+                                                background-color: var(--mpwpb_color_theme);
+                                                color: var(--mpwpb_color_theme_alter);
                                             }
                                         }
                                         @media (max-width:1024px) {
@@ -388,12 +388,12 @@
                                         padding: 10px 0;
                                         h3{
                                             font-size: 16px;
-                                            color: var(--color_theme);
+                                            color: var(--mpwpb_color_theme);
                                             font-weight: 700;
                                         }
                                     }
                                     .carousel_area{
-                                        color: var(--color_theme);
+                                        color: var(--mpwpb_color_theme);
                                         button{
                                             border-radius: 0;
                                         }
@@ -402,7 +402,7 @@
                                         .to-book{
                                             font-size: 14px;
                                             &.mpActive{
-                                                background-color: var(--color_theme);
+                                                background-color: var(--mpwpb_color_theme);
                                                 color: #fff;
                                             }
                                         }
@@ -413,7 +413,7 @@
                                         
                                         .booked{
                                             font-size: 14px;
-                                            background-color: var(--color_theme_aa);
+                                            background-color: var(--mpwpb_color_theme_aa);
                                         }
                                     }
                                 }
@@ -425,10 +425,10 @@
                                     h3{
                                         background-color: transparent;
                                         font-size: 16px !important;
-                                        color: var(--color_theme);
+                                        color: var(--mpwpb_color_theme);
                                         font-weight: 700;
                                         padding:10px 0;
-                                        border-bottom: 1px solid var(--color_theme);
+                                        border-bottom: 1px solid var(--mpwpb_color_theme);
                                     }
                                     label{
                                         font-size: 14px;
@@ -441,7 +441,7 @@
                                 #order_review_heading{
                                     font-size: 16px !important;
                                     margin-bottom: 10px;
-                                    color: var(--color_theme);
+                                    color: var(--mpwpb_color_theme);
                                 }
                                 #order_review{
                                     #payment{
@@ -460,8 +460,8 @@
                                             }
                                         }
                                         #place_order{
-                                            background-color: var(--color_theme);
-                                            border: 1px solid var(--color_theme);
+                                            background-color: var(--mpwpb_color_theme);
+                                            border: 1px solid var(--mpwpb_color_theme);
                                         }
                                     }
                                 }
@@ -481,16 +481,16 @@
                                     background-color: transparent;
                                     position: relative;
                                     .mpwpb_summary_item{
-                                        // border-left: 1px solid var(--color_theme);
-                                        border-left: 1px solid var(--color_theme);
+                                        // border-left: 1px solid var(--mpwpb_color_theme);
+                                        border-left: 1px solid var(--mpwpb_color_theme);
                                         &:last-child{
                                             border-left: 0;
                                         }
                                         padding: 0 5px 30px 24px;
                                         .mpwpb_item_check{
-                                            border: 1px solid var(--color_theme);
+                                            border: 1px solid var(--mpwpb_color_theme);
                                             background-color: #fff;
-                                            color: var(--color_theme);
+                                            color: var(--mpwpb_color_theme);
                                         }
                                     }
                                 }
@@ -499,8 +499,8 @@
                         
                     }                        
                 }
-                .popupClose{
-                    background-color: var(--color_theme);
+                .mpwpb_popup_close{
+                    background-color: var(--mpwpb_color_theme);
                     color: #FFF; 
                 }
                 .popupFooter{
@@ -547,9 +547,9 @@
                 width: 400px; 
             }
             .mpwpb_static {
-                background-color: var(--color_theme);
+                background-color: var(--mpwpb_color_theme);
                 padding: 30px;
-                border: 2px solid var(--color_theme_alter);
+                border: 2px solid var(--mpwpb_color_theme_alter);
                 border-radius: 10px;
                 box-shadow: 0 0 5px #333;
                 margin: 10px;
@@ -564,16 +564,16 @@
                 .mp_title {
                     margin-bottom: 20px;
                     h2 {
-                        color: var(--color_theme_alter);
+                        color: var(--mpwpb_color_theme_alter);
                         text-align: left;
                     }
                     p {
-                        color: var(--color_theme_alter);
+                        color: var(--mpwpb_color_theme_alter);
                         text-align: left;
                     }
                     .ratings{
                         background-color: #00000052;
-                        color: var(--color_theme_alter);
+                        color: var(--mpwpb_color_theme_alter);
                     }
                 }
                 .mpwpb_item_box {
@@ -584,7 +584,7 @@
                     padding: 15px 20px;
                     margin-bottom: 20px;
                     position: relative;
-                    background-color: var(--color_theme_alter);
+                    background-color: var(--mpwpb_color_theme_alter);
                     color: var(--d_color);
                     border-radius: 5px;
                     &:last-child{
@@ -597,7 +597,7 @@
                     }
                 
                     i {
-                        color: var(--color_theme);
+                        color: var(--mpwpb_color_theme);
                     }
                 }
                 

@@ -18,7 +18,7 @@
 				add_action('mpwpb_service_reviews', [$this, 'show_service_reviews']);
 			}
 			public function features_heighlight($limit = '') {
-				$features_heightlight = MP_Global_Function::get_post_info(get_the_ID(), 'mpwpb_features', []);
+				$features_heightlight = MPWPB_Global_Function::get_post_info(get_the_ID(), 'mpwpb_features', []);
 				$limit = $limit ? $limit : 3;
 				if (!empty($features_heightlight)):
 					?>
@@ -37,15 +37,15 @@
 				endif;
 			}
 			public function popup_feature_lists() {
-				$features_heightlight = MP_Global_Function::get_post_info(get_the_ID(), 'mpwpb_features', []);
+				$features_heightlight = MPWPB_Global_Function::get_post_info(get_the_ID(), 'mpwpb_features', []);
 				?>
-                <div class="mpPopup mpStyle popup-features" data-popup="#mpwpb_view_more_popup">
-                    <div class="popupMainArea">
-                        <div class="popupHeader">
+                <div class="mpwpb_popup mpwpb_style popup-features" data-popup="#mpwpb_view_more_popup">
+                    <div class="mpwpb_popup_main_area">
+                        <div class="mpwpb_popup_header">
                             <h3><?php esc_html_e('Features Heighlight', 'service-booking-manager'); ?></h3>
-                            <span class="fas fa-times popupClose"></span>
+                            <span class="fas fa-times mpwpb_popup_close"></span>
                         </div>
-                        <div class="popupBody">
+                        <div class="mpwpb_popup_body">
                             <ul class="features">
 								<?php
 									foreach ($features_heightlight as $value):

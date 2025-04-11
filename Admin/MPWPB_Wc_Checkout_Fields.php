@@ -89,7 +89,7 @@
 			}
 			public function checkout_field_list() {
 				?>
-                <div class="mpStyles">
+                <div class="mpwpb_styles">
                     <div class="checkout">
                         <div class="modal-container">
                             <div class="modal" id="field-modal">
@@ -138,7 +138,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="mpStyles">
+                <div class="mpwpb_styles">
                     <div class="checkout">
                         <div class="tab-container">
                             <ul class="tab-menu">

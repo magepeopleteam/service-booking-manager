@@ -13,7 +13,7 @@
 			//***********Template********************//
 			public static function details_template_path($post_id = ''): string {
 				$post_id = $post_id ?? get_the_id();
-				$template_name = MP_Global_Function::get_post_info($post_id, 'mpwpb_template', 'default.php');
+				$template_name = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_template', 'default.php');
 				$file_name = 'themes/' . $template_name;
 				$dir = MPWPB_PLUGIN_DIR . '/templates/' . $file_name;
 				if (!file_exists($dir)) {
@@ -30,7 +30,7 @@
 			}
 			//************************//
 			public static function get_general_settings($key, $default = '') {
-				return MP_Global_Function::get_settings('mpwpb_general_settings', $key, $default);
+				return MPWPB_Global_Function::get_settings('mpwpb_general_settings', $key, $default);
 			}
 			//*****************//
 			public static function get_cpt(): string {
@@ -60,21 +60,21 @@
 			//*************************************************************Full Custom Function******************************//
 			//*******************************//
 			public static function get_category_text($post_id) {
-				$text = MP_Global_Function::get_post_info($post_id, 'mpwpb_category_text');
+				$text = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_category_text');
 				return $text ?: self::get_general_settings('category_text', esc_html__('Category', 'service-booking-manager'));
 			}
 			public static function get_sub_category_text($post_id) {
-				$text = MP_Global_Function::get_post_info($post_id, 'mpwpb_sub_category_text');
+				$text = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_sub_category_text');
 				return $text ?: self::get_general_settings('sub_category_text', esc_html__('Sub-Category', 'service-booking-manager'));
 			}
 			public static function get_service_text($post_id) {
-				$text = MP_Global_Function::get_post_info($post_id, 'mpwpb_service_text');
+				$text = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service_text');
 				return $text ?: self::get_general_settings('service_text', esc_html__('Service', 'service-booking-manager'));
 			}
 			//*******************************//
 			public static function get_category_name($post_id,$cat_id='') {
 				if($cat_id && $cat_id>0 && $post_id){
-					$all_category = MP_Global_Function::get_post_info($post_id, 'mpwpb_category_service', array());
+					$all_category = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_category_service', array());
 					if (sizeof($all_category) > 0) {
 						foreach ($all_category as $cat_key => $category) {
 							if($cat_key+1 == $cat_id){
@@ -87,7 +87,7 @@
 			}
 			public static function get_sub_category_name($post_id,$sub_cat_id='') {
 				if($sub_cat_id && $sub_cat_id>0 && $post_id){
-					$all_category = MP_Global_Function::get_post_info($post_id, 'mpwpb_sub_category_service', array());
+					$all_category = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_sub_category_service', array());
 					if (sizeof($all_category) > 0) {
 						foreach ($all_category as $cat_key => $category) {
 							if($cat_key+1 == $sub_cat_id){
@@ -100,7 +100,7 @@
 			}
 			public static function get_service_name($post_id,$service_id='') {
 				if($service_id && $service_id>0 && $post_id){
-					$all_category = MP_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
+					$all_category = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
 					if (sizeof($all_category) > 0) {
 						foreach ($all_category as $cat_key => $category) {
 							if($cat_key+1 == $service_id){
@@ -113,7 +113,7 @@
 			}
 			public static function get_category($post_id, $all_services = []) {
 				$categories = [];
-				$all_services = $all_services ?: MP_Global_Function::get_post_info($post_id, 'mpwpb_category_infos', []);
+				$all_services = $all_services ?: MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_category_infos', []);
 				if (sizeof($all_services) > 0) {
 					$count = 0;
 					foreach ($all_services as $service) {
@@ -129,7 +129,7 @@
 			}
 			public static function get_sub_category($post_id, $all_services = []) {
 				$sub_category_list = [];
-				$all_services = $all_services ?: MP_Global_Function::get_post_info($post_id, 'mpwpb_category_infos', []);
+				$all_services = $all_services ?: MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_category_infos', []);
 				$count = 0;
 				if (sizeof($all_services) > 0) {
 					foreach ($all_services as $category_info) {
@@ -155,7 +155,7 @@
 			}
 			public static function get_all_service($post_id) {
 				$all_service_item = [];
-				$all_services = MP_Global_Function::get_post_info($post_id, 'mpwpb_category_infos', []);
+				$all_services = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_category_infos', []);
 				$count = 0;
 				if (sizeof($all_services) > 0) {
 					foreach ($all_services as $category_info) {
@@ -187,24 +187,24 @@
 			//*********Date and Time**********************//
 			public static function get_date($post_id, $expire = false) {
 				$now = current_time('Y-m-d');
-				$date_type = MP_Global_Function::get_post_info($post_id, 'mpwpb_date_type', 'repeated');
+				$date_type = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_date_type', 'repeated');
 				$all_dates = [];
-				$off_days = MP_Global_Function::get_post_info($post_id, 'mpwpb_off_days');
+				$off_days = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_off_days');
 				$all_off_days = explode(',', $off_days);
-				$all_off_dates = MP_Global_Function::get_post_info($post_id, 'mpwpb_off_dates', array());
+				$all_off_dates = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_off_dates', array());
 				$off_dates = [];
 				foreach ($all_off_dates as $off_date) {
 					$off_dates[] = date_i18n('Y-m-d', strtotime($off_date));
 				}
 				if ($date_type == 'repeated') {
-					$start_date = MP_Global_Function::get_post_info($post_id, 'mpwpb_repeated_start_date', $now);
+					$start_date = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_repeated_start_date', $now);
 					if (strtotime($now) >= strtotime($start_date) && !$expire) {
 						$start_date = $now;
 					}
-					$repeated_after = MP_Global_Function::get_post_info($post_id, 'mpwpb_repeated_after', 1);
-					$active_days = MP_Global_Function::get_post_info($post_id, 'mpwpb_active_days', 10) - 1;
+					$repeated_after = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_repeated_after', 1);
+					$active_days = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_active_days', 10) - 1;
 					$end_date = date_i18n('Y-m-d', strtotime($start_date . ' +' . $active_days . ' day'));
-					$dates = MP_Global_Function::date_separate_period($start_date, $end_date, $repeated_after);
+					$dates = MPWPB_Global_Function::date_separate_period($start_date, $end_date, $repeated_after);
 					foreach ($dates as $date) {
 						$date = $date->format('Y-m-d');
 						$day = strtolower(date_i18n('l', strtotime($date)));
@@ -214,7 +214,7 @@
 					}
 				}
 				else {
-					$particular_date_lists = MP_Global_Function::get_post_info($post_id, 'mpwpb_particular_dates', array());
+					$particular_date_lists = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_particular_dates', array());
 					if (sizeof($particular_date_lists)) {
 						foreach ($particular_date_lists as $particular_date) {
 							if ($particular_date && ($expire || strtotime($now) <= strtotime($particular_date)) && !in_array($particular_date, $off_dates) && !in_array($particular_date, $all_off_days)) {
@@ -229,18 +229,18 @@
 				$now_full = current_time( 'Y-m-d H:i' );
 
 				$all_slots = [];
-				$slot_length = MP_Global_Function::get_post_info($post_id, 'mpwpb_time_slot_length', 30);
+				$slot_length = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_time_slot_length', 30);
 				$slot_length = $slot_length * 60;
 				$day_name = strtolower(date_i18n('l', strtotime($start_date)));
-				$start_time = MP_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_start_time');
+				$start_time = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_start_time');
 				if (!$start_time) {
 					$day_name = 'default';
-					$start_time = MP_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_start_time', 10);
+					$start_time = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_start_time', 10);
 				}
 				$start_time = $start_time * 3600;
-				$end_time = MP_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_end_time', 18) * 3600;
-				$start_time_break = MP_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_start_break_time', 0) * 3600;
-				$end_time_break = MP_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_end_break_time', 0) * 3600;
+				$end_time = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_end_time', 18) * 3600;
+				$start_time_break = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_start_break_time', 0) * 3600;
+				$end_time_break = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_end_break_time', 0) * 3600;
 				for ($i = $start_time; $i <= $end_time; $i = $i + $slot_length) {
 					if ($i < $start_time_break || $i >= $end_time_break) {
 						$date_time=$start_date . ' ' . date_i18n('H:i', $i);
@@ -254,7 +254,7 @@
 				return $all_slots;
 			}
 			public static function slice_buffer_time( $date ) {
-				$buffer_time = MP_Global_Function::get_settings( 'mpwpb_general_settings', 'buffer_time', 0 ) * 60;
+				$buffer_time = MPWPB_Global_Function::get_settings( 'mpwpb_general_settings', 'buffer_time', 0 ) * 60;
 				if ( $buffer_time > 0 ) {
 					$date = date_i18n( 'Y-m-d H:i', strtotime( $date ) - $buffer_time );
 				}
@@ -264,7 +264,7 @@
 			public static function get_price($post_id, $service_id,$date = '') {
 				$price = 0;
 				if($service_id && $service_id>0 && $post_id){
-					$all_category = MP_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
+					$all_category = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
 					if (sizeof($all_category) > 0) {
 						foreach ($all_category as $cat_key => $category) {
 							if($cat_key+1 == $service_id){
@@ -273,13 +273,13 @@
 						}
 					}
 				}
-				$price = MP_Global_Function::wc_price($post_id, $price);
-				$price = MP_Global_Function::price_convert_raw($price);
+				$price = MPWPB_Global_Function::wc_price($post_id, $price);
+				$price = MPWPB_Global_Function::price_convert_raw($price);
 				return apply_filters('mpwpb_price_filter', $price, $post_id, $service_id, $date);
 			}
 			public static function get_extra_price($post_id, $ex_service_types, $ex_service_category = '') {
 				$ex_price = 0;
-				$extra_services = MP_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', []);
+				$extra_services = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', []);
 				if (sizeof($extra_services) > 0) {
 					foreach ($extra_services as $service_info) {
 						$service_name = array_key_exists('name', $service_info) ? $service_info['name'] : '';
@@ -288,13 +288,13 @@
 						}
 					}
 				}
-				$ex_price = MP_Global_Function::wc_price($post_id, $ex_price);
-				$ex_price = MP_Global_Function::price_convert_raw($ex_price);
+				$ex_price = MPWPB_Global_Function::wc_price($post_id, $ex_price);
+				$ex_price = MPWPB_Global_Function::price_convert_raw($ex_price);
 				return apply_filters('mpwpb_price_filter', $ex_price, $post_id, $ex_service_category, $ex_service_types);
 			}
 			//************* seat ******************//
 			public static function get_total_available($post_id, $date) {
-				$total = MP_Global_Function::get_post_info($post_id, 'mpwpb_capacity_per_session', 1);
+				$total = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_capacity_per_session', 1);
 				$sold = MPWPB_Query::query_all_sold($post_id, $date)->post_count;
 				$available = $total - $sold;
 				return max(0, $available);

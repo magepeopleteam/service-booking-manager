@@ -1,6 +1,6 @@
 /********************************************************************  ************************************************/
 @media only screen and (min-width: 10px) {
-  div.mpStyle div.mpwpb_price_settings .formControl {
+  div.mpwpb_style div.mpwpb_price_settings .formControl {
     text-align: left;
     height: 36px;
   }
@@ -8,7 +8,7 @@
   div.mpwpb_category_header,
   div.mpwpb_category_header div.mpwpb_service_area {
     text-align: center;
-    background-color: var(--color_theme);
+    background-color: var(--mpwpb_color_theme);
     color: #fff;
   }
   div.mpwpb_category_header div.mpwpb_category_content {
@@ -32,8 +32,8 @@
   }
   div.mpwpb_category_item {
     padding: 7px;
-    border-left: 1px solid var(--color_border);
-    border-bottom: 1px solid var(--color_border);
+    border-left: 1px solid var(--mpwpb_color_border);
+    border-bottom: 1px solid var(--mpwpb_color_border);
     max-width: 200px;
     width: 100%;
     min-width: 200px;
@@ -42,7 +42,7 @@
     width: 100%;
   }
   div.mpwpb_category_item.mActive ~ div.mpwpb_category_content {
-    border-bottom: 1px solid var(--color_border);
+    border-bottom: 1px solid var(--mpwpb_color_border);
   }
   /*****/
   div.mpwpb_sub_category_area {
@@ -52,18 +52,18 @@
   }
   div.mpwpb_sub_category_item {
     padding: 7px;
-    border-left: 1px solid var(--color_border);
-    border-bottom: 1px solid var(--color_border);
+    border-left: 1px solid var(--mpwpb_color_border);
+    border-bottom: 1px solid var(--mpwpb_color_border);
     max-width: 200px;
     width: 100%;
     min-width: 200px;
   }
   div.mpwpb_sub_category_content {
     width: 100%;
-    border-right: 1px solid var(--color_border);
+    border-right: 1px solid var(--mpwpb_color_border);
   }
   div.mpwpb_sub_category_item.mActive ~ div.mpwpb_sub_category_content {
-    border-bottom: 1px solid var(--color_border);
+    border-bottom: 1px solid var(--mpwpb_color_border);
   }
   /*************/
   div.mpwpb_service_area {
@@ -73,14 +73,14 @@
   }
   div.mpwpb_service_item {
     padding: 7px;
-    border: 1px solid var(--color_border);
+    border: 1px solid var(--mpwpb_color_border);
     min-width: 250px;
     width: 100%;
   }
   div.mpwpb_service_content {
     padding: 7px;
-    border-left: 1px solid var(--color_border);
-    border-bottom: 1px solid var(--color_border);
+    border-left: 1px solid var(--mpwpb_color_border);
+    border-bottom: 1px solid var(--mpwpb_color_border);
     min-width: 120px;
     max-width: 150px;
   }
@@ -203,6 +203,6 @@
 /********************************************************************  ************************************************/
 @media only screen and (min-width: 10px) {
   div.mpwpb_add_staff form label span::before {
-    margin: 0 var(--dMP_xs) 0 0;
+    margin: 0 var(--mpwpb_dmp_xs) 0 0;
   }
 }

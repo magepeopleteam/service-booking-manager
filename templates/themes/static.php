@@ -10,7 +10,7 @@
 	}
 	$post_id = $post_id ?? get_the_id();
 ?>
-    <div class="mpStyle mpwpb-static-template mpwpb_registration">
+    <div class="mpwpb_style mpwpb-static-template mpwpb_registration">
         <header style="background-image: url('<?php echo esc_url(get_the_post_thumbnail_url()); ?>');">
             <div class="template-header">
                 <div class="header-content">

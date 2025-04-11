@@ -7,9 +7,9 @@
 		exit;
 	}
 	$post_id = $post_id ?? get_the_id();
-	$all_category = $all_category ?? MP_Global_Function::get_post_info($post_id, 'mpwpb_category_service', array());
-	$all_sub_category = $all_sub_category ?? MP_Global_Function::get_post_info($post_id, 'mpwpb_sub_category_service', array());
-	$all_services = $all_services ?? MP_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
+	$all_category = $all_category ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_category_service', array());
+	$all_sub_category = $all_sub_category ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_sub_category_service', array());
+	$all_services = $all_services ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
 	//echo '<pre>'; print_r($all_services); echo '</pre>';
 	$category_text = $category_text ?? MPWPB_Function::get_category_text($post_id);
 	//echo '<pre>'; print_r($all_sub_category); echo '</pre>';
@@ -32,7 +32,7 @@
 							<?php } ?>
 							<?php if ($category_image) { ?>
                                 <div class="bg_image_area">
-                                    <div data-bg-image="<?php echo esc_attr(MP_Global_Function::get_image_url('', $category_image, 'medium')); ?>"></div>
+                                    <div data-bg-image="<?php echo esc_attr(MPWPB_Global_Function::get_image_url('', $category_image, 'medium')); ?>"></div>
                                 </div>
 							<?php } ?>
                             <h6><?php echo esc_html($category_name); ?></h6>
@@ -52,7 +52,7 @@
                                         <div class="alignCenter _fullWidth">
 											<?php if ($sub_category_image) { ?>
                                                 <div class="bg_image_area">
-                                                    <div data-bg-image="<?php echo esc_attr(MP_Global_Function::get_image_url('', $sub_category_image, 'medium')); ?>"></div>
+                                                    <div data-bg-image="<?php echo esc_attr(MPWPB_Global_Function::get_image_url('', $sub_category_image, 'medium')); ?>"></div>
                                                 </div>
 											<?php } ?>
 											<?php if ($sub_category_icon) { ?>

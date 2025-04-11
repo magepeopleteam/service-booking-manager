@@ -52,11 +52,11 @@ jQuery(document).ready(function($) {
     $('body').append(modalHtml);
 
     // When the original "Add Field" or "Edit" button is clicked
-    $('.mpStyles .checkout .open-modal').on('click', function() {
+    $('.mpwpb_styles .checkout .open-modal').on('click', function() {
         console.log('Open modal button clicked');
 
         // Get the original modal content
-        var originalModalContent = $('.mpStyles .checkout #field-modal .modal-content').html();
+        var originalModalContent = $('.mpwpb_styles .checkout #field-modal .modal-content').html();
 
         // Set the content in our custom modal
         $('#mpwpb-custom-modal-body').html(originalModalContent);

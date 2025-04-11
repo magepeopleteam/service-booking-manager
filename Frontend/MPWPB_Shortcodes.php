@@ -27,7 +27,7 @@
 						<?php
 					}
 					?>
-                    <div class="mpStyle mpwpb_registration_short_code mpwpb_registration mpwpb-static-template">
+                    <div class="mpwpb_style mpwpb_registration_short_code mpwpb_registration mpwpb-static-template">
                         <div class="sidebar">
 							<?php include(MPWPB_Function::template_path('registration/static_registration.php')); ?>
                         </div>

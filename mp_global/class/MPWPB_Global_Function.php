@@ -6,10 +6,10 @@
 	if (!defined('ABSPATH')) {
 		die;
 	} // Cannot access pages directly.
-	if (!class_exists('MP_Global_Function')) {
-		class MP_Global_Function {
+	if (!class_exists('MPWPB_Global_Function')) {
+		class MPWPB_Global_Function {
 			public function __construct() {
-				add_action('mp_load_date_picker_js', [$this, 'date_picker_js'], 10, 2);
+				add_action('mpwpb_load_date_picker_js', [$this, 'date_picker_js'], 10, 2);
 			}
 			public static function query_post_type($post_type, $show = -1, $page = 1): WP_Query {
 				$args = array(
@@ -75,7 +75,7 @@
 			}
 			//**************Date related*********************//
 			public static function date_picker_format_without_year($key = 'date_format'): string {
-				$format = MP_Global_Function::get_settings('mp_global_settings', $key, 'D d M , yy');
+				$format = self::get_settings('mpwpb_global_settings', $key, 'D d M , yy');
 				$date_format = 'm-d';
 				$date_format = $format == 'yy/mm/dd' ? 'm/d' : $date_format;
 				$date_format = $format == 'yy-dd-mm' ? 'd-m' : $date_format;
@@ -90,7 +90,7 @@
 				return $format == 'D M d , yy' ? 'D M  j' : $date_format;
 			}
 			public static function date_picker_format($key = 'date_format'): string {
-				$format = MP_Global_Function::get_settings('mp_global_settings', $key, 'D d M , yy');
+				$format = self::get_settings('mpwpb_global_settings', $key, 'D d M , yy');
 				$date_format = 'Y-m-d';
 				$date_format = $format == 'yy/mm/dd' ? 'Y/m/d' : $date_format;
 				$date_format = $format == 'yy-dd-mm' ? 'Y-d-m' : $date_format;
@@ -121,7 +121,7 @@
                 <script>
                     jQuery(document).ready(function () {
                         jQuery("<?php echo esc_attr($selector); ?>").datepicker({
-                            dateFormat: mp_date_format,
+                            dateFormat: mpwpb_date_format,
                             minDate: new Date(<?php echo esc_attr($start_year); ?>, <?php echo esc_attr($start_month); ?>, <?php echo esc_attr($start_day); ?>),
                             maxDate: new Date(<?php echo esc_attr($end_year); ?>, <?php echo esc_attr($end_month); ?>, <?php echo esc_attr($end_day); ?>),
                             autoSize: true,
@@ -207,13 +207,13 @@
 				return $default;
 			}
 			public static function get_style_settings($key, $default = '') {
-				return self::get_settings('mp_style_settings', $key, $default);
+				return self::get_settings('mpwpb_style_settings', $key, $default);
 			}
 			public static function get_slider_settings($key, $default = '') {
-				return self::get_settings('mp_slider_settings', $key, $default);
+				return self::get_settings('mpwpb_slider_settings', $key, $default);
 			}
 			public static function get_licence_settings($key, $default = '') {
-				return self::get_settings('mp_basic_license_settings', $key, $default);
+				return self::get_settings('mpwpb_license_settings', $key, $default);
 			}
 			//***********************************//
 			public static function price_convert_raw($price) {
@@ -329,9 +329,9 @@
 				}
 			}
 			public static function check_product_in_cart($post_id) {
-				$status = MP_Global_Function::check_woocommerce();
+				$status = self::check_woocommerce();
 				if ($status == 1) {
-					$product_id = MP_Global_Function::get_post_info($post_id, 'link_wc_product');
+					$product_id = self::get_post_info($post_id, 'link_wc_product');
 					foreach (WC()->cart->get_cart() as $cart_item) {
 						if ($cart_item['product_id'] == $product_id) {
 							return true;
@@ -374,5 +374,135 @@
 				return $ids;
 			}
 		}
-		new MP_Global_Function();
+		new MPWPB_Global_Function();
+	}
+	if (!class_exists('MP_Global_Function')) {
+		class MP_Global_Function {
+			public static function get_post_info($post_id, $key, $default = '') {
+				$data = get_post_meta($post_id, $key, true) ?: $default;
+				return self::data_sanitize($data);
+			}
+			public static function data_sanitize($data) {
+				$data = maybe_unserialize($data);
+				if (is_string($data)) {
+					$data = maybe_unserialize($data);
+					if (is_array($data)) {
+						$data = self::data_sanitize($data);
+					} else {
+						$data = sanitize_text_field(stripslashes(wp_strip_all_tags($data)));
+					}
+				} elseif (is_array($data)) {
+					foreach ($data as &$value) {
+						if (is_array($value)) {
+							$value = self::data_sanitize($value);
+						} else {
+							$value = sanitize_text_field(stripslashes(wp_strip_all_tags($value)));
+						}
+					}
+				}
+				return $data;
+			}
+			public static function date_picker_format($key = 'date_format'): string {
+				$format = self::get_settings('mpwpb_global_settings', $key, 'D d M , yy');
+				$date_format = 'Y-m-d';
+				$date_format = $format == 'yy/mm/dd' ? 'Y/m/d' : $date_format;
+				$date_format = $format == 'yy-dd-mm' ? 'Y-d-m' : $date_format;
+				$date_format = $format == 'yy/dd/mm' ? 'Y/d/m' : $date_format;
+				$date_format = $format == 'dd-mm-yy' ? 'd-m-Y' : $date_format;
+				$date_format = $format == 'dd/mm/yy' ? 'd/m/Y' : $date_format;
+				$date_format = $format == 'mm-dd-yy' ? 'm-d-Y' : $date_format;
+				$date_format = $format == 'mm/dd/yy' ? 'm/d/Y' : $date_format;
+				$date_format = $format == 'd M , yy' ? 'j M , Y' : $date_format;
+				$date_format = $format == 'D d M , yy' ? 'D j M , Y' : $date_format;
+				$date_format = $format == 'M d , yy' ? 'M  j, Y' : $date_format;
+				return $format == 'D M d , yy' ? 'D M  j, Y' : $date_format;
+			}
+			public static function date_format($date, $format = 'date') {
+				$date_format = get_option('date_format');
+				$time_format = get_option('time_format');
+				$wp_settings = $date_format . '  ' . $time_format;
+				//$timezone = wp_timezone_string();
+				$timestamp = strtotime($date);
+				if ($format == 'date') {
+					$date = date_i18n($date_format, $timestamp);
+				} elseif ($format == 'time') {
+					$date = date_i18n($time_format, $timestamp);
+				} elseif ($format == 'full') {
+					$date = date_i18n($wp_settings, $timestamp);
+				} elseif ($format == 'day') {
+					$date = date_i18n('d', $timestamp);
+				} elseif ($format == 'month') {
+					$date = date_i18n('M', $timestamp);
+				} elseif ($format == 'year') {
+					$date = date_i18n('Y', $timestamp);
+				} else {
+					$date = date_i18n($format, $timestamp);
+				}
+				return $date;
+			}
+			public static function get_settings($section, $key, $default = '') {
+				$options = get_option($section);
+				if (isset($options[$key]) && $options[$key]) {
+					$default = $options[$key];
+				}
+				return $default;
+			}
+			public static function wc_price($post_id, $price, $args = array()): string {
+				$num_of_decimal = get_option('woocommerce_price_num_decimals', 2);
+				$args = wp_parse_args($args, array(
+					'qty' => '',
+					'price' => '',
+				));
+				$_product = self::get_post_info($post_id, 'link_wc_product', $post_id);
+				$product = wc_get_product($_product);
+				$qty = '' !== $args['qty'] ? max(0.0, (float)$args['qty']) : 1;
+				$tax_with_price = get_option('woocommerce_tax_display_shop');
+				if ('' === $price) {
+					return '';
+				} elseif (empty($qty)) {
+					return 0.0;
+				}
+				$line_price = (float)$price * (int)$qty;
+				$return_price = $line_price;
+				if ($product && $product->is_taxable()) {
+					if (!wc_prices_include_tax()) {
+						$tax_rates = WC_Tax::get_rates($product->get_tax_class());
+						$taxes = WC_Tax::calc_tax($line_price, $tax_rates);
+						if ('yes' === get_option('woocommerce_tax_round_at_subtotal')) {
+							$taxes_total = array_sum($taxes);
+						} else {
+							$taxes_total = array_sum(array_map('wc_round_tax_total', $taxes));
+						}
+						$return_price = $tax_with_price == 'excl' ? round($line_price, $num_of_decimal) : round($line_price + $taxes_total, $num_of_decimal);
+					} else {
+						$tax_rates = WC_Tax::get_rates($product->get_tax_class());
+						$base_tax_rates = WC_Tax::get_base_tax_rates($product->get_tax_class('unfiltered'));
+						if (!empty(WC()->customer) && WC()->customer->get_is_vat_exempt()) { // @codingStandardsIgnoreLine.
+							$remove_taxes = apply_filters('woocommerce_adjust_non_base_location_prices', true) ? WC_Tax::calc_tax($line_price, $base_tax_rates, true) : WC_Tax::calc_tax($line_price, $tax_rates, true);
+							if ('yes' === get_option('woocommerce_tax_round_at_subtotal')) {
+								$remove_taxes_total = array_sum($remove_taxes);
+							} else {
+								$remove_taxes_total = array_sum(array_map('wc_round_tax_total', $remove_taxes));
+							}
+							// $return_price = round( $line_price, $num_of_decimal);
+							$return_price = round($line_price - $remove_taxes_total, $num_of_decimal);
+						} else {
+							$base_taxes = WC_Tax::calc_tax($line_price, $base_tax_rates, true);
+							$modded_taxes = WC_Tax::calc_tax($line_price - array_sum($base_taxes), $tax_rates);
+							if ('yes' === get_option('woocommerce_tax_round_at_subtotal')) {
+								$base_taxes_total = array_sum($base_taxes);
+								$modded_taxes_total = array_sum($modded_taxes);
+							} else {
+								$base_taxes_total = array_sum(array_map('wc_round_tax_total', $base_taxes));
+								$modded_taxes_total = array_sum(array_map('wc_round_tax_total', $modded_taxes));
+							}
+							$return_price = $tax_with_price == 'excl' ? round($line_price - $base_taxes_total, $num_of_decimal) : round($line_price - $base_taxes_total + $modded_taxes_total, $num_of_decimal);
+						}
+					}
+				}
+				$return_price = apply_filters('woocommerce_get_price_including_tax', $return_price, $qty, $product);
+				$display_suffix = get_option('woocommerce_price_display_suffix') ? get_option('woocommerce_price_display_suffix') : '';
+				return wc_price($return_price) . ' ' . $display_suffix;
+			}
+		}
 	}
