@@ -17,6 +17,9 @@ function mpwpb_price_format(price) {
     } else {
         price_text = mpwpb_currency_symbol + '&nbsp;' + price;
     }
+    if(mpwpb_price_suffix){
+        price_text=price_text+ '&nbsp;' +mpwpb_price_suffix;
+    }
     return price_text;
 }
 //=======================================================Loader==============//
