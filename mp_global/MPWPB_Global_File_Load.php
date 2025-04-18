@@ -86,6 +86,7 @@
 					let mpwpb_currency_decimal = "";
 					let mpwpb_currency_thousands_separator = "";
 					let mpwpb_num_of_decimal = "";
+					let mpwpb_price_suffix="<?php echo get_option('woocommerce_price_display_suffix'); ?>";
 					let mpwpb_ajax_url = "<?php echo esc_js(admin_url('admin-ajax.php')); ?>";
 					let mpwpb_empty_image_url = "<?php echo esc_js(MPWPB_GLOBAL_PLUGIN_URL . '/assets/images/no_image.png'); ?>";
 					let mpwpb_date_format = "<?php echo esc_js(MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'date_format', 'D d M , yy')); ?>";
