@@ -159,17 +159,17 @@
 							$post_id = wc_get_order_item_meta($item_id, '_mpwpb_id');
 							if (get_post_type($post_id) == MPWPB_Function::get_cpt()) {
 								$date = wc_get_order_item_meta($item_id, '_mpwpb_date');
-								$date = $date ? MPWPB_Global_Function::data_sanitize($date) : '';
+								$date = $date ? sanitize_text_field( wp_unslash( $date ) ) : '';
 								$category = wc_get_order_item_meta($item_id, '_mpwpb_category');
-								$category = $category ? MPWPB_Global_Function::data_sanitize($category) : '';
+								$category = $category ? sanitize_text_field( wp_unslash( $category ) )  : '';
 								$sub_category = wc_get_order_item_meta($item_id, '_mpwpb_sub_category');
-								$sub_category = $sub_category ? MPWPB_Global_Function::data_sanitize($sub_category) : '';
+								$sub_category = $sub_category ? sanitize_text_field( wp_unslash( $sub_category ) ) : '';
 								$service = wc_get_order_item_meta($item_id, '_mpwpb_service');
-								$service = $service ? MPWPB_Global_Function::data_sanitize($service) : [];
+								$service = $service ? sanitize_text_field( wp_unslash( $service ) ) : [];
 								$total_price = wc_get_order_item_meta($item_id, '_mpwpb_tp');
-								$total_price = $total_price ? MPWPB_Global_Function::data_sanitize($total_price) : '';
+								$total_price = $total_price ? sanitize_text_field( wp_unslash( $total_price ) ): '';
 								$ex_service = wc_get_order_item_meta($item_id, '_mpwpb_extra_service_info');
-								$ex_service_infos = $ex_service ? MPWPB_Global_Function::data_sanitize($ex_service) : [];
+								$ex_service_infos = $ex_service ? array_map( 'sanitize_text_field', wp_unslash( $ex_service ) ) : [];
 								$data['mpwpb_id'] = $post_id;
 								$data['mpwpb_date'] = $date;
 								if ($category) {
