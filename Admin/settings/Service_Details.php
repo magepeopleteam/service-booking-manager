@@ -12,12 +12,12 @@
 				add_action('add_mpwpb_settings_tab_content', [$this, 'service_details']);
 			}
 			public function service_details($post_id) {
-				$service_features_status = MP_Global_Function::get_post_info($post_id, 'mpwpb_features_status', 'on');
-				$service_overview_status = MP_Global_Function::get_post_info($post_id, 'mpwpb_service_overview_status', 'off');
-				$service_details_status = MP_Global_Function::get_post_info($post_id, 'mpwpb_service_details_status', 'off');
-				$service_ratings = MP_Global_Function::get_post_info($post_id, 'mpwpb_service_review_ratings', '');
-				$service_rating_scale = MP_Global_Function::get_post_info($post_id, 'mpwpb_service_rating_scale', '');
-				$service_rating_text = MP_Global_Function::get_post_info($post_id, 'mpwpb_service_rating_text', '');
+				$service_features_status = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_features_status', 'on');
+				$service_overview_status = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service_overview_status', 'off');
+				$service_details_status = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service_details_status', 'off');
+				$service_ratings = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service_review_ratings', '');
+				$service_rating_scale = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service_rating_scale', '');
+				$service_rating_text = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service_rating_text', '');
 				$service_features_checked = $service_features_status == 'on' ? 'checked' : '';
 				$features_active_class = $service_features_status == 'on' ? 'mActive' : '';
 				$service_overview_checked = $service_overview_status == 'on' ? 'checked' : '';
@@ -44,7 +44,7 @@
                                 <span><?php esc_html_e('Service Features', 'service-booking-manager'); ?></span>
                             </div>
                             <div>
-								<?php MP_Custom_Layout::switch_button('mpwpb_features_status', $service_features_checked); ?>
+								<?php MPWPB_Custom_Layout::switch_button('mpwpb_features_status', $service_features_checked); ?>
                             </div>
                         </label>
                     </section>
@@ -53,7 +53,7 @@
                             <div class="mp_settings_area" style="width: 100%;">
                                 <div class="mp_item_insert mp_sortable_area">
 									<?php
-										$features = MP_Global_Function::get_post_info($post_id, 'mpwpb_features', []);
+										$features = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_features', []);
 										if (sizeof($features) > 0) {
 											foreach ($features as $item) {
 												if ($item) {
@@ -63,9 +63,9 @@
 										}
 									?>
                                 </div>
-								<?php MP_Custom_Layout::add_new_button(esc_html__('Add New Feature', 'service-booking-manager')); ?>
-                                <div class="mp_hidden_content">
-                                    <div class="mp_hidden_item">
+								<?php MPWPB_Custom_Layout::add_new_button(esc_html__('Add New Feature', 'service-booking-manager')); ?>
+                                <div class="mpwpb_hidden_content">
+                                    <div class="mpwpb_hidden_item">
 										<?php self::feature_lists('mpwpb_features[]'); ?>
                                     </div>
                                 </div>
@@ -84,7 +84,7 @@
                                 <span><?php esc_html_e('Enable Service Overview', 'service-booking-manager'); ?></span>
                             </div>
                             <div>
-								<?php MP_Custom_Layout::switch_button('mpwpb_service_overview_status', $service_overview_checked); ?>
+								<?php MPWPB_Custom_Layout::switch_button('mpwpb_service_overview_status', $service_overview_checked); ?>
                             </div>
                         </label>
                     </section>
@@ -103,7 +103,7 @@
                                 <span><?php esc_html_e('Enable Service Details', 'service-booking-manager'); ?></span>
                             </div>
                             <div>
-								<?php MP_Custom_Layout::switch_button('mpwpb_service_details_status', $service_details_checked); ?>
+								<?php MPWPB_Custom_Layout::switch_button('mpwpb_service_details_status', $service_details_checked); ?>
                             </div>
                         </label>
                     </section>
@@ -153,7 +153,7 @@
                         <label class="col_12">
                             <input type="text" class="formControl" name="<?php echo esc_attr($name); ?>" value="<?php echo esc_attr($item); ?>"/>
                         </label>
-						<?php MP_Custom_Layout::move_remove_button(); ?>
+						<?php MPWPB_Custom_Layout::move_remove_button(); ?>
                     </div>
                 </div>
 				<?php

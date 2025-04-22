@@ -58,7 +58,7 @@
 				wp_enqueue_style('thickbox');
 			}
 			public function faq_settings($post_id) {
-				$mpwpb_faq_active = MP_Global_Function::get_post_info($post_id, 'mpwpb_faq_active', 'off');
+				$mpwpb_faq_active = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_faq_active', 'off');
 				$active_class = $mpwpb_faq_active == 'on' ? 'mActive' : '';
 				$mpwpb_faq_active_checked = $mpwpb_faq_active == 'on' ? 'checked' : '';
 				?>
@@ -78,7 +78,7 @@
                                 <span><?php esc_html_e('Enable FAQ Section', 'service-booking-manager'); ?></span>
                             </div>
                             <div>
-								<?php MP_Custom_Layout::switch_button('mpwpb_faq_active', $mpwpb_faq_active_checked); ?>
+								<?php MPWPB_Custom_Layout::switch_button('mpwpb_faq_active', $mpwpb_faq_active_checked); ?>
                             </div>
                         </label>
                     </section>

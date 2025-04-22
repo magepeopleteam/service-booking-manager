@@ -8,7 +8,7 @@
 	}
 	$post_id = $post_id ?? get_the_id();
 	$service_text = $service_text ?? MPWPB_Function::get_service_text($post_id);
-	$all_services = $all_services ?? MP_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
+	$all_services = $all_services ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
 	//echo '<pre>'; print_r($all_services); echo '</pre>';
 	if (sizeof($all_services) > 0) {
 		?>
@@ -26,8 +26,8 @@
 					$service_image = array_key_exists('image', $service_item) ? $service_item['image'] : '';
 					$service_icon = array_key_exists('icon', $service_item) ? $service_item['icon'] : '';
 					$service_price = array_key_exists('price', $service_item) ? $service_item['price'] : 0;
-					$service_wc_price = MP_Global_Function::wc_price($post_id, $service_price);
-					$service_price = MP_Global_Function::price_convert_raw($service_wc_price);
+					$service_wc_price = MPWPB_Global_Function::wc_price($post_id, $service_price);
+					$service_price = MPWPB_Global_Function::price_convert_raw($service_wc_price);
 					$service_details = array_key_exists('details', $service_item) ? $service_item['details'] : '';
 					$service_duration = array_key_exists('duration', $service_item) ? $service_item['duration'] : '';
 					$unique_id = '#service_' . uniqid();;
@@ -37,7 +37,7 @@
                         <div class="_dFlex">
 							<?php if ($service_image) { ?>
                                 <div class="bg_image_area _w_75_mR_xs">
-                                    <div data-bg-image="<?php echo esc_attr(MP_Global_Function::get_image_url('', $service_image, 'medium')); ?>"></div>
+                                    <div data-bg-image="<?php echo esc_attr(MPWPB_Global_Function::get_image_url('', $service_image, 'medium')); ?>"></div>
                                 </div>
 							<?php } ?>
                             <div class="_dFlex_justifyBetween_fullWidth">

@@ -67,7 +67,9 @@
 			}
 			public function admin_enqueue() {
 				wp_enqueue_style('mpwpb_checkout', MPWPB_PLUGIN_URL . '/assets/checkout/css/mpwpb-pro-checkout.css', array(), time());
+				wp_enqueue_style('mpwpb_modal_custom', MPWPB_PLUGIN_URL . '/assets/checkout/css/mpwpb-modal-custom.css', array(), time());
 				wp_enqueue_script('mpwpb_checkout', MPWPB_PLUGIN_URL . '/assets/checkout/js/mpwpb-pro-checkout.js', array('jquery'), time(), true);
+				wp_enqueue_script('mpwpb_modal_fix', MPWPB_PLUGIN_URL . '/assets/checkout/js/mpwpb-modal-fix.js', array('jquery', 'mpwpb_checkout'), time(), true);
 			}
 			public function frontend_enqueue() {
 				wp_enqueue_style('mpwpb_checkout_front_style', MPWPB_PLUGIN_URL . '/assets/checkout/front/css/mpwpb-pro-checkout-front-style.css', array(), time());
@@ -87,7 +89,7 @@
 			}
 			public function checkout_field_list() {
 				?>
-                <div class="mpStyles">
+                <div class="mpwpb_styles">
                     <div class="checkout">
                         <div class="modal-container">
                             <div class="modal" id="field-modal">
@@ -136,7 +138,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="mpStyles">
+                <div class="mpwpb_styles">
                     <div class="checkout">
                         <div class="tab-container">
                             <ul class="tab-menu">

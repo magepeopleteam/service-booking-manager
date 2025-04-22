@@ -113,14 +113,6 @@
 			<meta_value>car_wash</meta_value>
 		</postmeta>
 		<postmeta>
-			<meta_key>mpwpb_category_active</meta_key>
-			<meta_value>off</meta_value>
-		</postmeta>
-		<postmeta>
-			<meta_key>mpwpb_sub_category_active</meta_key>
-			<meta_value>off</meta_value>
-		</postmeta>
-		<postmeta>
 			<meta_key>mpwpb_service_details_active</meta_key>
 			<meta_value>on</meta_value>
 		</postmeta>

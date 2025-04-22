@@ -3,7 +3,7 @@
     "use strict";
     $(document).on('click', '.mpwpb_add_category', function () {
         let parent = $(this).closest('.mp_settings_area');
-        let target_item = $(this).next($('.mp_hidden_content')).find(' .mp_hidden_item');
+        let target_item = $(this).next($('.mpwpb_hidden_content')).find(' .mpwpb_hidden_item');
         let item = target_item.html();
         load_sortable_datepicker(parent, item);
         let unique_id = Math.floor((Math.random() * 9999) + 9999);
@@ -18,7 +18,7 @@
     });
     $(document).on('click', '.mpwpb_add_sub_category', function () {
         let parent = $(this).closest('.mp_settings_area');
-        let target_item = $(this).next($('.mp_hidden_content')).find(' .mp_hidden_item');
+        let target_item = $(this).next($('.mpwpb_hidden_content')).find(' .mpwpb_hidden_item');
         let item = target_item.html();
         load_sortable_datepicker(parent, item);
         let unique_id = Math.floor((Math.random() * 9999) + 99999);
@@ -29,19 +29,10 @@
         target_item.find('[name*="mpwpb_service_price_"]').attr('name', 'mpwpb_service_price_' + unique_id + '[]');
         target_item.find('[name*="mpwpb_service_duration_"]').attr('name', 'mpwpb_service_duration_' + unique_id + '[]');
     });
-    $(document).on('change', '[name="mpwpb_category_active"]', function () {
-        let parent = $(this).closest('.mpwpb_price_settings');
-        if (!$(this).is(":checked")) {
-            let target = parent.find('[name="mpwpb_sub_category_active"]');
-            if (target.is(":checked")) {
-                target.next($('span')).trigger('click');
-            }
-        }
-    });
     //========extra service settings===============//
     $(document).on('click', '.mpwpb_add_group_service', function () {
         let parent = $(this).closest('.mp_settings_area');
-        let target_item = $(this).next($('.mp_hidden_content')).find(' .mp_hidden_item');
+        let target_item = $(this).next($('.mpwpb_hidden_content')).find(' .mpwpb_hidden_item');
         let item = target_item.html();
         load_sortable_datepicker(parent, item);
         let unique_id = Math.floor((Math.random() * 9999) + 9999);
@@ -74,7 +65,7 @@
                     "nonce": mpwpb_admin_ajax.nonce
                 },
                 beforeSend: function () {
-                    dLoader_xs_circle(target);
+                    mpwpb_loader_xs_circle(target);
                 },
                 success: function (data) {
                     target.html(data).promise().done(function () {
@@ -104,7 +95,7 @@
                     "nonce": mpwpb_admin_ajax.nonce
                 },
                 beforeSend: function () {
-                    dLoader_xs_circle(target);
+                    mpwpb_loader_xs_circle(target);
                 },
                 success: function (data) {
                     target.html(data).promise().done(function () {
@@ -134,7 +125,7 @@
                     "nonce": mpwpb_admin_ajax.nonce
                 },
                 beforeSend: function () {
-                    dLoader_xs_circle(target);
+                    mpwpb_loader_xs_circle(target);
                 },
                 success: function (data) {
                     target.html(data).promise().done(function () {
@@ -166,7 +157,7 @@
                     "nonce": mpwpb_admin_ajax.nonce
                 },
                 beforeSend: function () {
-                    dLoader_xs_circle(target);
+                    mpwpb_loader_xs_circle(target);
                 },
                 success: function (data) {
                     target.html(data).promise().done(function () {
@@ -196,7 +187,7 @@
                     "nonce": mpwpb_admin_ajax.nonce
                 },
                 beforeSend: function () {
-                    dLoader_xs_circle(target);
+                    mpwpb_loader_xs_circle(target);
                 },
                 success: function (data) {
                     target.html(data).promise().done(function () {
@@ -226,7 +217,7 @@
                     "nonce": mpwpb_admin_ajax.nonce
                 },
                 beforeSend: function () {
-                    dLoader_xs_circle(target);
+                    mpwpb_loader_xs_circle(target);
                 },
                 success: function (data) {
                     target.html(data).promise().done(function () {
@@ -252,7 +243,7 @@
                     type: 'POST', url: mpwpb_admin_ajax.ajax_url, data: {
                         "action": "mpwpb_delete_staff", "staff_id": staff_id, "nonce": mpwpb_admin_ajax.nonce
                     }, beforeSend: function () {
-                        dLoader_circle(parent);
+                        mpwpb_loader_circle(parent);
                     }, success: function (data) {
                         parent.html(data);
                     }
@@ -277,12 +268,12 @@
                 "user_id": user_id, "nonce": mpwpb_admin_ajax.nonce
             },
             beforeSend: function () {
-                dLoader_circle(target);
+                mpwpb_loader_circle(target);
             },
             success: function (data) {
                 target.html(data).promise().done(function () {
-                    mp_load_date_picker(target);
-                    dLoaderRemove(target);
+                    mpwpb_load_date_picker(target);
+                    mpwpb_loaderRemove(target);
                 });
             }
         });
@@ -474,9 +465,9 @@
         $('select[name="mpwpb_sub_category"]').val('');
         $('input[name="mpwpb_category_image_icon"]').val('');
 
-        $('.mp_icon_item').hide();
-        $('.mp_image_item').hide();
-        $('.mp_add_icon_image_button_area').show();
+        $('.mpwpb_icon_item').hide();
+        $('.mpwpb_image_item').hide();
+        $('.mpwpb_add_icon_image_button_area').show();
         
     }
     $(document).on('change', 'input[name="mpwpb_show_category_status"]', function () {
@@ -556,19 +547,19 @@
         var name = parent.find('td .service-name').text().trim();
         var price = parent.find('td:nth-child(3)').text().trim();
         var duratoin = parent.find('td:nth-child(4)').text().trim();
-        $('.mp_icon_item').hide();
-        $('.mp_image_item').hide();
+        $('.mpwpb_icon_item').hide();
+        $('.mpwpb_image_item').hide();
         $('input[name="service_item_id"]').val(itemId);
         if (icon) {
             $('input[name="service_image_icon"]').val(icon);
-            $('.mp_icon_item').show();
-            $('.mp_icon_item span').addClass(icon);
+            $('.mpwpb_icon_item').show();
+            $('.mpwpb_icon_item span').addClass(icon);
         } else if (imageId) {
             $('input[name="service_image_icon"]').val(imageId);
-            $('.mp_image_item').show();
-            $('.mp_image_item img').attr('src',imageSrc);
+            $('.mpwpb_image_item').show();
+            $('.mpwpb_image_item img').attr('src',imageSrc);
         }
-        $('.mp_add_icon_image_button_area').show();
+        $('.mpwpb_add_icon_image_button_area').show();
 
         $('input[name="service_name"]').val(name);
         $('input[name="service_price"]').val(price);
@@ -799,9 +790,9 @@
         $('textarea[name="mpwpb_ext_service_description"]').val('');
         $('input[name="mpwpb_ext_service_image_icon"]').val('');
 
-        $('.mp_icon_item').hide();
-        $('.mp_image_item').hide();
-        $('.mp_add_icon_image_button_area').show();
+        $('.mpwpb_icon_item').hide();
+        $('.mpwpb_image_item').hide();
+        $('.mpwpb_add_icon_image_button_area').show();
     }
     $(document).on('click', '#mpwpb_ex_service_save', function (e) {
         e.preventDefault();
@@ -942,17 +933,17 @@
         var price = parent.find('td:nth-child(5)').text().trim();
         $('input[name="mpwpb_ext_service_item_id"]').val(itemId);
         
-        $('.mp_icon_item').hide();
-        $('.mp_image_item').hide();
+        $('.mpwpb_icon_item').hide();
+        $('.mpwpb_image_item').hide();
         if (icon) {
             $('input[name="mpwpb_ext_service_image_icon"]').val(icon);
-            $('.mp_icon_item').show();
-            $('.mp_icon_item span').addClass(icon);
+            $('.mpwpb_icon_item').show();
+            $('.mpwpb_icon_item span').addClass(icon);
             console.log(icon);
         } else if (imageId) {
             $('input[name="mpwpb_ext_service_image_icon"]').val(imageId);
-            $('.mp_image_item').show();
-            $('.mp_image_item img').attr('src',imageSrc);
+            $('.mpwpb_image_item').show();
+            $('.mpwpb_image_item img').attr('src',imageSrc);
         }
         $('input[name="mpwpb_ext_service_name"]').val(name);
         $('input[name="mpwpb_ext_service_price"]').val(price);
@@ -1066,9 +1057,9 @@
         $('[data-collapse="#mpwpb_use_sub_category"]').slideUp();
         $('select[name="mpwpb_parent_cat"]').val('').change();
 
-        $('.mp_icon_item').hide();
-        $('.mp_image_item').hide();
-        $('.mp_add_icon_image_button_area').show();
+        $('.mpwpb_icon_item').hide();
+        $('.mpwpb_image_item').hide();
+        $('.mpwpb_add_icon_image_button_area').show();
 
         if ($('.mpwpb-category-items').length > 0) {
             $('.mpwpb-sub-category-enable').show();
@@ -1185,20 +1176,20 @@
         var name = parent.find('.title').text().trim();
         $('input[name="mpwpb_category_item_id"]').val(itemId);
 
-        $('.mp_icon_item').hide();
-        $('.mp_image_item').hide();
+        $('.mpwpb_icon_item').hide();
+        $('.mpwpb_image_item').hide();
         if (icon) {
             $('input[name="mpwpb_category_image_icon"]').val(icon);
-            $('.mp_icon_item').show();
-            $('.mp_icon_item div span').addClass(icon);
+            $('.mpwpb_icon_item').show();
+            $('.mpwpb_icon_item div span').addClass(icon);
         } else if (imageId) {
             $('input[name="mpwpb_category_image_icon"]').val(imageId);
-            $('.mp_image_item').show();
-            $('.mp_image_item img').attr('src',imageSrc);
+            $('.mpwpb_image_item').show();
+            $('.mpwpb_image_item img').attr('src',imageSrc);
         }
         $('input[name="mpwpb_category_name"]').val(name);
 
-        $('.mp_add_icon_image_button_area').show();
+        $('.mpwpb_add_icon_image_button_area').show();
     });
     $(document).on('click', '#mpwpb_category_service_update', function (e) {
         e.preventDefault();
@@ -1327,15 +1318,15 @@
         $('input[name="mpwpb_category_item_id"]').val(itemId);
         if (icon) {
             $('input[name="mpwpb_category_image_icon"]').val(icon);
-            $('.mp_icon_item').show();
+            $('.mpwpb_icon_item').show();
         } else if (imageId) {
             $('input[name="mpwpb_category_image_icon"]').val(imageId);
-            $('.mp_image_item').show();
-            $('.mp_image_item img').attr('src',imageSrc);
+            $('.mpwpb_image_item').show();
+            $('.mpwpb_image_item img').attr('src',imageSrc);
         }
         $('input[name="mpwpb_category_name"]').val(name);
         
-        $('.mp_add_icon_image_button_area').show();
+        $('.mpwpb_add_icon_image_button_area').show();
     });
     $(document).on('click', '.mpwpb-category-delete', function (e) {
         e.preventDefault();

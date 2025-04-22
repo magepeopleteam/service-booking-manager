@@ -3,7 +3,7 @@
 	 * Plugin Name: Service Booking & Scheduling Solution | All-in-one Booking Systems
 	 * Plugin URI: http://mage-people.com
 	 * Description: A complete solution for Any kind of service booking.
-	 * Version: 1.1.3
+	 * Version: 1.2.0
 	 * Author: MagePeople Team
 	 * Author URI: http://www.mage-people.com/
 	 * Text Domain: service-booking-manager
@@ -26,8 +26,8 @@
 				if (!defined('MPWPB_PLUGIN_URL')) {
 					define('MPWPB_PLUGIN_URL', plugins_url() . '/' . plugin_basename(dirname(__FILE__)));
 				}
-				require_once MPWPB_PLUGIN_DIR . '/mp_global/MP_Global_File_Load.php';
-				if (MP_Global_Function::check_woocommerce() == 1) {
+				require_once MPWPB_PLUGIN_DIR . '/mp_global/MPWPB_Global_File_Load.php';
+				if (MPWPB_Global_Function::check_woocommerce() == 1) {
 					add_action('activated_plugin', array($this, 'activation_redirect'), 90, 1);
 					require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Dependencies.php';
 				} else {
@@ -35,6 +35,15 @@
 					 //add_action('admin_notices', [$this, 'woocommerce_not_active']);
 					add_action('activated_plugin', array($this, 'activation_redirect_setup'), 90, 1);
 				}
+				$this->appsero_init_tracker_service_booking_manager();
+			}
+			public function appsero_init_tracker_service_booking_manager() {
+				if ( ! class_exists( 'Appsero\Client' ) ) {
+					require_once __DIR__ . '/lib/appsero/src/Client.php';
+				}			
+				$client = new Appsero\Client( '969083cc-730a-49a5-ad81-e24ace3fbacf', 'Service Booking &amp; Scheduling Solution | All-in-one Booking Systems', __FILE__ );			
+				// Active insights
+				$client->insights()->init();
 			}
 			public function activation_redirect($plugin) {
 				if ($plugin == plugin_basename(__FILE__)) {

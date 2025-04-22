@@ -12,7 +12,7 @@
 				add_action('admin_menu', array($this, 'quick_setup_menu'));
 			}
 			public function quick_setup_menu() {
-				$status = MP_Global_Function::check_woocommerce();
+				$status = MPWPB_Global_Function::check_woocommerce();
 				if ($status == 1) {
 					add_submenu_page('edit.php?post_type=mpwpb_item', __('Quick Setup', 'service-booking-manager'), '<span style="color:#10dd10">' . esc_html__('Quick Setup', 'service-booking-manager') . '</span>', 'manage_options', 'mpwpb_quick_setup', array($this, 'quick_setup'));
 					add_submenu_page('mpwpb_item', esc_html__('Quick Setup', 'service-booking-manager'), '<span style="color:#10dd10">' . esc_html__('Quick Setup', 'service-booking-manager') . '</span>', 'manage_options', 'mpwpb_quick_setup', array($this, 'quick_setup'));
@@ -22,12 +22,12 @@
 				}
 			}
 			public function quick_setup() {
-				$status = MP_Global_Function::check_woocommerce();
+				$status = MPWPB_Global_Function::check_woocommerce();
 				if (isset($_POST['mpwpb_quick_setup_nonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['mpwpb_quick_setup_nonce'])), 'mpwpb_quick_setup_nonce')) {
 					if (isset($_POST['active_woo_btn'])) {
 						?>
                         <script>
-                            dLoaderBody();
+                            mpwpb_loaderBody();
                         </script>
 						<?php
 						activate_plugin('woocommerce/woocommerce.php');
@@ -107,11 +107,11 @@
 					}
 				}
 				?>
-                <div class="mpStyle">
+                <div class="mpwpb_style">
                     <div class=_dShadow_6_adminLayout">
                         <form method="post" action="">
 							<?php wp_nonce_field('mpwpb_quick_setup_nonce', 'mpwpb_quick_setup_nonce'); ?>
-                            <div class="mpTabsNext">
+                            <div class="mpwpb_tabs_next">
                                 <div class="tabListsNext _max_700_mAuto">
                                     <div data-tabs-target-next="#mpwpb_qs_welcome" class="tabItemNext" data-open-text="1" data-close-text=" " data-open-icon="" data-close-icon="fas fa-check" data-add-class="success">
                                         <h4 class="circleIcon" data-class>
@@ -160,7 +160,7 @@
 				<?php
 			}
 			public function setup_welcome_content() {
-				$status = MP_Global_Function::check_woocommerce();
+				$status = MPWPB_Global_Function::check_woocommerce();
 				?>
                 <div data-tabs-next="#mpwpb_qs_welcome">
                     <h2><?php esc_html_e('Service Booking Manager For Woocommerce Plugin', 'service-booking-manager'); ?></h2>
@@ -187,8 +187,8 @@
 				<?php
 			}
 			public function setup_general_content() {
-				$label = MP_Global_Function::get_settings('mpwpb_general_settings', 'label', 'Service Booking');
-				$slug = MP_Global_Function::get_settings('mpwpb_general_settings', 'slug', 'service-booking');
+				$label = MPWPB_Global_Function::get_settings('mpwpb_general_settings', 'label', 'Service Booking');
+				$slug = MPWPB_Global_Function::get_settings('mpwpb_general_settings', 'slug', 'service-booking');
 				?>
                 <div data-tabs-next="#mpwpb_qs_general">
                     <div class="section">

@@ -2,8 +2,8 @@
 	if (!defined('ABSPATH')) {
 		die;
 	} // Cannot access pages directly.
-	if (!class_exists('MAGE_Setting_API')) {
-		class MAGE_Setting_API {
+	if (!class_exists('MPWPB_Setting_API')) {
+		class MPWPB_Setting_API {
 			protected $settings_sections = array();
 			protected $settings_fields = array();
 			public function __construct() { }
@@ -98,7 +98,7 @@
 				return $desc;
 			}
 			function callback_text($args) {
-				$value = MP_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
+				$value = MPWPB_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
 				$name = $args['section'] . '[' . $args['id'] . ']';
 				$placeholder = empty($args['placeholder']) ? '' : $args['placeholder'];
 				?>
@@ -108,9 +108,9 @@
 				<?php
 			}
 			function callback_datepicker($args) {
-				$date_format = MP_Global_Function::date_picker_format();
+				$date_format = MPWPB_Global_Function::date_picker_format();
 				$now = date_i18n($date_format, strtotime(current_time('Y-m-d')));
-				$date = MP_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
+				$date = MPWPB_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
 				$hidden_date = $date ? date_i18n('Y-m-d', strtotime($date)) : '';
 				$visible_date = $date ? date_i18n($date_format, strtotime($date)) : '';
 				$name = $args['section'] . '[' . $args['id'] . ']';
@@ -121,12 +121,12 @@
                 </label>
 				<?php
 			}
-			function callback_mp_select2($args) {
-				$value = MP_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
+			function callback_mpwpb_select2($args) {
+				$value = MPWPB_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
 				$name = $args['section'] . '[' . $args['id'] . ']';
 				?>
                 <label>
-                    <select name="<?php echo esc_attr($name); ?>" class="formControl mp_select2">
+                    <select name="<?php echo esc_attr($name); ?>" class="formControl mpwpb_select2">
 						<?php foreach ($args['options'] as $key => $label) { ?>
                             <option value="<?php echo esc_attr($key); ?>" <?php echo esc_attr($key == $value ? 'selected' : ''); ?>><?php echo esc_html($label); ?></option>
 						<?php } ?>
@@ -134,14 +134,14 @@
                 </label>
 				<?php
 			}
-			function callback_mp_select2_role($args) {
+			function callback_mpwpb_select2_role($args) {
 				global $wp_roles;
-				$value = MP_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
+				$value = MPWPB_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
 				$name = $args['section'] . '[' . $args['id'] . '][]';
 				$value = is_array($value) ? $value : [$value];
 				?>
                 <label>
-                    <select name="<?php echo esc_attr($name); ?>" class="formControl mp_select2" multiple>
+                    <select name="<?php echo esc_attr($name); ?>" class="formControl mpwpb_select2" multiple>
 						<?php foreach ($wp_roles->roles as $key => $label) { ?>
                             <option value="<?php echo esc_attr($key); ?>" <?php echo in_array($key, $value) ? 'selected' : ''; ?>><?php echo esc_html($label['name']); ?></option>
 						<?php } ?>
@@ -153,7 +153,7 @@
 				$this->callback_text($args);
 			}
 			function callback_number($args) {
-				$value = MP_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
+				$value = MPWPB_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
 				$name = $args['section'] . '[' . $args['id'] . ']';
 				$placeholder = empty($args['placeholder']) ? '' : $args['placeholder'];
 				?>
@@ -167,7 +167,7 @@
 				<?php
 			}
 			function callback_checkbox($args) {
-				$value = MP_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
+				$value = MPWPB_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
 				$name = $args['section'] . '[' . $args['id'] . ']';
 				$checked = checked($value, 'on', false);
 				?>
@@ -181,7 +181,7 @@
 				<?php
 			}
 			function callback_multicheck($args) {
-				$value = MP_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
+				$value = MPWPB_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
 				$name = $args['section'] . '[' . $args['id'] . ']';
 				?>
                 <fieldset>
@@ -201,7 +201,7 @@
 				<?php
 			}
 			function callback_radio($args) {
-				$value = MP_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
+				$value = MPWPB_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
 				$name = $args['section'] . '[' . $args['id'] . ']';
 				?>
                 <fieldset>
@@ -216,7 +216,7 @@
 				<?php
 			}
 			function callback_select($args) {
-				$value = MP_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
+				$value = MPWPB_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
 				$name = $args['section'] . '[' . $args['id'] . ']';
 				?>
                 <label>
@@ -229,7 +229,7 @@
 				<?php
 			}
 			function callback_textarea($args) {
-				$value = MP_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
+				$value = MPWPB_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
 				$name = $args['section'] . '[' . $args['id'] . ']';
 				$placeholder = empty($args['placeholder']) ? '' : $args['placeholder'];
 				?>
@@ -249,7 +249,7 @@
 				}
 			}
 			function callback_wysiwyg($args) {
-				$value = MP_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
+				$value = MPWPB_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
 				?>
                 <div>
 					<?php
@@ -267,14 +267,14 @@
 				<?php
 			}
 			function callback_file($args) {
-				$value = MP_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
+				$value = MPWPB_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
 				$name = $args['section'] . '[' . $args['id'] . ']';
 				$placeholder = empty($args['placeholder']) ? '' : $args['placeholder'];
 				$label = $args['options']['button_label'] ?? esc_html__('Choose File', 'service-booking-manager');
-				do_action('mp_add_single_image', $name, $value);
+				do_action('mpwpb_add_single_image', $name, $value);
 			}
 			function callback_password($args) {
-				$value = MP_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
+				$value = MPWPB_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
 				$name = $args['section'] . '[' . $args['id'] . ']';
 				$placeholder = empty($args['placeholder']) ? '' : $args['placeholder'];
 				?>
@@ -284,7 +284,7 @@
 				<?php
 			}
 			function callback_color($args) {
-				$value = MP_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
+				$value = MPWPB_Global_Function::get_settings($args['section'], $args['id'], $args['std']);
 				$name = $args['section'] . '[' . $args['id'] . ']';
 				?>
                 <label>
@@ -294,7 +294,7 @@
 			}
 			function callback_pages($args) {
 				$dropdown_args = array(
-					'selected' => MP_Global_Function::get_settings($args['section'], $args['id'], $args['std']),
+					'selected' => MPWPB_Global_Function::get_settings($args['section'], $args['id'], $args['std']),
 					'name' => $args['section'] . '[' . $args['id'] . ']',
 					'id' => $args['section'] . '[' . $args['id'] . ']',
 				);

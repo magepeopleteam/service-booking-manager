@@ -23,81 +23,58 @@ Whether it's a salon booking,  music class, workshop, car wash, repair service, 
 
 
 ### Services Available for Online Booking
-WpBookingly is designed to perfectly integrate with a variety of booking systems, ensuring compatibility across common platforms. This versatile system performs exceptionally well with various services, including:
-
-
+WpBookingly is designed to integrate perfectly with a variety of booking systems, ensuring compatibility across common platforms. This versatile system performs exceptionally well with various services, including:
 ### 🛠️ Repair Service Booking:
 Car repair & maintenance, Television, Mobile Laptop Service Booking.
-
 ### 🚗 Cleaning and Wash Service Booking:
 Car wash, House cleaning, and more.
-
 ### 💇‍♀️ Salons & Beauty Appointment Booking:
 Hair salons, nail salons, barbershops, and more.
-
 ### 💆 Health and Wellness Appointment Booking:
 Wellness, spas & massage, therapy, baths.
-
 ### 🏥 Medicine Appointment Booking:
-Clinics, doctors, dentists, and medical centres.
-
+Clinics, doctors, dentists, and medical centers.
 ### 🏫 Educational Appointment Booking:
-Education centres, tutors, language schools, private lessons.
-
+Education centers, tutors, language schools, private lessons.
 ### 🏋️‍♂️ Fitness & Gyms Booking:
-Yoga classes, personal trainers, health clubs, and fitness centres.
-
+Yoga classes, personal trainers, health clubs, and fitness centers.
 ### 🤝 Professional Services Booking:
-Coaches, consultants, lawyers, photographers, consulting psychologists, cleaning services, and many more.
-
+Coaches, consultants, lawyers, photographers, consulting psychologists, cleaning services, etc.
 
 Let's See Demos To Get A Clear Idea
 
-🧼🚗[Car Wash server Booking Demo](https://wpbookingly.com/service/car-wash/)
+🧼 [Car Wash server Booking Demo](https://wpbookingly.com/service/car-wash/)
 🚗 [Car Rental Booking Demo](https://wpbookingly.com/service/rent-your-dream-car/)
 🏥 [Medical & Dental Service Appointment Demo](https://wpbookingly.com/service/medical-dental/)
 🎵 [Musical Class Appointment Booking Demo](https://wpbookingly.com/service/musical-class/)
 🔧 [Repair Service Booking Demo](https://wpbookingly.com/service/repair-service/)
-💇‍♀️[Salon & Spa Appointment Booking Demo](https://wpbookingly.com/service/car-repair-service/)
-👉[Buy WordPress Service Booking & Scheduling Plugin Pro](https://mage-people.com/product/wordpress-service-booking-plugin-all-kind-of-service-booking-solution/) 👈
-
+💇‍♀️ [Salon & Spa Appointment Booking Demo](https://wpbookingly.com/service/car-repair-service/)
+👉 [Buy WordPress Service Booking & Scheduling Plugin Pro](https://mage-people.com/product/wordpress-service-booking-plugin-all-kind-of-service-booking-solution/) 👈
 
 
 ### Explore the Power of Our Plugin with Key Features
-
-Freatues that includes with the plugin will help you to build your booking solution smoothly. Lets see what are those powerful features that makes the plugin useful.
-
+Features that are included with the plugin will help you to build your booking solution smoothly. Let's see what are those powerful features that make the plugin useful.
 
 ### 🌐 Support for All Payment Methods:
 Easily integrates with all payment methods available in WooCommerce.
-
 ### 💳 Secure Payment Processing:
 Allow users to conveniently book and pay for their spot using popular payment gateways within WooCommerce.
-
 ### 🗓️ Integrated Calendar System:
 Keep track of all your upcoming bookings with ease using our comprehensive calendar system.
-
 ### 🔍 Short Codes for Booking Section:
 Easily customize and display the booking section using available shortcodes.
-
 ### 📦 Comprehensive Category Management:
 Manage categories, sub-categories, quantities, prices, and images.
-
 ### 🛠️ Booking Extra Service Management:
 Enhance your offerings with additional services, effortlessly managing prices and quantities.
-
 ### 🎨 Theme Compatibility:
 Works smoothly with any standards-compliant WordPress theme.
-
 ### 📄 PDF Invoices:
 Generate PDF Tickets or Invoices with detailed booking information.
-
 ### 📧 Email Settings:
 Maximize earnings by allowing clients to opt for extra services when booking.
-
 ### 🌐 Translation Settings:
-Explore varied translation options for connecting with a wide range of audience.
-
+Explore varied translation options for connecting with a wide range of audiences.
 ### 📊 Export Data in CSV:
 Easily export all available data in CSV format.
 
@@ -122,7 +99,6 @@ A. You need to Re-save permalink settings it will solve the 404. if still does n
 
 = Q. What is Shortcode to display the booking section  =
 A. Here is shortcode  [bookingplus post_id='id'] you can display the booking section on any page.
-
 
 = Q. Does Service Booking Manager integrate with popular payment gateways? =
 A. Yes, Service Booking Manager includes integrations of all payment methods with WooCommerce.

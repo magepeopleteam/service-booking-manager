@@ -10,15 +10,15 @@
 	}
 	$post_id = $post_id ?? get_the_id();
 	$service_text = $service_text ?? MPWPB_Function::get_service_text($post_id);
-	$all_services = $all_services ?? MP_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
+	$all_services = $all_services ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
 	$all_category = $all_category ?? MPWPB_Function::get_category($post_id);
 	$all_sub_category = $all_sub_category ?? MPWPB_Function::get_sub_category($post_id);
 	$all_service_list = $all_service_list ?? MPWPB_Function::get_all_service($post_id);
-	$extra_services = $extra_services ?? MP_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', array());
-	$title = MP_Global_Function::get_post_info($post_id, 'mpwpb_shortcode_title');
-	$sub_title = MP_Global_Function::get_post_info($post_id, 'mpwpb_shortcode_sub_title');
+	$extra_services = $extra_services ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', array());
+	$title = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_shortcode_title');
+	$sub_title = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_shortcode_sub_title');
 ?>
-    <div class="mpStyle mpwpb-default-template mpwpb_registration">
+    <div class="mpwpb_style mpwpb-default-template mpwpb_registration">
         <header style="background-image: url('<?php echo esc_url(get_the_post_thumbnail_url()); ?>');">
             <div class="template-header">
                 <div class="header-content">
@@ -81,7 +81,7 @@
                                             <span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
                                             <div class="flexWrap justifyBetween">
                                                 <h6 class="mR_xs"><?php echo esc_html($service_list['service']); ?></h6>
-                                                <p><span class="textTheme">x1</span>&nbsp;|&nbsp; <span class="textTheme service_price"><?php echo wp_kses_post(MP_Global_Function::wc_price($post_id, $service_list['price'])); ?></span></p>
+                                                <p><span class="textTheme">x1</span>&nbsp;|&nbsp; <span class="textTheme service_price"><?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, $service_list['price'])); ?></span></p>
                                             </div>
                                         </div>
 									<?php } ?>
@@ -108,7 +108,7 @@
                                                             </h6>
                                                             <p>
                                                                 <span class="textTheme ex_service_qty">x1</span>&nbsp;|&nbsp;
-                                                                <span class="textTheme"><?php echo wp_kses_post(MP_Global_Function::wc_price($post_id, $ex_service_price)); ?></span>
+                                                                <span class="textTheme"><?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, $ex_service_price)); ?></span>
                                                             </p>
                                                         </div>
                                                     </div>
@@ -126,7 +126,7 @@
                                     <span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
                                     <div class="flexWrap justifyBetween">
                                         <h5 class="mR_xs"><?php esc_html_e('Total :', 'service-booking-manager'); ?></h5>
-                                        <h5><span class="mpwpb_total_bill textTheme"><?php echo wp_kses_post(MP_Global_Function::wc_price($post_id, 0)); ?></span></h5>
+                                        <h5><span class="mpwpb_total_bill textTheme"><?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, 0)); ?></span></h5>
                                     </div>
                                 </div>
                             </div>

@@ -7,8 +7,8 @@
 		exit;
 	}
 	$post_id   = $post_id ?? get_the_id();
-	$title     = MP_Global_Function::get_post_info( $post_id, 'mpwpb_shortcode_title' );
-	$sub_title = MP_Global_Function::get_post_info( $post_id, 'mpwpb_shortcode_sub_title' );
+	$title     = MPWPB_Global_Function::get_post_info( $post_id, 'mpwpb_shortcode_title' );
+	$sub_title = MPWPB_Global_Function::get_post_info( $post_id, 'mpwpb_shortcode_sub_title' );
 	if ( $title ) {
 		?>
 		<div class="mp_title">
