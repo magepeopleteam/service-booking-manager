@@ -192,7 +192,7 @@
 								$data['mpwpb_billing_address'] = $order->get_billing_address_1() . ' ' . $order->get_billing_address_2();
 								$booking_data = apply_filters('add_mpwpb_booking_data', $data, $post_id);
 								self::add_cpt_data('mpwpb_booking', $booking_data['mpwpb_billing_name'], $booking_data);
-								if (sizeof($ex_service_infos) > 0) {
+								if (is_array($ex_service_infos) && sizeof($ex_service_infos) > 0) {
 									foreach ($ex_service_infos as $ex_service_info) {
 										$ex_data['mpwpb_id'] = $post_id;
 										$ex_data['mpwpb_date'] = $date;
