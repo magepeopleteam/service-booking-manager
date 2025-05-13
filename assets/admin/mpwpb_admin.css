@@ -266,7 +266,7 @@ button.button.mpwpb-service-new{
 .service-container table.table tbody tr td:first-child i{border:none !important; border-radius:10px;}
 
 .service-container table.table thead tr th {
-    background-color: #f5f5f5;
+    background-color: #f5f5f5 !important;
     color: #333;
     padding: 10px;
     text-align: left;
@@ -280,17 +280,17 @@ button.button.mpwpb-service-new{
 
 /* Even row styling */
 .service-container table.table tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
+    background-color: #f9f9f9 !important;
 }
 
 /* Hover effect on rows */
 .service-container table.table tbody tr:hover {
-    background-color: #e6f7ff;
+    background-color: #e6f7ff !important;
     cursor: pointer;
 }
 
 /* Optional: td styling for spacing */
 .service-container table.table tbody tr td {
     padding: 10px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #eee !important;
 }
