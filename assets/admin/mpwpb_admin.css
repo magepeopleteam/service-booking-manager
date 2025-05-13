@@ -255,5 +255,5 @@ button.button.mpwpb-category-new
 }
 .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items {padding:5px 0px !important}
 .mpwpb-category-lists .mpwpb-category-items .parent-category-items{padding:5px 10px !important}
-.service-container #mp_meta_box_panel table.table thead tr th{background: #e9e9ff !important;}
-#mp_meta_box_panel table.table tbody tr td:first-child i{border:none !important; border-radius:10px;}
+.service-container table.table thead tr th{background: #e9e9ff !important;}
+.service-container table.table tbody tr td:first-child i{border:none !important; border-radius:10px;}
