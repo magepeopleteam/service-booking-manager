@@ -219,14 +219,6 @@
 .mpwpb-category-lists .mpwpb-category-items .parent-category-items .image-block i, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items .image-block i{ width:40px !important; font-size: 16px !important;background: none !important;}
 .mpwpb-category-lists .mpwpb-category-items .parent-category-items .action i, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items .action i{color: #fff !important;}
 
-    background-color: var(--mage-light);
-    font-size: 36px;
-    width: 40px;
-    height: 100%;
-    color: var(--mage-primary);
-    text-align: center;
-}
-
 .category-service-area{border:5px solid #4361ee !important; }
 .service-container{padding:10px;}
 
