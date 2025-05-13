@@ -231,7 +231,7 @@ button.button.mpwpb-category-new
     border: none;
     padding: 0.6rem 1.25rem;
     margin-top: 1rem;
-    border-radius: var(--radius);
+    border-radius: 20px;
     cursor: pointer;
     font-size: 0.9rem;
     transition: var(--transition);
