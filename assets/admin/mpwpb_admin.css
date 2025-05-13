@@ -213,4 +213,5 @@
 .category-service-area .category-container .header button{border:none !important; background:none !important; color:#fff !important; }
 .mpwpb-category-lists .mpwpb-category-items .parent-category-items, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items{color:#fff !important; background:none !important; border:none !important;}
 .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items{color:#fff !important; background:none !important; border:none !important;}
-.mpwpb-category-lists .mpwpb-category-items .parent-category-items .image-block i, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items .image-block i{font-size: 16px;background: none !important;}
+.mpwpb-category-lists .mpwpb-category-items .parent-category-items .image-block i, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items .image-block i{font-size: 16px !important;background: none !important;}
+.mpwpb-category-lists .mpwpb-category-items .parent-category-items .action i, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items .action i{color: #fff !important;}
