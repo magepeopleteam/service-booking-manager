@@ -100,7 +100,18 @@ function mpwpb_price_calculation($this) {
             }
         });
     }
+    $(document).on('click', '#mpwpb_show_all_category', function () {
+        $(this).fadeOut();
+        $('.mpwpb_category_section').fadeIn();
+    });
+
     $(document).on('click', 'div.mpwpb_registration .mpwpb_category_item', function () {
+
+       $('.mpwpb_sub_category_area').fadeIn();
+        $(this).parent().siblings().fadeOut();
+        $(this).parent().fadeIn();
+
+        $("#mpwpb_show_all_category").fadeIn();
         let current = $(this);
         let category = current.data('category');
         if (category && !current.hasClass('mpActive')) {
@@ -154,6 +165,8 @@ function mpwpb_price_calculation($this) {
     });
     //=========sub category=============//
     $(document).on('click', 'div.mpwpb_registration .mpwpb_sub_category_item', function () {
+        $('.mpwpb_sub_category_area').fadeOut();
+        $(this).parent().fadeIn();
         let current = $(this);
         let parent = current.closest('div.mpwpb_registration');
         let category = parent.find('[name="mpwpb_category"]').val();

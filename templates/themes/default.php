@@ -52,6 +52,9 @@
                     <div class="content">
                         <div class="service-items">
                             <div class="all_service_area ">
+                                <div class="mpwpb_show_all_category_holder" id="mpwpb_show_all_category" style="display: none">
+                                    <div class="mpwpb_show_all_category_text">All Category</div>
+                                </div>
 								<?php include(MPWPB_Function::template_path('registration/category_selection.php')); ?>
 								<?php include(MPWPB_Function::template_path('registration/service_selection.php')); ?>
 								<?php include(MPWPB_Function::template_path('registration/extra_services.php')); ?>
