@@ -227,7 +227,7 @@
     text-align: center;
 }
 
-.category-service-area{border:5px solid #4361ee; }
+.category-service-area{border:5px solid #4361ee !important; }
 .service-container{padding:10px;}
 
 button.button.mpwpb-category-new
