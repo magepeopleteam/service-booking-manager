@@ -222,7 +222,7 @@
 .category-service-area{border:5px solid #4361ee !important; }
 .service-container{padding:10px;}
 
-button.button.mpwpb-category-new, button.button.mpwpb-service-new 
+button.button.mpwpb-category-new
  {
     display: inline-flex;
     align-items: center;
@@ -237,6 +237,21 @@ button.button.mpwpb-category-new, button.button.mpwpb-service-new
     font-size: 0.9rem;
     transition: var(--transition);
 }
+button.button.mpwpb-service-new{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #4361ee;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.25rem;
+    margin-top: 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: var(--transition);
+}
+
 .button.button.mpwpb-category-new::before, button.button.mpwpb-service-new::before {
     content: "+ ";
     font-weight: bold; /* Optional */
