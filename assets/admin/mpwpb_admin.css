@@ -219,7 +219,7 @@
 .mpwpb-category-lists .mpwpb-category-items .parent-category-items .image-block i, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items .image-block i{ width:40px !important; font-size: 16px !important;background: none !important;}
 .mpwpb-category-lists .mpwpb-category-items .parent-category-items .action i, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items .action i{color: #fff !important;}
 
-.category-service-area{border:5px solid #4361ee !important; }
+.category-service-area{border:5px solid #4361ee !important; border-radius:10px !important; }
 .service-container{padding:10px;}
 
 button.button.mpwpb-category-new
@@ -267,7 +267,6 @@ button.button.mpwpb-service-new{
 
 .service-container table.table thead tr th {
     color: #333 !important;
-    padding: 10px !important;
     text-align: left !important;
     border-bottom: 2px solid #ddd !important;
 }
@@ -290,6 +289,5 @@ button.button.mpwpb-service-new{
 
 /* Optional: td styling for spacing */
 .service-container table.table tbody tr td {
-    padding: 10px !important;
     border-bottom: 1px solid #eee !important;
 }
