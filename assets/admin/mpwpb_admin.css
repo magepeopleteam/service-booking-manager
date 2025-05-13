@@ -210,4 +210,6 @@
 .category-service-area .category-container{
     background: linear-gradient(to bottom, #4361ee, #7209b7);
 }
-.category-service-area .category-container .header button{border:none; background:none }
+.category-service-area .category-container .header button{border:none; background:none; color:#fff; }
+.mpwpb-category-lists .mpwpb-category-items .parent-category-items, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items{background:none;}
+.mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items{background:none;}
