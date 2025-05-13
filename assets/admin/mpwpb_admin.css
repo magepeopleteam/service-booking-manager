@@ -231,7 +231,7 @@ button.button.mpwpb-category-new
     border: none;
     padding: 0.6rem 1.25rem;
     margin-top: 1rem;
-    border-radius: 20px;
+    border-radius: 10px;
     cursor: pointer;
     font-size: 0.9rem;
     transition: var(--transition);
@@ -241,3 +241,8 @@ button.button.mpwpb-category-new
     font-weight: bold; /* Optional */
     margin-right: 4px;  /* Optional spacing */
 }
+.mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items {
+    margin-left: 25px !important;
+}
+.mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items {padding:5px 0px !important}
+.mpwpb-category-lists .mpwpb-category-items .parent-category-items{padding:5px 10px !important}
