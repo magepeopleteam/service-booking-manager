@@ -206,3 +206,15 @@
     margin: 0 var(--mpwpb_dmp_xs) 0 0;
   }
 }
+
+.category-service-area .category-container {
+    background: linear-gradient(to bottom, #4361ee, #7209b7);
+    color: white;
+    padding: 1.5rem;
+    position: fixed;
+    width: 280px;
+    height: 100vh;
+    overflow-y: auto;
+    transition: var(--transition);
+    z-index: 100;
+}
