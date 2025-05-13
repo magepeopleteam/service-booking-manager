@@ -213,7 +213,7 @@
 }
 .category-service-area .category-container .header button{border:none !important; background:none !important; color:#fff !important; }
 
-.mpwpb-category-lists .mpwpb-category-items .parent-category-items, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items{color:#fff !important; background:background-color: rgba(255, 255, 255, 0.1); !important; border:none !important;}
+.mpwpb-category-lists .mpwpb-category-items .parent-category-items, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items{color:#fff !important; background-color: rgba(255, 255, 255, 0.1) !important; border:none !important;}
 
 .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items{color:#fff !important; background:none !important; border:none !important;}
 .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items:hover {background-color: rgba(255, 255, 255, 0.1); color: white;}
