@@ -211,5 +211,5 @@
     background: linear-gradient(to bottom, #4361ee, #7209b7);
 }
 .category-service-area .category-container .header button{border:none !important; background:none !important; color:#fff !important; }
-.mpwpb-category-lists .mpwpb-category-items .parent-category-items, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items{background:none !important;}
-.mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items{background:none !important;}
+.mpwpb-category-lists .mpwpb-category-items .parent-category-items, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items{color:#fff !important; background:none !important; border:none !important;}
+.mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items{color:#fff !important; background:none !important; border:none !important;}
