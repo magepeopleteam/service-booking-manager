@@ -220,3 +220,19 @@
 .mpwpb-category-lists .mpwpb-category-items .parent-category-items .action i, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items .action i{color: #fff !important;}
 .category-service-area{border:5px solid #4361ee; }
 .service-container{padding:10px;}
+
+button.button.mpwpb-category-new
+ {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.25rem;
+    margin-top: 1rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: var(--transition);
+}
