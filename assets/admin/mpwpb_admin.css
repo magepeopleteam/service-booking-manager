@@ -236,3 +236,8 @@ button.button.mpwpb-category-new
     font-size: 0.9rem;
     transition: var(--transition);
 }
+.button.button.mpwpb-category-new::before {
+    content: "+ ";
+    font-weight: bold; /* Optional */
+    margin-right: 4px;  /* Optional spacing */
+}
