@@ -16,16 +16,20 @@ div.registration_tab_item {
 /******************************************************************** ************************************************/
 .mpwpb_registration_short_code.mpwpb-static-template .sidebar{width: 100%;}
 .mpwpb_registration_short_code.mpwpb-static-template .sidebar .mpwpb_static_area{width: 100%;position: relative;left: inherit;  bottom: inherit;}
-.mpwpb_show_all_category_holder{
-  padding: 5px 0px;
-  margin: 10px 0px;
+
+
+.mpwpb_selected_control{
+  display: flex;
+  padding: 5px;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: left;
+}
+.mpwpb_selected_category{
   cursor: pointer;
-  color: #555050;
   font-weight: 800;
 }
-.mpwpb_show_all_category_text:hover{
-  text-decoration: underline;
-}
+
 @media only screen and (min-width: 10px) {
   div.mpwpb_registration .woocommerce-page span.woocommerce-input-wrapper,
   div.mpwpb_registration .woocommerce-page table span {

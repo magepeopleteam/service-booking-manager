@@ -32,9 +32,15 @@
                     <div class="mpwpb-popup-content">
                         <div class="service-items">
                             <div class="all_service_area ">
-                                <div class="mpwpb_show_all_category_holder" id="mpwpb_show_all_category" style="display: none">
-                                    <div class="mpwpb_show_all_category_text">All Category</div>
+
+                                <div class="mpwpb_selected_control" id="mpwpb_selected_control" style="display: none">
+                                    <div class="mpwpb_show_all_category_holder mpwpb_selected_category" id="mpwpb_show_all_category" >
+                                        All Category <i class="fa-solid fa-arrow-right"></i>
+                                    </div>
+                                    <div class="mpwpb_selected_category_text mpwpb_category_selected_item mpActive mpwpb_selected_category" data-category=""></div>
+                                    <div class="mpwpb_selected_sub_category_text mpwpb_selected_category" data-category='' data-sub-category=""></div>
                                 </div>
+
 								<?php include(MPWPB_Function::template_path('registration/category_selection.php')); ?>
 								<?php include(MPWPB_Function::template_path('registration/service_selection.php')); ?>
 								<?php include(MPWPB_Function::template_path('registration/extra_services.php')); ?>
