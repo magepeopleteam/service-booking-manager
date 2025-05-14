@@ -1260,3 +1260,10 @@ div.registration_tab_item {
 .mpwpb_service_item, .mpwpb_extra_service_item {
     border-radius: 10px;
 }
+.mpwpb_popup_header{
+ background-color: var(--mpwpb_color_theme); 
+}
+.mpwpb_popup_header h5, .mpwpb_popup_header p {
+ background-color: var(--mpwpb_color_theme); 
+ text-align: center;
+}
