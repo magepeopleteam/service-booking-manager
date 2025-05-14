@@ -1264,6 +1264,6 @@ div.registration_tab_item {
  background-color: var(--mpwpb_color_theme); 
 }
 .mpwpb_popup_header h5, .mpwpb_popup_header p {
- background-color: var(--mpwpb_color_theme); 
+ color: #fff; 
  text-align: center;
 }
