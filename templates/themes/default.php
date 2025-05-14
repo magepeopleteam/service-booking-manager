@@ -52,6 +52,18 @@
                     <div class="content">
                         <div class="service-items">
                             <div class="all_service_area ">
+                                <div class="mpwpb_selected_control" id="mpwpb_selected_control" style="display: none">
+                                    <div class="mpwpb_show_all_category_holder mpwpb_selected_category" id="mpwpb_show_all_category" >
+                                        <?php esc_html_e( 'All Category', 'service-booking-manager' );?> <i class="fa-solid fa-arrow-right"></i>
+                                    </div>
+                                    <div class="mpwpb_text_icon_holder">
+                                        <div class="mpwpb_selected_category_text mpwpb_category_selected_item mpActive mpwpb_selected_category" data-category=""></div>
+                                        <div class="mpwpb_arrow_icon_holder" style="display: none"><i class="fa-solid fa-arrow-right"></i></div>
+                                    </div>
+                                    <div class="mpwpb_selected_sub_category_text mpwpb_selected_category" data-category='' data-sub-category=""></div>
+                                </div>
+
+
 								<?php include(MPWPB_Function::template_path('registration/category_selection.php')); ?>
 								<?php include(MPWPB_Function::template_path('registration/service_selection.php')); ?>
 								<?php include(MPWPB_Function::template_path('registration/extra_services.php')); ?>
