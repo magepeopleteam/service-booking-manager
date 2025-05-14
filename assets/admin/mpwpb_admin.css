@@ -245,7 +245,6 @@ button.button.mpwpb-service-new, button.button.mpwpb-category-new{
 .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items {
     margin-left: 25px !important;
 }
-.mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items {padding:5px 0px !important}
 .mpwpb-category-lists .mpwpb-category-items .parent-category-items{padding:5px 10px !important}
 .service-container table.table thead tr th{background: #e9e9ff !important;}
 .service-container table.table tbody tr td:first-child i{border:none !important; border-radius:10px;}
