@@ -1263,6 +1263,8 @@ div.registration_tab_item {
 .mpwpb_popup_header{
  background-color: var(--mpwpb_color_theme); 
 }
+.mpwpb_popup_header h5{font-size:28px !important;}
+.mpwpb_popup_header p{font-size:16px !important;}
 .mpwpb_popup_header h5, .mpwpb_popup_header p {
  color: #fff; 
  text-align: center;
