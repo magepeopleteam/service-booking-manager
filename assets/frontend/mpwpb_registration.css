@@ -24,10 +24,16 @@ div.registration_tab_item {
   gap: 15px;
   flex-wrap: wrap;
   justify-content: left;
+  color: #444444;
+  font-size: 16px;
 }
 .mpwpb_selected_category{
   cursor: pointer;
   font-weight: 800;
+
+}
+.mpwpb_selected_category:hover{
+  color: #333333;
 }
 
 @media only screen and (min-width: 10px) {

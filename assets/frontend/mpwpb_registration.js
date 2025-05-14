@@ -112,10 +112,11 @@ function mpwpb_price_calculation($this) {
         $('.mpwpb_selected_sub_category_text').text('');
 
         let parent =  $(this).closest('div.mpwpb_registration');
-
+        // parent.find('.mpwpb_category_item').removeClass('mpActive');
+        parent.find('.mpwpb_sub_category_item').removeClass('mpActive');
         refresh_service(parent);
+        refresh_sub_category(parent);
         mpwpb_price_calculation($(this));
-
 
     });
 
@@ -168,17 +169,19 @@ function mpwpb_price_calculation($this) {
     $(document).on('click', 'div.mpwpb_registration .mpwpb_category_selected_item', function () {
 
         $('.mpwpb_selected_sub_category_text').text('');
-        $('.mpwpb_sub_category_area').fadeIn();
-        $(this).parent().fadeIn();
 
         $("#mpwpb_selected_control").fadeIn();
         let current = $(this);
+        let parent = current.closest('div.mpwpb_registration');
         let category = current.data('category');
+
+        $('.mpwpb_sub_category_area').fadeIn();
+        $(this).parent().fadeIn();
+
 
         $('.mpwpb_selected_category_text').attr('data-category', category);
 
         if (category && !current.hasClass('mpActive')) {
-            let parent = current.closest('div.mpwpb_registration');
             let target_sub_category = current.closest('.mpwpb_category_section').find('.mpwpb_sub_category_area');
             let target_service = parent.find('.mpwpb_service_area');
             parent.find('.mpwpb_summary_area_left').slideDown('fast');
@@ -234,9 +237,14 @@ function mpwpb_price_calculation($this) {
 
         sub_category_show_click.text( selectedTabText );
 
-        $('.mpwpb_sub_category_area').fadeOut();
         // $(this).parent().fadeIn();
         let current = $(this);
+        if( !current.hasClass('mpActive')){
+            $('.mpwpb_sub_category_area').fadeOut();
+        }else{
+            $('.mpwpb_selected_sub_category_text').text('');
+        }
+
         let parent = current.closest('div.mpwpb_registration');
         let category = parent.find('[name="mpwpb_category"]').val();
         let sub_category = current.data('sub-category');
