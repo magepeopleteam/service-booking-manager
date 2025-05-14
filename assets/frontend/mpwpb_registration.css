@@ -27,6 +27,10 @@ div.registration_tab_item {
   color: #444444;
   font-size: 16px;
 }
+.mpwpb_text_icon_holder{
+  display: flex;
+  gap: 5px;
+}
 .mpwpb_selected_category{
   cursor: pointer;
   font-weight: 800;

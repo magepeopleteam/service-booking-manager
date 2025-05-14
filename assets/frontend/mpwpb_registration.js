@@ -107,6 +107,7 @@ function mpwpb_price_calculation($this) {
         $('.mpwpb_category_item').fadeIn();
         $('.mpwpb_sub_category_area').fadeOut();
         $('.mpwpb_service_area').fadeOut();
+        $('.mpwpb_arrow_icon_holder').fadeOut();
 
         $('.mpwpb_selected_category_text').text('');
         $('.mpwpb_selected_sub_category_text').text('');
@@ -168,6 +169,7 @@ function mpwpb_price_calculation($this) {
 
     $(document).on('click', 'div.mpwpb_registration .mpwpb_category_selected_item', function () {
 
+        $('.mpwpb_arrow_icon_holder').fadeOut();
         $('.mpwpb_selected_sub_category_text').text('');
 
         $("#mpwpb_selected_control").fadeIn();
@@ -241,8 +243,10 @@ function mpwpb_price_calculation($this) {
         let current = $(this);
         if( !current.hasClass('mpActive')){
             $('.mpwpb_sub_category_area').fadeOut();
+            $('.mpwpb_arrow_icon_holder').fadeIn();
         }else{
             $('.mpwpb_selected_sub_category_text').text('');
+            $('.mpwpb_arrow_icon_holder').fadeOut();
         }
 
         let parent = current.closest('div.mpwpb_registration');
