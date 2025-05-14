@@ -1267,7 +1267,7 @@ div.registration_tab_item {
  color: #fff; 
  text-align: center;
 }
-.mpwpb_service_item .mpwpb_service_button{
+.mpwpb_service_item .mpwpb_service_button, .mpwpb_extra_service_item .mpwpb_price_calculation{
   background-color: var(--mpwpb_color_theme) !important; 
 }
 .mpwpb_style button span{color:#fff !important;}
