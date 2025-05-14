@@ -206,3 +206,88 @@
     margin: 0 var(--mpwpb_dmp_xs) 0 0;
   }
 }
+
+.category-service-area .category-container{
+    background: linear-gradient(to bottom, #4361ee, #7209b7);
+    padding:10px;
+}
+.category-service-area .category-container .header button{border:none !important; border-bottom:3px solid #fff !important; background:none !important; color:#fff !important; background-color: rgba(255, 255, 255, 0.1) !important; }
+
+.mpwpb-category-lists .mpwpb-category-items .parent-category-items, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items{min-height: 40px !important; border-radius:10px; color:#fff !important; background-color: rgba(255, 255, 255, 0.1) !important; border:none !important;}
+
+.mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items{min-height: 40px !important; border-radius:10px; color:#fff !important; background-color: rgba(255, 255, 255, 0.1) !important; border:none !important;}
+.mpwpb-category-lists .mpwpb-category-items .parent-category-items .image-block i, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items .image-block i{ width:40px !important; font-size: 16px !important;background: none !important;}
+.mpwpb-category-lists .mpwpb-category-items .parent-category-items .action i, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items .action i{color: #fff !important;}
+
+.category-service-area{border:5px solid #4361ee !important; border-radius:10px !important; }
+.service-container{padding:10px;}
+
+button.button.mpwpb-category-new
+ {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.25rem;
+    margin-top: 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: var(--transition);
+}
+button.button.mpwpb-service-new{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #4361ee;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.25rem;
+    margin-top: 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: var(--transition);
+}
+
+.button.button.mpwpb-category-new::before, button.button.mpwpb-service-new::before {
+    content: "+ ";
+    font-weight: bold; /* Optional */
+    margin-right: 4px;  /* Optional spacing */
+}
+.mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items {
+    margin-left: 25px !important;
+}
+.mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items {padding:5px 0px !important}
+.mpwpb-category-lists .mpwpb-category-items .parent-category-items{padding:5px 10px !important}
+.service-container table.table thead tr th{background: #e9e9ff !important;}
+.service-container table.table tbody tr td:first-child i{border:none !important; border-radius:10px;}
+
+.service-container table.table thead tr th {
+    color: #333 !important;
+    text-align: left !important;
+    border-bottom: 2px solid #ddd !important;
+}
+
+/* Odd row styling */
+.service-container table.table tbody tr:nth-child(odd) {
+    background-color: #ffffff !important;
+}
+
+/* Even row styling */
+.service-container table.table tbody tr:nth-child(even) {
+    background-color: #f9f9f9 !important;
+}
+
+/* Hover effect on rows */
+.service-container table.table tbody tr:hover {
+    background-color: #e6f7ff !important;
+    cursor: pointer !important;
+}
+
+/* Optional: td styling for spacing */
+.service-container table.table tbody tr td {
+    border-bottom: 1px solid #eee !important;
+}
