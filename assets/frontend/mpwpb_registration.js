@@ -110,10 +110,16 @@ function mpwpb_price_calculation($this) {
 
         $('.mpwpb_selected_category_text').text('');
         $('.mpwpb_selected_sub_category_text').text('');
+
+        let parent =  $(this).closest('div.mpwpb_registration');
+
+        refresh_service(parent);
+        mpwpb_price_calculation($(this));
+
+
     });
 
     $(document).on('click', 'div.mpwpb_registration .mpwpb_category_item', function () {
-
 
         let selectedTabText = $(this).find('h6').text().trim();
         $('.mpwpb_selected_category_text').text( selectedTabText );
