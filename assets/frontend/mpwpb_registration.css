@@ -1267,3 +1267,9 @@ div.registration_tab_item {
  color: #fff; 
  text-align: center;
 }
+.mpwpb_service_button{
+  background-color: var(--mpwpb_color_theme); 
+}
+.mpwpb_service_button:hover{
+  background-color: #f5f7fa; 
+}
