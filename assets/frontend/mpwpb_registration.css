@@ -1270,8 +1270,9 @@ div.registration_tab_item {
 .mpwpb_service_item .mpwpb_service_button{
   background-color: var(--mpwpb_color_theme) !important; 
 }
+.mpwpb_style button span{color:#fff !important;}
 .mpwpb_service_button:hover{
-  background-color: #f5f7fa; 
+  background-color: #f5f7fa !important; 
 }
 .mpwpb_service_area header h5, .mpwpb_extra_service_area h5{color:#333 !important;}
 .mpwpb_service_area header,.mpwpb_extra_service_area h5{border-bottom: 1px solid #ddd !important;}
