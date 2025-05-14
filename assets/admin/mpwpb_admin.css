@@ -222,22 +222,7 @@
 .category-service-area{border:5px solid #4361ee !important; border-radius:10px !important; }
 .service-container{padding:10px;}
 
-button.button.mpwpb-category-new
- {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(255, 255, 255, 0.15);
-    color: white;
-    border: none;
-    padding: 0.6rem 1.25rem;
-    margin-top: 1rem;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: var(--transition);
-}
-button.button.mpwpb-service-new{
+button.button.mpwpb-service-new, button.button.mpwpb-category-new{
     display: inline-flex;
     align-items: center;
     justify-content: center;
