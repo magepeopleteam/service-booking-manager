@@ -211,7 +211,7 @@
     background: #ddd;
     padding:10px;
 }
-.category-service-area .category-container .header button{border:#eee !important; background:#fff !important; border-radius:10px; background-color: #fff !important; }
+.category-service-area .category-container .header button{border:#eee !important; border-radius:10px !important; background-color: #fff !important; }
 
 .mpwpb-category-lists .mpwpb-category-items .parent-category-items, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items{min-height: 40px !important; border-radius:10px;  !important; background-color: #fff !important; border:none !important;}
 
