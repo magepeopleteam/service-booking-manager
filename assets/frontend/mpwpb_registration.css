@@ -24,11 +24,12 @@ div.registration_tab_item {
   gap: 15px;
   flex-wrap: wrap;
   justify-content: left;
-  color: #333;
+  color: #767373;
   font-size: 16px;
   padding:10px;
   background:#fff;
   border:1px solid #ddd;
+  border-radius:10px;
 }
 .mpwpb_text_icon_holder{
   display: flex;
