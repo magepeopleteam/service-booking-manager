@@ -1274,7 +1274,7 @@ div.registration_tab_item {
 .mpwpb_service_button:hover{
   background-color: #f5f7fa !important; 
 }
-.mpwpb_service_button.mActive{
+.mpwpb_service_button.mActive, .mpwpb_extra_service_item .mpwpb_price_calculation.mActive{
   background-color: #4caf50 !important; 
 }
  div.mpwpb_service_item .mpwpb_service_button{border:none !important}
