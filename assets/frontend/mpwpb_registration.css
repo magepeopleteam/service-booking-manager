@@ -1253,3 +1253,6 @@ div.registration_tab_item {
 }
 
 /*# sourceMappingURL=mpwpb_registration.css.map */
+
+.mpwpb_popup_body{background:#f5f7fa; }
+._dShadow_7.mpwpb_category_area, ._dShadow_7_mB_xs.mpwpb_service_area, ._dShadow_7_mB_xs.mpwpb_extra_service_area, ._dShadow_7.mpwpb_category_area, .service-cart{background:#fff; padding:10px;}
