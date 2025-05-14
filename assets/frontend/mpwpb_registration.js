@@ -106,6 +106,7 @@ function mpwpb_price_calculation($this) {
         $('.mpwpb_category_section').fadeIn();
         $('.mpwpb_category_item').fadeIn();
         $('.mpwpb_sub_category_area').fadeOut();
+        $('.mpwpb_service_area').fadeOut();
 
         $('.mpwpb_selected_category_text').text('');
         $('.mpwpb_selected_sub_category_text').text('');
