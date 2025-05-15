@@ -246,33 +246,33 @@ button.button.mpwpb-service-new, button.button.mpwpb-category-new{
     margin-left: 25px !important;
 }
 .mpwpb-category-lists .mpwpb-category-items .parent-category-items{padding:5px 10px !important}
-.mpwpb_extra_service_settings table.table thead tr th, .service-container table.table thead tr th{background: #e9e9ff !important;}
-.mpwpb_extra_service_settings table.table thead tr td:first-child i, .service-container table.table tbody tr td:first-child i{border:none !important; border-radius:10px;}
+.service-container table.table thead tr th{background: #e9e9ff !important;}
+.service-container table.table tbody tr td:first-child i{border:none !important; border-radius:10px;}
 
-.mpwpb_extra_service_settings table.table thead tr th, .service-container table.table thead tr th {
+.service-container table.table thead tr th {
     color: #333 !important;
     text-align: left !important;
     border-bottom: 2px solid #ddd !important;
 }
 
 /* Odd row styling */
-.mpwpb_extra_service_settings table.table tbody tr:nth-child(odd), .service-container table.table tbody tr:nth-child(odd) {
+.service-container table.table tbody tr:nth-child(odd) {
     background-color: #ffffff !important;
 }
 
 /* Even row styling */
-.mpwpb_extra_service_settings table.table tbody tr:nth-child(even), .service-container table.table tbody tr:nth-child(even) {
+.service-container table.table tbody tr:nth-child(even) {
     background-color: #f9f9f9 !important;
 }
 
 /* Hover effect on rows */
-.mpwpb_extra_service_settings table.table tbody tr:hover, .service-container table.table tbody tr:hover {
+.service-container table.table tbody tr:hover {
     background-color: #e6f7ff !important;
     cursor: pointer !important;
 }
 
 /* Optional: td styling for spacing */
-.mpwpb_extra_service_settings table.table tbody tr td, .service-container table.table tbody tr td {
+.service-container table.table tbody tr td {
     border-bottom: 1px solid #eee !important;
 }
 
