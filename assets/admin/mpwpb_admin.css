@@ -238,7 +238,8 @@ button.button.mpwpb-service-new, button.button.mpwpb-category-new{
 }
 
 button.button.mpwpb-service-new:hover, button.button.mpwpb-category-new:hover{
-    background-color: var(--mage-primary-dark);
+    background-color: var(--mage-primary);
+    opacity: 0.85;
 }
 
 
