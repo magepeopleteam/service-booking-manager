@@ -309,3 +309,4 @@ button.button.mpwpb-service-new, button.button.mpwpb-category-new{
 #mp_meta_box_panel table.table thead tr th {
     background: #e9e9ff !important;
 }
+#mp_meta_box_panel table.table tbody tr td:first-child i{width:40px !important; border:none !important;}
