@@ -331,3 +331,11 @@ button.button.mpwpb-extra-service-new:hover, button.button.mpwpb-faq-item-new:ho
  {
     border-radius: 10px 10px 0 0;
 }
+
+.date-time-schedule .date-time-container label input, .date-time-schedule .date-time-container label select
+ {
+    border: 1px solid #dbdada;
+    background: #f5f8ff !important;
+    min-height: 40px;
+    border-radius: 5px;
+}
