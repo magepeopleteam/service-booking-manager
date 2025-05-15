@@ -317,3 +317,7 @@ button.button.mpwpb-extra-service-new:hover, button.button.mpwpb-faq-item-new:ho
     background: #e9e9ff !important;
 }
 #mp_meta_box_panel table.table tbody tr td:first-child i{width:40px !important; border:none !important;}
+mpwpb-faq-items section.faq-header {
+    background: #f7f7f9;
+    margin-top:5px;
+}
