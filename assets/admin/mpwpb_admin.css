@@ -238,7 +238,7 @@ button.button.mpwpb-service-new, button.button.mpwpb-category-new{
 }
 
 button.button.mpwpb-service-new:hover, button.button.mpwpb-category-new:hover{
-    background-color: var(--mage-primary);;
+    background-color: rgba(74, 144, 226, 0.9);
 }
 
 
