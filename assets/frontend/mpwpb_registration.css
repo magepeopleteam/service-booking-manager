@@ -17,7 +17,17 @@ div.registration_tab_item {
 .mpwpb_registration_short_code.mpwpb-static-template .sidebar{width: 100%;}
 .mpwpb_registration_short_code.mpwpb-static-template .sidebar .mpwpb_static_area{width: 100%;position: relative;left: inherit;  bottom: inherit;}
 
-
+.mpwpd_category_info_holder{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+.mpwpd_category_min_price{
+  padding: 8px 0px;
+}
+.mpwpd_category_data_pos{
+  flex-direction: column;
+}
 .mpwpb_selected_control{
   display: flex;
   padding: 5px;
@@ -175,6 +185,7 @@ div.registration_tab_item {
     color: var(--d_color);
     border-radius: 5px;
     border: 1px solid var(--mpwpb_color_light_3);
+    flex-direction: column;
   }
   .mpwpb_item_box.mpwpb_extra_service_item {
     display: block;
