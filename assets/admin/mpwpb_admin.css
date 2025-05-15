@@ -306,3 +306,6 @@ button.button.mpwpb-service-new, button.button.mpwpb-category-new{
     border-radius: 10px !important;
     margin-top: 5px !important;
 }
+#mp_meta_box_panel table.table thead tr th {
+    background: #e9e9ff !important;
+}
