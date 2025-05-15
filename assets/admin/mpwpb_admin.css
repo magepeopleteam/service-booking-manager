@@ -280,3 +280,31 @@ button.button.mpwpb-service-new, button.button.mpwpb-category-new{
     border-radius: 10px !important;
     margin-top: 5px !important;
 }
+
+/* General light background */
+.mpwpb-faq-item {
+  background-color: #f9f9f9; /* Light background */
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  transition: background-color 0.3s ease;
+}
+
+/* Odd item background */
+.mpwpb-faq-item:nth-child(odd) {
+  background-color: #ffffff; /* White */
+}
+
+/* Even item background */
+.mpwpb-faq-item:nth-child(even) {
+  background-color: #f1f1f1; /* Slightly darker light gray */
+}
+
+/* Focus/Active background */
+.mpwpb-faq-item:focus,
+.mpwpb-faq-item:focus-visible,
+.mpwpb-faq-item.active {
+  background-color: #e0f7fa; /* Light blue or any focus color */
+  outline: none;
+}
+
