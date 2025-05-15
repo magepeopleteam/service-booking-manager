@@ -239,6 +239,101 @@ div.registration_tab_item {
     color: #666;
   }
   .mpwpb_extra_service_item .service-details {
+    margin-top: 5px;
+    color: #666;
+  }
+  /*************/
+  div.service_img_area {
+    max-width: 120px;
+    margin: 0 15px 0 0;
+    width: 100%;
+  }
+  div.mpwpb_icon_area {
+    font-size: 60px;
+    padding: var(--mpwpb_dmp);
+  }
+  /*************/
+  div.mpwpb_extra_service_area div.mpwpb_item_box {
+    padding: var(--mpwpb_dmp_xs);
+    margin: var(--mpwpb_dmp_xs) 0;
+    position: relative;
+    border: 1px solid var(--mpwpb_color_light_2);
+    border-radius: 0;
+  }
+  div.mpwpb_extra_service_area div.mpwpb_item_box .mpwpb_price_calculation {
+    color: var(--mpwpb_color_theme);
+    border: 1px solid var(--mpwpb_color_theme);
+    background-color: #fff;
+    min-width: 100px;
+    width: 100px;
+  }
+  div.mpwpb_extra_service_area div.mpwpb_item_box .mpwpb_price_calculation.mActive {
+    background-color: var(--mpwpb_color_theme);
+    color: #fff;
+  }
+  div.mpwpb_extra_service_area div.mpwpb_item_box .mpwpb_price_calculation:hover {
+    background-color: var(--mpwpb_color_theme);
+    color: var(--mpwpb_color_theme_alter);
+  }
+  div.mpwpb_extra_service_area div.mpwpb_item_box .mpwpb_price_calculation:focus {
+    background-color: var(--mpwpb_color_theme);
+    color: var(--mpwpb_color_theme_alter);
+  }
+  /*************/
+  div.mpwpb_summary_area_left {
+    display: none;
+  }
+  div.mpwpb_summary_area_left .mpwpb_summary_area_left_title {
+    background-color: var(--mpwpb_color_theme);
+    color: var(--mpwpb_color_theme_alter);
+    padding: var(--mpwpb_dmp_xs);
+    text-align: center;
+  }
+  div.mpwpb_summary_area_left_content {
+    border: 1px solid var(--mpwpb_color_border);
+    padding: var(--mpwpb_dmp_xs) 20px;
+    padding-right: 5px;
+    background-color: #FFF;
+    overflow: auto;
+  }
+  div.mpwpb_summary_item {
+    position: relative;
+    padding: 0 5px 15px 25px;
+    display: none;
+    border-left: 1px solid var(--mpwpb_color_theme);
+    padding: 0 5px 30px 24px;
+  }
+  div.mpwpb_summary_item span.mpwpb_item_check {
+    opacity: 1;
+    right: inherit;
+    left: -14px;
+    font-size: var(--mpwpb_fs_small);
+    top: -2px;
+    border: 1px solid var(--mpwpb_color_theme);
+    background-color: #fff;
+    color: var(--mpwpb_color_theme);
+  }
+  div.mpwpb_summary_item:last-child {
+    border-color: transparent;
+    display: block;
+  }
+  /*************/
+  div.mpwpb_date_carousel .owl-dots {
+    display: none;
+  }
+}
+/********************************************************************************************************************/
+/********************************************************************************************************************/
+@media only screen and (min-width: 10px) {
+  div.mpwpb_static_theme div.mpwpb_summary_area_left {
+    width: 400px;
+    border-left: 2px solid var(--mpwpb_color_border);
+  }
+  div.mpwpb_static_theme div.mpwpb_static_service {
+    width: calc(100% - 400px);
+  }
+  div.mpwpb_static_theme div.mpwpb_summary_area_left_content {
+    border: none;
     position: absolute;
   }
   div.mpwpb_static_theme div.mpwpb_popup_body {
@@ -697,7 +792,7 @@ div.registration_tab_item {
   margin: 5px 15px;
   background-color: var(--mpwpb_color_theme_alter);
   border-radius: 20px;
-  font-size: 16px;
+  font-size: 16px
   border: 1px solid var(--mpwpb_color_theme);
 }
 .mpwpb_registration nav ul li:first-child {
