@@ -327,3 +327,7 @@ button.button.mpwpb-extra-service-new:hover, button.button.mpwpb-faq-item-new:ho
     width: 25% !important;
 }
 #mp_meta_box_panel .mpwpb-faq-section .mpwpb-faq-item{margin-top:10px;}
+#mp_meta_box_panel .metabox .tabsContent section.section
+ {
+    border-radius: 10px 10px 0 0;
+}
