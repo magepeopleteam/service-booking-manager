@@ -275,3 +275,8 @@ button.button.mpwpb-service-new, button.button.mpwpb-category-new{
 .mpwpb_extra_service_settings table.table tbody tr td, .service-container table.table tbody tr td {
     border-bottom: 1px solid #eee !important;
 }
+
+#mp_meta_box_panel .metabox .tabsContent section {
+    border-radius: 10px !important;
+    margin-top: 5px !important;
+}
