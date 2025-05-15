@@ -789,9 +789,10 @@ div.registration_tab_item {
   align-items: center;
 }
 .mpwpb_registration nav ul li {
-  margin: 0 10px;
+  margin: 5px 15px;
   background-color: var(--mpwpb_color_theme_alter);
-  border-radius: 3px;
+  border-radius: 20px;
+  font-size: 16px
   border: 1px solid var(--mpwpb_color_theme);
 }
 .mpwpb_registration nav ul li:first-child {
