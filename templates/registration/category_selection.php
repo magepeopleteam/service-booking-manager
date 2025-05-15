@@ -59,7 +59,7 @@
 
 				?>
                 <div class="mpwpb_category_section">
-                    <div class="mpwpb_item_box mpwpb_category_item" data-category="<?php echo esc_attr($cat_key + 1); ?>" style=" align-items: flex-start">
+                    <div class="mpwpd_item_box_direction mpwpb_item_box mpwpb_category_item " data-category="<?php echo esc_attr($cat_key + 1); ?>" style=" align-items: flex-start">
                         <div class="mpwpd_category_info_holder">
                             <div class="alignCenter _fullWidth">
                                 <?php if ($category_icon) { ?>
@@ -90,7 +90,7 @@
 
 								?>
                                 <div class="mpwpb_sub_category_area">
-                                    <div class="mpwpb_item_box mpwpb_sub_category_item " data-category="<?php echo esc_attr($cat_key + 1); ?>" data-sub-category="<?php echo esc_attr($sub_key + 1); ?>" style=" align-items: flex-start">
+                                    <div class="mpwpd_item_box_direction mpwpb_item_box mpwpb_sub_category_item " data-category="<?php echo esc_attr($cat_key + 1); ?>" data-sub-category="<?php echo esc_attr($sub_key + 1); ?>" style=" align-items: flex-start">
                                         <div class="mpwpd_category_info_holder">
                                             <div class="alignCenter _fullWidth">
                                                 <?php if ($sub_category_image) { ?>
