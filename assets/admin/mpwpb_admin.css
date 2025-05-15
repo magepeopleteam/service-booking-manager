@@ -327,4 +327,6 @@ button.button.mpwpb-extra-service-new:hover, button.button.mpwpb-faq-item-new:ho
     min-height: 40px !important;
     background: #f5f8ff !important;
 }
-
+.date-time-schedule .date-time-container {
+    width: 25% !important;
+}
