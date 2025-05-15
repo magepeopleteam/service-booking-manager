@@ -316,3 +316,9 @@ button.button.mpwpb-extra-service-new:hover, button.button.mpwpb-faq-item-new:ho
 .mpwpb-faq-items section.faq-header {
     background: #f7f7f9;
 }
+
+.mp_settings_area .formControl
+ {
+  width: 99% !important;  
+  min-height: 40px !important;
+}
