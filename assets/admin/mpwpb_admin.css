@@ -322,3 +322,9 @@ button.button.mpwpb-extra-service-new:hover, button.button.mpwpb-faq-item-new:ho
   width: 99% !important;  
   min-height: 40px !important;
 }
+#mp_meta_box_panel .metabox .tabsContent section label.label input, #mp_meta_box_panel .metabox .tabsContent section label.label select, #mp_meta_box_panel .metabox .tabsContent section label.label textarea
+ {
+    min-height: 40px !important;
+    background: #f5f8ff !important;
+}
+
