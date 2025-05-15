@@ -226,7 +226,7 @@ button.button.mpwpb-service-new, button.button.mpwpb-category-new{
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background-color: #4361ee;
+    background-color: var(--mage-primary);;
     color: white;
     border: none;
     padding: 0.6rem 1.25rem;
