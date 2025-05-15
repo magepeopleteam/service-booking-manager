@@ -281,27 +281,4 @@ button.button.mpwpb-service-new, button.button.mpwpb-category-new{
     margin-top: 5px !important;
 }
 
-/* General light background */
-#mp_meta_box_panel .metabox .tabsContent section {
-  background-color: #f9f9f9; /* Light background */
-  transition: background-color 0.3s ease;
-}
-
-/* Odd item background */
-#mp_meta_box_panel .metabox .tabsContent section:nth-child(odd) {
-  background-color: #ffffff; /* White */
-}
-
-/* Even item background */
-#mp_meta_box_panel .metabox .tabsContent section:nth-child(even) {
-  background-color: #f1f1f1; /* Slightly darker light gray */
-}
-
-/* Focus/Active background */
-#mp_meta_box_panel .metabox .tabsContent section:focus,
-#mp_meta_box_panel .metabox .tabsContent section:focus-visible,
-#mp_meta_box_panel .metabox .tabsContent section.active {
-  background-color: #e0f7fa; /* Light blue or any focus color */
-  outline: none;
-}
 
