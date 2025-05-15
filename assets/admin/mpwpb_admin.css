@@ -282,7 +282,7 @@ button.button.mpwpb-service-new, button.button.mpwpb-category-new{
 }
 
 /* General light background */
-.mpwpb-faq-item {
+#mp_meta_box_panel .metabox .tabsContent section {
   background-color: #f9f9f9; /* Light background */
   padding: 15px;
   border-radius: 5px;
@@ -291,19 +291,19 @@ button.button.mpwpb-service-new, button.button.mpwpb-category-new{
 }
 
 /* Odd item background */
-.mpwpb-faq-item:nth-child(odd) {
+#mp_meta_box_panel .metabox .tabsContent section:nth-child(odd) {
   background-color: #ffffff; /* White */
 }
 
 /* Even item background */
-.mpwpb-faq-item:nth-child(even) {
+#mp_meta_box_panel .metabox .tabsContent section:nth-child(even) {
   background-color: #f1f1f1; /* Slightly darker light gray */
 }
 
 /* Focus/Active background */
-.mpwpb-faq-item:focus,
-.mpwpb-faq-item:focus-visible,
-.mpwpb-faq-item.active {
+#mp_meta_box_panel .metabox .tabsContent section:focus,
+#mp_meta_box_panel .metabox .tabsContent section:focus-visible,
+#mp_meta_box_panel .metabox .tabsContent section.active {
   background-color: #e0f7fa; /* Light blue or any focus color */
   outline: none;
 }
