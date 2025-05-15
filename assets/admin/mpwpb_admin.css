@@ -284,9 +284,6 @@ button.button.mpwpb-service-new, button.button.mpwpb-category-new{
 /* General light background */
 #mp_meta_box_panel .metabox .tabsContent section {
   background-color: #f9f9f9; /* Light background */
-  padding: 15px;
-  border-radius: 5px;
-  margin-bottom: 10px;
   transition: background-color 0.3s ease;
 }
 
