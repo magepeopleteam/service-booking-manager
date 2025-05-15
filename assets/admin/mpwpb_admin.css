@@ -229,7 +229,7 @@ button.button.mpwpb-extra-service-new, button.button.mpwpb-faq-item-new, button.
     background-color: var(--mage-primary);;
     color: white;
     border: none;
-    padding: 0.6rem 1.25rem;
+    padding: 5px 15px;
     margin-top: 1rem;
     border-radius: 10px;
     cursor: pointer;
