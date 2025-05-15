@@ -283,10 +283,6 @@ button.button.mpwpb-extra-service-new:hover, button.button.mpwpb-faq-item-new:ho
     border-bottom: 1px solid #eee !important;
 }
 
-#mp_meta_box_panel .metabox .tabsContent section {
-    border-radius: 10px !important;
-    margin-top: 10px !important;
-}
 
 /* Odd row styling */
 .mpwpb_extra_service_settings table.table tbody tr:nth-child(odd), .service-container table.table tbody tr:nth-child(odd) {
@@ -330,3 +326,4 @@ button.button.mpwpb-extra-service-new:hover, button.button.mpwpb-faq-item-new:ho
 .date-time-schedule .date-time-container {
     width: 25% !important;
 }
+#mp_meta_box_panel .mpwpb-faq-section .mpwpb-faq-item{margin-top:10px;}
