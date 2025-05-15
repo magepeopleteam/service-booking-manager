@@ -282,23 +282,23 @@ button.button.mpwpb-service-new, button.button.mpwpb-category-new{
 }
 
 /* Odd row styling */
-.mpwpb_extra_service_settings table.table tbody tr:nth-child(odd), .service-container table.table tbody tr:nth-child(odd) {
+.service-container table.table tbody tr:nth-child(odd) {
     background-color: #ffffff !important;
 }
 
 /* Even row styling */
-.mpwpb_extra_service_settings table.table tbody tr:nth-child(even), .service-container table.table tbody tr:nth-child(even) {
+.service-container table.table tbody tr:nth-child(even) {
     background-color: #f9f9f9 !important;
 }
 
 /* Hover effect on rows */
-.mpwpb_extra_service_settings table.table tbody tr:hover, .service-container table.table tbody tr:hover {
+.service-container table.table tbody tr:hover {
     background-color: #e6f7ff !important;
     cursor: pointer !important;
 }
 
 /* Optional: td styling for spacing */
-.mpwpb_extra_service_settings table.table tbody tr td, .service-container table.table tbody tr td {
+.service-container table.table tbody tr td {
     border-bottom: 1px solid #eee !important;
 }
 
