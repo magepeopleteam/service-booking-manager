@@ -17,6 +17,8 @@
 	$extra_services = $extra_services ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', array());
 	$title = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_shortcode_title');
 	$sub_title = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_shortcode_sub_title');
+
+    $is_multiselect = get_post_meta( $post_id, 'mpwpb_service_multiple_category_check', true );
 ?>
     <div class="mpwpb_style mpwpb-default-template mpwpb_registration">
         <header style="background-image: url('<?php echo esc_url(get_the_post_thumbnail_url()); ?>');">
@@ -53,6 +55,7 @@
                         <div class="service-items">
                             <div class="all_service_area ">
                                 <div class="mpwpb_selected_control" id="mpwpb_selected_control" style="display: none">
+                                    <input type="hidden" id="mpwpb_multi_category_select" value="<?php echo esc_attr( $is_multiselect )?>">
                                     <div class="mpwpb_show_all_category_holder mpwpb_selected_category" id="mpwpb_show_all_category" >
                                         <?php esc_html_e( 'All Category', 'service-booking-manager' );?> <i class="fa-solid fa-arrow-right"></i>
                                     </div>

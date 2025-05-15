@@ -45,6 +45,9 @@
 								<li  data-tabs-target="#mpwpb_service_details">
 									<i class="fas fa-wrench pe-1"></i><?php esc_html_e('Service Details', 'service-booking-manager'); ?>
 								</li>
+								<li  data-tabs-target="#mpwpb_service_settings">
+                                    <i class="fa-solid fa-gear"></i><?php esc_html_e('Service Settings', 'service-booking-manager'); ?>
+								</li>
 								<?php do_action('add_mpwpb_settings_tab_after_date', $post_id); ?>
 							</ul>
 						</div>
@@ -138,7 +141,9 @@
 					$service_rating_text = isset($_POST['mpwpb_service_rating_text']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_service_rating_text'])) : '';
 					$service_overview_content =  isset($_POST['mpwpb_service_overview_content']) ? wp_kses_post(wp_unslash($_POST['mpwpb_service_overview_content'])):'';
 					$service_details_content =  isset($_POST['mpwpb_service_details_content']) ? wp_kses_post(wp_unslash($_POST['mpwpb_service_details_content'])):'';
-					update_post_meta($post_id, 'mpwpb_features_status', $service_features_status);
+                    $service_multiple_category_check = isset($_POST['mpwpb_service_multiple_category_check']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_service_multiple_category_check'])) : 'off';
+                    error_log( print_r( [ '$service_multiple_category_check' => $service_multiple_category_check ], true ) );
+                    update_post_meta($post_id, 'mpwpb_features_status', $service_features_status);
 					update_post_meta($post_id, 'mpwpb_service_overview_status', $service_overview_status);
 					update_post_meta($post_id, 'mpwpb_service_details_status', $service_details_status);
 					update_post_meta($post_id, 'mpwpb_service_overview_content', $service_overview_content);
@@ -146,6 +151,7 @@
 					update_post_meta($post_id, 'mpwpb_service_review_ratings', $service_rating);
 					update_post_meta($post_id, 'mpwpb_service_rating_scale', $service_rating_scale);
 					update_post_meta($post_id, 'mpwpb_service_rating_text', $service_rating_text);
+					update_post_meta($post_id, 'mpwpb_service_multiple_category_check', $service_multiple_category_check);
 					$features = isset($_POST['mpwpb_features']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_features'])) : [];
 					$features_lists = array();
 					if (sizeof($features) > 0) {
