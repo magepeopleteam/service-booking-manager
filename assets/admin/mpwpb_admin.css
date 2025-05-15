@@ -266,12 +266,12 @@ button.button.mpwpb-service-new, button.button.mpwpb-category-new{
 }
 
 /* Hover effect on rows */
-.mpwpb_extra_service_settings table.table tbody tr:hover .service-container table.table tbody tr:hover {
+.mpwpb_extra_service_settings table.table tbody tr:hover, .service-container table.table tbody tr:hover {
     background-color: #e6f7ff !important;
     cursor: pointer !important;
 }
 
 /* Optional: td styling for spacing */
-..mpwpb_extra_service_settings table.table tbody tr td, .service-container table.table tbody tr td {
+.mpwpb_extra_service_settings table.table tbody tr td, .service-container table.table tbody tr td {
     border-bottom: 1px solid #eee !important;
 }
