@@ -236,7 +236,7 @@ button.button.mpwpb-service-new, button.button.mpwpb-category-new{
     font-size: 0.9rem;
     transition: var(--transition);
 }
-
+.mpwpb_extra_service_settings table.table tbody tr td{text-align:left !important;}
 .button.button.mpwpb-category-new::before, button.button.mpwpb-service-new::before {
     content: "+ ";
     font-weight: bold; /* Optional */
