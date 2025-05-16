@@ -50,7 +50,7 @@ div.registration_tab_item {
 }
 .mpwpb_selected_category{
   cursor: pointer;
-  font-weight: 800;
+  font-weight: 600;
 
 }
 .mpwpb_selected_category:hover{
@@ -802,9 +802,10 @@ div.registration_tab_item {
   align-items: center;
 }
 .mpwpb_registration nav ul li {
-  margin: 0 10px;
+  margin: 5px 15px;
   background-color: var(--mpwpb_color_theme_alter);
-  border-radius: 3px;
+  border-radius: 20px;
+  font-size: 16px;
   border: 1px solid var(--mpwpb_color_theme);
 }
 .mpwpb_registration nav ul li:first-child {
@@ -1298,7 +1299,7 @@ div.registration_tab_item {
 .mpwpb_popup_body{background:#f5f7fa; }
 ._dShadow_7.mpwpb_category_area, ._dShadow_7_mB_xs.mpwpb_service_area, ._dShadow_7_mB_xs.mpwpb_extra_service_area, ._dShadow_7.mpwpb_category_area{background:#fff; padding:10px; }
 ._dShadow_7.mpwpb_category_area {margin-top:10px !important; border-radius:10px !important; border-radius:10px !important}
-.service-cart{ background: #fff !important;}
+.service-cart{ background: #fff !important; overflow-y: auto !important;}
 .mpwpb_service_item, .mpwpb_extra_service_item {
     border-radius: 10px;
 }
@@ -1324,3 +1325,4 @@ div.registration_tab_item {
  div.mpwpb_service_item .mpwpb_service_button, .mpwpb_extra_service_item .mpwpb_price_calculation{border:none !important}
 .mpwpb_service_area header h5, .mpwpb_extra_service_area h5{color:#333 !important;}
 .mpwpb_service_area header,.mpwpb_extra_service_area h5{border-bottom: 1px solid #ddd !important;}
+.mpwpb_selected_category {font-weight: 600 !important; }

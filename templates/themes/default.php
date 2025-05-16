@@ -48,8 +48,8 @@
             <div class="sidebar">
                 <div class="booking-area">
                     <div class="header">
-                        <h5><?php //echo esc_html( $title ); ?></h5>
-                        <p><?php //echo esc_html( $sub_title ); ?></p>
+                        <h5><?PHP // echo esc_html( $title ); ?></h5>
+                        <p><?php // echo esc_html( $sub_title ); ?></p>
                     </div>
                     <div class="content">
                         <div class="service-items">

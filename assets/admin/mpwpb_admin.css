@@ -222,14 +222,14 @@
 .category-service-area{border:5px solid #e9e9ff !important; border-radius:10px !important; }
 .service-container{padding:10px;}
 
-button.button.mpwpb-service-new, button.button.mpwpb-category-new{
+button.button.mpwpb-extra-service-new, button.button.mpwpb-faq-item-new, button.button.mpwpb-service-new, button.button.mpwpb-category-new{
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background-color: #4361ee;
+    background-color: var(--mage-primary);;
     color: white;
     border: none;
-    padding: 0.6rem 1.25rem;
+    padding: 5px 15px;
     margin-top: 1rem;
     border-radius: 10px;
     cursor: pointer;
@@ -237,6 +237,13 @@ button.button.mpwpb-service-new, button.button.mpwpb-category-new{
     transition: var(--transition);
 }
 
+button.button.mpwpb-extra-service-new:hover, button.button.mpwpb-faq-item-new:hover, button.button.mpwpb-service-new:hover, button.button.mpwpb-category-new:hover{
+    background-color: var(--mage-primary);
+    opacity: 0.85;
+}
+
+
+.mpwpb_extra_service_settings table.table tbody tr td{text-align:left !important;}
 .button.button.mpwpb-category-new::before, button.button.mpwpb-service-new::before {
     content: "+ ";
     font-weight: bold; /* Optional */
@@ -274,4 +281,61 @@ button.button.mpwpb-service-new, button.button.mpwpb-category-new{
 /* Optional: td styling for spacing */
 .service-container table.table tbody tr td {
     border-bottom: 1px solid #eee !important;
+}
+
+
+/* Odd row styling */
+.mpwpb_extra_service_settings table.table tbody tr:nth-child(odd), .service-container table.table tbody tr:nth-child(odd) {
+    background-color: #ffffff !important;
+}
+
+/* Even row styling */
+.mpwpb_extra_service_settings table.table tbody tr:nth-child(even), .service-container table.table tbody tr:nth-child(even) {
+    background-color: #f9f9f9 !important;
+}
+
+/* Hover effect on rows */
+.mpwpb_extra_service_settings table.table tbody tr:hover, .service-container table.table tbody tr:hover {
+    background-color: #e6f7ff !important;
+    cursor: pointer !important;
+}
+
+/* Optional: td styling for spacing */
+.mpwpb_extra_service_settings table.table tbody tr td, .service-container table.table tbody tr td {
+    border-bottom: 1px solid #eee !important;
+}
+
+#mp_meta_box_panel table.table thead tr th {
+    background: #e9e9ff !important;
+}
+#mp_meta_box_panel table.table tbody tr td:first-child i{width:40px !important; border:none !important;}
+.mpwpb-faq-items section.faq-header {
+    background: #f7f7f9;
+}
+
+.mp_settings_area .formControl
+ {
+  width: 99% !important;  
+  min-height: 40px !important;
+}
+#mp_meta_box_panel .metabox .tabsContent section label.label input, #mp_meta_box_panel .metabox .tabsContent section label.label select, #mp_meta_box_panel .metabox .tabsContent section label.label textarea
+ {
+    min-height: 40px !important;
+    background: #f5f8ff !important;
+}
+.date-time-schedule .date-time-container {
+    width: 25% !important;
+}
+#mp_meta_box_panel .mpwpb-faq-section .mpwpb-faq-item{margin-top:10px;}
+#mp_meta_box_panel .metabox .tabsContent section.section
+ {
+    border-radius: 10px 10px 0 0;
+}
+
+.date-time-schedule .date-time-container label input, .date-time-schedule .date-time-container label select
+ {
+    border: 1px solid #dbdada;
+    background: #f5f8ff !important;
+    min-height: 40px;
+    border-radius: 5px;
 }
