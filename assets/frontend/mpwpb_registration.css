@@ -31,6 +31,11 @@ div.registration_tab_item {
 .mpwpd_category_data_pos{
   flex-direction: column;
 }
+.selection-header {
+  padding: 20px;
+  background-color: var(--light-bg);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
 .mpwpb_selected_control{
   display: flex;
   padding: 5px;

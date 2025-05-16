@@ -35,6 +35,11 @@
                         <div class="service-items">
                             <div class="all_service_area ">
 
+                                <div class="selection-header">
+                                    <h3>Select Service Type</h3>
+                                    <p>Choose the perfect wash for your vehicle</p>
+                                </div>
+
                                 <div class="mpwpb_selected_control" id="mpwpb_selected_control" style="display: none">
                                     <input type="hidden" id="mpwpb_multi_category_select" value="<?php echo esc_attr( $is_multiselect )?>">
                                     <div class="mpwpb_show_all_category_holder mpwpb_selected_category" id="mpwpb_show_all_category" >
