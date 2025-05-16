@@ -75,7 +75,7 @@
                             <span class="fas fa-check mpwpb_item_check _circleIcon_xs" style="top: 15px"></span>
                         </div>
 
-                        <div class="mpwpd_category_min_price"><?php echo wp_kses_post( $min_price )?> </div>
+                        <div class="mpwpd_category_min_price"><?php esc_attr_e( 'Price Start At:', 'service-booking-manager' );?> <?php echo wp_kses_post( $min_price )?> </div>
                     </div>
 					<?php if (sizeof($all_sub_category) > 0) {
 						foreach ($all_sub_category as $sub_key => $sub_category_item) {
@@ -105,7 +105,7 @@
                                             </div>
                                             <span class="fas fa-check mpwpb_item_check _circleIcon_xs" style="top: 15px"></span>
                                         </div>
-                                        <div class="mpwpd_category_min_price" ><?php echo  wp_kses_post( $sub_min_price );?></div>
+                                        <div class="mpwpd_category_min_price"><?php esc_attr_e( 'Price Start At:', 'service-booking-manager' );?> <?php echo  wp_kses_post( $sub_min_price );?></div>
 
                                     </div>
                                 </div>

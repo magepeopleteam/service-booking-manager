@@ -24,7 +24,7 @@
             </div>
         </div>
         <div class="mpwpb_popup mpwpb_style" data-popup="#mpwpb_static_popup">
-            <div class="mpwpb_popup_main_area">
+            <div class="mpwpb_popup_main_area mpwpd_padding_bottom">
                 <div class="mpwpb_popup_header">
                     <h5><?php echo esc_html($title); ?></h5>
                     <p><?php echo esc_html($sub_title); ?></p>

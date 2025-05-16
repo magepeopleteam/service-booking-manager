@@ -17,10 +17,6 @@ function mpwpb_price_calculation($this) {
         }
     });
     parent.find('.mpwpb_total_bill').html(mpwpb_price_format(price));
-    if( price ){
-        parent.find('#mpwpd_btn_proceed').fadeOut();
-    }
-
 }
 //Registration
 (function ($) {
@@ -321,7 +317,9 @@ function mpwpb_price_calculation($this) {
     $(document).on('click', 'div.mpwpb_registration .mpwpb_service_button', function () {
         let $this = $(this);
 
-        let is_multiple_service = false
+        $('#mpwpd_btn_proceed').fadeOut();
+
+        let is_multiple_service = false;
         if( is_multiple_service ){
             if( $this.hasClass('mActive')){
                 $this.siblings('.mpwpb_service_inc_dec_holder').fadeOut();

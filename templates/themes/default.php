@@ -157,9 +157,7 @@
 						<?php include(MPWPB_Function::template_path('registration/next_service.php')); ?>
 						<?php include(MPWPB_Function::template_path('registration/next_date_time.php')); ?>
                     </div>
-                    <div class="mpwpd_btn_proceed" id="mpwpd_btn_proceed">
-                        <?php esc_html_e('Continue :', 'service-booking-manager'); ?> <i class="fa-solid fa-arrow-right"></i>
-                    </div>
+
                 </div>
             </div>
         </main>

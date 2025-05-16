@@ -80,6 +80,10 @@ div.registration_tab_item {
   color: #333333;
 }
 
+.mpwpd_padding_bottom{
+  padding-bottom: 10px;
+}
+
 @media only screen and (min-width: 10px) {
   div.mpwpb_registration .woocommerce-page span.woocommerce-input-wrapper,
   div.mpwpb_registration .woocommerce-page table span {
