@@ -17,6 +17,10 @@ function mpwpb_price_calculation($this) {
         }
     });
     parent.find('.mpwpb_total_bill').html(mpwpb_price_format(price));
+    if( price ){
+        parent.find('#mpwpd_btn_proceed').fadeOut();
+    }
+
 }
 //Registration
 (function ($) {
@@ -71,6 +75,7 @@ function mpwpb_price_calculation($this) {
         }
     }
     function refresh_service(parent) {
+        $('#mpwpd_btn_proceed').fadeIn();
         let is_multi_select = $("#mpwpb_multi_category_select").val().trim();
         if( is_multi_select !== 'on' ) {
             parent.find('.mpwpb_extra_service_area,.next_service_area,.mpwpb_date_time_area,.mpwpb_order_proceed_area').slideUp(350);
@@ -315,6 +320,16 @@ function mpwpb_price_calculation($this) {
     //==========service============//
     $(document).on('click', 'div.mpwpb_registration .mpwpb_service_button', function () {
         let $this = $(this);
+
+        let is_multiple_service = false
+        if( is_multiple_service ){
+            if( $this.hasClass('mActive')){
+                $this.siblings('.mpwpb_service_inc_dec_holder').fadeOut();
+            }else{
+                $this.siblings('.mpwpb_service_inc_dec_holder').fadeIn();
+            }
+        }
+
         let current = $this.closest('.mpwpb_service_item');
         let parent = $(this).closest('div.mpwpb_registration');
         let current_category = current.data('category');

@@ -36,8 +36,8 @@
                             <div class="all_service_area ">
 
                                 <div class="selection-header">
-                                    <h3>Select Service Type</h3>
-                                    <p>Choose the perfect wash for your vehicle</p>
+                                    <h3><?php esc_html_e('Select Service Type', 'service-booking-manager'); ?></h3>
+                                    <p><?php esc_html_e('Choose the perfect wash for your vehicle', 'service-booking-manager'); ?></p>
                                 </div>
 
                                 <div class="mpwpb_selected_control" id="mpwpb_selected_control" style="display: none">
@@ -136,6 +136,9 @@
                 <div class="popupFooter _justifyBetween">
 					<?php include(MPWPB_Function::template_path('registration/next_service.php')); ?>
 					<?php include(MPWPB_Function::template_path('registration/next_date_time.php')); ?>
+                </div>
+                <div class="mpwpd_btn_proceed" id="mpwpd_btn_proceed">
+                    <?php esc_html_e('Continue :', 'service-booking-manager'); ?> <i class="fa-solid fa-arrow-right"></i>
                 </div>
             </div>
         </div>

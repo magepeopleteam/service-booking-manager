@@ -31,6 +31,24 @@ div.registration_tab_item {
 .mpwpd_category_data_pos{
   flex-direction: column;
 }
+
+.mpwpd_btn_proceed {
+  display: block;
+  width: calc(100% - 16px);
+  margin: 0px 8px 0px;
+  padding: 10px;
+  background: #db4366;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  /* transition: var(--transition); */
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+}
+
 .selection-header {
   padding: 20px;
   background-color: var(--light-bg);
