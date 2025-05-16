@@ -142,7 +142,6 @@
 					$service_overview_content =  isset($_POST['mpwpb_service_overview_content']) ? wp_kses_post(wp_unslash($_POST['mpwpb_service_overview_content'])):'';
 					$service_details_content =  isset($_POST['mpwpb_service_details_content']) ? wp_kses_post(wp_unslash($_POST['mpwpb_service_details_content'])):'';
                     $service_multiple_category_check = isset($_POST['mpwpb_service_multiple_category_check']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_service_multiple_category_check'])) : 'off';
-                    error_log( print_r( [ '$service_multiple_category_check' => $service_multiple_category_check ], true ) );
                     update_post_meta($post_id, 'mpwpb_features_status', $service_features_status);
 					update_post_meta($post_id, 'mpwpb_service_overview_status', $service_overview_status);
 					update_post_meta($post_id, 'mpwpb_service_details_status', $service_details_status);

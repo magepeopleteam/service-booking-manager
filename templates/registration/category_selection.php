@@ -10,7 +10,36 @@
 	$all_category = $all_category ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_category_service', array());
 	$all_sub_category = $all_sub_category ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_sub_category_service', array());
 	$all_services = $all_services ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
-	//echo '<pre>'; print_r($all_services); echo '</pre>';
+
+
+    $parent_prices = [];
+    $sub_prices = [];
+
+    foreach ($all_services as $item) {
+        $parent = $item['parent_cat'];
+        $sub = $item['sub_cat'];
+        $price = $item['price'];
+        $parent_prices[$parent][] = $price;
+        $sub_prices[$sub][] = $price;
+    }
+
+    $parent_min_max = [];
+    foreach ($parent_prices as $parent_cat => $prices) {
+        $parent_min_max[$parent_cat] = [
+            'min' => min($prices),
+            'max' => max($prices)
+        ];
+    }
+
+    $sub_min_max = [];
+    foreach ($sub_prices as $sub_cat => $prices) {
+        $sub_min_max[$sub_cat] = [
+            'min' => min($prices),
+            'max' => max($prices)
+        ];
+    }
+
+
 	$category_text = $category_text ?? MPWPB_Function::get_category_text($post_id);
 	//echo '<pre>'; print_r($all_sub_category); echo '</pre>';
 	if (sizeof($all_category) > 0) {
@@ -23,21 +52,30 @@
 				$category_name = array_key_exists('name', $category) ? $category['name'] : '';
 				$category_icon = array_key_exists('icon', $category) ? $category['icon'] : '';
 				$category_image = array_key_exists('image', $category) ? $category['image'] : '';
+
+                $max_min_price = $parent_min_max[ $cat_key ];
+                $min_price = wc_price( $max_min_price['min'] );
+                $max_price = wc_price( $max_min_price['max'] );
+
 				?>
                 <div class="mpwpb_category_section">
-                    <div class="mpwpb_item_box mpwpb_category_item" data-category="<?php echo esc_attr($cat_key + 1); ?>">
-                        <div class="alignCenter _fullWidth">
-							<?php if ($category_icon) { ?>
-                                <span class="<?php echo esc_attr($category_icon); ?> _mR_xs"></span>
-							<?php } ?>
-							<?php if ($category_image) { ?>
-                                <div class="bg_image_area">
-                                    <div data-bg-image="<?php echo esc_attr(MPWPB_Global_Function::get_image_url('', $category_image, 'medium')); ?>"></div>
-                                </div>
-							<?php } ?>
-                            <h6><?php echo esc_html($category_name); ?></h6>
+                    <div class="mpwpd_item_box_direction mpwpb_item_box mpwpb_category_item " data-category="<?php echo esc_attr($cat_key + 1); ?>" style=" align-items: flex-start">
+                        <div class="mpwpd_category_info_holder">
+                            <div class="alignCenter _fullWidth">
+                                <?php if ($category_icon) { ?>
+                                    <span class="<?php echo esc_attr($category_icon); ?> _mR_xs"></span>
+                                <?php } ?>
+                                <?php if ($category_image) { ?>
+                                    <div class="bg_image_area">
+                                        <div data-bg-image="<?php echo esc_attr(MPWPB_Global_Function::get_image_url('', $category_image, 'medium')); ?>"></div>
+                                    </div>
+                                <?php } ?>
+                                <h6><?php echo esc_html($category_name); ?></h6>
+                            </div>
+                            <span class="fas fa-check mpwpb_item_check _circleIcon_xs" style="top: 15px"></span>
                         </div>
-                        <span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
+
+                        <div class="mpwpd_category_min_price"><?php esc_attr_e( 'Price Start At:', 'service-booking-manager' );?> <?php echo wp_kses_post( $min_price )?> </div>
                     </div>
 					<?php if (sizeof($all_sub_category) > 0) {
 						foreach ($all_sub_category as $sub_key => $sub_category_item) {
@@ -46,21 +84,29 @@
 								$sub_category_name = array_key_exists('name', $sub_category_item) ? $sub_category_item['name'] : '';
 								$sub_category_icon = array_key_exists('icon', $sub_category_item) ? $sub_category_item['icon'] : '';
 								$sub_category_image = array_key_exists('image', $sub_category_item) ? $sub_category_item['image'] : '';
+
+                                $sub_max_min_price = $sub_min_max[ $sub_key ];
+                                $sub_min_price = wc_price( $sub_max_min_price['min'] );
+
 								?>
                                 <div class="mpwpb_sub_category_area">
-                                    <div class="mpwpb_item_box mpwpb_sub_category_item " data-category="<?php echo esc_attr($cat_key + 1); ?>" data-sub-category="<?php echo esc_attr($sub_key + 1); ?>">
-                                        <div class="alignCenter _fullWidth">
-											<?php if ($sub_category_image) { ?>
-                                                <div class="bg_image_area">
-                                                    <div data-bg-image="<?php echo esc_attr(MPWPB_Global_Function::get_image_url('', $sub_category_image, 'medium')); ?>"></div>
-                                                </div>
-											<?php } ?>
-											<?php if ($sub_category_icon) { ?>
-                                                <span class="<?php echo esc_attr($sub_category_icon); ?> _mR_xs"></span>
-											<?php } ?>
-                                            <h6><?php echo esc_html($sub_category_name); ?></h6>
+                                    <div class="mpwpd_item_box_direction mpwpb_item_box mpwpb_sub_category_item " data-category="<?php echo esc_attr($cat_key + 1); ?>" data-sub-category="<?php echo esc_attr($sub_key + 1); ?>" style=" align-items: flex-start">
+                                        <div class="mpwpd_category_info_holder">
+                                            <div class="alignCenter _fullWidth">
+                                                <?php if ($sub_category_image) { ?>
+                                                    <div class="bg_image_area">
+                                                        <div data-bg-image="<?php echo esc_attr(MPWPB_Global_Function::get_image_url('', $sub_category_image, 'medium')); ?>"></div>
+                                                    </div>
+                                                <?php } ?>
+                                                <?php if ($sub_category_icon) { ?>
+                                                    <span class="<?php echo esc_attr($sub_category_icon); ?> _mR_xs"></span>
+                                                <?php } ?>
+                                                <h6><?php echo esc_html($sub_category_name); ?></h6>
+                                            </div>
+                                            <span class="fas fa-check mpwpb_item_check _circleIcon_xs" style="top: 15px"></span>
                                         </div>
-                                        <span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
+                                        <div class="mpwpd_category_min_price"><?php esc_attr_e( 'Price Start At:', 'service-booking-manager' );?> <?php echo  wp_kses_post( $sub_min_price );?></div>
+
                                     </div>
                                 </div>
 							<?php }

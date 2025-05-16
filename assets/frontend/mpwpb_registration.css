@@ -17,7 +17,43 @@ div.registration_tab_item {
 .mpwpb_registration_short_code.mpwpb-static-template .sidebar{width: 100%;}
 .mpwpb_registration_short_code.mpwpb-static-template .sidebar .mpwpb_static_area{width: 100%;position: relative;left: inherit;  bottom: inherit;}
 
+.mpwpd_category_info_holder{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+.mpwpd_item_box_direction{
+  flex-direction: column;
+}
+.mpwpd_category_min_price{
+  padding: 8px 0px;
+}
+.mpwpd_category_data_pos{
+  flex-direction: column;
+}
 
+.mpwpd_btn_proceed {
+  display: block;
+  width: calc(100% - 16px);
+  margin: 0px 8px 0px;
+  padding: 10px;
+  background: #db4366;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  /* transition: var(--transition); */
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.selection-header {
+  padding: 20px;
+  background-color: var(--light-bg);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
 .mpwpb_selected_control{
   display: flex;
   padding: 5px;
@@ -42,6 +78,10 @@ div.registration_tab_item {
 }
 .mpwpb_selected_category:hover{
   color: #333333;
+}
+
+.mpwpd_padding_bottom{
+  padding-bottom: 10px;
 }
 
 @media only screen and (min-width: 10px) {

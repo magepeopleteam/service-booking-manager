@@ -54,6 +54,11 @@
                     <div class="content">
                         <div class="service-items">
                             <div class="all_service_area ">
+                                <div class="selection-header">
+                                    <h3><?php esc_html_e('Select Service Type', 'service-booking-manager'); ?></h3>
+                                    <p><?php esc_html_e('Choose the perfect wash for your vehicle', 'service-booking-manager'); ?></p>
+                                </div>
+
                                 <div class="mpwpb_selected_control" id="mpwpb_selected_control" style="display: none">
                                     <input type="hidden" id="mpwpb_multi_category_select" value="<?php echo esc_attr( $is_multiselect )?>">
                                     <div class="mpwpb_show_all_category_holder mpwpb_selected_category" id="mpwpb_show_all_category" >
@@ -147,10 +152,12 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="footer _justifyBetween">
 						<?php include(MPWPB_Function::template_path('registration/next_service.php')); ?>
 						<?php include(MPWPB_Function::template_path('registration/next_date_time.php')); ?>
                     </div>
+
                 </div>
             </div>
         </main>
