@@ -36,7 +36,7 @@
 
 					//echo '<pre>'; print_r($sub_category_name); echo '</pre>';
 					?>
-                    <div class="mpwpb_service_item" data-price="<?php echo esc_attr($service_price); ?>" data-category="<?php echo esc_attr($category_name); ?>" data-sub-category="<?php echo esc_attr($sub_category_name); ?>" data-service="<?php echo esc_attr($service_key+1); ?>">
+                    <div class="mpwpb_service_item" data-price="<?php echo esc_attr($service_price); ?>" data-category="<?php echo esc_attr($category_name); ?>" data-sub-category="<?php echo esc_attr($sub_category_name); ?>" data-service="<?php echo esc_attr($service_key+1); ?>" data-service-qty="1">
                         <div class="_dFlex">
 							<?php if ($service_image) { ?>
                                 <div class="bg_image_area _w_75_mR_xs">
@@ -75,10 +75,10 @@
                                 </div>-->
 
                                 <div class="alignCenter quantity-box" >
-                                    <?php if( 1 === 2 ){?>
+                                    <?php if( 1 ){?>
                                     <div class="mR_xs min_100 mpwpb_service_inc_dec_holder" data-service-collapse="<?php echo esc_attr($unique_id); ?>" style="display: none">
                                         <div class="groupContent qtyIncDec">
-                                            <div class="decQty addonGroupContent">
+                                            <div class="service_decQty addonGroupContent">
                                                 <span class="fas fa-minus"></span>
                                             </div>
                                             <label>
@@ -86,12 +86,12 @@
                                                        class="formControl inputIncDec mpwpb_number_validation"
                                                        data-price="<?php echo esc_attr($service_price); ?>"
                                                        name="mpwpb_service_qtt[]"
-                                                       value="<?php echo esc_attr(max(0, 0)); ?>"
-                                                       min="<?php echo esc_attr(0); ?>"
+                                                       value="<?php echo esc_attr(max(1, 0)); ?>"
+                                                       min="<?php echo esc_attr(1); ?>"
                                                        max="<?php echo esc_attr(10); ?>"
                                                 />
                                             </label>
-                                            <div class="incQty addonGroupContent">
+                                            <div class="service_incQty addonGroupContent">
                                                 <span class="fas fa-plus"></span>
                                             </div>
                                         </div>

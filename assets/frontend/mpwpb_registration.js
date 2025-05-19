@@ -2,9 +2,10 @@ function mpwpb_price_calculation($this) {
     let parent = $this.closest('div.mpwpb_registration');
     let price = 0;
     parent.find('.mpwpb_service_area .mpwpb_service_item[data-price].mpActive').each(function () {
+        let qty = parseInt( jQuery(this).attr('data-service-qty') );
         let current_price = jQuery(this).data('price') ?? 0;
         current_price = current_price && current_price > 0 ? current_price : 0;
-        price = price + parseFloat(current_price);
+        price = price + parseFloat(current_price) * qty ;
     });
     parent.find('.mpwpb_extra_service_item').each(function () {
         let service_name = jQuery(this).find('[name="mpwpb_extra_service_type[]"]').val();
@@ -314,12 +315,47 @@ function mpwpb_price_calculation($this) {
         }
     });
     //==========service============//
+    /*$(document).on('click', 'div.mpwpb_registration .incQty', function () {
+        let $this = $(this);
+        let current = $this.closest('.mpwpb_service_item');
+        let current_service_qty = current.attr('data-service-qty');
+
+        let target = current.closest('.qtyIncDec').find('input');
+        let currentValue = parseInt(target.val());
+
+    });*/
+
+    $(document).on("click", ".service_decQty, .service_incQty", function () {
+        let current = $(this);
+        let target = current.closest('.qtyIncDec').find('input');
+        let currentValue = parseInt(target.val());
+        let value = current.hasClass('service_incQty') ? (currentValue + 1) : ((currentValue - 1) > 0 ? (currentValue - 1) : 0);
+        let min = parseInt(target.attr('min'));
+        let max = parseInt(target.attr('max'));
+        target.parents('.qtyIncDec').find('.service_incQty , .service_decQty').removeClass('mpDisabled');
+        if (value < min || isNaN(value) || value === 0) {
+            value = min;
+            target.parents('.qtyIncDec').find('.service_decQty').addClass('mpDisabled');
+        }
+        if (value > max) {
+            value = max;
+            target.parents('.qtyIncDec').find('.service_incQty').addClass('mpDisabled');
+        }
+        target.val(value).trigger('change').trigger('input');
+
+        let data_current = current.closest('.mpwpb_service_item');
+        data_current.attr('data-service-qty', value);
+
+        mpwpb_price_calculation(current);
+
+    });
+
     $(document).on('click', 'div.mpwpb_registration .mpwpb_service_button', function () {
         let $this = $(this);
 
         $('#mpwpd_btn_proceed').fadeOut();
 
-        let is_multiple_service = false;
+        let is_multiple_service = true;
         if( is_multiple_service ){
             if( $this.hasClass('mActive')){
                 $this.siblings('.mpwpb_service_inc_dec_holder').fadeOut();
@@ -425,11 +461,18 @@ function mpwpb_price_calculation($this) {
             let mpwpb_sub_category = parent.find('[name="mpwpb_sub_category"]').val();
             mpwpb_sub_category = mpwpb_sub_category ? parseInt(mpwpb_sub_category) : '';
             let mpwpb_service = {};
+            let mpwpb_service_qty = {};
             let service_count = 0;
             parent.find('[name="mpwpb_service[]"]').each(function () {
                 let service = $(this).val();
                 if (service) {
                     mpwpb_service[service_count] = parseInt(service);
+
+                    let ex_parent = $(this).closest('.mpwpb_service_item');
+                    let ex_qty = parseInt(ex_parent.find('[name="mpwpb_service_qtt[]"]').val());
+                    ex_qty = ex_qty > 0 ? ex_qty : 1;
+                    mpwpb_service_qty[service] = ex_qty;
+
                     service_count++;
                 }
             });
@@ -459,6 +502,7 @@ function mpwpb_price_calculation($this) {
                     "mpwpb_category": mpwpb_category,
                     "mpwpb_sub_category": mpwpb_sub_category,
                     "mpwpb_service": mpwpb_service,
+                    "mpwpb_service_qty": mpwpb_service_qty,
                     "mpwpb_date": date,
                     "mpwpb_extra_service": mpwpb_extra_service,
                     "mpwpb_extra_service_type": mpwpb_extra_service_type,
