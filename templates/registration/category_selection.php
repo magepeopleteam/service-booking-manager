@@ -12,32 +12,45 @@
 	$all_services = $all_services ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
 
 
-    $parent_prices = [];
-    $sub_prices = [];
+    $parent_category_prices = [];
+    $sub_category_prices = [];
 
-    foreach ($all_services as $item) {
-        $parent = $item['parent_cat'];
-        $sub = $item['sub_cat'];
-        $price = $item['price'];
-        $parent_prices[$parent][] = $price;
-        $sub_prices[$sub][] = $price;
+    if( is_array( $all_services ) && !empty( $all_services ) ){
+        foreach ($all_services as $item) {
+            $parent = $item['parent_cat'];
+            $sub = $item['sub_cat'];
+            $price = $item['price'];
+            if( $parent >= 0 ) {
+                $parent_category_prices[$parent][] = $price;
+            }
+            if( $sub >= 0 ){
+                $sub_category_prices[$sub][] = $price;
+            }
+
+        }
     }
 
     $parent_min_max = [];
-    foreach ($parent_prices as $parent_cat => $prices) {
-        $parent_min_max[$parent_cat] = [
-            'min' => min($prices),
-            'max' => max($prices)
-        ];
+    if( !empty( $parent_category_prices ) ){
+        foreach ($parent_category_prices as $parent_cat => $prices) {
+            $parent_min_max[$parent_cat] = [
+                'min' => min($prices),
+                'max' => max($prices)
+            ];
+        }
     }
 
+
     $sub_min_max = [];
-    foreach ($sub_prices as $sub_cat => $prices) {
-        $sub_min_max[$sub_cat] = [
-            'min' => min($prices),
-            'max' => max($prices)
-        ];
+    if( !empty( $sub_category_prices ) ){
+        foreach ($sub_category_prices as $sub_cat => $prices) {
+            $sub_min_max[$sub_cat] = [
+                'min' => min($prices),
+                'max' => max($prices)
+            ];
+        }
     }
+
 
 
 	$category_text = $category_text ?? MPWPB_Function::get_category_text($post_id);
@@ -53,9 +66,14 @@
 				$category_icon = array_key_exists('icon', $category) ? $category['icon'] : '';
 				$category_image = array_key_exists('image', $category) ? $category['image'] : '';
 
-                $max_min_price = $parent_min_max[ $cat_key ];
-                $min_price = wc_price( $max_min_price['min'] );
-                $max_price = wc_price( $max_min_price['max'] );
+                if( !empty( $parent_min_max ) ){
+                    $max_min_price = $parent_min_max[ $cat_key ];
+                    $min_price = wc_price( $max_min_price['min'] );
+                }else{
+                    $min_price = '';
+                }
+
+//                $max_price = wc_price( $max_min_price['max'] );
 
 				?>
                 <div class="mpwpb_category_section">
@@ -85,8 +103,12 @@
 								$sub_category_icon = array_key_exists('icon', $sub_category_item) ? $sub_category_item['icon'] : '';
 								$sub_category_image = array_key_exists('image', $sub_category_item) ? $sub_category_item['image'] : '';
 
-                                $sub_max_min_price = $sub_min_max[ $sub_key ];
-                                $sub_min_price = wc_price( $sub_max_min_price['min'] );
+                                if( !empty( $sub_min_max ) ) {
+                                    $sub_max_min_price = $sub_min_max[$sub_key];
+                                    $sub_min_price = wc_price($sub_max_min_price['min']);
+                                }else{
+                                    $sub_min_price = '';
+                                }
 
 								?>
                                 <div class="mpwpb_sub_category_area">

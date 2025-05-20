@@ -33,14 +33,17 @@
 						$category = isset($_POST['mpwpb_category']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_category'])) : '';
 						$sub_category = isset($_POST['mpwpb_sub_category']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_sub_category'])) : '';
 						$services = isset($_POST['mpwpb_service']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_service'])) : [];
+						$services_qty = isset($_POST['mpwpb_service_qty']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_service_qty'])) : [];
 						$date = isset($_POST['mpwpb_date']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_date'])) : '';
 						$all_service = [];
 						if (is_array($services) && sizeof($services)) {
 							foreach ($services as $key => $service) {
 								$all_service[$key]['name'] = MPWPB_Function::get_service_name($product_id, $service);
 								$all_service[$key]['price'] = MPWPB_Function::get_price($product_id, $service, $date);
+								$all_service[$key]['qty'] = $services_qty[ $service ];
 							}
 						}
+
 						$ex_service_types = isset($_POST['mpwpb_extra_service_type']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_extra_service_type'])) : [];
 						$ex_service_qty = isset($_POST['mpwpb_extra_service_qty']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_extra_service_qty'])) : [];
 						$ex_service_group = isset($_POST['mpwpb_extra_service']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_extra_service'])) : [];
@@ -365,7 +368,7 @@
 				$price = 0;
 				if (is_array($all_service) && sizeof($all_service)) {
 					foreach ($all_service as $service) {
-						$price = $price + $service['price'];
+						$price = $price + $service['price'] * $service['qty'];
 					}
 				}
 				$ex_price = 0;
