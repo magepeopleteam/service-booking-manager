@@ -34,6 +34,8 @@
 					$service_duration = array_key_exists('duration', $service_item) ? $service_item['duration'] : '';
 					$unique_id = '#service_' . uniqid();;
 
+                    $multiple_service_check = get_post_meta( $post_id, 'mpwpb_multiple_service_select', true );
+
 					//echo '<pre>'; print_r($sub_category_name); echo '</pre>';
 					?>
                     <div class="mpwpb_service_item" data-price="<?php echo esc_attr($service_price); ?>" data-category="<?php echo esc_attr($category_name); ?>" data-sub-category="<?php echo esc_attr($sub_category_name); ?>" data-service="<?php echo esc_attr($service_key+1); ?>" data-service-qty="1">
@@ -75,7 +77,7 @@
                                 </div>-->
 
                                 <div class="alignCenter quantity-box" >
-                                    <?php if( 1 ){?>
+                                    <?php if( $multiple_service_check === 'on' ){?>
                                     <div class="mR_xs min_100 mpwpb_service_inc_dec_holder" data-service-collapse="<?php echo esc_attr($unique_id); ?>" style="display: none">
                                         <div class="groupContent qtyIncDec">
                                             <div class="service_decQty addonGroupContent">

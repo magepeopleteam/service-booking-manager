@@ -142,6 +142,7 @@
 					$service_overview_content =  isset($_POST['mpwpb_service_overview_content']) ? wp_kses_post(wp_unslash($_POST['mpwpb_service_overview_content'])):'';
 					$service_details_content =  isset($_POST['mpwpb_service_details_content']) ? wp_kses_post(wp_unslash($_POST['mpwpb_service_details_content'])):'';
                     $service_multiple_category_check = isset($_POST['mpwpb_service_multiple_category_check']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_service_multiple_category_check'])) : 'off';
+                    $multiple_service_select = isset($_POST['mpwpb_multiple_service_select']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_multiple_service_select'])) : 'off';
                     update_post_meta($post_id, 'mpwpb_features_status', $service_features_status);
 					update_post_meta($post_id, 'mpwpb_service_overview_status', $service_overview_status);
 					update_post_meta($post_id, 'mpwpb_service_details_status', $service_details_status);
@@ -151,6 +152,7 @@
 					update_post_meta($post_id, 'mpwpb_service_rating_scale', $service_rating_scale);
 					update_post_meta($post_id, 'mpwpb_service_rating_text', $service_rating_text);
 					update_post_meta($post_id, 'mpwpb_service_multiple_category_check', $service_multiple_category_check);
+					update_post_meta($post_id, 'mpwpb_multiple_service_select', $multiple_service_select);
 					$features = isset($_POST['mpwpb_features']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_features'])) : [];
 					$features_lists = array();
 					if (sizeof($features) > 0) {
