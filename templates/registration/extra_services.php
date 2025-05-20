@@ -17,7 +17,7 @@
             <h5><?php esc_html_e('Choose Extra Features (Optional)', 'service-booking-manager'); ?></h5>
 			<?php
 				if (sizeof($extra_services) > 0) {
-					foreach ($extra_services as $ex_service_info) {
+					foreach ($extra_services as $ex_key => $ex_service_info) {
 						$ex_service_price = array_key_exists('price', $ex_service_info) ? $ex_service_info['price'] : 0;
 						$ex_service_price = MPWPB_Global_Function::wc_price($post_id, $ex_service_price);
 						$ex_service_price_raw = MPWPB_Global_Function::price_convert_raw($ex_service_price);
@@ -28,7 +28,7 @@
 						$unique_id = '#service_' . uniqid();
 						if ($ex_service_name && $ex_service_price) {
 							?>
-                            <div class="mpwpb_item_box mpwpb_extra_service_item">
+                            <div class="mpwpb_item_box mpwpb_extra_service_item" id="mpwpb_ex_service_item<?php echo esc_attr( $ex_key+1 )?>">
                                 <div class="dFlex" style="width: 100%;">
 									<?php if ($ex_service_image) { ?>
                                         <div class="service_img_area alignCenter">
@@ -53,10 +53,10 @@
                                         </div>
                                         <h6 class="_textTheme_min_100"><?php echo wp_kses_post($ex_service_price); ?></h6>
                                         <div class="alignCenter quantity-box">
-                                            <div class="mR_xs min_100" data-collapse="<?php echo esc_attr($ex_unique_id); ?>">
+                                            <div class="mR_xs min_100 mpwpd_ex_service_qty_inc_dec_holder" data-collapse="<?php echo esc_attr($ex_unique_id); ?>">
 												<?php MPWPB_Custom_Layout::qty_input('mpwpb_extra_service_qty[]', $ex_service_price_raw, $ex_service_info['qty'], 1, 0, $ex_service_info['qty']); ?>
                                             </div>
-                                            <button type="button" class="_mpBtn_btLight_2_min_150 mpwpb_price_calculation" data-extra-item data-collapse-target="<?php echo esc_attr($ex_unique_id); ?>" data-open-text="<?php esc_attr_e('Add', 'service-booking-manager'); ?>" data-close-text="<?php esc_attr_e('Added', 'service-booking-manager'); ?>" data-add-class="mActive">
+                                            <button type="button" class="_mpBtn_btLight_2_min_150 mpwpb_price_calculation mpwpb_ex_service_button" data-extra-item data-collapse-target="<?php echo esc_attr($ex_unique_id); ?>" data-open-text="<?php esc_attr_e('Add', 'service-booking-manager'); ?>" data-close-text="<?php esc_attr_e('Added', 'service-booking-manager'); ?>" data-add-class="mActive">
                                                 <input type="hidden" name="mpwpb_extra_service_type[]" data-value="<?php echo esc_attr($ex_service_info['name']); ?>" value=""/>
                                                 <span data-text><?php esc_html_e('Add', 'service-booking-manager'); ?></span>
                                                 <span data-icon="" class="mL_xs fas fa-plus"></span>

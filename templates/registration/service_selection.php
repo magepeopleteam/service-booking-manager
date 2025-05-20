@@ -38,7 +38,7 @@
 
 					//echo '<pre>'; print_r($sub_category_name); echo '</pre>';
 					?>
-                    <div class="mpwpb_service_item" data-price="<?php echo esc_attr($service_price); ?>" data-category="<?php echo esc_attr($category_name); ?>" data-sub-category="<?php echo esc_attr($sub_category_name); ?>" data-service="<?php echo esc_attr($service_key+1); ?>" data-service-qty="1">
+                    <div class="mpwpb_service_item" id="mpwpb_service_item<?php echo esc_attr( $service_key+1 )?>" data-price="<?php echo esc_attr($service_price); ?>" data-category="<?php echo esc_attr($category_name); ?>" data-sub-category="<?php echo esc_attr($sub_category_name); ?>" data-service="<?php echo esc_attr($service_key+1); ?>" data-service-qty="1">
                         <div class="_dFlex">
 							<?php if ($service_image) { ?>
                                 <div class="bg_image_area _w_75_mR_xs">
