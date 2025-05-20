@@ -364,6 +364,7 @@ function mpwpb_price_calculation($this) {
         let current = $('#'+curent_id);
         let selected_this = current.find('.mpwpb_service_button');
         let inc_dec_holder = current.find('.mpwpb_service_inc_dec_holder');
+        current.find('[name="mpwpb_service[]"]').val('');
         current.removeClass('mpActive');
         this_current.slideUp('fast');
         inc_dec_holder.fadeOut();
@@ -381,6 +382,7 @@ function mpwpb_price_calculation($this) {
         let current = $('#'+curent_id);
         let selected_this = current.find('.mpwpb_ex_service_button');
         let inc_dec_holder = current.find('.mpwpd_ex_service_qty_inc_dec_holder');
+
         current.removeClass('mpActive');
         this_current.slideUp('fast');
         inc_dec_holder.fadeOut();
@@ -456,6 +458,7 @@ function mpwpb_price_calculation($this) {
                 service_count++;
             }
         });
+
         if (service_count > 0) {
             parent.find('.all_service_area').slideUp(350);
             parent.find('.mpwpb_date_time_tab').addClass('mpActive').removeClass('mpDisabled');
