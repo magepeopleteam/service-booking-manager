@@ -375,3 +375,9 @@ section.faq-header
     background: #f1f1f1 !important;
     border-radius: 10px;
 }
+.category-service-area .category-container .header button {
+    border: 1px solid #e5dede !important;
+}
+.mpwpb-category-lists .mpwpb-category-items .parent-category-items, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items {
+    border: 1px solid #e5dede !important;
+}
