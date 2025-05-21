@@ -350,3 +350,7 @@ button.button.mpwpb-extra-service-new:hover, button.button.mpwpb-faq-item-new:ho
     border: 1px solid #e1dbdb;
     margin-bottom: 1px;
 }
+input[type=color], input[type=date], input[type=datetime-local], input[type=datetime], input[type=email], input[type=month], input[type=number], input[type=password], input[type=search], input[type=tel], input[type=text], input[type=time], input[type=url], input[type=week], select, textarea
+ {
+    border: 1px solid #ddd !important;
+}
