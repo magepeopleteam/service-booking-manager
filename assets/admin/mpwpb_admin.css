@@ -354,3 +354,7 @@ input[type=color], input[type=date], input[type=datetime-local], input[type=date
  {
     border: 1px solid #ddd !important;
 }
+.date-time-schedule .date-time-container {
+    background: #e9e9ff;
+    padding: 20px;
+}
