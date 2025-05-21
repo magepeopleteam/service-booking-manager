@@ -522,6 +522,24 @@ function mpwpb_price_calculation($this) {
     $(document).on('click', 'div.mpwpb_registration .mpwpb_date_time_next', function () {
         let parent = $(this).closest('div.mpwpb_registration');
         let date = parent.find('[name="mpwpb_date"]').val();
+
+
+        let dateTimes = [];
+        $('#mpwpb_recurring_dates_list li').each(function () {
+            var dateTime = $(this).data('date-time');
+            // Remove seconds if present (convert "HH:MM:SS" to "HH:MM")
+            if (dateTime) {
+                dateTime = dateTime.substring(0, 16); // "YYYY-MM-DD HH:MM"
+                dateTimes.push(dateTime);
+            }
+        });
+
+        if (dateTimes.length === 0) {
+            dateTimes.push(date);
+        }
+        var dateTimeString = dateTimes.join(',');
+
+
         if (date) {
 
             let link_id = $(this).attr('data-wc_link_id');
@@ -572,7 +590,8 @@ function mpwpb_price_calculation($this) {
                     "mpwpb_sub_category": mpwpb_sub_category,
                     "mpwpb_service": mpwpb_service,
                     "mpwpb_service_qty": mpwpb_service_qty,
-                    "mpwpb_date": date,
+                    "mpwpb_date": dateTimeString,
+                    // "mpwpb_date": date,
                     "mpwpb_extra_service": mpwpb_extra_service,
                     "mpwpb_extra_service_type": mpwpb_extra_service_type,
                     "mpwpb_extra_service_qty": mpwpb_extra_service_qty,
