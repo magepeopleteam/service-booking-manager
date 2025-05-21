@@ -23,8 +23,8 @@
 				$post_id = get_the_id();
 				wp_nonce_field('mpwpb_nonce', 'mpwpb_nonce');
 				?>
-				<div class="mpStyle">
-					<div class="mpTabs metabox">
+				<div class="mpwpb_style">
+					<div class="mpwpb_tabs metabox">
 						<div class="tabLists">
 							<ul>
 								<li  data-tabs-target="#mpwpb_general_info">
@@ -44,6 +44,9 @@
 								</li>
 								<li  data-tabs-target="#mpwpb_service_details">
 									<i class="fas fa-wrench pe-1"></i><?php esc_html_e('Service Details', 'service-booking-manager'); ?>
+								</li>
+								<li  data-tabs-target="#mpwpb_service_settings">
+                                    <i class="fa-solid fa-gear"></i><?php esc_html_e('Service Settings', 'service-booking-manager'); ?>
 								</li>
 								<?php do_action('add_mpwpb_settings_tab_after_date', $post_id); ?>
 							</ul>
@@ -98,7 +101,7 @@
 					update_post_meta($post_id, 'mpwpb_capacity_per_session', $capacity_per_session);
 					//**********************//
 					$this->save_schedule($post_id, 'default');
-					$days = MP_Global_Function::week_day();
+					$days = MPWPB_Global_Function::week_day();
 					foreach ($days as $key => $day) {
 						$this->save_schedule($post_id, $key);
 					}
@@ -138,7 +141,9 @@
 					$service_rating_text = isset($_POST['mpwpb_service_rating_text']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_service_rating_text'])) : '';
 					$service_overview_content =  isset($_POST['mpwpb_service_overview_content']) ? wp_kses_post(wp_unslash($_POST['mpwpb_service_overview_content'])):'';
 					$service_details_content =  isset($_POST['mpwpb_service_details_content']) ? wp_kses_post(wp_unslash($_POST['mpwpb_service_details_content'])):'';
-					update_post_meta($post_id, 'mpwpb_features_status', $service_features_status);
+                    $service_multiple_category_check = isset($_POST['mpwpb_service_multiple_category_check']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_service_multiple_category_check'])) : 'off';
+                    $multiple_service_select = isset($_POST['mpwpb_multiple_service_select']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_multiple_service_select'])) : 'off';
+                    update_post_meta($post_id, 'mpwpb_features_status', $service_features_status);
 					update_post_meta($post_id, 'mpwpb_service_overview_status', $service_overview_status);
 					update_post_meta($post_id, 'mpwpb_service_details_status', $service_details_status);
 					update_post_meta($post_id, 'mpwpb_service_overview_content', $service_overview_content);
@@ -146,6 +151,8 @@
 					update_post_meta($post_id, 'mpwpb_service_review_ratings', $service_rating);
 					update_post_meta($post_id, 'mpwpb_service_rating_scale', $service_rating_scale);
 					update_post_meta($post_id, 'mpwpb_service_rating_text', $service_rating_text);
+					update_post_meta($post_id, 'mpwpb_service_multiple_category_check', $service_multiple_category_check);
+					update_post_meta($post_id, 'mpwpb_multiple_service_select', $multiple_service_select);
 					$features = isset($_POST['mpwpb_features']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_features'])) : [];
 					$features_lists = array();
 					if (sizeof($features) > 0) {
@@ -178,8 +185,6 @@
 			}
 			public static function description_array($key) {
 				$des = array(
-					'mpwpb_category_active' => esc_html__('By default Category  is ON but you can keep it off by switching this option', 'service-booking-manager'),
-					'mpwpb_sub_category_active' => esc_html__('By default Sub-Category  is ON but you can keep it off by switching this option', 'service-booking-manager'),
 					'mpwpb_service_details_active' => esc_html__('By default Service Details  is OFF but you can keep it ON by switching this option', 'service-booking-manager'),
 					'mpwpb_service_duration_active' => esc_html__('By default Service Duration  is ON but you can keep it OFF by switching this option', 'service-booking-manager'),
 					'mpwpb_service_multi_select_active' => esc_html__('By default Multi Select  is OFF but you can keep it ON by switching this option', 'service-booking-manager'),
@@ -203,9 +208,7 @@
 			public static function info_text($key) {
 				$data = self::description_array($key);
 				if ($data) {
-					?>
-					<?php echo esc_html($data); ?>
-					<?php
+					 echo esc_html($data);
 				}
 			}
 		}

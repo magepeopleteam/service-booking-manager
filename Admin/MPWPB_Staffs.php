@@ -33,9 +33,9 @@
 				$this->save_staff();
 				?>
                 <div class="wrap">
-                    <div class="mpStyle mpwpb_staff_page">
+                    <div class="mpwpb_style mpwpb_staff_page">
                         <div class="_dLayout_dShadow_1">
-                            <div class="mpTabs">
+                            <div class="mpwpb_tabs">
                                 <div class="tabLists">
                                     <div class="buttonGroup">
                                         <button class="_mpBtn " data-tabs-target="#mpwpb_staff_list" type="button" title="<?php esc_attr_e('Staff Lists', 'service-booking-manager'); ?>">
@@ -132,7 +132,7 @@
                                 <div class="divider"></div>
                                 <label>
                                     <span class="fas fa-user-tie _w_200"><?php esc_html_e('Select User', 'service-booking-manager'); ?></span>
-                                    <select name="mpwpb_user" class="formControl mp_select2 mpwpb_user_select">
+                                    <select name="mpwpb_user" class="formControl mpwpb_select2 mpwpb_user_select">
                                         <option value=" "><?php esc_html_e('Add New User', 'service-booking-manager'); ?></option>
 										<?php if (sizeof($users) > 0) { ?>
 											<?php foreach ($users as $user) { ?>
@@ -145,7 +145,7 @@
                                 </label>
                                 <label class="_mT_xs">
                                     <span class="fas fa-user _w_200"><?php esc_html_e('User Name', 'service-booking-manager'); ?></span>
-                                    <input type="text" class="formControl mp_id_validation" name="mpwpb_user_name" value="<?php echo esc_attr($staff_name); ?>" placeholder="<?php esc_html_e('Please Type Staff Name.....', 'service-booking-manager'); ?>" <?php echo esc_attr($user_id ? 'disabled' : ''); ?> required/>
+                                    <input type="text" class="formControl mpwpb_id_validation" name="mpwpb_user_name" value="<?php echo esc_attr($staff_name); ?>" placeholder="<?php esc_html_e('Please Type Staff Name.....', 'service-booking-manager'); ?>" <?php echo esc_attr($user_id ? 'disabled' : ''); ?> required/>
                                 </label>
                                 <label class="_mT_xs">
                                     <span class="fas fa-key _w_200"><?php esc_html_e('Staff Password', 'service-booking-manager'); ?></span>
@@ -157,11 +157,11 @@
                                 </label>
                                 <label class="_mT_xs">
                                     <span class="fas fa-user _w_200"><?php esc_html_e('Staff First Name', 'service-booking-manager'); ?></span>
-                                    <input type="text" class="formControl mp_name_validation" name="mpwpb_staff_first_name" value="<?php echo esc_attr($staff_first_name); ?>" placeholder="<?php esc_html_e('Please Type Staff First Name.....', 'service-booking-manager'); ?>"/>
+                                    <input type="text" class="formControl mpwpb_name_validation" name="mpwpb_staff_first_name" value="<?php echo esc_attr($staff_first_name); ?>" placeholder="<?php esc_html_e('Please Type Staff First Name.....', 'service-booking-manager'); ?>"/>
                                 </label>
                                 <label class="_mT_xs">
                                     <span class="fas fa-user _w_200"><?php esc_html_e('Staff Last Name', 'service-booking-manager'); ?></span>
-                                    <input type="text" class="formControl mp_name_validation" name="mpwpb_staff_last_name" value="<?php echo esc_attr($staff_last_name); ?>" placeholder="<?php esc_html_e('Please Type Staff Last Name.....', 'service-booking-manager'); ?>"/>
+                                    <input type="text" class="formControl mpwpb_name_validation" name="mpwpb_staff_last_name" value="<?php echo esc_attr($staff_last_name); ?>" placeholder="<?php esc_html_e('Please Type Staff Last Name.....', 'service-booking-manager'); ?>"/>
                                 </label>
                             </div>
                             <div class="col_7 _borL_pL">
@@ -194,7 +194,7 @@
 				$date_type = $user_id ? get_user_meta($user_id, 'date_type') : [];
 				$date_type = sizeof($date_type) > 0 ? current($date_type) : 'repeated';
 				//echo '<pre>'; print_r($date_type); echo '</pre>';
-				$date_format = MP_Global_Function::date_picker_format();
+				$date_format = MPWPB_Global_Function::date_picker_format();
 				$now = date_i18n($date_format, strtotime(current_time('Y-m-d')));
 				$repeated_start_date = $user_id ? get_user_meta($user_id, 'mpwpb_repeated_start_date') : [];
 				$repeated_start_date = sizeof($repeated_start_date) > 0 ? current($repeated_start_date) : '';
@@ -236,9 +236,9 @@
 											}
 										?>
                                     </div>
-									<?php MP_Custom_Layout::add_new_button(esc_html__('Add New Particular date', 'service-booking-manager')); ?>
-                                    <div class="mp_hidden_content">
-                                        <div class="mp_hidden_item">
+									<?php MPWPB_Custom_Layout::add_new_button(esc_html__('Add New Particular date', 'service-booking-manager')); ?>
+                                    <div class="mpwpb_hidden_content">
+                                        <div class="mpwpb_hidden_item">
 											<?php MPWPB_Date_Time_Settings::particular_date_item('mpwpb_particular_dates[]'); ?>
                                         </div>
                                     </div>
@@ -257,7 +257,7 @@
                             <div class="divider"></div>
                             <label>
                                 <span class="_w_200"><?php esc_html_e('Repeated after', 'service-booking-manager'); ?></span>
-                                <input type="text" name="mpwpb_repeated_after" class="formControl mp_number_validation" value="<?php echo esc_attr($repeated_after); ?>"/>
+                                <input type="text" name="mpwpb_repeated_after" class="formControl mpwpb_number_validation" value="<?php echo esc_attr($repeated_after); ?>"/>
                             </label>
                         </div>
                     </div>
@@ -286,7 +286,7 @@
                             <tbody>
 							<?php
 								$this->time_slot_tr($user_id, 'default');
-								$days = MP_Global_Function::week_day();
+								$days = MPWPB_Global_Function::week_day();
 								foreach ($days as $key => $day) {
 									$this->time_slot_tr($user_id, $key);
 								}
@@ -302,7 +302,7 @@
 				$date_type = sizeof($date_type) > 0 ? current($date_type) : 'repeated';
 				$off_days = $user_id ? get_user_meta($user_id, 'mpwpb_off_days') : [];
 				$off_days = sizeof($off_days) > 0 ? current($off_days) : '';
-				$days = MP_Global_Function::week_day();
+				$days = MPWPB_Global_Function::week_day();
 				$off_day_array = explode(',', $off_days);
 				?>
                 <div class="mpPanel mT_xs <?php echo esc_attr($date_type == 'repeated' ? 'mActive' : ''); ?>" data-collapse="#mp_repeated">
@@ -341,9 +341,9 @@
 										}
 									?>
                                 </div>
-								<?php MP_Custom_Layout::add_new_button(esc_html__('Add New Off date', 'service-booking-manager')); ?>
-                                <div class="mp_hidden_content">
-                                    <div class="mp_hidden_item">
+								<?php MPWPB_Custom_Layout::add_new_button(esc_html__('Add New Off date', 'service-booking-manager')); ?>
+                                <div class="mpwpb_hidden_content">
+                                    <div class="mpwpb_hidden_item">
 										<?php MPWPB_Date_Time_Settings::particular_date_item('mpwpb_off_dates[]'); ?>
                                     </div>
                                 </div>
@@ -562,7 +562,7 @@
 					update_user_meta($user_id, 'mpwpb_repeated_after', $repeated_after);
 					//**********************//
 					$this->save_schedule($user_id, 'default');
-					$days = MP_Global_Function::week_day();
+					$days = MPWPB_Global_Function::week_day();
 					foreach ($days as $key => $day) {
 						$this->save_schedule($user_id, $key);
 					}

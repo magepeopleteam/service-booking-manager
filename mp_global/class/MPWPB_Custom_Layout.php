@@ -6,17 +6,17 @@
 	if (!defined('ABSPATH')) {
 		die;
 	} // Cannot access pages directly.
-	if (!class_exists('MP_Custom_Layout')) {
-		class MP_Custom_Layout {
+	if (!class_exists('MPWPB_Custom_Layout')) {
+		class MPWPB_Custom_Layout {
 			public function __construct() {
-				add_action('add_mp_hidden_table', array($this, 'hidden_table'), 10, 2);
-				add_action('add_mp_pagination_section', array($this, 'pagination'), 10, 3);
+				add_action('add_mpwpb_hidden_table', array($this, 'hidden_table'), 10, 2);
+				add_action('add_mpwpb_pagination_section', array($this, 'pagination'), 10, 3);
 			}
 			public function hidden_table($hook_name, $data = array()) {
 				?>
-				<div class="mp_hidden_content">
+				<div class="mpwpb_hidden_content">
 					<table>
-						<tbody class="mp_hidden_item">
+						<tbody class="mpwpb_hidden_item">
 						<?php do_action($hook_name, $data); ?>
 						</tbody>
 					</table>
@@ -28,7 +28,7 @@
 				?>
 				<input type="hidden" name="pagination_per_page" value="<?php echo esc_attr($per_page); ?>"/>
 				<input type="hidden" name="pagination_style" value="<?php echo esc_attr($params['pagination-style']); ?>"/>
-				<input type="hidden" name="mp_total_item" value="<?php echo esc_attr($total_item); ?>"/>
+				<input type="hidden" name="mpwpb_total_item" value="<?php echo esc_attr($total_item); ?>"/>
 				<?php if ($total_item > $per_page) { ?>
 					<div class="allCenter pagination_area" data-placeholder>
 						<?php
@@ -125,21 +125,21 @@
 			}
 			public static function remove_button() {
 				?>
-				<button class="_themeButton_xs mp_item_remove" type="button">
+				<button class="_themeButton_xs mpwpb_item_remove" type="button">
 					<span class="fas fa-trash-alt mp_zero"></span>
 				</button>
 				<?php
 			}
 			public static function move_button() {
 				?>
-				<div class="_themeButton_xs mp_sortable_button" type="">
+				<div class="_themeButton_xs mpwpb_sortable_button" type="">
 					<span class="fas fa-expand-arrows-alt mp_zero"></span>
 				</div>
 				<?php
 			}
 			/*****************************/
 			public static function bg_image($post_id='',$url='') {
-				$thumbnail = $post_id>0?MP_Global_Function::get_image_url($post_id):$url;
+				$thumbnail = $post_id>0?MPWPB_Global_Function::get_image_url($post_id):$url;
 				$post_url=$post_id>0?get_the_permalink($post_id):'';
 				?>
 				<div class="bg_image_area" data-href="<?php echo esc_attr($post_url); ?>" data-placeholder>
@@ -152,7 +152,7 @@
 				$text_length = strlen($text);
 				if ($text && $text_length > $length) {
 					?>
-					<div class="mp_load_more_text_area">
+					<div class="mpwpb_load_more_text_area">
 						<span data-read-close><?php echo esc_html(substr($text, 0, $length)); ?> ....</span>
 						<span data-read-open class="dNone"><?php echo esc_html($text); ?></span>
 						<div data-read data-open-text="<?php esc_attr_e('Load More', 'service-booking-manager'); ?>" data-close-text="<?php esc_attr_e('Less More', 'service-booking-manager'); ?>">
@@ -179,7 +179,7 @@
 							</div>
 							<label>
 								<input type="text"
-									class="formControl inputIncDec mp_number_validation"
+									class="formControl inputIncDec mpwpb_number_validation"
 									data-price="<?php echo esc_attr($price); ?>"
 									name="<?php echo esc_attr($input_name); ?>"
 									value="<?php echo esc_attr(max(0, $default_qty)); ?>"
@@ -212,5 +212,5 @@
 				}
 			}
 		}
-		new MP_Custom_Layout();
+		new MPWPB_Custom_Layout();
 	}

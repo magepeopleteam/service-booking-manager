@@ -42,7 +42,9 @@
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Extra_service.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Faq.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Service_Details.php';
-	
+
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Service_Settings.php';
+
 				//****************Woocommerce Checkout*********************** */
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Settings.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Fields.php';
@@ -59,7 +61,7 @@
 			}
 			//************Disable Gutenberg************************//
 			public function disable_gutenberg($current_status, $post_type) {
-				$user_status = MP_Global_Function::get_settings('mp_global_settings', 'disable_block_editor', 'yes');
+				$user_status = MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'disable_block_editor', 'yes');
 				if ($post_type === MPWPB_Function::get_cpt() && $user_status == 'yes') {
 					return false;
 				}

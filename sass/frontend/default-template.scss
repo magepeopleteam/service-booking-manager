@@ -41,33 +41,33 @@
                         background-color: #fff;
                         
                         align-items: center;
-                        color: var(--color_theme);
-                        border: 1px solid var(--color_theme_77);
+                        color: var(--mpwpb_color_theme);
+                        border: 1px solid var(--mpwpb_color_theme_77);
                     }
                     .mpwpb_category_item.mpActive{
-                        background-color: var(--color_theme);
-                        color: var(--color_theme_alter);
+                        background-color: var(--mpwpb_color_theme);
+                        color: var(--mpwpb_color_theme_alter);
                         h6{
                             font-weight: 700;
-                            color: var(--color_theme_alter);
+                            color: var(--mpwpb_color_theme_alter);
                         }
                         .mpwpb_item_check{
                             position: relative;
                             right: 0;
                             top: 0;
-                            background-color: var(--color_theme_alter);
-                            color: var(--color_theme);
+                            background-color: var(--mpwpb_color_theme_alter);
+                            color: var(--mpwpb_color_theme);
                             margin: 0;
                         }
                     }
                     .mpwpb_sub_category_area{
                         padding-left: 20px;
                         .mpwpb_sub_category_item{
-                            background-color: var(--color_theme_alter);
+                            background-color: var(--mpwpb_color_theme_alter);
                             padding: 5px;
                             margin: 5px;
                             &.mpActive{
-                                background-color: var(--color_theme_77);
+                                background-color: var(--mpwpb_color_theme_77);
                             }
                         }
                     }
@@ -76,39 +76,39 @@
                     margin-top: 20px;
                     header{
                         background-color: transparent;
-                        border-bottom: 1px solid var(--color_theme);
+                        border-bottom: 1px solid var(--mpwpb_color_theme);
                         padding:10px 0;
                         h5{
                             font-size: 16px;
-                            color: var(--color_theme);
+                            color: var(--mpwpb_color_theme);
                             font-weight: 700;
                             
                         }
                     }
                     .mpwpb_service_item{
                         background-color: #fff;
-                        border: 1px solid var(--color_light_2);
+                        border: 1px solid var(--mpwpb_color_light_2);
                         border-radius: 3px;
                         [data-collapse]{
                             margin-top: 15px;
                             color: #999;
                         }
                         .mpwpb_service_button{
-                            color: var(--color_theme);
-                            border: 1px solid var(--color_theme);
+                            color: var(--mpwpb_color_theme);
+                            border: 1px solid var(--mpwpb_color_theme);
                             background-color: #fff;
                             min-width: 100px;
                             &:hover{
-                                background-color: var(--color_theme);
-                                color: var(--color_theme_alter);
+                                background-color: var(--mpwpb_color_theme);
+                                color: var(--mpwpb_color_theme_alter);
                             }
                             &:focus{
-                                background-color: var(--color_theme);
-                                color: var(--color_theme_alter);
+                                background-color: var(--mpwpb_color_theme);
+                                color: var(--mpwpb_color_theme_alter);
                             }
                             &.mActive{
-                                background-color: var(--color_theme);
-                                color: var(--color_theme_alter);
+                                background-color: var(--mpwpb_color_theme);
+                                color: var(--mpwpb_color_theme_alter);
                                 min-width: 100px;
                                 width: 100px;
                             }
@@ -119,10 +119,10 @@
                     h5{
                         background-color: transparent;
                         font-size: 16px;
-                        color: var(--color_theme);
+                        color: var(--mpwpb_color_theme);
                         font-weight: 700;
                         padding:10px 0;
-                        border-bottom: 1px solid var(--color_theme);
+                        border-bottom: 1px solid var(--mpwpb_color_theme);
                     }
                     .mpwpb_item_box{
                         background-color: #fff;
@@ -137,20 +137,20 @@
                         .mpwpb_price_calculation{
                             min-width: 100px;
                             width: 100px;
-                            border: 1px solid var(--color_theme);
-                            color: var(--color_theme);
-                            background-color: var(--color_theme_alter);
+                            border: 1px solid var(--mpwpb_color_theme);
+                            color: var(--mpwpb_color_theme);
+                            background-color: var(--mpwpb_color_theme_alter);
                             &:hover{
-                                background-color: var(--color_theme);
-                                color: var(--color_theme_alter);
+                                background-color: var(--mpwpb_color_theme);
+                                color: var(--mpwpb_color_theme_alter);
                             }
                             &:focus{
-                                background-color: var(--color_theme);
-                                color: var(--color_theme_alter);
+                                background-color: var(--mpwpb_color_theme);
+                                color: var(--mpwpb_color_theme_alter);
                             }
                             &.mActive{
-                                background-color: var(--color_theme);
-                                color: var(--color_theme_alter);
+                                background-color: var(--mpwpb_color_theme);
+                                color: var(--mpwpb_color_theme_alter);
                             }
                         }
                         @media (max-width:1024px) {
@@ -169,12 +169,12 @@
                         padding: 10px 0;
                         h3{
                             font-size: 16px;
-                            color: var(--color_theme);
+                            color: var(--mpwpb_color_theme);
                             font-weight: 700;
                         }
                     }
                     .carousel_area{
-                        color: var(--color_theme);
+                        color: var(--mpwpb_color_theme);
                         button{
                             border-radius: 0;
                         }
@@ -183,7 +183,7 @@
                         .to-book{
                             font-size: 14px;
                             &.mpActive{
-                                background-color: var(--color_theme);
+                                background-color: var(--mpwpb_color_theme);
                                 color: #fff;
                             }
                         }
@@ -194,7 +194,7 @@
                         
                         .booked{
                             font-size: 14px;
-                            background-color: var(--color_theme_aa);
+                            background-color: var(--mpwpb_color_theme_aa);
                         }
                     }
                 }
@@ -206,10 +206,10 @@
                     h3{
                         background-color: transparent;
                         font-size: 16px !important;
-                        color: var(--color_theme);
+                        color: var(--mpwpb_color_theme);
                         font-weight: 700;
                         padding:10px 0;
-                        border-bottom: 1px solid var(--color_theme);
+                        border-bottom: 1px solid var(--mpwpb_color_theme);
                     }
                     label{
                         font-size: 14px;
@@ -222,7 +222,7 @@
                 #order_review_heading{
                     font-size: 16px !important;
                     margin-bottom: 10px;
-                    color: var(--color_theme);
+                    color: var(--mpwpb_color_theme);
                 }
                 #order_review{
                     #payment{
@@ -241,8 +241,8 @@
                             }
                         }
                         #place_order{
-                            background-color: var(--color_theme);
-                            border: 1px solid var(--color_theme);
+                            background-color: var(--mpwpb_color_theme);
+                            border: 1px solid var(--mpwpb_color_theme);
                         }
                     }
                 }
@@ -256,13 +256,13 @@
                     background-color: transparent;
                     position: relative;
                     .mpwpb_summary_item{
-                        // border-left: 1px solid var(--color_theme);
-                        border-left: 1px solid var(--color_theme);
+                        // border-left: 1px solid var(--mpwpb_color_theme);
+                        border-left: 1px solid var(--mpwpb_color_theme);
                         padding: 0 5px 30px 24px;
                         .mpwpb_item_check{
-                            border: 1px solid var(--color_theme);
+                            border: 1px solid var(--mpwpb_color_theme);
                             background-color: #fff;
-                            color: var(--color_theme);
+                            color: var(--mpwpb_color_theme);
                         }
                         &:last-child{
                             padding-bottom:0;

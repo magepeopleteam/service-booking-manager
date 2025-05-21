@@ -12,9 +12,9 @@
 				add_action('add_mpwpb_settings_tab_content', [$this, 'general_settings'], 10, 1);
 			}
 			public function general_settings($post_id) {
-				$title = MP_Global_Function::get_post_info($post_id, 'mpwpb_shortcode_title');
-				$sub_title = MP_Global_Function::get_post_info($post_id, 'mpwpb_shortcode_sub_title');
-				$mpwpb_template = MP_Global_Function::get_post_info($post_id, 'mpwpb_template', 'default.php');
+				$title = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_shortcode_title');
+				$sub_title = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_shortcode_sub_title');
+				$mpwpb_template = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_template', 'default.php');
 				// echo $mpwpb_template;
 				?>
                 <div class="tabsItem" data-tabs="#mpwpb_general_info">

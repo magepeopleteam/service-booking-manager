@@ -7,9 +7,9 @@
 		exit;
 	}
 	$post_id = $post_id ?? get_the_id();
-	$all_category = $all_category ?? MP_Global_Function::get_post_info($post_id, 'mpwpb_category_service', array());
-	$all_sub_category = $all_sub_category ?? MP_Global_Function::get_post_info($post_id, 'mpwpb_sub_category_service', array());
-	$all_services = $all_services ?? MP_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
+	$all_category = $all_category ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_category_service', array());
+	$all_sub_category = $all_sub_category ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_sub_category_service', array());
+	$all_services = $all_services ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
 	if (sizeof($all_category) > 0) {
 		foreach ($all_category as $cat_key => $category) {
 			$category_icon = array_key_exists('icon', $category) ? $category['icon'] : '';
@@ -22,7 +22,7 @@
 					<?php } ?>
 					<?php if ($category_image) { ?>
                         <div class="bg_image_area">
-                            <div data-bg-image="<?php echo esc_attr(MP_Global_Function::get_image_url('', $category_image, 'medium')); ?>"></div>
+                            <div data-bg-image="<?php echo esc_attr(MPWPB_Global_Function::get_image_url('', $category_image, 'medium')); ?>"></div>
                         </div>
 					<?php } ?>
                     <h2><?php echo esc_html($category['name']); ?></h2>
@@ -46,7 +46,7 @@
 	                <?php } ?>
 	                <?php if ($service_image) { ?>
                         <div class="bg_image_area">
-                            <div data-bg-image="<?php echo esc_attr(MP_Global_Function::get_image_url('', $service_image, 'medium')); ?>"></div>
+                            <div data-bg-image="<?php echo esc_attr(MPWPB_Global_Function::get_image_url('', $service_image, 'medium')); ?>"></div>
                         </div>
 	                <?php } ?>
                     <h2><?php echo esc_html($service_name); ?></h2>

@@ -13,13 +13,13 @@
 			}
 			private function dummy_import() {
 				$dummy_post = get_option('mpwpb_dummy_already_inserted');
-				$all_post = MP_Global_Function::query_post_type('mpwpb_item');
+				$all_post = MPWPB_Global_Function::query_post_type('mpwpb_item');
 				if ($all_post->post_count == 0 && $dummy_post != 'yes') {
 					$dummy_data = $this->dummy_data();
 					foreach ($dummy_data as $type => $dummy) {
 						if ($type == 'taxonomy') {
 							foreach ($dummy as $taxonomy => $dummy_taxonomy) {
-								$check_taxonomy = MP_Global_Function::get_taxonomy($taxonomy);
+								$check_taxonomy = MPWPB_Global_Function::get_taxonomy($taxonomy);
 								if (is_string($check_taxonomy) || sizeof($check_taxonomy) == 0) {
 									foreach ($dummy_taxonomy as $taxonomy_data) {
 										wp_insert_term($taxonomy_data['name'], $taxonomy);
@@ -29,7 +29,7 @@
 						}
 						if ($type == 'custom_post') {
 							foreach ($dummy as $custom_post => $dummy_post) {
-								$post = MP_Global_Function::query_post_type($custom_post);
+								$post = MPWPB_Global_Function::query_post_type($custom_post);
 								if ($post->post_count == 0) {
 									foreach ($dummy_post as $key => $dummy_data) {
 										$title = $dummy_data['name'];
@@ -95,8 +95,6 @@
 									'mpwpb_off_dates' => [],
 									'mpwpb_service_type' => 'car_wash',
 									// Price_settings
-									'mpwpb_category_active' => 'off',
-									'mpwpb_sub_category_active' => 'off',
 									'mpwpb_service_details_active' => 'on',
 									'mpwpb_service_duration_active' => 'on',
 									'mpwpb_category_text' => 'Category',
@@ -284,8 +282,6 @@
 									'mpwpb_off_days' => 'saturday,sunday',
 									'mpwpb_off_dates' => [],
 									// Price_settings
-									'mpwpb_category_active' => 'on',
-									'mpwpb_sub_category_active' => 'on',
 									'mpwpb_service_details_active' => 'on',
 									'mpwpb_service_duration_active' => 'on',
 									'mpwpb_category_text' => 'Wash Type',
@@ -629,8 +625,6 @@
 									'mpwpb_off_days' => 'saturday,sunday',
 									'mpwpb_off_dates' => [],
 									// Price_settings
-									'mpwpb_category_active' => 'on',
-									'mpwpb_sub_category_active' => 'off',
 									'mpwpb_service_details_active' => 'on',
 									'mpwpb_service_duration_active' => 'on',
 									'mpwpb_category_text' => 'Service Type',
@@ -830,8 +824,6 @@
 									'mpwpb_off_days' => 'saturday,sunday',
 									'mpwpb_off_dates' => [],
 									// Price_settings
-									'mpwpb_category_active' => 'off',
-									'mpwpb_sub_category_active' => 'off',
 									'mpwpb_service_details_active' => 'on',
 									'mpwpb_service_duration_active' => 'on',
 									'mpwpb_category_text' => 'Category',
@@ -1029,8 +1021,6 @@
 									'mpwpb_off_days' => 'saturday,sunday',
 									'mpwpb_off_dates' => [],
 									// Price_settings
-									'mpwpb_category_active' => 'off',
-									'mpwpb_sub_category_active' => 'off',
 									'mpwpb_service_details_active' => 'on',
 									'mpwpb_service_duration_active' => 'on',
 									'mpwpb_category_text' => 'Category',
@@ -1208,8 +1198,6 @@
 									'mpwpb_off_days' => 'saturday,sunday',
 									'mpwpb_off_dates' => [],
 									// Price_settings
-									'mpwpb_category_active' => 'off',
-									'mpwpb_sub_category_active' => 'off',
 									'mpwpb_service_details_active' => 'on',
 									'mpwpb_service_duration_active' => 'on',
 									'mpwpb_category_text' => 'Car Type',

@@ -6,19 +6,19 @@
 	if (!defined('ABSPATH')) {
 		die;
 	} // Cannot access pages directly.
-	if (!class_exists('MP_Select_Icon_image')) {
-		$GLOBALS['mp_icon_popup_exit'] = false;
-		class MP_Select_Icon_image {
+	if (!class_exists('MPWPB_Select_Icon_image')) {
+		$GLOBALS['mpwpb_icon_popup_exit'] = false;
+		class MPWPB_Select_Icon_image {
 			public function __construct() {
-				add_action('mp_input_add_icon', array($this, 'load_icon'), 10, 2);
-				add_action('mp_add_single_image', array($this, 'add_single_image'), 10, 2);
-				add_action('mp_add_multi_image', array($this, 'add_multi_image'), 10, 2);
-				add_action('mp_add_icon_image', array($this, 'add_icon_image'), 10, 3);
+				add_action('mpwpb_input_add_icon', array($this, 'load_icon'), 10, 2);
+				add_action('mpwpb_add_single_image', array($this, 'add_single_image'), 10, 2);
+				add_action('mpwpb_add_multi_image', array($this, 'add_multi_image'), 10, 2);
+				add_action('mpwpb_add_icon_image', array($this, 'add_icon_image'), 10, 3);
 			}
 			public function load_icon($name, $value = '') {
 				?>
-                <div class="mp_add_icon_area">
-                    <button type="button" class="mp_add_icon dButton_xs ">
+                <div class="mpwpb_add_icon_area">
+                    <button type="button" class="mpwpb_add_icon dButton_xs ">
                         <input type="hidden" name="<?php echo esc_html($name); ?>" placeholder="" value="<?php echo esc_html($value); ?>"/>
                         <span class="<?php echo esc_html($value); ?>" data-empty-text="<?php esc_html_e('Add Icon', 'service-booking-manager'); ?>">
 			                    <?php
@@ -27,26 +27,26 @@
 				                    }
 			                    ?>
 			                </span>
-                        <span class="fas fa-times remove_input_icon <?php echo esc_html($value ? 'active' : ''); ?> " title="<?php esc_html_e('Remove Icon', 'service-booking-manager'); ?>"></span>
+                        <span class="fas fa-times mpwpb_remove_input_icon <?php echo esc_html($value ? 'active' : ''); ?> " title="<?php esc_html_e('Remove Icon', 'service-booking-manager'); ?>"></span>
                     </button>
                 </div>
 				<?php
 				add_action('admin_footer', array($this, 'icon_popup'));
 			}
 			public function icon_popup() {
-				if (!$GLOBALS['mp_icon_popup_exit']) {
-					$GLOBALS['mp_icon_popup_exit'] = true;
+				if (!$GLOBALS['mpwpb_icon_popup_exit']) {
+					$GLOBALS['mpwpb_icon_popup_exit'] = true;
 					?>
-                    <div class="mp_add_icon_popup mpPopup mpStyle" data-popup="#mp_add_icon_popup">
-                        <div class="popupMainArea fullWidth">
-                            <div class="popupHeader allCenter">
+                    <div class="mpwpb_add_icon_popup mpwpb_popup mpwpb_style" data-popup="#mpwpb_add_icon_popup">
+                        <div class="mpwpb_popup_main_area fullWidth">
+                            <div class="mpwpb_popup_header allCenter">
                                 <h2 class="_mR"><?php esc_html_e('Select Icon', 'service-booking-manager'); ?></h2>
                                 <label class="min_300">
-                                    <input type="text" class="formControl mp_name_validation" name="mp_select_icon_name" placeholder="<?php esc_attr_e('Icon/class name....', 'service-booking-manager'); ?>"/>
+                                    <input type="text" class="formControl mpwpb_name_validation" name="mpwpb_select_icon_name" placeholder="<?php esc_attr_e('Icon/class name....', 'service-booking-manager'); ?>"/>
                                 </label>
-                                <span class="fas fa-times popupClose"></span>
+                                <span class="fas fa-times mpwpb_popup_close"></span>
                             </div>
-                            <div class="popupBody">
+                            <div class="mpwpb_popup_body">
 								<?php
 									$icons = $this->all_icon_array();
 									if (sizeof($icons) > 0) {
@@ -56,7 +56,7 @@
 										}
 										?>
                                         <div class="dFlex">
-                                            <ul class="popupIconMenu">
+                                            <ul class="popup_icon_menu">
                                                 <li class="active" data-icon-menu="all_item" data-icon-title="all_item">
 													<?php esc_html_e('All Icon', 'service-booking-manager'); ?>&nbsp;(
                                                     <strong><?php echo esc_html($total_icon); ?></strong>
@@ -94,11 +94,11 @@
 			//======image========//
 			public function add_single_image($name, $image_id = '') {
 				?>
-                <div class="mp_add_single_image">
+                <div class="mpwpb_add_single_image">
                     <input type="hidden" name="<?php echo esc_attr($name); ?>" value="<?php echo esc_attr($image_id); ?>"/>
 					<?php if ($image_id) { ?>
-                        <div class="mp_single_image_item" data-image-id="<?php echo esc_attr($image_id); ?>'">
-                            <span class="fas fa-times circleIcon_xs mp_remove_single_image"></span>
+                        <div class="mpwpb_single_image_item" data-image-id="<?php echo esc_attr($image_id); ?>'">
+                            <span class="fas fa-times circleIcon_xs mpwpb_remove_single_image"></span>
 							<?php echo wp_get_attachment_image($image_id, 'medium'); ?>
                         </div>
 					<?php } ?>
@@ -109,18 +109,18 @@
 				<?php
 			}
 			public function add_multi_image($name, $images) {
-				$images = is_array($images) ? MP_Global_Function::array_to_string($images) : $images;
+				$images = is_array($images) ? MPWPB_Global_Function::array_to_string($images) : $images;
 				?>
-                <div class="mp_multi_image_area">
-                    <input type="hidden" class="mp_multi_image_value" name="<?php echo esc_attr($name); ?>" value="<?php esc_attr($images); ?>"/>
-                    <div class="mp_multi_image">
+                <div class="mpwpb_multi_image_area">
+                    <input type="hidden" class="mpwpb_multi_image_value" name="<?php echo esc_attr($name); ?>" value="<?php esc_attr($images); ?>"/>
+                    <div class="mpwpb_multi_image">
 						<?php
 							$all_images = explode(',', $images);
 							if ($images && sizeof($all_images) > 0) {
 								foreach ($all_images as $image) {
 									?>
-                                    <div class="mp_multi_image_item" data-image-id="<?php esc_attr($image); ?>">
-                                        <span class="fas fa-times circleIcon_xs mp_remove_multi_image"></span>
+                                    <div class="mpwpb_multi_image_item" data-image-id="<?php esc_attr($image); ?>">
+                                        <span class="fas fa-times circleIcon_xs mpwpb_remove_multi_image"></span>
 										<?php echo wp_get_attachment_image($image, 'medium'); ?>
                                     </div>
 									<?php
@@ -141,22 +141,22 @@
 				$value = $image ?: $icon;
 				$button_active_class = $icon || $image ? 'dNone' : '';
 				?>
-                <div class="mp_add_icon_image_area fdColumn">
+                <div class="mpwpb_add_icon_image_area fdColumn">
                     <input type="hidden" name="<?php echo esc_attr($name); ?>" value="<?php echo esc_attr($value); ?>"/>
-                    <div class="mp_icon_item <?php echo esc_attr($icon_class); ?>">
+                    <div class="mpwpb_icon_item <?php echo esc_attr($icon_class); ?>">
                         <div class="allCenter">
                             <span class="<?php echo esc_attr($icon); ?>" data-add-icon></span>
                         </div>
-                        <span class="fas fa-times mp_remove_icon mp_icon_remove" title="<?php esc_html_e('Remove Icon', 'service-booking-manager'); ?>"></span>
+                        <span class="fas fa-times mpwpb_remove_icon mpwpb_icon_remove" title="<?php esc_html_e('Remove Icon', 'service-booking-manager'); ?>"></span>
                     </div>
-                    <div class="mp_image_item <?php echo esc_attr($image_class); ?>">
+                    <div class="mpwpb_image_item <?php echo esc_attr($image_class); ?>">
 						<?php echo $image ? wp_get_attachment_image($image, 'medium') : '<img  src="" alt=""/>'; ?>
-                        <span class="fas fa-times mp_remove_icon mp_image_remove" title="<?php esc_html_e('Remove Image', 'service-booking-manager'); ?>"></span>
+                        <span class="fas fa-times mpwpb_remove_icon mpwpb_image_remove" title="<?php esc_html_e('Remove Image', 'service-booking-manager'); ?>"></span>
                     </div>
-                    <div class="mp_add_icon_image_button_area <?php echo esc_attr($button_active_class); ?>">
+                    <div class="mpwpb_add_icon_image_button_area <?php echo esc_attr($button_active_class); ?>">
                         <div class="flexEqual d-flex flex-column">
-                            <button class="_mpBtn_xs mp_image_add m-1" type="button"><span class="fas fa-images"></span><?php esc_html_e('Image', 'service-booking-manager'); ?></button>
-                            <button class="_mpBtn_xs mp_icon_add m-1" type="button" data-target-popup="#mp_add_icon_popup"><span class="fas fa-plus"></span><?php esc_html_e('Icon', 'service-booking-manager'); ?></button>
+                            <button class="_mpBtn_xs mpwpb_image_add m-1" type="button"><span class="fas fa-images"></span><?php esc_html_e('Image', 'service-booking-manager'); ?></button>
+                            <button class="_mpBtn_xs mpwpb_icon_add m-1" type="button" data-target-popup="#mpwpb_add_icon_popup"><span class="fas fa-plus"></span><?php esc_html_e('Icon', 'service-booking-manager'); ?></button>
                         </div>
                     </div>
                 </div>
@@ -1907,5 +1907,5 @@
 				];
 			}
 		}
-		new MP_Select_Icon_image();
+		new MPWPB_Select_Icon_image();
 	}

@@ -1,6 +1,6 @@
 /********************************************************************  ************************************************/
 @media only screen and (min-width: 10px) {
-  div.mpStyle div.mpwpb_price_settings .formControl {
+  div.mpwpb_style div.mpwpb_price_settings .formControl {
     text-align: left;
     height: 36px;
   }
@@ -8,7 +8,7 @@
   div.mpwpb_category_header,
   div.mpwpb_category_header div.mpwpb_service_area {
     text-align: center;
-    background-color: var(--color_theme);
+    background-color: var(--mpwpb_color_theme);
     color: #fff;
   }
   div.mpwpb_category_header div.mpwpb_category_content {
@@ -32,8 +32,8 @@
   }
   div.mpwpb_category_item {
     padding: 7px;
-    border-left: 1px solid var(--color_border);
-    border-bottom: 1px solid var(--color_border);
+    border-left: 1px solid var(--mpwpb_color_border);
+    border-bottom: 1px solid var(--mpwpb_color_border);
     max-width: 200px;
     width: 100%;
     min-width: 200px;
@@ -42,7 +42,7 @@
     width: 100%;
   }
   div.mpwpb_category_item.mActive ~ div.mpwpb_category_content {
-    border-bottom: 1px solid var(--color_border);
+    border-bottom: 1px solid var(--mpwpb_color_border);
   }
   /*****/
   div.mpwpb_sub_category_area {
@@ -52,18 +52,18 @@
   }
   div.mpwpb_sub_category_item {
     padding: 7px;
-    border-left: 1px solid var(--color_border);
-    border-bottom: 1px solid var(--color_border);
+    border-left: 1px solid var(--mpwpb_color_border);
+    border-bottom: 1px solid var(--mpwpb_color_border);
     max-width: 200px;
     width: 100%;
     min-width: 200px;
   }
   div.mpwpb_sub_category_content {
     width: 100%;
-    border-right: 1px solid var(--color_border);
+    border-right: 1px solid var(--mpwpb_color_border);
   }
   div.mpwpb_sub_category_item.mActive ~ div.mpwpb_sub_category_content {
-    border-bottom: 1px solid var(--color_border);
+    border-bottom: 1px solid var(--mpwpb_color_border);
   }
   /*************/
   div.mpwpb_service_area {
@@ -73,14 +73,14 @@
   }
   div.mpwpb_service_item {
     padding: 7px;
-    border: 1px solid var(--color_border);
+    border: 1px solid var(--mpwpb_color_border);
     min-width: 250px;
     width: 100%;
   }
   div.mpwpb_service_content {
     padding: 7px;
-    border-left: 1px solid var(--color_border);
-    border-bottom: 1px solid var(--color_border);
+    border-left: 1px solid var(--mpwpb_color_border);
+    border-bottom: 1px solid var(--mpwpb_color_border);
     min-width: 120px;
     max-width: 150px;
   }
@@ -203,6 +203,139 @@
 /********************************************************************  ************************************************/
 @media only screen and (min-width: 10px) {
   div.mpwpb_add_staff form label span::before {
-    margin: 0 var(--dMP_xs) 0 0;
+    margin: 0 var(--mpwpb_dmp_xs) 0 0;
   }
+}
+
+.category-service-area .category-container{
+    background: #e9e9ff;
+    padding:10px;
+}
+.category-service-area .category-container .header button{border:#eee !important; border-radius:10px !important; background-color: #fff !important; }
+
+.mpwpb-category-lists .mpwpb-category-items .parent-category-items, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items{min-height: 40px !important; border-radius:10px;  !important; background-color: #fff !important; border:none !important;}
+
+.mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items{min-height: 40px !important; border-radius:10px; padding-right:10px !important;  background-color: #fff !important; border:none !important;}
+.mpwpb-category-lists .mpwpb-category-items .parent-category-items .image-block i, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items .image-block i{ width:40px !important; font-size: 16px !important;background: none !important;}
+.mpwpb-category-lists .mpwpb-category-items .parent-category-items .action i, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items .action i{border:1px solid #ddd; border-radius:10px !important; color: var(--mage-primary) !important;}
+
+.category-service-area{border:5px solid #e9e9ff !important; border-radius:10px !important; }
+.service-container{padding:10px;}
+
+button.button.mpwpb-extra-service-new, button.button.mpwpb-faq-item-new, button.button.mpwpb-service-new, button.button.mpwpb-category-new{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--mage-primary);;
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    margin-top: 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: var(--transition);
+}
+
+button.button.mpwpb-extra-service-new:hover, button.button.mpwpb-faq-item-new:hover, button.button.mpwpb-service-new:hover, button.button.mpwpb-category-new:hover{
+    background-color: var(--mage-primary);
+    opacity: 0.85;
+}
+
+
+.mpwpb_extra_service_settings table.table tbody tr td{text-align:left !important;}
+.button.button.mpwpb-category-new::before, button.button.mpwpb-service-new::before {
+    content: "+ ";
+    font-weight: bold; /* Optional */
+    margin-right: 4px;  /* Optional spacing */
+}
+.mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items {
+    margin-left: 25px !important;
+}
+.mpwpb-category-lists .mpwpb-category-items .parent-category-items{padding:5px 10px !important}
+.service-container table.table thead tr th{background: #e9e9ff !important;}
+.service-container table.table tbody tr td:first-child i{border:none !important; border-radius:10px;}
+
+.service-container table.table thead tr th {
+    color: #333 !important;
+    text-align: left !important;
+    border-bottom: 2px solid #ddd !important;
+}
+
+/* Odd row styling */
+.service-container table.table tbody tr:nth-child(odd) {
+    background-color: #ffffff !important;
+}
+
+/* Even row styling */
+.service-container table.table tbody tr:nth-child(even) {
+    background-color: #f9f9f9 !important;
+}
+
+/* Hover effect on rows */
+.service-container table.table tbody tr:hover {
+    background-color: #e6f7ff !important;
+    cursor: pointer !important;
+}
+
+/* Optional: td styling for spacing */
+.service-container table.table tbody tr td {
+    border-bottom: 1px solid #eee !important;
+}
+
+
+/* Odd row styling */
+.mpwpb_extra_service_settings table.table tbody tr:nth-child(odd), .service-container table.table tbody tr:nth-child(odd) {
+    background-color: #ffffff !important;
+}
+
+/* Even row styling */
+.mpwpb_extra_service_settings table.table tbody tr:nth-child(even), .service-container table.table tbody tr:nth-child(even) {
+    background-color: #f9f9f9 !important;
+}
+
+/* Hover effect on rows */
+.mpwpb_extra_service_settings table.table tbody tr:hover, .service-container table.table tbody tr:hover {
+    background-color: #e6f7ff !important;
+    cursor: pointer !important;
+}
+
+/* Optional: td styling for spacing */
+.mpwpb_extra_service_settings table.table tbody tr td, .service-container table.table tbody tr td {
+    border-bottom: 1px solid #eee !important;
+}
+
+#mp_meta_box_panel table.table thead tr th {
+    background: #e9e9ff !important;
+}
+#mp_meta_box_panel table.table tbody tr td:first-child i{width:40px !important; border:none !important;}
+.mpwpb-faq-items section.faq-header {
+    background: #f7f7f9;
+}
+
+.mp_settings_area .formControl
+ {
+  width: 99% !important;  
+  min-height: 40px !important;
+}
+#mp_meta_box_panel .metabox .tabsContent section label.label input, #mp_meta_box_panel .metabox .tabsContent section label.label select, #mp_meta_box_panel .metabox .tabsContent section label.label textarea
+ {
+    min-height: 40px !important;
+    background: #f5f8ff !important;
+}
+.date-time-schedule .date-time-container {
+    width: 25% !important;
+}
+#mp_meta_box_panel .mpwpb-faq-section .mpwpb-faq-item{margin-top:10px;}
+#mp_meta_box_panel .metabox .tabsContent section.section
+ {
+    border-radius: 10px 10px 0 0;
+}
+
+.date-time-schedule .date-time-container label input, .date-time-schedule .date-time-container label select
+ {
+    border: 1px solid #dbdada;
+    background: #f5f8ff !important;
+    min-height: 40px;
+    border-radius: 5px;
 }

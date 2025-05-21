@@ -104,7 +104,7 @@
 				die;
 			}
 			public function view_all_services($post_id) {
-				$show_category_status = MP_Global_Function::get_post_info($post_id, 'mpwpb_show_category_status', 'off');
+				$show_category_status = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_show_category_status', 'off');
 				$active_class = $show_category_status == 'on' ? 'mActive' : '';
 				$show_category_status = $show_category_status == 'on' ? 'checked' : '';
 				?>
@@ -138,7 +138,7 @@
                             <input type="hidden" name="mpwpb_parent_cat_id" value="">
                             <input type="hidden" name="mpwpb_sub_cat_id" value="">
                             <label><?php esc_html_e('Use Category', 'service-booking-manager'); ?></label>
-							<?php MP_Custom_Layout::switch_button('mpwpb_show_category_status', $show_category_status); ?>
+							<?php MPWPB_Custom_Layout::switch_button('mpwpb_show_category_status', $show_category_status); ?>
                             <div class="<?php echo esc_attr($active_class); ?>" data-collapse="#mpwpb_show_category_status" style="display:none;">
                                 <label><?php esc_html_e('Select Category', 'service-booking-manager'); ?> </label>
                                 <div class="mpwpb-parent-category">
@@ -172,21 +172,21 @@
                             <label>
 								<?php esc_html_e('Image/Icon', 'service-booking-manager'); ?>
                             </label>
-                            <div class="mp_add_icon_image_area">
+                            <div class="mpwpb_add_icon_image_area">
                                 <input type="hidden" name="service_image_icon" value="">
-                                <div class="mp_icon_item dNone">
+                                <div class="mpwpb_icon_item dNone">
                                     <span class="" data-add-icon=""></span>
-                                    <span class="fas fa-times mp_remove_icon mp_icon_remove"></span>
+                                    <span class="fas fa-times mpwpb_remove_icon mpwpb_icon_remove"></span>
                                 </div>
-                                <div class="mp_image_item dNone">
+                                <div class="mpwpb_image_item dNone">
                                     <img  alt=""/>
-                                    <span class="fas fa-times mp_remove_icon mp_image_remove"></span>
+                                    <span class="fas fa-times mpwpb_remove_icon mpwpb_image_remove"></span>
                                 </div>
-                                <div class="mp_add_icon_image_button_area ">
-                                    <button class="mp_image_add" type="button">
+                                <div class="mpwpb_add_icon_image_button_area ">
+                                    <button class="mpwpb_image_add" type="button">
                                         <span class="fas fa-images"></span> <?php _e('Image','service-booking-manager'); ?>
                                     </button>
-                                    <button class="mp_icon_add" type="button" data-target-popup="#mp_add_icon_popup">
+                                    <button class="mpwpb_icon_add" type="button" data-target-popup="#mpwpb_add_icon_popup">
                                         <span class="fas fa-plus"></span><?php _e('Icon','service-booking-manager'); ?>
                                     </button>
                                 </div>
