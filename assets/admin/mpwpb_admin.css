@@ -344,3 +344,9 @@ button.button.mpwpb-extra-service-new:hover, button.button.mpwpb-faq-item-new:ho
  {
     background: #fff;
 }
+#mp_meta_box_panel .metabox .tabsContent section.section
+ {
+    background-color: #f4fdfc;
+    border: 1px solid #e1dbdb;
+    margin-bottom: 1px;
+}
