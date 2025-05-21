@@ -1381,7 +1381,7 @@ div.registration_tab_item {
 .mpwpb_service_area header h5, .mpwpb_extra_service_area h5{color:#333 !important;}
 .mpwpb_service_area header,.mpwpb_extra_service_area h5{border-bottom: 1px solid #ddd !important;}
 .mpwpb_selected_category {font-weight: 600 !important; }
-.mpwpb_price_qty_remove_holder p{padding-right: 23px;}
+.mpwpb_price_qty_remove_holder p{padding-right: 23px !important;}
 button.mpwpb_service_button_remove{
   position: absolute;
   right: 0;
