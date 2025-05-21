@@ -16,7 +16,7 @@
             <header>
                 <input type="hidden" name="mpwpb_category" value="">
                 <input type="hidden" name="mpwpb_sub_category" value="">
-                <h5><?php echo esc_html__('Select', 'service-booking-manager') . ' ' . esc_html($service_text); ?></h5>
+<!--                <h5>--><?php //echo esc_html__('Select', 'service-booking-manager') . ' ' . esc_html($service_text); ?><!--</h5>-->
             </header>
 			<?php
 				foreach ($all_services as $service_key => $service_item) {
