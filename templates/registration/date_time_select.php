@@ -59,7 +59,7 @@
 													if (!is_array($waiting_list)) {
 														$waiting_list = [];
 													}
-													$max_waiting_list = MP_Global_Function::get_post_info($post_id, 'mpwpb_max_waiting_list', 10);
+													$max_waiting_list = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_max_waiting_list', 10);
 													$waiting_list_available = count($waiting_list) < $max_waiting_list;
 													
 													if ($waiting_list_available) {

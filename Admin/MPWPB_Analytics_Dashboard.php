@@ -266,7 +266,7 @@ if (!class_exists('MPWPB_Analytics_Dashboard')) {
             );
 
             // Get booking status that should be counted
-            $booking_statuses = MP_Global_Function::get_settings('mp_global_settings', 'set_book_status', array('processing', 'completed'));
+            $booking_statuses = MPWPB_Global_Function::get_settings('mp_global_settings', 'set_book_status', array('processing', 'completed'));
             if (empty($booking_statuses)) {
                 $booking_statuses = array('processing', 'completed');
             }

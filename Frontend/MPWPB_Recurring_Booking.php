@@ -177,7 +177,7 @@ if (!class_exists('MPWPB_Recurring_Booking')) {
                     $recurring_dates = $this->calculate_recurring_dates($recurring_type, $recurring_count, $start_date);
                     
                     // Apply recurring discount if available
-                    $recurring_discount = MP_Global_Function::get_post_info($product_id, 'mpwpb_recurring_discount', 0);
+                    $recurring_discount = MPWPB_Global_Function::get_post_info($product_id, 'mpwpb_recurring_discount', 0);
                     if ($recurring_discount > 0) {
                         $discount_amount = ($cart_item_data['mpwpb_tp'] * $recurring_discount) / 100;
                         $discounted_price = $cart_item_data['mpwpb_tp'] - $discount_amount;
@@ -256,8 +256,8 @@ if (!class_exists('MPWPB_Recurring_Booking')) {
                         <ol>
                             <?php foreach ($recurring_dates as $date) { ?>
                                 <li>
-                                    <?php echo esc_html(MP_Global_Function::date_format($date)); ?>
-                                    <?php echo esc_html(MP_Global_Function::date_format($date, 'time')); ?>
+                                    <?php echo esc_html(MPWPB_Global_Function::date_format($date)); ?>
+                                    <?php echo esc_html(MPWPB_Global_Function::date_format($date, 'time')); ?>
                                 </li>
                             <?php } ?>
                         </ol>

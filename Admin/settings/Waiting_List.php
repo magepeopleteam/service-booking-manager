@@ -23,10 +23,10 @@ if (!class_exists('MPWPB_Waiting_List_Settings')) {
 		
 
 		public function waiting_list_settings($post_id) {
-			$enable_waiting_list = MP_Global_Function::get_post_info($post_id, 'mpwpb_enable_waiting_list', 'no');
-			$max_waiting_list = MP_Global_Function::get_post_info($post_id, 'mpwpb_max_waiting_list', 10);
-			$waiting_list_email_subject = MP_Global_Function::get_post_info($post_id, 'mpwpb_waiting_list_email_subject', 'Slot Available for {service_name}');
-			$waiting_list_email_body = MP_Global_Function::get_post_info($post_id, 'mpwpb_waiting_list_email_body', "Hello {customer_name},\n\nA slot has become available for {service_name} on {date} at {time}.\n\nPlease book soon as this slot may be taken by someone else.\n\nRegards,\n{site_name}");
+			$enable_waiting_list = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_enable_waiting_list', 'no');
+			$max_waiting_list = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_max_waiting_list', 10);
+			$waiting_list_email_subject = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_waiting_list_email_subject', 'Slot Available for {service_name}');
+			$waiting_list_email_body = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_waiting_list_email_body', "Hello {customer_name},\n\nA slot has become available for {service_name} on {date} at {time}.\n\nPlease book soon as this slot may be taken by someone else.\n\nRegards,\n{site_name}");
 			?>
 			<div class="tabsItem" data-tabs="#mpwpb_waiting_list">
 				<header>
@@ -101,14 +101,14 @@ if (!class_exists('MPWPB_Waiting_List_Settings')) {
 				}
 				
 				// Check if waiting list is enabled for this service
-				$enable_waiting_list = MP_Global_Function::get_post_info($post_id, 'mpwpb_enable_waiting_list', 'no');
+				$enable_waiting_list = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_enable_waiting_list', 'no');
 				if ($enable_waiting_list !== 'yes') {
 					wp_send_json_error(['message' => __('Waiting list is not enabled for this service', 'service-booking-manager')]);
 					return;
 				}
 				
 				// Check if waiting list is full
-				$max_waiting_list = MP_Global_Function::get_post_info($post_id, 'mpwpb_max_waiting_list', 10);
+				$max_waiting_list = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_max_waiting_list', 10);
 				$waiting_list = get_post_meta($post_id, 'mpwpb_waiting_list_' . sanitize_title($date), true);
 				
 				if (!is_array($waiting_list)) {
@@ -157,14 +157,14 @@ if (!class_exists('MPWPB_Waiting_List_Settings')) {
 					return;
 				}
 				
-				$enable_waiting_list = MP_Global_Function::get_post_info($post_id, 'mpwpb_enable_waiting_list', 'no');
+				$enable_waiting_list = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_enable_waiting_list', 'no');
 				$waiting_list = get_post_meta($post_id, 'mpwpb_waiting_list_' . sanitize_title($date), true);
 				
 				if (!is_array($waiting_list)) {
 					$waiting_list = [];
 				}
 				
-				$max_waiting_list = MP_Global_Function::get_post_info($post_id, 'mpwpb_max_waiting_list', 10);
+				$max_waiting_list = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_max_waiting_list', 10);
 				$waiting_list_count = count($waiting_list);
 				$waiting_list_available = $enable_waiting_list === 'yes' && $waiting_list_count < $max_waiting_list;
 				
@@ -220,7 +220,7 @@ if (!class_exists('MPWPB_Waiting_List_Settings')) {
 	
 		
 		private function notify_waiting_list($post_id, $date) {
-			$enable_waiting_list = MP_Global_Function::get_post_info($post_id, 'mpwpb_enable_waiting_list', 'no');
+			$enable_waiting_list = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_enable_waiting_list', 'no');
 			if ($enable_waiting_list !== 'yes') {
 				return;
 			}
@@ -242,8 +242,8 @@ if (!class_exists('MPWPB_Waiting_List_Settings')) {
 		
 		private function send_waiting_list_confirmation($post_id, $date, $name, $email) {
 			$service_name = get_the_title($post_id);
-			$date_formatted = MP_Global_Function::date_format($date);
-			$time_formatted = MP_Global_Function::date_format($date, 'time');
+			$date_formatted = MPWPB_Global_Function::date_format($date);
+			$time_formatted = MPWPB_Global_Function::date_format($date, 'time');
 			
 			$subject = sprintf(__('You have been added to the waiting list for %s', 'service-booking-manager'), $service_name);
 			
@@ -263,12 +263,12 @@ if (!class_exists('MPWPB_Waiting_List_Settings')) {
 		
 		private function send_slot_available_notification($post_id, $date, $name, $email) {
 			$service_name = get_the_title($post_id);
-			$date_formatted = MP_Global_Function::date_format($date);
-			$time_formatted = MP_Global_Function::date_format($date, 'time');
+			$date_formatted = MPWPB_Global_Function::date_format($date);
+			$time_formatted = MPWPB_Global_Function::date_format($date, 'time');
 			$site_name = get_bloginfo('name');
 			
-			$subject = MP_Global_Function::get_post_info($post_id, 'mpwpb_waiting_list_email_subject', 'Slot Available for {service_name}');
-			$body = MP_Global_Function::get_post_info($post_id, 'mpwpb_waiting_list_email_body', "Hello {customer_name},\n\nA slot has become available for {service_name} on {date} at {time}.\n\nPlease book soon as this slot may be taken by someone else.\n\nRegards,\n{site_name}");
+			$subject = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_waiting_list_email_subject', 'Slot Available for {service_name}');
+			$body = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_waiting_list_email_body', "Hello {customer_name},\n\nA slot has become available for {service_name} on {date} at {time}.\n\nPlease book soon as this slot may be taken by someone else.\n\nRegards,\n{site_name}");
 			
 			// Replace placeholders
 			$subject = str_replace(

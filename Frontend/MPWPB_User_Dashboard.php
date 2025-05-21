@@ -139,8 +139,8 @@ $tabs = array(
                             <tr>
                                 <td>#<?php echo esc_html($booking->ID); ?></td>
                                 <td><?php echo esc_html(get_the_title($booking->mpwpb_id)); ?></td>
-                                <td><?php echo esc_html(MP_Global_Function::date_format($booking->mpwpb_date)); ?></td>
-                                <td><?php echo esc_html(MP_Global_Function::date_format($booking->mpwpb_date, 'time')); ?></td>
+                                <td><?php echo esc_html(MPWPB_Global_Function::date_format($booking->mpwpb_date)); ?></td>
+                                <td><?php echo esc_html(MPWPB_Global_Function::date_format($booking->mpwpb_date, 'time')); ?></td>
                                 <td>
                                     <span class="mpwpb-status mpwpb-status-<?php echo esc_attr(strtolower($booking->mpwpb_order_status)); ?>">
                                         <?php echo esc_html(ucfirst($booking->mpwpb_order_status)); ?>
@@ -229,11 +229,11 @@ $tabs = array(
                                 <h4><?php echo esc_html(get_the_title($booking->mpwpb_id)); ?></h4>
                                 <p class="mpwpb-appointment-date">
                                     <i class="far fa-calendar-alt"></i>
-                                    <?php echo esc_html(MP_Global_Function::date_format($booking->mpwpb_date)); ?>
+                                    <?php echo esc_html(MPWPB_Global_Function::date_format($booking->mpwpb_date)); ?>
                                 </p>
                                 <p class="mpwpb-appointment-time">
                                     <i class="far fa-clock"></i>
-                                    <?php echo esc_html(MP_Global_Function::date_format($booking->mpwpb_date, 'time')); ?>
+                                    <?php echo esc_html(MPWPB_Global_Function::date_format($booking->mpwpb_date, 'time')); ?>
                                 </p>
                                 <p class="mpwpb-appointment-status">
                                     <span class="mpwpb-status mpwpb-status-<?php echo esc_attr(strtolower($booking->mpwpb_order_status)); ?>">
@@ -497,7 +497,7 @@ $tabs = array(
                     $order->add_order_note(
                         sprintf(
                             esc_html__('Booking rescheduled by customer. New date/time: %s', 'service-booking-manager'),
-                            MP_Global_Function::date_format($new_datetime) . ' ' . MP_Global_Function::date_format($new_datetime, 'time')
+                            MPWPB_Global_Function::date_format($new_datetime) . ' ' . MPWPB_Global_Function::date_format($new_datetime, 'time')
                         )
                     );
                 }
