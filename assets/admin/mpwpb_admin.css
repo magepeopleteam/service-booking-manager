@@ -339,3 +339,8 @@ button.button.mpwpb-extra-service-new:hover, button.button.mpwpb-faq-item-new:ho
     min-height: 40px;
     border-radius: 5px;
 }
+#mp_meta_box_panel .metabox .tabsContent{background: #eaeaef; }
+#mp_meta_box_panel .metabox .tabsContent section
+ {
+    background: #fff;
+}
