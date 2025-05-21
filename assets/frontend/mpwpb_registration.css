@@ -1402,7 +1402,7 @@ button.mpwpb_service_button.mActive:hover{
     border-radius: 10px;
     position: relative;
 }
-.service-cart {
+.booking-area .service-cart {
     background: none !important;
 }
 .mpwpb_popup .service-cart {
