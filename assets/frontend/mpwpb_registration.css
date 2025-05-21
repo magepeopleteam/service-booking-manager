@@ -1396,6 +1396,6 @@ button.mpwpb_service_button:hover{
     background-color: var(--mpwpb_color_theme) !important;
     color: var(--mpwpb_color_theme_alter) !important;
 }
-button.mpwpb_service_button.active:hover{
+button.mpwpb_service_button.mActive:hover{
    background-color: #4caf50 !important;
 }
