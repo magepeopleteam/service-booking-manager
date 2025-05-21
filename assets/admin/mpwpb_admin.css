@@ -358,3 +358,7 @@ input[type=color], input[type=date], input[type=datetime-local], input[type=date
     background: #e9e9ff;
     padding: 20px;
 }
+#mp_meta_box_panel .metabox .tabsContent section .date-time-schedule section
+ {
+    background-color: #e9e9ff !important;
+}
