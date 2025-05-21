@@ -163,7 +163,7 @@
                 parent.find('.mpwpb_recurring_dates').show();
             },
             success: function(response) {
-                console.log('Recurring dates response:', response);
+                // console.log('Recurring dates response:', response);
 
                 if (response.success && response.data && response.data.dates) {
                     displayRecurringDates(parent, response.data.dates);
@@ -190,8 +190,9 @@
         
         if (dates && dates.length > 0) {
             $.each(dates, function(index, date) {
+                // console.log( date );
                 let formattedDate = formatDate(date);
-                let listItem = $('<li>').text(formattedDate);
+                let listItem = $(`<li data-date-time="${date}">`).text(formattedDate);
                 
                 if (index === 0) {
                     listItem.prepend('<strong>' + (index + 1) + '. </strong>');

@@ -322,6 +322,7 @@ function mpwpb_price_calculation($this) {
         let parent = $(this).closest('div.mpwpb_registration');
         let date = parent.find('[name="mpwpb_date"]').val();
         if (date) {
+
             let link_id = $(this).attr('data-wc_link_id');
             let mpwpb_category = parent.find('[name="mpwpb_category"]').val();
             mpwpb_category = mpwpb_category ? parseInt(mpwpb_category) : '';
