@@ -59,6 +59,7 @@
 							<?php include(MPWPB_Function::template_path('registration/date_time_select.php')); ?>
                             <div class="mpwpb_order_proceed_area"></div>
                         </div>
+
                         <div class="service-cart">
                             <div class="mpwpb_summary_area_left_content">
 								<?php if (sizeof($all_category) > 0) { ?>
@@ -84,33 +85,41 @@
 										$service_wc_price = MPWPB_Global_Function::wc_price($post_id, $service_price);
 										$service_price = MPWPB_Global_Function::price_convert_raw($service_wc_price);
 										?>
-                                        <div class="mpwpb_summary_item" data-service="<?php echo esc_attr($service_key + 1); ?>" data-service-category="<?php echo esc_attr($category_name); ?>" data-service-sub-category="<?php echo esc_attr($sub_category_name); ?>">
+                                        <div class="mpwpb_summary_item" id="mpwpb_summary_cart_item<?php echo esc_attr($service_key + 1); ?>" data-service="<?php echo esc_attr($service_key + 1); ?>" data-service-category="<?php echo esc_attr($category_name); ?>" data-service-sub-category="<?php echo esc_attr($sub_category_name); ?>">
                                             <span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
                                             <div class="flexWrap justifyBetween">
                                                 <h6 class="mR_xs"><?php echo esc_html($service_name); ?></h6>
-                                                <p><span class="textTheme">x1</span>&nbsp;|&nbsp; <span class="textTheme service_price"><?php echo wp_kses_post($service_wc_price); ?></span></p>
+                                                <div class="mpwpb_price_qty_remove_holder">
+                                                    <p><span class="textTheme mpwpd_cart_service_qty">x1</span>&nbsp;|&nbsp; <span class="textTheme service_price"><?php echo wp_kses_post($service_wc_price); ?></span></p>
+                                                    <button class="mpwpb_service_button_remove">✕</button>
+                                                </div>
+
                                             </div>
+
                                         </div>
 									<?php } ?>
 								<?php } ?>
 								<?php
 									//echo '<pre>';									print_r($extra_services);									echo '</pre>';
 									if (sizeof($extra_services) > 0) {
-										foreach ($extra_services as $ex_service_info) {
+										foreach ($extra_services as $ex_key => $ex_service_info) {
 											$ex_service_price = array_key_exists('price', $ex_service_info) ? $ex_service_info['price'] : 0;
 											$ex_service_price = MPWPB_Global_Function::wc_price($post_id, $ex_service_price);
 											$ex_service_price_raw = MPWPB_Global_Function::price_convert_raw($ex_service_price);
 											$ex_service_name = array_key_exists('name', $ex_service_info) ? $ex_service_info['name'] : '';
 											if ($ex_service_name && $ex_service_price) {
 												?>
-                                                <div class="mpwpb_summary_item" data-extra-service="<?php echo esc_attr($ex_service_info['name']); ?>">
+                                                <div class="mpwpb_summary_item" data-extra-service="<?php echo esc_attr($ex_service_info['name']); ?>" data-ex_service="<?php echo esc_attr( $ex_key + 1); ?>">
                                                     <span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
                                                     <div class="flexWrap justifyBetween">
-                                                        <h6 class="mR_xs">                                                                <?php echo esc_html($ex_service_info['name']); ?>                                                            </h6>
-                                                        <p>
-                                                            <span class="textTheme ex_service_qty">x1</span>&nbsp;|&nbsp;
-                                                            <span class="textTheme"><?php echo wp_kses_post($ex_service_price); ?></span>
-                                                        </p>
+                                                        <h6 class="mR_xs"><?php echo esc_html($ex_service_info['name']); ?></h6>
+                                                        <div class="mpwpb_price_qty_remove_holder">
+                                                            <p>
+                                                                <span class="textTheme ex_service_qty">x1</span>&nbsp;|&nbsp;
+                                                                <span class="textTheme"><?php echo wp_kses_post($ex_service_price); ?></span>
+                                                            </p>
+                                                            <button class="mpwpb_ex_service_button_remove">✕</button>
+                                                        </div>
                                                     </div>
                                                 </div>
 												<?php
@@ -131,15 +140,20 @@
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
                 <div class="popupFooter _justifyBetween">
 					<?php include(MPWPB_Function::template_path('registration/next_service.php')); ?>
 					<?php include(MPWPB_Function::template_path('registration/next_date_time.php')); ?>
                 </div>
+                <?php if( (is_array($all_category) && !empty($all_category)) ||
+                    (is_array($all_sub_category) && !empty($all_sub_category))
+                 ){?>
                 <div class="mpwpd_btn_proceed" id="mpwpd_btn_proceed">
                     <?php esc_html_e('Continue :', 'service-booking-manager'); ?> <i class="fa-solid fa-arrow-right"></i>
                 </div>
+                <?php }?>
             </div>
         </div>
     </div>

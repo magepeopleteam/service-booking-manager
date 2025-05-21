@@ -15,9 +15,14 @@ if (!class_exists('Service_Settings')) {
 
         public function service_settings( $post_id ){
             $multiple_category_check = get_post_meta( $post_id, 'mpwpb_service_multiple_category_check', true );
+            $multiple_service_check = get_post_meta( $post_id, 'mpwpb_multiple_service_select', true );
             $checked = '';
+            $mp_service_checked = '';
             if( $multiple_category_check === 'on' ){
                 $checked = 'checked';
+            }
+            if( $multiple_service_check === 'on' ){
+                $mp_service_checked = 'checked';
             }
             ?>
 
@@ -36,6 +41,20 @@ if (!class_exists('Service_Settings')) {
                             <label class="roundSwitchLabel">
                                 <input type="checkbox" name="mpwpb_service_multiple_category_check" <?php echo esc_attr( $checked )?>>
                                 <span class="roundSwitch" data-collapse-target="#mpwpb_service_multiple_category_check"></span>
+                            </label>
+                        </div>
+                    </label>
+                </section>
+                <section>
+                    <label class="label">
+                        <div>
+                            <p><?php esc_html_e('Enable Multiple Service Select', 'service-booking-manager'); ?></p>
+                            <span><?php esc_html_e('Enable Multiple Service Select', 'service-booking-manager'); ?></span>
+                        </div>
+                        <div>
+                            <label class="roundSwitchLabel">
+                                <input type="checkbox" name="mpwpb_multiple_service_select" <?php echo esc_attr( $mp_service_checked )?>>
+                                <span class="roundSwitch" data-collapse-target="#mpwpb_multiple_service_select"></span>
                             </label>
                         </div>
                     </label>

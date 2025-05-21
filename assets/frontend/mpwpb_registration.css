@@ -48,6 +48,34 @@ div.registration_tab_item {
   text-decoration: none;
   font-size: 16px;
 }
+.mpwpb_service_button_remove,
+.mpwpb_ex_service_button_remove{
+  position: absolute;
+  /*right: -10px;
+  top: 50%;*/
+  right: -54px;
+  top: -10px;
+  transform: translateY(-50%);
+  background-color: #ff5252;
+  color: white;
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.mpwpb_summary_item:hover .mpwpb_service_button_remove{
+  opacity: 1;
+}
+.mpwpb_summary_item:hover .mpwpb_ex_service_button_remove{
+  opacity: 1;
+}
 
 .selection-header {
   padding: 20px;

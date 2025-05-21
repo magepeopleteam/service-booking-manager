@@ -255,7 +255,7 @@
                                         </li>
                                         <li>
                                             <h6><?php esc_html_e('Price', 'service-booking-manager'); ?>&nbsp;:&nbsp;</h6>
-                                            <span><?php echo wp_kses_post(' ( ' . MPWPB_Global_Function::wc_price($post_id, $service['price']) . ' x 1 ) = ' . MPWPB_Global_Function::wc_price($post_id, ($service['price'] * 1))); ?></span>
+                                            <span><?php echo wp_kses_post(' ( ' . MPWPB_Global_Function::wc_price($post_id, $service['price']) . ' x '.$service['qty'].' ) = ' . MPWPB_Global_Function::wc_price($post_id, ($service['price'] * $service['qty']))); ?></span>
                                         </li>
 										<?php
 									}
