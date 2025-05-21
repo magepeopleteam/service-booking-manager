@@ -58,9 +58,9 @@
 	if (sizeof($all_category) > 0) {
 		?>
         <div class="_dShadow_7 mpwpb_category_area">
-            <header>
-                <h5><?php esc_html_e('Select Type', 'service-booking-manager'); ?></h5>
-            </header>
+            <!--<header>
+                <h5><?php /*esc_html_e('Select Type', 'service-booking-manager'); */?></h5>
+            </header>-->
 			<?php foreach ($all_category as $cat_key => $category) {
 				$category_name = array_key_exists('name', $category) ? $category['name'] : '';
 				$category_icon = array_key_exists('icon', $category) ? $category['icon'] : '';
@@ -81,19 +81,26 @@
                         <div class="mpwpd_category_info_holder">
                             <div class="alignCenter _fullWidth">
                                 <?php if ($category_icon) { ?>
-                                    <span class="<?php echo esc_attr($category_icon); ?> _mR_xs"></span>
+                                <div class="mpwpd_bg_image_area">
+                                    <span class="<?php echo esc_attr($category_icon); ?> _mR_xs" style="font-size: 30px"></span>
+                                </div>
                                 <?php } ?>
                                 <?php if ($category_image) { ?>
-                                    <div class="bg_image_area">
+                                    <div class="mpwpd_bg_image_area">
                                         <div data-bg-image="<?php echo esc_attr(MPWPB_Global_Function::get_image_url('', $category_image, 'medium')); ?>"></div>
                                     </div>
                                 <?php } ?>
-                                <h6><?php echo esc_html($category_name); ?></h6>
+                                <div class="mpwpb_category_info_holder">
+                                    <div class="mpwpb_category_info">
+                                        <h6><?php echo esc_html($category_name); ?></h6>
+                                        <span class="fas fa-check mpwpb_item_check _circleIcon_xs" style="top: 15px"></span>
+                                    </div>
+                                    <div class="mpwpd_category_min_price"><?php esc_attr_e( 'Price Start At:', 'service-booking-manager' );?> <?php echo wp_kses_post( $min_price )?> </div>
+                                </div>
+
                             </div>
-                            <span class="fas fa-check mpwpb_item_check _circleIcon_xs" style="top: 15px"></span>
                         </div>
 
-                        <div class="mpwpd_category_min_price"><?php esc_attr_e( 'Price Start At:', 'service-booking-manager' );?> <?php echo wp_kses_post( $min_price )?> </div>
                     </div>
 					<?php if (sizeof($all_sub_category) > 0) {
 						foreach ($all_sub_category as $sub_key => $sub_category_item) {
@@ -116,19 +123,25 @@
                                         <div class="mpwpd_category_info_holder">
                                             <div class="alignCenter _fullWidth">
                                                 <?php if ($sub_category_image) { ?>
-                                                    <div class="bg_image_area">
-                                                        <div data-bg-image="<?php echo esc_attr(MPWPB_Global_Function::get_image_url('', $sub_category_image, 'medium')); ?>"></div>
-                                                    </div>
+                                                <div class="mpwpd_bg_image_area">
+                                                    <div data-bg-image="<?php echo esc_attr(MPWPB_Global_Function::get_image_url('', $sub_category_image, 'medium')); ?>"></div>
+                                                </div>
                                                 <?php } ?>
                                                 <?php if ($sub_category_icon) { ?>
-                                                    <span class="<?php echo esc_attr($sub_category_icon); ?> _mR_xs"></span>
+                                                <div class="mpwpd_bg_image_area">
+                                                    <span class="<?php echo esc_attr($sub_category_icon); ?> _mR_xs" style="font-size: 30px"
+                                                    ></span>
+                                                </div>
                                                 <?php } ?>
-                                                <h6><?php echo esc_html($sub_category_name); ?></h6>
+                                                <div class="mpwpb_category_info_holder">
+                                                    <div class="mpwpb_category_info">
+                                                        <h6><?php echo esc_html($sub_category_name); ?></h6>
+                                                        <span class="fas fa-check mpwpb_item_check _circleIcon_xs" style="top: 15px"></span>
+                                                    </div>
+                                                    <div class="mpwpd_category_min_price"><?php esc_attr_e( 'Price Start At:', 'service-booking-manager' );?> <?php echo wp_kses_post( $sub_min_price )?> </div>
+                                                </div>
                                             </div>
-                                            <span class="fas fa-check mpwpb_item_check _circleIcon_xs" style="top: 15px"></span>
                                         </div>
-                                        <div class="mpwpd_category_min_price"><?php esc_attr_e( 'Price Start At:', 'service-booking-manager' );?> <?php echo  wp_kses_post( $sub_min_price );?></div>
-
                                     </div>
                                 </div>
 							<?php }

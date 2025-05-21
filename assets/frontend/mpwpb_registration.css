@@ -32,6 +32,30 @@ div.registration_tab_item {
   flex-direction: column;
 }
 
+.mpwpb_category_info{
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+.mpwpd_bg_image_area{
+  max-width: 50px;
+  margin: 0 8px 0 0;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  height: max-content;
+}
+
+.mpwpb_category_info_holder{
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+}
+.mpwpb_category_name_icon{
+  display: flex;
+  justify-content: flex-start;
+}
+
 .mpwpd_btn_proceed {
   display: block;
   width: calc(100% - 16px);
@@ -47,6 +71,7 @@ div.registration_tab_item {
   text-align: center;
   text-decoration: none;
   font-size: 16px;
+  opacity: .5;
 }
 .mpwpb_service_button_remove,
 .mpwpb_ex_service_button_remove{
