@@ -1391,6 +1391,4 @@ button.mpwpb_service_button_remove, button.mpwpb_ex_service_button_remove{
 .mpwpb-static-template .sidebar .mpwpb_static_theme .mpwpb_popup .mpwpb_popup_main_area .mpwpb_popup_body .mpwpb-popup-content .service-items .mpwpb_service_area .mpwpb_service_item .mpwpb_service_button:focus {
     background-color: var(--mpwpb_color_theme) !important;
     color: var(--mpwpb_color_theme_alter) !important;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2); 
 }
