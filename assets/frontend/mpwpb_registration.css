@@ -1402,3 +1402,6 @@ button.mpwpb_service_button.mActive:hover{
     border-radius: 10px;
     position: relative;
 }
+.service-cart {
+    background: none !important;
+}
