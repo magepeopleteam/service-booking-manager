@@ -1396,3 +1396,9 @@ button.mpwpb_service_button:hover{
 button.mpwpb_service_button.mActive:hover{
    background-color: #4caf50 !important;
 }
+.mpwpb-default-template .sidebar .content .service-cart .mpwpb_summary_area_left_content
+ {
+    background-color: #fff;
+    border-radius: 10px;
+    position: relative;
+}
