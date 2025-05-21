@@ -364,3 +364,9 @@ input[type=color], input[type=date], input[type=datetime-local], input[type=date
     background-color: #e9e9ff !important;
     border:none !important;
 }
+.date-time-schedule .schedule-container {
+    width: 74%;
+    border: 1px solid #eee;
+    padding: 20px;
+    border-radius: 10px;
+}
