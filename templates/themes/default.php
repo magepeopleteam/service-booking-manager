@@ -19,6 +19,7 @@
 	$sub_title = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_shortcode_sub_title');
 
     $is_multiselect = get_post_meta( $post_id, 'mpwpb_service_multiple_category_check', true );
+    $enable_recurring = MPWPB_Global_Function::get_post_info( $post_id, 'mpwpb_enable_recurring', 'no');
 ?>
     <div class="mpwpb_style mpwpb-default-template mpwpb_registration">
         <header style="background-image: url('<?php echo esc_url(get_the_post_thumbnail_url()); ?>');">
@@ -157,7 +158,26 @@
                                         <h5 class="mR_xs"><?php esc_html_e('Total :', 'service-booking-manager'); ?></h5>
                                         <h5><span class="mpwpb_total_bill textTheme"><?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, 0)); ?></span></h5>
                                     </div>
+
+                                    <?php if( $enable_recurring === 'yes' ){?>
+                                        <div class="mpwpb_recurring_order_display" id="mpwpb_recurring_order_display" style="display: none">
+                                            <div class="mpwpb_recurring_order_text_number">
+                                                <span class="mpwpb_recurring_text">Recurring Order</span>
+                                                <div class="mpwpb_recurring_number_holder">
+                                                    <span class="mpwpb_recurring_symbol">X</span>
+                                                    <span class="mpwpb_recurring_number" id="mpwpb_recurring_number">2</span>
+                                                </div>
+
+                                            </div>
+                                            <div class="mpwpb_recurring_discount">
+                                                <span class="mpwpb_recurring_discount_text">less discount</span>
+                                                <span class="mpwpb_recurring_discount_value" id="mpwpb_recurring_discount_value">10%</span>
+                                            </div>
+                                        </div>
+                                    <?php }?>
+
                                 </div>
+
                             </div>
                         </div>
 

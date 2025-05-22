@@ -530,8 +530,6 @@ function mpwpb_price_calculation($this) {
             recurringCount = parseInt(parent.find('#mpwpb_recurring_count').val());
             is_recurring_on = 'on';
         }
-        console.log( is_recurring_on, recurringCount );
-
         let dateTimes = [];
         $('#mpwpb_recurring_dates_list li').each(function () {
             var dateTime = $(this).data('date-time');

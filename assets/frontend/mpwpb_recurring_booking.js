@@ -119,6 +119,11 @@
             parent.find('#mpwpb_recurring_dates_list').empty();
         }
 
+
+        parent.find('#mpwpb_recurring_order_display').fadeIn();
+        parent.find('#mpwpb_recurring_number').text( recurringCount );
+        parent.find('#mpwpb_recurring_discount_value').text( recurring_discount_price+'%' );
+
         recuring_price_with_discount( recurringCount, recurring_discount_price );
     });
 
@@ -126,10 +131,13 @@
         let parent_div = $('.next_date_area');
         let total_bill = parent_div.find('#mpwpd_all_total_bill').text();
         if( price_in_number === 0 ){
-            price_in_number =  total_bill.match(/[0-9.]+/)[0] ;
+            // price_in_number =  total_bill.match(/[0-9.]+/)[0] ;
+            price_in_number =  parseInt( total_bill.replace(/[^\d.]/g, '') );
         }
+
         let currency = total_bill.replace(/[0-9.]/g, '');
         let total_bill_new = price_in_number * recurringCount ;
+        // console.log( price_in_number, total_bill_new );
         let discountAmount = ( total_bill_new * recurring_discount_price ) / 100;
         total_bill_new = total_bill_new - discountAmount;
         let bill = total_bill_new.toFixed(2)+ currency;

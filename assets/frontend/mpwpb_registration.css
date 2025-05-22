@@ -102,6 +102,21 @@ div.registration_tab_item {
   opacity: 1;
 }
 
+.mpwpb_recurring_order_display{
+  display: flex;
+  flex-direction: column;
+  padding-top: 10px;
+}
+.mpwpb_recurring_order_text_number, .mpwpb_recurring_discount{
+  display: flex;
+  justify-content: space-between;
+  padding-right: 40px;
+}
+.mpwpb_recurring_number_holder{
+  display: flex;
+  gap: 16px;
+}
+
 .selection-header {
   padding: 20px;
   background-color: var(--light-bg);
