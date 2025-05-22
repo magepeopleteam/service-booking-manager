@@ -167,6 +167,13 @@
 						<?php include(MPWPB_Function::template_path('registration/next_service.php')); ?>
 						<?php include(MPWPB_Function::template_path('registration/next_date_time.php')); ?>
                     </div>
+                    <?php if( (is_array($all_category) && !empty($all_category)) ||
+                        (is_array($all_sub_category) && !empty($all_sub_category))
+                    ){?>
+                        <div class="mpwpd_btn_proceed" id="mpwpd_btn_proceed">
+                            <?php esc_html_e('Continue :', 'service-booking-manager'); ?> <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+                    <?php }?>
 
                 </div>
             </div>

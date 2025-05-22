@@ -208,7 +208,7 @@
 }
 
 .category-service-area .category-container{
-    background: #e9e9ff;
+    background: #f1f1f1;
     padding:10px;
 }
 .category-service-area .category-container .header button{border:#eee !important; border-radius:10px !important; background-color: #fff !important; }
@@ -219,7 +219,7 @@
 .mpwpb-category-lists .mpwpb-category-items .parent-category-items .image-block i, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items .image-block i{ width:40px !important; font-size: 16px !important;background: none !important;}
 .mpwpb-category-lists .mpwpb-category-items .parent-category-items .action i, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items .action i{border:1px solid #ddd; border-radius:10px !important; color: var(--mage-primary) !important;}
 
-.category-service-area{border:5px solid #e9e9ff !important; border-radius:10px !important; }
+.category-service-area{border:5px solid #f1f1f1 !important; border-radius:10px !important; }
 .service-container{padding:10px;}
 
 button.button.mpwpb-extra-service-new, button.button.mpwpb-faq-item-new, button.button.mpwpb-service-new, button.button.mpwpb-category-new{
@@ -253,7 +253,7 @@ button.button.mpwpb-extra-service-new:hover, button.button.mpwpb-faq-item-new:ho
     margin-left: 25px !important;
 }
 .mpwpb-category-lists .mpwpb-category-items .parent-category-items{padding:5px 10px !important}
-.service-container table.table thead tr th{background: #e9e9ff !important;}
+.service-container table.table thead tr th{background: #f1f1f1 !important;}
 .service-container table.table tbody tr td:first-child i{border:none !important; border-radius:10px;}
 
 .service-container table.table thead tr th {
@@ -306,7 +306,7 @@ button.button.mpwpb-extra-service-new:hover, button.button.mpwpb-faq-item-new:ho
 }
 
 #mp_meta_box_panel table.table thead tr th {
-    background: #e9e9ff !important;
+    background: #f1f1f1 !important;
 }
 #mp_meta_box_panel table.table tbody tr td:first-child i{width:40px !important; border:none !important;}
 .mpwpb-faq-items section.faq-header {
@@ -338,4 +338,46 @@ button.button.mpwpb-extra-service-new:hover, button.button.mpwpb-faq-item-new:ho
     background: #f5f8ff !important;
     min-height: 40px;
     border-radius: 5px;
+}
+#mp_meta_box_panel .metabox .tabsContent{background: #eaeaef; }
+#mp_meta_box_panel .metabox .tabsContent section
+ {
+    background: #fff;
+}
+#mp_meta_box_panel .metabox .tabsContent section.section
+ {
+    background-color: #f4fdfc !important;
+    border: 1px solid #e1dbdb;
+    margin-bottom: 1px;
+}
+input[type=color], input[type=date], input[type=datetime-local], input[type=datetime], input[type=email], input[type=month], input[type=number], input[type=password], input[type=search], input[type=tel], input[type=text], input[type=time], input[type=url], input[type=week], select, textarea
+ {
+    border: 1px solid #ddd !important;
+}
+.date-time-schedule .date-time-container {
+    background: #f1f1f1;
+    padding: 20px;
+    border-radius:10px;
+}
+#mp_meta_box_panel .metabox .tabsContent section .date-time-schedule section
+ {
+    background-color: #f1f1f1 !important;
+    border:none !important;
+}
+.date-time-schedule .schedule-container {
+    width: 74% !important;
+    border: 1px solid #eee;
+    padding: 20px;
+    border-radius: 10px;
+}
+section.faq-header
+ {
+    background: #f1f1f1 !important;
+    border-radius: 10px;
+}
+.category-service-area .category-container .header button {
+    border: 1px solid #e5dede !important;
+}
+.mpwpb-category-lists .mpwpb-category-items .parent-category-items, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items {
+    border: 1px solid #e5dede !important;
 }
