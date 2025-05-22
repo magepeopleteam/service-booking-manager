@@ -119,7 +119,6 @@
             parent.find('#mpwpb_recurring_dates_list').empty();
         }
 
-
         parent.find('#mpwpb_recurring_order_display').fadeIn();
         parent.find('#mpwpb_recurring_number').text( recurringCount );
         parent.find('#mpwpb_recurring_discount_value').text( recurring_discount_price+'%' );
@@ -168,10 +167,10 @@
             postId = mpwpb_ajax.post_id;
         }
 
-        console.log('Generating recurring dates for post ID:', postId);
+        /*console.log('Generating recurring dates for post ID:', postId);
         console.log('Start date:', startDate);
         console.log('Recurring type:', recurringType);
-        console.log('Recurring count:', recurringCount);
+        console.log('Recurring count:', recurringCount);*/
 
         // Determine which AJAX URL and nonce to use
         let ajaxUrl = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.ajax_url : mpwpb_ajax.ajax_url;
@@ -220,9 +219,13 @@
         datesList.empty();
         
         if (dates && dates.length > 0) {
+            parent.find('#mpwpd_selected_date').empty();
             $.each(dates, function(index, date) {
                 // console.log( date );
-                let formattedDate = formatDate(date);
+                let formattedDate = formatDate_new(date);
+
+                parent.find('#mpwpb_summary_date_item').find('#mpwpd_selected_date').append( `<li class="mpwpd_service_date">${formattedDate}</li>` );
+
                 let listItem = $(`<li data-date-time="${date}">`).text(formattedDate);
                 
                 if (index === 0) {
@@ -235,6 +238,9 @@
             });
             
             parent.find('.mpwpb_recurring_dates').show();
+
+
+
         } else {
             parent.find('.mpwpb_recurring_dates').hide();
         }
@@ -247,6 +253,17 @@
             weekday: 'long', 
             year: 'numeric', 
             month: 'long', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        };
+        return date.toLocaleDateString(undefined, options);
+    }
+    function formatDate_new(dateString) {
+        let date = new Date(dateString);
+        let options = {
+            year: 'numeric',
+            month: 'long',
             day: 'numeric',
             hour: '2-digit',
             minute: '2-digit'

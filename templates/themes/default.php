@@ -148,9 +148,9 @@
                                     }
                                 }
                                 ?>
-                                <div class="mpwpb_summary_item" data-date>
+                                <div class="mpwpb_summary_item" id="mpwpb_summary_date_item" data-date>
                                     <span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
-                                    <h6></h6>
+                                    <h6 id="mpwpd_selected_date"></h6>
                                 </div>
                                 <div class="mpwpb_summary_item">
                                     <span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>

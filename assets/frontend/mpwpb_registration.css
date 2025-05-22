@@ -116,6 +116,9 @@ div.registration_tab_item {
   display: flex;
   gap: 16px;
 }
+.mpwpd_service_date{
+  list-style-type: none;
+}
 
 .selection-header {
   padding: 20px;
