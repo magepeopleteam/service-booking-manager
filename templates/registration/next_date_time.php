@@ -18,7 +18,7 @@
             </button>
             <h4 class="alignCenter mpwpb-total">
 				<?php esc_html_e('Total :', 'service-booking-manager'); ?>&nbsp;&nbsp;
-                <span class="mpwpb_total_bill textTheme"><?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, 0)); ?></span>
+                <span class="mpwpb_total_bill textTheme" id="mpwpd_all_total_bill"><?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, 0)); ?></span>
             </h4>
             <button class="_mpBtn_dBR mActive mpwpb_date_time_next" type="button" data-wc_link_id="<?php echo esc_attr($link_wc_product); ?>" data-alert="<?php esc_html_e('Please Select Date & Time', 'service-booking-manager'); ?>">
 				<?php esc_html_e('Next Summary', 'service-booking-manager'); ?>

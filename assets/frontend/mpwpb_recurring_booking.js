@@ -97,21 +97,44 @@
             parent.find('#mpwpb_recurring_dates_list').empty();
         }
     });
-    
+
+    let price_in_number = 0;
     // Generate recurring dates when type or count changes
     $(document).on('change', '#mpwpb_recurring_type, #mpwpb_recurring_count', function() {
         let parent = $(this).closest('div.mpwpb_registration');
         let recurringType = parent.find('#mpwpb_recurring_type').val();
         let recurringCount = parseInt(parent.find('#mpwpb_recurring_count').val());
         let selectedDate = parent.find('[name="mpwpb_date"]').val();
-        
+
+        let recurring_discount_price = 0;
+        let recurring_discount = $('.mpwpb_recurring_discount');
+        if( recurring_discount.find('p').length > 0){
+            recurring_discount_price = parseInt( recurring_discount.find('p' ).attr('data-discount').trim() );
+        }
+
         if (recurringType && recurringCount >= 2 && selectedDate) {
             generateRecurringDates(parent, selectedDate, recurringType, recurringCount);
         } else {
             parent.find('.mpwpb_recurring_dates').hide();
             parent.find('#mpwpb_recurring_dates_list').empty();
         }
+
+        recuring_price_with_discount( recurringCount, recurring_discount_price );
     });
+
+    function recuring_price_with_discount( recurringCount, recurring_discount_price ){
+        let parent_div = $('.next_date_area');
+        let total_bill = parent_div.find('#mpwpd_all_total_bill').text();
+        if( price_in_number === 0 ){
+            price_in_number =  total_bill.match(/[0-9.]+/)[0] ;
+        }
+        let currency = total_bill.replace(/[0-9.]/g, '');
+        let total_bill_new = price_in_number * recurringCount ;
+        let discountAmount = ( total_bill_new * recurring_discount_price ) / 100;
+        total_bill_new = total_bill_new - discountAmount;
+        let bill = total_bill_new.toFixed(2)+ currency;
+        parent_div.find('#mpwpd_all_total_bill').text( bill );
+    }
     
     // Function to generate recurring dates
     function generateRecurringDates(parent, startDate, recurringType, recurringCount) {

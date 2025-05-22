@@ -523,13 +523,20 @@ function mpwpb_price_calculation($this) {
         let parent = $(this).closest('div.mpwpb_registration');
         let date = parent.find('[name="mpwpb_date"]').val();
 
+        let is_recurring_on = 'off';
+        let recurringCount = 1;
+        is_recurring_on = $('#mpwpb_enable_recurring_booking').is(':checked');
+        if( is_recurring_on ){
+            recurringCount = parseInt(parent.find('#mpwpb_recurring_count').val());
+            is_recurring_on = 'on';
+        }
+        console.log( is_recurring_on, recurringCount );
 
         let dateTimes = [];
         $('#mpwpb_recurring_dates_list li').each(function () {
             var dateTime = $(this).data('date-time');
-            // Remove seconds if present (convert "HH:MM:SS" to "HH:MM")
             if (dateTime) {
-                dateTime = dateTime.substring(0, 16); // "YYYY-MM-DD HH:MM"
+                dateTime = dateTime.substring(0, 16);
                 dateTimes.push(dateTime);
             }
         });
@@ -538,7 +545,6 @@ function mpwpb_price_calculation($this) {
             dateTimes.push(date);
         }
         var dateTimeString = dateTimes.join(',');
-
 
         if (date) {
 
@@ -591,7 +597,8 @@ function mpwpb_price_calculation($this) {
                     "mpwpb_service": mpwpb_service,
                     "mpwpb_service_qty": mpwpb_service_qty,
                     "mpwpb_date": dateTimeString,
-                    // "mpwpb_date": date,
+                    "recurringCount": recurringCount,
+                    "is_recurring_on": is_recurring_on,
                     "mpwpb_extra_service": mpwpb_extra_service,
                     "mpwpb_extra_service_type": mpwpb_extra_service_type,
                     "mpwpb_extra_service_qty": mpwpb_extra_service_qty,
