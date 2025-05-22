@@ -25,6 +25,7 @@
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Layout.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Admin.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Frontend.php';
+
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Form_Hook.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Checkout_Form_Modifier.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Direct_Form_Modifier.php';
@@ -46,6 +47,7 @@
 					update_option( 'mpwpb_license_settings', $license_settings );
 					update_option( 'mpwpb_conflict_update', 'completed' );
 				}
+
 			}
 			public function global_enqueue() {
 				do_action('add_mpwpb_common_script');

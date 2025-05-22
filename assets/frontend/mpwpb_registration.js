@@ -17,12 +17,19 @@ function mpwpb_price_calculation($this) {
             price = price + parseFloat(ex_price) * ex_qty;
         }
     });
+
     parent.find('.mpwpb_total_bill').html(mpwpb_price_format(price));
+
 }
 //Registration
 (function ($) {
     "use strict";
     $(document).ready(function () {
+        // Initialize recurring booking script if it exists
+        if (typeof initRecurringBooking === 'function') {
+            initRecurringBooking();
+        }
+
         $('div.mpwpb_registration').each(function () {
             let parent = $(this);
             let target = parent.find('.all_service_area');
@@ -37,6 +44,22 @@ function mpwpb_price_calculation($this) {
                     mpwpb_load_bg_image();
                     mpwpb_loaderRemove(target);
                 });
+            }
+
+            // Store post ID in data attribute for recurring booking
+            if (!parent.data('post-id')) {
+                let postId = 0;
+                // Try to get post ID from URL
+                let urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.has('id')) {
+                    postId = urlParams.get('id');
+                } else if (typeof mpwpb_ajax !== 'undefined' && mpwpb_ajax.post_id) {
+                    postId = mpwpb_ajax.post_id;
+                }
+
+                if (postId) {
+                    parent.attr('data-post-id', postId);
+                }
             }
         });
     });
@@ -499,7 +522,30 @@ function mpwpb_price_calculation($this) {
     $(document).on('click', 'div.mpwpb_registration .mpwpb_date_time_next', function () {
         let parent = $(this).closest('div.mpwpb_registration');
         let date = parent.find('[name="mpwpb_date"]').val();
+
+        let is_recurring_on = 'off';
+        let recurringCount = 1;
+        is_recurring_on = $('#mpwpb_enable_recurring_booking').is(':checked');
+        if( is_recurring_on ){
+            recurringCount = parseInt(parent.find('#mpwpb_recurring_count').val());
+            is_recurring_on = 'on';
+        }
+        let dateTimes = [];
+        $('#mpwpb_recurring_dates_list li').each(function () {
+            var dateTime = $(this).data('date-time');
+            if (dateTime) {
+                dateTime = dateTime.substring(0, 16);
+                dateTimes.push(dateTime);
+            }
+        });
+
+        if (dateTimes.length === 0) {
+            dateTimes.push(date);
+        }
+        var dateTimeString = dateTimes.join(',');
+
         if (date) {
+
             let link_id = $(this).attr('data-wc_link_id');
             let mpwpb_category = parent.find('[name="mpwpb_category"]').val();
             mpwpb_category = mpwpb_category ? parseInt(mpwpb_category) : '';
@@ -548,7 +594,9 @@ function mpwpb_price_calculation($this) {
                     "mpwpb_sub_category": mpwpb_sub_category,
                     "mpwpb_service": mpwpb_service,
                     "mpwpb_service_qty": mpwpb_service_qty,
-                    "mpwpb_date": date,
+                    "mpwpb_date": dateTimeString,
+                    "recurringCount": recurringCount,
+                    "is_recurring_on": is_recurring_on,
                     "mpwpb_extra_service": mpwpb_extra_service,
                     "mpwpb_extra_service_type": mpwpb_extra_service_type,
                     "mpwpb_extra_service_qty": mpwpb_extra_service_qty,

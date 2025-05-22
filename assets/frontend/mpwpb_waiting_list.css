@@ -1,0 +1,108 @@
+/* Waiting List Modal Styles */
+.mpwpb_waiting_list_modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.mpwpb_modal_content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 5px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.mpwpb_close_modal {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.mpwpb_form_group {
+    margin-bottom: 15px;
+}
+
+.mpwpb_form_group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.mpwpb_form_group input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.mpwpb_submit_waiting_list {
+    background-color: var(--mpwpb-theme-color, #0073aa);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.mpwpb_submit_waiting_list:hover {
+    background-color: var(--mpwpb-theme-hover-color, #005177);
+}
+
+.mpwpb_waiting_list_message {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.mpwpb_waiting_list_message .success {
+    color: #155724;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.mpwpb_waiting_list_message .error {
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+/* Waiting List Button Styles */
+._mpBtn.waiting-list {
+    background-color: #ff9800;
+    color: white;
+}
+
+._mpBtn.waiting-list:hover {
+    background-color: #e68a00;
+}
+
+._mpBtn.waiting-list-joined {
+    background-color: #4CAF50;
+    color: white;
+    cursor: default;
+}
+
+@media (max-width: 768px) {
+    .mpwpb_modal_content {
+        width: 95%;
+        margin: 20% auto;
+    }
+}

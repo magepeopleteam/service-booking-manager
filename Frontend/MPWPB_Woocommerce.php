@@ -28,6 +28,14 @@
 			public function add_cart_item_data($cart_item_data, $product_id) {
 				$linked_id = MPWPB_Global_Function::get_post_info($product_id, 'link_mpwpb_id', $product_id);
 				$product_id = is_string(get_post_status($linked_id)) ? $linked_id : $product_id;
+                $enable_recurring = MPWPB_Global_Function::get_post_info( $product_id, 'mpwpb_enable_recurring', 'no');
+                $recurring_discount = MPWPB_Global_Function::get_post_info( $product_id, 'mpwpb_recurring_discount', 0 );
+
+                $discountPercent = 0;
+                if( $enable_recurring === 'yes' ){
+                    $discountPercent = $recurring_discount;
+                }
+
 				if (isset($_POST['nonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_nonce')) {
 					if (get_post_type($product_id) == MPWPB_Function::get_cpt()) {
 						$category = isset($_POST['mpwpb_category']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_category'])) : '';
@@ -47,7 +55,13 @@
 						$ex_service_types = isset($_POST['mpwpb_extra_service_type']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_extra_service_type'])) : [];
 						$ex_service_qty = isset($_POST['mpwpb_extra_service_qty']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_extra_service_qty'])) : [];
 						$ex_service_group = isset($_POST['mpwpb_extra_service']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_extra_service'])) : [];
+						$is_recurring_on = isset($_POST['is_recurring_on']) ? sanitize_text_field( wp_unslash( $_POST['is_recurring_on'] ) ) : 'off';
 						$total_price = self::get_cart_total_price($product_id, $all_service, $ex_service_types, $ex_service_qty, $ex_service_group);
+                        if( $is_recurring_on === 'on' ){
+                            $recurringCount = isset($_POST['recurringCount']) ? sanitize_text_field( wp_unslash( $_POST['recurringCount'] ) ) : 1;
+                            $total_price = self::calculate_discounted_total( $total_price, $recurringCount, $discountPercent );
+                        }
+
 						$cart_item_data['mpwpb_category'] = MPWPB_Function::get_category_name($product_id, $category);
 						$cart_item_data['mpwpb_sub_category'] = MPWPB_Function::get_sub_category_name($product_id, $sub_category);
 						$cart_item_data['mpwpb_service'] = $all_service;
@@ -168,7 +182,7 @@
 								$sub_category = wc_get_order_item_meta($item_id, '_mpwpb_sub_category');
 								$sub_category = $sub_category ? sanitize_text_field( wp_unslash( $sub_category ) ) : '';
 								$service = wc_get_order_item_meta($item_id, '_mpwpb_service');
-								$service = $service ? sanitize_text_field( wp_unslash( $service ) ) : [];
+//								$service = $service ? array_map( 'sanitize_text_field', wp_unslash( $service ) ) : [];
 								$total_price = wc_get_order_item_meta($item_id, '_mpwpb_tp');
 								$total_price = $total_price ? sanitize_text_field( wp_unslash( $total_price ) ): '';
 								$ex_service = wc_get_order_item_meta($item_id, '_mpwpb_extra_service_info');
@@ -421,6 +435,13 @@
 				}
 				die();
 			}
+
+            public static function calculate_discounted_total( $price, $recurringCount, $discountPercent ) {
+                $total = $price * $recurringCount;
+                $discountAmount = ($total * $discountPercent) / 100;
+                $finalTotal = $total - $discountAmount;
+                return round($finalTotal, 2);
+            }
 		}
 		new MPWPB_Woocommerce();
 	}
