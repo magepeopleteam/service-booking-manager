@@ -186,7 +186,7 @@
 								$total_price = wc_get_order_item_meta($item_id, '_mpwpb_tp');
 								$total_price = $total_price ? sanitize_text_field( wp_unslash( $total_price ) ): '';
 								$ex_service = wc_get_order_item_meta($item_id, '_mpwpb_extra_service_info');
-								$ex_service_infos = $ex_service ? array_map( 'sanitize_text_field', wp_unslash( $ex_service ) ) : [];
+								$ex_service_infos = $ex_service ??  [];
 								$data['mpwpb_id'] = $post_id;
 								$data['mpwpb_date'] = $date;
 								if ($category) {
