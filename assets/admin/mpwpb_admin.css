@@ -381,3 +381,9 @@ section.faq-header
 .mpwpb-category-lists .mpwpb-category-items .parent-category-items, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items {
     border: 1px solid #e5dede !important;
 }
+.mpwpb_style .themeButton, .mpwpb_style [class*=_themeButton]
+ {
+    border-radius: 5px !important;
+    margin-right:5px; 
+
+}
