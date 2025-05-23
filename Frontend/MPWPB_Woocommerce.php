@@ -126,6 +126,10 @@
 					$sub_category = $values['mpwpb_sub_category'] ?: '';
 					$services = $values['mpwpb_service'] ?: [];
 					$date = $values['mpwpb_date'] ?: '';
+                    $date_array = [];
+                    if( !empty( $date ) ){
+                        $date_array = explode( ',', $date );
+                    }
 					$total_price = $values['mpwpb_tp'] ?? '';
 					$extra_service = $values['mpwpb_extra_service_info'] ?: [];
 					if ($category) {
@@ -140,8 +144,12 @@
 							$item->add_meta_data(esc_html__('Price ', 'service-booking-manager'), MPWPB_Global_Function::wc_price($post_id, $service['price']));
 						}
 					}
-					$item->add_meta_data(esc_html__('Date ', 'service-booking-manager'), esc_html(MPWPB_Global_Function::date_format($date)));
-					$item->add_meta_data(esc_html__('Time ', 'service-booking-manager'), esc_html(MPWPB_Global_Function::date_format($date, 'time')));
+                    if( is_array($date_array) && sizeof($date_array) > 0 ) {
+                        foreach ($date_array as $days) {
+                            $item->add_meta_data(esc_html__('Date ', 'service-booking-manager'), esc_html(MPWPB_Global_Function::date_format($days)));
+                            $item->add_meta_data(esc_html__('Time ', 'service-booking-manager'), esc_html(MPWPB_Global_Function::date_format($date, 'time')));
+                        }
+                    }
 					if (sizeof($extra_service) > 0) {
 						foreach ($extra_service as $ex_service) {
 							$item->add_meta_data(esc_html__('Services Name ', 'service-booking-manager'), $ex_service['ex_name']);
@@ -186,7 +194,7 @@
 								$total_price = wc_get_order_item_meta($item_id, '_mpwpb_tp');
 								$total_price = $total_price ? sanitize_text_field( wp_unslash( $total_price ) ): '';
 								$ex_service = wc_get_order_item_meta($item_id, '_mpwpb_extra_service_info');
-								$ex_service_infos = $ex_service ? array_map( 'sanitize_text_field', wp_unslash( $ex_service ) ) : [];
+								$ex_service_infos = $ex_service ??  [];
 								$data['mpwpb_id'] = $post_id;
 								$data['mpwpb_date'] = $date;
 								if ($category) {
@@ -274,20 +282,31 @@
 										<?php
 									}
 								}
-							?>
-                            <li>
-                                <span class="far fa-calendar-alt"></span>
-                                <h6><?php esc_html_e('Date', 'service-booking-manager'); ?>&nbsp;:&nbsp;</h6>
-                                <span><?php echo esc_html(MPWPB_Global_Function::date_format($cart_item['mpwpb_date'])); ?></span>
-                            </li>
-                            <li>
-                                <span class="far fa-clock"></span>
-                                <h6><?php esc_html_e('Time', 'service-booking-manager'); ?>&nbsp;:&nbsp;</h6>
-                                <span><?php echo esc_html(MPWPB_Global_Function::date_format($cart_item['mpwpb_date'], 'time')); ?></span>
-                            </li>
-                        </ul>
-                    </div>
-					<?php if (sizeof($extra_service) > 0) { ?>
+
+                            $str = strpos( $cart_item['mpwpb_date'], ',');
+
+
+                            $all_date_array = explode(',', $cart_item['mpwpb_date']);
+                            if( is_array( $all_date_array ) && sizeof( $all_date_array ) > 0 ) {
+                                foreach ($all_date_array as $days) {
+
+                                    ?>
+                                        <li>
+                                            <span class="far fa-calendar-alt"></span>
+                                            <h6><?php esc_html_e('Date', 'service-booking-manager'); ?>&nbsp;:&nbsp;</h6>
+                                            <span><?php echo esc_html(MPWPB_Global_Function::date_format( $days ) ); ?></span>
+                                        </li>
+                                        <li>
+                                            <span class="far fa-clock"></span>
+                                            <h6><?php esc_html_e('Time', 'service-booking-manager'); ?>&nbsp;:&nbsp;</h6>
+                                            <span><?php echo esc_html(MPWPB_Global_Function::date_format( $days, 'time')); ?></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                        <?php
+                            }
+                        }
+                        if (sizeof($extra_service) > 0) { ?>
                         <div class="dLayout_xs">
                             <h5 class="mB_xs"><?php esc_html_e('Extra Services', 'service-booking-manager'); ?></h5>
 							<?php foreach ($extra_service as $service) { ?>
