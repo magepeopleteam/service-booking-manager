@@ -1,0 +1,70 @@
+.mpwpv_service_list_container {
+    padding: 24px;
+    max-width: 1152px;
+    margin: 0 auto;
+}
+.mpwpv_service_list_header {
+    margin-bottom: 24px;
+}
+.mpwpv_service_list_header h1 {
+    color: #1f2937;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+.mpwpv_service_list_header p {
+    color: #6b7280;
+}
+.mpwpv_service_list_analytics-container {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+}
+.mpwpv_service_list_analytics-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    min-width: max-content;
+}
+.mpwpv_service_list_analytics-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    font-size: 24px;
+}
+.mpwpv_service_list_analytics-icon.blue {
+    background-color: #dbeafe;
+    color: #2563eb;
+}
+.mpwpv_service_list_analytics-icon.green {
+    background-color: #dcfce7;
+    color: #16a34a;
+}
+.mpwpv_service_list_analytics-icon.purple {
+    background-color: #f3e8ff;
+    color: #9333ea;
+}
+.mpwpv_service_list_analytics-icon.orange {
+    background-color: #fed7aa;
+    color: #ea580c;
+}
+.mpwpv_service_list_analytics-text p:first-child {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 2px;
+}
+
+@media (max-width: 768px) {
+    .mpwpv_service_list_analytics-container {
+        flex-direction: column;
+    }
+}

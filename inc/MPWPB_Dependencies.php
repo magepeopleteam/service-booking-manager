@@ -24,6 +24,7 @@
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Query.php';
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Layout.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Admin.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Service_List.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Frontend.php';
 
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Form_Hook.php';
@@ -57,6 +58,7 @@
 				// ****custom************//
 				wp_enqueue_style('mpwpb_admin', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_admin.css', [], time());
 				wp_enqueue_style('admin_style', MPWPB_PLUGIN_URL . '/assets/admin/admin_style.css', [], time());
+				wp_enqueue_style('mpwpb_service_list', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_service_list.css', [], time());
 				wp_enqueue_script('mpwpb_admin', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_admin.js', ['jquery'], time(), true);
 				wp_localize_script('mpwpb_admin', 'mpwpb_admin_ajax', array(
 					'ajax_url' => admin_url('admin-ajax.php'),
