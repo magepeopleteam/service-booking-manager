@@ -124,6 +124,12 @@ function mpwpb_get_service_posts_by_status() {
 }
 
 $data = mpwpb_get_service_posts_by_status();
+
+    $count_service = wp_count_posts('mpwpb_item');
+    $publish = isset($count_service->publish) ? $count_service->publish : 0;
+    $draft   = isset($count_service->draft) ? $count_service->draft : 0;
+    $trash   = isset($count_service->trash) ? $count_service->trash : 0;
+    $total   = $publish + $draft + $trash;
 ?>
 
 <div class="mpwpv_service_list_container">
@@ -139,7 +145,7 @@ $data = mpwpb_get_service_posts_by_status();
             <div class="mpwpv_service_list_analytics-icon blue">📊</div>
             <div class="mpwpv_service_list_analytics-text">
                 <p>Total Services</p>
-                <p>142</p>
+                <p><?php echo esc_attr( $total )?></p>
             </div>
         </div>
 
@@ -181,10 +187,10 @@ $data = mpwpb_get_service_posts_by_status();
             </div>
 
             <div class="mpwpv_service_list_filter-buttons">
-                <button class="mpwpv_service_list_filter-btn" data-filter-item="all">All Items (15)</button>
-                <button class="mpwpv_service_list_filter-btn" data-filter-item="publish">Published (13)</button>
-                <button class="mpwpv_service_list_filter-btn" data-filter-item="draft">Draft (2)</button>
-                <button class="mpwpv_service_list_filter-btn" data-filter-item="trash">Trash (0)</button>
+                <button class="mpwpv_service_list_filter-btn" data-filter-item="all">All Items (<?php echo esc_attr( $total )?>)</button>
+                <button class="mpwpv_service_list_filter-btn" data-filter-item="publish">Published (<?php echo esc_attr( $publish )?>)</button>
+                <button class="mpwpv_service_list_filter-btn" data-filter-item="draft">Draft (<?php echo esc_attr( $draft )?>)</button>
+                <button class="mpwpv_service_list_filter-btn" data-filter-item="trash">Trash (<?php echo esc_attr( $trash )?>)</button>
             </div>
         </div>
 
