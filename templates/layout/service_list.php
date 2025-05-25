@@ -1,6 +1,7 @@
 <?php
 function mpwpb_get_service_posts_by_status() {
-    $statuses = ['publish', 'draft', 'trash'];
+//    $statuses = ['publish', 'draft', 'trash'];
+    $statuses = ['publish', 'draft'];
     ob_start(); // Start buffering
     $args = [
         'post_type'      => 'mpwpb_item',
