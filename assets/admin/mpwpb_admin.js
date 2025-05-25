@@ -1398,17 +1398,35 @@
     $(document).on('click', '[data-modal-target] .mpwpb-modal-close', function (e) {
         $(this).closest('[data-modal-target]').removeClass('open');
     });
+
+    $(document).on('keyup', '#mpwpv_service_list_search_input', function() {
+        let searchText = $(this).val().toLowerCase();
+        mpwpb_function_search_by_post_name( searchText, 'mpwpv_service_list_table-container' );
+    });
+    function mpwpb_function_search_by_post_name( searchText, class_name ){
+        $('.'+class_name).each(function() {
+            let service_name = $(this).data('service-title').toLowerCase();
+
+            if ( service_name.includes( searchText ) ) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    }
+
+
     $(document).on('click', '.mpwpv_service_list_filter-btn', function() {
 
         $('.mpwpv_service_list_filter-btn').removeClass('ttbm_filter_btn_active_bg_color').addClass('ttbm_filter_btn_bg_color');
         $(this).removeClass('ttbm_filter_btn_bg_color').addClass('ttbm_filter_btn_active_bg_color');
         let searchText = $(this).attr('data-filter-item');
-        ttbm_function_filter_by_post_type( searchText, 'mpwpv_service_list_table-container' );
+        ttbm_function_filter_by_post_type( searchText, 'mpwpv_service_list_table-container', 'service-status' );
     });
 
-    function ttbm_function_filter_by_post_type( searchText, class_name ){
+    function ttbm_function_filter_by_post_type( searchText, class_name, service_status ){
         $('.'+class_name).each(function() {
-            let by_filter = $(this).data('service-status').toLowerCase();
+            let by_filter = $(this).data( service_status ).toLowerCase();
             if( searchText === 'all' ){
                 $(this).fadeIn();
             }else{
