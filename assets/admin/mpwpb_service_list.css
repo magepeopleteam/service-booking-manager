@@ -318,7 +318,14 @@
 .mpwpb_duplicate_post{
     margin-top: 6px;
 }
-.mpwpv_service_list_actions a{ border:1px solid #2e77ff; }
+.mpwpv_service_list_actions a{ border: 1px solid #2e77ff;
+    padding: 10px;
+    font-size: 20px;
+}
+a.mpwpb_duplicate_post {
+    padding: 10px;
+    border-radius: 30px;
+}
 
 /* Responsive Design */
 @media screen and (max-width: 768px) {
