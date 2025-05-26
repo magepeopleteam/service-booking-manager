@@ -241,9 +241,9 @@
 .mpwpv_service_list_services {
     display: flex;
     flex-wrap: wrap;
-    flex-direction: column;
+    /*flex-direction: column;*/
     gap: 6px;
-    /*max-width: 150px;*/
+    max-width: 350px;
 }
 
 .mpwpv_service_list_badge {
@@ -257,10 +257,18 @@
     background: #2e77ff;
     color: #2e77ff;
 }
+.gray {
+    background: #69717f;
+    color: #2e77ff;
+}
 
 .green {
     background: #10893e;
     color: #10893e;
+}
+.orange {
+    background: #e7a185;
+    color: #e7a185;
 }
 .yellow {
     background-color: #fef3c7;
@@ -291,6 +299,19 @@
     align-items: center;
     background: #e5efff;
     padding: 12px;
+}
+
+.mpwpb_service_bg_color_one{
+    background-color: rgb(251 251 248);
+}
+.mpwpb_service_bg_color_two{
+    background-color: rgb(239 231 230);
+}
+.mpwpb_service_bg_color_three{
+    background-color: rgb(251 242 244);
+}
+.mpwpb_service_bg_color_four{
+    background-color: rgb(247 237 244);
 }
 
 .mpwpv_service_list_more {

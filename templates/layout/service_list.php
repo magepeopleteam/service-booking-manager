@@ -80,22 +80,30 @@ function mpwpb_get_service_posts_by_status( $query ) {
 
                                 if( is_array( $all_services ) && !empty( $all_services ) ) {
                                     foreach ($all_services as $service) {
-                                        if( $service_show < 2 ){
+                                        if( $service_show < 4 ){
                                             if( $service_show === 0 ){
+                                                $color_class = 'gray';
+                                                $bg_color = 'mpwpb_service_bg_color_one';
+                                            }else if( $service_show === 1 ){
+                                                $color_class = 'orange';
+                                                $bg_color = 'mpwpb_service_bg_color_two';
+                                            }else if( $service_show === 2 ){
                                                 $color_class = 'blue';
+                                                $bg_color = 'mpwpb_service_bg_color_three';
                                             }else{
-                                                $color_class = 'green';
+                                                $color_class = 'orange';
+                                                $bg_color = 'mpwpb_service_bg_color_four';
                                             }
                                             ?>
-                                            <div class="mpwpv_service_list_holder <?php echo esc_attr( $color_class );?>">
+                                            <div class="mpwpv_service_list_holder <?php echo esc_attr( $bg_color );?>">
                                                 <span class="mpwpv_service_list_service-tag <?php echo esc_attr( $color_class );?>"></span>
                                                 <span class="mpwpv_service_list_badge"><?php echo esc_html( $service['name'] )?></span>
                                             </div>
                                             <?php $service_show++;
                                         }
                                     }
-                                } if( $service_count > 2){
-                                    $remainig_service_count = $service_count - 2;
+                                } if( $service_count > 4){
+                                    $remainig_service_count = $service_count - 4;
                                     ?>
                                     <span class="mpwpv_service_list_more">+<?php echo esc_attr( $remainig_service_count );?> more</span>
                                 <?php }?>
