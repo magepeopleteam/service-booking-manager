@@ -20,11 +20,11 @@
 				load_plugin_textdomain('service-booking-manager', false, $plugin_dir);
 			}
 			private function load_file(): void {
+                require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Service_List.php';
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Function.php';
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Query.php';
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Layout.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Admin.php';
-                require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Service_List.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Frontend.php';
 
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Form_Hook.php';

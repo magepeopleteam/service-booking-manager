@@ -108,7 +108,7 @@
     position: relative;
 }
 .mpwpv_service_list_search-input {
-    padding: 8px 16px 8px 40px;
+    padding: 5px 10px 5px 23px !important;
     border: 1px solid #d1d5db;
     border-radius: 8px;
     outline: none;
@@ -116,7 +116,7 @@
 }
 .mpwpv_service_list_search-icon {
     position: absolute;
-    left: 12px;
+    left: 6px;
     top: 50%;
     transform: translateY(-50%);
     color: #9ca3af;
@@ -316,7 +316,9 @@
 .status-draft {
     color: #ea580c;
 }
-
+.mpwpb_duplicate_post{
+    margin-top: 6px;
+}
 
 /* Responsive Design */
 @media screen and (max-width: 768px) {
