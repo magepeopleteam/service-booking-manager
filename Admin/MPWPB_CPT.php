@@ -56,6 +56,7 @@
 					'show_ui' => true,  // you should be able to edit it in wp-admin
 					'exclude_from_search' => true,  // you should exclude it from search results
 					'show_in_nav_menus' => false,  // you shouldn't be able to add it to menus
+					
 					'has_archive' => false,  // it shouldn't have archive page
 					'rewrite' => ['slug' => $slug],
 				];
@@ -64,3 +65,9 @@
 		}
 		new MPWPB_CPT();
 	}
+
+	function mpwpb_hide_cpt_all_posts_submenu() {
+    	// Replace 'my_custom_post' with your actual CPT slug
+   	 	remove_submenu_page('edit.php?post_type=mpwpb_item', 'edit.php?post_type=mpwpb_item');
+	}
+	add_action('admin_menu', 'mpwpb_hide_cpt_all_posts_submenu', 999);
