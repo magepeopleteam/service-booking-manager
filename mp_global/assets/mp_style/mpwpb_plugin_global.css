@@ -130,7 +130,7 @@
 	div.mpwpb_style h3,
 	div.mpwpb_style [class*="_fs_h3"] { font-size: var(--mpwpb_fs_h3); font-weight: var(--mpwpb_fw-medium); }
 	div.mpwpb_style h4,
-	div.mpwpb_style [class*="_fs_h4"] { font-size: var(--mpwpb_fs_h4); font-weight: var(--mpwpb_fw-medium); text-transform: inherit;}
+	div.mpwpb_style [class*="_fs_h4"] { font-size: var(--mpwpb_fs_h4); font-weight: var(--mpwpb_fw-medium); text-transform: inherit; padding-bottom:10px;}
 	div.mpwpb_style h5,
 	div.mpwpb_style [class*="_fs_h5"] { font-size: var(--mpwpb_fs_h5); font-weight: var(--mpwpb_fw-medium); text-transform: inherit;}
 	div.mpwpb_style h6,
