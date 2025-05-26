@@ -258,7 +258,7 @@ $total_user = get_total_customer();
                 <p><?php esc_attr_e( 'Monthly Revenue', 'service-booking-manager')?></p>
                 <p><?php
                         $current_month = date('Y-m');
-                        $revinue = isset( $monthly_totals[ $current_month ] ) ? $monthly_totals[ $current_month ] : 0;
+                        $revinue = isset( $monthly_totals[ $current_month ] ) ? $monthly_totals[ $current_month ] : 0 ;
                         echo wp_kses_post( wc_price( $revinue ) );
                     ?>
                 </p>
