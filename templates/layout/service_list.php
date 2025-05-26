@@ -1,15 +1,31 @@
 <?php
-function mpwpb_get_service_posts_by_status() {
-//    $statuses = ['publish', 'draft', 'trash'];
-    $statuses = ['publish', 'draft'];
-    ob_start(); // Start buffering
-    $args = [
-        'post_type'      => 'mpwpb_item',
-        'post_status'    => $statuses,
-        'posts_per_page' => -1,
-    ];
 
-    $query = new WP_Query($args);
+$statuses = ['publish', 'draft'];
+$args = [
+    'post_type'      => 'mpwpb_item',
+    'post_status'    => $statuses,
+    'posts_per_page' => -1,
+];
+
+$query = new WP_Query($args);
+
+$data = mpwpb_get_service_posts_by_status( $query );
+
+$count_service = wp_count_posts('mpwpb_item');
+$publish = isset($count_service->publish) ? $count_service->publish : 0;
+$draft   = isset($count_service->draft) ? $count_service->draft : 0;
+$trash   = isset($count_service->trash) ? $count_service->trash : 0;
+$total   = $publish + $draft + $trash;
+
+$trash_link = add_query_arg([
+    'post_status' => 'trash',
+    'post_type'   => 'mpwpb_item',
+], admin_url('edit.php'));
+function mpwpb_get_service_posts_by_status( $query ) {
+//    $statuses = ['publish', 'draft', 'trash'];
+
+    ob_start(); // Start buffering
+
 
     if ($query->have_posts()) {
         while ($query->have_posts()) {
@@ -58,7 +74,7 @@ function mpwpb_get_service_posts_by_status() {
                                     <span class="mpwpv_service_list_status <?php echo esc_attr( $status_dot_class );?>"></span>
                                     <span class="mpwpv_service_list_availability <?php echo esc_attr( $status_class );?>"><?php echo ucfirst($status_text); ?></span>
                                 </div>
-                                <div class="mpwpv_service_list_title"><?php echo esc_html( $service_name ); ?></div>
+                                <div class="mpwpv_service_list_title"><a href="<?php echo esc_url( $edit_link )?>" style="color: unset"><?php echo esc_html( $service_name ); ?></a></div>
                             </div>
                             <div class="mpwpv_service_list_location"><?php echo esc_attr( $sub_title );?></div>
                             <div class="mpwpv_service_list_services">
@@ -130,18 +146,85 @@ function mpwpb_get_service_posts_by_status() {
     return $results;
 }
 
-$data = mpwpb_get_service_posts_by_status();
+function get_total_customer(){
+    $users = get_users([
+        'role' => 'customer',
+        'fields' => 'ID',
+    ]);
 
-$count_service = wp_count_posts('mpwpb_item');
-$publish = isset($count_service->publish) ? $count_service->publish : 0;
-$draft   = isset($count_service->draft) ? $count_service->draft : 0;
-$trash   = isset($count_service->trash) ? $count_service->trash : 0;
-$total   = $publish + $draft + $trash;
+    return count( $users );
+}
+function get_upcomming_service_order_count(){
+    $start_date = date('Y-m-d') . 'T00:00:00' . date('P');
+    $end_date = date('Y-12-31') . 'T23:59:59' . date('P');
+    $args = array(
+        'status'   => array('processing', 'completed', 'on-hold', 'pending'),
+        'limit'    => -1,
+        'orderby'  => 'date',
+        'order'    => 'DESC',
+        'date_query' => array(
+            array(
+                'after'     => $start_date,
+                'before'    => $end_date,
+                'inclusive' => true,
+            ),
+        ),
+    );
+    $orders = wc_get_orders($args);
+    $all_booking_dates = [];
 
-$trash_link = add_query_arg([
-    'post_status' => 'trash',
-    'post_type'   => 'mpwpb_item',
-], admin_url('edit.php'));
+    foreach ($orders as $order) {
+        foreach ($order->get_items() as $item_id => $item) {
+            $service_date_raw = sanitize_text_field(wc_get_order_item_meta($item_id, '_mpwpb_date', true) ?: '');
+            if ( !empty($service_date_raw ) ) {
+                $dates = explode(',', $service_date_raw);
+                $all_booking_dates = array_merge( $all_booking_dates, $dates );
+            }
+        }
+    }
+
+    return count( $all_booking_dates );
+}
+
+function get_monthly_sales_totals() {
+    $start_date = date('Y-m-d') . 'T00:00:00' . date('P');
+    $end_date   = date('Y-12-31') . 'T23:59:59' . date('P');
+
+    $args = array(
+        'status'     => array('processing', 'completed', 'on-hold', 'pending'),
+        'limit'      => -1,
+        'orderby'    => 'date',
+        'order'      => 'DESC',
+        'date_query' => array(
+            array(
+                'after'     => $start_date,
+                'inclusive' => true,
+            ),
+        ),
+    );
+
+    $orders = wc_get_orders($args);
+    $monthly_totals = [];
+
+    foreach ($orders as $order) {
+        $order_date = $order->get_date_created(); // WC_DateTime object
+        if ( $order_date ) {
+            $month = $order_date->format('Y-m'); // e.g., 2025-06
+            $total = floatval($order->get_total());
+
+            if (isset($monthly_totals[$month])) {
+                $monthly_totals[$month] += $total;
+            } else {
+                $monthly_totals[$month] = $total;
+            }
+        }
+    }
+
+    return $monthly_totals;
+}
+$monthly_totals = get_monthly_sales_totals();
+$all_booking_dates = get_upcomming_service_order_count();
+$total_user = get_total_customer();
 ?>
 
 <div class="mpwpv_service_list_container">
@@ -165,7 +248,7 @@ $trash_link = add_query_arg([
             <div class="mpwpv_service_list_analytics-icon green">👥</div>
             <div class="mpwpv_service_list_analytics-text">
                 <p><?php esc_attr_e( 'Active Clients', 'service-booking-manager')?></p>
-                <p><?php esc_attr_e( '87', 'service-booking-manager')?></p>
+                <p><?php echo esc_attr( $total_user )?></p>
             </div>
         </div>
 
@@ -173,7 +256,11 @@ $trash_link = add_query_arg([
             <div class="mpwpv_service_list_analytics-icon purple">💲</div>
             <div class="mpwpv_service_list_analytics-text">
                 <p><?php esc_attr_e( 'Monthly Revenue', 'service-booking-manager')?></p>
-                <p><?php esc_attr_e( '$28,650', 'service-booking-manager')?></p>
+                <p><?php
+                    $current_month = date('Y-m');
+                        echo wp_kses_post( wc_price( $monthly_totals[ $current_month ] ) );
+                    ?>
+                </p>
             </div>
         </div>
 
@@ -181,7 +268,7 @@ $trash_link = add_query_arg([
             <div class="mpwpv_service_list_analytics-icon orange">📅</div>
             <div class="mpwpv_service_list_analytics-text">
                 <p><?php esc_attr_e( 'Upcoming Bookings', 'service-booking-manager')?></p>
-                <p><?php esc_attr_e( '23', 'service-booking-manager')?></p>
+                <p><?php echo esc_attr( $all_booking_dates )?></p>
             </div>
         </div>
     </div>
