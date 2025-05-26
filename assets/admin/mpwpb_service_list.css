@@ -38,6 +38,13 @@
     cursor: pointer;
 }
 
+.mpwpb_item_page_mpwpb_service_list .mpwpv_service_list_header .updated {
+    display: none;
+}
+.mpwpv_service_list_container > .mpwpv_service_list_header {
+    display: block;
+}
+
 .mpwpv_service_list_table_header {
     display: flex;
     font-weight: bold;
