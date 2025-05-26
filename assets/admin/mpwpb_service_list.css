@@ -339,7 +339,6 @@
 }
 
 .mpwpv_service_list_actions {
-    display: flex;
     gap: 8px;
 }
 
@@ -363,11 +362,11 @@
     margin-top: 6px;
 }
 .mpwpv_service_list_actions a{ border: 1px solid #2e77ff;
-    padding: 15px;
+    padding: 5px;
     font-size: 15px;
 }
 a.mpwpb_duplicate_post {
-    padding: 10px;
+    padding: 5px;
     border-radius: 30px;
 }
 
