@@ -10,23 +10,19 @@ $args = [
 $query = new WP_Query($args);
 
 $data = mpwpb_get_service_posts_by_status( $query );
-
 $count_service = wp_count_posts('mpwpb_item');
 $publish = isset($count_service->publish) ? $count_service->publish : 0;
 $draft   = isset($count_service->draft) ? $count_service->draft : 0;
 $trash   = isset($count_service->trash) ? $count_service->trash : 0;
 $total   = $publish + $draft + $trash;
-
 $trash_link = add_query_arg([
     'post_status' => 'trash',
     'post_type'   => 'mpwpb_item',
 ], admin_url('edit.php'));
+$add_new_link = admin_url('post-new.php?post_type=mpwpb_item');
+
 function mpwpb_get_service_posts_by_status( $query ) {
-//    $statuses = ['publish', 'draft', 'trash'];
-
-    ob_start(); // Start buffering
-
-
+    ob_start();
     if ($query->have_posts()) {
         while ($query->have_posts()) {
             $query->the_post();
@@ -105,8 +101,7 @@ function mpwpb_get_service_posts_by_status( $query ) {
                                 <?php }?>
                             </div>
                             <div class="mpwpv_service_list_rating">
-                                <span class="mpwpv_service_list_rating_number">4.8</span>
-                                <span class="mpwpv_service_list_stars">★★★★★</span>
+                                <span class="mpwpv_service_list_rating_number"><?php MPWPB_Static_Template::get_ratings();?></span>
                             </div>
 
                             <div class="mpwpv_service_list_actions">
@@ -145,7 +140,6 @@ function mpwpb_get_service_posts_by_status( $query ) {
 
     return $results;
 }
-
 function get_total_customer(){
     $users = get_users([
         'role' => 'customer',
@@ -185,7 +179,6 @@ function get_upcomming_service_order_count(){
 
     return count( $all_booking_dates );
 }
-
 function get_monthly_sales_totals() {
     $start_date = date('Y-m-d') . 'T00:00:00' . date('P');
     $end_date   = date('Y-12-31') . 'T23:59:59' . date('P');
@@ -280,9 +273,12 @@ $total_user = get_total_customer();
         <div class="mpwpv_service_list_card-header">
             <div class="mpwpv_service_list_header-top">
                 <h2><?php esc_attr_e( 'Service Listings', 'service-booking-manager')?></h2>
-                <div class="mpwpv_service_list_search-container">
-                    <input type="text" class="mpwpv_service_list_search-input" id="mpwpv_service_list_search_input" placeholder="<?php esc_attr_e( 'Search services...', 'service-booking-manager')?>">
-                    <span class="mpwpv_service_list_search-icon">🔍</span>
+                <div class="mpwpb_add_new_search_holder">
+                    <a href="<?php echo esc_url( $add_new_link )?>"><div class="mpwpb_add_new_Service"><span class="fas fa-plus _mR_xs"></span><?php echo esc_html__('Add New Service', 'tour-booking-manager')?></div></a>
+                    <div class="mpwpv_service_list_search-container">
+                        <input type="text" class="mpwpv_service_list_search-input" id="mpwpv_service_list_search_input" placeholder="<?php esc_attr_e( 'Search services...', 'service-booking-manager')?>">
+                        <span class="mpwpv_service_list_search-icon">🔍</span>
+                    </div>
                 </div>
             </div>
 

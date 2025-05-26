@@ -21,6 +21,22 @@
     overflow-x: auto;
     padding-bottom: 8px;
 }
+.mpwpb_add_new_search_holder{
+    display: flex;
+    gap: 20px;
+}
+
+.mpwpb_add_new_Service{
+    border: 0;
+    box-shadow: none;
+    background-color: var(--mpl-primary);
+    border-radius: 0.25rem;
+    padding: 0.5em 0.75em;
+    color: var(--mpl-white);
+    font-size: 1rem;
+    transition: all 0.5s ease-in-out;
+    cursor: pointer;
+}
 
 .mpwpv_service_list_table_header {
     display: flex;
@@ -107,7 +123,7 @@
     position: relative;
 }
 .mpwpv_service_list_search-input {
-    padding: 5px 10px 5px 23px !important;
+    padding: 10px 10px 10px 23px !important;
     border: 1px solid #d1d5db;
     border-radius: 8px;
     outline: none;
