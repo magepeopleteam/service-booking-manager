@@ -71,3 +71,33 @@
    	 	remove_submenu_page('edit.php?post_type=mpwpb_item', 'edit.php?post_type=mpwpb_item');
 	}
 	add_action('admin_menu', 'mpwpb_hide_cpt_all_posts_submenu', 999);
+
+
+	function mpwpb_reorder_service_list_submenu() {
+    	global $submenu;
+		$parent_slug = 'edit.php?post_type=mpwpb_item';
+		if (!isset($submenu[$parent_slug])) {
+			return;
+		}
+		$original = $submenu[$parent_slug];
+		$reordered = [];
+		// First keep the first item (usually "All Posts")
+		if (isset($original[0])) {
+			$reordered[] = $original[0];
+		}
+		// Now push your custom page second
+		foreach ($original as $item) {
+			if ($item[2] === 'mpwpb_service_list') {
+				$reordered[] = $item;
+			}
+		}
+		// Then push the remaining items, skipping the one we already moved
+		foreach ($original as $item) {
+			if ($item[2] !== 'mpwpb_service_list' && $item !== $original[0]) {
+				$reordered[] = $item;
+			}
+		}
+		// Replace submenu with reordered list
+		$submenu[$parent_slug] = $reordered;
+	}
+	add_action('admin_menu', 'mpwpb_reorder_service_list_submenu', 999);
