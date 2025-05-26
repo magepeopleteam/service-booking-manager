@@ -19,7 +19,7 @@
     display: flex;
     align-items: center;
     margin-bottom: 15px;
-    gap:15px;
+    gap: 20px;
 }
 
 .mpwpb_recurring_toggle label {
