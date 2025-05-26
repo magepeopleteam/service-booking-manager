@@ -29,10 +29,10 @@
 .mpwpb_add_new_Service{
     border: 0;
     box-shadow: none;
-    background-color: var(--mpl-primary);
+    background-color: #5e59c7ee;
     border-radius: 0.25rem;
     padding: 0.5em 0.75em;
-    color: var(--mpl-white);
+    color: #fff;
     font-size: 1rem;
     transition: all 0.5s ease-in-out;
     cursor: pointer;
