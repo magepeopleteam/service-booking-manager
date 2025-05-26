@@ -327,7 +327,7 @@
 	.mpwpb_style .zeroBorder, .mpwpb_style [class*="_zeroBorder"] { border: none; }
 	/**************/
 	.mpwpb_style .padZero, .mpwpb_style span.padZero, .mpwpb_style [class*="_pad_zero"] { padding: 0; }
-	.mpwpb_style .padding, .mpwpb_style [class*="_padding"] { padding: var(--mpwpb_dmp); }
+	/* .mpwpb_style .padding, .mpwpb_style [class*="_padding"] { padding: var(--mpwpb_dmp); } */
 	.mpwpb_style .padding_xs, .mpwpb_style [class*="_padding_xs"] { padding: var(--mpwpb_dmp_xs); }
 	.mpwpb_style .pad_25, .mpwpb_style [class*="_pad_25"] { padding: 25px; }
 	.mpwpb_style .pT, .mpwpb_style [class*="_pT"] { padding-top: var(--mpwpb_dmp); }
