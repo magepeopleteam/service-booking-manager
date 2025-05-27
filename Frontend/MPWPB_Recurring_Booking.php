@@ -66,14 +66,6 @@ if (!class_exists('MPWPB_Recurring_Booking')) {
             $recurring_count = isset($_POST['recurring_count']) ? absint($_POST['recurring_count']) : 0;
             $dates = isset($_POST['dates']) ? array_map('sanitize_text_field', wp_unslash($_POST['dates'])) : [];
 
-            // Debug information
-            error_log('Recurring booking request: ' . json_encode([
-                'post_id' => $post_id,
-                'recurring_type' => $recurring_type,
-                'recurring_count' => $recurring_count,
-                'dates' => $dates
-            ]));
-
             // Validate the data
             if (!$post_id || !$recurring_type || $recurring_count < 2 || empty($dates)) {
                 wp_send_json_error([
@@ -112,14 +104,14 @@ if (!class_exists('MPWPB_Recurring_Booking')) {
 
             // Make sure we have a valid date format
             if (!strtotime($start_date)) {
-                error_log('Invalid start date format: ' . $start_date);
+                // error_log('Invalid start date format: ' . $start_date);
                 return $dates;
             }
 
             // Parse the date and time
             $date_parts = date_parse($start_date);
             if ($date_parts === false) {
-                error_log('Failed to parse date: ' . $start_date);
+                // error_log('Failed to parse date: ' . $start_date);
                 return $dates;
             }
 
@@ -151,7 +143,7 @@ if (!class_exists('MPWPB_Recurring_Booking')) {
                     $dates[] = $date_string . ' ' . $time_string;
                 }
             } catch (Exception $e) {
-                error_log('Error creating DateTime object: ' . $e->getMessage());
+                // error_log('Error creating DateTime object: ' . $e->getMessage());
                 return [$start_date];
             }
 

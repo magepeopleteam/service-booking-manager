@@ -487,9 +487,9 @@
 				}
 			}
 			function save_custom_checkout_fields_to_order($order_id, $data) {
-				error_log('Saving custom checkout fields for order ID: ' . $order_id);
+				// error_log('Saving custom checkout fields for order ID: ' . $order_id);
 				if (!isset($_POST['mp_checkout_nonce_action']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['mp_checkout_nonce_action'])), 'mp_checkout_nonce_action')) {
-					error_log('Nonce verification failed for saving custom checkout fields');
+					// error_log('Nonce verification failed for saving custom checkout fields');
 					return;
 				}
 
@@ -497,7 +497,7 @@
 				$checkout_key_fields = $this->get_checkout_fields_for_checkout();
 
 				// Debug POST data
-				error_log('POST data: ' . print_r($_POST, true));
+				// error_log('POST data: ' . print_r($_POST, true));
 
 				// Process each section (billing, shipping, order)
 				foreach ($checkout_key_fields as $key => $checkout_fields) {
@@ -507,17 +507,17 @@
 						foreach ($checkout_other_fields as $q => $field) {
                             $value = isset($_POST[$q]) ? sanitize_text_field(wp_unslash($_POST[$q])) : '';
 							update_post_meta($order_id, '_' . $q, $value);
-							error_log('Saved regular field ' . $q . ' with value: ' . $value);
+							// error_log('Saved regular field ' . $q . ' with value: ' . $value);
 						}
 
 						// Process file upload fields
 						if (in_array('file', array_column($checkout_fields, 'type'))) {
-							error_log('Found file fields in ' . $key . ' section');
+							// error_log('Found file fields in ' . $key . ' section');
 							$checkout_file_fields = array_filter($checkout_fields, array($this, 'get_file_fields'));
-							error_log('File fields: ' . print_r($checkout_file_fields, true));
+							// error_log('File fields: ' . print_r($checkout_file_fields, true));
 
 							foreach ($checkout_file_fields as $p => $file_field) {
-								error_log('Processing file field: ' . $p);
+								// error_log('Processing file field: ' . $p);
 
 								// Check if this is a required field
 								$is_required = isset($file_field['required']) && $file_field['required'] == '1';
@@ -527,33 +527,33 @@
 
 								if (!empty($file_url)) {
 									// We have a file URL from the AJAX upload
-									error_log('Found file URL in POST data for field ' . $p . ': ' . $file_url);
+									// error_log('Found file URL in POST data for field ' . $p . ': ' . $file_url);
 									update_post_meta($order_id, '_' . $p, $file_url);
 
 									// Extract the filename from the URL
 									$filename = basename($file_url);
 									update_post_meta($order_id, '_' . $p . '_filename', sanitize_text_field($filename));
-									error_log('Saved filename for field ' . $p . ': ' . $filename);
+									// error_log('Saved filename for field ' . $p . ': ' . $filename);
 								} else {
 									// Try the old method as a fallback
 									$image_url = $this->get_uploaded_image_link($p . '_file');
 
 									if ($image_url) {
-										error_log('Saving file URL from fallback method for field ' . $p . ': ' . $image_url);
+										// error_log('Saving file URL from fallback method for field ' . $p . ': ' . $image_url);
 										update_post_meta($order_id, '_' . $p, esc_url($image_url));
 
 										// Save the original filename if available
 										if (session_id() && isset($_SESSION['mpwpb_file_original_names'][$p])) {
 											$original_filename = $_SESSION['mpwpb_file_original_names'][$p];
 											update_post_meta($order_id, '_' . $p . '_filename', sanitize_text_field($original_filename));
-											error_log('Saved original filename for field ' . $p . ': ' . $original_filename);
+											// error_log('Saved original filename for field ' . $p . ': ' . $original_filename);
 										}
 									} else {
-										error_log('No file URL found for field: ' . $p);
+										// error_log('No file URL found for field: ' . $p);
 
 										// If no file was uploaded but the field is not required, that's okay
 										if (!$is_required) {
-											error_log('Field ' . $p . ' is not required, so no file upload is acceptable');
+											// error_log('Field ' . $p . ' is not required, so no file upload is acceptable');
 										}
 									}
 								}
@@ -567,7 +567,7 @@
 					unset($_SESSION['mpwpb_file_original_names']);
 				}
 
-				error_log('Finished saving custom checkout fields for order ID: ' . $order_id);
+				// error_log('Finished saving custom checkout fields for order ID: ' . $order_id);
 			}
 			function get_post($order_id) {
 				$args = array(
@@ -594,14 +594,14 @@
 			}
 			function get_uploaded_image_link($file_field_name) {
 				// Log the function call for debugging
-				error_log('Attempting to upload file from field: ' . $file_field_name);
+				// error_log('Attempting to upload file from field: ' . $file_field_name);
 
 				// Debug information about the form submission
-				error_log('Form method: ' . $_SERVER['REQUEST_METHOD']);
-				error_log('Content-Type: ' . $_SERVER['CONTENT_TYPE']);
+				// error_log('Form method: ' . $_SERVER['REQUEST_METHOD']);
+				// error_log('Content-Type: ' . $_SERVER['CONTENT_TYPE']);
 
 				if (!isset($_POST['mp_checkout_nonce_action']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['mp_checkout_nonce_action'])), 'mp_checkout_nonce_action')) {
-					error_log('Nonce verification failed for file upload');
+					// error_log('Nonce verification failed for file upload');
 					return false;
 				}
 
@@ -609,11 +609,11 @@
 				$image_url = '';
 
 				// Debug all $_FILES data
-				error_log('All $_FILES data: ' . print_r($_FILES, true));
+				// error_log('All $_FILES data: ' . print_r($_FILES, true));
 
 				// Check if a file was uploaded
 				if (isset($_FILES[$file_field_name]) && !empty($_FILES[$file_field_name]['name'])) {
-					error_log('File found in $_FILES: ' . $file_field_name . ' - Name: ' . $_FILES[$file_field_name]['name']);
+					// error_log('File found in $_FILES: ' . $file_field_name . ' - Name: ' . $_FILES[$file_field_name]['name']);
 
 					// Check if the file has a valid size (not zero)
 					if ($_FILES[$file_field_name]['size'] > 0) {
@@ -628,7 +628,7 @@
 
 					if ($movefile && !isset($movefile['error'])) {
 						$image_url = $movefile['url'];
-						error_log('File uploaded successfully: ' . $image_url);
+						// error_log('File uploaded successfully: ' . $image_url);
 
 							// Store the file in the media library for better management
 							$filename = basename($movefile['file']);
@@ -645,19 +645,19 @@
 								require_once(ABSPATH . 'wp-admin/includes/image.php');
 								$attach_data = wp_generate_attachment_metadata($attach_id, $movefile['file']);
 								wp_update_attachment_metadata($attach_id, $attach_data);
-								error_log('File added to media library with ID: ' . $attach_id);
+								// error_log('File added to media library with ID: ' . $attach_id);
 							}
 					} else {
 						$error = isset($movefile['error']) ? $movefile['error'] : 'Unknown error';
-						error_log('File upload failed: ' . $error);
+						// error_log('File upload failed: ' . $error);
 						}
 					} else {
-						error_log('File has zero size: ' . $file_field_name);
+						// error_log('File has zero size: ' . $file_field_name);
 					}
 				} else {
-					error_log('No file found in $_FILES for: ' . $file_field_name);
+					// error_log('No file found in $_FILES for: ' . $file_field_name);
 					if (isset($_FILES)) {
-						error_log('Available files in $_FILES: ' . print_r(array_keys($_FILES), true));
+						// error_log('Available files in $_FILES: ' . print_r(array_keys($_FILES), true));
 					}
 				}
 
@@ -671,7 +671,7 @@
 						}
 						$field_base_name = str_replace('_file', '', $file_field_name);
 						$_SESSION['mpwpb_file_original_names'][$field_base_name] = $original_filename;
-						error_log('Stored original filename for ' . $field_base_name . ': ' . $original_filename);
+						// error_log('Stored original filename for ' . $field_base_name . ': ' . $original_filename);
 					}
 					return $image_url;
 				} else {

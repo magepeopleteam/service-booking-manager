@@ -15,9 +15,6 @@ if (!class_exists('MPWPB_Direct_Form_Modifier')) {
             // Add a filter to directly modify the checkout form HTML
             add_filter('woocommerce_before_checkout_form', array($this, 'add_form_enctype_script'), 1);
             
-            // Add a filter to modify the checkout process
-            add_action('woocommerce_checkout_process', array($this, 'debug_checkout_process'));
-            
             // Add a filter to output a direct form modification
             add_action('wp_footer', array($this, 'add_direct_form_modification'));
         }
@@ -41,16 +38,6 @@ if (!class_exists('MPWPB_Direct_Form_Modifier')) {
                 });
             </script>
             <?php
-        }
-        
-        /**
-         * Debug the checkout process
-         */
-        public function debug_checkout_process() {
-            error_log('MPWPB_Direct_Form_Modifier: Checkout process started');
-            error_log('REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']);
-            error_log('CONTENT_TYPE: ' . (isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : 'Not set'));
-            error_log('$_FILES: ' . print_r($_FILES, true));
         }
         
         /**
