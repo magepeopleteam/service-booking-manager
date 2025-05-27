@@ -81,23 +81,24 @@
 		}
 		$original = $submenu[$parent_slug];
 		$reordered = [];
-		// First keep the first item (usually "All Posts")
-		if (isset($original[0])) {
-			$reordered[] = $original[0];
+		$first_item = isset($original[0]) ? $original[0] : null;
+		if ($first_item) {
+			$reordered[] = $first_item;
 		}
-		// Now push your custom page second
 		foreach ($original as $item) {
 			if ($item[2] === 'mpwpb_service_list') {
 				$reordered[] = $item;
 			}
 		}
-		// Then push the remaining items, skipping the one we already moved
 		foreach ($original as $item) {
-			if ($item[2] !== 'mpwpb_service_list' && $item !== $original[0]) {
-				$reordered[] = $item;
+			if (
+				($first_item && $item === $first_item) ||
+				$item[2] === 'mpwpb_service_list'
+			) {
+				continue;
 			}
+			$reordered[] = $item;
 		}
-		// Replace submenu with reordered list
 		$submenu[$parent_slug] = $reordered;
 	}
 	add_action('admin_menu', 'mpwpb_reorder_service_list_submenu', 999);
