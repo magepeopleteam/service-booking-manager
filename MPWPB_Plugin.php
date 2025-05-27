@@ -76,7 +76,7 @@
 				<?php
 			}
 			public static function plugin_activate() {
-				error_log('MPWPB_Plugin activated.', 0);
+				// error_log('MPWPB_Plugin activated.', 0);
 				flush_rewrite_rules();
 			}
 		}

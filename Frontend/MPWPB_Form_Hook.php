@@ -75,15 +75,9 @@ if (!class_exists('MPWPB_Form_Hook')) {
          * This is a fallback method to ensure files are processed correctly
          */
         public function handle_file_upload_checkout_process() {
-            // Log the checkout process
-            error_log('WooCommerce checkout process started');
-            error_log('Form method: ' . $_SERVER['REQUEST_METHOD']);
-            error_log('Content-Type: ' . (isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : 'Not set'));
-            error_log('All $_FILES data: ' . print_r($_FILES, true));
-
             // If we have file uploads, make sure they're processed correctly
             if (!empty($_FILES)) {
-                error_log('Files detected in checkout process');
+                // error_log('Files detected in checkout process');
                 // No need to do anything else here, just making sure the files are logged
             }
         }
