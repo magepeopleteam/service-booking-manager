@@ -1451,3 +1451,4 @@ button.mpwpb_service_button.mActive:hover{
 .mpwpb_popup .service-cart {
     background: #fff !important;
 }
+.mpwpb-popup-content{ padding: 10px; }

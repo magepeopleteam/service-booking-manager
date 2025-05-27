@@ -21,12 +21,30 @@
     overflow-x: auto;
     padding-bottom: 8px;
 }
+.mpwpb_add_new_search_holder{
+    display: flex;
+    gap: 20px;
+}
+
+.mpwpb_add_new_Service{
+    border: 0;
+    box-shadow: none;
+    background-color: #5e59c7ee;
+    border-radius: 0.25rem;
+    padding: 0.5em 0.75em;
+    color: #fff;
+    font-size: 1rem;
+    transition: all 0.5s ease-in-out;
+    cursor: pointer;
+}
+
 .mpwpb_item_page_mpwpb_service_list .mpwpv_service_list_header .updated {
     display: none;
 }
 .mpwpv_service_list_container > .mpwpv_service_list_header {
     display: block;
 }
+
 .mpwpv_service_list_table_header {
     display: flex;
     font-weight: bold;
@@ -112,7 +130,7 @@
     position: relative;
 }
 .mpwpv_service_list_search-input {
-    padding: 5px 10px 5px 23px !important;
+    padding: 10px 10px 10px 23px !important;
     border: 1px solid #d1d5db;
     border-radius: 8px;
     outline: none;
@@ -223,9 +241,9 @@
 .mpwpv_service_list_services {
     display: flex;
     flex-wrap: wrap;
-    flex-direction: column;
+    /*flex-direction: column;*/
     gap: 6px;
-    /*max-width: 150px;*/
+    max-width: 350px;
 }
 
 .mpwpv_service_list_badge {
@@ -239,10 +257,18 @@
     background: #2e77ff;
     color: #2e77ff;
 }
+.gray {
+    background: #69717f;
+    color: #2e77ff;
+}
 
 .green {
     background: #10893e;
     color: #10893e;
+}
+.orange {
+    background: #e7a185;
+    color: #e7a185;
 }
 .yellow {
     background-color: #fef3c7;
@@ -272,7 +298,20 @@
     display: flex;
     align-items: center;
     background: #e5efff;
-    padding: 12px;
+    padding: 5px;
+}
+
+.mpwpb_service_bg_color_one{
+    background-color: rgb(251 251 248);
+}
+.mpwpb_service_bg_color_two{
+    background-color: rgb(239 231 230);
+}
+.mpwpb_service_bg_color_three{
+    background-color: rgb(251 242 244);
+}
+.mpwpb_service_bg_color_four{
+    background-color: rgb(247 237 244);
 }
 
 .mpwpv_service_list_more {
@@ -300,7 +339,6 @@
 }
 
 .mpwpv_service_list_actions {
-    display: flex;
     gap: 8px;
 }
 
@@ -324,11 +362,11 @@
     margin-top: 6px;
 }
 .mpwpv_service_list_actions a{ border: 1px solid #2e77ff;
-    padding: 15px;
+    padding: 5px;
     font-size: 15px;
 }
 a.mpwpb_duplicate_post {
-    padding: 10px;
+    padding: 5px;
     border-radius: 30px;
 }
 

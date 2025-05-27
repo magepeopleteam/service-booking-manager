@@ -11,8 +11,17 @@ if (!class_exists('Service_Settings')) {
 
         public function __construct() {
             add_action('add_mpwpb_settings_tab_content', [$this, 'service_settings']);
+            add_action('save_post', [$this, 'add_custom_meta_on_post_create'], 10, 3);
         }
 
+        function add_custom_meta_on_post_create( $post_id, $post, $update ) {
+            if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
+            if ($update) return;
+            if ( $post->post_type === 'mpwpb_item') {
+                add_post_meta($post_id, 'mpwpb_service_multiple_category_check', 'on', true);
+                add_post_meta($post_id, 'mpwpb_multiple_service_select', 'on', true);
+            }
+        }
         public function service_settings( $post_id ){
             $multiple_category_check = get_post_meta( $post_id, 'mpwpb_service_multiple_category_check', true );
             $multiple_service_check = get_post_meta( $post_id, 'mpwpb_multiple_service_select', true );

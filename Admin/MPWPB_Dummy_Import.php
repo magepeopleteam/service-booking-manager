@@ -149,6 +149,8 @@
 										]
 									],
 									'mpwpb_extra_service_active' => 'on',
+									'mpwpb_service_multiple_category_check' => 'on',
+									'mpwpb_multiple_service_select' => 'on',
 									'mpwpb_group_extra_service_active' => 'off',
 									'mpwpb_extra_service' => [
 										[
@@ -460,6 +462,8 @@
 										],
 									],									
 									'mpwpb_extra_service_active' => 'on',
+                                    'mpwpb_service_multiple_category_check' => 'on',
+                                    'mpwpb_multiple_service_select' => 'on',
 									'mpwpb_group_extra_service_active' => 'off',
 									'mpwpb_extra_service' => [
 										[
@@ -723,6 +727,8 @@
 										]
 									],									
 									'mpwpb_extra_service_active' => 'on',
+                                    'mpwpb_service_multiple_category_check' => 'on',
+                                    'mpwpb_multiple_service_select' => 'on',
 									'mpwpb_group_extra_service_active' => 'off',
 									'mpwpb_extra_service' => [
 										[
@@ -933,6 +939,8 @@
 										],
 									],									
 									'mpwpb_extra_service_active' => 'off',
+                                    'mpwpb_service_multiple_category_check' => 'on',
+                                    'mpwpb_multiple_service_select' => 'on',
 									'mpwpb_group_extra_service_active' => 'off',
 									'mpwpb_extra_service' => [],
 									// Gallery Settings
@@ -1108,6 +1116,8 @@
 										],
 									],
 									'mpwpb_extra_service_active' => 'off',
+                                    'mpwpb_service_multiple_category_check' => 'on',
+                                    'mpwpb_multiple_service_select' => 'on',
 									'mpwpb_group_extra_service_active' => 'off',
 									'mpwpb_extra_service' => [],
 									// Gallery Settings
@@ -1279,6 +1289,8 @@
 										]
 									],
 									'mpwpb_extra_service_active' => 'off',
+                                    'mpwpb_service_multiple_category_check' => 'on',
+                                    'mpwpb_multiple_service_select' => 'on',
 									'mpwpb_group_extra_service_active' => 'off',
 									'mpwpb_extra_service' => [],
 									// Gallery Settings

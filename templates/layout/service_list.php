@@ -10,23 +10,19 @@ $args = [
 $query = new WP_Query($args);
 
 $data = mpwpb_get_service_posts_by_status( $query );
-
 $count_service = wp_count_posts('mpwpb_item');
 $publish = isset($count_service->publish) ? $count_service->publish : 0;
 $draft   = isset($count_service->draft) ? $count_service->draft : 0;
 $trash   = isset($count_service->trash) ? $count_service->trash : 0;
 $total   = $publish + $draft + $trash;
-
 $trash_link = add_query_arg([
     'post_status' => 'trash',
     'post_type'   => 'mpwpb_item',
 ], admin_url('edit.php'));
+$add_new_link = admin_url('post-new.php?post_type=mpwpb_item');
+
 function mpwpb_get_service_posts_by_status( $query ) {
-//    $statuses = ['publish', 'draft', 'trash'];
-
-    ob_start(); // Start buffering
-
-
+    ob_start();
     if ($query->have_posts()) {
         while ($query->have_posts()) {
             $query->the_post();
@@ -84,29 +80,36 @@ function mpwpb_get_service_posts_by_status( $query ) {
 
                                 if( is_array( $all_services ) && !empty( $all_services ) ) {
                                     foreach ($all_services as $service) {
-                                        if( $service_show < 2 ){
+                                        if( $service_show < 4 ){
                                             if( $service_show === 0 ){
+                                                $color_class = 'gray';
+                                                $bg_color = 'mpwpb_service_bg_color_one';
+                                            }else if( $service_show === 1 ){
+                                                $color_class = 'orange';
+                                                $bg_color = 'mpwpb_service_bg_color_two';
+                                            }else if( $service_show === 2 ){
                                                 $color_class = 'blue';
+                                                $bg_color = 'mpwpb_service_bg_color_three';
                                             }else{
-                                                $color_class = 'green';
+                                                $color_class = 'orange';
+                                                $bg_color = 'mpwpb_service_bg_color_four';
                                             }
                                             ?>
-                                            <div class="mpwpv_service_list_holder <?php echo esc_attr( $color_class );?>">
+                                            <div class="mpwpv_service_list_holder <?php echo esc_attr( $bg_color );?>">
                                                 <span class="mpwpv_service_list_service-tag <?php echo esc_attr( $color_class );?>"></span>
                                                 <span class="mpwpv_service_list_badge"><?php echo esc_html( $service['name'] )?></span>
                                             </div>
                                             <?php $service_show++;
                                         }
                                     }
-                                } if( $service_count > 2){
-                                    $remainig_service_count = $service_count - 2;
+                                } if( $service_count > 4){
+                                    $remainig_service_count = $service_count - 4;
                                     ?>
                                     <span class="mpwpv_service_list_more">+<?php echo esc_attr( $remainig_service_count );?> more</span>
                                 <?php }?>
                             </div>
                             <div class="mpwpv_service_list_rating">
-                                <span class="mpwpv_service_list_rating_number">4.8</span>
-                                <span class="mpwpv_service_list_stars">★★★★★</span>
+                                <span class="mpwpv_service_list_rating_number"><?php MPWPB_Static_Template::get_ratings();?></span>
                             </div>
 
                             <div class="mpwpv_service_list_actions">
@@ -145,7 +148,6 @@ function mpwpb_get_service_posts_by_status( $query ) {
 
     return $results;
 }
-
 function get_total_customer(){
     $users = get_users([
         'role' => 'customer',
@@ -185,7 +187,6 @@ function get_upcomming_service_order_count(){
 
     return count( $all_booking_dates );
 }
-
 function get_monthly_sales_totals() {
     $start_date = date('Y-m-d') . 'T00:00:00' . date('P');
     $end_date   = date('Y-12-31') . 'T23:59:59' . date('P');
@@ -257,8 +258,10 @@ $total_user = get_total_customer();
             <div class="mpwpv_service_list_analytics-text">
                 <p><?php esc_attr_e( 'Monthly Revenue', 'service-booking-manager')?></p>
                 <p><?php
-                    $current_month = date('Y-m');
-                    echo wp_kses_post( wc_price( $monthly_totals[$current_month] ?? 0 ) );
+
+                        $current_month = date('Y-m');
+                        $revinue = isset( $monthly_totals[ $current_month ] ) ? $monthly_totals[ $current_month ] : 0 ;
+                        echo wp_kses_post( wc_price( $revinue ) );
                     ?>
                 </p>
             </div>
@@ -279,9 +282,12 @@ $total_user = get_total_customer();
         <div class="mpwpv_service_list_card-header">
             <div class="mpwpv_service_list_header-top">
                 <h2><?php esc_attr_e( 'Service Listings', 'service-booking-manager')?></h2>
-                <div class="mpwpv_service_list_search-container">
-                    <input type="text" class="mpwpv_service_list_search-input" id="mpwpv_service_list_search_input" placeholder="<?php esc_attr_e( 'Search services...', 'service-booking-manager')?>">
-                    <span class="mpwpv_service_list_search-icon">🔍</span>
+                <div class="mpwpb_add_new_search_holder">
+                    <a href="<?php echo esc_url( $add_new_link )?>"><div class="mpwpb_add_new_Service"><span class="fas fa-plus _mR_xs"></span><?php echo esc_html__('Add New Service', 'tour-booking-manager')?></div></a>
+                    <div class="mpwpv_service_list_search-container">
+                        <input type="text" class="mpwpv_service_list_search-input" id="mpwpv_service_list_search_input" placeholder="<?php esc_attr_e( 'Search services...', 'service-booking-manager')?>">
+                        <span class="mpwpv_service_list_search-icon">🔍</span>
+                    </div>
                 </div>
             </div>
 
