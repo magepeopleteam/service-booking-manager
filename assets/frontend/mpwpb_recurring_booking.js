@@ -45,7 +45,6 @@
     $(document).on('click', 'div.mpwpb_registration .mpwpb_date_time_area .to-book', function() {
         let parent = $(this).closest('div.mpwpb_registration');
         let recurringArea = parent.find('.mpwpb_recurring_booking_area');
-
         if (recurringArea.length > 0) {
             // Reset recurring options
             parent.find('#mpwpb_enable_recurring_booking').prop('checked', false);
@@ -61,6 +60,48 @@
                 console.log('Showing recurring booking area');
             }, 300);
         }
+
+
+        let date_time = $(this).attr('data-date').trim();
+        let data_radio_check = $(this).attr('data-radio-check').trim();
+        let dateObj = new Date(date_time);
+        let year = dateObj.getFullYear();
+        let month = String(dateObj.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+        let day = String(dateObj.getDate()).padStart(2, '0');
+
+        let formattedDate = `${year}-${month}-${day}`;
+        let hours24 = dateObj.getHours();
+
+        console.log( formattedDate, hours24 );
+
+        let postId = parent.data('post-id');
+        let ajaxUrl = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.ajax_url : mpwpb_ajax.ajax_url;
+        let nonce = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.nonce : mpwpb_ajax.nonce;
+        $.ajax({
+            type: 'POST',
+            url: ajaxUrl,
+            data: {
+                action: 'mpwpb_get_available_staff',
+                post_id: postId,
+                staff_date: formattedDate,
+                staff_time: hours24,
+                date_time: data_radio_check,
+                nonce: nonce
+            },
+            beforeSend: function() {
+                parent.find('#mpwpb_recurring_dates_list').html('<li>Loading...</li>');
+                parent.find('.mpwpb_recurring_dates').show();
+            },
+            success: function(response) {
+                $("#mpwpb_staff_member_booking").html( response );
+                $("#mpwpb_staff_member_booking_area").fadeIn();
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX error:', status, error);
+                parent.find('#mpwpb_recurring_dates_list').html('<li>Error: ' + error + '</li>');
+            }
+        });
+
     });
 
     // Also handle the radio-check event which is triggered when a date is selected

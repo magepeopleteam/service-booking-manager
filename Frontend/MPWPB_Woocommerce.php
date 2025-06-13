@@ -62,6 +62,17 @@
                             $total_price = self::calculate_discounted_total( $total_price, $recurringCount, $discountPercent );
                         }
 
+                        $mpwpb_staff_member_id = isset($_POST['mpwpb_staff_member']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_staff_member'])) : '';
+                        if( $mpwpb_staff_member_id ){
+                            $mpwpb_staff_date = get_term($mpwpb_staff_member_id);
+                            $mpwpb_staff_member = $mpwpb_staff_date->name;
+                        }else{
+                            $mpwpb_staff_member = '';
+                        }
+
+                        $cart_item_data['mpwpb_staff_name'] = $mpwpb_staff_member;
+                        $cart_item_data['mpwpb_staff_member_id'] = $mpwpb_staff_member_id;
+
 						$cart_item_data['mpwpb_category'] = MPWPB_Function::get_category_name($product_id, $category);
 						$cart_item_data['mpwpb_sub_category'] = MPWPB_Function::get_sub_category_name($product_id, $sub_category);
 						$cart_item_data['mpwpb_service'] = $all_service;
@@ -120,9 +131,13 @@
 				}
 			}
 			public function checkout_create_order_line_item($item, $cart_item_key, $values) {
+
 				$post_id = array_key_exists('mpwpb_id', $values) ? $values['mpwpb_id'] : 0;
 				if (get_post_type($post_id) == MPWPB_Function::get_cpt()) {
+
 					$category = $values['mpwpb_category'] ?: '';
+                    $mpwpb_staff_name = $values['mpwpb_staff_name'] ?: '';
+					$staff_member = $values['mpwpb_staff_member_id'] ?: '';
 					$sub_category = $values['mpwpb_sub_category'] ?: '';
 					$services = $values['mpwpb_service'] ?: [];
 					$date = $values['mpwpb_date'] ?: '';
@@ -157,7 +172,11 @@
 							$item->add_meta_data(esc_html__('Price ', 'service-booking-manager'), ' ( ' . MPWPB_Global_Function::wc_price($post_id, $ex_service['ex_price']) . ' x ' . $ex_service['ex_qty'] . ') = ' . MPWPB_Global_Function::wc_price($post_id, ($ex_service['ex_price'] * $ex_service['ex_qty'])));
 						}
 					}
+                    if( $mpwpb_staff_name ){
+                        $item->add_meta_data(esc_html__('Staff Name ', 'service-booking-manager'), $mpwpb_staff_name );
+                    }
 					$item->add_meta_data('_mpwpb_id', $post_id);
+					$item->add_meta_data('_mpwpb_staff_term_id', $staff_member);
 					$item->add_meta_data('_mpwpb_date', $date);
 					if ($category) {
 						$item->add_meta_data('_mpwpb_category', $category);
@@ -184,6 +203,8 @@
 							$post_id = wc_get_order_item_meta($item_id, '_mpwpb_id');
 							if (get_post_type($post_id) == MPWPB_Function::get_cpt()) {
 								$date = wc_get_order_item_meta($item_id, '_mpwpb_date');
+
+								$mpwpb_staff = wc_get_order_item_meta($item_id, '_mpwpb_staff_term_id');
 								$date = $date ? sanitize_text_field( wp_unslash( $date ) ) : '';
 								$category = wc_get_order_item_meta($item_id, '_mpwpb_category');
 								$category = $category ? sanitize_text_field( wp_unslash( $category ) )  : '';
@@ -204,6 +225,7 @@
 									}
 								}
 								$data['mpwpb_service'] = $service;
+								$data['mpwpb_staff_term_id'] = $mpwpb_staff;
 								$data['mpwpb_tp'] = $total_price;
 								$data['mpwpb_service_info'] = $ex_service_infos;
 								$data['mpwpb_order_id'] = $order_id;
@@ -322,8 +344,17 @@
                                 </div>
 							<?php } ?>
                         </div>
-					<?php } ?>
-					<?php do_action('mpwpb_after_cart_item_display', $cart_item, $post_id); ?>
+					<?php }
+                        $staff_name = $cart_item['mpwpb_staff_name'];
+                        if( $staff_name ){
+                        ?>
+                        <div class="dLayout_xs">
+                            <h5 class="mB_xs"><?php esc_html_e('Selected Staff', 'service-booking-manager'); ?></h5>
+                            <span><?php echo esc_html( $staff_name ); ?>
+                        </div>
+					<?php }
+                        do_action('mpwpb_after_cart_item_display', $cart_item, $post_id);
+                    ?>
                 </div>
 				<?php
 			}

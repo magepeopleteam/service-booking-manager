@@ -554,6 +554,9 @@ function mpwpb_price_calculation($this) {
             let mpwpb_service = {};
             let mpwpb_service_qty = {};
             let service_count = 0;
+
+            let staff_member = parent.find('[name="mpwpb_staff_member_booking"]').val();
+
             parent.find('[name="mpwpb_service[]"]').each(function () {
                 let service = $(this).val();
                 if (service) {
@@ -600,6 +603,7 @@ function mpwpb_price_calculation($this) {
                     "mpwpb_extra_service": mpwpb_extra_service,
                     "mpwpb_extra_service_type": mpwpb_extra_service_type,
                     "mpwpb_extra_service_qty": mpwpb_extra_service_qty,
+                    "mpwpb_staff_member": staff_member,
                     nonce: mpwpb_ajax.nonce
                 },
                 beforeSend: function () {
