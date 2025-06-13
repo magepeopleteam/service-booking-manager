@@ -44,6 +44,7 @@
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Service_Details.php';
 
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Service_Settings.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Staff_Member.php';
 
 				//****************Woocommerce Checkout*********************** */
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Settings.php';

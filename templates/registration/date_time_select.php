@@ -16,6 +16,8 @@
 	$max_recurring_count = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_max_recurring_count', 10);
 	$recurring_discount = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_recurring_discount', 0);
 
+    $enable_staff_member = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_staff_member_add', 'no');
+
 	$short_date_format = $short_date_format ?? MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'date_format_short', 'M , Y');
 	$extra_services = $extra_services ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', array());
 
@@ -151,12 +153,12 @@
             </div>
         </div>
     </div>
-<?php } ?>
+<?php }
 
-<div class="_dShadow_7_mB_xs mpwpb_staff_member_booking_area" id="mpwpb_staff_member_booking_area" style="display: none;">
-    <select class="mpwpb_staff_member_booking" name="mpwpb_staff_member_booking" id="mpwpb_staff_member_booking"></select>
-</div>
-
-<?php if ($enable_waiting_list === 'yes') {
+if ( $enable_staff_member === 'on') { ?>
+    <div class="_dShadow_7_mB_xs mpwpb_staff_member_booking_area" id="mpwpb_staff_member_booking_area" style="display: none;">
+        <select class="mpwpb_staff_member_booking" name="mpwpb_staff_member_booking" id="mpwpb_staff_member_booking"></select>
+    </div>
+<?php } if ($enable_waiting_list === 'yes') {
     include(MPWPB_Function::template_path('registration/waiting_list_modal.php'));
 } ?>

@@ -49,6 +49,10 @@
                                     <i class="fa-solid fa-gear"></i><?php esc_html_e('Service Settings', 'service-booking-manager'); ?>
 								</li>
 								<?php do_action('add_mpwpb_settings_tab_after_date', $post_id); ?>
+
+                                <li  data-tabs-target="#mpwpb_staff_members">
+                                    <i class="fa-solid fa-gear"></i><?php esc_html_e('Staff Member', 'service-booking-manager'); ?>
+                                </li>
 							</ul>
 						</div>
 						<div class="tabsContent">
