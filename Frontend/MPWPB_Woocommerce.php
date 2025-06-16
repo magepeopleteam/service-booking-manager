@@ -64,8 +64,8 @@
 
                         $mpwpb_staff_member_id = isset($_POST['mpwpb_staff_member']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_staff_member'])) : '';
                         if( $mpwpb_staff_member_id ){
-                            $mpwpb_staff_date = get_term($mpwpb_staff_member_id);
-                            $mpwpb_staff_member = $mpwpb_staff_date->name;
+                            $mpwpb_staff_date = get_userdata($mpwpb_staff_member_id);
+                            $mpwpb_staff_member = $mpwpb_staff_date->display_name;
                         }else{
                             $mpwpb_staff_member = '';
                         }

@@ -567,7 +567,7 @@
 						$this->save_schedule($user_id, $key);
 					}
 					//**********************//
-					$off_days = isset($_POST['mpwpb_off_days']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_off_days'])) : [];
+					$off_days = isset($_POST['mpwpb_off_days']) ? $_POST['mpwpb_off_days'] : [];
 					update_user_meta($user_id, 'mpwpb_off_days', $off_days);
 					//**********************//
 					$off_dates = isset($_POST['mpwpb_off_dates']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_off_dates'])) : [];

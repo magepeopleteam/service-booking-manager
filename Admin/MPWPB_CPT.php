@@ -10,7 +10,7 @@
 		class MPWPB_CPT {
 			public function __construct() {
 				add_action('init', [$this, 'add_cpt']);
-                add_action('init', [$this, 'mpwpb_register_staff_taxonomy']);
+//                add_action('init', [$this, 'mpwpb_register_staff_taxonomy']);
 			}
 
             public function mpwpb_register_staff_taxonomy() {
