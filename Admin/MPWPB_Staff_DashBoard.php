@@ -239,21 +239,45 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
                                     </span>
                             </td>
                             <td class="mpwpb-actions">
-                                <?php if ($this->can_cancel_booking($booking)) : ?>
+                                <?php if ($this->can_cancel_booking($booking) && 1 === 2 ) : ?>
                                     <button class="mpwpb-btn mpwpb-cancel-btn" data-id="<?php echo esc_attr($booking->ID); ?>">
                                         <?php esc_html_e('Cancel', 'service-booking-manager'); ?>
                                     </button>
                                 <?php endif; ?>
 
-                                <?php if ($this->can_reschedule_booking($booking)) : ?>
+                                <?php if ($this->can_reschedule_booking($booking) && 1 === 2 ) : ?>
                                     <button class="mpwpb-btn mpwpb-reschedule-btn" data-id="<?php echo esc_attr($booking->ID); ?>" data-service="<?php echo esc_attr($booking->mpwpb_id); ?>">
                                         <?php esc_html_e('Reschedule', 'service-booking-manager'); ?>
                                     </button>
                                 <?php endif; ?>
 
-                                <a href="<?php echo esc_url(get_permalink($booking->mpwpb_id)); ?>" class="mpwpb-btn mpwpb-view-btn">
+                                <!--<a href="<?php /*echo esc_url(get_permalink($booking->mpwpb_id)); */?>" class="mpwpb-btn mpwpb-view-btn">
+                                    <?php /*esc_html_e('View Service', 'service-booking-manager'); */?>
+                                </a>-->
+
+                                <div class="mpwpb-service-wrapper">
+                                    <span class="mpwpb-btn mpwpb-view-btn mpwpb_view_selected_service_staff">
                                     <?php esc_html_e('View Service', 'service-booking-manager'); ?>
-                                </a>
+                                </span>
+
+                                    <?php
+                                    $mpwpb_services = $booking->mpwpb_service;
+                                    if (!empty($mpwpb_services)) :
+                                        echo '<div class="mpwpb-service-staff_card" style="display: none;">';
+                                        foreach ($mpwpb_services as $service) :
+                                            if (!empty($service['name'])) : ?>
+                                                <div class="mpwpb-service-card">
+                                                    <h3 class="mpwpb-service-title"><?php echo esc_html($service['name']); ?></h3>
+                                                </div>
+                                            <?php endif;
+                                        endforeach;
+                                        echo '</div>';
+                                    else :
+                                        echo '<p>No services found.</p>';
+                                    endif;
+                                    ?>
+                                </div>
+
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -431,7 +455,7 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
         /**
          * Get all bookings for a user
          */
-        private function get_user_bookings($user_id) {
+        private function get_user_bookings_old($user_id) {
             global $wpdb;
 
             $bookings = $wpdb->get_results(
@@ -464,6 +488,48 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
 
                 $formatted_bookings[] = $booking_data;
             }
+
+            return $formatted_bookings;
+        }
+
+        private function get_user_bookings($user_id) {
+            $args = array(
+                'post_type'      => 'mpwpb_booking',
+                'posts_per_page' => -1,
+                'orderby'        => 'date',
+                'order'          => 'DESC',
+                'meta_query'     => array(
+                    array(
+                        'key'   => 'mpwpb_staff_term_id',
+                        'value' => $user_id,
+                        'compare' => '=',
+                    ),
+                ),
+            );
+
+            $query = new WP_Query($args);
+
+            if (!$query->have_posts()) {
+                return array();
+            }
+
+            $formatted_bookings = array();
+
+            foreach ($query->posts as $post) {
+                $booking_data = new stdClass();
+                $booking_data->ID = $post->ID;
+
+                // Get booking meta data
+                $meta = get_post_meta($post->ID);
+                $booking_data->mpwpb_id           = isset($meta['mpwpb_id'][0]) ? $meta['mpwpb_id'][0] : '';
+                $booking_data->mpwpb_date         = isset($meta['mpwpb_date'][0]) ? $meta['mpwpb_date'][0] : '';
+                $booking_data->mpwpb_order_id     = isset($meta['mpwpb_order_id'][0]) ? $meta['mpwpb_order_id'][0] : '';
+                $booking_data->mpwpb_order_status = isset($meta['mpwpb_order_status'][0]) ? $meta['mpwpb_order_status'][0] : '';
+                $booking_data->mpwpb_service = isset($meta['mpwpb_service'][0]) ? unserialize( $meta['mpwpb_service'][0] ) : array();
+                $formatted_bookings[] = $booking_data;
+            }
+
+            wp_reset_postdata();
 
             return $formatted_bookings;
         }
