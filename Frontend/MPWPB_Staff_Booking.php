@@ -29,7 +29,7 @@ if (!class_exists('MPWPB_Staff_Booking')) {
             $bookings = get_posts($args);
             return !empty($bookings);
         }
-        public function ssnb_is_staff_booked_new( $staff_term_id, $datetime ) {
+        public function mpwpb_is_staff_booked_new( $staff_term_id, $datetime ) {
             $args = array(
                 'post_type' => 'mpwpb_booking',
                 'posts_per_page' => -1,
@@ -38,7 +38,9 @@ if (!class_exists('MPWPB_Staff_Booking')) {
                     array('key' => 'mpwpb_date', 'value' => $datetime ),
                 ),
             );
+
             $bookings = get_posts($args);
+
             return !empty($bookings);
         }
 
@@ -64,13 +66,15 @@ if (!class_exists('MPWPB_Staff_Booking')) {
             return $this->get_date_check( $staff_id, $date, $time );
         }
 
-        public static function get_date_check( $staff_id, $check_date, $time ) {
+        public static function get_date_check_old( $staff_id, $check_date, $time ) {
 
             $off_days_arr = [];
             $travel_type = get_user_meta( $staff_id, 'date_type', true );
 
-            $check_by_time = self::mpwpb_is_staff_available_time( $staff_id, $time, $check_date );
-//            error_log( print_r( [ '$check_by_time' => $check_by_time ], true ) );
+//            $check_by_time = self::mpwpb_is_staff_available_time( $staff_id, $time, $check_date );
+            if( self::mpwpb_is_staff_available_time( $staff_id, $time, $check_date ) ){
+                return true;
+            }
 
             if ($travel_type == 'particular') {
                 $particular_dates =get_user_meta( $staff_id, 'mpwpb_particular_dates', array());
@@ -110,46 +114,58 @@ if (!class_exists('MPWPB_Staff_Booking')) {
 
         }
 
-        public static function mpwpb_is_staff_available_time_old( $user_id, $check_time, $date = null ) {
-            if (!$date) {
-                $day = strtolower(date('l')); // আজকের দিন (monday, tuesday etc)
-            }else{
-                $day = strtolower( date('l', strtotime( $date ) ) );
+        public static function get_date_check($staff_id, $check_date, $time) {
+            $travel_type = get_user_meta($staff_id, 'date_type', true);
+
+            // 1. Check availability by date and time
+            /*if (self::mpwpb_is_staff_available_time($staff_id, $time, $check_date)) {
+                return true;
+            }*/
+
+            // 2. Handle "particular" travel type
+            if ($travel_type === 'particular') {
+                $particular_dates = get_user_meta($staff_id, 'mpwpb_particular_dates', false); // Use `false` to get all values
+                $flat_dates = !empty($particular_dates) ? call_user_func_array('array_merge', $particular_dates) : [];
+
+                return in_array($check_date, $flat_dates);
             }
 
-            $prefix = "mpwpb_{$day}_";
-            $default_end = "mpwpb_default_end_time";
-            $default_start = "mpwpb_default_start_time";
+            // 3. Handle "repeated" travel type
+            if ($travel_type === 'repeated') {
+                $check_day = strtolower(date('l', strtotime($check_date)));
 
-            $default_start_time = get_user_meta( $user_id, 'mpwpb_default_start_time', true);
-            $default_end_time = get_user_meta($user_id,'mpwpb_default_end_time', true);
+                $start_date = get_user_meta($staff_id, 'mpwpb_repeated_start_date', true);
+                $repeat_after = (int) get_user_meta($staff_id, 'mpwpb_repeated_after', true) ?: 1;
 
-            $start_time = get_user_meta( $user_id, $prefix . 'start_time', true);
-            $end_time = get_user_meta($user_id, $prefix . 'end_time', true);
-            $start_break = get_user_meta($user_id, $prefix . 'start_break_time', true);
-            $end_break = get_user_meta($user_id, $prefix . 'end_break_time', true);
+                $get_off_dates = get_user_meta($staff_id, 'mpwpb_off_dates', false);
+                $off_dates = !empty($get_off_dates) ? call_user_func_array('array_merge', $get_off_dates) : [];
 
-            $check_time = (int) $check_time;
-            $start_time = (int) $start_time;
-            $end_time = (int) $end_time;
-            $start_break = (int) $start_break;
-            $end_break = (int) $end_break;
+                $get_off_days = get_user_meta($staff_id, 'mpwpb_off_days', true);
+                $off_days_arr = !empty($get_off_days) ? array_map('strtolower', array_map('trim', explode(',', $get_off_days))) : [];
 
-            if ($check_time < $start_time || $check_time >= $end_time) {
-                return false;
+                if (self::mpwpb_is_repeated_date($start_date, $repeat_after, $check_date)) {
+                    // Check if it's an off date
+                    if (in_array($check_date, $off_dates)) {
+                        return false;
+                    }
+
+                    // Check if it's an off day (e.g., 'sunday')
+                    if (in_array($check_day, $off_days_arr)) {
+                        return false;
+                    }
+
+                    return true;
+                }
             }
 
-            if ($check_time >= $start_break && $check_time < $end_break) {
-                return false;
-            }
-
-            return true;
+            // 4. If no condition matched
+            return false;
         }
 
-        public static function mpwpb_is_staff_available_time( $user_id, $check_time, $date = null ) {
-            // দিন বের করা
+
+        public static function mpwpb_is_staff_available_time( $user_id, $check_time, $date = null) {
             if (!$date) {
-                $day = strtolower(date('l')); // আজকের দিন (monday, tuesday etc)
+                $day = strtolower(date('l'));
             } else {
                 $day = strtolower(date('l', strtotime($date)));
             }
@@ -158,6 +174,8 @@ if (!class_exists('MPWPB_Staff_Booking')) {
 
             $default_start_time = (int) get_user_meta($user_id, 'mpwpb_default_start_time', true);
             $default_end_time = (int) get_user_meta($user_id, 'mpwpb_default_end_time', true);
+            $default_start_break_time = (int) get_user_meta($user_id, 'mpwpb_default_start_break_time', true); // updated key
+            $default_end_break_time = (int) get_user_meta($user_id, 'mpwpb_default_end_break_time', true);     // updated key
 
             $start_time = (int) get_user_meta($user_id, $prefix . 'start_time', true);
             $end_time = (int) get_user_meta($user_id, $prefix . 'end_time', true);
@@ -170,12 +188,17 @@ if (!class_exists('MPWPB_Staff_Booking')) {
                 if ($check_time < $default_start_time || $check_time >= $default_end_time) {
                     return false;
                 }
+
+                if ($default_start_break_time && $default_end_break_time && $check_time >= $default_start_break_time && $check_time < $default_end_break_time) {
+                    return false;
+                }
+
             } else {
                 if ($check_time < $start_time || $check_time >= $end_time) {
                     return false;
                 }
 
-                if ($check_time >= $start_break && $check_time < $end_break) {
+                if ($start_break && $end_break && $check_time >= $start_break && $check_time < $end_break) {
                     return false;
                 }
             }
@@ -185,31 +208,47 @@ if (!class_exists('MPWPB_Staff_Booking')) {
 
 
 
+
         public function mpwpb_get_available_staff() {
 
-            $date = sanitize_text_field( $_POST['staff_date'] );
-            $time = sanitize_text_field( $_POST['staff_time'] );
+            $service_id =  isset( $_POST['service_id'] ) ? sanitize_text_field( $_POST['service_id'] ) : '';
+            $date = isset( $_POST['staff_date'] ) ? sanitize_text_field( wp_unslash( $_POST['staff_date'] ) ) : '';
+            $time =  isset( $_POST['staff_time'] ) ? sanitize_text_field( $_POST['staff_time'] ) : '';
+            $date_time =  isset( $_POST['date_time'] ) ? sanitize_text_field( $_POST['date_time'] ) : '';
 
-            $count = 1;
-            $all_staffs = get_users(['role' => 'mpwpb_staff']);
+            if( $service_id ){
 
-            if ( sizeof($all_staffs) > 0) {
                 $available_staff = [];
-                foreach ($all_staffs as $staff_data ) {
-                    $staff_id = $staff_data->ID;
-                    if ( $this->mpwpb_is_staff_booked( $staff_id, $date, $time ) ) {
-                        $available_staff[] = $staff_data;
+                $get_selected_staff = get_post_meta( $service_id, 'mpwpb_selected_staff_ids', array() );
+                $flat_selected_staff_ids = call_user_func_array('array_merge', $get_selected_staff);
+
+                if( is_array( $flat_selected_staff_ids ) && !empty( $flat_selected_staff_ids ) ){
+                    $all_staffs = get_users([
+                        'include' => $flat_selected_staff_ids,
+                        'role'    => 'mpwpb_staff'
+                    ]);
+                    if ( sizeof($all_staffs) > 0) {
+                        foreach ($all_staffs as $staff_data ) {
+                            $staff_id = $staff_data->ID;
+                            if ( $this->mpwpb_is_staff_booked( $staff_id, $date, $time ) ) {
+                                if( !$this->mpwpb_is_staff_booked_new( $staff_id, $date_time ) ){
+                                    $available_staff[] = $staff_data;
+                                }
+
+                            }
+                        }
                     }
                 }
-            }
 
-            if (!empty( $available_staff ) ) {
-                echo '<option value="">Select Staff</option>';
-                foreach ( $available_staff as $staff) {
-                    echo '<option value="' . esc_attr( $staff->data->ID ) . '">' . esc_html( $staff->data->display_name) . '</option>';
+
+                if (!empty( $available_staff ) ) {
+                    echo '<option value="">Select Staff</option>';
+                    foreach ( $available_staff as $staff) {
+                        echo '<option value="' . esc_attr( $staff->data->ID ) . '">' . esc_html( $staff->data->display_name) . '</option>';
+                    }
+                } else {
+                    echo '<option value="">No Staff Available</option>';
                 }
-            } else {
-                echo '<option value="">No Staff Available</option>';
             }
 
             wp_die();

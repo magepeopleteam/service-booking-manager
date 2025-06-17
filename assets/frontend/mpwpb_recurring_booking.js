@@ -72,9 +72,6 @@
         let formattedDate = `${year}-${month}-${day}`;
         let hours24 = dateObj.getHours();
 
-        console.log( formattedDate, hours24 );
-
-        let postId = parent.data('post-id');
         let ajaxUrl = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.ajax_url : mpwpb_ajax.ajax_url;
         let nonce = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.nonce : mpwpb_ajax.nonce;
         $.ajax({
@@ -82,7 +79,7 @@
             url: ajaxUrl,
             data: {
                 action: 'mpwpb_get_available_staff',
-                post_id: postId,
+                service_id: mpwpb_recurring_data.post_id,
                 staff_date: formattedDate,
                 staff_time: hours24,
                 date_time: data_radio_check,
