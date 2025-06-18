@@ -45,6 +45,8 @@
 				<?php do_action('mpwpb_service_details'); ?>
                 <!-- dispaly service Reviews section using this hook -->
 				<?php do_action('mpwpb_service_reviews'); ?>
+
+				<?php do_action('mpwpb_added_staff_details'); ?>
             </div>
             <div class="sidebar">
                 <div class="booking-area">

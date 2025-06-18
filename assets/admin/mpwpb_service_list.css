@@ -370,6 +370,14 @@ a.mpwpb_duplicate_post {
     border-radius: 30px;
 }
 
+.mpwpb_staff_image_holder{
+    width: 80px;
+}
+.mpwpb_staff_image_holder img{
+    width: 70px !important;
+    height: 65px !important;
+}
+
 /* Responsive Design */
 @media screen and (max-width: 768px) {
     .mpwpv_service_list_header {

@@ -155,10 +155,12 @@
     </div>
 <?php }
 
-if ( $enable_staff_member === 'on') { ?>
+if ( $enable_staff_member === 'on' ) { ?>
     <div class="_dShadow_7_mB_xs mpwpb_staff_member_booking_area" id="mpwpb_staff_member_booking_area" style="display: none;">
         <select class="mpwpb_staff_member_booking" name="mpwpb_staff_member_booking" id="mpwpb_staff_member_booking"></select>
     </div>
-<?php } if ($enable_waiting_list === 'yes') {
-    include(MPWPB_Function::template_path('registration/waiting_list_modal.php'));
-} ?>
+<?php }
+    if ($enable_waiting_list === 'yes') {
+        include(MPWPB_Function::template_path('registration/waiting_list_modal.php'));
+    }
+?>

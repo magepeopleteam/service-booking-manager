@@ -26,7 +26,7 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
         public function mpwpb_add_dashboard_widget() {
 
             $current_user = wp_get_current_user();
-            if (in_array('mpwpb_staff', $current_user->roles)) {
+            if ( in_array('mpwpb_staff', $current_user->roles)) {
 
                 wp_add_dashboard_widget(
                     'mpwpb_staff_dashboard_widget',
@@ -63,9 +63,6 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
 
         function mpwpb_show_staff_info_on_dashboard() {
             $current_user = wp_get_current_user();
-
-//            $atts = '';
-
             echo $this->user_dashboard($current_user);
         }
 
@@ -273,7 +270,7 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
                                         endforeach;
                                         echo '</div>';
                                     else :
-                                        echo '<p>No services found.</p>';
+                                        echo '<p>'. esc_html_e('No services found.', 'service-booking-manager').'</p>';
                                     endif;
                                     ?>
                                 </div>

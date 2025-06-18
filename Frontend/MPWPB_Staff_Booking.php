@@ -16,20 +16,8 @@ if (!class_exists('MPWPB_Staff_Booking')) {
             add_action('wp_ajax_nopriv_mpwpb_get_available_staff', [ $this, 'mpwpb_get_available_staff'] );
         }
 
-        public function ssnb_is_staff_booked( $staff_term_id, $date, $time ) {
-            $args = array(
-                'post_type' => 'mpwpb_booking',
-                'posts_per_page' => -1,
-                'meta_query' => array(
-                    array('key' => 'mpwpb_staff_term_id', 'value' => $staff_term_id),
-                    array('key' => 'mpwpb_staff_date', 'value' => $date),
-                    array('key' => 'mpwpb_staff_time', 'value' => $time),
-                ),
-            );
-            $bookings = get_posts($args);
-            return !empty($bookings);
-        }
-        public function mpwpb_is_staff_booked_new( $staff_term_id, $datetime ) {
+
+        public function mpwpb_is_staff_booked_new_1( $staff_term_id, $datetime ) {
             $args = array(
                 'post_type' => 'mpwpb_booking',
                 'posts_per_page' => -1,
@@ -43,6 +31,31 @@ if (!class_exists('MPWPB_Staff_Booking')) {
 
             return !empty($bookings);
         }
+
+        public function mpwpb_is_staff_booked_order( $staff_term_id, $datetime ) {
+            $args = array(
+                'post_type'      => 'mpwpb_booking',
+                'posts_per_page' => -1,
+                'meta_query'     => array(
+                    'relation' => 'AND',
+                    array(
+                        'key'     => 'mpwpb_staff_term_id',
+                        'value'   => $staff_term_id,
+                        'compare' => '='
+                    ),
+                    array(
+                        'key'     => 'mpwpb_date',
+                        'value'   => $datetime,
+                        'compare' => 'LIKE'
+                    ),
+                ),
+            );
+
+            $bookings = get_posts( $args );
+
+            return ! empty( $bookings );
+        }
+
 
         public static function mpwpb_is_repeated_date( $start_date, $repeat_every_days, $check_date ) {
             // Convert to DateTime objects
@@ -66,12 +79,11 @@ if (!class_exists('MPWPB_Staff_Booking')) {
             return $this->get_date_check( $staff_id, $date, $time );
         }
 
-        public static function get_date_check_old( $staff_id, $check_date, $time ) {
+        /*public static function get_date_check_old( $staff_id, $check_date, $time ) {
 
             $off_days_arr = [];
             $travel_type = get_user_meta( $staff_id, 'date_type', true );
 
-//            $check_by_time = self::mpwpb_is_staff_available_time( $staff_id, $time, $check_date );
             if( self::mpwpb_is_staff_available_time( $staff_id, $time, $check_date ) ){
                 return true;
             }
@@ -112,7 +124,7 @@ if (!class_exists('MPWPB_Staff_Booking')) {
                 }
             }
 
-        }
+        }*/
 
         public static function get_date_check($staff_id, $check_date, $time) {
             $travel_type = get_user_meta($staff_id, 'date_type', true);
@@ -174,8 +186,8 @@ if (!class_exists('MPWPB_Staff_Booking')) {
 
             $default_start_time = (int) get_user_meta($user_id, 'mpwpb_default_start_time', true);
             $default_end_time = (int) get_user_meta($user_id, 'mpwpb_default_end_time', true);
-            $default_start_break_time = (int) get_user_meta($user_id, 'mpwpb_default_start_break_time', true); // updated key
-            $default_end_break_time = (int) get_user_meta($user_id, 'mpwpb_default_end_break_time', true);     // updated key
+            $default_start_break_time = (int) get_user_meta($user_id, 'mpwpb_default_start_break_time', true);
+            $default_end_break_time = (int) get_user_meta($user_id, 'mpwpb_default_end_break_time', true);
 
             $start_time = (int) get_user_meta($user_id, $prefix . 'start_time', true);
             $end_time = (int) get_user_meta($user_id, $prefix . 'end_time', true);
@@ -184,21 +196,18 @@ if (!class_exists('MPWPB_Staff_Booking')) {
 
             $check_time = (int) $check_time;
 
-            if ($default_start_time && $default_end_time) {
-                if ($check_time < $default_start_time || $check_time >= $default_end_time) {
-                    return false;
-                }
-
-                if ($default_start_break_time && $default_end_break_time && $check_time >= $default_start_break_time && $check_time < $default_end_break_time) {
-                    return false;
-                }
-
-            } else {
+            if( $start_time && $end_time ) {
                 if ($check_time < $start_time || $check_time >= $end_time) {
                     return false;
                 }
-
                 if ($start_break && $end_break && $check_time >= $start_break && $check_time < $end_break) {
+                    return false;
+                }
+            }else if ( $default_start_time && $default_end_time ) {
+                if ($check_time < $default_start_time || $check_time >= $default_end_time) {
+                    return false;
+                }
+                if ($default_start_break_time && $default_end_break_time && $check_time >= $default_start_break_time && $check_time < $default_end_break_time) {
                     return false;
                 }
             }
@@ -231,8 +240,11 @@ if (!class_exists('MPWPB_Staff_Booking')) {
                         foreach ($all_staffs as $staff_data ) {
                             $staff_id = $staff_data->ID;
                             if ( $this->mpwpb_is_staff_booked( $staff_id, $date, $time ) ) {
-                                if( !$this->mpwpb_is_staff_booked_new( $staff_id, $date_time ) ){
-                                    $available_staff[] = $staff_data;
+                                if( !$this->mpwpb_is_staff_booked_order( $staff_id, $date_time ) ){
+                                    if( self::mpwpb_is_staff_available_time( $staff_id, $time, $date_time ) ){
+                                        $available_staff[] = $staff_data;
+                                    }
+
                                 }
 
                             }
