@@ -1440,5 +1440,31 @@
         });
     }
 
-})(jQuery);
+    let mpwpb_mediaUploader;
+    $(document).on( 'click', '#upload_profile_image_button', function(e) {
+        e.preventDefault();
+        if (mpwpb_mediaUploader) {
+            mpwpb_mediaUploader.open();
+            return;
+        }
+        mpwpb_mediaUploader = wp.media.frames.file_frame = wp.media({
+            title: 'Select Profile Image',
+            button: {
+                text: 'Use this image'
+            }, multiple: false
+        });
+        mpwpb_mediaUploader.on('select', function() {
+            let attachment = mpwpb_mediaUploader.state().get('selection').first().toJSON();
+            $('#mpwpb_custom_profile_image').val(attachment.id);
+            $('#mpwpb_custom_profile_image_preview').attr('src', attachment.url);
+        });
+        mpwpb_mediaUploader.open();
+    });
 
+    $(document).on( 'click', '#remove_profile_image_button', function(e) {
+        e.preventDefault();
+        $('#mpwpb_custom_profile_image').val('');
+        $('#mpwpb_custom_profile_image_preview').attr('src', '');
+    });
+
+})(jQuery);

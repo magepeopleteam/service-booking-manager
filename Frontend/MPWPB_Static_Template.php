@@ -16,6 +16,7 @@
 				add_action('mpwpb_service_faq', [$this, 'show_service_faq']);
 				add_action('mpwpb_service_details', [$this, 'show_service_details']);
 				add_action('mpwpb_service_reviews', [$this, 'show_service_reviews']);
+				add_action('mpwpb_added_staff_details', [$this, 'show_added_staff_details']);
 			}
 			public function features_heighlight($limit = '') {
 				$features_heightlight = MPWPB_Global_Function::get_post_info(get_the_ID(), 'mpwpb_features', []);
@@ -171,6 +172,57 @@
                     </section>
 				<?php
 				endif;
+			}
+
+
+            public function display_staff_member( $all_staffs ) {
+                ob_start(); ?>
+                <div class="mpwpb_added_staff_holder">
+                    <?php foreach ( $all_staffs as $staff_data ) {
+                        $staff_id   = $staff_data->ID;
+                        $staff_name = $staff_data->display_name;
+                        $image_id   = get_user_meta( $staff_id, 'mpwpb_custom_profile_image', true );
+                        $image_url  = esc_url( wp_get_attachment_url( $image_id ) );
+
+                        if ( empty( $image_url ) ) {
+                            $image_url = 'https://via.placeholder.com/80'; // fallback image
+                        }
+                        ?>
+                        <div class="mpwpb_staff_card">
+                            <img src="<?php echo $image_url; ?>" alt="<?php echo esc_attr( $staff_name ); ?>" />
+                            <div class="mpwpb_staff_name"><?php echo esc_html( $staff_name ); ?></div>
+                        </div>
+                    <?php } ?>
+                </div>
+
+                <?php
+                return ob_get_clean();
+            }
+
+
+            public function show_added_staff_details() {
+                $enable_staff_member = MPWPB_Global_Function::get_post_info( get_the_ID(), 'mpwpb_staff_member_add', 'no' );
+				if ( $enable_staff_member === 'on' ){
+                    $all_staffs = [];
+                    $get_selected_staff = get_post_meta( get_the_ID(), 'mpwpb_selected_staff_ids', array() );
+                    $flat_selected_staff_ids = call_user_func_array('array_merge', $get_selected_staff);
+                    if( is_array( $flat_selected_staff_ids ) && !empty( $flat_selected_staff_ids ) ) {
+                        $all_staffs = get_users([
+                            'include' => $flat_selected_staff_ids,
+                            'role' => 'mpwpb_staff'
+                        ]);
+                    }
+                    ?>
+                    <section id="service-reviews">
+                        <h2><?php esc_html_e('Staff Members', 'service-booking-manager'); ?></h2>
+                    </section>
+				<?php
+
+                    if ( sizeof($all_staffs) > 0) {
+                        echo $this->display_staff_member( $all_staffs );
+                    }
+
+                }
 			}
 		}
 		new MPWPB_Static_Template();

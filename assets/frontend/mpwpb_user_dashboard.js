@@ -181,7 +181,16 @@ jQuery(document).ready(function($) {
             }
         });
     });
-    
+
+    $(document).on('click', '.mpwpb_view_selected_service_staff', function(e) {
+        e.preventDefault();
+
+        $('.mpwpb-service-staff_card').fadeOut();
+        $(this).closest('.mpwpb-service-wrapper')
+            .find('.mpwpb-service-staff_card')
+            .fadeIn();
+    });
+
     // Profile update form
     $('#mpwpb-profile-form').on('submit', function(e) {
         e.preventDefault();

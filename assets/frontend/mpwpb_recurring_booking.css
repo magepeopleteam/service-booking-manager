@@ -153,3 +153,84 @@ input:checked + .slider:before {
     border-left: 3px solid #0078d7;
     font-weight: bold;
 }
+
+.mpwpb_staff_member_booking_area{
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 5px;
+    clear: both;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.mpwpb_staff_member_booking {
+    width: 100%;
+    max-width: 300px;
+    padding: 10px 15px;
+    font-size: 16px;
+    color: #333;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%23333' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px;
+    cursor: pointer;
+}
+
+.mpwpb_staff_member_booking:hover {
+    border-color: #888;
+}
+
+.mpwpb_staff_member_booking:focus {
+    outline: none;
+    border-color: #0073aa;
+    box-shadow: 0 0 0 3px rgba(0, 115, 170, 0.2);
+}
+
+.mpwpb_added_staff_holder {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-start;
+    padding: 5px;
+}
+
+.mpwpb_staff_card {
+    background-color: #ffffff;
+    border: 1px solid #e2e2e2;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    padding: 5px;
+    width: 110px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.mpwpb_staff_card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.mpwpb_staff_card img {
+    width: 100px !important;
+    height: 90px !important;
+    border-radius: 50% !important;
+    object-fit: cover;
+    border: 2px solid #ddd;
+    margin-bottom: 2px;
+}
+
+.mpwpb_staff_name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}

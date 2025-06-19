@@ -10,7 +10,24 @@
 		class MPWPB_CPT {
 			public function __construct() {
 				add_action('init', [$this, 'add_cpt']);
+//                add_action('init', [$this, 'mpwpb_register_staff_taxonomy']);
 			}
+
+            public function mpwpb_register_staff_taxonomy() {
+                $slug = MPWPB_Function::get_slug();
+                register_taxonomy(
+                    'mpwpb_staff',
+                    'mpwpb_item',
+                    array(
+                        'label' => 'Staff Members',
+                        'hierarchical' => false,
+                        'public' => true,
+                        'show_admin_column' => true,
+                        'show_ui' => true,
+                        'show_in_menu' => $slug,
+                    )
+                );
+            }
 			public function add_cpt(): void {
 				$cpt = MPWPB_Function::get_cpt();
 				$label = MPWPB_Function::get_name();
