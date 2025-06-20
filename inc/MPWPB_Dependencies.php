@@ -59,6 +59,9 @@
             public static function staff_dashboard_enqueue_scripts() {
                 $current_user = wp_get_current_user();
                 if (in_array('mpwpb_staff', $current_user->roles)) {
+
+                    wp_enqueue_script('jquery-ui-sortable');
+                    // your script depends on jQuery UI
                     wp_enqueue_style('mpwpb-user-dashboard', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_user_dashboard.css', array(), time());
                     wp_enqueue_script('mpwpb-user-dashboard', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_user_dashboard.js', array('jquery'), time(), true);
                     wp_localize_script('mpwpb-user-dashboard', 'mpwpb_dashboard', array(

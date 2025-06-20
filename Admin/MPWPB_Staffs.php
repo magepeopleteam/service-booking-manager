@@ -159,6 +159,8 @@
 					$staff_email = $user_id ? $user_info->user_email : '';
 					$staff_first_name = $user_id ? $user_info->first_name : '';
 					$staff_last_name = $user_id ? $user_info->last_name : '';
+
+                    $approve_holiday_modify = get_user_meta( $user_id, 'mpwpb_staff_modify_holiday', true);
 					//echo '<pre>'; print_r($user_info); echo '</pre>';
 					?>
                     <form action="" method="post">
@@ -202,9 +204,17 @@
                                     <input type="text" class="formControl mpwpb_name_validation" name="mpwpb_staff_last_name" value="<?php echo esc_attr($staff_last_name); ?>" placeholder="<?php esc_html_e('Please Type Staff Last Name.....', 'service-booking-manager'); ?>"/>
                                 </label>
 
+                                <label class="_mT_xs">
+                                    <span class="fas fa-user _w_200"><?php esc_html_e('Staff Modify Holiday', 'service-booking-manager'); ?></span>
+                                    <select name="mpwpb_staff_modify_holiday" class="mpwpb_staff_modify_holiday">
+                                        <option value="no" <?php echo ($approve_holiday_modify === 'no') ? 'selected' : ''; ?>>No</option>
+                                        <option value="yes" <?php echo ($approve_holiday_modify === 'yes') ? 'selected' : ''; ?>>Yes</option>
+                                    </select>
+                                </label>
+
                                 <?php
                                 // Show upload field in user profile (backend)
-                                echo $this->custom_user_profile_image_field( $user_id );
+                                wp_kses_post( $this->custom_user_profile_image_field( $user_id ) );
                                 ?>
 
                             </div>
@@ -397,6 +407,7 @@
                 </div>
 				<?php
 			}
+
 			//*****************************//
 			public function time_slot_tr($user_id, $day) {
 				$start_name = 'mpwpb_' . $day . '_start_time';
@@ -578,6 +589,7 @@
 				if ($user_id) {
 					$first_name = isset($_POST['mpwpb_staff_first_name']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_staff_first_name'])) : '';
 					$last_name = isset($_POST['mpwpb_staff_last_name']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_staff_last_name'])) : '';
+					$modify_holiday = isset($_POST['mpwpb_staff_modify_holiday']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_staff_modify_holiday'])) : '';
 					$userinfo = array(
 						'ID' => $user_id,
 						'first_name' => $first_name,
@@ -587,6 +599,7 @@
 					wp_update_user($userinfo);
 					$date_type = isset($_POST['mpwpb_date_type']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_date_type'])) : 'repeated';
 					update_user_meta($user_id, 'date_type', $date_type);
+					update_user_meta($user_id, 'mpwpb_staff_modify_holiday', $modify_holiday);
 					//**********************//
 					$particular_dates = isset($_POST['mpwpb_particular_dates']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_particular_dates'])) : [];
 					$particular = array();

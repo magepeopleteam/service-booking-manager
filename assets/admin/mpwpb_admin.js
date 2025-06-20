@@ -232,6 +232,7 @@
 (function ($) {
     "use strict";
     $(document).on('change', '.mpwpb_add_staff  .mpwpb_user_select', function () {
+        alert('clicked');
         load_staff_form(parseInt($(this).val()));
     });
     $(document).on('click', '#mpwpb_delete_staff', function () {

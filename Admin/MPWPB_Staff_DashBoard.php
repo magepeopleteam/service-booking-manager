@@ -9,102 +9,74 @@ if (!defined('ABSPATH')) {
 if (!class_exists('MPWPB_Staff_DashBoard')) {
     class MPWPB_Staff_DashBoard{
         public function __construct(){
-            add_action('wp_dashboard_setup', [ $this, 'mpwpb_add_dashboard_widget'] );
 
-            add_action('show_user_profile', [ $this, 'mpwpb_add_custom_user_profile_fields']);
-            add_action('edit_user_profile', [ $this, 'mpwpb_add_custom_user_profile_fields']);
-
-            add_action('personal_options_update', [ $this, 'mpwpb_save_custom_user_profile_fields']);
-            add_action('edit_user_profile_update', [ $this, 'mpwpb_save_custom_user_profile_fields']);
+            add_action( 'woocommerce_account_dashboard', [ $this, 'mpwpb_my_dashboard_content'] );
 
             add_action('wp_ajax_mpwpb_cancel_booking', array($this, 'cancel_booking'));
             add_action('wp_ajax_mpwpb_reschedule_booking', array($this, 'reschedule_booking'));
             add_action('wp_ajax_mpwpb_update_user_profile', array($this, 'update_user_profile'));
-//            add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+
+            add_action('wp_ajax_mpwpb_save_specific_schedule', array($this, 'mpwpb_save_specific_schedule'));
         }
 
-        public function mpwpb_add_dashboard_widget() {
 
-            $current_user = wp_get_current_user();
-            if ( in_array('mpwpb_staff', $current_user->roles)) {
+        function mpwpb_save_specific_schedule() {
 
-                wp_add_dashboard_widget(
-                    'mpwpb_staff_dashboard_widget',
-                    __('Your Staff Info', 'service-booking-manager'),
-                    [$this, 'mpwpb_show_staff_info_on_dashboard']
-                );
-                remove_meta_box('dashboard_activity', 'dashboard', 'normal');
-                remove_meta_box('dashboard_quick_press', 'dashboard', 'side');
-                remove_meta_box('dashboard_right_now', 'dashboard', 'normal');
-                remove_meta_box('dashboard_primary', 'dashboard', 'side');
-                remove_meta_box('dashboard_site_health', 'dashboard', 'normal');
+            $user_id = get_current_user_id();
 
-                add_action('admin_head', function () {
-                    echo '<style>
-                            #mpwpb_staff_dashboard_widget {
-                                width: 100% !important;
-                                box-sizing: border-box;
-                            }
-                            .postbox-container .meta-box-sortables {
-                                min-width: 100% !important;
-                            }
-                            #postbox-container-1{
-                                min-width: 100% !important;
-                            }
-                            #mpwpb_staff_dashboard_widget .inside {
-                                padding: 20px;
-                            }
-                        </style>';
-                });
+            $off_dates_json = isset( $_POST['offDates_str'] ) ? stripslashes( sanitize_text_field( $_POST['offDates_str'] ) ) : '';
+            $off_days = isset( $_POST['offDays'] ) ? stripslashes( sanitize_text_field( $_POST['offDays'] ) ) : '';
+            $off_dates = json_decode($off_dates_json, true);
+            if (!$user_id) {
+                wp_send_json_error('User not logged in');
             }
+            if (!isset($_POST['schedule']) || !is_array($_POST['schedule'])) {
+                wp_send_json_error('Invalid or missing schedule data');
+            }
+            $raw_schedule = $_POST['schedule'];
+            foreach ($raw_schedule as $day => $times ) {
+                $start = isset($times['start_time']) ? sanitize_text_field($times['start_time']) : '';
+                $end = isset($times['end_time']) ? sanitize_text_field($times['end_time']) : '';
+                $break_start = isset($times['start_break_time']) ? sanitize_text_field($times['start_break_time']) : '';
+                $break_end = isset($times['end_break_time']) ? sanitize_text_field($times['end_break_time']) : '';
+                    if( $break_start !== '' &&  $break_end === '' ){
+                        $break_start = '';
+                    } else if( $break_start === '' &&  $break_end !== '' ){
+                        $break_end = '';
+                    }
+                    if( $start !== '' &&  $end === '' ){
+                        $start = '';
+                    } else if( $start === '' &&  $end !== '' ){
+                        $end = '';
+                    }
+                    $start_key = 'mpwpb_' . $day . '_start_time';
+                    $end_key = 'mpwpb_' . $day . '_end_time';
+                    $start_default_key = 'mpwpb_' . $day . '_start_break_time';
+                    $end_default_key = 'mpwpb_' . $day . '_end_break_time';
 
+                    update_user_meta( $user_id, $start_key, $start );
+                    update_user_meta( $user_id, $end_key, $end );
+                    update_user_meta( $user_id, $start_default_key, $break_start );
+                    update_user_meta( $user_id, $end_default_key, $break_end );
+                }
+                update_user_meta( $user_id, 'mpwpb_off_days', $off_days );
+                update_user_meta( $user_id, 'mpwpb_off_dates', $off_dates );
+
+            wp_send_json_success('Schedule saved successfully');
         }
 
+
+        function mpwpb_my_dashboard_content() {
+            $current_user = wp_get_current_user();
+//            if ( in_array('mpwpb_staff', $current_user->roles) ) {
+                $this->mpwpb_show_staff_info_on_dashboard();
+//            }
+        }
 
         function mpwpb_show_staff_info_on_dashboard() {
             $current_user = wp_get_current_user();
             echo $this->user_dashboard($current_user);
         }
-
-        function mpwpb_add_custom_user_profile_fields($user) {
-            if (!in_array('mpwpb_staff', (array) $user->roles)) {
-                return;
-            }
-            ?>
-            <h3><?php esc_html_e('Staff Extra Information', 'service-booking-manager'); ?></h3>
-            <table class="form-table">
-                <tr>
-                    <th><label for="staff_phone"><?php esc_html_e('Phone Number', 'service-booking-manager'); ?></label></th>
-                    <td>
-                        <input type="text" name="staff_phone" id="staff_phone" value="<?php echo esc_attr(get_user_meta($user->ID, 'staff_phone', true)); ?>" class="regular-text" />
-                    </td>
-                </tr>
-                <tr>
-                    <th><label for="staff_skill"><?php esc_html_e('Skill/Expertise', 'service-booking-manager'); ?></label></th>
-                    <td>
-                        <input type="text" name="staff_skill" id="staff_skill" value="<?php echo esc_attr(get_user_meta($user->ID, 'staff_skill', true)); ?>" class="regular-text" />
-                    </td>
-                </tr>
-            </table>
-            <?php
-
-//                $this->staff_form($user->ID);
-        }
-
-        function mpwpb_save_custom_user_profile_fields($user_id) {
-            if (!current_user_can('edit_user', $user_id)) {
-                return false;
-            }
-
-            if (isset($_POST['staff_phone'])) {
-                update_user_meta($user_id, 'staff_phone', sanitize_text_field($_POST['staff_phone']));
-            }
-
-            if (isset($_POST['staff_skill'])) {
-                update_user_meta($user_id, 'staff_skill', sanitize_text_field($_POST['staff_skill']));
-            }
-        }
-
 
         /**
          * Enqueue necessary scripts and styles for the dashboard
@@ -120,6 +92,68 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
             ));
         }
 
+
+        public function staff_off_on_day_settings($user_id = '') {
+            $date_type = $user_id ? get_user_meta($user_id, 'date_type') : [];
+            $date_type = sizeof($date_type) > 0 ? current($date_type) : 'repeated';
+            $off_days = $user_id ? get_user_meta($user_id, 'mpwpb_off_days') : [];
+            $off_days = sizeof($off_days) > 0 ? current($off_days) : '';
+            $days = MPWPB_Global_Function::week_day();
+            $off_day_array = explode(',', $off_days);
+            ob_start()
+            ?>
+            <div class="mpPanel mT_xs <?php echo esc_attr($date_type == 'repeated' ? 'mActive' : ''); ?>" data-collapse="#mp_repeated">
+                <div class="mpPanelHeader _bgColor_6" data-collapse-target="#mpwpb_staff_off_on_day_setting" data-open-icon="fa-minus" data-close-icon="fa-plus">
+                    <h6 class="_textBlack">
+                        <span data-icon class="fas fa-plus mR_xs"></span><?php esc_html_e('Off Days & Dates Settings', 'service-booking-manager'); ?>
+                    </h6>
+                </div>
+                <div class="mpPanelBody" data-collapse="#mpwpb_staff_off_on_day_setting">
+                    <div class="dFlex">
+                        <span class="_fs_label_w_200"><?php esc_html_e('Off Day', 'service-booking-manager'); ?></span>
+                        <div class="groupCheckBox flexWrap">
+                            <input type="hidden" name="mpwpb_off_days" value="<?php echo esc_attr($off_days); ?>"/>
+                            <?php foreach ($days as $key => $day) { ?>
+                                <label class="customCheckboxLabel _w_200">
+                                    <input type="checkbox" <?php echo esc_attr(in_array($key, $off_day_array) ? 'checked' : ''); ?> data-checked="<?php echo esc_attr($key); ?>"/>
+                                    <span class="customCheckbox"><?php echo esc_html($day); ?></span>
+                                </label>
+                            <?php } ?>
+                        </div>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="dFlex">
+                        <span class="_fs_label_w_200"><?php esc_html_e('Off Dates', 'service-booking-manager'); ?></span>
+                        <div class="mp_settings_area">
+                            <div class="mp_item_insert mp_sortable_area">
+                                <?php
+                                $off_day_lists = $user_id ? get_user_meta($user_id, 'mpwpb_off_dates') : [];
+                                $off_day_lists = sizeof($off_day_lists) > 0 ? current($off_day_lists) : [];
+                                if (sizeof($off_day_lists) > 0) {
+                                    foreach ($off_day_lists as $off_day) {
+                                        if ($off_day) {
+                                            MPWPB_Date_Time_Settings::particular_date_item('mpwpb_off_dates[]', $off_day);
+                                        }
+                                    }
+                                }
+                                ?>
+
+                                <div class="mpwpb_hidden_content" style="display: none">
+                                    <div class="mpwpb_hidden_item">
+                                        <?php MPWPB_Date_Time_Settings::particular_date_item('mpwpb_off_dates[]'); ?>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <?php MPWPB_Custom_Layout::add_new_button(esc_html__('Add New Off date', 'service-booking-manager')); ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <?php
+            return ob_get_clean();
+        }
+
         /**
          * Main dashboard shortcode callback
          */
@@ -131,52 +165,69 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
                 $this->login_form();
                 return ob_get_clean();
             }
-
             $user_id = get_current_user_id();
+            $approve_holiday_modify = get_user_meta($user_id, 'mpwpb_staff_modify_holiday', true);
             $tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'bookings';
 
             // Dashboard tabs
             // Dashboard tabs
             $tabs = array(
-                'bookings' => esc_html__('My Bookings', 'service-booking-manager'),
+                'bookings' => esc_html__('Users Bookings', 'service-booking-manager'),
                 'upcoming' => esc_html__('Upcoming Appointments', 'service-booking-manager'),
                 'reviews' => esc_html__('My Reviews', 'service-booking-manager'),
-                'profile' => esc_html__('My Profile', 'service-booking-manager')
+//                'profile' => esc_html__('My Profile', 'service-booking-manager'),
+                'holiday' => esc_html__('Manage Holidays', 'service-booking-manager')
             );
-
-
+            if( $approve_holiday_modify === 'no' ){
+                unset($tabs['holiday']);
+            }
             ?>
-            <div class="mpStyle mpwpb-user-dashboard">
-                <div class="mpwpb-dashboard-tabs">
-                    <ul class="mpwpb-tabs-nav">
-                        <?php foreach ($tabs as $tab_key => $tab_label) : ?>
-                            <li class="<?php echo $tab === $tab_key ? 'active' : ''; ?>">
-                                <a href="?tab=<?php echo esc_attr($tab_key); ?>"><?php echo esc_html($tab_label); ?></a>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
+                <div class="wrap">
+                    <div class="mpwpb_style mpwpb_staff_page">
+                        <div class="_dLayout_dShadow_1">
+                            <div class="mpStyle mpwpb-user-dashboard">
+                                <div class="mpwpb-dashboard-tabs">
+                                    <ul class="mpwpb-tabs-nav">
+                                        <?php foreach ($tabs as $tab_key => $tab_label) : ?>
+                                            <li class="<?php echo $tab === $tab_key ? 'active' : ''; ?>">
+                                                <a href="?tab=<?php echo esc_attr($tab_key); ?>"><?php echo esc_html($tab_label); ?></a>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                </div>
 
-                <div class="mpwpb-dashboard-content">
-                    <?php
-                    switch ($tab) {
-                        case 'upcoming':
-                            $this->upcoming_appointments($user_id);
-                            break;
-                        case 'reviews':
-                            do_action('mpwpb_dashboard_content', 'reviews', $user_id);
-                            break;
-                        case 'profile':
-                            $this->user_profile($user_id);
-                            break;
-                        default:
-                            $this->booking_history($user_id);
-                            break;
-                    }
+                                <div class="mpwpb-dashboard-content">
+                                    <?php
+                                    switch ($tab) {
+                                        case 'upcoming':
+                                            $this->upcoming_appointments($user_id);
+                                            break;
+                                        case 'reviews':
+                                            do_action('mpwpb_dashboard_content', 'reviews', $user_id);
+                                            break;
+                                        case 'holiday':
+                                            if( $approve_holiday_modify === 'yes' ){
+                                                $MPWPB_Staffs = new MPWPB_Staffs();
+                                                wp_kses_post( $MPWPB_Staffs->schedule_settings( $user_id ) );
+                                                echo $this->staff_off_on_day_settings( $user_id );
+                                            ?>
+                                            <button type="button" id="saveScheduleBtn" class="mpmw_staff_button_primary">
+                                                <i class="fas fa-save"></i> Save Schedule
+                                            </button>
+                                            <?php
+                                            }
+                                            break;
+                                        default:
+                                            $this->booking_history($user_id);
+                                            break;
+                                    }
 
-                    ?>
+                                    ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
             <?php
 
             return ob_get_clean();
@@ -211,7 +262,7 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
 
             ?>
             <div class="mpwpb-booking-history">
-                <h3><?php esc_html_e('My Booking History', 'service-booking-manager'); ?></h3>
+                <h3><?php esc_html_e('Users Booking History', 'service-booking-manager'); ?></h3>
                 <table class="mpwpb-bookings-table">
                     <thead>
                     <tr>
@@ -447,6 +498,7 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
                 </form>
             </div>
             <?php
+
         }
 
         /**
