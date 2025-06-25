@@ -200,15 +200,15 @@ if (!class_exists('MPWPB_Staff_Members')) {
                             </label>
 
                             <label class="mpwpb_user_info">
-                                <span class=" _w_200"><?php esc_html_e('User Name', 'service-booking-manager'); ?></span>
+                                <span  class=" _w_200"> <i class="fa-solid fa-user"></i> <?php esc_html_e('User Name', 'service-booking-manager'); ?></span>
                                 <input type="text" class="formControl mpwpb_id_validation mpwpb_input_height" name="mpwpb_user_name" value="<?php echo esc_attr($staff_name); ?>" placeholder="<?php esc_html_e('Please Type Staff Name.....', 'service-booking-manager'); ?>" <?php echo esc_attr($user_id ? 'disabled' : ''); ?> required/>
                             </label>
                             <label class="mpwpb_user_info">
-                                <span class=" _w_200"><?php esc_html_e('Staff Password', 'service-booking-manager'); ?></span>
+                                <span class=" _w_200"> <i class="fa-solid fa-key"></i> <?php esc_html_e('Staff Password', 'service-booking-manager'); ?></span>
                                 <input type="password" class="formControl mpwpb_input_height" name="mpwpb_user_password" value="<?php echo esc_attr($staff_pass); ?>" placeholder="<?php esc_html_e('Please Type Staff Password.....', 'service-booking-manager'); ?>" <?php echo esc_attr($user_id ? 'disabled' : ''); ?> required/>
                             </label>
                             <label class="mpwpb_user_info">
-                                <span class=" _w_200"><?php esc_html_e('Staff Email', 'service-booking-manager'); ?></span>
+                                <span class=" _w_200"> <i class="fa-solid fa-envelope"></i> <?php esc_html_e('Staff Email', 'service-booking-manager'); ?></span>
                                 <input type="email" class="formControl mpwpb_input_height" name="mpwpb_user_mail" value="<?php echo esc_attr($staff_email); ?>" placeholder="<?php esc_html_e('Please Type Staff Email.....', 'service-booking-manager'); ?>" required/>
                             </label>
                             <label class="mpwpb_user_info">
