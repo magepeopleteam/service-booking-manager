@@ -448,7 +448,7 @@ function mpwpb_sticky_management() {
     });
     $(document).ready(function () {
         $('.mpwpb_style .mpwpb_tabs').each(function () {
-            let tabLists = $(this).find('.tabLists:first');
+            let tabLists = $(this).find('.mpwpb_add_update_tab:first');
             let activeTab = tabLists.find('[data-tabs-target].active');
             let targetTab = activeTab.length > 0 ? activeTab : tabLists.find('[data-tabs-target]').first();
             targetTab.trigger('click');
@@ -468,7 +468,7 @@ function mpwpb_sticky_management() {
             let tabsTarget = $(this).data('tabs-target');
             let parent = $(this).closest('.mpwpb_tabs');
             parent.height(parent.height());
-            let tabLists = $(this).closest('.tabLists');
+            let tabLists = $(this).closest('.mpwpb_add_update_tab');
             let tabsContent = parent.find('.tabsContent:first');
             tabLists.find('[data-tabs-target].active').each(function () {
                 $(this).removeClass('active').promise().done(function () {

@@ -25,10 +25,10 @@
     font-size: 16px;
 }
 .mpwpb_add_update_tab{
-    background: #3b82f6;
+    /*background: #3b82f6;*/
     color: white;
     border: none;
-    padding: 10px 20px;
+    padding: 5px 5px;
     border-radius: 8px;
     font-weight: 500;
     cursor: pointer;
@@ -46,4 +46,115 @@
     cursor: pointer;
     transition: background-color 0.2s;
     font-size: 14px;
+}
+
+
+.profile-section {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 24px;
+}
+.profile-section h3 {
+    color: #374151;
+    margin-bottom: 16px;
+    font-size: 16px;
+    font-weight: 500;
+}
+.upload-area {
+    border: 2px dashed #d1d5db;
+    border-radius: 8px;
+    padding: 24px;
+    text-align: center;
+    transition: border-color 0.2s;
+    cursor: pointer;
+}
+.upload-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 12px;
+}
+.btn-primary {
+    background: #3b82f6;
+    color:#6b7280;
+    border-color: #3b82f6;
+}
+.btn-secondary {
+    color: #6b7280;
+}
+.btn {
+    padding: 8px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 13px;
+    background: white;
+}
+
+.mpwpb_input_height{
+    min-height: 45px !important;
+}
+
+/* Container and spacing */
+label.mpwpb_user_info {
+    display: block;
+    margin-bottom: 20px !important;
+    font-weight: 600;
+}
+
+/* Label Icons and Text */
+label.mpwpb_user_info span {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #333;
+}
+
+.mpwpb_style table td{
+    border: none !important;
+    border-bottom: 1px solid var(--mpwpb_color_border) !important;
+}
+.mpwpb_style table th, .mpwpb_style table td {
+    border: none !important;
+    text-align: left !important;
+}
+
+/* Input field styling */
+.formControl {
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+/* Input hover/focus */
+.formControl:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+    outline: none;
+}
+
+/* Select field styling */
+select.mpwpb_staff_modify_holiday {
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+/* Select hover/focus */
+select.mpwpb_staff_modify_holiday:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+    outline: none;
 }

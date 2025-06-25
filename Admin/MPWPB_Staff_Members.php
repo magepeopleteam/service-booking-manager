@@ -45,20 +45,32 @@ if (!class_exists('MPWPB_Staff_Members')) {
         }
         public function custom_user_profile_image_field( $user_id ) {
             $image_url = esc_url( wp_get_attachment_url( get_user_meta( $user_id, 'mpwpb_custom_profile_image', true) ) );
+            error_log( print_r( [ '$image_url' => $image_url ], true ) );
             ?>
-            <h3><?php esc_html_e('Profile Image', 'service-booking-manager'); ?></h3>
-            <table class="form-table">
-                <tr>
-                    <th><label for="mpwpb_custom_profile_image"><?php esc_html_e('Upload Image', 'service-booking-manager'); ?></label></th>
-                    <td>
-                        <input type="hidden" name="mpwpb_custom_profile_image" id="mpwpb_custom_profile_image" value="<?php echo esc_attr(get_user_meta( $user_id, 'mpwpb_custom_profile_image', true)); ?>" />
+            <div class="profile-section">
+                <h3>Profile Image</h3>
+
+                <div class="mpwpb_profile_image_show">
+                    <input type="hidden" name="mpwpb_custom_profile_image" id="mpwpb_custom_profile_image" value="<?php echo esc_attr(get_user_meta( $user_id, 'mpwpb_custom_profile_image', true)); ?>" />
+                </div>
+                <div class="upload-area">
+
+                    <?php if( $image_url ){?>
                         <img src="<?php echo esc_attr( $image_url );?>" id="mpwpb_custom_profile_image_preview" style="width:100px;height:auto;" />
-                        <br/>
-                        <input type="button" class="button" value="<?php esc_attr_e('Upload Image', 'service-booking-manager'); ?>" id="upload_profile_image_button" />
-                        <input type="button" class="button" value="<?php esc_attr_e('Remove Image', 'service-booking-manager'); ?>" id="remove_profile_image_button" />
-                    </td>
-                </tr>
-            </table>
+                        <p style="color: #6b7280; font-size: 14px;"><?php esc_attr_e('Uploaded Imag', 'service-booking-manager'); ?>e</p>
+                    <?php }else{?>
+                        <div style="font-size: 32px; margin-bottom: 8px; color: #9ca3af;">📁</div>
+                        <p style="color: #6b7280; font-size: 14px;"><?php esc_attr_e('Upload Image', 'service-booking-manager'); ?></p>
+                    <?php }?>
+
+
+                    <div class="upload-buttons">
+                        <input type="button" class="btn btn-primary" value="<?php esc_attr_e('Add Image', 'service-booking-manager'); ?>" id="upload_profile_image_button" />
+                        <input type="button" class="btn btn-secondary" value="<?php esc_attr_e('Remove Image', 'service-booking-manager'); ?>" id="remove_profile_image_button" />
+                    </div>
+                </div>
+            </div>
+
             <?php
         }
         public function mpwpb_staff_service() {
@@ -68,17 +80,23 @@ if (!class_exists('MPWPB_Staff_Members')) {
                 <div class="mpwpb_style mpwpb_staff_page">
                     <div class="_dLayout_dShadow_1">
                         <div class="mpwpb_tabs">
-                            <div class="tabLists">
-                                <div class="buttonGroup">
-                                    <button class="_mpBtn " data-tabs-target="#mpwpb_staff_list" type="button" title="<?php esc_attr_e('Staff Lists', 'service-booking-manager'); ?>">
-                                        <span class="fas fa-users"></span><?php esc_html_e('Staff Lists', 'service-booking-manager'); ?>
-                                    </button>
-                                    <button class="_mpBtn mpwpb_add_new_staff" type="button" data-tabs-target="#mpwpb_add_new_staff" title="<?php esc_attr_e('Add New Staff', 'service-booking-manager'); ?>">
-                                        <span class="fas fa-plus-square"></span><?php esc_html_e('Add/Update Staff', 'service-booking-manager'); ?>
-                                    </button>
+                            <div class="header">
+                                <h1>
+                                    <div class="header-icon">👥</div>
+                                    <?php esc_html_e('Staff Management', 'service-booking-manager'); ?>
+                                </h1>
+                                <div class="mpwpb_add_update_tab">
+                                    <div class="buttonGroup">
+                                        <button class="_mpBtn " data-tabs-target="#mpwpb_staff_list" type="button" title="<?php esc_attr_e('Staff Lists', 'service-booking-manager'); ?>">
+                                            <span class="fas fa-users"></span><?php esc_html_e('Staff Lists', 'service-booking-manager'); ?>
+                                        </button>
+                                        <button class="_mpBtn mpwpb_add_new_staff" type="button" data-tabs-target="#mpwpb_add_new_staff" title="<?php esc_attr_e('Add New Staff', 'service-booking-manager'); ?>">
+                                            <span class="fas fa-plus-square"></span><?php esc_html_e('Add/Update Staff', 'service-booking-manager'); ?>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="divider"></div>
+
                             <div class="tabsContent _pad_zero">
                                 <div class="tabsItem mpwpb_staff_list" data-tabs="#mpwpb_staff_list">
                                     <?php $this->staff_list(); ?>
@@ -167,10 +185,9 @@ if (!class_exists('MPWPB_Staff_Members')) {
                     <div class="mpRow">
                         <div class="col_5 _infoLayout_xs">
                             <h4><?php esc_html_e('Staff Information', 'service-booking-manager'); ?></h4>
-                            <div class="divider"></div>
                             <label>
-                                <span class="fas fa-user-tie _w_200"><?php esc_html_e('Select User', 'service-booking-manager'); ?></span>
-                                <select name="mpwpb_user" class="formControl mpwpb_select2 mpwpb_user_select">
+                                <span class=" _w_200"><?php esc_html_e('Select User', 'service-booking-manager'); ?></span>
+                                <select name="mpwpb_user" class="formControl mpwpb_user_select">
                                     <option value=" "><?php esc_html_e('Add New User', 'service-booking-manager'); ?></option>
                                     <?php if (sizeof($users) > 0) { ?>
                                         <?php foreach ($users as $user) { ?>
@@ -181,29 +198,30 @@ if (!class_exists('MPWPB_Staff_Members')) {
                                     <?php } ?>
                                 </select>
                             </label>
-                            <label class="_mT_xs">
-                                <span class="fas fa-user _w_200"><?php esc_html_e('User Name', 'service-booking-manager'); ?></span>
-                                <input type="text" class="formControl mpwpb_id_validation" name="mpwpb_user_name" value="<?php echo esc_attr($staff_name); ?>" placeholder="<?php esc_html_e('Please Type Staff Name.....', 'service-booking-manager'); ?>" <?php echo esc_attr($user_id ? 'disabled' : ''); ?> required/>
+
+                            <label class="mpwpb_user_info">
+                                <span class=" _w_200"><?php esc_html_e('User Name', 'service-booking-manager'); ?></span>
+                                <input type="text" class="formControl mpwpb_id_validation mpwpb_input_height" name="mpwpb_user_name" value="<?php echo esc_attr($staff_name); ?>" placeholder="<?php esc_html_e('Please Type Staff Name.....', 'service-booking-manager'); ?>" <?php echo esc_attr($user_id ? 'disabled' : ''); ?> required/>
                             </label>
-                            <label class="_mT_xs">
-                                <span class="fas fa-key _w_200"><?php esc_html_e('Staff Password', 'service-booking-manager'); ?></span>
-                                <input type="password" class="formControl" name="mpwpb_user_password" value="<?php echo esc_attr($staff_pass); ?>" placeholder="<?php esc_html_e('Please Type Staff Password.....', 'service-booking-manager'); ?>" <?php echo esc_attr($user_id ? 'disabled' : ''); ?> required/>
+                            <label class="mpwpb_user_info">
+                                <span class=" _w_200"><?php esc_html_e('Staff Password', 'service-booking-manager'); ?></span>
+                                <input type="password" class="formControl mpwpb_input_height" name="mpwpb_user_password" value="<?php echo esc_attr($staff_pass); ?>" placeholder="<?php esc_html_e('Please Type Staff Password.....', 'service-booking-manager'); ?>" <?php echo esc_attr($user_id ? 'disabled' : ''); ?> required/>
                             </label>
-                            <label class="_mT_xs">
-                                <span class="far fa-envelope _w_200"><?php esc_html_e('Staff Email', 'service-booking-manager'); ?></span>
-                                <input type="email" class="formControl" name="mpwpb_user_mail" value="<?php echo esc_attr($staff_email); ?>" placeholder="<?php esc_html_e('Please Type Staff Email.....', 'service-booking-manager'); ?>" required/>
+                            <label class="mpwpb_user_info">
+                                <span class=" _w_200"><?php esc_html_e('Staff Email', 'service-booking-manager'); ?></span>
+                                <input type="email" class="formControl mpwpb_input_height" name="mpwpb_user_mail" value="<?php echo esc_attr($staff_email); ?>" placeholder="<?php esc_html_e('Please Type Staff Email.....', 'service-booking-manager'); ?>" required/>
                             </label>
-                            <label class="_mT_xs">
-                                <span class="fas fa-user _w_200"><?php esc_html_e('Staff First Name', 'service-booking-manager'); ?></span>
-                                <input type="text" class="formControl mpwpb_name_validation" name="mpwpb_staff_first_name" value="<?php echo esc_attr($staff_first_name); ?>" placeholder="<?php esc_html_e('Please Type Staff First Name.....', 'service-booking-manager'); ?>"/>
+                            <label class="mpwpb_user_info">
+                                <span class=" _w_200"><?php esc_html_e('Staff First Name', 'service-booking-manager'); ?></span>
+                                <input type="text" class="formControl mpwpb_name_validation mpwpb_input_height" name="mpwpb_staff_first_name" value="<?php echo esc_attr($staff_first_name); ?>" placeholder="<?php esc_html_e('Please Type Staff First Name.....', 'service-booking-manager'); ?>"/>
                             </label>
-                            <label class="_mT_xs">
-                                <span class="fas fa-user _w_200"><?php esc_html_e('Staff Last Name', 'service-booking-manager'); ?></span>
-                                <input type="text" class="formControl mpwpb_name_validation" name="mpwpb_staff_last_name" value="<?php echo esc_attr($staff_last_name); ?>" placeholder="<?php esc_html_e('Please Type Staff Last Name.....', 'service-booking-manager'); ?>"/>
+                            <label class="mpwpb_user_info">
+                                <span class=" _w_200"><?php esc_html_e('Staff Last Name', 'service-booking-manager'); ?></span>
+                                <input type="text" class="formControl mpwpb_name_validation mpwpb_input_height" name="mpwpb_staff_last_name" value="<?php echo esc_attr($staff_last_name); ?>" placeholder="<?php esc_html_e('Please Type Staff Last Name.....', 'service-booking-manager'); ?>"/>
                             </label>
 
-                            <label class="_mT_xs">
-                                <span class="fas fa-user _w_200"><?php esc_html_e('Staff Modify Holiday', 'service-booking-manager'); ?></span>
+                            <label class="mpwpb_user_info">
+                                <span class=" _w_200"><?php esc_html_e('Staff Modify Holiday', 'service-booking-manager'); ?></span>
                                 <select name="mpwpb_staff_modify_holiday" class="mpwpb_staff_modify_holiday">
                                     <option value="no" <?php echo ($approve_holiday_modify === 'no') ? 'selected' : ''; ?>>No</option>
                                     <option value="yes" <?php echo ($approve_holiday_modify === 'yes') ? 'selected' : ''; ?>>Yes</option>
@@ -218,13 +236,11 @@ if (!class_exists('MPWPB_Staff_Members')) {
                         </div>
                         <div class="col_7 _borL_pL">
                             <h4><?php esc_html_e('Staff Schedule', 'service-booking-manager'); ?></h4>
-                            <div class="divider"></div>
                             <?php $this->general_settings($user_id); ?>
                             <?php $this->schedule_settings($user_id); ?>
                             <?php $this->off_on_day_settings($user_id); ?>
                         </div>
                     </div>
-                    <div class="divider"></div>
                     <div class="justifyBetween _mT_xs">
                         <div></div>
                         <button class="themeButton" type="submit" title="<?php esc_attr_e('Save Staff', 'service-booking-manager'); ?>">
@@ -271,7 +287,6 @@ if (!class_exists('MPWPB_Staff_Members')) {
                         </select>
                     </label>
                     <div data-collapse="#mp_particular" class="<?php echo esc_attr($date_type == 'particular' ? 'mActive' : ''); ?>">
-                        <div class="divider"></div>
                         <div class="_dFlex">
                             <span class="_fs_label_w_200"><?php esc_html_e('Particular Dates', 'service-booking-manager'); ?></span>
                             <div class="mp_settings_area">
@@ -298,7 +313,6 @@ if (!class_exists('MPWPB_Staff_Members')) {
                         </div>
                     </div>
                     <div data-collapse="#mp_repeated" class="<?php echo esc_attr($date_type == 'repeated' ? 'mActive' : ''); ?>">
-                        <div class="divider"></div>
                         <label>
                             <span class="_w_200"><?php esc_html_e('Repeated Start Date', 'service-booking-manager'); ?></span>
                             <input type="hidden" name="mpwpb_repeated_start_date" value="<?php echo esc_attr($hidden_repeated_start_date); ?>"/>
@@ -306,7 +320,6 @@ if (!class_exists('MPWPB_Staff_Members')) {
                         </label>
                     </div>
                     <div data-collapse="#mp_repeated" class="<?php echo esc_attr($date_type == 'repeated' ? 'mActive' : ''); ?>">
-                        <div class="divider"></div>
                         <label>
                             <span class="_w_200"><?php esc_html_e('Repeated after', 'service-booking-manager'); ?></span>
                             <input type="text" name="mpwpb_repeated_after" class="formControl mpwpb_number_validation" value="<?php echo esc_attr($repeated_after); ?>"/>
@@ -376,7 +389,6 @@ if (!class_exists('MPWPB_Staff_Members')) {
                             <?php } ?>
                         </div>
                     </div>
-                    <div class="divider"></div>
                     <div class="dFlex">
                         <span class="_fs_label_w_200"><?php esc_html_e('Off Dates', 'service-booking-manager'); ?></span>
                         <div class="mp_settings_area">
