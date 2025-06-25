@@ -30,6 +30,7 @@
 	
 
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Staffs.php';
+//				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Staff_Members.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Staff_DashBoard.php';
 				//*************Global Settings*****************//
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Settings_Global.php';
