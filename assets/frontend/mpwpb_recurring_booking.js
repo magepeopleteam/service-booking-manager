@@ -41,6 +41,14 @@
         initRecurringBooking();
     });
     
+    $(document).on('change', 'div.mpwpb_registration #mpwpb_staff_member_booking', function() {
+        let selected_val = $(this).val();
+        if( selected_val ){
+            $("#mpwpb_progress_staff").addClass('active');
+        }else{
+            $("#mpwpb_progress_staff").removeClass('active');
+        }
+    });
     // Show recurring options when a date is selected
     $(document).on('click', 'div.mpwpb_registration .mpwpb_date_time_area .to-book', function() {
         let parent = $(this).closest('div.mpwpb_registration');
@@ -72,6 +80,10 @@
         let formattedDate = `${year}-${month}-${day}`;
         let hours24 = dateObj.getHours();
 
+        if( date_time ){
+            $("#mpwpb_progress_date_time").addClass('active');
+        }
+
         let ajaxUrl = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.ajax_url : mpwpb_ajax.ajax_url;
         let nonce = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.nonce : mpwpb_ajax.nonce;
         $.ajax({
@@ -90,8 +102,14 @@
                 parent.find('.mpwpb_recurring_dates').show();
             },
             success: function(response) {
-                $("#mpwpb_staff_member_booking").html( response );
+                console.log( response );
+                $("#mpwpb_staff_member_booking").html( response.html );
                 $("#mpwpb_staff_member_booking_area").fadeIn();
+                if( response.count < 1 ){
+                    $("#mpwpb_progress_staff").fadeOut();
+                }else{
+                    $("#mpwpb_progress_staff").fadeIn();
+                }
             },
             error: function(xhr, status, error) {
                 console.error('AJAX error:', status, error);

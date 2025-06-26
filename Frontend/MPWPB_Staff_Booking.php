@@ -218,7 +218,7 @@ if (!class_exists('MPWPB_Staff_Booking')) {
 
 
 
-        public function mpwpb_get_available_staff() {
+        public function mpwpb_get_available_staff_old() {
 
             $service_id =  isset( $_POST['service_id'] ) ? sanitize_text_field( $_POST['service_id'] ) : '';
             $date = isset( $_POST['staff_date'] ) ? sanitize_text_field( wp_unslash( $_POST['staff_date'] ) ) : '';
@@ -265,6 +265,57 @@ if (!class_exists('MPWPB_Staff_Booking')) {
 
             wp_die();
         }
+        public function mpwpb_get_available_staff() {
+            $service_id = isset($_POST['service_id']) ? sanitize_text_field($_POST['service_id']) : '';
+            $date       = isset($_POST['staff_date']) ? sanitize_text_field(wp_unslash($_POST['staff_date'])) : '';
+            $time       = isset($_POST['staff_time']) ? sanitize_text_field($_POST['staff_time']) : '';
+            $date_time  = isset($_POST['date_time']) ? sanitize_text_field($_POST['date_time']) : '';
+
+            $response = [
+                'html' => '<option value="">No Staff Available</option>',
+                'count' => 0
+            ];
+
+            if ($service_id) {
+                $available_staff = [];
+
+                $enable_staff_member = get_post_meta( $service_id, 'mpwpb_staff_member_add', true );
+                if( $enable_staff_member === 'on' ){
+                    $get_selected_staff = get_post_meta( $service_id, 'mpwpb_selected_staff_ids', array() );
+
+                    $flat_selected_staff_ids = is_array($get_selected_staff) ? call_user_func_array('array_merge', $get_selected_staff) : [];
+                    if (!empty($flat_selected_staff_ids)) {
+                        $all_staffs = get_users([
+                            'include' => $flat_selected_staff_ids,
+                            'role'    => 'mpwpb_staff'
+                        ]);
+
+                        foreach ($all_staffs as $staff_data) {
+                            $staff_id = $staff_data->ID;
+                            if ($this->mpwpb_is_staff_booked($staff_id, $date, $time)) {
+                                if (!$this->mpwpb_is_staff_booked_order($staff_id, $date_time)) {
+                                    if (self::mpwpb_is_staff_available_time($staff_id, $time, $date_time)) {
+                                        $available_staff[] = $staff_data;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (!empty($available_staff)) {
+                    $html = '<option value="">Select Staff</option>';
+                    foreach ($available_staff as $staff) {
+                        $html .= '<option value="' . esc_attr($staff->ID) . '">' . esc_html($staff->display_name) . '</option>';
+                    }
+                    $response['html'] = $html;
+                    $response['count'] = count($available_staff);
+                }
+            }
+
+            wp_send_json($response); // return JSON and end execution
+        }
+
 
     }
 

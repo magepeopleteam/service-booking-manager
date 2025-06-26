@@ -17,7 +17,26 @@
 				add_action('mpwpb_service_details', [$this, 'show_service_details']);
 				add_action('mpwpb_service_reviews', [$this, 'show_service_reviews']);
 				add_action('mpwpb_added_staff_details', [$this, 'show_added_staff_details']);
+                add_action('mpwpb_progress_bar', [$this, 'mpwpb_progress_bar_callback'], 10, 2 );
 			}
+
+            public function mpwpb_progress_bar_callback( $service_id, $is_active ) {
+                $enable_staff_member = get_post_meta($service_id, 'mpwpb_staff_member_add', true);
+                ?>
+                <div class="mpwpb_progress_container">
+                    <div class="mpwpb_progress_bar">
+                        <div class="mpwpb_progress_line"></div>
+                        <div id="mpwpb_progress_service" class="mpwpb_progress_step <?php echo esc_attr( $is_active ); ?>">Service</div>
+                        <div id="mpwpb_progress_date_time" class="mpwpb_progress_step">Date & Time </div>
+                        <?php  if ($enable_staff_member === 'on') {?>
+                            <div id="mpwpb_progress_staff" class="mpwpb_progress_step">Staff</div>
+                        <?php }?>
+                        <div id="mpwpb_progress_checkout" class="mpwpb_progress_step">Checkout</div>
+                    </div>
+                </div>
+
+            <?php
+            }
 			public function features_heighlight($limit = '') {
 				$features_heightlight = MPWPB_Global_Function::get_post_info(get_the_ID(), 'mpwpb_features', []);
 				$limit = $limit ? $limit : 3;

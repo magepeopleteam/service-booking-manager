@@ -18,6 +18,12 @@ function mpwpb_price_calculation($this) {
         }
     });
 
+    if( price > 0 ){
+        parent.find("#mpwpb_progress_service").addClass('active');
+    }else{
+        parent.find("#mpwpb_progress_service").removeClass('active');
+    }
+
     parent.find('.mpwpb_total_bill').html(mpwpb_price_format(price));
 
 }
@@ -545,6 +551,8 @@ function mpwpb_price_calculation($this) {
         var dateTimeString = dateTimes.join(',');
 
         if (date) {
+
+            $("#mpwpb_progress_checkout").addClass('active');
 
             let link_id = $(this).attr('data-wc_link_id');
             let mpwpb_category = parent.find('[name="mpwpb_category"]').val();
