@@ -1461,6 +1461,16 @@
         mpwpb_mediaUploader.open();
     });
 
+    $(document).on( 'click', '.mpwpb_staff_tab_switch', function(e) {
+        let tab_id = $(this).attr( 'id' );
+        $(".mpwpb_staff_tab_switch").removeClass('mpwpb_staff_tab_active');
+        $("#"+tab_id).addClass('mpwpb_staff_tab_active');
+
+        let tab_holder_id = tab_id+'_holder';
+        $("#"+tab_holder_id).siblings().fadeOut();
+        $("#"+tab_holder_id).fadeIn();
+    });
+
     $(document).on( 'click', '#remove_profile_image_button', function(e) {
         e.preventDefault();
         $('#mpwpb_custom_profile_image').val('');

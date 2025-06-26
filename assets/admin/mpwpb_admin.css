@@ -386,3 +386,10 @@ section.faq-header
     border-radius: 5px !important;
     margin-right:5px; 
 }
+
+.mpwpb_style .mpwpb_staff_tab_active{
+    text-decoration: none;
+    opacity: 0.8;
+    background-color: var(--mage-primary) !important;
+    color: #FFF;
+}

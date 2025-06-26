@@ -79,7 +79,7 @@ if (!class_exists('MPWPB_Staff_Members')) {
             <div class="wrap">
                 <div class="mpwpb_style mpwpb_staff_page">
                     <div class="_dLayout_dShadow_1">
-                        <div class="mpwpb_tabs">
+                        <div class="mpwpb_staff_tabs">
                             <div class="header">
                                 <h1>
                                     <div class="header-icon">👥</div>
@@ -87,10 +87,10 @@ if (!class_exists('MPWPB_Staff_Members')) {
                                 </h1>
                                 <div class="mpwpb_add_update_tab">
                                     <div class="buttonGroup">
-                                        <button class="_mpBtn " data-tabs-target="#mpwpb_staff_list" type="button" title="<?php esc_attr_e('Staff Lists', 'service-booking-manager'); ?>">
+                                        <button class="_mpBtn mpwpb_staff_tab_switch mpwpb_staff_tab_active" id="mpwpb_staff_lists"  type="button" title="<?php esc_attr_e('Staff Lists', 'service-booking-manager'); ?>">
                                             <span class="fas fa-users"></span><?php esc_html_e('Staff Lists', 'service-booking-manager'); ?>
                                         </button>
-                                        <button class="_mpBtn mpwpb_add_new_staff" type="button" data-tabs-target="#mpwpb_add_new_staff" title="<?php esc_attr_e('Add New Staff', 'service-booking-manager'); ?>">
+                                        <button class="_mpBtn mpwpb_staff_tab_switch" id="mpwpb_staff_members" type="button" title="<?php esc_attr_e('Add New Staff', 'service-booking-manager'); ?>">
                                             <span class="fas fa-plus-square"></span><?php esc_html_e('Add/Update Staff', 'service-booking-manager'); ?>
                                         </button>
                                     </div>
@@ -98,10 +98,10 @@ if (!class_exists('MPWPB_Staff_Members')) {
                             </div>
 
                             <div class="tabsContent _pad_zero">
-                                <div class="tabsItem mpwpb_staff_list" data-tabs="#mpwpb_staff_list">
+                                <div class="tabsItem mpwpb_staff_list" id="mpwpb_staff_lists_holder">
                                     <?php $this->staff_list(); ?>
                                 </div>
-                                <div class="tabsItem  mpwpb_add_staff" data-tabs="#mpwpb_add_new_staff">
+                                <div class="tabsItem  mpwpb_add_staff" id="mpwpb_staff_members_holder" style="display: none">
                                     <?php $this->staff_form(); ?>
                                 </div>
                             </div>
