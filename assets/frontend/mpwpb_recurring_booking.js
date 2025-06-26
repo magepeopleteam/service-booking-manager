@@ -40,15 +40,7 @@
     $(document).ready(function() {
         initRecurringBooking();
     });
-    
-    $(document).on('change', 'div.mpwpb_registration #mpwpb_staff_member_booking', function() {
-        let selected_val = $(this).val();
-        if( selected_val ){
-            $("#mpwpb_progress_staff").addClass('active');
-        }else{
-            $("#mpwpb_progress_staff").removeClass('active');
-        }
-    });
+
     // Show recurring options when a date is selected
     $(document).on('click', 'div.mpwpb_registration .mpwpb_date_time_area .to-book', function() {
         let parent = $(this).closest('div.mpwpb_registration');

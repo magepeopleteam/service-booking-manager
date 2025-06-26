@@ -172,7 +172,6 @@ function mpwpb_price_calculation($this) {
         let selectedTabText = $(this).find('h6').text().trim();
         $('.mpwpb_selected_category_text').text( selectedTabText );
         $('.mpwpb_category_itemaa').fadeIn();
-        // alert( selectedTabText );
        $('.mpwpb_sub_category_area').fadeIn();
 
        if( $('.mpwpb_category_area').find('.mpwpb_sub_category_area').length == 0 ){
@@ -564,7 +563,6 @@ function mpwpb_price_calculation($this) {
             let service_count = 0;
 
             let staff_member = parent.find('[name="mpwpb_staff_member_booking"]').val();
-            alert(staff_member);
 
             parent.find('[name="mpwpb_service[]"]').each(function () {
                 let service = $(this).val();
@@ -677,7 +675,8 @@ function mpwpb_price_calculation($this) {
         let staffId = $(this).find('.mpwpb_selected_staff').val();
 
         $("#mpwpb_staff_member_booking").val( staffId );
-        // alert( staffId );
+
+        $("#mpwpb_progress_staff").addClass('active');
     });
 
     //======================//
