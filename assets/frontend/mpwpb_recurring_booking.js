@@ -102,13 +102,20 @@
                 parent.find('.mpwpb_recurring_dates').show();
             },
             success: function(response) {
-                console.log( response );
-                $("#mpwpb_staff_member_booking").html( response.html );
+                // console.log( response );
+                $("#mpwpb_staff_member_holder").html( response.html );
                 $("#mpwpb_staff_member_booking_area").fadeIn();
+
                 if( response.count < 1 ){
                     $("#mpwpb_progress_staff").fadeOut();
+                    $("#mpwpb_datetime_holder").fadeIn();
+                    $("#mpwpb_carousel_area").fadeIn();
                 }else{
                     $("#mpwpb_progress_staff").fadeIn();
+                    $("#mpwpb_staff_member_holder").fadeIn();
+
+                    $("#mpwpb_datetime_holder").fadeOut();
+                    $("#mpwpb_carousel_area").fadeOut();
                 }
             },
             error: function(xhr, status, error) {

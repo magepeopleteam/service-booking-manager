@@ -564,6 +564,7 @@ function mpwpb_price_calculation($this) {
             let service_count = 0;
 
             let staff_member = parent.find('[name="mpwpb_staff_member_booking"]').val();
+            alert(staff_member);
 
             parent.find('[name="mpwpb_service[]"]').each(function () {
                 let service = $(this).val();
@@ -654,6 +655,31 @@ function mpwpb_price_calculation($this) {
     $(document).on('click', 'div.mpwpb_registration .mpwpb_price_calculation', function () {
         mpwpb_price_calculation($(this));
     });
+
+
+    $(document).on('click', '#mpwpb_show_hide_date_time', function () {
+        $("#mpwpb_datetime_holder").fadeIn();
+        $("#mpwpb_carousel_area").fadeIn();
+
+        $("#mpwpb_staff_member_holder").fadeOut();
+    });
+
+    $(document).on('click', '#mpwpb_show_hide_staff_member', function () {
+        $("#mpwpb_datetime_holder").fadeOut();
+        $("#mpwpb_carousel_area").fadeOut();
+
+        $("#mpwpb_staff_member_holder").fadeIn();
+    });
+
+    $(document).on('click', '.mpwp_select_staff_card', function () {
+        $('.mpwp_select_staff_card').removeClass('selected');
+        $(this).addClass('selected');
+        let staffId = $(this).find('.mpwpb_selected_staff').val();
+
+        $("#mpwpb_staff_member_booking").val( staffId );
+        // alert( staffId );
+    });
+
     //======================//
     $(document).ready(function () {
         $('.faq-header').on('click', function () {

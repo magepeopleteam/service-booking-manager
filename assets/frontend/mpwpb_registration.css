@@ -1514,3 +1514,77 @@ button.mpwpb_service_button.mActive:hover{
   color: #4CAF50;
 }
 
+.mpwpb_staff_member_booking {
+  width: 100%;
+  padding: 10px 15px;
+  font-size: 16px;
+  color: #333;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  background-repeat: no-repeat;
+
+  box-sizing: border-box;
+  height: 300px;
+  overflow-y: auto;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -o-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.mpwpb_select_staff_image{
+  width: 70px !important;
+}
+
+.mpwpb_date_staff_select{
+  cursor: pointer;
+}
+
+.mpwp_select_staff_wrapper {
+  padding: 20px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.mpwp_select_staff_grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.mpwp_select_staff_card {
+  background: #fff;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 15px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.mpwp_select_staff_card.selected {
+  border-color: #4CAF50;
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.15);
+}
+
+.mpwp_select_staff_img {
+  width: 70px;
+  height: 70px;
+  border-radius: 10px;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.mpwp_select_staff_name {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.mpwp_select_staff_email {
+  font-size: 12px;
+  color: #666;
+}
+
+

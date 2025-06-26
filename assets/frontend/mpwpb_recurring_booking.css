@@ -155,15 +155,15 @@ input:checked + .slider:before {
 }
 
 .mpwpb_staff_member_booking_area{
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #fff;
-    border-radius: 5px;
-    clear: both;
+    /*margin-top: 20px;*/
+    /*padding: 15px;*/
+    /*background-color: #fff;*/
+    /*border-radius: 5px;*/
+    /*clear: both;*/
     width: 100%;
     box-sizing: border-box;
 }
-
+/*
 .mpwpb_staff_member_booking {
     width: 100%;
     max-width: 300px;
@@ -193,7 +193,7 @@ input:checked + .slider:before {
     outline: none;
     border-color: #0073aa;
     box-shadow: 0 0 0 3px rgba(0, 115, 170, 0.2);
-}
+}*/
 
 .mpwpb_added_staff_holder {
     display: flex;

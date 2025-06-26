@@ -26,10 +26,10 @@
         <div class="mpwpb_date_carousel groupRadioCheck">
             <header class="_dFlex_alignCenter_justifyBetween">
                 <input type="hidden" name="mpwpb_date">
-                <h3><?php esc_html_e('Choose Date & Time', 'service-booking-manager'); ?></h3>
+                <h3 id="mpwpb_show_hide_date_time" class="mpwpb_date_staff_select"><?php esc_html_e('Choose Date & Time', 'service-booking-manager'); ?></h3>
 				<?php include(MPWPB_Function::template_path('layout/carousel_indicator.php')); ?>
             </header>
-            <div class="owl-theme mpwpb-owl-carousel">
+            <div class="owl-theme mpwpb-owl-carousel" id="mpwpb_datetime_holder">
 				<?php
 					if (sizeof($all_dates) > 0) {
 						$start_date = $all_dates[0];
@@ -156,8 +156,17 @@
 <?php }
 
 if ( $enable_staff_member === 'on' ) { ?>
-    <div class="_dShadow_7_mB_xs mpwpb_staff_member_booking_area" id="mpwpb_staff_member_booking_area" style="display: none;">
-        <select class="mpwpb_staff_member_booking" name="mpwpb_staff_member_booking" id="mpwpb_staff_member_booking"></select>
+    <div class="_dShadow_7_mB_xs mpwpb_date_time_area">
+        <div class="mpwpb_date_carousel groupRadioCheck">
+            <div class="_dShadow_7_mB_xs mpwpb_staff_member_booking_area" id="mpwpb_staff_member_booking_area" style="display: none;">
+                <header class="_dFlex_alignCenter_justifyBetween">
+                    <h3 id="mpwpb_show_hide_staff_member" class="mpwpb_date_staff_select"><?php esc_html_e('Select Staff', 'service-booking-manager'); ?></h3>
+                </header>
+
+                <input type="hidden" class="mpwpb_staff_member_booking" name="mpwpb_staff_member_booking" id="mpwpb_staff_member_booking" value="">
+                <div class="mpwpb_staff_member_booking" id="mpwpb_staff_member_holder"></div>
+            </div>
+        </div>
     </div>
 <?php }
     if ($enable_waiting_list === 'yes') {
