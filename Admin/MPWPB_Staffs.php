@@ -69,13 +69,13 @@
                 <div class="wrap">
                     <div class="mpwpb_style mpwpb_staff_page">
                         <div class="_dLayout_dShadow_1">
-                            <div class="mpwpb_tabs">
+                            <div class="mpwpb_staff_tabs">
                                 <div class="tabLists">
                                     <div class="buttonGroup">
-                                        <button class="_mpBtn " data-tabs-target="#mpwpb_staff_list" type="button" title="<?php esc_attr_e('Staff Lists', 'service-booking-manager'); ?>">
+                                        <button class="_mpBtn " data-staff-tabs-target="#mpwpb_staff_list" type="button" title="<?php esc_attr_e('Staff Lists', 'service-booking-manager'); ?>">
                                             <span class="fas fa-users"></span><?php esc_html_e('Staff Lists', 'service-booking-manager'); ?>
                                         </button>
-                                        <button class="_mpBtn mpwpb_add_new_staff" type="button" data-tabs-target="#mpwpb_add_new_staff" title="<?php esc_attr_e('Add New Staff', 'service-booking-manager'); ?>">
+                                        <button class="_mpBtn mpwpb_add_new_staff" type="button" data-staff-tabs-target="#mpwpb_add_new_staff" title="<?php esc_attr_e('Add New Staff', 'service-booking-manager'); ?>">
                                             <span class="fas fa-plus-square"></span><?php esc_html_e('Add/Update Staff', 'service-booking-manager'); ?>
                                         </button>
                                     </div>
