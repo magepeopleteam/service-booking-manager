@@ -857,6 +857,12 @@ function mpwpb_pagination_page_management(parent, pagination_page, total_item) {
         $(this).closest('[data-popup]').removeClass('in');
         $('body').removeClass('noScroll');
     });
+    $(document).on('click', '.mpwpb_style .mpwpb_show_time', function () {
+        $(".to-book").fadeOut();
+        $(".booked").fadeOut();
+        $(this).siblings().fadeIn();
+        // $('body').removeClass('noScroll');
+    });
 }(jQuery));
 //======================================================================Outer Close==========//
 (function ($) {

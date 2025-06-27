@@ -20,7 +20,7 @@
                 add_action('mpwpb_progress_bar', [$this, 'mpwpb_progress_bar_callback'], 10, 2 );
 			}
 
-            public function mpwpb_progress_bar_callback( $service_id, $is_active ) {
+            public function mpwpb_progress_bar_callback_old( $service_id, $is_active ) {
                 $enable_staff_member = get_post_meta($service_id, 'mpwpb_staff_member_add', true);
                 ?>
                 <div class="mpwpb_progress_container">
@@ -36,6 +36,29 @@
                 </div>
 
             <?php
+            }
+            public function mpwpb_progress_bar_callback( $service_id, $is_active ) {
+                $enable_staff_member = get_post_meta($service_id, 'mpwpb_staff_member_add', true);
+                ?>
+                <div class="mpwpb_cart_progress_wrapper">
+                    <div class="mpwpb_cart_progress_step active" id="mpwpb_progress_service">
+                        <div class="mpwpb_cart_progress_circle">1</div>
+                        <div class="mpwpb_cart_progress_label">Service</div>
+                    </div>
+                    <div class="mpwpb_cart_progress_arrow">→</div>
+                    <div class="mpwpb_cart_progress_step" id="mpwpb_progress_date_time">
+                        <div class="mpwpb_cart_progress_circle">2</div>
+                        <div class="mpwpb_cart_progress_label">Date & Time</div>
+                    </div>
+                    <div class="mpwpb_cart_progress_arrow">→</div>
+                    <div class="mpwpb_cart_progress_step" id="mpwpb_progress_checkout">
+                        <div class="mpwpb_cart_progress_circle">3</div>
+                        <div class="mpwpb_cart_progress_label">Checkout</div>
+                    </div>
+                </div>
+
+
+                <?php
             }
 			public function features_heighlight($limit = '') {
 				$features_heightlight = MPWPB_Global_Function::get_post_info(get_the_ID(), 'mpwpb_features', []);

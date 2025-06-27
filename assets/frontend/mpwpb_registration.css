@@ -127,15 +127,14 @@ div.registration_tab_item {
 }
 .mpwpb_selected_control{
   display: flex;
-  padding: 5px;
   gap: 15px;
   flex-wrap: wrap;
   justify-content: left;
   color: #767373;
   font-size: 16px;
   padding:10px;
-  background:#fff;
-  border:1px solid #ddd;
+  /*background:#fff;*/
+  /*border:1px solid #ddd;*/
   border-radius:10px;
 }
 .mpwpb_text_icon_holder{
@@ -1266,7 +1265,7 @@ div.registration_tab_item {
   overflow-y: scroll;
   padding: 10px;
   margin: 10px;
-  border: 2px solid #d3d3d3;
+  /*border: 2px solid #d3d3d3;*/
   border-radius: 10px;
   background-color: #f4f5f8;
 }
@@ -1453,25 +1452,27 @@ button.mpwpb_service_button.mActive:hover{
 }
 .mpwpb-popup-content{ padding: 10px; }
 
+
+
 /* Container */
-.mpwpb_progress_container {
+/*.mpwpb_progress_container {
   width: 100%;
   padding: 5px 5px;
   display: flex;
   justify-content: center;
 }
 
-/* Progress Bar */
+!* Progress Bar *!
 .mpwpb_progress_bar {
   position: relative;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   width: 100%;
-  gap: 5px;
+  gap: 25px;
 }
 
-/* Line Behind Steps */
+!* Line Behind Steps *!
 .mpwpb_progress_line {
   position: absolute;
   top: 50%;
@@ -1484,7 +1485,7 @@ button.mpwpb_service_button.mActive:hover{
   border-radius: 2px;
 }
 
-/* Step Buttons */
+!* Step Buttons *!
 .mpwpb_progress_step {
   position: relative;
   z-index: 1;
@@ -1500,7 +1501,7 @@ button.mpwpb_service_button.mActive:hover{
   font-size: 12px;
 }
 
-/* Active Step */
+!* Active Step *!
 .mpwpb_progress_step.active {
   background-color: #4CAF50;
   border-color: #4CAF50;
@@ -1508,11 +1509,11 @@ button.mpwpb_service_button.mActive:hover{
   box-shadow: 0 0 10px rgba(76, 175, 80, 0.4);
 }
 
-/* Optional Hover Effect */
+!* Optional Hover Effect *!
 .mpwpb_progress_step:hover {
   border-color: #4CAF50;
   color: #4CAF50;
-}
+}*/
 
 .mpwpb_staff_member_booking {
   width: 100%;
@@ -1585,6 +1586,59 @@ button.mpwpb_service_button.mActive:hover{
 .mpwp_select_staff_email {
   font-size: 12px;
   color: #666;
+}
+
+
+
+
+
+
+.mpwpb_cart_progress_wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  padding: 5px;
+  background: #f9fbfd;
+}
+
+.mpwpb_cart_progress_step {
+  display: flex;
+  /*flex-direction: column;*/
+  flex-direction: row;
+  align-items: center;
+  color: #999;
+  gap: 8px;
+}
+
+.mpwpb_cart_progress_step.active {
+  color: #2563eb;
+  font-weight: bold;
+}
+
+.mpwpb_cart_progress_circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  color: #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-bottom: 5px;
+  transition: background 0.3s, color 0.3s;
+}
+
+.mpwpb_cart_progress_step.active .mpwpb_cart_progress_circle {
+  background: #2563eb;
+  color: white;
+}
+
+.mpwpb_cart_progress_arrow {
+  color: #ccc;
+  font-size: 18px;
+  padding: 0 5px;
 }
 
 

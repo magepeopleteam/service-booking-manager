@@ -67,8 +67,12 @@
 				$category_image = array_key_exists('image', $category) ? $category['image'] : '';
 
                 if( !empty( $parent_min_max ) ){
-                    $max_min_price = $parent_min_max[ $cat_key ];
-                    $min_price = wc_price( $max_min_price['min'] );
+                    if( isset( $parent_min_max[ $cat_key ] ) ){
+                        $max_min_price = $parent_min_max[ $cat_key ];
+                        $min_price = wc_price( $max_min_price['min'] );
+                    }else{
+                        $min_price = '';
+                    }
                 }else{
                     $min_price = '';
                 }
@@ -111,8 +115,13 @@
 								$sub_category_image = array_key_exists('image', $sub_category_item) ? $sub_category_item['image'] : '';
 
                                 if( !empty( $sub_min_max ) ) {
-                                    $sub_max_min_price = $sub_min_max[$sub_key];
-                                    $sub_min_price = wc_price($sub_max_min_price['min']);
+                                    if( isset( $sub_min_max[$sub_key] ) ){
+                                        $sub_max_min_price = $sub_min_max[$sub_key];
+                                        $sub_min_price = wc_price($sub_max_min_price['min']);
+                                    }else{
+                                        $sub_max_min_price = '';
+                                    }
+
                                 }else{
                                     $sub_min_price = '';
                                 }
