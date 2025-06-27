@@ -57,7 +57,7 @@
                     <div class="content">
                         <div class="service-items">
                             <?php
-                            $is_active = '';
+                            $is_active = 'active';
                             do_action('mpwpb_progress_bar', $post_id, $is_active );
                             ?>
                             <div class="all_service_area ">

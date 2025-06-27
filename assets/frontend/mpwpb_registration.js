@@ -18,11 +18,11 @@ function mpwpb_price_calculation($this) {
         }
     });
 
-    if( price > 0 ){
+    /*if( price > 0 ){
         parent.find("#mpwpb_progress_service").addClass('active');
     }else{
         parent.find("#mpwpb_progress_service").removeClass('active');
-    }
+    }*/
 
     parent.find('.mpwpb_total_bill').html(mpwpb_price_format(price));
 
@@ -476,6 +476,7 @@ function mpwpb_price_calculation($this) {
         mpwpb_all_content_change($this);
     });
     $(document).on('click', 'div.mpwpb_registration .mpwpb_service_next', function () {
+        $("#mpwpb_progress_date_time").addClass('active');
         let parent = $(this).closest('div.mpwpb_registration');
         let mpwpb_service = {};
         let service_count = 0;
@@ -676,7 +677,8 @@ function mpwpb_price_calculation($this) {
 
         $("#mpwpb_staff_member_booking").val( staffId );
 
-        $("#mpwpb_progress_staff").addClass('active');
+        // $("#mpwpb_progress_staff").addClass('active');
+        $("#mpwpb_progress_checkout").addClass('active');
     });
 
     //======================//

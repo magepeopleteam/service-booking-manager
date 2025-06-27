@@ -1526,7 +1526,7 @@ button.mpwpb_service_button.mActive:hover{
   background-repeat: no-repeat;
 
   box-sizing: border-box;
-  height: 300px;
+  max-height: 300px;
   overflow-y: auto;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;

@@ -72,9 +72,9 @@
         let formattedDate = `${year}-${month}-${day}`;
         let hours24 = dateObj.getHours();
 
-        if( date_time ){
-            $("#mpwpb_progress_date_time").addClass('active');
-        }
+        /*if( date_time ){
+            $("#mpwpb_progress_staff").addClass('active');
+        }*/
 
         let ajaxUrl = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.ajax_url : mpwpb_ajax.ajax_url;
         let nonce = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.nonce : mpwpb_ajax.nonce;
@@ -102,7 +102,14 @@
                     $("#mpwpb_progress_staff").fadeOut();
                     $("#mpwpb_datetime_holder").fadeIn();
                     $("#mpwpb_carousel_area").fadeIn();
+
+                    $("#mpwpb_progress_checkout").addClass('active');
                 }else{
+                    $("#mpwpb_progress_staff").addClass('active');
+                    if ($('#mpwpb_progress_checkout').hasClass('active')) {
+                        $('#mpwpb_progress_checkout').removeClass('active');
+                    }
+
                     $("#mpwpb_progress_staff").fadeIn();
                     $("#mpwpb_staff_member_holder").fadeIn();
 

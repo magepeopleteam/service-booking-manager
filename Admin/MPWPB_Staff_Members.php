@@ -45,7 +45,6 @@ if (!class_exists('MPWPB_Staff_Members')) {
         }
         public function custom_user_profile_image_field( $user_id ) {
             $image_url = esc_url( wp_get_attachment_url( get_user_meta( $user_id, 'mpwpb_custom_profile_image', true) ) );
-            error_log( print_r( [ '$image_url' => $image_url ], true ) );
             ?>
             <div class="profile-section">
                 <h3>Profile Image</h3>
