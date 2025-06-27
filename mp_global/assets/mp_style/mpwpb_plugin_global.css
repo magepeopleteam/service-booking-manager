@@ -211,6 +211,10 @@
 }
 /******************************************************************** Radios Section************************************************/
 @media only screen and (min-width: 10px) {
+	.mpwpb_service_cart_holder{
+		display: flex;
+		flex-direction: row
+	}
 	.mpwpb_style img,
 	.mpwpb_style [class*="dButton"], .mpwpb_style button,
 	div.filter_item,
@@ -1113,6 +1117,13 @@
 	div.mpwpb_popup .popupFooter { border-top: 4px double var(--mpwpb_color_border); padding: var(--mpwpb_dmp_xs); }
 	div.mpwpb_popup .dLayout, div.mpwpb_popup [class*='_dLayout'] { margin: 0; }
 }
+@media only screen and (max-width: 1024px) {
+
+	.mpwpb_service_cart_holder {
+		flex-direction: column;
+	}
+}
+
 /******************************************************************** Pagination section ************************************************/
 @media only screen and (min-width: 10px) {
 	div.mp_pagination_main_area .mp_pagination_item{position: relative;}
