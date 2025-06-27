@@ -440,6 +440,34 @@
     border-bottom: 1px solid #efe9e9;
 }
 
+.mpmw_staff_button_primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #0073aa;
+    color: #fff;
+    font-size: 15px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.2s ease;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-top: 10px !important;
+}
+
+.mpmw_staff_button_primary:hover {
+    background-color: #005f8d;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.mpmw_staff_button_primary:active {
+    background-color: #004f78;
+}
+
+
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     .mpwpb-tabs-nav {

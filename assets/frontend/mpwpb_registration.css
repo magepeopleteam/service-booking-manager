@@ -1452,3 +1452,139 @@ button.mpwpb_service_button.mActive:hover{
     background: #fff !important;
 }
 .mpwpb-popup-content{ padding: 10px; }
+
+/* Container */
+.mpwpb_progress_container {
+  width: 100%;
+  padding: 5px 5px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Progress Bar */
+.mpwpb_progress_bar {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 5px;
+}
+
+/* Line Behind Steps */
+.mpwpb_progress_line {
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background-color: #979292;
+  z-index: 0;
+  transform: translateY(-50%);
+  border-radius: 2px;
+}
+
+/* Step Buttons */
+.mpwpb_progress_step {
+  position: relative;
+  z-index: 1;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 50px;
+  padding: 10px 15px;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  text-align: center;
+  font-size: 12px;
+}
+
+/* Active Step */
+.mpwpb_progress_step.active {
+  background-color: #4CAF50;
+  border-color: #4CAF50;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.4);
+}
+
+/* Optional Hover Effect */
+.mpwpb_progress_step:hover {
+  border-color: #4CAF50;
+  color: #4CAF50;
+}
+
+.mpwpb_staff_member_booking {
+  width: 100%;
+  padding: 10px 15px;
+  font-size: 16px;
+  color: #333;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  background-repeat: no-repeat;
+
+  box-sizing: border-box;
+  max-height: 300px;
+  overflow-y: auto;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -o-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.mpwpb_select_staff_image{
+  width: 70px !important;
+}
+
+.mpwpb_date_staff_select{
+  cursor: pointer;
+}
+
+.mpwp_select_staff_wrapper {
+  padding: 20px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.mpwp_select_staff_grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.mpwp_select_staff_card {
+  background: #fff;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 15px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.mpwp_select_staff_card.selected {
+  border-color: #4CAF50;
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.15);
+}
+
+.mpwp_select_staff_img {
+  width: 70px;
+  height: 70px;
+  border-radius: 10px;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.mpwp_select_staff_name {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.mpwp_select_staff_email {
+  font-size: 12px;
+  color: #666;
+}
+
+

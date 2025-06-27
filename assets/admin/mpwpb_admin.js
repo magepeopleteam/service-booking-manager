@@ -232,7 +232,7 @@
 (function ($) {
     "use strict";
     $(document).on('change', '.mpwpb_add_staff  .mpwpb_user_select', function () {
-        load_staff_form(parseInt($(this).val()));
+        load_staff_form($(this).val());
     });
     $(document).on('click', '#mpwpb_delete_staff', function () {
         if (confirm('Are You Sure , Remove this row ? \n\n 1. Ok : To Remove . \n 2. Cancel : To Cancel .')) {
@@ -1459,6 +1459,16 @@
             $('#mpwpb_custom_profile_image_preview').attr('src', attachment.url);
         });
         mpwpb_mediaUploader.open();
+    });
+
+    $(document).on( 'click', '.mpwpb_staff_tab_switch', function(e) {
+        let tab_id = $(this).attr( 'id' );
+        $(".mpwpb_staff_tab_switch").removeClass('mpwpb_staff_tab_active');
+        $("#"+tab_id).addClass('mpwpb_staff_tab_active');
+
+        /*let tab_holder_id = tab_id+'_holder';
+        $("#"+tab_holder_id).siblings().fadeOut();
+        $("#"+tab_holder_id).fadeIn();*/
     });
 
     $(document).on( 'click', '#remove_profile_image_button', function(e) {

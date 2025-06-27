@@ -34,6 +34,12 @@
                 <div class="mpwpb_popup_body">
                     <div class="mpwpb-popup-content">
                         <div class="service-items">
+
+                            <?php
+                            $is_active = 'active';
+                            do_action('mpwpb_progress_bar', $post_id, $is_active );
+                            ?>
+
                             <div class="all_service_area ">
 
                                 <div class="selection-header">

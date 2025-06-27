@@ -18,6 +18,12 @@ function mpwpb_price_calculation($this) {
         }
     });
 
+    /*if( price > 0 ){
+        parent.find("#mpwpb_progress_service").addClass('active');
+    }else{
+        parent.find("#mpwpb_progress_service").removeClass('active');
+    }*/
+
     parent.find('.mpwpb_total_bill').html(mpwpb_price_format(price));
 
 }
@@ -166,7 +172,6 @@ function mpwpb_price_calculation($this) {
         let selectedTabText = $(this).find('h6').text().trim();
         $('.mpwpb_selected_category_text').text( selectedTabText );
         $('.mpwpb_category_itemaa').fadeIn();
-        // alert( selectedTabText );
        $('.mpwpb_sub_category_area').fadeIn();
 
        if( $('.mpwpb_category_area').find('.mpwpb_sub_category_area').length == 0 ){
@@ -471,6 +476,7 @@ function mpwpb_price_calculation($this) {
         mpwpb_all_content_change($this);
     });
     $(document).on('click', 'div.mpwpb_registration .mpwpb_service_next', function () {
+        $("#mpwpb_progress_date_time").addClass('active');
         let parent = $(this).closest('div.mpwpb_registration');
         let mpwpb_service = {};
         let service_count = 0;
@@ -545,6 +551,8 @@ function mpwpb_price_calculation($this) {
         var dateTimeString = dateTimes.join(',');
 
         if (date) {
+
+            $("#mpwpb_progress_checkout").addClass('active');
 
             let link_id = $(this).attr('data-wc_link_id');
             let mpwpb_category = parent.find('[name="mpwpb_category"]').val();
@@ -646,6 +654,33 @@ function mpwpb_price_calculation($this) {
     $(document).on('click', 'div.mpwpb_registration .mpwpb_price_calculation', function () {
         mpwpb_price_calculation($(this));
     });
+
+
+    $(document).on('click', '#mpwpb_show_hide_date_time', function () {
+        $("#mpwpb_datetime_holder").fadeIn();
+        $("#mpwpb_carousel_area").fadeIn();
+
+        $("#mpwpb_staff_member_holder").fadeOut();
+    });
+
+    $(document).on('click', '#mpwpb_show_hide_staff_member', function () {
+        $("#mpwpb_datetime_holder").fadeOut();
+        $("#mpwpb_carousel_area").fadeOut();
+
+        $("#mpwpb_staff_member_holder").fadeIn();
+    });
+
+    $(document).on('click', '.mpwp_select_staff_card', function () {
+        $('.mpwp_select_staff_card').removeClass('selected');
+        $(this).addClass('selected');
+        let staffId = $(this).find('.mpwpb_selected_staff').val();
+
+        $("#mpwpb_staff_member_booking").val( staffId );
+
+        // $("#mpwpb_progress_staff").addClass('active');
+        $("#mpwpb_progress_checkout").addClass('active');
+    });
+
     //======================//
     $(document).ready(function () {
         $('.faq-header').on('click', function () {

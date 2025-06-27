@@ -237,4 +237,152 @@ jQuery(document).ready(function($) {
             }
         });
     });
+
+
+    function getAllOffDates() {
+        let dates = [];
+        $('input[name="mpwpb_off_dates[]"]').each(function() {
+            let val = $(this).val();
+            if (val) {
+                dates.push(val);
+            }
+        });
+        return dates;
+    }
+    function updateOffDaysValue() {
+        let selectedDays = [];
+        $('.groupCheckBox input[type="checkbox"]').each(function() {
+            if ($(this).is(':checked')) {
+                selectedDays.push($(this).data('checked'));
+            }
+        });
+
+        $('input[name="mpwpb_off_days"]').val(selectedDays.join(','));
+    }
+
+    $('.groupCheckBox input[type="checkbox"]').on('change', function() {
+        updateOffDaysValue();
+    });
+    updateOffDaysValue();
+
+    $(document).on('click', '#saveScheduleBtn', function(e) {
+
+        e.preventDefault();
+
+        let offDays = $('input[name="mpwpb_off_days"]').val();
+        let offDates = getAllOffDates();
+        let offDates_str = JSON.stringify( offDates );
+        // console.log( offDates_str );
+
+        var days = ['default', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+        var schedule = {};
+
+        days.forEach(function(day) {
+            const start       = $(`select[name="mpwpb_${day}_start_time"]`).val();
+            const end         = $(`select[name="mpwpb_${day}_end_time"]`).val();
+            const break_start = $(`select[name="mpwpb_${day}_start_break_time"]`).val();
+            const break_end   = $(`select[name="mpwpb_${day}_end_break_time"]`).val();
+            schedule[day] = {
+                start_time: start,
+                end_time: end,
+                start_break_time: break_start || "",
+                end_break_time: break_end || ""
+            };
+        });
+        if (!schedule['default']) {
+            alert("Default time must have both Start and End time.");
+            return;
+        }
+        $.post( mpwpb_ajax_url , {
+            action: 'mpwpb_save_specific_schedule',
+            schedule: schedule,
+            offDays: offDays,
+            offDates_str: offDates_str,
+        }, function(response) {
+            if (response.success) {
+                alert('Schedule saved successfully!');
+            } else {
+                alert('Error: ' + response.data);
+            }
+        });
+
+    });
+
+    $('#mpmw_staff_add_off_date').on('click', function() {
+        $('#mpmw_staff_off_dates_wrapper').append(`
+            <div class="mpmw_staff_off_date_row">
+                <input type="date" class="mpmw_staff_off_date_input" name="mpmw_staff_off_dates[]">
+                <button type="button" class="mpmw_staff_delete_btn">🗑️</button>
+            </div>
+        `);
+    });
+
+    // Remove date row
+    $(document).on('click', '.mpmw_staff_delete_btn', function() {
+        $(this).closest('.mpmw_staff_off_date_row').remove();
+    });
+
+    // Get all selected off dates
+    function getOffDates() {
+        let offDates = [];
+        $('.mpmw_staff_off_date_input').each(function() {
+            const val = $(this).val();
+            if (val) {
+                offDates.push(val);
+            }
+        });
+        return offDates;
+    }
+
+    // Example: Get on button click
+    $('#mpmw_staff_get_dates').on('click', function() {
+        const dates = getOffDates();
+        console.log('Selected Dates:', dates);
+    });
+
+    function load_sortable_datepicker(parent, item) {
+        if(parent.find('.mp_item_insert_before').length>0){
+            jQuery(item).insertBefore(parent.find('.mp_item_insert_before').first()).promise().done(function () {
+                parent.find('.mp_sortable_area').sortable({
+                    handle: jQuery(this).find('.mpwpb_sortable_button')
+                });
+                mpwpb_load_date_picker(parent);
+            });
+        }else {
+            parent.find('.mp_item_insert').first().append(item).promise().done(function () {
+                parent.find('.mp_sortable_area').sortable({
+                    handle: jQuery(this).find('.mpwpb_sortable_button')
+                });
+                mpwpb_load_date_picker(parent);
+            });
+        }
+        return true;
+    }
+    $(document).find('.mp_sortable_area').sortable({
+        handle: $(this).find('.mpwpb_sortable_button')
+    });
+
+    $(document).on('click', '.mpwpb_item_remove', function (e) {
+        e.preventDefault();
+        if (confirm('Are You Sure , Remove this row ? \n\n 1. Ok : To Remove . \n 2. Cancel : To Cancel .')) {
+            $(this).closest('.mp_remove_area').slideUp(250).remove();
+            return true;
+        } else {
+            return false;
+        }
+    });
+
+    $(document).on('click', '.mp_add_item', function () {
+        let parent = $(this).closest('.mp_settings_area');
+        let item = $(this).next($('.mpwpb_hidden_content')).find(' .mpwpb_hidden_item').html();
+        if (!item || item === "undefined" || item === " ") {
+            item = parent.find('.mpwpb_hidden_content').first().find('.mpwpb_hidden_item').html();
+        }
+        load_sortable_datepicker(parent, item);
+        parent.find('.mp_item_insert').find('.add_mpwpb_select2').select2({});
+        return true;
+    });
+
+
+
 });
