@@ -56,7 +56,7 @@
 
             // Show recurring area after a short delay to ensure date is selected
             setTimeout(function() {
-                recurringArea.slideDown(350);
+                // recurringArea.slideDown(350);
                 console.log('Showing recurring booking area');
             }, 300);
         }
@@ -113,7 +113,16 @@
                     $("#mpwpb_progress_staff").fadeIn();
                     $("#mpwpb_staff_member_holder").fadeIn();
 
-                    $("#mpwpb_datetime_holder").fadeOut();
+                    if (recurringArea.length > 0) {
+                        $("#mpwpb_datetime_holder").fadeIn();
+                        let container = $('#mpwpb_popup_body_id');
+                        container.animate({
+                            scrollTop: container[0].scrollHeight
+                        }, 500);
+                    }else{
+                        $("#mpwpb_datetime_holder").fadeOut();
+                    }
+
                     $("#mpwpb_carousel_area").fadeOut();
                 }
             },
@@ -141,7 +150,7 @@
             parent.find('#mpwpb_recurring_dates_list').empty();
 
             // Show recurring area
-            recurringArea.slideDown(350);
+            // recurringArea.slideDown(350);
             console.log('Date selected, showing recurring booking area');
         }
     });
@@ -203,6 +212,9 @@
         total_bill_new = total_bill_new - discountAmount;
         let bill = total_bill_new.toFixed(2)+ currency;
         parent_div.find('#mpwpd_all_total_bill').text( bill );
+
+        $("#mpwpb_datetime_holder").fadeOut();
+        $("#mpwpb_staff_member_holder").fadeIn();
     }
     
     // Function to generate recurring dates
