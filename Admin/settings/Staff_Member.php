@@ -60,9 +60,12 @@ if (!class_exists('Staff_Member')) {
 
         public function staff_member_settings($post_id) {
             $checked = '';
+            $load_selection = 'none';
             $enable_staff_member = get_post_meta($post_id, 'mpwpb_staff_member_add', true);
             if ($enable_staff_member === 'on') {
                 $checked = 'checked';
+
+                $load_selection = 'block';
             }
 
             $selected_staff_ids = get_post_meta($post_id, 'mpwpb_selected_staff_ids', true);
@@ -86,22 +89,25 @@ if (!class_exists('Staff_Member')) {
                         </div>
                         <div>
                             <label class="roundSwitchLabel">
-                                <input type="checkbox" name="mpwpb_staff_member_add" <?php echo esc_attr($checked) ?>>
+                                <input type="checkbox" class="mpwpb_staff_member_add" name="mpwpb_staff_member_add" <?php echo esc_attr($checked) ?>>
                                 <span class="roundSwitch" data-collapse-target="#mpwpb_staff_member_add"></span>
                             </label>
                         </div>
                     </label>
                 </section>
 
-                <section>
-                    <label for="mpwpb_staff_selector"><?php esc_html_e('Select Staff', 'service-booking-manager'); ?></label>
-                    <select id="mpwpb_staff_selector" multiple style="width: 100%;">
-                        <?php foreach ($users as $user): ?>
-                            <option value="<?php echo esc_attr($user->ID); ?>" <?php selected(in_array($user->ID, $selected_staff_ids), true); ?>>
-                                <?php echo esc_html($user->display_name); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
+                <section id="mpwpb_add_staff_container" style="display: <?php echo esc_attr( $load_selection );?>">
+                    <div class="mpwpb_add_staff_container" >
+                        <label for="mpwpb_staff_selector"><?php esc_html_e('Select Staff', 'service-booking-manager'); ?></label>
+                        <select id="mpwpb_staff_selector" multiple style="width: 100%;">
+                            <?php foreach ($users as $user): ?>
+                                <option value="<?php echo esc_attr($user->ID); ?>" <?php selected(in_array($user->ID, $selected_staff_ids), true); ?>>
+                                    <?php echo esc_html($user->display_name); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
                 </section>
             </div>
             <?php

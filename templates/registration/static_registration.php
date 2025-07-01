@@ -31,7 +31,7 @@
                     <p><?php echo esc_html($sub_title); ?></p>
                     <span class="fas fa-times mpwpb_popup_close"></span>
                 </div>
-                <div class="mpwpb_popup_body">
+                <div class="mpwpb_popup_body" id="mpwpb_popup_body_id">
                     <div class="mpwpb-popup-content" style="flex-direction: column">
                         <div class="">
                             <?php
@@ -72,19 +72,7 @@
 
                             <div class="service-cart">
                                 <div class="mpwpb_summary_area_left_content">
-                                    <?php if (sizeof($all_category) > 0) { ?>
-                                        <div class="mpwpb_summary_item" data-category>
-                                            <span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
-                                            <h6></h6>
-                                        </div>
-                                    <?php } ?>
 
-                                    <?php if (sizeof($all_sub_category) > 0) { ?>
-                                        <div class="mpwpb_summary_item" data-sub-category>
-                                            <span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
-                                            <h6></h6>
-                                        </div>
-                                    <?php } ?>
 
                                     <?php if (sizeof($all_services) > 0) { ?>
                                         <?php foreach ($all_services as $service_key => $service_item) {

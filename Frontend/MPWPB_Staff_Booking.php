@@ -312,7 +312,7 @@ if (!class_exists('MPWPB_Staff_Booking')) {
                                 <div class="mpwp_select_staff_card selected">
                                     <input type="hidden" class="mpwpb_selected_staff" name="mpwpb_selected_staff_id[]" value="">
                                     <div class="mpwp_select_staff_icon">👥</div>
-                                    <div class="mpwp_select_staff_name">Any Artist</div>
+                                    <div class="mpwp_select_staff_name">Any Staff</div>
                                 </div>
                             ';
                     foreach ( $available_staff as $staff ) {

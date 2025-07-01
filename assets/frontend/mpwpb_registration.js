@@ -492,6 +492,9 @@ function mpwpb_price_calculation($this) {
             parent.find('.all_service_area').slideUp(350);
             parent.find('.mpwpb_date_time_tab').addClass('mpActive').removeClass('mpDisabled');
             load_date_time_tab(parent);
+
+            $("#mpwpb_datetime_holder").fadeIn();
+            $("#mpwpb_staff_member_holder").fadeOut();
         } else {
             mpwpb_alert($(this));
         }
@@ -634,6 +637,10 @@ function mpwpb_price_calculation($this) {
         load_service_tab(parent);
         $(".mpwpb_service_button_remove").css({ 'display': 'flex' });
         $(".mpwpb_ex_service_button_remove").css({ 'display': 'flex' });
+
+        $("#mpwpb_progress_date_time").removeClass('active');
+        $("#mpwpb_progress_staff").removeClass('active');
+        $("#mpwpb_progress_checkout").removeClass('active');
     });
     //========Extra service==============//
     $(document).on('change', 'div.mpwpb_registration [name="mpwpb_extra_service_qty[]"]', function () {
