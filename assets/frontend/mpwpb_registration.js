@@ -640,6 +640,7 @@ function mpwpb_price_calculation($this) {
 
         $("#mpwpb_progress_date_time").removeClass('active');
         $("#mpwpb_progress_staff").removeClass('active');
+        $("#mpwpb_progress_checkout").removeClass('active');
     });
     //========Extra service==============//
     $(document).on('change', 'div.mpwpb_registration [name="mpwpb_extra_service_qty[]"]', function () {

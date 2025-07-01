@@ -1477,4 +1477,14 @@
         $('#mpwpb_custom_profile_image_preview').attr('src', '');
     });
 
+    $(document).on( 'change', '.mpwpb_staff_member_add', function(e) {
+        e.preventDefault();
+        let isChecked = $(this).is(':checked');
+        if( isChecked ){
+            $("#mpwpb_add_staff_container").fadeIn();
+        }else{
+            $("#mpwpb_add_staff_container").fadeOut();
+        }
+    });
+
 })(jQuery);
