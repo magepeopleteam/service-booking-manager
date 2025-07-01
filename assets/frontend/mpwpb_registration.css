@@ -285,7 +285,7 @@ div.registration_tab_item {
   div.mpwpb_date_time_area header {
     background-color: rgba(54, 85, 250, 0.06);
     padding: var(--mpwpb_dmp_xs);
-    border-bottom: 1px solid var(--mpwpb_color_border);
+    /*border-bottom: 1px solid var(--mpwpb_color_border);*/
   }
   div.mpwpb_item_box {
     display: flex;
@@ -476,6 +476,8 @@ div.registration_tab_item {
   .mpwpb_date_carousel .mpwpb-owl-carousel .owl-stage {
     display: -webkit-flex;
     display: flex;
+    gap: 5px;
+    margin-top: 5px;
   }
   .mpwpb_date_carousel .mpwpb-owl-carousel .owl-item {
     display: -webkit-flex;
@@ -1653,6 +1655,49 @@ button.mpwpb_service_button.mActive:hover{
   color: #ccc;
   font-size: 18px;
   padding: 0 5px;
+}
+
+.mpwpb_get_date_selected{
+  background-color: #ff6b9d !important;
+  color: aliceblue !important;
+}
+
+.mpwpb_get_date{
+  background-color: var(--mpwpb_color_light);
+  cursor: pointer;
+  padding: 15px !important;
+  min-height: 80px !important;
+  border-radius: 10px;
+}
+
+.mpwpb_get_date:hover {
+  border: 1px solid #ff6b9d;
+  background: #fef2f2;
+}
+
+.mpwpb_get_close_date
+{
+  background-color: #fbeeee  !important;
+  cursor: pointer;
+  padding: 15px !important;
+  min-height: 80px !important;
+  border-radius: 10px;
+}
+
+.mpwpb_time_display{
+  display: flex;
+  gap: 10px;
+  padding: 20px 5px 5px 5px;
+  flex-wrap: wrap;
+}
+.mpwpb_time_btn{
+  padding: 15px !important;
+}
+
+.mpwpb_close_text{
+  position: absolute;
+  color: #e76840;
+  font-size: 11px;
 }
 
 

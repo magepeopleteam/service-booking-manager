@@ -199,7 +199,7 @@ div.registration_tab_item {
 @media only screen and (min-width: 10px) {
 	.mpwpb_date_carousel {position: relative;}
 	.mpwpb_date_carousel .mpwpb-owl-carousel {overflow: hidden;}
-	.mpwpb_date_carousel .mpwpb-owl-carousel .owl-stage {display: -webkit-flex;display: flex;}
+	.mpwpb_date_carousel .mpwpb-owl-carousel .owl-stage {display: -webkit-flex;display: flex; gap: 5px}
 	.mpwpb_date_carousel .mpwpb-owl-carousel .owl-item {display: -webkit-flex;display: flex;}
 	.mpwpb_date_time_line {width: 100%;text-align: center;}
 	.mpwpb_date_time_line [data-radio-check] {width: 100%;margin: 0 0 5px 0;-webkit-justify-content: center;}

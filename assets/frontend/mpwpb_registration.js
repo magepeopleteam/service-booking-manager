@@ -677,6 +677,21 @@ function mpwpb_price_calculation($this) {
         $("#mpwpb_staff_member_holder").fadeIn();
     });
 
+    $(document).on('click', '.mpwpb_get_date', function () {
+        let parent = $(this).closest('div.mpwpb_registration');
+
+        $(".mpwpb_get_date").removeClass('mpwpb_get_date_selected');
+        $(this).addClass('mpwpb_get_date_selected');
+
+        let selectedDate = $(this).attr('data-find-time');
+
+        // Hide all date sections first
+        $('.mpwpb_time_display').hide();
+
+        // Show only the one that matches the selected date
+        $('.mpwpb_time_display[data-date-filder="' + selectedDate + '"]').fadeIn();
+    });
+
     $(document).on('click', '.mpwp_select_staff_card', function () {
         $('.mpwp_select_staff_card').removeClass('selected');
         $(this).addClass('selected');
