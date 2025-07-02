@@ -1604,11 +1604,6 @@ button.mpwpb_service_button.mActive:hover{
   color: #666;
 }
 
-
-
-
-
-
 .mpwpb_cart_progress_wrapper {
   display: flex;
   align-items: center;
@@ -1723,6 +1718,11 @@ button.mpwpb_service_button.mActive:hover{
   background-color: #df185a;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
   transform: translateY(-2px);
+}
+
+.mpwpb_active_time{
+  background-color: #ff6b9d !important;
+  color: #fff !important;
 }
 
 

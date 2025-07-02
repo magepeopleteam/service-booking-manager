@@ -55,7 +55,7 @@
                         <div class="mpwpb_cart_progress_circle">3</div>
                         <div class="mpwpb_cart_progress_label">Staff</div>
                     </div>
-                    <div class="mpwpb_cart_progress_arrow">→</div>
+                    <div class="mpwpb_cart_progress_arrow" id="mpwpb_staff_arrow">→</div>
                     <div class="mpwpb_cart_progress_step" id="mpwpb_progress_checkout">
                         <div class="mpwpb_cart_progress_circle">4</div>
                         <div class="mpwpb_cart_progress_label">Checkout</div>

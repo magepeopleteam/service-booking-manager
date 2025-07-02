@@ -130,7 +130,7 @@
                                         <h6 id="mpwpd_selected_date"></h6>
                                     </div>
                                     <div class="mpwpb_summary_item">
-                                        <span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>
+<!--                                        <span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>-->
                                         <div class="flexWrap justifyBetween">
                                             <h5 class="mR_xs"><?php esc_html_e('Total :', 'service-booking-manager'); ?></h5>
                                             <h5><span class="mpwpb_total_bill textTheme"><?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, 0)); ?></span></h5>

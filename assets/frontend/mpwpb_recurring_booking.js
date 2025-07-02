@@ -43,6 +43,10 @@
 
     // Show recurring options when a date is selected
     $(document).on('click', 'div.mpwpb_registration .mpwpb_date_time_area .to-book', function() {
+
+        $('div.mpwpb_registration .mpwpb_date_time_area .to-book').removeClass('mpwpb_active_time');
+        $(this).addClass('mpwpb_active_time');
+
         let parent = $(this).closest('div.mpwpb_registration');
         let recurringArea = parent.find('.mpwpb_recurring_booking_area');
         if (recurringArea.length > 0) {
@@ -95,12 +99,19 @@
                     $("#mpwpb_progress_staff").fadeOut();
                     $("#mpwpb_progress_checkout").addClass('active');
                     $("#mpwpb_show_hide_staff_member").hide();
+
+                    $("#mpwpb_staff_arrow").hide();
+
+                    $("#mpwpb_date_time_next_btn_id").fadeIn();
                 }else{
                     if ($('#mpwpb_progress_checkout').hasClass('active')) {
                         $('#mpwpb_progress_checkout').removeClass('active');
                     }
                     $("#mpwpb_progress_staff").fadeIn();
                     $("#mpwpb_show_hide_staff_member").fadeIn();
+                    $("#mpwpb_date_time_next_btn_id").hide();
+                    $("#mpwpb_staff_arrow").fadeIn();
+
                 }
             },
             error: function(xhr, status, error) {
@@ -143,6 +154,9 @@
             parent.find('.mpwpb_recurring_settings').slideUp(350);
             parent.find('.mpwpb_recurring_dates').hide();
             parent.find('#mpwpb_recurring_dates_list').empty();
+
+            $('#mpwpd_selected_date li.mpwpd_service_date').not(':first').hide();
+
         }
     });
 
