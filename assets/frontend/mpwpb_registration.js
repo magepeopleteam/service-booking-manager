@@ -494,7 +494,7 @@ function mpwpb_price_calculation($this) {
             load_date_time_tab(parent);
 
             $("#mpwpb_datetime_holder").fadeIn();
-            $("#mpwpb_staff_member_holder").fadeOut();
+            $("#mpwpb_staff_member_holder").fadeIn();
         } else {
             mpwpb_alert($(this));
         }
@@ -664,17 +664,32 @@ function mpwpb_price_calculation($this) {
 
 
     $(document).on('click', '#mpwpb_show_hide_date_time', function () {
+        $("#mpwpb_staff_member_booking_area").hide();
         $("#mpwpb_datetime_holder").fadeIn();
-        $("#mpwpb_carousel_area").fadeIn();
+        $("#mpwpb_progress_staff").removeClass('active');
+        $('#mpwpb_progress_checkout').removeClass('active');
 
-        $("#mpwpb_staff_member_holder").fadeOut();
     });
 
     $(document).on('click', '#mpwpb_show_hide_staff_member', function () {
-        $("#mpwpb_datetime_holder").fadeOut();
-        $("#mpwpb_carousel_area").fadeOut();
+        $("#mpwpb_progress_staff").addClass('active');
+        $("#mpwpb_datetime_holder").hide();
+        $("#mpwpb_staff_member_booking_area").fadeIn();
+    });
 
-        $("#mpwpb_staff_member_holder").fadeIn();
+    $(document).on('click', '.mpwpb_get_date', function () {
+        let parent = $(this).closest('div.mpwpb_registration');
+
+        $(".mpwpb_get_date").removeClass('mpwpb_get_date_selected');
+        $(this).addClass('mpwpb_get_date_selected');
+
+        let selectedDate = $(this).attr('data-find-time');
+
+        // Hide all date sections first
+        $('.mpwpb_time_display').hide();
+
+        // Show only the one that matches the selected date
+        $('.mpwpb_time_display[data-date-filder="' + selectedDate + '"]').fadeIn();
     });
 
     $(document).on('click', '.mpwp_select_staff_card', function () {

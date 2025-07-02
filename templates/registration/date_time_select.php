@@ -21,78 +21,98 @@
 	$short_date_format = $short_date_format ?? MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'date_format_short', 'M , Y');
 	$extra_services = $extra_services ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', array());
 
+
+    function display_time( $post_id, $all_dates ){
+        $start_date = $all_dates[0];
+        $end_date = end($all_dates);
+        $start = 0;
+        while (strtotime($start_date) <= strtotime($end_date)) {
+            if( $start === 0 ){
+                $display = 'flex';
+            }else{
+                $display = 'none';
+            }
+            ?>
+            <div class="mpwpb_time_display" id="<?php echo esc_attr($start_date);?>" style="display: <?php echo esc_attr( $display );?>" data-date-filder="<?php echo esc_attr( $start_date );?>">
+                   <?php
+                $all_time_slots = MPWPB_Function::get_time_slot( $post_id, $start_date );
+                if (sizeof($all_time_slots) > 0) {
+                    foreach ($all_time_slots as $slot) {
+                        $available = MPWPB_Function::get_total_available($post_id, $slot );
+                        if ($available > 0) {
+                            ?>
+                            <button type="button" class=" to-book mpwpb_time_btn" data-date="<?php echo esc_attr(MPWPB_Global_Function::date_format($slot, 'full')); ?>" data-radio-check="<?php echo esc_attr($slot); ?>" data-open-icon="fas fa-check" data-close-icon="">
+                                <!-- <span data-icon></span> --><?php echo esc_html(date_i18n('h:i A', strtotime($slot))); ?>
+                            </button>
+                        <?php } else {
+                            ?>
+                            <button type="button" class="_mpBtn mActive booked"><?php esc_html_e('Booked', 'service-booking-manager'); ?></button>
+                            <?php
+                        }
+                    }
+                } ?>
+            </div>
+            <?php
+                $start_date = date_i18n('Y-m-d', strtotime($start_date . ' +1 day'));
+                $start++;
+        }
+    }
+    function display_date_time( $post_id, $all_dates ){
+        $start_date = $all_dates[0];
+        $end_date = end($all_dates);
+
+        $loop_start = 0;
+        while (strtotime($start_date) <= strtotime($end_date)) {
+            if( $loop_start === 0 ){
+                $selected = 'mpwpb_get_date_selected';
+            }else{
+                $selected = '';
+            }
+            ?>
+            <div class="fdColumn mpwpb_date_time_line">
+
+                <?php if (!in_array($start_date, $all_dates)) {
+                    ?>
+                    <div class="_mpBtn_mpDisabled_fullHeight_bgLight mpwpb_get_close_date">
+                        <h6 class="_rotate_90 mpwpb_close_text"><?php esc_html_e('Closed', 'service-booking-manager'); ?></h6>
+                        <div class="mpwpb_close_date"><?php echo esc_html(MPWPB_Global_Function::date_format($start_date)); ?></div>
+                    </div>
+                <?php } else { ?>
+                    <div class="<?php echo esc_attr( $selected );?> mpwpb_get_date" data-find-time="<?php echo esc_attr( $start_date );?>">
+                        <strong><?php echo esc_html(MPWPB_Global_Function::date_format($start_date)); ?></strong>
+                    </div>
+                <?php } ?>
+            </div>
+            <?php
+            $start_date = date_i18n('Y-m-d', strtotime($start_date . ' +1 day'));
+            $loop_start++;
+        }
+    }
+
 ?>
     <div class="_dShadow_7_mB_xs mpwpb_date_time_area">
-        <div class="mpwpb_date_carousel groupRadioCheck">
+        <div class="mpwpb_date_carousel groupRadioCheck" id="mpwpb_datetime_holder">
             <header class="_dFlex_alignCenter_justifyBetween">
                 <input type="hidden" name="mpwpb_date">
-                <h3 id="mpwpb_show_hide_date_time" class="mpwpb_date_staff_select"><?php esc_html_e('Choose Date & Time', 'service-booking-manager'); ?></h3>
+                <h3 class="mpwpb_date_staff_select"><?php esc_html_e('Choose Date & Time', 'service-booking-manager'); ?></h3>
 				<?php include(MPWPB_Function::template_path('layout/carousel_indicator.php')); ?>
             </header>
-            <div class="" id="mpwpb_datetime_holder">
+            <div class="" >
                 <div class="owl-theme mpwpb-owl-carousel" id="mpwpb_datetime_holder1">
+                    <?php if (sizeof($all_dates) > 0) {
+                        wp_kses_post( display_date_time( $post_id, $all_dates ) );
+                    ?>
+                </div>
+                <div class="mpwpb_select_time_holder">
                     <?php
-                    if (sizeof($all_dates) > 0) {
-                        $start_date = $all_dates[0];
-                        $end_date = end($all_dates);
-                        while (strtotime($start_date) <= strtotime($end_date)) {
-                            ?>
-                            <div class="fdColumn mpwpb_date_time_line">
-                                <div class="_bgTheme_mB_xs_padding_xs fdColumn">
-                                    <strong><?php echo esc_html(MPWPB_Global_Function::date_format($start_date)); ?></strong>
-                                </div>
-                                <?php if (!in_array($start_date, $all_dates)) { ?>
-                                    <div class="_mpBtn_mpDisabled_fullHeight_bgLight">
-                                        <h4 class="_rotate_90"><?php esc_html_e('Closed', 'service-booking-manager'); ?></h4>
-                                    </div>
-                                <?php } else {
-                                    $all_time_slots = MPWPB_Function::get_time_slot($post_id, $start_date);
-                                    if (sizeof($all_time_slots) > 0) {
-                                        foreach ($all_time_slots as $slot) {
-                                            $available = MPWPB_Function::get_total_available($post_id, $slot);
-                                            if ($available > 0) {
-                                                ?>
-                                                <button type="button" class="_mpBtn to-book" data-date="<?php echo esc_attr(MPWPB_Global_Function::date_format($slot, 'full')); ?>" data-radio-check="<?php echo esc_attr($slot); ?>" data-open-icon="fas fa-check" data-close-icon="">
-                                                    <!-- <span data-icon></span> --><?php echo esc_html(date_i18n('h:i A', strtotime($slot))); ?>
-                                                </button>
-                                            <?php } else {
-                                                if ($enable_waiting_list === 'yes') {
-                                                    // Get waiting list data for this slot
-                                                    $waiting_list = get_post_meta($post_id, 'mpwpb_waiting_list_' . sanitize_title($slot), true);
-                                                    if (!is_array($waiting_list)) {
-                                                        $waiting_list = [];
-                                                    }
-                                                    $max_waiting_list = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_max_waiting_list', 10);
-                                                    $waiting_list_available = count($waiting_list) < $max_waiting_list;
-
-                                                    if ($waiting_list_available) {
-                                                        ?>
-                                                        <button type="button" class="_mpBtn mActive waiting-list" data-slot="<?php echo esc_attr($slot); ?>" data-post-id="<?php echo esc_attr($post_id); ?>"><?php esc_html_e('Join Waiting List', 'service-booking-manager'); ?></button>
-                                                        <?php
-                                                    } else {
-                                                        ?>
-                                                        <button type="button" class="_mpBtn mActive booked"><?php esc_html_e('Fully Booked', 'service-booking-manager'); ?></button>
-                                                        <?php
-                                                    }
-                                                } else {
-                                                    ?>
-                                                    <button type="button" class="_mpBtn mActive booked"><?php esc_html_e('Booked', 'service-booking-manager'); ?></button>
-                                                    <?php
-                                                }
-                                            }
-                                        }
-                                    }
-                                } ?>
-                            </div>
-                            <?php
-                            $start_date = date_i18n('Y-m-d', strtotime($start_date . ' +1 day'));
-                        }
-                    } else {
-                        ?>
-                        <h5><?php esc_html_e('Date not available', 'service-booking-manager'); ?></h5>
-                    <?php } ?>
+                        wp_kses_post( display_time( $post_id, $all_dates ) );
+                    ?>
                 </div>
                 <?php
+                } else {
+                ?>
+                    <h5><?php esc_html_e('Date not available', 'service-booking-manager'); ?></h5> <?php
+                }
                 if ($enable_recurring === 'yes') { ?>
                     <div class="_dShadow_7_mB_xs mpwpb_recurring_booking_area" id="mpwpb_recurring_booking_area" style="display: block;">
                         <div class="mpwpb_recurring_booking">
@@ -155,22 +175,24 @@
                 <?php }
                 ?>
             </div>
-
+            <div class="mpqpb_next_prev_btn_display" id="mpwpb_show_hide_staff_member" style="display: none"><span class="mpwpb_next_prev_btn">Next Staff Member <i class="fas fa-long-arrow-alt-right _mL_xs"></i></span></div>
         </div>
+
     </div>
 
 <?php
     if ( $enable_staff_member === 'on' ) { ?>
         <div class="_dShadow_7_mB_xs mpwpb_date_time_area">
-            <div class="mpwpb_date_carousel groupRadioCheck">
-                <div class="_dShadow_7_mB_xs mpwpb_staff_member_booking_area" id="mpwpb_staff_member_booking_area" style="display: none;">
+            <div class="mpwpb_date_carousel groupRadioCheck" id="mpwpb_staff_member_booking_area" style="display: none;">
+                <div class="_dShadow_7_mB_xs mpwpb_staff_member_booking_area" >
                     <header class="_dFlex_alignCenter_justifyBetween">
-                        <h3 id="mpwpb_show_hide_staff_member" class="mpwpb_date_staff_select"><?php esc_html_e('Select Staff', 'service-booking-manager'); ?></h3>
+                        <h3 class="mpwpb_date_staff_select"><?php esc_html_e('Select Staff', 'service-booking-manager'); ?></h3>
                     </header>
 
                     <input type="hidden" class="mpwpb_staff_member_booking" name="mpwpb_staff_member_booking" id="mpwpb_staff_member_booking" value="">
                     <div class="mpwpb_staff_member_booking" id="mpwpb_staff_member_holder"></div>
                 </div>
+                <div class="mpqpb_next_prev_btn_display" id="mpwpb_show_hide_date_time"><span class="mpwpb_next_prev_btn"><i class="fas fa-long-arrow-alt-left _mR_xs"></i>previous Date Time</span></div>
             </div>
         </div>
     <?php }
