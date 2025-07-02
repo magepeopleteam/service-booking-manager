@@ -1700,4 +1700,30 @@ button.mpwpb_service_button.mActive:hover{
   font-size: 11px;
 }
 
+.mpqpb_next_prev_btn_display {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  margin: 20px auto;
+}
+
+.mpwpb_next_prev_btn {
+  background-color: #f94e87;
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.mpwpb_next_prev_btn:hover {
+  cursor: pointer;
+  background-color: #df185a;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+}
+
+
 

@@ -72,10 +72,6 @@
         let formattedDate = `${year}-${month}-${day}`;
         let hours24 = dateObj.getHours();
 
-        /*if( date_time ){
-            $("#mpwpb_progress_staff").addClass('active');
-        }*/
-
         let ajaxUrl = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.ajax_url : mpwpb_ajax.ajax_url;
         let nonce = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.nonce : mpwpb_ajax.nonce;
         $.ajax({
@@ -94,36 +90,17 @@
                 parent.find('.mpwpb_recurring_dates').show();
             },
             success: function(response) {
-                // console.log( response );
                 $("#mpwpb_staff_member_holder").html( response.html );
-                $("#mpwpb_staff_member_booking_area").fadeIn();
-
                 if( response.count < 1 ){
                     $("#mpwpb_progress_staff").fadeOut();
-                    $("#mpwpb_datetime_holder").fadeIn();
-                    $("#mpwpb_carousel_area").fadeIn();
-
                     $("#mpwpb_progress_checkout").addClass('active');
+                    $("#mpwpb_show_hide_staff_member").hide();
                 }else{
-                    $("#mpwpb_progress_staff").addClass('active');
                     if ($('#mpwpb_progress_checkout').hasClass('active')) {
                         $('#mpwpb_progress_checkout').removeClass('active');
                     }
-
                     $("#mpwpb_progress_staff").fadeIn();
-                    $("#mpwpb_staff_member_holder").fadeIn();
-
-                    if (recurringArea.length > 0) {
-                        $("#mpwpb_datetime_holder").fadeIn();
-                        let container = $('#mpwpb_popup_body_id');
-                        container.animate({
-                            scrollTop: container[0].scrollHeight
-                        }, 500);
-                    }else{
-                        $("#mpwpb_datetime_holder").fadeOut();
-                    }
-
-                    $("#mpwpb_carousel_area").fadeOut();
+                    $("#mpwpb_show_hide_staff_member").fadeIn();
                 }
             },
             error: function(xhr, status, error) {
@@ -210,11 +187,11 @@
         // console.log( price_in_number, total_bill_new );
         let discountAmount = ( total_bill_new * recurring_discount_price ) / 100;
         total_bill_new = total_bill_new - discountAmount;
-        let bill = total_bill_new.toFixed(2)+ currency;
+        let bill = total_bill_new.toFixed(2)+   currency;
         parent_div.find('#mpwpd_all_total_bill').text( bill );
 
-        $("#mpwpb_datetime_holder").fadeOut();
-        $("#mpwpb_staff_member_holder").fadeIn();
+        /*$("#mpwpb_datetime_holder").fadeOut();
+        $("#mpwpb_staff_member_holder").fadeIn();*/
     }
     
     // Function to generate recurring dates

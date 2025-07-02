@@ -91,13 +91,13 @@
 
 ?>
     <div class="_dShadow_7_mB_xs mpwpb_date_time_area">
-        <div class="mpwpb_date_carousel groupRadioCheck">
+        <div class="mpwpb_date_carousel groupRadioCheck" id="mpwpb_datetime_holder">
             <header class="_dFlex_alignCenter_justifyBetween">
                 <input type="hidden" name="mpwpb_date">
-                <h3 id="mpwpb_show_hide_date_time" class="mpwpb_date_staff_select"><?php esc_html_e('Choose Date & Time', 'service-booking-manager'); ?></h3>
+                <h3 class="mpwpb_date_staff_select"><?php esc_html_e('Choose Date & Time', 'service-booking-manager'); ?></h3>
 				<?php include(MPWPB_Function::template_path('layout/carousel_indicator.php')); ?>
             </header>
-            <div class="" id="mpwpb_datetime_holder">
+            <div class="" >
                 <div class="owl-theme mpwpb-owl-carousel" id="mpwpb_datetime_holder1">
                     <?php if (sizeof($all_dates) > 0) {
                         wp_kses_post( display_date_time( $post_id, $all_dates ) );
@@ -175,22 +175,24 @@
                 <?php }
                 ?>
             </div>
-
+            <div class="mpqpb_next_prev_btn_display" id="mpwpb_show_hide_staff_member" style="display: none"><span class="mpwpb_next_prev_btn">Next Staff Member <i class="fas fa-long-arrow-alt-right _mL_xs"></i></span></div>
         </div>
+
     </div>
 
 <?php
     if ( $enable_staff_member === 'on' ) { ?>
         <div class="_dShadow_7_mB_xs mpwpb_date_time_area">
-            <div class="mpwpb_date_carousel groupRadioCheck">
-                <div class="_dShadow_7_mB_xs mpwpb_staff_member_booking_area" id="mpwpb_staff_member_booking_area" style="display: none;">
+            <div class="mpwpb_date_carousel groupRadioCheck" id="mpwpb_staff_member_booking_area" style="display: none;">
+                <div class="_dShadow_7_mB_xs mpwpb_staff_member_booking_area" >
                     <header class="_dFlex_alignCenter_justifyBetween">
-                        <h3 id="mpwpb_show_hide_staff_member" class="mpwpb_date_staff_select"><?php esc_html_e('Select Staff', 'service-booking-manager'); ?></h3>
+                        <h3 class="mpwpb_date_staff_select"><?php esc_html_e('Select Staff', 'service-booking-manager'); ?></h3>
                     </header>
 
                     <input type="hidden" class="mpwpb_staff_member_booking" name="mpwpb_staff_member_booking" id="mpwpb_staff_member_booking" value="">
                     <div class="mpwpb_staff_member_booking" id="mpwpb_staff_member_holder"></div>
                 </div>
+                <div class="mpqpb_next_prev_btn_display" id="mpwpb_show_hide_date_time"><span class="mpwpb_next_prev_btn"><i class="fas fa-long-arrow-alt-left _mR_xs"></i>previous Date Time</span></div>
             </div>
         </div>
     <?php }
