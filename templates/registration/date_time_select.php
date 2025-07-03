@@ -74,7 +74,7 @@
                 <?php if (!in_array($start_date, $all_dates)) {
                     ?>
                     <div class="_mpBtn_mpDisabled_fullHeight_bgLight mpwpb_get_close_date">
-                        <h6 class="_rotate_90 mpwpb_close_text"><?php esc_html_e('Closed', 'service-booking-manager'); ?></h6>
+<!--                        <h6 class="_rotate_90 mpwpb_close_text">--><?php //esc_html_e('Closed', 'service-booking-manager'); ?><!--</h6>-->
                         <div class="mpwpb_close_date"><?php echo esc_html(MPWPB_Global_Function::date_format($start_date)); ?></div>
                     </div>
                 <?php } else { ?>
@@ -175,7 +175,6 @@
                 <?php }
                 ?>
             </div>
-            <div class="mpqpb_next_prev_btn_display" id="mpwpb_show_hide_staff_member" style="display: none"><span class="mpwpb_next_prev_btn">Next Staff Member <i class="fas fa-long-arrow-alt-right _mL_xs"></i></span></div>
         </div>
 
     </div>
@@ -192,7 +191,6 @@
                     <input type="hidden" class="mpwpb_staff_member_booking" name="mpwpb_staff_member_booking" id="mpwpb_staff_member_booking" value="">
                     <div class="mpwpb_staff_member_booking" id="mpwpb_staff_member_holder"></div>
                 </div>
-                <div class="mpqpb_next_prev_btn_display" id="mpwpb_show_hide_date_time"><span class="mpwpb_next_prev_btn"><i class="fas fa-long-arrow-alt-left _mR_xs"></i>previous Date Time</span></div>
             </div>
         </div>
     <?php }

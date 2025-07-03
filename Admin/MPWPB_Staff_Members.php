@@ -57,8 +57,11 @@ if (!class_exists('MPWPB_Staff_Members')) {
                     <?php if( $image_url ){?>
                         <img src="<?php echo esc_attr( $image_url );?>" id="mpwpb_custom_profile_image_preview" style="width:100px;height:auto;" />
                         <p style="color: #6b7280; font-size: 14px;"><?php esc_attr_e('Uploaded Imag', 'service-booking-manager'); ?>e</p>
-                    <?php }else{?>
-                        <div style="font-size: 32px; margin-bottom: 8px; color: #9ca3af;">📁</div>
+                    <?php }else{
+                        $image_url = MPWPB_PLUGIN_URL.'/mp_global/assets/images/staff_fallback.webp';
+                        ?>
+                        <img src="<?php echo esc_attr( $image_url );?>" id="mpwpb_custom_profile_image_preview" style="width:60px;height:auto;" />
+<!--                        <div style="font-size: 32px; margin-bottom: 8px; color: #9ca3af;">📁</div>-->
                         <p style="color: #6b7280; font-size: 14px;"><?php esc_attr_e('Upload Image', 'service-booking-manager'); ?></p>
                     <?php }?>
 

@@ -158,3 +158,9 @@ select.mpwpb_staff_modify_holiday:focus {
     box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
     outline: none;
 }
+
+.mpwpb_staff_image_upload{
+    background-color: white;
+    filter: alpha(opacity=100); /* for old IE */
+    opacity: 1;
+}
