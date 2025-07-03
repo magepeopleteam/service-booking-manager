@@ -670,12 +670,27 @@ function mpwpb_price_calculation($this) {
         mpwpb_price_calculation($(this));
     });
 
+    $(document).on('click', '#mpwpb_display_date_time', function () {
+        $(this).hide();
+        $("#mpwpb_staff_member_booking_area").hide();
+        $("#mpwpb_date_time_next_btn_id").hide();
+        $("#mpwpb_show_hide_staff_member").fadeIn();
+        $("#mpwpb_datetime_holder").fadeIn();
+        $("#mpwpb_display_service_btn").fadeIn();
+
+        $("#mpwpb_progress_staff").removeClass('active');
+        $("#mpwpb_progress_checkout").removeClass('active');
+    });
+
     $(document).on('click', '#mpwpb_show_hide_staff_member', function () {
         $(this).hide();
         $("#mpwpb_date_time_next_btn_id").fadeIn();
         $("#mpwpb_progress_staff").addClass('active');
         $("#mpwpb_datetime_holder").hide();
         $("#mpwpb_staff_member_booking_area").fadeIn();
+
+        $("#mpwpb_display_service_btn").hide();
+        $("#mpwpb_display_date_time").fadeIn();
     });
 
     $(document).on('click', '.mpwpb_get_date', function () {

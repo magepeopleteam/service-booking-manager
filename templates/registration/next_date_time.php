@@ -12,7 +12,13 @@
 ?>
     <div class="next_date_area">
         <div class="justifyBetween ">
-            <button class="_mpBtn_dBR mpActive mpwpb_date_time_prev" type="button">
+
+            <button class="_mpBtn_dBR mpActive" type="button" id="mpwpb_display_date_time" style="display: none">
+                <i class="fas fa-long-arrow-alt-left _mR_xs"></i>
+				<?php echo esc_html__('Previous Date Time', 'service-booking-manager'); ?>
+            </button>
+
+            <button class="_mpBtn_dBR mpActive mpwpb_date_time_prev" type="button" id="mpwpb_display_service_btn">
                 <i class="fas fa-long-arrow-alt-left _mR_xs"></i>
 				<?php echo esc_html__('Previous', 'service-booking-manager') . ' ' . esc_html($service_text); ?>
             </button>

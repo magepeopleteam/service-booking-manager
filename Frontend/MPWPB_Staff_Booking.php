@@ -307,7 +307,7 @@ if (!class_exists('MPWPB_Staff_Booking')) {
                         }
                         if ( !empty( $available_staff ) ) {
                             $html = '<div class="mpwp_select_staff_grid">
-                                <div class="mpwp_select_staff_card selected">
+                                <div class="mpwp_select_staff_card">
                                     <input type="hidden" class="mpwpb_selected_staff" name="mpwpb_selected_staff_id[]" value="">
                                     <div class="mpwp_select_staff_icon">👥</div>
                                     <div class="mpwp_select_staff_name">Any Staff</div>
@@ -331,12 +331,11 @@ if (!class_exists('MPWPB_Staff_Booking')) {
                             $response['count'] = count($available_staff);
                         } else {
                             $html = '<div class="mpwp_select_staff_grid">
-                                <div class="mpwp_select_staff_card selected">
-                                    <input type="hidden" class="mpwpb_selected_staff" name="mpwpb_selected_staff_id[]" value="">
-                                    <div class="mpwp_select_staff_icon">👥</div>
-                                    <div class="mpwp_select_staff_name">Any Staff</div>
-                                </div>
-                            ';
+                                    <div class="mpwp_select_staff_card">
+                                        <input type="hidden" class="mpwpb_selected_staff" name="mpwpb_selected_staff_id[]" value="">
+                                        <div class="mpwp_select_staff_icon">👥</div>
+                                        <div class="mpwp_select_staff_name">Any Staff</div>
+                                    </div>';
                             $response['html'] = $html;
                             $response['count'] = 1;
                         }
