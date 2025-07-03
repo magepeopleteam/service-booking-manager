@@ -47,6 +47,8 @@
         $('div.mpwpb_registration .mpwpb_date_time_area .to-book').removeClass('mpwpb_active_time');
         $(this).addClass('mpwpb_active_time');
 
+        let post_id = $(this).parent().parent().attr('id').trim();
+
         let parent = $(this).closest('div.mpwpb_registration');
         let recurringArea = parent.find('.mpwpb_recurring_booking_area');
         if (recurringArea.length > 0) {
@@ -78,12 +80,13 @@
 
         let ajaxUrl = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.ajax_url : mpwpb_ajax.ajax_url;
         let nonce = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.nonce : mpwpb_ajax.nonce;
+
         $.ajax({
             type: 'POST',
             url: ajaxUrl,
             data: {
                 action: 'mpwpb_get_available_staff',
-                service_id: mpwpb_recurring_data.post_id,
+                service_id: post_id,
                 staff_date: formattedDate,
                 staff_time: hours24,
                 date_time: data_radio_check,

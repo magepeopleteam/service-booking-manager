@@ -99,6 +99,17 @@
 					'ajax_url' => admin_url('admin-ajax.php'),
 					'nonce'    => wp_create_nonce('mpwpb_nonce')
 				));
+
+                wp_enqueue_script('mpwpb-recurring-booking', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_recurring_booking.js', array('jquery'),  true);
+                wp_enqueue_style('mpwpb-recurring-booking', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_recurring_booking.css', array(), true);
+
+                // Pass post ID to JavaScript
+                wp_localize_script('mpwpb-recurring-booking', 'mpwpb_recurring_data', array(
+                    'ajax_url' => admin_url('admin-ajax.php'),
+                    'nonce' => wp_create_nonce('mpwpb_nonce'),
+                    'plugin_url' => MPWPB_PLUGIN_URL
+                ));
+
 				do_action('add_mpwpb_frontend_script');
 			}
 		}
