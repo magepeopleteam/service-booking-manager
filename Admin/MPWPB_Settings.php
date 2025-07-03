@@ -50,9 +50,13 @@
 								</li>
 								<?php do_action('add_mpwpb_settings_tab_after_date', $post_id); ?>
 
+                                <?php
+                                if ( is_plugin_active('service-booking-manager-pro/MPWPB_Plugin_Pro.php') ) {
+                                ?>
                                 <li  data-tabs-target="#mpwpb_staff_members">
                                     <i class="fa-solid fa-gear"></i><?php esc_html_e('Staff Member', 'service-booking-manager'); ?>
                                 </li>
+                                <?php }?>
 							</ul>
 						</div>
 						<div class="tabsContent">
