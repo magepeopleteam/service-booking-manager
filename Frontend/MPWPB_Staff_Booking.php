@@ -315,7 +315,11 @@ if (!class_exists('MPWPB_Staff_Booking')) {
                             ';
                             foreach ($available_staff as $staff) {
                                 $image_id = get_user_meta($staff->ID, 'mpwpb_custom_profile_image', true);
+
                                 $image_url = esc_url(wp_get_attachment_url($image_id));
+                                if( empty( $image_url ) ){
+                                    $image_url = MPWPB_PLUGIN_URL.'/mp_global/assets/images/staff_fallback.webp';
+                                }
                                 $html .=
                                     '<div class="mpwp_select_staff_card">
                                     <input type="hidden" class="mpwpb_selected_staff" name="mpwpb_selected_staff_id[]" value="' . $staff->ID . '">

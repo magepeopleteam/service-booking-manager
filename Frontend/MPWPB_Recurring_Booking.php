@@ -11,7 +11,7 @@ if (!class_exists('MPWPB_Recurring_Booking')) {
     class MPWPB_Recurring_Booking {
         public function __construct() {
             // Enqueue scripts and styles
-            add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+//            add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
             
             // AJAX handlers
             add_action('wp_ajax_mpwpb_save_recurring_booking', array($this, 'generate_recurring_dates'));
