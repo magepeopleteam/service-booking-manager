@@ -6,7 +6,10 @@ if (!class_exists('MPWPB_Staff_Members')) {
     class MPWPB_Staff_Members{
 
         public function __construct() {
-            add_action('admin_menu', array($this, 'staffs_menu'));
+            if ( is_plugin_active('service-booking-manager-pro/MPWPB_Plugin_Pro.php') ) {
+                add_action('admin_menu', array($this, 'staffs_menu'));
+            }
+
             add_action('wp_ajax_get_mpwpb_get_staff_form', array($this, 'get_mpwpb_get_staff_form'));
             add_action('wp_ajax_nopriv_get_mpwpb_get_staff_form', array($this, 'get_mpwpb_get_staff_form'));
             /*********************************************/

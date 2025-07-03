@@ -12,7 +12,13 @@
 ?>
     <div class="next_date_area">
         <div class="justifyBetween ">
-            <button class="_mpBtn_dBR mpActive mpwpb_date_time_prev" type="button">
+
+            <button class="_mpBtn_dBR mpActive" type="button" id="mpwpb_display_date_time" style="display: none">
+                <i class="fas fa-long-arrow-alt-left _mR_xs"></i>
+				<?php echo esc_html__('Previous Date Time', 'service-booking-manager'); ?>
+            </button>
+
+            <button class="_mpBtn_dBR mpActive mpwpb_date_time_prev" type="button" id="mpwpb_display_service_btn">
                 <i class="fas fa-long-arrow-alt-left _mR_xs"></i>
 				<?php echo esc_html__('Previous', 'service-booking-manager') . ' ' . esc_html($service_text); ?>
             </button>
@@ -23,7 +29,7 @@
 <!--            <div class="mpqpb_next_prev_btn_display" id="mpwpb_show_hide_staff_member" style="display: none"><span class="mpwpb_next_prev_btn">Next Staff Member</span></div>-->
 
             <?php
-            if( $enable_staff_member === 'on' ){
+            if( is_plugin_active('service-booking-manager-pro/MPWPB_Plugin_Pro.php') && $enable_staff_member === 'on' ){
             ?>
             <button class="_mpBtn_dBR mActive" id="mpwpb_show_hide_staff_member" type="button" data-wc_link_id="<?php echo esc_attr($link_wc_product); ?>" style="display: none">
                 <?php esc_html_e('Next Staff Member', 'service-booking-manager'); ?>
@@ -32,7 +38,7 @@
             <?php }?>
 
             <button class="_mpBtn_dBR mActive mpwpb_date_time_next" id="mpwpb_date_time_next_btn_id" type="button" data-wc_link_id="<?php echo esc_attr($link_wc_product); ?>" data-alert="<?php esc_html_e('Please Select Date & Time', 'service-booking-manager'); ?>" style="display: none">
-				<?php esc_html_e('Next Summary', 'service-booking-manager'); ?>
+				<?php esc_html_e('Proceed to Checkout', 'service-booking-manager'); ?>
                 <i class="fas fa-long-arrow-alt-right _mL_xs"></i>
             </button>
         </div>

@@ -20,45 +20,32 @@
                 add_action('mpwpb_progress_bar', [$this, 'mpwpb_progress_bar_callback'], 10, 2 );
 			}
 
-            public function mpwpb_progress_bar_callback_old( $service_id, $is_active ) {
-                $enable_staff_member = get_post_meta($service_id, 'mpwpb_staff_member_add', true);
-                ?>
-                <div class="mpwpb_progress_container">
-                    <div class="mpwpb_progress_bar">
-                        <div class="mpwpb_progress_line"></div>
-                        <div id="mpwpb_progress_service" class="mpwpb_progress_step <?php echo esc_attr( $is_active ); ?>">Service</div>
-                        <div id="mpwpb_progress_date_time" class="mpwpb_progress_step">Date & Time </div>
-                        <?php  if ($enable_staff_member === 'on') {?>
-                            <div id="mpwpb_progress_staff" class="mpwpb_progress_step">Staff</div>
-                        <?php }?>
-                        <div id="mpwpb_progress_checkout" class="mpwpb_progress_step">Checkout</div>
-                    </div>
-                </div>
-
-            <?php
-            }
             public function mpwpb_progress_bar_callback( $service_id, $is_active ) {
                 $enable_staff_member = get_post_meta($service_id, 'mpwpb_staff_member_add', true);
                 ?>
                 <div class="mpwpb_cart_progress_wrapper">
                     <div class="mpwpb_cart_progress_step active" id="mpwpb_progress_service">
-                        <div class="mpwpb_cart_progress_circle">1</div>
-                        <div class="mpwpb_cart_progress_label">Service</div>
+                        <div class="mpwpb_cart_progress_circle"><?php esc_html_e(1, 'service-booking-manager') ?></div>
+                        <div class="mpwpb_cart_progress_label"><?php esc_html_e('Service', 'service-booking-manager') ?></div>
                     </div>
                     <div class="mpwpb_cart_progress_arrow">→</div>
                     <div class="mpwpb_cart_progress_step" id="mpwpb_progress_date_time">
-                        <div class="mpwpb_cart_progress_circle">2</div>
-                        <div class="mpwpb_cart_progress_label">Date & Time</div>
+                        <div class="mpwpb_cart_progress_circle"><?php esc_html_e(2, 'service-booking-manager') ?></div>
+                        <div class="mpwpb_cart_progress_label"><?php esc_html_e('Date & Time', 'service-booking-manager') ?></div>
                     </div>
                     <div class="mpwpb_cart_progress_arrow">→</div>
-                    <div class="mpwpb_cart_progress_step" id="mpwpb_progress_staff">
-                        <div class="mpwpb_cart_progress_circle">3</div>
-                        <div class="mpwpb_cart_progress_label">Staff</div>
-                    </div>
-                    <div class="mpwpb_cart_progress_arrow" id="mpwpb_staff_arrow">→</div>
+                    <?php  if ( is_plugin_active('service-booking-manager-pro/MPWPB_Plugin_Pro.php') && $enable_staff_member === 'on' ) {
+                        $number = 4;
+                        ?>
+                        <div class="mpwpb_cart_progress_step" id="mpwpb_progress_staff">
+                            <div class="mpwpb_cart_progress_circle"><?php esc_html_e(3, 'service-booking-manager') ?></div>
+                            <div class="mpwpb_cart_progress_label"><?php esc_html_e('Staff', 'service-booking-manager') ?></div>
+                        </div>
+                        <div class="mpwpb_cart_progress_arrow" id="mpwpb_staff_arrow">→</div>
+                    <?php } else {  $number = 3; }?>
                     <div class="mpwpb_cart_progress_step" id="mpwpb_progress_checkout">
-                        <div class="mpwpb_cart_progress_circle">4</div>
-                        <div class="mpwpb_cart_progress_label">Checkout</div>
+                        <div class="mpwpb_cart_progress_circle"><?php echo esc_html( $number ) ?></div>
+                        <div class="mpwpb_cart_progress_label"><?php esc_html_e('Checkout', 'service-booking-manager') ?></div>
                     </div>
                 </div>
 
