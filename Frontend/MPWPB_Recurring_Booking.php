@@ -11,7 +11,7 @@ if (!class_exists('MPWPB_Recurring_Booking')) {
     class MPWPB_Recurring_Booking {
         public function __construct() {
             // Enqueue scripts and styles
-//            add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+            add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
             
             // AJAX handlers
             add_action('wp_ajax_mpwpb_save_recurring_booking', array($this, 'generate_recurring_dates'));
@@ -34,7 +34,7 @@ if (!class_exists('MPWPB_Recurring_Booking')) {
          * Enqueue scripts and styles for recurring bookings
          */
         public function enqueue_scripts() {
-            if (is_singular(MPWPB_Function::get_cpt()) || (is_a(get_post(), 'WP_Post') && has_shortcode(get_post()->post_content, 'mpwpb-registration'))) {
+//            if (is_singular(MPWPB_Function::get_cpt()) || (is_a(get_post(), 'WP_Post') && has_shortcode(get_post()->post_content, 'mpwpb-registration'))) {
                 global $post;
 
                 wp_enqueue_script('mpwpb-recurring-booking', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_recurring_booking.js', array('jquery'),  true);
@@ -47,7 +47,7 @@ if (!class_exists('MPWPB_Recurring_Booking')) {
                     'nonce' => wp_create_nonce('mpwpb_nonce'),
                     'plugin_url' => MPWPB_PLUGIN_URL
                 ));
-            }
+//            }
         }
         
         /**

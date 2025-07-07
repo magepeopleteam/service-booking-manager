@@ -12,8 +12,9 @@
 
 	$enable_waiting_list = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_enable_waiting_list', 'no');
 	$enable_recurring = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_enable_recurring', 'no');
-	$recurring_types = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_recurring_types', array('weekly', 'bi-weekly', 'monthly'));
-	$max_recurring_count = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_max_recurring_count', 10);
+	$recurring_types = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_recurring_types', array( 'daily','weekly', 'bi-weekly', 'monthly' ) );
+
+    $max_recurring_count = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_max_recurring_count', 10);
 	$recurring_discount = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_recurring_discount', 0);
 
     $enable_staff_member = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_staff_member_add', 'no');
@@ -22,6 +23,9 @@
 	$extra_services = $extra_services ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', array());
 
 ?>
+
+<!-- Popup Wrapper -->
+
     <div class="_dShadow_7_mB_xs mpwpb_date_time_area">
         <div class="mpwpb_date_carousel groupRadioCheck" id="mpwpb_datetime_holder">
             <header class="_dFlex_alignCenter_justifyBetween">
@@ -61,6 +65,15 @@
                                 </div>
 
                                 <div class="mpwpb_recurring_settings" style="display: none;">
+                                    <div class="mpwpb_weekday_selector" id="mpwpb_weekday_selector" style="display: none">
+                                        <label><input type="checkbox" name="recurring_days[]" value="sun"> Sun</label>
+                                        <label><input type="checkbox" name="recurring_days[]" value="mon"> Mon</label>
+                                        <label><input type="checkbox" name="recurring_days[]" value="tue"> Tue</label>
+                                        <label><input type="checkbox" name="recurring_days[]" value="wed"> Wed</label>
+                                        <label><input type="checkbox" name="recurring_days[]" value="thu"> Thu</label>
+                                        <label><input type="checkbox" name="recurring_days[]" value="fri"> Fri</label>
+                                        <label><input type="checkbox" name="recurring_days[]" value="sat"> Sat</label>
+                                    </div>
                                     <div class="mpwpb_recurring_type">
                                         <label><?php esc_html_e('Recurring Type', 'service-booking-manager'); ?></label>
                                         <select name="mpwpb_recurring_type" id="mpwpb_recurring_type">
@@ -68,6 +81,9 @@
                                             <?php foreach ($recurring_types as $type) {
                                                 $label = '';
                                                 switch ($type) {
+                                                    case 'daily':
+                                                        $label = esc_html__('Daily', 'service-booking-manager');
+                                                        break;
                                                     case 'weekly':
                                                         $label = esc_html__('Weekly', 'service-booking-manager');
                                                         break;

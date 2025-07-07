@@ -168,6 +168,11 @@
     $(document).on('change', '#mpwpb_recurring_type, #mpwpb_recurring_count', function() {
         let parent = $(this).closest('div.mpwpb_registration');
         let recurringType = parent.find('#mpwpb_recurring_type').val();
+        if( recurringType !== 'daily' ){
+            $("#mpwpb_weekday_selector").fadeIn();
+        }else{
+            $("#mpwpb_weekday_selector").fadeOut();
+        }
         let recurringCount = parseInt(parent.find('#mpwpb_recurring_count').val());
         let selectedDate = parent.find('[name="mpwpb_date"]').val();
 
@@ -177,8 +182,15 @@
             recurring_discount_price = parseInt( recurring_discount.find('p' ).attr('data-discount').trim() );
         }
 
+        let selectedRecurringDays = [];
+        $('input[name="recurring_days[]"]:checked').each(function () {
+            selectedRecurringDays.push($(this).val()); // ['mon', 'wed', 'fri']
+        });
+
+        console.log( selectedRecurringDays );
+
         if (recurringType && recurringCount >= 2 && selectedDate) {
-            generateRecurringDates(parent, selectedDate, recurringType, recurringCount);
+            generateRecurringDates(parent, selectedDate, recurringType, recurringCount, selectedRecurringDays );
         } else {
             parent.find('.mpwpb_recurring_dates').hide();
             parent.find('#mpwpb_recurring_dates_list').empty();
@@ -212,7 +224,7 @@
     }
     
     // Function to generate recurring dates
-    function generateRecurringDates(parent, startDate, recurringType, recurringCount) {
+    function generateRecurringDates( parent, startDate, recurringType, recurringCount, selectedRecurringDays ) {
         // Get the post ID
         let postId = parent.data('post-id');
         if (!postId) {
@@ -253,6 +265,7 @@
                 post_id: postId,
                 recurring_type: recurringType,
                 recurring_count: recurringCount,
+                selectedRecurringDays: selectedRecurringDays,
                 dates: [startDate],
                 nonce: nonce
             },
@@ -289,22 +302,35 @@
         if (dates && dates.length > 0) {
             parent.find('#mpwpd_selected_date').empty();
             $.each(dates, function(index, date) {
-                // console.log( date );
+
+                //
                 let formattedDate = formatDate_new(date);
+                parent.find('#mpwpb_summary_date_item').find('#mpwpd_selected_date').append( `<li class="mpwpd_service_date" data-cart-date-time="${date}">${formattedDate}</li>` );
 
-                parent.find('#mpwpb_summary_date_item').find('#mpwpd_selected_date').append( `<li class="mpwpd_service_date">${formattedDate}</li>` );
+                // let listItem = $(`<li data-date-time="${date}">`).text(formattedDate);
+                // let listItem = `<li data-date-time="${date}"><strong>${index + 1}</strong> ${formattedDate}</li>`;
 
-                let listItem = $(`<li data-date-time="${date}">`).text(formattedDate);
-                
                 if (index === 0) {
-                    listItem.prepend('<strong>' + (index + 1) + '. </strong>');
+                    var count_li = `<strong>${index + 1}</strong>`;
                 } else {
-                    listItem.prepend((index + 1) + '. ');
+                    count_li = index + 1;
                 }
-                
+
+                let listItem = `
+                    <li data-date-time="${date}" class="mpwpb_recurring_days">
+                        <div>
+                            ${ count_li +' '+ formattedDate}
+                        </div>
+                        <div class="mpwpb_recurring_actions">
+                            <span class="mpwpb_recurring_edit_icon">✏️</span>
+                            <span class="mpwpb_recurring_delete_icon">✖</span>
+                        </div>
+                      
+                    </li>`;
                 datesList.append(listItem);
+
             });
-            
+
             parent.find('.mpwpb_recurring_dates').show();
 
 
@@ -313,7 +339,56 @@
             parent.find('.mpwpb_recurring_dates').hide();
         }
     }
-    
+
+    // Delete handler
+    $(document).on('click', '.mpwpb_recurring_delete_icon', function () {
+        const parent = $('#mpwpb_recurring_dates_list');
+        const totalItems = parent.find('li').length;
+        if (totalItems <= 2) {
+            alert('At least 2 dates must remain.');
+            return;
+        }
+        const dateTime = $(this).closest('li').attr('data-date-time');
+        $(this).closest('li').remove();
+        $('#mpwpd_selected_date')
+            .find(`li[data-cart-date-time="${dateTime}"]`)
+            .remove();
+    });
+    // Edit handler
+
+    $(document).on('click', '.mpwpb_recurring_edit_icon', function () {
+
+        $('.mpwpb_edit_recurring_datetime_popup').fadeIn();
+
+        let li = $(this).closest('li');
+        let oldDateTime = li.attr('data-date-time'); // original value
+
+        let newDate = prompt('Edit date:', oldDateTime);
+
+        if (newDate) {
+            let formattedDate = formatDate_new(newDate); // your existing formatting function
+
+            // Update recurring item
+            li.attr('data-date-time', newDate);
+            li.addClass('mpwpb_recurring_days');
+            li.html(`
+            <div>${li.index() + 1} ${formattedDate}</div>
+            <div class="mpwpb_recurring_actions">
+                <span class="mpwpb_recurring_edit_icon">✏️</span>
+                <span class="mpwpb_recurring_delete_icon">✖</span>
+            </div>
+        `);
+
+            // Update the matching summary item
+            $('#mpwpd_selected_date')
+                .find(`li[data-cart-date-time="${oldDateTime}"]`)
+                .attr('data-cart-date-time', newDate)
+                .text(formattedDate);
+        }
+    });
+
+
+
     // Format date for display
     function formatDate(dateString) {
         let date = new Date(dateString);
@@ -378,5 +453,6 @@
             }
         }
     });
+
     
 })(jQuery);

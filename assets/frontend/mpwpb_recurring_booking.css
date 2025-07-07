@@ -234,3 +234,57 @@ input:checked + .slider:before {
     font-weight: 600;
     color: #333;
 }
+.mpwpb_weekday_selector {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+.mpwpb_weekday_selector label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+
+
+
+
+/* Main list item */
+.mpwpb_recurring_days {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    margin: 6px 0;
+    background-color: #f9f9f9;
+    border-left: 4px solid #0073aa; /* optional highlight */
+    border-radius: 6px;
+    font-size: 15px;
+    font-family: Arial, sans-serif;
+    transition: background 0.2s ease;
+}
+.mpwpb_recurring_days:hover {
+    background-color: #eef6fa;
+}
+.mpwpb_recurring_actions {
+    display: flex;
+    gap: 10px;
+}
+.mpwpb_recurring_edit_icon,
+.mpwpb_recurring_delete_icon {
+    cursor: pointer;
+    font-size: 16px;
+    transition: transform 0.2s ease;
+}
+.mpwpb_recurring_edit_icon:hover {
+    color: #0073aa;
+    transform: scale(1.2);
+}
+.mpwpb_recurring_delete_icon:hover {
+    color: #d63638;
+    transform: scale(1.2);
+}
+
