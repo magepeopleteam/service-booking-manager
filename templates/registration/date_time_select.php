@@ -29,7 +29,6 @@
         $off_dates_recurring[] = date_i18n('Y-m-d', strtotime($off_date));
     }
     $off_dates_recurring = implode(',', $off_dates_recurring);
-    error_log( print_r( [ '$all_off_days' => $off_days_recurring, '$off_dates' => $off_dates_recurring ], true ) );
 
 ?>
 
@@ -43,16 +42,17 @@
     <div class="mpwpb_edit_recurring_datetime_modal">
         <h3>Select Time</h3>
         <div class="mpwpb_edit_recurring_datetime_timeslot_wrap">
-            <span class="mpwpb_edit_recurring_datetime_timeslot" data-time="1">1</span>
-            <span class="mpwpb_edit_recurring_datetime_timeslot" data-time="2">2</span>
-            <span class="mpwpb_edit_recurring_datetime_timeslot" data-time="3">3</span>
-            <span class="mpwpb_edit_recurring_datetime_timeslot" data-time="4">4</span>
-            <span class="mpwpb_edit_recurring_datetime_timeslot" data-time="5">5</span>
+            <input type="hidden" id="mpwpb_get_selected_time" value="">
+            <?PHP
+            for( $i = 9; $i<=18; $i++ ){ ?>
+                <span class="mpwpb_select_datetime_timeslot" data-time="<?php echo esc_attr( $i );?>"><?php echo esc_attr( $i );?></span>
+            <?PHP }
+            ?>
             <!-- Add more as needed -->
         </div>
         <div class="mpwpb_edit_recurring_datetime_input_wrap">
-            <label>Selected Time:</label>
-            <input type="text" id="date_type_edit_recurring" class="formControl date_type_edit_recurring" value="" />
+            <h3>Selecte Date</h3>
+            <input type="text" id="date_type_edit_recurring" class="formControl date_type_edit_recurring" value=""/>
             <input type="hidden" id="mpwpb_date_edit_recurring" class="mpwpb_date_edit_recurring" value=""/>
         </div>
         <div class="mpwpb_edit_date_btn_holder">

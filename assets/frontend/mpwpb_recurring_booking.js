@@ -440,7 +440,7 @@
         if ( newDate ) {
             let formattedDate = formatDate_new( newDate ); // your existing formatting function
             $("#mpwpb_recurring_datetime_set").attr('data-recurringli-id', oldDateTime );
-            $("#date_type_edit_recurring").val( formattedDate );
+            $(".date_type_edit_recurring").val( formattedDate );
             $("#mpwpb_date_edit_recurring").val( oldDateTime );
 
             let li = $(this).closest('li');
@@ -457,7 +457,7 @@
         let targetDateTime = $(this).data('recurringli-id').trim(); // পুরাতন datetime
 
         let get_date = $("#mpwpb_date_edit_recurring").val().trim(); // যেমন: 2025-07-14
-        let get_time = 4; // যেমন: 04
+        let get_time = $("#mpwpb_get_selected_time").val();
 
         if (get_date === '' || get_time === '') {
             alert('Please select both date and time.');
@@ -493,6 +493,15 @@
 
     $(document).on('click', '.mpwpb_edit_recurring_datetime_close, .mpwpb_edit_recurring_datetime_overlay', function () {
         hide_recurring_popup();
+    });
+
+    $(document).on('click', '.mpwpb_select_datetime_timeslot', function () {
+        $('.mpwpb_select_datetime_timeslot').removeClass( 'mpwpb_selected_time' );
+        let time = $(this).attr('data-time');
+        if( time !== '' ){
+            $("#mpwpb_get_selected_time").val( time );
+        }
+        $(this).addClass( 'mpwpb_selected_time' );
     });
 
     function hide_recurring_popup(){

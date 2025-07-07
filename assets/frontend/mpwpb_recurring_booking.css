@@ -316,18 +316,18 @@ input:checked + .slider:before {
 .mpwpb_edit_recurring_datetime_timeslot_wrap {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
+    gap: 4px;
+    justify-content: start;
     margin: 15px 0;
 }
-.mpwpb_edit_recurring_datetime_timeslot {
+.mpwpb_select_datetime_timeslot {
     padding: 10px 15px;
     background: #f0f0f0;
     border-radius: 6px;
     cursor: pointer;
     transition: 0.3s;
 }
-.mpwpb_edit_recurring_datetime_timeslot:hover {
+.mpwpb_select_datetime_timeslot:hover {
     background: #0073aa;
     color: #fff;
 }
@@ -349,7 +349,7 @@ input:checked + .slider:before {
     cursor: pointer;
 }
 .mpwpb_recurring_datetime_set {
-    background: #d63638;
+    background: #03A9F4;
     color: white;
     padding: 8px 16px;
     border: none;
@@ -360,6 +360,15 @@ input:checked + .slider:before {
     background: #b32d2e;
 }
 
+.mpwpb_edit_date_btn_holder{
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+.mpwpb_selected_time{
+    background: #03A9F4;
+    color: #fff;
+}
 
 
 
