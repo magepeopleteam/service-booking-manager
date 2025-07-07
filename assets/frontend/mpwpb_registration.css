@@ -1725,5 +1725,11 @@ button.mpwpb_service_button.mActive:hover{
   color: #fff !important;
 }
 
+.mpwpb-static-template .sidebar
+ {
+    width: 100%;
+    padding-bottom: 10px;
+}
+
 
 
