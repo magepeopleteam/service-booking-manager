@@ -356,37 +356,6 @@
     });
     // Edit handler
 
-    $(document).on('click', '.mpwpb_recurring_edit_icon', function () {
-
-        $('.mpwpb_edit_recurring_datetime_popup').fadeIn();
-
-        let li = $(this).closest('li');
-        let oldDateTime = li.attr('data-date-time'); // original value
-
-        let newDate = prompt('Edit date:', oldDateTime);
-
-        if (newDate) {
-            let formattedDate = formatDate_new(newDate); // your existing formatting function
-
-            // Update recurring item
-            li.attr('data-date-time', newDate);
-            li.addClass('mpwpb_recurring_days');
-            li.html(`
-            <div>${li.index() + 1} ${formattedDate}</div>
-            <div class="mpwpb_recurring_actions">
-                <span class="mpwpb_recurring_edit_icon">✏️</span>
-                <span class="mpwpb_recurring_delete_icon">✖</span>
-            </div>
-        `);
-
-            // Update the matching summary item
-            $('#mpwpd_selected_date')
-                .find(`li[data-cart-date-time="${oldDateTime}"]`)
-                .attr('data-cart-date-time', newDate)
-                .text(formattedDate);
-        }
-    });
-
 
 
     // Format date for display
@@ -453,6 +422,84 @@
             }
         }
     });
+
+    $(document).on('click', '.mpwpb_recurring_edit_icon', function () {
+        $('.mpwpb_edit_recurring_datetime_popup').fadeIn();
+
+    });
+
+    $(document).on('click', '.mpwpb_recurring_edit_icon', function () {
+
+        $('.mpwpb_edit_recurring_datetime_popup').fadeIn();
+
+        let li = $(this).closest('li');
+        let oldDateTime = li.attr('data-date-time'); // original value
+
+        let newDate =  oldDateTime;
+
+        if ( newDate ) {
+            let formattedDate = formatDate_new( newDate ); // your existing formatting function
+            $("#mpwpb_recurring_datetime_set").attr('data-recurringli-id', oldDateTime );
+            $("#date_type_edit_recurring").val( formattedDate );
+            $("#mpwpb_date_edit_recurring").val( oldDateTime );
+
+            let li = $(this).closest('li');
+            let currentDateTime = li.attr('data-date-time');
+            $('#mpwpb_recurring_datetime_set')
+                .data('target-li', li) // attach li element directly
+                .data('recurringli-id', currentDateTime);
+
+        }
+    });
+
+    $(document).on('click', '#mpwpb_recurring_datetime_set', function () {
+        let li = $(this).data('target-li');
+        let targetDateTime = $(this).data('recurringli-id').trim(); // পুরাতন datetime
+
+        let get_date = $("#mpwpb_date_edit_recurring").val().trim(); // যেমন: 2025-07-14
+        let get_time = 4; // যেমন: 04
+
+        if (get_date === '' || get_time === '') {
+            alert('Please select both date and time.');
+            return;
+        }
+
+        let hour = ('0' + get_time).slice(-2);
+        let dateTime = `${get_date} ${hour}:00:00`; // Final format: 2025-07-14 04:00:00
+        let formattedDate = formatDate_new(dateTime); // যেমন: July 14, 2025 at 04:00 AM
+
+        if (li && li.length) {
+            li.attr('data-date-time', dateTime);
+            li.addClass('mpwpb_recurring_days');
+            li.html(`
+            <div>${li.index() + 1} ${formattedDate}</div>
+            <div class="mpwpb_recurring_actions">
+                <span class="mpwpb_recurring_edit_icon">✏️</span>
+                <span class="mpwpb_recurring_delete_icon">✖</span>
+            </div>
+        `);
+        }
+
+        let summaryLi = $('#mpwpd_selected_date')
+            .find(`li[data-cart-date-time="${targetDateTime}"]`);
+
+        if (summaryLi.length) {
+            summaryLi
+                .attr('data-cart-date-time', dateTime)
+                .text(formattedDate);
+        }
+        hide_recurring_popup();
+    });
+
+    $(document).on('click', '.mpwpb_edit_recurring_datetime_close, .mpwpb_edit_recurring_datetime_overlay', function () {
+        hide_recurring_popup();
+    });
+
+    function hide_recurring_popup(){
+        $("#date_type_edit_recurring").val('');
+        $("#mpwpb_date_edit_recurring").val('');
+        $('.mpwpb_edit_recurring_datetime_popup').fadeOut();
+    }
 
     
 })(jQuery);

@@ -73,6 +73,8 @@ function pageScrollTo(target) {
         scrollTop: target.offset().top -= 150
     }, 1000);
 }
+
+
 //====================================================Load Date picker==============//
 function mpwpb_load_date_picker(parent = jQuery('.mpwpb_style')) {
     parent.find(".date_type.hasDatepicker").each(function () {
@@ -106,7 +108,88 @@ function mpwpb_load_date_picker(parent = jQuery('.mpwpb_style')) {
             }
         });
     });
+
+    parent.find(".date_type_edit_recurring.hasDatepicker").each(function () {
+        jQuery(this).removeClass('hasDatepicker').attr('id', '').removeData('datepicker').unbind();
+    }).promise().done(function () {
+        parent.find(".date_type_edit_recurring").datepicker({
+            dateFormat: mpwpb_date_format,
+            //showButtonPanel: true,
+            autoSize: true,
+            changeMonth: true,
+            minDate: 0,
+            changeYear: false,
+            beforeShow: function(input, inst) {
+                setTimeout(function() {
+                    jQuery('#ui-datepicker-div').addClass('mpwpb_custom_datepicker_style');
+                }, 0);
+            },
+            onSelect: function (dateString, data) {
+                //console.log(mpwpb_date_format_without_year);
+                let year = data.currentYear;
+                let month = ('0' + (parseInt(data.selectedMonth) + 1)).slice(-2);
+                let day = ('0' + parseInt(data.selectedDay)).slice(-2);
+
+                let formattedDate = `${year}-${month}-${day}`;
+                jQuery("#mpwpb_date_edit_recurring").val(formattedDate).trigger('change');
+            }
+        });
+    });
 }
+function mpwpb_load_date_picker_edit_curring_date(  off_days, off_dates ) {
+
+    let blockedDates = off_dates.split(',');
+
+    let offDays  = off_days.split(',');
+    let weekDays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    let numericOffDays = offDays.map(day => weekDays.indexOf(day.toLowerCase())).filter(i => i !== -1);
+
+    console.log( numericOffDays );
+
+    parent = jQuery('.mpwpb_style')
+    parent.find(".date_type_edit_recurring.hasDatepicker").each(function () {
+        jQuery(this).removeClass('hasDatepicker').attr('id', '').removeData('datepicker').unbind();
+    }).promise().done(function () {
+        parent.find(".date_type_edit_recurring").datepicker({
+            dateFormat: mpwpb_date_format,
+            //showButtonPanel: true,
+            autoSize: true,
+            changeMonth: true,
+            minDate: 0,
+            changeYear: false,
+            beforeShow: function(input, inst) {
+                setTimeout(function() {
+                    jQuery('#ui-datepicker-div').addClass('mpwpb_custom_datepicker_style');
+                }, 0);
+            },
+            beforeShowDay: function(date) {
+                let yyyy = date.getFullYear();
+                let mm = ('0' + (date.getMonth() + 1)).slice(-2);
+                let dd = ('0' + date.getDate()).slice(-2);
+                let formatted = `${yyyy}-${mm}-${dd}`;
+
+                let day = date.getDay(); // রবিবার = 0
+
+                if (blockedDates.includes(formatted) || numericOffDays.includes(day)) {
+                    return [false]; // disabled
+                }
+
+                return [true]; // enabled
+            },
+            onSelect: function (dateString, data) {
+                //console.log(mpwpb_date_format_without_year);
+                let year = data.currentYear;
+                let month = ('0' + (parseInt(data.selectedMonth) + 1)).slice(-2);
+                let day = ('0' + parseInt(data.selectedDay)).slice(-2);
+
+                let formattedDate = `${year}-${month}-${day}`;
+                jQuery("#mpwpb_date_edit_recurring").val(formattedDate).trigger('change');
+            }
+        });
+    });
+}
+
+
 //========================================================Alert==============//
 function mpwpb_alert($this, attr = 'alert') {
     alert($this.data(attr));
@@ -115,7 +198,14 @@ function mpwpb_alert($this, attr = 'alert') {
 (function ($) {
     "use strict";
     $(document).ready(function () {
+
+        let off_days = $("#mpwpb_off_days_data").val();
+        let off_dates = $("#mpwpb_off_dates_data").val();
+        let off_days_ary = ['2025-09-07', '2025-09-10']; // YYYY-MM-DD format
+        var off_dates_ary = [ 0, 6 ];
+
         mpwpb_load_date_picker();
+        mpwpb_load_date_picker_edit_curring_date( off_days, off_dates );
         $('.mpwpb_select2').select2({});
     });
 }(jQuery));
@@ -149,6 +239,7 @@ function mpwpb_resize_bg_image_area(target, bg_url) {
     });
 }
 (function ($) {
+
     let bg_image_load = false;
     $(document).ready(function () {
         $('body').find('.mpwpb_style [data-bg-image]').each(function () {

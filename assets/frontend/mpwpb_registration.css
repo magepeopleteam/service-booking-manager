@@ -1340,7 +1340,7 @@ div.registration_tab_item {
   left: 0;
   bottom: 0;
   width: 100%;
-  z-index: 99999;
+  z-index: 1;
 }
 @media (min-width: 1024px) {
   .mpwpb-static-template .sidebar .mpwpb_static_area {

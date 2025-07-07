@@ -251,19 +251,15 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
 
                     foreach ($selected_days as $day) {
                         if ($recurring_type === 'monthly') {
-                            // For monthly, find this weekday in the Nth month
                             $month_base = strtotime("+{$interval} month", $start_timestamp);
                             $month_year = date('Y-m', $month_base);
 
-                            // Find the weekday in that month (first occurrence after month start)
                             $day_date = strtotime("first $day of $month_year");
                             $day_time = strtotime($base_time, $day_date);
                         } else {
-                            // For weekly/bi-weekly, get specific day after interval weeks
                             $week_base = strtotime("+{$interval} week", $start_timestamp);
                             $day_date = strtotime("next $day", $week_base);
 
-                            // Ensure we don't skip the exact start day
                             if (date('D', $start_timestamp) === ucfirst($day) && $i === 0) {
                                 $day_date = $start_timestamp;
                             }
@@ -277,7 +273,6 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
                     }
                 }
             } else {
-                // For daily or default cases
                 $dates[] = date('Y-m-d H:i:s', $start_timestamp); // Add start date
                 $current_date = $start_timestamp;
 
@@ -285,6 +280,9 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
                     switch ($recurring_type) {
                         case 'daily':
                             $current_date = strtotime('+1 day', $current_date);
+                            break;
+                        case 'weekly':
+                            $current_date = strtotime('+1 week', $current_date);
                             break;
                         case 'bi-weekly':
                             $current_date = strtotime('+2 weeks', $current_date);
