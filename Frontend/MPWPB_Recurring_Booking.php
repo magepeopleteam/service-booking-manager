@@ -391,6 +391,150 @@ if (!class_exists('MPWPB_Recurring_Booking')) {
             
             return $booking_data;
         }
+
+
+        public static function get_time_from_datetime( $all_datetime_slots ){
+            $times = [];
+            foreach ($all_datetime_slots as $slot) {
+                $parts = explode(' ', $slot);
+                if (isset($parts[1])) {
+                    $times[] = $parts[1];
+                }
+            }
+
+            return $times;
+        }
+        public static function get_time_slot_on_date( $post_id, $start_date ){
+            $all_datetime_slots = MPWPB_Function::get_time_slot( $post_id, $start_date );
+
+            return self::get_time_from_datetime( $all_datetime_slots );
+        }
+        public static function wp_get_order_time_by_dates( $target_date ) {
+            global $wpdb;
+            $raw_results = $wpdb->get_col(
+                $wpdb->prepare(
+                    "
+            SELECT meta_value
+            FROM {$wpdb->postmeta}
+            WHERE meta_key = %s
+            AND meta_value LIKE %s
+            ",
+                    'mpwpb_date',
+                    $wpdb->esc_like($target_date) . '%'
+                )
+            );
+            $ordered_times = [];
+            foreach ( $raw_results as $value ) {
+                $datetime_array = explode(',', $value);
+                foreach ( $datetime_array as $datetime ) {
+                    $datetime = trim($datetime);
+                    if (strpos($datetime, $target_date) === 0) {
+                        $parts = explode(' ', $datetime);
+                        if (isset($parts[1])) {
+                            $ordered_times[] = $parts[1];
+                        }
+                    }
+                }
+            }
+            sort($ordered_times);
+            return $ordered_times;
+        }
+
+        public static function get_all_future_booking_order_date_times_g() {
+            global $wpdb;
+
+            $meta_key = 'mpwpb_date';
+            $now = current_time('Y-m-d H:i');
+
+            $results = $wpdb->get_results(
+                "
+                SELECT pm.meta_value
+                FROM {$wpdb->postmeta} pm
+                INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+                WHERE pm.meta_key = '{$meta_key}'
+                AND p.post_type = 'mpwpb_booking'
+                AND p.post_status = 'publish'
+                ",
+                ARRAY_A
+            );
+
+            $future_slots = [];
+
+            foreach ( $results as $row ) {
+                $value = $row['meta_value'];
+
+                // Allow comma-separated values
+                $date_times = explode(',', $value);
+
+                foreach ( $date_times as $datetime ) {
+                    $datetime = trim($datetime);
+
+                    // If valid datetime format and it's not in the past
+                    if (preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/', $datetime)) {
+                        if ($datetime >= $now) {
+                            $future_slots[] = $datetime;
+                        }
+                    }
+                }
+            }
+
+            sort($future_slots);
+            return $future_slots;
+        }
+
+        public static function get_all_future_booking_order_date_times() {
+            global $wpdb;
+
+            $meta_key = 'mpwpb_date';
+            $now = current_time('Y-m-d H:i:s'); // current time with seconds
+
+            // Use prepare to safely insert meta_key
+            $results = $wpdb->get_results(
+                $wpdb->prepare(
+                    "
+            SELECT pm.meta_value
+            FROM {$wpdb->postmeta} pm
+            INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+            WHERE pm.meta_key = %s
+            AND p.post_type = 'mpwpb_booking'
+            AND p.post_status = 'publish'
+            ",
+                    $meta_key
+                ),
+                ARRAY_A
+            );
+
+            $future_slots = [];
+
+            foreach ($results as $row) {
+                $value = $row['meta_value'];
+
+                // Handle comma-separated multiple datetimes
+                $date_times = explode(',', $value);
+
+                foreach ($date_times as $datetime) {
+                    $datetime = trim($datetime);
+
+                    // Accept datetime with or without seconds: 'YYYY-MM-DD HH:MM' or 'YYYY-MM-DD HH:MM:SS'
+                    if (preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}(:\d{2})?$/', $datetime)) {
+                        // If seconds missing, add ':00'
+                        if (strlen($datetime) === 16) {
+                            $datetime .= ':00';
+                        }
+
+                        // Compare timestamps for future
+                        if (strtotime($datetime) >= strtotime($now)) {
+                            $future_slots[] = $datetime;
+                        }
+                    }
+                }
+            }
+
+            sort($future_slots);
+            return $future_slots;
+        }
+
+
     }
     
     new MPWPB_Recurring_Booking();

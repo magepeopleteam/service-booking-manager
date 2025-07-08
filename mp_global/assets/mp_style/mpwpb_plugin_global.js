@@ -183,6 +183,34 @@ function mpwpb_load_date_picker_edit_curring_date(  off_days, off_dates ) {
                 let day = ('0' + parseInt(data.selectedDay)).slice(-2);
 
                 let formattedDate = `${year}-${month}-${day}`;
+
+                let dateOnly = formattedDate;
+                console.log( dateOnly );
+                let ajaxUrl = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.ajax_url : mpwpb_ajax.ajax_url;
+                let nonce = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.nonce : mpwpb_ajax.nonce;
+                let postId = mpwpb_recurring_data.post_id;
+
+                jQuery.ajax({
+                    type: 'POST',
+                    url: ajaxUrl,
+                    data: {
+                        action: 'mpwpb_get_filtered_time_by_date',
+                        post_id: postId,
+                        dates: dateOnly,
+                        nonce: nonce
+                    },
+                    success: function(response) {
+                        if (response.success && response.data && response.data.dates) {
+                            jQuery("#mpwpb_recurring_time_holedr").html(response.data.dates );
+                        } else {
+                            console.error('AJAX Data Loadinf error:');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX error:', status, error);
+                    }
+                });
+                // alert( formattedDate );
                 jQuery("#mpwpb_date_edit_recurring").val(formattedDate).trigger('change');
             }
         });

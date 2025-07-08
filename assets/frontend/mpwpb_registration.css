@@ -119,6 +119,9 @@ div.registration_tab_item {
 .mpwpd_service_date{
   list-style-type: none;
 }
+.mpwpd_service_date_selected{
+  color: #990000;
+}
 
 .selection-header {
   padding-top: 5px;

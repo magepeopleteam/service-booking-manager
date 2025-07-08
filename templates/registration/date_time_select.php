@@ -30,7 +30,6 @@
     }
     $off_dates_recurring = implode(',', $off_dates_recurring);
 
-
 ?>
 
 <div class="mpwpb_off_days_dates" style="display: none; visibility: hidden; margin: 0; padding: 0" >
@@ -42,13 +41,12 @@
     <div class="mpwpb_edit_recurring_datetime_overlay"></div>
     <div class="mpwpb_edit_recurring_datetime_modal">
         <h3>Select Time</h3>
-        <div class="mpwpb_edit_recurring_datetime_timeslot_wrap">
+        <div class="mpwpb_edit_recurring_datetime_timeslot_wrap" id="mpwpb_edit_recurring_datetime_timeslot_wrap">
             <input type="hidden" id="mpwpb_get_selected_time" value="">
-            <?PHP
-            for( $i = 9; $i<=18; $i++ ){ ?>
-                <span class="mpwpb_select_datetime_timeslot" data-time="<?php echo esc_attr( $i );?>"><?php echo esc_attr( $i );?></span>
-            <?PHP }
-            ?>
+            <div class="mpwpb_recurring_time_holedr" id="mpwpb_recurring_time_holedr">
+                <div class="mpwpb_recurring_loader">Loading...</div>
+            </div>
+
             <!-- Add more as needed -->
         </div>
         <div class="mpwpb_edit_recurring_datetime_input_wrap">
