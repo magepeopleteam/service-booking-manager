@@ -277,7 +277,7 @@
                 // console.log('Recurring dates response:', response);
 
                 if (response.success && response.data && response.data.dates) {
-                    displayRecurringDates(parent, response.data.dates);
+                    displayRecurringDates(parent, response.data.dates,  response.data.dates_html, response.data.selected_html);
                 } else {
                     let errorMessage = 'Error generating dates';
                     if (response.data && response.data.message) {
@@ -295,46 +295,15 @@
     }
     
     // Function to display recurring dates
-    function displayRecurringDates(parent, dates) {
+    function displayRecurringDates(parent, dates, html, selected_html ) {
         let datesList = parent.find('#mpwpb_recurring_dates_list');
         datesList.empty();
         
         if (dates && dates.length > 0) {
             parent.find('#mpwpd_selected_date').empty();
-            $.each(dates, function(index, date) {
-
-                //
-                let formattedDate = formatDate_new(date);
-                parent.find('#mpwpb_summary_date_item').find('#mpwpd_selected_date').append( `<li class="mpwpd_service_date" data-cart-date-time="${date}">${formattedDate}</li>` );
-
-                // let listItem = $(`<li data-date-time="${date}">`).text(formattedDate);
-                // let listItem = `<li data-date-time="${date}"><strong>${index + 1}</strong> ${formattedDate}</li>`;
-
-                if (index === 0) {
-                    var count_li = `<strong>${index + 1}</strong>`;
-                } else {
-                    count_li = index + 1;
-                }
-
-                let listItem = `
-                    <li data-date-time="${date}" class="mpwpb_recurring_days">
-                        <div>
-                            ${ count_li +' '+ formattedDate}
-                        </div>
-                        <div class="mpwpb_recurring_actions">
-                            <span class="mpwpb_recurring_edit_icon">✏️</span>
-                            <span class="mpwpb_recurring_delete_icon">✖</span>
-                        </div>
-                      
-                    </li>`;
-                datesList.append(listItem);
-
-            });
-
+            datesList.append( html );
+            parent.find('#mpwpb_summary_date_item').find('#mpwpd_selected_date').append( selected_html );
             parent.find('.mpwpb_recurring_dates').show();
-
-
-
         } else {
             parent.find('.mpwpb_recurring_dates').hide();
         }
@@ -430,17 +399,44 @@
 
     $(document).on('click', '.mpwpb_recurring_edit_icon', function () {
 
+        // let parent = $(this).closest('div.mpwpb_registration');
         $('.mpwpb_edit_recurring_datetime_popup').fadeIn();
 
         let li = $(this).closest('li');
         let oldDateTime = li.attr('data-date-time'); // original value
-
         let newDate =  oldDateTime;
 
         if ( newDate ) {
+            let dateOnly = oldDateTime.split(' ')[0];
+            // console.log( dateOnly );
+            let ajaxUrl = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.ajax_url : mpwpb_ajax.ajax_url;
+            let nonce = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.nonce : mpwpb_ajax.nonce;
+            let postId = mpwpb_recurring_data.post_id;
+
+            $.ajax({
+                type: 'POST',
+                url: ajaxUrl,
+                data: {
+                    action: 'mpwpb_get_filtered_time_by_date',
+                    post_id: postId,
+                    dates: dateOnly,
+                    nonce: nonce
+                },
+                success: function(response) {
+                    if (response.success && response.data && response.data.dates) {
+                        $("#mpwpb_recurring_time_holedr").html(response.data.dates );
+                    } else {
+                        console.error('AJAX Data Loadinf error:');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', status, error);
+                }
+            });
+
             let formattedDate = formatDate_new( newDate ); // your existing formatting function
             $("#mpwpb_recurring_datetime_set").attr('data-recurringli-id', oldDateTime );
-            $(".date_type_edit_recurring").val( formattedDate );
+            $("#date_type_edit_recurring").val( formattedDate );
             $("#mpwpb_date_edit_recurring").val( oldDateTime );
 
             let li = $(this).closest('li');

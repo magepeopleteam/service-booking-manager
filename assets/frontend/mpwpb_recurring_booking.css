@@ -266,6 +266,19 @@ input:checked + .slider:before {
     font-family: Arial, sans-serif;
     transition: background 0.2s ease;
 }
+.mpwpb_invalid_recurring_days {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    margin: 6px 0;
+    background-color: #efcec4 !important;
+    border-left: 4px solid #FF5722 !important; /* optional highlight */
+    border-radius: 6px;
+    font-size: 15px;
+    font-family: Arial, sans-serif;
+    transition: background 0.2s ease;
+}
 .mpwpb_recurring_days:hover {
     background-color: #eef6fa;
 }
@@ -321,11 +334,18 @@ input:checked + .slider:before {
     margin: 15px 0;
 }
 .mpwpb_select_datetime_timeslot {
-    padding: 10px 15px;
+    padding: 10px 12px;
     background: #f0f0f0;
     border-radius: 6px;
     cursor: pointer;
     transition: 0.3s;
+}
+.mpwpb_selected_datetime_timeslot {
+    padding: 10px 12px;
+    background: #cb7a7a;
+    border-radius: 6px;
+    transition: 0.3s;
+    color: #fff;
 }
 .mpwpb_select_datetime_timeslot:hover {
     background: #0073aa;
@@ -368,6 +388,12 @@ input:checked + .slider:before {
 .mpwpb_selected_time{
     background: #03A9F4;
     color: #fff;
+}
+.mpwpb_recurring_time_holedr{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: start;
 }
 
 

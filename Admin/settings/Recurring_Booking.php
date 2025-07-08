@@ -13,6 +13,9 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
 			add_action('mpwpb_settings_save', array($this, 'save_recurring_booking_settings'), 10, 1);
 			add_action('wp_ajax_mpwpb_save_recurring_booking', array($this, 'save_recurring_booking'));
 			add_action('wp_ajax_nopriv_mpwpb_save_recurring_booking', array($this, 'save_recurring_booking'));
+
+			add_action('wp_ajax_mpwpb_get_filtered_time_by_date', array($this, 'mpwpb_get_filtered_time_by_date'));
+			add_action('wp_ajax_nopriv_mpwpb_get_filtered_time_by_date', array($this, 'mpwpb_get_filtered_time_by_date'));
 		}
 
 		public function recurring_booking_settings($post_id) {
@@ -92,6 +95,29 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
 			<?php
 		}
 
+		public function mpwpb_get_filtered_time_by_date() {
+            $valid_html = '';
+            $post_id = isset( $_POST[ 'post_id' ] ) ? sanitize_text_field( wp_unslash( $_POST[ 'post_id' ] ) ) : '';
+            $target_date = isset( $_POST[ 'dates' ] ) ? sanitize_text_field( wp_unslash( $_POST[ 'dates' ] ) ) : '';
+            $ordered_times = MPWPB_Recurring_Booking::wp_get_order_time_by_dates( $target_date );
+            $all_time_slots = MPWPB_Recurring_Booking::get_time_slot_on_date( $post_id, $target_date );
+            foreach ( $all_time_slots as $time ){
+                if( in_array( $time, $ordered_times ) ){
+                    $class = 'mpwpb_selected_datetime_timeslot';
+                }else{
+                    $class = 'mpwpb_select_datetime_timeslot';
+                }
+                $timeParts = explode(':', $time);
+                $hour = (int) $timeParts[0];
+                $valid_html .= '<span class="'.$class.'" data-time="'.$hour.'">'.$time.'</span>';
+            }
+
+            wp_send_json_success([
+                'dates' => $valid_html,
+                'message' => __('Recurring dates generated successfully', 'service-booking-manager')
+            ]);
+        }
+
 		public function save_recurring_booking() {
 			if (isset($_POST['nonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_nonce')) {
 				$post_id = isset($_POST['post_id']) ? absint($_POST['post_id']) : 0;
@@ -104,8 +130,8 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
 					wp_send_json_error(['message' => __('Invalid data provided', 'service-booking-manager')]);
 					return;
 				}
-				
-				// Return the dates for the recurring bookings
+
+                $all_future_order = MPWPB_Recurring_Booking::get_all_future_booking_order_date_times();
 				$recurring_dates = $this->generate_recurring_dates($recurring_type, $recurring_count, $dates[0], $selectedRecurringDays );
 
                 $off_days_recurring = MPWPB_Global_Function::get_post_info( $post_id, 'mpwpb_off_days' );
@@ -116,22 +142,76 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
                 }
                 $off_days_array = array_map('strtolower', explode(',', $off_days_recurring));
 
-                $valid_dates = [];
+                $valid_recurring_dates = [];
                 $invalid_dates = [];
 
                 foreach ($recurring_dates as $dateTime) {
                     $date = date('Y-m-d', strtotime($dateTime));
                     $day = strtolower(date('l', strtotime($dateTime))); // e.g., 'monday'
 
-                    if (in_array($day, $off_days_array) || in_array($date, $off_dates_recurring)) {
-                        $invalid_dates[] = $dateTime;
+                    if (in_array( $day, $off_days_array ) || in_array( $date, $off_dates_recurring ) ) {
+                        $valid_recurring_dates[] = array(
+                              'date' => $dateTime,
+                              'valid' => '0',
+                        ); ;
                     } else {
-                        $valid_dates[] = $dateTime;
+                        if( !in_array( $dateTime, $all_future_order ) ){
+                            $valid_recurring_dates[] = array(
+                                'date' => $dateTime,
+                                'valid' => '1',
+                            );
+                        }else{
+                            $valid_recurring_dates[] = array(
+                                'date' => $dateTime,
+                                'valid' => '0',
+                            );
+                        }
                     }
                 }
-				
+
+                $html = '';
+                $selected_html_right = '';
+
+                if( !empty( $valid_recurring_dates )){
+                    foreach ( $valid_recurring_dates as $index => $dates ){
+                        if ( $index == 0) {
+                            $count_li = '<strong>' . ($index + 1) . '</strong>';
+                        } else {
+                            $count_li = $index + 1;
+                        }
+                        $date = $dates['date'];
+                        $valid = $dates['valid'];
+
+                        $formattedDate = date('F j, Y \a\t g:i A', strtotime($date));
+                        error_log( print_r( [ 'valid' => $valid ], true ) );
+
+                        if( $valid == 1 ){
+                            $html .= '<li data-date-time="'.$date.'" class="mpwpb_recurring_days">
+                                <div><strong>'.$count_li.'</strong>'.$formattedDate.'</div>
+                                <div class="mpwpb_recurring_actions">
+                                    <span class="mpwpb_recurring_edit_icon">✏️</span>
+                                    <span class="mpwpb_recurring_delete_icon">✖</span>
+                                </div>
+                            </li>';
+                        }else{
+                            $html .= '<li data-date-time="" class="mpwpb_invalid_recurring_days">
+                                <div class="mpwpb_invalid_recurrin"><strong>'.$count_li.'</strong>'.$formattedDate.'</div>
+                                <div class="mpwpb_recurring_actions">
+                                    <span class="mpwpb_recurring_edit_icon">✏️</span>
+                                    <span class="mpwpb_recurring_delete_icon">✖</span>
+                                </div>
+                            </li>';
+                        }
+
+
+                        $selected_html_right .= '<li class="mpwpd_service_date" data-cart-date-time="'.$date.'">'.$formattedDate.'</li>';
+                    }
+                }
+
 				wp_send_json_success([
-					'dates' => $valid_dates,
+					'dates' => $valid_recurring_dates,
+					'dates_html' => $html,
+					'selected_html' => $selected_html_right,
 					'message' => __('Recurring dates generated successfully', 'service-booking-manager')
 				]);
 			} else {
@@ -164,89 +244,7 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
 		$recurring_discount = isset($_POST['mpwpb_recurring_discount']) ? absint($_POST['mpwpb_recurring_discount']) : 0;
 		update_post_meta($post_id, 'mpwpb_recurring_discount', $recurring_discount);
 	    }
-	
-		
-		private function generate_recurring_dates_old($recurring_type, $recurring_count, $start_date) {
-			$dates = [];
-			$dates[] = $start_date; // Add the initial date
-			
-			$current_date = strtotime($start_date);
-			
-			for ($i = 1; $i < $recurring_count; $i++) {
-				switch ($recurring_type) {
-                    case 'daily':
-                        $current_date = strtotime('+1 day', $current_date);
-                        break;
-					case 'weekly':
-						$current_date = strtotime('+1 week', $current_date);
-						break;
-					case 'bi-weekly':
-						$current_date = strtotime('+2 weeks', $current_date);
-						break;
-					case 'monthly':
-						$current_date = strtotime('+1 month', $current_date);
-						break;
-					default:
-						break;
-				}
-				
-				$dates[] = date('Y-m-d H:i:s', $current_date);
-			}
 
-			return $dates;
-		}
-
-        private function generate_recurring_dates_y($recurring_type, $recurring_count, $start_date, $selected_days = []) {
-
-            $selected_days = [ 'mon', 'fri' ];
-            $dates = [];
-
-            $start_timestamp = strtotime($start_date);
-            $base_time = date('H:i:s', $start_timestamp); // preserve time
-
-            if ($recurring_type === 'weekly' && !empty($selected_days)) {
-                // Normalize selected days to lowercase 3-letter codes
-                $selected_days = array_map('strtolower', $selected_days);
-
-                for ($week = 0; $week < $recurring_count; $week++) {
-                    foreach ($selected_days as $day) {
-                        // Get date of this day in current week
-                        $day_date = strtotime("next $day", strtotime("+$week week", $start_timestamp));
-
-                        // Only include dates after or equal to the start date
-                        if ($day_date >= $start_timestamp) {
-                            $dates[] = date('Y-m-d', $day_date) . ' ' . $base_time;
-                        }
-                    }
-                }
-
-            } else {
-                // Default recurring behavior (daily, bi-weekly, monthly)
-                $dates[] = date('Y-m-d H:i:s', $start_timestamp); // include start date
-
-                $current_date = $start_timestamp;
-
-                for ($i = 1; $i < $recurring_count; $i++) {
-                    switch ($recurring_type) {
-                        case 'daily':
-                            $current_date = strtotime('+1 day', $current_date);
-                            break;
-                        case 'bi-weekly':
-                            $current_date = strtotime('+2 weeks', $current_date);
-                            break;
-                        case 'monthly':
-                            $current_date = strtotime('+1 month', $current_date);
-                            break;
-                        default:
-                            break;
-                    }
-
-                    $dates[] = date('Y-m-d H:i:s', $current_date);
-                }
-            }
-
-            return $dates;
-        }
         private function generate_recurring_dates( $recurring_type, $recurring_count, $start_date, $selected_days = [] ) {
 //            $selected_days = [ 'mon', 'fri' ]
             $dates = [];
