@@ -278,6 +278,7 @@ input:checked + .slider:before {
     font-size: 15px;
     font-family: Arial, sans-serif;
     transition: background 0.2s ease;
+    text-decoration: line-through;
 }
 .mpwpb_recurring_days:hover {
     background-color: #eef6fa;
@@ -342,7 +343,7 @@ input:checked + .slider:before {
 }
 .mpwpb_selected_datetime_timeslot {
     padding: 10px 12px;
-    background: #cb7a7a;
+    background: #ebcfcf;
     border-radius: 6px;
     transition: 0.3s;
     color: #fff;
@@ -394,6 +395,10 @@ input:checked + .slider:before {
     flex-wrap: wrap;
     gap: 5px;
     justify-content: start;
+}
+.mpwpb_seleted_date_text{
+    text-decoration: line-through;
+    color: #d9947e;
 }
 
 

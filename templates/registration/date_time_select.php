@@ -44,7 +44,7 @@
         <div class="mpwpb_edit_recurring_datetime_timeslot_wrap" id="mpwpb_edit_recurring_datetime_timeslot_wrap">
             <input type="hidden" id="mpwpb_get_selected_time" value="">
             <div class="mpwpb_recurring_time_holedr" id="mpwpb_recurring_time_holedr">
-                <div class="mpwpb_loader">Loading...</div>
+                <div class="mpwpb_recurring_loader">Loading...</div>
             </div>
 
             <!-- Add more as needed -->
