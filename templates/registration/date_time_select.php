@@ -22,7 +22,48 @@
 	$short_date_format = $short_date_format ?? MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'date_format_short', 'M , Y');
 	$extra_services = $extra_services ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', array());
 
+    $off_days_recurring = MPWPB_Global_Function::get_post_info( $post_id, 'mpwpb_off_days' );
+    $all_off_dates_recurring = MPWPB_Global_Function::get_post_info( $post_id, 'mpwpb_off_dates', array() );
+    $off_dates_recurring = [];
+    foreach ($all_off_dates_recurring as $off_date) {
+        $off_dates_recurring[] = date_i18n('Y-m-d', strtotime($off_date));
+    }
+    $off_dates_recurring = implode(',', $off_dates_recurring);
+
+
 ?>
+
+<div class="mpwpb_off_days_dates" style="display: none; visibility: hidden; margin: 0; padding: 0" >
+    <input type="hidden" class="mpwpb_off_days_data" id="mpwpb_off_days_data" value="<?php echo esc_attr( $off_days_recurring );?>">
+    <input type="hidden" class="mpwpb_off_dates_data" id="mpwpb_off_dates_data" value="<?php echo esc_attr( $off_dates_recurring );?>">
+</div>
+<!-- Popup Wrapper -->
+<div class="mpwpb_edit_recurring_datetime_popup" style="display:none;">
+    <div class="mpwpb_edit_recurring_datetime_overlay"></div>
+    <div class="mpwpb_edit_recurring_datetime_modal">
+        <h3>Select Time</h3>
+        <div class="mpwpb_edit_recurring_datetime_timeslot_wrap">
+            <input type="hidden" id="mpwpb_get_selected_time" value="">
+            <?PHP
+            for( $i = 9; $i<=18; $i++ ){ ?>
+                <span class="mpwpb_select_datetime_timeslot" data-time="<?php echo esc_attr( $i );?>"><?php echo esc_attr( $i );?></span>
+            <?PHP }
+            ?>
+            <!-- Add more as needed -->
+        </div>
+        <div class="mpwpb_edit_recurring_datetime_input_wrap">
+            <h3>Selecte Date</h3>
+            <input type="text" id="date_type_edit_recurring" class="formControl date_type_edit_recurring" value=""/>
+            <input type="hidden" id="mpwpb_date_edit_recurring" class="mpwpb_date_edit_recurring" value=""/>
+        </div>
+        <div class="mpwpb_edit_date_btn_holder">
+            <button class="mpwpb_recurring_datetime_set" id="mpwpb_recurring_datetime_set" data-recurringli-id="">Set</button>
+            <button class="mpwpb_edit_recurring_datetime_close">Close</button>
+        </div>
+
+    </div>
+</div>
+
 
 <!-- Popup Wrapper -->
 
@@ -66,13 +107,13 @@
 
                                 <div class="mpwpb_recurring_settings" style="display: none;">
                                     <div class="mpwpb_weekday_selector" id="mpwpb_weekday_selector" style="display: none">
-                                        <label><input type="checkbox" name="recurring_days[]" value="sun"> Sun</label>
-                                        <label><input type="checkbox" name="recurring_days[]" value="mon"> Mon</label>
-                                        <label><input type="checkbox" name="recurring_days[]" value="tue"> Tue</label>
-                                        <label><input type="checkbox" name="recurring_days[]" value="wed"> Wed</label>
-                                        <label><input type="checkbox" name="recurring_days[]" value="thu"> Thu</label>
-                                        <label><input type="checkbox" name="recurring_days[]" value="fri"> Fri</label>
-                                        <label><input type="checkbox" name="recurring_days[]" value="sat"> Sat</label>
+                                        <label><input type="checkbox" name="recurring_days[]" value="sun"> <?php esc_html_e('Sunday', 'service-booking-manager'); ?></label>
+                                        <label><input type="checkbox" name="recurring_days[]" value="mon"> <?php esc_html_e('Monday', 'service-booking-manager'); ?></label>
+                                        <label><input type="checkbox" name="recurring_days[]" value="tue"> <?php esc_html_e('Tuesday', 'service-booking-manager'); ?></label>
+                                        <label><input type="checkbox" name="recurring_days[]" value="wed"> <?php esc_html_e('Wednesday', 'service-booking-manager'); ?></label>
+                                        <label><input type="checkbox" name="recurring_days[]" value="thu"> <?php esc_html_e('Thursday', 'service-booking-manager'); ?></label>
+                                        <label><input type="checkbox" name="recurring_days[]" value="fri"> <?php esc_html_e('Friday', 'service-booking-manager'); ?></label>
+                                        <label><input type="checkbox" name="recurring_days[]" value="sat"> <?php esc_html_e('Saturday', 'service-booking-manager'); ?></label>
                                     </div>
                                     <div class="mpwpb_recurring_type">
                                         <label><?php esc_html_e('Recurring Type', 'service-booking-manager'); ?></label>

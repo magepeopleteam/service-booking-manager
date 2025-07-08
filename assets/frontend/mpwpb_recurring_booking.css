@@ -288,3 +288,87 @@ input:checked + .slider:before {
     transform: scale(1.2);
 }
 
+
+.mpwpb_edit_recurring_datetime_popup {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.mpwpb_edit_recurring_datetime_overlay {
+    position: absolute;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+}
+.mpwpb_edit_recurring_datetime_modal {
+    position: relative;
+    background: #fff;
+    padding: 20px;
+    z-index: 10000;
+    width: 300px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    text-align: center;
+}
+.mpwpb_edit_recurring_datetime_timeslot_wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    justify-content: start;
+    margin: 15px 0;
+}
+.mpwpb_select_datetime_timeslot {
+    padding: 10px 15px;
+    background: #f0f0f0;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.mpwpb_select_datetime_timeslot:hover {
+    background: #0073aa;
+    color: #fff;
+}
+.mpwpb_edit_recurring_datetime_input_wrap {
+    margin-bottom: 15px;
+}
+.mpwpb_edit_recurring_datetime_input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+.mpwpb_edit_recurring_datetime_close {
+    background: #d63638;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.mpwpb_recurring_datetime_set {
+    background: #03A9F4;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.mpwpb_edit_recurring_datetime_close:hover {
+    background: #b32d2e;
+}
+
+.mpwpb_edit_date_btn_holder{
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+.mpwpb_selected_time{
+    background: #03A9F4;
+    color: #fff;
+}
+
+
+

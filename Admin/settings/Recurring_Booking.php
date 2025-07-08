@@ -107,9 +107,31 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
 				
 				// Return the dates for the recurring bookings
 				$recurring_dates = $this->generate_recurring_dates($recurring_type, $recurring_count, $dates[0], $selectedRecurringDays );
+
+                $off_days_recurring = MPWPB_Global_Function::get_post_info( $post_id, 'mpwpb_off_days' );
+                $all_off_dates_recurring = MPWPB_Global_Function::get_post_info( $post_id, 'mpwpb_off_dates', array() );
+                $off_dates_recurring = [];
+                foreach ($all_off_dates_recurring as $off_date) {
+                    $off_dates_recurring[] = date_i18n('Y-m-d', strtotime($off_date));
+                }
+                $off_days_array = array_map('strtolower', explode(',', $off_days_recurring));
+
+                $valid_dates = [];
+                $invalid_dates = [];
+
+                foreach ($recurring_dates as $dateTime) {
+                    $date = date('Y-m-d', strtotime($dateTime));
+                    $day = strtolower(date('l', strtotime($dateTime))); // e.g., 'monday'
+
+                    if (in_array($day, $off_days_array) || in_array($date, $off_dates_recurring)) {
+                        $invalid_dates[] = $dateTime;
+                    } else {
+                        $valid_dates[] = $dateTime;
+                    }
+                }
 				
 				wp_send_json_success([
-					'dates' => $recurring_dates,
+					'dates' => $valid_dates,
 					'message' => __('Recurring dates generated successfully', 'service-booking-manager')
 				]);
 			} else {
@@ -225,8 +247,8 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
 
             return $dates;
         }
-        private function generate_recurring_dates($recurring_type, $recurring_count, $start_date, $selected_days = []) {
-//            $selected_days = [ 'mon', 'fri' ];
+        private function generate_recurring_dates( $recurring_type, $recurring_count, $start_date, $selected_days = [] ) {
+//            $selected_days = [ 'mon', 'fri' ]
             $dates = [];
             $start_timestamp = strtotime($start_date);
             $base_time = date('H:i:s', $start_timestamp); // keep time part
@@ -251,19 +273,15 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
 
                     foreach ($selected_days as $day) {
                         if ($recurring_type === 'monthly') {
-                            // For monthly, find this weekday in the Nth month
                             $month_base = strtotime("+{$interval} month", $start_timestamp);
                             $month_year = date('Y-m', $month_base);
 
-                            // Find the weekday in that month (first occurrence after month start)
                             $day_date = strtotime("first $day of $month_year");
                             $day_time = strtotime($base_time, $day_date);
                         } else {
-                            // For weekly/bi-weekly, get specific day after interval weeks
                             $week_base = strtotime("+{$interval} week", $start_timestamp);
                             $day_date = strtotime("next $day", $week_base);
 
-                            // Ensure we don't skip the exact start day
                             if (date('D', $start_timestamp) === ucfirst($day) && $i === 0) {
                                 $day_date = $start_timestamp;
                             }
@@ -277,7 +295,6 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
                     }
                 }
             } else {
-                // For daily or default cases
                 $dates[] = date('Y-m-d H:i:s', $start_timestamp); // Add start date
                 $current_date = $start_timestamp;
 
@@ -285,6 +302,9 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
                     switch ($recurring_type) {
                         case 'daily':
                             $current_date = strtotime('+1 day', $current_date);
+                            break;
+                        case 'weekly':
+                            $current_date = strtotime('+1 week', $current_date);
                             break;
                         case 'bi-weekly':
                             $current_date = strtotime('+2 weeks', $current_date);
