@@ -30,6 +30,7 @@
     }
     $off_dates_recurring = implode(',', $off_dates_recurring);
 
+
 ?>
 
 <div class="mpwpb_off_days_dates" style="display: none; visibility: hidden; margin: 0; padding: 0" >
