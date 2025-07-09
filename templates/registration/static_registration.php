@@ -133,7 +133,7 @@
 <!--                                        <span class="fas fa-check mpwpb_item_check _circleIcon_xs"></span>-->
                                         <div class="flexWrap justifyBetween">
                                             <h5 class="mR_xs"><?php esc_html_e('Total :', 'service-booking-manager'); ?></h5>
-                                            <h5><span class="mpwpb_total_bill textTheme"><?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, 0)); ?></span></h5>
+                                            <h5><span class="mpwpb_total_bill textTheme" id="mpwpb_total_before_recurring"><?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, 0)); ?></span></h5>
                                         </div>
 
                                         <?php if( $enable_recurring === 'yes' ){?>

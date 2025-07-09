@@ -235,10 +235,14 @@ input:checked + .slider:before {
     color: #333;
 }
 .mpwpb_weekday_selector {
+    background-color: #fff;
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
-    margin-top: 10px;
+    margin: 5px 0px 10px 0px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #e1dfdf;
 }
 .mpwpb_weekday_selector label {
     display: flex;

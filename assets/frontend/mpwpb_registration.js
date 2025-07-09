@@ -544,7 +544,7 @@ function mpwpb_price_calculation($this) {
         let recurringCount = 1;
         is_recurring_on = $('#mpwpb_enable_recurring_booking').is(':checked');
         if( is_recurring_on ){
-            recurringCount = parseInt(parent.find('#mpwpb_recurring_count').val());
+            recurringCount = parseInt(parent.find('#mpwpb_recurring_count_hidden').val());
             is_recurring_on = 'on';
         }
         let dateTimes = [];
