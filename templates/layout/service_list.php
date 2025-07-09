@@ -9,7 +9,6 @@ $args = [
 
 $query = new WP_Query($args);
 
-$data = mpwpb_get_service_posts_by_status( $query );
 $count_service = wp_count_posts('mpwpb_item');
 $publish = isset($count_service->publish) ? $count_service->publish : 0;
 $draft   = isset($count_service->draft) ? $count_service->draft : 0;
@@ -21,10 +20,13 @@ $trash_link = add_query_arg([
 ], admin_url('edit.php'));
 $add_new_link = admin_url('post-new.php?post_type=mpwpb_item');
 
-function mpwpb_get_service_posts_by_status( $query ) {
-    ob_start();
-    if ($query->have_posts()) {
-        while ($query->have_posts()) {
+
+function mpwpb_display_service_list( $query ){ ?>
+
+
+            <?php
+            if ($query->have_posts()) {
+            while ($query->have_posts()) {
             $query->the_post();
             $post_id = get_the_ID();
             $status = get_post_status($post_id);
@@ -33,121 +35,89 @@ function mpwpb_get_service_posts_by_status( $query ) {
             $all_services     = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
             $title            = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_shortcode_title');
             $sub_title        = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_shortcode_sub_title');
-            $is_multiselect   = get_post_meta($post_id, 'mpwpb_service_multiple_category_check', true);
-            $enable_recurring = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_enable_recurring', 'no');
 
             $view_link   = get_permalink($post_id);
             $edit_link   = get_edit_post_link($post_id);
             $delete_link = get_delete_post_link($post_id);
 
             if( $status === 'publish' ) {
-                $status_dot_class = 'mpwpb_available_dot';
-                $status_class = 'mpwpb_available';
-                $status_text = 'Available';
-                $left_border = 'available';
-                $display = '';
+                $status_class = 'published';
+                $status_text = 'Publish';
             }else if( $status === 'draft' ){
-                $status_dot_class = 'mpwpb_draft_dot';
-                $status_class = 'mpwpb_draft';
+                $status_class = 'draft';
                 $status_text = 'Draft';
-                $left_border = '';
-                $display = '';
             }else{
-                $status_dot_class = 'mpwpb_trash_dot';
                 $status_class = 'mpwpb_trash';
                 $status_text = 'Trash';
-                $left_border = '';
-                $display = 'none';
             }
 
+            $shortcode = '[service-booking post_id="'.$post_id.'"]';
+
             ?>
-            <div class="mpwpv_service_list_table-container" data-service-status="<?php echo esc_attr( $status );?>" data-service-title="<?php echo esc_attr( $service_name )?>" >
-                <div class="mpwpv_service_list_wrapper">
-                    <div class="mpwpv_service_list_item <?php echo esc_attr( $left_border );?>">
-                        <div class="mpwpv_service_list_header" >
-                            <div class="mpwpv_service_list_service">
-                                <div class="mpwpv_service_list_status_text_holder" style="display:flex;">
-                                    <span class="mpwpv_service_list_status <?php echo esc_attr( $status_dot_class );?>"></span>
-                                    <span class="mpwpv_service_list_availability <?php echo esc_attr( $status_class );?>"><?php echo ucfirst($status_text); ?></span>
-                                </div>
-                                <div class="mpwpv_service_list_title"><a href="<?php echo esc_url( $edit_link )?>" style="color: unset"><?php echo esc_html( $service_name ); ?></a></div>
-                            </div>
-                            <div class="mpwpv_service_list_location"><?php echo esc_attr( $sub_title );?></div>
-                            <div class="mpwpv_service_list_services">
-                                <?php
-                                $service_count = count($all_services);
-                                $service_show = 0;
-
-                                if( is_array( $all_services ) && !empty( $all_services ) ) {
-                                    foreach ($all_services as $service) {
-                                        if( $service_show < 4 ){
-                                            if( $service_show === 0 ){
-                                                $color_class = 'gray';
-                                                $bg_color = 'mpwpb_service_bg_color_one';
-                                            }else if( $service_show === 1 ){
-                                                $color_class = 'orange';
-                                                $bg_color = 'mpwpb_service_bg_color_two';
-                                            }else if( $service_show === 2 ){
-                                                $color_class = 'blue';
-                                                $bg_color = 'mpwpb_service_bg_color_three';
-                                            }else{
-                                                $color_class = 'orange';
-                                                $bg_color = 'mpwpb_service_bg_color_four';
-                                            }
-                                            ?>
-                                            <div class="mpwpv_service_list_holder <?php echo esc_attr( $bg_color );?>">
-                                                <span class="mpwpv_service_list_service-tag <?php echo esc_attr( $color_class );?>"></span>
-                                                <span class="mpwpv_service_list_badge"><?php echo esc_html( $service['name'] )?></span>
-                                            </div>
-                                            <?php $service_show++;
-                                        }
-                                    }
-                                } if( $service_count > 4){
-                                    $remainig_service_count = $service_count - 4;
-                                    ?>
-                                    <span class="mpwpv_service_list_more">+<?php echo esc_attr( $remainig_service_count );?> more</span>
-                                <?php }?>
-                            </div>
-                            <div class="mpwpv_service_list_rating">
-                                <span class="mpwpv_service_list_rating_number"><?php MPWPB_Static_Template::get_ratings();?></span>
-                            </div>
-
-                            <div class="mpwpv_service_list_actions">
-                                <a class="mpwpv_icon view" href="<?php echo esc_url($view_link); ?>" title="View">👁️</a>
-
-                                <?php if (current_user_can('edit_post', $post_id)) : ?>
-                                    <a class="mpwpv_icon edit" href="<?php echo esc_url($edit_link); ?>" title="Edit">✏️</a>
-                                <?php endif; ?>
-
-                                <a title="<?php echo esc_attr__('Duplicate Post ', 'service-booking-manager') . ' : ' . get_the_title($post_id); ?>" class="mpwpb_duplicate_post" href="<?php echo wp_nonce_url(
-                                    admin_url('admin.php?action=mpwpb_duplicate_post&post_id=' . $post_id),
-                                    'mpwpb_duplicate_post_' . $post_id
-                                ); ?>">
-                                    <i class="fa fa-clone"></i>
-                                </a>
-
-                                <?php if (current_user_can('delete_post', $post_id)) : ?>
-                                    <a class="mpwpv_icon delete"
-                                       href="<?php echo esc_url($delete_link); ?>"
-                                       onclick="return confirm('Are you sure you want to move this to trash?');"
-                                       title="Trash">🗑️</a>
-                                <?php endif; ?>
-                            </div>
-
+            <tr class="mpwpv_service_list_table-container" data-service-status="<?php echo esc_attr( $status );?>" data-service-title="<?php echo esc_attr( $service_name )?>">
+                <td>
+                    <div class="mpwpb_service_list_service-name">
+                        <div>
+                            <div class="mpwpb_service_list_service-title"><?php echo esc_html( $service_name ); ?></div>
                         </div>
+                        <span class="mpwpb_service_list_status-badge <?php echo esc_attr( $status_class );?>"><?php echo esc_attr( $status_text )?></span>
                     </div>
-                </div>
-            </div>
-            <?php
+                </td>
+                <td>
+                    <span class="mpwpb_service_list_shortcode" id="mpwpb_shortcode_copy"><?php echo esc_attr( $shortcode );?></span>
+                </td>
+                <td>
+                    <div class="mpwpb_service_list_service-subtitle"><?php echo esc_attr( $sub_title );?></div>
+                </td>
+                <td>
+                    <div class="mpwpb_service_list_tags">
+                        <?php
+                        $service_count = count($all_services);
+                        $service_show = 0;
+
+                        if( is_array( $all_services ) && !empty( $all_services ) ) {
+                            foreach ($all_services as $service) {
+                                if( $service_show < 4 ){
+                                    if( $service_show === 0 ){
+                                       $popular_class = 'popular';
+                                    }else{
+                                        $popular_class = '';
+                                    }
+                                    ?>
+                                    <span class="mpwpb_service_list_tag <?php echo esc_attr( $popular_class )?>"><?php echo esc_html( $service['name'] )?></span>
+                                    <?php $service_show++;
+                                }
+                            }
+                        } if( $service_count > 4){
+                            $remainig_service_count = $service_count - 4;
+                            ?>
+                            <span class="mpwpb_service_list_more-link">+<?php echo esc_attr( $remainig_service_count );?> more</span>
+                        <?php }?>
+                    </div>
+
+
+
+                </td>
+                <td>
+                    <div class="mpwpb_service_list_actions">
+                        <a href="<?php echo esc_url( $view_link );?>"><button class="mpwpb_service_list_action-btn">👁</button></a>
+                        <a href="<?php echo  esc_url( $edit_link );?>"><button class="mpwpb_service_list_action-btn">✏️</button></a>
+                        <a title="<?php echo esc_attr__('Duplicate Post ', 'service-booking-manager') . ' : ' . get_the_title($post_id); ?>" class="mpwpb_duplicate_post" href="<?php echo wp_nonce_url(
+                            admin_url('admin.php?action=mpwpb_duplicate_post&post_id=' . $post_id),
+                            'mpwpb_duplicate_post_' . $post_id
+                        ); ?>">
+                            <i class="fa fa-clone" style="padding-top: 6px"></i>
+                        </a>
+                        <a class=" delete"
+                           href="<?php echo esc_url($delete_link); ?>"
+                           onclick="return confirm('Are you sure you want to move this to trash?');"
+                           title="Trash"><button class="mpwpb_service_list_action-btn">🗑️</button></a>
+                    </div>
+                </td>
+            </tr>
+            <?php }
+            }
         }
-        wp_reset_postdata();
-    }
-//    }
-
-    $results = ob_get_clean(); // End buffering and store the HTML
-
-    return $results;
-}
 function get_total_customer(){
     $users = get_users([
         'role' => 'customer',
@@ -304,13 +274,20 @@ $total_user = get_total_customer();
         </div>
 
         <!-- Services Table -->
-        <div class="mpwpv_service_list_table_header">
-            <div class="mpwpv_service_list_table_th" style="width: 25%"><?php esc_attr_e( 'Service', 'service-booking-manager')?></div>
-            <div class="mpwpv_service_list_table_th" style="width: 20%"><?php esc_attr_e( 'Sub Title', 'service-booking-manager')?></div>
-            <div class="mpwpv_service_list_table_th" style="width: 30%"><?php esc_attr_e( 'Popular Services', 'service-booking-manager')?></div>
-            <div class="mpwpv_service_list_table_th" style="width: 15%"><?php esc_attr_e( 'Rating', 'service-booking-manager')?></div>
-            <div class="mpwpv_service_list_table_th" style="width: 15%"><?php esc_attr_e( 'Actions', 'service-booking-manager')?></div>
-        </div>
-        <?php echo wp_kses_post( $data ) ;?>
+        <div class="mpwpb_service_list_table-container">
+            <table class="mpwpb_service_list_services-table">
+                <thead>
+                <tr>
+                    <th><?php esc_attr_e( 'Service', 'service-booking-manager')?></th>
+                    <th><?php esc_attr_e( 'Shortcode', 'service-booking-manager')?></th>
+                    <th><?php esc_attr_e( 'Sub Title', 'service-booking-manager')?></th>
+                    <th><?php esc_attr_e( 'Popular Services', 'service-booking-manager')?></th>
+                    <th><?php esc_attr_e( 'Actions', 'service-booking-manager')?></th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php echo mpwpb_display_service_list( $query );?>
+                </tbody>
+            </table>
     </div>
 </div>

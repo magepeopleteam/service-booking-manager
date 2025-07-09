@@ -1487,4 +1487,14 @@
         }
     });
 
+    $(document).on('click', '#mpwpb_shortcode_copy', function () {
+        let textToCopy = $(this).text().trim();
+        let tempInput = $('<input>');
+        $('body').append(tempInput);
+        tempInput.val(textToCopy).select();
+        document.execCommand('copy');
+        tempInput.remove();
+        alert('Copied!');
+    });
+
 })(jQuery);
