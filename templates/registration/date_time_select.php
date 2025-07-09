@@ -142,6 +142,7 @@
                                     <div class="mpwpb_recurring_count">
                                         <label><?php esc_html_e('Number of Occurrences', 'service-booking-manager'); ?></label>
                                         <input type="number" name="mpwpb_recurring_count" id="mpwpb_recurring_count" min="2" max="<?php echo esc_attr($max_recurring_count); ?>" value="2">
+                                        <input type="hidden" name="mpwpb_recurring_count_hidden" id="mpwpb_recurring_count_hidden" min="2" max="<?php echo esc_attr($max_recurring_count); ?>" value="2">
                                         <p class="description"><?php esc_html_e('Maximum allowed:', 'service-booking-manager'); ?> <?php echo esc_html($max_recurring_count); ?></p>
                                     </div>
 
