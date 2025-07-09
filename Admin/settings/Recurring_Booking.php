@@ -96,26 +96,30 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
 		}
 
 		public function mpwpb_get_filtered_time_by_date() {
-            $valid_html = '';
-            $post_id = isset( $_POST[ 'post_id' ] ) ? sanitize_text_field( wp_unslash( $_POST[ 'post_id' ] ) ) : '';
-            $target_date = isset( $_POST[ 'dates' ] ) ? sanitize_text_field( wp_unslash( $_POST[ 'dates' ] ) ) : '';
-            $ordered_times = MPWPB_Recurring_Booking::wp_get_order_time_by_dates( $target_date );
-            $all_time_slots = MPWPB_Recurring_Booking::get_time_slot_on_date( $post_id, $target_date );
-            foreach ( $all_time_slots as $time ){
-                if( in_array( $time, $ordered_times ) ){
-                    $class = 'mpwpb_selected_datetime_timeslot';
-                }else{
-                    $class = 'mpwpb_select_datetime_timeslot';
+            if ( isset( $_POST['nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'mpwpb_nonce' ) ) {
+                $valid_html = '';
+                $post_id = isset( $_POST['post_id'] ) ? sanitize_text_field(wp_unslash( $_POST['post_id'] ) ) : '';
+                $target_date = isset( $_POST['dates'] ) ? sanitize_text_field( wp_unslash( $_POST['dates'] ) ) : '';
+                $ordered_times = MPWPB_Recurring_Booking::wp_get_order_time_by_dates( $target_date, $post_id );
+                $all_time_slots = MPWPB_Recurring_Booking::get_time_slot_on_date( $post_id, $target_date );
+                foreach ( $all_time_slots as $time ) {
+                    if ( in_array( $time, $ordered_times ) ) {
+                        $class = 'mpwpb_selected_datetime_timeslot';
+                    } else {
+                        $class = 'mpwpb_select_datetime_timeslot';
+                    }
+                    $timeParts = explode(':', $time );
+                    $hour = (int)$timeParts[0];
+                    $valid_html .= '<span class="' . $class . '" data-time="' . $hour . '">' . $time . '</span>';
                 }
-                $timeParts = explode(':', $time);
-                $hour = (int) $timeParts[0];
-                $valid_html .= '<span class="'.$class.'" data-time="'.$hour.'">'.$time.'</span>';
-            }
 
-            wp_send_json_success([
-                'dates' => $valid_html,
-                'message' => __('Recurring dates generated successfully', 'service-booking-manager')
-            ]);
+                wp_send_json_success([
+                    'dates' => $valid_html,
+                    'message' => __('Recurring dates generated successfully', 'service-booking-manager')
+                ]);
+            }else{
+                wp_send_json_error(['message' => __('Security check failed', 'service-booking-manager')]);
+            }
         }
 
 		public function save_recurring_booking() {
@@ -131,7 +135,7 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
 					return;
 				}
 
-                $all_future_order = MPWPB_Recurring_Booking::get_all_future_booking_order_date_times();
+                $all_future_order = MPWPB_Recurring_Booking::get_all_future_booking_order_date_times( $post_id );
 				$recurring_dates = $this->generate_recurring_dates($recurring_type, $recurring_count, $dates[0], $selectedRecurringDays );
 
                 $off_days_recurring = MPWPB_Global_Function::get_post_info( $post_id, 'mpwpb_off_days' );
@@ -204,9 +208,6 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
 
                             $selected_html_right .= '<li class="mpwpd_service_date" data-cart-date-time="'.$date.'"><div class="mpwpb_seleted_date_text">'.$formattedDate.'</div></li>';
                         }
-
-
-
                     }
                 }
 
