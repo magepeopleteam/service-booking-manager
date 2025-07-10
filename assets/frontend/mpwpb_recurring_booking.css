@@ -419,3 +419,4 @@ button.to-book.mpwpb_time_btn
 .mpwpb_cart_progress_wrapper .mpwpb_cart_progress_step.active .mpwpb_cart_progress_circle {background: var(--mpwpb_color_theme_cc);}
 button._mpBtn_dBR.mActive.mpwpb_service_next {font-size: 16px;}
 .sidebar .mpwpb-static-template .sidebar [class*=_mpBtn]{font-size:16px;}
+.mpwpb_style .mpBtn, .mpwpb_style [class*="_mpBtn"], .mpwpb_style button{font-size:16px;}
