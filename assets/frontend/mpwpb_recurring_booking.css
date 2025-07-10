@@ -415,3 +415,4 @@ button.to-book.mpwpb_time_btn
     font-size: 14px;
     padding: 10px !important;
 }
+.mpwpb-popup-content .mpwpb_cart_progress_step.active{color: var(--mpwpb_color_theme_cc);}
