@@ -1768,6 +1768,14 @@ button.mpwpb_service_button.mActive:hover{
   background-color: #ff6b9d !important;
   color: #fff !important;
 }
+.mpwpb_without_cat_service_area .mpwpb_service_item{
+  border-radius: 3px;
+  padding: var(--mpwpb_dmp_xs);
+  margin: var(--mpwpb_dmp_xs) 0;
+  position: relative;
+  border: 1px solid var(--mpwpb_color_light_2);
+  background-color: #f4f5f8;
+}
 
 
 
