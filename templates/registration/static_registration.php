@@ -17,12 +17,23 @@
 ?>
     <div class="mpwpb_static_theme">
         <div class="mpwpb_static_area">
+            <?php if( $shortcode === 'yes' ){ ?>
             <div class="mpwpb_static ">
 				<?php include(MPWPB_Function::template_path('layout/title_details_page.php')); ?>
                 <div class="mpwpb_static_cateogry">
 					<?php include(MPWPB_Function::template_path('registration/category_selection_static.php')); ?>
                 </div>
             </div>
+            <?php } else{?>
+                <div class="mpwpb_static " id="mpwpb_make_static_booking">
+                    <div class="mpwpb_static_registration_popup_close" id="mpwpb_static_registration_popup_close">X</div>
+                    <?php include(MPWPB_Function::template_path('layout/title_details_page.php')); ?>
+                    <div class="mpwpb_static_cateogry">
+                        <?php include(MPWPB_Function::template_path('registration/category_selection_static.php')); ?>
+                    </div>
+                </div>
+                <div class="mpwpb_mobile_booking" id="mpwpb_mobile_booking_mobile"><?php esc_html_e('Make Service Booking', 'service-booking-manager'); ?></div>
+            <?php }?>
         </div>
         <div class="mpwpb_popup mpwpb_style" data-popup="#mpwpb_static_popup">
             <div class="mpwpb_popup_main_area mpwpd_padding_bottom">

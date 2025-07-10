@@ -89,7 +89,7 @@
                     <h5><?php esc_html_e('Date not available', 'service-booking-manager'); ?></h5> <?php
                 }
                 if ($enable_recurring === 'yes') { ?>
-                    <div class="_dShadow_7_mB_xs mpwpb_recurring_booking_area" id="mpwpb_recurring_booking_area" style="display: block;">
+                    <div class="_dShadow_7_mB_xs mpwpb_recurring_booking_area" id="mpwpb_recurring_booking_area" style="display: none;">
                         <div class="mpwpb_recurring_booking">
                             <header class="_dFlex_alignCenter_justifyBetween">
                                 <h3><?php esc_html_e('Recurring Booking Options', 'service-booking-manager'); ?></h3>
