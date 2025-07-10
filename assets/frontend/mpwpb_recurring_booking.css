@@ -410,6 +410,8 @@ input:checked + .slider:before {
     z-index: 999;
 }
 .mpwpb_service_button span{font-size:14px;}
-button.to-book.mpwpb_time_btn {
+button.to-book.mpwpb_time_btn
+ {
     font-size: 14px;
+    padding: 10px !important;
 }
