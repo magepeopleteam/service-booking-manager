@@ -416,3 +416,4 @@ button.to-book.mpwpb_time_btn
     padding: 10px !important;
 }
 .mpwpb-popup-content .mpwpb_cart_progress_step.active{color: var(--mpwpb_color_theme_cc);}
+.mpwpb-popup-content .mpwpb_cart_progress_step.active .mpwpb_cart_progress_circle {background: var(--mpwpb_color_theme_cc);}
