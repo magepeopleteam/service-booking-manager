@@ -1101,7 +1101,7 @@
 /******************************************************************** Popup section ************************************************/
 @media only screen and (min-width: 10px) {
 	[data-target-popup] { cursor: pointer; }
-	div.mpwpb_popup { display: none; position: fixed; left: 0; right: 0; top: 0; bottom: 0; z-index: 2; overflow: hidden; background: #000C; }
+	div.mpwpb_popup { display: none; position: fixed; left: 0; right: 0; top: 0; bottom: 0; z-index: 999; overflow: hidden; background: #000C; }
 	div.mpwpb_popup .mpwpb_popup_main_area {
 		min-width: 500px; max-width: 700px; width: auto; min-height: 250px; max-height: 100vh; height: auto;
 		background-color: #FFF; border: 20px solid #444; position: relative;
