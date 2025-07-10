@@ -405,5 +405,8 @@ input:checked + .slider:before {
     color: #d9947e;
 }
 
-
+.mpwpb_style.mpwpb-static-template .sidebar .mpwpb_static_area
+ {
+    z-index: 999;
+}
 
