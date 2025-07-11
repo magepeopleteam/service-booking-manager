@@ -1106,7 +1106,7 @@ div.registration_tab_item {
   margin: 0;
 }
 .mpwpb-static-template .sidebar .mpwpb_static_theme .mpwpb_popup .mpwpb_popup_main_area .mpwpb_popup_body .mpwpb-popup-content .service-items .mpwpb_category_section .mpwpb_sub_category_area {
-  margin-left: 20px;
+  margin-left:0px;
 }
 .mpwpb-static-template .sidebar .mpwpb_static_theme .mpwpb_popup .mpwpb_popup_main_area .mpwpb_popup_body .mpwpb-popup-content .service-items .mpwpb_category_section .mpwpb_sub_category_area .mpwpb_sub_category_item {
   background-color: #f4f5f8;
