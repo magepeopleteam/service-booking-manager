@@ -422,6 +422,6 @@ button._mpBtn_dBR.mActive.mpwpb_service_next {font-size: 16px;}
 .mpwpb_style .mpBtn, .mpwpb_style [class*="_mpBtn"], .mpwpb_style button{font-size:16px;}
 .mpwpb_extra_service_item span[data-text] {font-size: 12px;}
 .mpwpb_service_item ._equalChild span {font-size: 12px;}
-.mpwpb-static-template .sidebar .mpwpb_static_theme .mpwpb_popup .mpwpb_popup_main_area .mpwpb_popup_body .mpwpb-popup-content .service-items .mpwpb_category_section .mpwpb_sub_category_area {
-    margin-left: 0px !importrant;
+.mpwpb_item-template-default .mpwpb-static-template .sidebar .mpwpb_static_theme .mpwpb_popup .mpwpb_popup_main_area .mpwpb_popup_body .mpwpb-popup-content .service-items .mpwpb_category_section .mpwpb_sub_category_area {
+    margin-left: 0px;
 }
