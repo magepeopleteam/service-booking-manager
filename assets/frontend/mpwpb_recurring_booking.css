@@ -421,3 +421,4 @@ button._mpBtn_dBR.mActive.mpwpb_service_next {font-size: 16px;}
 .mpwpb-static-template .sidebar [class*=_mpBtn]{font-size:16px !important;}
 .mpwpb_style .mpBtn, .mpwpb_style [class*="_mpBtn"], .mpwpb_style button{font-size:16px;}
 .mpwpb_extra_service_item span[data-text] {font-size: 12px;}
+.mpwpb_service_item ._equalChild span {font-size: 12px;}
