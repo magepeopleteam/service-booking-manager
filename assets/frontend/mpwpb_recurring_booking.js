@@ -36,6 +36,8 @@
 
     $(document).on('click', 'div.mpwpb_registration .mpwpb_date_time_area .to-book', function() {
 
+        $("#mpwpb_recurring_booking_area").fadeIn();
+
         $('div.mpwpb_registration .mpwpb_date_time_area .to-book').removeClass('mpwpb_active_time');
         $(this).addClass('mpwpb_active_time');
 

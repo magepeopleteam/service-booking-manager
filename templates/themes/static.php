@@ -9,6 +9,7 @@
 		exit;
 	}
 	$post_id = $post_id ?? get_the_id();
+    $shortcode = 'no';
 ?>
     <div class="mpwpb_style mpwpb-static-template mpwpb_registration">
         <header style="background-image: url('<?php echo esc_url(get_the_post_thumbnail_url()); ?>');">

@@ -1354,6 +1354,7 @@ div.registration_tab_item {
   }
 }
 .mpwpb-static-template .sidebar .mpwpb_static_area .mpwpb_static {
+  display: block;
   background-color: var(--mpwpb_color_theme);
   padding: 30px;
   border: 2px solid var(--mpwpb_color_theme_alter);
@@ -1361,6 +1362,46 @@ div.registration_tab_item {
   box-shadow: 0 0 5px #333;
   margin: 10px;
 }
+
+.mpwpb-static-template .sidebar .mpwpb_static_area .mpwpb_static .mpwpb_static_registration_popup_close{
+  display: none;
+  justify-content: end;
+  position: absolute;
+  right: 22px;
+  color: #333333;
+  font-size: 20px;
+  top: 18px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_static_area .mpwpb_mobile_booking{
+  display: none;
+  background-color: var(--mpwpb_color_theme);
+  padding: 20px 30px;
+  border: 2px solid var(--mpwpb_color_theme_alter);
+  border-radius: 10px;
+  box-shadow: 0 0 5px #333;
+  margin: 10px;
+  font-size: 25px;
+  color: #f6f6f6;
+  cursor: pointer;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .mpwpb-static-template .sidebar .mpwpb_static_area #mpwpb_mobile_booking_mobile{
+    display: block;
+  }
+
+  .mpwpb-static-template .sidebar .mpwpb_static_area #mpwpb_make_static_booking {
+    display: none;
+  }
+  .mpwpb-static-template .sidebar .mpwpb_static_area .mpwpb_static .mpwpb_static_registration_popup_close{
+    display: flex;
+  }
+}
+
 @media (min-width: 1024px) {
   .mpwpb-static-template .sidebar .mpwpb_static_area .mpwpb_static {
     margin: 0;
@@ -1726,6 +1767,14 @@ button.mpwpb_service_button.mActive:hover{
 .mpwpb_active_time{
   background-color: #ff6b9d !important;
   color: #fff !important;
+}
+.mpwpb_without_cat_service_area .mpwpb_service_item{
+  border-radius: 3px;
+  padding: var(--mpwpb_dmp_xs);
+  margin: var(--mpwpb_dmp_xs) 0;
+  position: relative;
+  border: 1px solid var(--mpwpb_color_light_2);
+  background-color: #f4f5f8;
 }
 
 .mpwpb-static-template .sidebar

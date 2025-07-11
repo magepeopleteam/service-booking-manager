@@ -1,7 +1,7 @@
 function mpwpb_price_calculation($this) {
     let parent = $this.closest('div.mpwpb_registration');
     let price = 0;
-    parent.find('.mpwpb_service_area .mpwpb_service_item[data-price].mpActive').each(function () {
+    parent.find(' .mpwpb_service_item[data-price].mpActive').each(function () {
         let qty = parseInt( jQuery(this).attr('data-service-qty') );
         let current_price = jQuery(this).data('price') ?? 0;
         current_price = current_price && current_price > 0 ? current_price : 0;
@@ -717,6 +717,16 @@ function mpwpb_price_calculation($this) {
 
         // $("#mpwpb_progress_staff").addClass('active');
         $("#mpwpb_progress_checkout").addClass('active');
+    });
+
+    $(document).on('click', '#mpwpb_mobile_booking_mobile', function () {
+        $(this).hide();
+        $("#mpwpb_make_static_booking").fadeIn();
+    });
+
+    $(document).on('click', '#mpwpb_static_registration_popup_close', function () {
+        $("#mpwpb_make_static_booking").fadeOut();
+        $("#mpwpb_mobile_booking_mobile").fadeIn();
     });
 
     //======================//
