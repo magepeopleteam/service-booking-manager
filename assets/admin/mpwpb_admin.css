@@ -387,9 +387,9 @@ section.faq-header
     margin-right:5px; 
 }
 
-.mpwpb_style .mpwpb_staff_tab_active{
-    text-decoration: none;
-    opacity: 0.8;
-    background-color: var(--mage-primary) !important;
-    color: #FFF;
+.mpwpb_style .mpwpb_category_tab_active{
+    /*background-color: var(--mage-primary) !important;*/
+    color: var(--mage-primary) !important;
 }
+
+
