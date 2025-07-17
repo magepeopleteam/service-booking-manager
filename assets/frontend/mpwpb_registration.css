@@ -1096,6 +1096,10 @@ div.registration_tab_item {
   border: 2px solid #e2e8f0;
   border-radius:16px;
 }
+.mpwpb_selected_category_text.mpwpb_category_selected_item.mpActive.mpwpb_selected_category {
+    font-weight: bold;
+}
+.mpwpb_selected_category{font-weight:normal; }
 
 .mpwpb-static-template   .mpwpb_popup   .service-items .mpwpb_category_section .mpwpb_item_box:hover {
   border: 2px solid var(--mpwpb_color_theme); 
