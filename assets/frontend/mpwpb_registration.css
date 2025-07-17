@@ -1783,9 +1783,9 @@ button.mpwpb_service_button.mActive:hover{
 @media only screen and (min-width: 10px) {
     div.mpwpb_style label, div.mpwpb_style [class*="_fs_label"]
  {
-        font-size: 16px;
+        font-size: 14px;
         font-weight: normal;
-        margin-bottom: 10px;
+        margin-bottom: 5px;
     }
 }
 .mpwpb_select_time_holder .mpwpb_time_btn{font-weight:normal; }
