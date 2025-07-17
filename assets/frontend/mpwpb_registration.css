@@ -1145,6 +1145,7 @@ div.registration_tab_item {
   font-size: 16px;
   color: var(--mpwpb_color_theme);
   font-weight: 700;
+  border: 2px solid #e2e8f0;
 }
 .mpwpb-static-template   .mpwpb_popup   .service-items .mpwpb_service_area .mpwpb_service_item {
   background-color: #f4f5f8;
