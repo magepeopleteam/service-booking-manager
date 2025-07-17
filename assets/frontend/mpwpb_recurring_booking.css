@@ -431,3 +431,6 @@ input#mpwpb_recurring_count {
 button.to-book.mpwpb_time_btn {
     width: 18%;
 }
+select#mpwpb_recurring_type, input#mpwpb_recurring_count {
+    border-radius:5px;
+}
