@@ -1094,8 +1094,7 @@ div.registration_tab_item {
   border-radius:16px;
 }
 .mpwpb-static-template   .mpwpb_popup   .service-items .mpwpb_category_section .mpActive {
-  background-color: var(--mpwpb_color_theme);
-  color: var(--mpwpb_color_theme_alter);
+  border: 2px solid var(--mpwpb_color_theme);
 }
 .mpwpb-static-template   .mpwpb_popup   .service-items .mpwpb_category_section .mpActive h6 {
   font-weight: 700;
@@ -1107,6 +1106,7 @@ div.registration_tab_item {
   background-color: var(--mpwpb_color_theme_alter);
   color: var(--mpwpb_color_theme);
   margin: 0;
+  border:1px solid;
 }
 .mpwpb-static-template   .mpwpb_popup   .service-items .mpwpb_category_section .mpwpb_sub_category_area {
   margin-left:0px;
