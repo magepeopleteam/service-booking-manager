@@ -401,3 +401,7 @@ section.faq-header
     font-size: 18px;
     border-radius:8px;
 }
+.mpwpb-modal-container .mpwpb-modal-content input[type=color], .mpwpb-modal-container .mpwpb-modal-content input[type=date], .mpwpb-modal-container .mpwpb-modal-content input[type=datetime-local], .mpwpb-modal-container .mpwpb-modal-content input[type=datetime], .mpwpb-modal-container .mpwpb-modal-content input[type=email], .mpwpb-modal-container .mpwpb-modal-content input[type=month], .mpwpb-modal-container .mpwpb-modal-content input[type=number], .mpwpb-modal-container .mpwpb-modal-content input[type=password], .mpwpb-modal-container .mpwpb-modal-content input[type=search], .mpwpb-modal-container .mpwpb-modal-content input[type=tel], .mpwpb-modal-container .mpwpb-modal-content input[type=text], .mpwpb-modal-container .mpwpb-modal-content input[type=time], .mpwpb-modal-container .mpwpb-modal-content input[type=url], .mpwpb-modal-container .mpwpb-modal-content input[type=week], .mpwpb-modal-container .mpwpb-modal-content select, .mpwpb-modal-container .mpwpb-modal-content textarea
+ {
+    border: 2px solid #e5e7eb;
+}
