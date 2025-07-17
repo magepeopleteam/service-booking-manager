@@ -1040,6 +1040,7 @@ div.registration_tab_item {
   max-width: auto;
   min-width: 300px;
   max-width: 400px;
+  max-height:90vh;
 }
 @media (min-width: 1024px) {
   .mpwpb-static-template   .mpwpb_popup .mpwpb_popup_main_area {
