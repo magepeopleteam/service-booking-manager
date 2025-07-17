@@ -132,6 +132,7 @@ div.registration_tab_item {
   padding-top: 5px;
   background-color: var(--light-bg);
   /*border-bottom: 1px solid rgba(0, 0, 0, 0.05);*/
+  margin-bottom:20px;
 }
 .mpwpb_selected_control{
   display: flex;
@@ -1497,13 +1498,17 @@ div.registration_tab_item {
  div.mpwpb_service_item .mpwpb_service_button, .mpwpb_extra_service_item .mpwpb_price_calculation{border:none !important}
 .mpwpb_service_area header h5, .mpwpb_extra_service_area h5{color:#333 !important;}
 /*.mpwpb_service_area header,.mpwpb_extra_service_area h5{border-bottom: 1px solid #ddd !important;}*/
-.mpwpb_selected_category {font-weight: 600 !important; }
 .mpwpb_price_qty_remove_holder p, span.mpwpb_total_bill.textTheme{padding-right: 23px !important;}
 button.mpwpb_service_button_remove, button.mpwpb_ex_service_button_remove{
   position: absolute;
   right: 0;
   top: 10px;
   padding: 0;
+}
+
+.mpwpb_selected_control i.fa-solid.fa-arrow-right {
+    font-size: 12px;
+    color: #bbb2b2;
 }
 
 button.mpwpb_service_button:hover{
