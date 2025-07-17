@@ -15,6 +15,34 @@
     $parent_category_prices = [];
     $sub_category_prices = [];
 
+    error_log( print_r( [ '$all_services' => $all_services ], true ) );
+    $category_selection_parent_cat = $category_selection_sub_category = $services_sub_cat = [];
+    if( is_array( $all_services ) && !empty( $all_services ) ){
+        $service_parent_cat = array_column( $all_services, 'parent_cat' );
+        $service_sub_cat = array_column( $all_services, 'sub_cat' );
+        if( !empty( $service_parent_cat ) ){
+            $filtered = array_unique(array_filter( $service_parent_cat, function($value ) {
+                return $value !== '' && $value !== null;
+            }));
+            $category_selection_parent_cat = array_values($filtered);
+        }
+        if( !empty( $service_sub_cat ) ){
+            $sub_cat_filtered = array_unique(array_filter( $service_sub_cat, function($value ) {
+                return $value !== '' && $value !== null;
+            }));
+            $services_sub_cat = array_values( $sub_cat_filtered );
+        }
+    }
+    if( is_array( $all_services ) && !empty( $all_services ) ){
+        $sub_category = array_column( $all_sub_category, 'cat_id');
+        if( !empty( $sub_category ) ){
+            $filtered = array_unique(array_filter( $sub_category, function($value ) {
+                return $value !== '' && $value !== null;
+            }));
+            $category_selection_sub_category = array_values($filtered);
+        }
+    }
+
     if( is_array( $all_services ) && !empty( $all_services ) ){
         foreach ($all_services as $item) {
             $parent = $item['parent_cat'];
@@ -184,6 +212,7 @@
 
 //                $max_price = wc_price( $max_min_price['max'] );
 
+            if( in_array( $cat_key, $category_selection_sub_category ) || in_array( $cat_key, $category_selection_parent_cat ) ){
 				?>
                 <div class="mpwpb_category_section">
                     <div class="mpwpd_item_box_direction mpwpb_item_box mpwpb_category_item " data-category="<?php echo esc_attr($cat_key + 1); ?>" style=" align-items: flex-start">
@@ -231,6 +260,7 @@
                                     $sub_min_price = '';
                                 }
 
+                                if( in_array( $sub_key, $services_sub_cat ) ){
 								?>
                                 <div class="mpwpb_sub_category_area">
                                     <div class="mpwpd_item_box_direction mpwpb_item_box mpwpb_sub_category_item " data-category="<?php echo esc_attr($cat_key + 1); ?>" data-sub-category="<?php echo esc_attr($sub_key + 1); ?>" style=" align-items: flex-start">
@@ -259,10 +289,11 @@
                                     </div>
                                 </div>
 							<?php }
-						}
+						    }
+                        }
 					} ?>
                 </div>
-			<?php } ?>
+			<?php } } ?>
         </div>
 		<?php
 
