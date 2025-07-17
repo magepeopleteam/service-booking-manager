@@ -1,8 +1,8 @@
 /* Recurring Booking Styles */
 .mpwpb_recurring_booking_area {
-    margin-top: 0px;
-    padding: 15px;
-    background-color: #fff;
+    margin-top: 10px;
+    padding: 0px 15px;
+    background-color: var(--mpwpb_color_light);
     border-radius: 5px;
     clear: both;
     width: 100%;
@@ -10,7 +10,7 @@
 }
 
 .mpwpb_recurring_booking header {
-    margin-bottom: 15px;
+    margin-bottom: 5px;
     padding-bottom: 10px;
     border-bottom: 1px solid #eee;
 }
