@@ -434,3 +434,6 @@ button.to-book.mpwpb_time_btn {
 select#mpwpb_recurring_type, input#mpwpb_recurring_count {
     border-radius:5px;
 }
+div#mpwpb_recurring_booking_area {
+    padding-bottom: 5px;
+}
