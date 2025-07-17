@@ -1813,5 +1813,8 @@ button.mpwpb_service_button.mActive:hover{
     }
 }
 .mpwpb_select_time_holder .mpwpb_time_btn{font-weight:normal; }
+span.mptrs_day_with_date {
+    color: var(--mpwpb_color_theme);
+}
 
-
+.mpwpb_get_date_selected.mpwpb_get_date span.mptrs_day_with_date{color: aliceblue !important;}
