@@ -428,3 +428,6 @@ button._mpBtn_dBR.mActive.mpwpb_service_next {font-size: 16px;}
 input#mpwpb_recurring_count {
     margin-bottom: 15px;
 }
+button.to-book.mpwpb_time_btn {
+    width: 18%;
+}
