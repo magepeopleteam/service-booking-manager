@@ -410,16 +410,17 @@ section.faq-header
   background: #20cb8424;
   padding: 20px;
   border-radius: 20px;
-  position: relative; 
+  position: relative;
+  margin-bottom: 42px; /* 20px (to line) + 2px (line height) + 20px (below line) */
 }
 
 .mpwpb-modal-container .mpwpb-modal-content .mActive::after {
   content: "";
   position: absolute;
-  top: 100%; /* exactly below the element */
+  top: 100%;
   left: 0;
   width: 100%;
   height: 2px;
-  background-color: #20cb84; 
-  margin-top: 20px; 
+  background-color: #20cb84;
+  margin-top: 20px;
 }
