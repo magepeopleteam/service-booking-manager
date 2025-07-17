@@ -27,6 +27,8 @@ div.registration_tab_item {
 }
 .mpwpd_category_min_price{
   padding: 8px 0px;
+  color: var(--mpwpb_color_theme);
+  font-weight:bold;
 }
 .mpwpd_category_data_pos{
   flex-direction: column;
@@ -1088,7 +1090,8 @@ div.registration_tab_item {
   background-color: #f4f5f8;
   margin: 10px 0;
   align-items: center;
-  border: 1px solid var(--mpwpb_color_theme);
+  border: 2px solid #e2e8f0;
+  border-radius:16px;
 }
 .mpwpb-static-template   .mpwpb_popup   .service-items .mpwpb_category_section .mpActive {
   background-color: var(--mpwpb_color_theme);
