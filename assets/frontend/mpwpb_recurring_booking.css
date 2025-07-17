@@ -425,3 +425,6 @@ button._mpBtn_dBR.mActive.mpwpb_service_next {font-size: 16px;}
 .mpwpb_item-template-default .mpwpb-static-template .sidebar .mpwpb_static_theme .mpwpb_popup .mpwpb_popup_main_area .mpwpb_popup_body .mpwpb-popup-content .service-items .mpwpb_category_section .mpwpb_sub_category_area {
     margin-left: 0px;
 }
+input#mpwpb_recurring_count {
+    margin-bottom: 15px;
+}
