@@ -1189,6 +1189,8 @@ div.registration_tab_item {
 }
 .mpwpb-static-template   .mpwpb_popup   .service-items .mpwpb_extra_service_area .mpwpb_extra_service_item {
   display: block;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
 }
 .mpwpb-static-template   .mpwpb_popup   .service-items .mpwpb_extra_service_area .mpwpb_extra_service_item .service-details {
   color: #999;
