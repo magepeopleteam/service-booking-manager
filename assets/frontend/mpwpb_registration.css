@@ -1452,7 +1452,7 @@ div.registration_tab_item {
 /*# sourceMappingURL=mpwpb_registration.css.map */
 
 .mpwpb_popup_body{background:#f5f7fa; }
-._dShadow_7.mpwpb_category_area, ._dShadow_7_mB_xs.mpwpb_service_area, ._dShadow_7_mB_xs.mpwpb_extra_service_area, ._dShadow_7.mpwpb_category_area{background:#fff; padding:10px; }
+._dShadow_7.mpwpb_category_area, ._dShadow_7_mB_xs.mpwpb_service_area, ._dShadow_7_mB_xs.mpwpb_extra_service_area, ._dShadow_7.mpwpb_category_area{background:#fff; padding:0px; }
 ._dShadow_7.mpwpb_category_area {margin-top:10px !important; border-radius:10px !important; border-radius:10px !important}
 .service-cart{ background: #fff !important; overflow-y: auto !important;}
 .mpwpb_service_item, .mpwpb_extra_service_item {
