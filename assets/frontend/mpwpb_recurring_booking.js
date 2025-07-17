@@ -163,9 +163,9 @@
         let parent = $(this).closest('div.mpwpb_registration');
         let recurringType = parent.find('#mpwpb_recurring_type').val();
         if( recurringType !== 'daily' ){
-            $("#mpwpb_weekday_selector").fadeIn();
+            // $("#mpwpb_weekday_selector").fadeIn();
         }else{
-            $("#mpwpb_weekday_selector").fadeOut();
+            // $("#mpwpb_weekday_selector").fadeOut();
         }
         let recurringCount = parseInt(parent.find('#mpwpb_recurring_count').val());
         let selectedDate = parent.find('[name="mpwpb_date"]').val();

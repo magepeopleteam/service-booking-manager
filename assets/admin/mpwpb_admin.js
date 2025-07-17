@@ -479,19 +479,22 @@
             $('input[name="mpwpb_show_category_status"]').val('off');
         }
     });
-    $(document).on('click', '#mpwpb_service_save', function (e) {
+    $(document).on('click', '.mpwpb_service_save_close', function (e) {
         e.preventDefault();
-        save_service();
+        let clickedId =  $(this).attr('id');
+        e.preventDefault();
+        save_service( clickedId, e );
     });
-    $(document).on('click', '#mpwpb_service_save_close', function (e) {
+    /*$(document).on('click', '#mpwpb_service_save_close', function (e) {
         e.preventDefault();
         save_service();
         close_sidebar_modal(e);
-    });
-    function save_service() {
+    });*/
+    function save_service( clickedId, e ) {
         var postID = $('input[name="mpwpb_post_id"]');
         var service_name = $('input[name="service_name"]');
         var service_price = $('input[name="service_price"]');
+        var service_unit = $('input[name="service_unit"]');
         var service_duration = $('input[name="service_duration"]');
         var service_description = $('textarea[name="service_description"]');
         var service_image_icon = $('input[name="service_image_icon"]');
@@ -507,6 +510,7 @@
                     service_postID: postID.val(),
                     service_name: service_name.val(),
                     service_price: service_price.val(),
+                    service_unit: service_unit.val(),
                     service_duration: service_duration.val(),
                     service_description: service_description.val(),
                     service_image_icon: service_image_icon.val(),
@@ -523,6 +527,9 @@
                     $('.mpwpb-service-rows').html('');
                     $('.mpwpb-service-rows').append(response.data.html);
                     empty_service_form();
+                    if( clickedId === 'mpwpb_service_save_close' && response.data.status === true ){
+                        close_sidebar_modal(e);
+                    }
                 },
                 error: function (error) {
                     console.log('Error:', error);
@@ -987,8 +994,14 @@
                 nonce: mpwpb_admin_ajax.nonce
             },
             success: function (response) {
-                $('.mpwpb-sub-category').html('');
-                $('.mpwpb-sub-category').append(response.data.html);
+
+                if( response.data.html !== '' ){
+                    $('.mpwpb-sub-category').html('');
+                    $('.mpwpb-sub-category').append(response.data.html);
+                }else{
+                    $(".sub-category-container").hide();
+                }
+
             },
             error: function (error) {
                 console.log('Error:', error);

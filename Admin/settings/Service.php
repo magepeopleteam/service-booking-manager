@@ -162,6 +162,10 @@
                                 <input type="number" name="service_price" placeholder="10">
                             </label>
                             <label>
+                                <?php esc_html_e('Service Unit', 'service-booking-manager'); ?>
+                                <input type="text" name="service_unit" placeholder="sqft/piece">
+                            </label>
+                            <label>
 								<?php esc_html_e('Duration', 'service-booking-manager'); ?>
                                 <input type="text" name="service_duration" placeholder="10min">
                             </label>
@@ -193,13 +197,13 @@
                             </div>
                             <div class="mpwpb_service_save_button">
                                 <p>
-                                    <button id="mpwpb_service_save" class="button button-primary button-large"><?php esc_html_e('Save', 'service-booking-manager'); ?></button>
-                                    <button id="mpwpb_service_save_close" class="button button-primary button-large">save close</button>
+                                    <button id="mpwpb_service_save" class="button button-primary button-large mpwpb_service_save_close"><?php esc_html_e('Save', 'service-booking-manager'); ?></button>
+                                    <button id="mpwpb_service_save_close" class="button button-primary button-large mpwpb_service_save_close">save close</button>
                                 <p>
                             </div>
                             <div class="mpwpb_service_update_button" style="display: none;">
                                 <p>
-                                    <button id="mpwpb_service_update" class="button button-primary button-large"><?php esc_html_e('Update and Close', 'service-booking-manager'); ?></button>
+                                    <button id="mpwpb_service_update" class="button button-primary button-large mpwpb_service_save"><?php esc_html_e('Update and Close', 'service-booking-manager'); ?></button>
                                 <p>
                             </div>
                         </div>
@@ -303,6 +307,7 @@
 				$new_data = [
 					'name' => isset($_POST['service_name'])?sanitize_text_field(wp_unslash($_POST['service_name'])):'',
 					'price' =>isset($_POST['service_price'])? sanitize_text_field(wp_unslash($_POST['service_price'])):'',
+					'service_unit' =>isset($_POST['service_unit'])? sanitize_text_field(wp_unslash($_POST['service_unit'])):'',
 					'duration' => isset($_POST['service_duration'])?sanitize_text_field(wp_unslash($_POST['service_duration'])):'',
 					'details' => isset($_POST['service_description'])?sanitize_text_field(wp_unslash($_POST['service_description'])):'',
 					'icon' => $iconClass,
@@ -327,6 +332,7 @@
                     $html_output = ob_get_clean();
                     wp_send_json_success([
                         'message' => $resultMessage,
+                        'status' => false,
                         'color' => '#f7430a',
                         'html' => $html_output,
                     ]);
@@ -340,6 +346,7 @@
 				$html_output = ob_get_clean();
 				wp_send_json_success([
 					'message' => $resultMessage,
+                    'status' => true,
                     'color' => '#303030',
 					'html' => $html_output,
 				]);
