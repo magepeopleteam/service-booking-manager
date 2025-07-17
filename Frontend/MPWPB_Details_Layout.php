@@ -64,12 +64,13 @@
                         <?php if (!in_array($start_date, $all_dates)) {
                             ?>
                             <div class="_mpBtn_mpDisabled_fullHeight_bgLight mpwpb_get_close_date">
-                                <!--                        <h6 class="_rotate_90 mpwpb_close_text">--><?php //esc_html_e('Closed', 'service-booking-manager'); ?><!--</h6>-->
                                 <div class="mpwpb_close_date"><?php echo esc_html(MPWPB_Global_Function::date_format($start_date)); ?></div>
                             </div>
-                        <?php } else { ?>
+                        <?php } else {
+                            $day = date('l', strtotime( $start_date ) );
+                            ?>
                             <div class="<?php echo esc_attr( $selected );?> mpwpb_get_date" data-find-time="<?php echo esc_attr( $start_date );?>">
-                                <strong><?php echo esc_html(MPWPB_Global_Function::date_format($start_date)); ?></strong>
+                                <strong><?php echo esc_html(MPWPB_Global_Function::date_format($start_date)).'</br> <span class="mptrs_day_with_date">'; echo esc_attr( $day ).'</span>';?></strong>
                             </div>
                         <?php } ?>
                     </div>

@@ -192,12 +192,6 @@ function mpwpb_price_calculation($this) {
             let target_sub_category = current.closest('.mpwpb_category_section').find('.mpwpb_sub_category_area');
             let target_service = parent.find('.mpwpb_service_area');
 
-            let target_service_empty_sub = $('.mpwpb_service_item').filter(function () {
-                return $(this).data('category') !== category && $(this).data('sub-category') === "";
-            });
-
-            console.log( target_service_empty_sub );
-
             parent.find('.mpwpb_summary_area_left').slideDown('fast');
             parent.find('.mpwpb_summary_item[data-category]').slideDown('fast').find('h6').html(current.find('h6').html());
             parent.find('[name="mpwpb_category"]').val(category).promise().done(function () {

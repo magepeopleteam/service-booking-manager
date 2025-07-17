@@ -199,15 +199,22 @@
 			}
 			public function sub_category_by_parent_id($post_id, $parentId) {
 				$sub_categories = $this->get_sub_categories($post_id);
-				?>
-                <select name="mpwpb_sub_category">
-                    <option value=""><?php esc_html_e('Select Sub Category', 'service-booking-manager'); ?></option>
-					<?php foreach ($sub_categories as $key => $category):
-						if ($category['cat_id'] == $parentId): ?>
-                            <option value="<?php echo esc_attr($key); ?>"><?php echo esc_html($category['name']); ?></option>
-						<?php endif; endforeach; ?>
-                </select>
-				<?php
+                $is_sub = false;
+                $cat_ids = array_column($sub_categories, 'cat_id');
+                if (in_array($parentId, $cat_ids)) {
+                    $is_sub = true;
+                }
+                if( $is_sub ){
+                    ?>
+                    <select name="mpwpb_sub_category">
+                        <option value=""><?php esc_html_e('Select Sub Category', 'service-booking-manager'); ?></option>
+                        <?php foreach ($sub_categories as $key => $category):
+                            if ($category['cat_id'] == $parentId): ?>
+                                <option value="<?php echo esc_attr($key); ?>"><?php echo esc_html($category['name']); ?></option>
+                            <?php endif; endforeach; ?>
+                    </select>
+                    <?php
+                }
 			}
 			/**
 			 * set_category_service() will adjust old category data in new array structure
