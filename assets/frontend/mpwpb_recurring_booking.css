@@ -119,7 +119,6 @@ input:checked + .slider:before {
 
 .mpwpb_recurring_discount {
     background-color: #e9f7ef;
-    padding: 10px;
     border-radius: 4px;
     margin-bottom: 15px;
 }
