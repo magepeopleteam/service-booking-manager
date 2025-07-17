@@ -39,7 +39,7 @@ div.registration_tab_item {
   width: 100%;
   justify-content: space-between;
 }
-.mpwpb_category_info h6{
+.mpwpd_category_info_holder .mpwpb_category_info h6{
   font-weight:700;
 }
 .mpwpd_bg_image_area{
