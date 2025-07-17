@@ -405,3 +405,8 @@ section.faq-header
  {
     border: 2px solid #e5e7eb !important;
 }
+.mpwpb-modal-container .mpwpb-modal-content .mActive {
+    background: #20cb8424;
+    padding: 20px;
+    border-radius: 20px;
+}
