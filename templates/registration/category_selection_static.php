@@ -7,9 +7,16 @@
 		exit;
 	}
 	$post_id = $post_id ?? get_the_id();
-	$all_category = $all_category ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_category_service', array());
-	$all_sub_category = $all_sub_category ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_sub_category_service', array());
-	$all_services = $all_services ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
+
+    if( $shortcode === 'yes' ){
+        $all_category = MPWPB_Global_Function::get_post_info( $post_id, 'mpwpb_category_service', array() );
+        $all_sub_category = MPWPB_Global_Function::get_post_info( $post_id, 'mpwpb_sub_category_service', array() );
+        $all_services = MPWPB_Global_Function::get_post_info( $post_id, 'mpwpb_service', array() );
+    }else{
+        $all_category = $all_category ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_category_service', array());
+        $all_sub_category = $all_sub_category ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_sub_category_service', array());
+        $all_services = $all_services ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
+    }
 
     $filtered_parent_cat = $filtered_sub_category = [];
     if( is_array( $all_services ) && !empty( $all_services ) ){

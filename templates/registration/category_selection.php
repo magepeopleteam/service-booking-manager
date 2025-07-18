@@ -15,7 +15,6 @@
     $parent_category_prices = [];
     $sub_category_prices = [];
 
-    error_log( print_r( [ '$all_services' => $all_services ], true ) );
     $category_selection_parent_cat = $category_selection_sub_category = $services_sub_cat = [];
     if( is_array( $all_services ) && !empty( $all_services ) ){
         $service_parent_cat = array_column( $all_services, 'parent_cat' );
