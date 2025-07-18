@@ -419,6 +419,7 @@ section.faq-header
     background: #fff;
     margin-bottom: 20px;
     padding: 5px;
+    border-radius: 5px;
 }
 .mpwpb-category-lists .mpwpb-category-items .parent-category-items:hover,
 .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items:hover {
@@ -427,4 +428,8 @@ section.faq-header
   transition: all 0.3s ease;
   transform: scale(1.02); /* slight zoom effect */
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* subtle shadow */
+}
+.category-service-area .category-container .header
+ {
+    border-radius: 8px;
 }
