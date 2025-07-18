@@ -413,4 +413,8 @@ section.faq-header
   position: relative;
   margin-bottom: 42px; /* 20px (to line) + 2px (line height) + 20px (below line) */
 }
-
+.category-container .mpwpb-category-lists {
+    background: #fff;
+    margin-bottom: 20px;
+    padding: 5px;
+}
