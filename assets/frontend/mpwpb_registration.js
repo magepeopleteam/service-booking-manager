@@ -748,6 +748,30 @@ function mpwpb_price_calculation($this) {
             $(this).next('.faq-content').slideToggle();
             $(this).find('i').toggleClass('fa-plus fa-minus');
         });
+
+        var staticArea = $('.mpwpb_static_area');
+        if (staticArea.length > 0) {
+            var staticOffset = staticArea.offset().top;
+
+            $(window).on('scroll', function() {
+                var scrollTop = $(window).scrollTop();
+
+                if (scrollTop >= staticOffset) {
+                    staticArea.css({
+                        'position': 'fixed',
+                        'top': '7%',
+                        'left' : '70%',
+                        'width': '400px',
+                        'z-index': '1'
+                    });
+                } else {
+                    staticArea.css({
+                        'position': 'relative',
+                        'width': '400px',
+                    });
+                }
+            });
+        }
     });
 }(jQuery));
 

@@ -1338,6 +1338,7 @@ div.registration_tab_item {
 .mpwpb-static-template .sidebar .mpwpb_static_theme .mpwpb_popup .popupFooter button.mpwpb_date_time_next {
   padding: 10px;
 }
+
 .mpwpb-static-template .sidebar .mpwpb_static_area {
   position: fixed;
   left: 0;
@@ -1345,13 +1346,19 @@ div.registration_tab_item {
   width: 100%;
   z-index: 1;
 }
+
 @media (min-width: 1024px) {
   .mpwpb-static-template .sidebar .mpwpb_static_area {
-    position: fixed;
+    /*position: fixed;
     left: 70%;
     bottom: 7%;
+    width: 400px;*/
+
+    position: relative;
     width: 400px;
   }
+
+
 }
 .mpwpb-static-template .sidebar .mpwpb_static_area .mpwpb_static {
   display: block;
