@@ -749,7 +749,9 @@ function mpwpb_price_calculation($this) {
             $(this).find('i').toggleClass('fa-plus fa-minus');
         });
 
-        var staticArea = $('.mpwpb_static_area');
+        let parent = $('#mpwpb_static_sidbar');
+
+        var staticArea =parent.find('.mpwpb_static_area');
         if (staticArea.length > 0) {
             var staticOffset = staticArea.offset().top;
 
