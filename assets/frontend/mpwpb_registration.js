@@ -755,21 +755,25 @@ function mpwpb_price_calculation($this) {
 
             $(window).on('scroll', function() {
                 var scrollTop = $(window).scrollTop();
+                var windowWidth = $(window).width();
 
-                if (scrollTop >= staticOffset) {
-                    staticArea.css({
-                        'position': 'fixed',
-                        'top': '7%',
-                        'left' : '70%',
-                        'width': '400px',
-                        'z-index': '1'
-                    });
-                } else {
-                    staticArea.css({
-                        'position': 'relative',
-                        'width': '400px',
-                    });
+                if( windowWidth > 1024 ){
+                    if ( scrollTop >= staticOffset ) {
+                        staticArea.css({
+                            'position': 'fixed',
+                            'top': '7%',
+                            'left' : '70%',
+                            'width': '400px',
+                            'z-index': '1'
+                        });
+                    } else {
+                        staticArea.css({
+                            'position': 'relative',
+                            'width': '400px',
+                        });
+                    }
                 }
+
             });
         }
     });
