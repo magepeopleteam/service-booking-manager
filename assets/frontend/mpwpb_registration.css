@@ -1360,7 +1360,13 @@ div.registration_tab_item {
 }
 
 
-.mpwpb-static-template .sidebar .mpwpb_static_area {
+/*.mpwpb-static-template .sidebar .mpwpb_static_area {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  z-index: 99999;
+}*/
 
 .mpwpb-static-template  .mpwpb_static_area {
 
@@ -1374,14 +1380,6 @@ div.registration_tab_item {
 @media (min-width: 1024px) {
 
   .mpwpb-static-template .sidebar .mpwpb_static_area {
-    /*position: fixed;
-
-  .mpwpb-static-template  .mpwpb_static_area {
-    position: fixed;
-
-    left: 70%;
-    bottom: 7%;
-    width: 400px;*/
 
     position: relative;
     width: 400px;
