@@ -753,16 +753,20 @@ function mpwpb_price_calculation($this) {
         if (staticArea.length > 0) {
             var staticOffset = staticArea.offset().top;
 
-            $(window).on('scroll', function() {
-                var scrollTop = $(window).scrollTop();
-                var windowWidth = $(window).width();
+            let width = $('#service-overview').width() + 150;
 
-                if( windowWidth > 1024 ){
-                    if ( scrollTop >= staticOffset ) {
+            var windowWidth = $(window).width();
+            if( windowWidth > 1024 ) {
+                $(window).on('scroll', function () {
+                    var scrollTop = $(window).scrollTop();
+
+
+                    // if( windowWidth > 1024 ){
+                    if (scrollTop >= staticOffset) {
                         staticArea.css({
                             'position': 'fixed',
                             'top': '7%',
-                            'left' : '70%',
+                            'left': width + 'px',
                             'width': '400px',
                             'z-index': '1'
                         });
@@ -770,11 +774,13 @@ function mpwpb_price_calculation($this) {
                         staticArea.css({
                             'position': 'relative',
                             'width': '400px',
+                            'left':'0',
                         });
                     }
-                }
+                    // }
 
-            });
+                });
+            }
         }
     });
 }(jQuery));
