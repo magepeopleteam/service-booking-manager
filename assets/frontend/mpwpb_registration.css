@@ -1354,6 +1354,11 @@ div.registration_tab_item {
   .mpwpb-static-template   .mpwpb_popup .popupFooter .next_date_area .mpwpb-total {
     padding: 0;
   }
+
+  .mpwpb-static-template   .mpwpb_popup  .mpwpb_popup_body .mpwpb-popup-content .service-cart {
+    width: 90%;
+  }
+
 }
 .mpwpb-static-template   .mpwpb_popup .popupFooter button.mpwpb_date_time_next {
   padding: 10px;
@@ -1434,6 +1439,11 @@ div.registration_tab_item {
   .mpwpb-static-template  .mpwpb_static_area .mpwpb_static .mpwpb_static_registration_popup_close{
     display: flex;
   }
+
+  .mpwpb-static-template   .mpwpb_popup  .mpwpb_popup_body .mpwpb-popup-content .service-cart {
+    width: 90%;
+  }
+
 }
 
 @media (min-width: 1024px) {
