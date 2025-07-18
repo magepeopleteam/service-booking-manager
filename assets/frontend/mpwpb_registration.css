@@ -1358,20 +1358,36 @@ div.registration_tab_item {
 .mpwpb-static-template   .mpwpb_popup .popupFooter button.mpwpb_date_time_next {
   padding: 10px;
 }
+
+
+.mpwpb-static-template .sidebar .mpwpb_static_area {
+
 .mpwpb-static-template  .mpwpb_static_area {
+
   position: fixed;
   left: 0;
   bottom: 0;
   width: 100%;
   z-index: 1;
 }
+
 @media (min-width: 1024px) {
+
+  .mpwpb-static-template .sidebar .mpwpb_static_area {
+    /*position: fixed;
+
   .mpwpb-static-template  .mpwpb_static_area {
     position: fixed;
+
     left: 70%;
     bottom: 7%;
+    width: 400px;*/
+
+    position: relative;
     width: 400px;
   }
+
+
 }
 .mpwpb-static-template  .mpwpb_static_area .mpwpb_static {
   display: block;
@@ -1481,23 +1497,23 @@ div.registration_tab_item {
     border-radius: 10px;
 }
 .mpwpb_popup_header{
- background-color: var(--mpwpb_color_theme); 
+ background-color: var(--mpwpb_color_theme);
 }
 .mpwpb_popup_header h5{font-size:28px !important;}
 .mpwpb_popup_header p{font-size:16px !important;}
 .mpwpb_popup_header h5, .mpwpb_popup_header p {
- color: #fff; 
+ color: #fff;
  text-align: center;
 }
 .mpwpb_service_item .mpwpb_service_button, .mpwpb_extra_service_item .mpwpb_price_calculation{
-  background-color: var(--mpwpb_color_theme) !important; 
+  background-color: var(--mpwpb_color_theme) !important;
 }
 .mpwpb_style button span{color:#fff !important;}
 .mpwpb_service_button:hover{
-  background-color: #f5f7fa !important; 
+  background-color: #f5f7fa !important;
 }
 .mpwpb_service_button.mActive, .mpwpb_extra_service_item .mpwpb_price_calculation.mActive{
-  background-color: #4caf50 !important; 
+  background-color: #4caf50 !important;
 }
  div.mpwpb_service_item .mpwpb_service_button, .mpwpb_extra_service_item .mpwpb_price_calculation{border:none !important}
 .mpwpb_service_area header h5, .mpwpb_extra_service_area h5{color:#333 !important;}

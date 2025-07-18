@@ -84,7 +84,16 @@ function mpwpb_price_calculation($this) {
     });
     //==========category============//
     function refresh_sub_category(parent) {
-        parent.find('.mpwpb_service_area,.mpwpb_extra_service_area,.next_service_area,.mpwpb_date_time_area,.mpwpb_order_proceed_area').slideUp(350);
+
+        let selectServiceCount = parent.find('.mpwpb_service_item.mpActive').length;
+        if( selectServiceCount > 0 ){
+            parent.find('.next_service_area').slideDown(350);
+            $("#mpwpd_btn_proceed").hide();
+        }else{
+            parent.find('.next_service_area').slideUp(350);
+        }
+
+        parent.find('.mpwpb_service_area,.mpwpb_extra_service_area,.mpwpb_date_time_area,.mpwpb_order_proceed_area').slideUp(350);
         let target_sub_category = parent.find('.mpwpb_sub_category_area');
         parent.find('[name="mpwpb_sub_category"]').val('');
         if (target_sub_category.length > 0) {
@@ -101,7 +110,11 @@ function mpwpb_price_calculation($this) {
         }
     }
     function refresh_service(parent) {
-        $('#mpwpd_btn_proceed').fadeIn();
+
+        let selectServiceCount = parent.find('.mpwpb_service_item.mpActive').length;
+        if( selectServiceCount < 1 ){
+            $('#mpwpd_btn_proceed').fadeIn();
+        }
         let is_multi_select = $("#mpwpb_multi_category_select").val().trim();
         if( is_multi_select !== 'on' ) {
             parent.find('.mpwpb_extra_service_area,.next_service_area,.mpwpb_date_time_area,.mpwpb_order_proceed_area').slideUp(350);
@@ -219,12 +232,10 @@ function mpwpb_price_calculation($this) {
     });
 
     $(document).on('click', 'div.mpwpb_registration .mpwpb_category_selected_item', function () {
-
         $('.mpwpb_arrow_icon_holder').fadeOut();
-
         $('.mpwpb_selected_sub_category_text').text('');
-
         $("#mpwpb_selected_control").fadeIn();
+
         let current = $(this);
         let parent = current.closest('div.mpwpb_registration');
         let category = current.data('category');
@@ -737,6 +748,34 @@ function mpwpb_price_calculation($this) {
             $(this).next('.faq-content').slideToggle();
             $(this).find('i').toggleClass('fa-plus fa-minus');
         });
+
+        var staticArea = $('.mpwpb_static_area');
+        if (staticArea.length > 0) {
+            var staticOffset = staticArea.offset().top;
+
+            $(window).on('scroll', function() {
+                var scrollTop = $(window).scrollTop();
+                var windowWidth = $(window).width();
+
+                if( windowWidth > 1024 ){
+                    if ( scrollTop >= staticOffset ) {
+                        staticArea.css({
+                            'position': 'fixed',
+                            'top': '7%',
+                            'left' : '70%',
+                            'width': '400px',
+                            'z-index': '1'
+                        });
+                    } else {
+                        staticArea.css({
+                            'position': 'relative',
+                            'width': '400px',
+                        });
+                    }
+                }
+
+            });
+        }
     });
 }(jQuery));
 
