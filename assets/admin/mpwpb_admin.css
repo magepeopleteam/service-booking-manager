@@ -209,7 +209,8 @@
 
 .category-service-area .category-container{
     background: #f1f1f1;
-    padding:10px;
+    padding: 5px;
+    padding-right: 7px !important;
 }
 .category-service-area .category-container .header button{border:#eee !important; border-radius:10px !important; background-color: #fff !important; }
 
@@ -418,4 +419,12 @@ section.faq-header
     background: #fff;
     margin-bottom: 20px;
     padding: 5px;
+}
+.mpwpb-category-lists .mpwpb-category-items .parent-category-items:hover,
+.mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items:hover {
+  background-color: #f0f0f0; /* light grey background on hover */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  transform: scale(1.02); /* slight zoom effect */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* subtle shadow */
 }
