@@ -209,13 +209,14 @@
 
 .category-service-area .category-container{
     background: #f1f1f1;
-    padding:10px;
+    padding: 5px;
+    padding-right: 7px !important;
 }
 .category-service-area .category-container .header button{border:#eee !important; border-radius:10px !important; background-color: #fff !important; }
 
-.mpwpb-category-lists .mpwpb-category-items .parent-category-items, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items{min-height: 40px !important; border-radius:10px;  !important; background-color: #fff !important; border:none !important;}
+.mpwpb-category-lists .mpwpb-category-items .parent-category-items, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items{min-height: 40px !important; background-color: #fff !important; border:none !important;}
 
-.mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items{min-height: 40px !important; border-radius:10px; padding-right:10px !important;  background-color: #fff !important; border:none !important;}
+.mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items{min-height: 40px !important; padding-right:10px !important;   background-color: #efefef !important; border:none !important;}
 .mpwpb-category-lists .mpwpb-category-items .parent-category-items .image-block i, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items .image-block i{ width:40px !important; font-size: 16px !important;background: none !important;}
 .mpwpb-category-lists .mpwpb-category-items .parent-category-items .action i, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items .action i{border:1px solid #ddd; border-radius:10px !important; color: var(--mage-primary) !important;}
 
@@ -339,7 +340,7 @@ button.button.mpwpb-extra-service-new:hover, button.button.mpwpb-faq-item-new:ho
     min-height: 40px;
     border-radius: 5px;
 }
-#mp_meta_box_panel .metabox .tabsContent{background: #eaeaef; }
+#mp_meta_box_panel .metabox .tabsContent{background: #eaeaef; padding:2% !important; }
 #mp_meta_box_panel .metabox .tabsContent section
  {
     background: #fff;
@@ -379,7 +380,8 @@ section.faq-header
     border: 1px solid #e5dede !important;
 }
 .mpwpb-category-lists .mpwpb-category-items .parent-category-items, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items {
-    border: 1px solid #e5dede !important;
+   border: 2px solid #f1e8e8 !important;
+   border-radius: 5px;
 }
 .mpwpb_style .themeButton, .mpwpb_style [class*=_themeButton]
  {
@@ -392,4 +394,42 @@ section.faq-header
     color: var(--mage-primary) !important;
 }
 
+.mpwpb-modal-container .mpwpb-modal-content input[type=text], .mpwpb-modal-container .mpwpb-modal-content input[type=number], .mpwpb-modal-container .mpwpb-modal-content textarea, .mpwpb-modal-container .mpwpb-modal-content select {
+    width: 100%;
+    border: 2px solid #e5e7eb;
+    display: block;
+    font-weight: normal;
+    padding: 10px;
+    font-size: 18px;
+    border-radius:8px;
+}
+.mpwpb-modal-container .mpwpb-modal-content input[type=color], .mpwpb-modal-container .mpwpb-modal-content input[type=date], .mpwpb-modal-container .mpwpb-modal-content input[type=datetime-local], .mpwpb-modal-container .mpwpb-modal-content input[type=datetime], .mpwpb-modal-container .mpwpb-modal-content input[type=email], .mpwpb-modal-container .mpwpb-modal-content input[type=month], .mpwpb-modal-container .mpwpb-modal-content input[type=number], .mpwpb-modal-container .mpwpb-modal-content input[type=password], .mpwpb-modal-container .mpwpb-modal-content input[type=search], .mpwpb-modal-container .mpwpb-modal-content input[type=tel], .mpwpb-modal-container .mpwpb-modal-content input[type=text], .mpwpb-modal-container .mpwpb-modal-content input[type=time], .mpwpb-modal-container .mpwpb-modal-content input[type=url], .mpwpb-modal-container .mpwpb-modal-content input[type=week], .mpwpb-modal-container .mpwpb-modal-content select, .mpwpb-modal-container .mpwpb-modal-content textarea
+ {
+    border: 2px solid #e5e7eb !important;
+}
 
+.mpwpb-modal-container .mpwpb-modal-content .mActive {
+  background: #20cb8424;
+  padding: 20px;
+  border-radius: 20px;
+  position: relative;
+  margin-bottom: 42px; /* 20px (to line) + 2px (line height) + 20px (below line) */
+}
+.category-container .mpwpb-category-lists {
+    background: #fff;
+    margin-bottom: 20px;
+    padding: 5px;
+    border-radius: 5px;
+}
+.mpwpb-category-lists .mpwpb-category-items .parent-category-items:hover,
+.mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items:hover {
+  background-color: #f0f0f0; /* light grey background on hover */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  transform: scale(1.02); /* slight zoom effect */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* subtle shadow */
+}
+.category-service-area .category-container .header
+ {
+    border-radius: 8px;
+}

@@ -1,8 +1,8 @@
 /* Recurring Booking Styles */
 .mpwpb_recurring_booking_area {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #fff;
+    margin-top: 10px;
+    padding: 0px 15px;
+    background-color: var(--mpwpb_color_light);
     border-radius: 5px;
     clear: both;
     width: 100%;
@@ -10,7 +10,7 @@
 }
 
 .mpwpb_recurring_booking header {
-    margin-bottom: 15px;
+    margin-bottom: 5px;
     padding-bottom: 10px;
     border-bottom: 1px solid #eee;
 }
@@ -18,7 +18,7 @@
 .mpwpb_recurring_toggle {
     display: flex;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 5px;
     gap: 20px;
 }
 
@@ -85,16 +85,16 @@ input:checked + .slider:before {
 
 /* Recurring Settings */
 .mpwpb_recurring_settings {
-    padding: 15px;
-    background-color: #f9f9f9;
+    padding: 0px;
     border-radius: 5px;
-    margin-top: 10px;
+    margin-top: 5px;
 }
 
 .mpwpb_recurring_type,
 .mpwpb_recurring_count {
     margin-bottom: 15px;
 }
+.mpwpb_recurring_type{margin-top:10px; }
 
 .mpwpb_recurring_type label,
 .mpwpb_recurring_count label {
@@ -119,7 +119,6 @@ input:checked + .slider:before {
 
 .mpwpb_recurring_discount {
     background-color: #e9f7ef;
-    padding: 10px;
     border-radius: 4px;
     margin-bottom: 15px;
 }
@@ -405,5 +404,35 @@ input:checked + .slider:before {
     color: #d9947e;
 }
 
-
-
+.mpwpb_style.mpwpb-static-template .sidebar .mpwpb_static_area
+ {
+    z-index: 999;
+}
+.mpwpb_service_button span{font-size:14px;}
+button.to-book.mpwpb_time_btn
+ {
+    font-size: 14px;
+    padding: 10px !important;
+}
+.mpwpb-popup-content .mpwpb_cart_progress_step.active{color: var(--mpwpb_color_theme_cc);}
+.mpwpb_cart_progress_wrapper .mpwpb_cart_progress_step.active .mpwpb_cart_progress_circle {background: var(--mpwpb_color_theme_cc);}
+button._mpBtn_dBR.mActive.mpwpb_service_next {font-size: 16px;}
+.mpwpb-static-template .sidebar [class*=_mpBtn]{font-size:16px !important;}
+.mpwpb_style .mpBtn, .mpwpb_style [class*="_mpBtn"], .mpwpb_style button{font-size:16px;}
+.mpwpb_extra_service_item span[data-text] {font-size: 12px;}
+.mpwpb_service_item ._equalChild span {font-size: 12px;}
+.mpwpb_item-template-default .mpwpb-static-template .sidebar .mpwpb_static_theme .mpwpb_popup .mpwpb_popup_main_area .mpwpb_popup_body .mpwpb-popup-content .service-items .mpwpb_category_section .mpwpb_sub_category_area {
+    margin-left: 0px;
+}
+input#mpwpb_recurring_count {
+    margin-bottom: 15px;
+}
+button.to-book.mpwpb_time_btn {
+    width: 18%;
+}
+select#mpwpb_recurring_type, input#mpwpb_recurring_count {
+    border-radius:5px;
+}
+div#mpwpb_recurring_booking_area {
+    padding-bottom: 5px;
+}
