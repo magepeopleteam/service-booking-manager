@@ -64,11 +64,11 @@
 }
 
 input:checked + .slider {
-    background-color: #2196F3;
+    background-color: var(--mpwpb_color_theme);
 }
 
 input:focus + .slider {
-    box-shadow: 0 0 1px #2196F3;
+    box-shadow: 0 0 1px var(--mpwpb_color_theme);
 }
 
 input:checked + .slider:before {
@@ -413,6 +413,8 @@ button.to-book.mpwpb_time_btn
  {
     font-size: 14px;
     padding: 10px !important;
+    background: #f2f2f2;
+    border: 1px solid #bfbfbf;
 }
 .mpwpb-popup-content .mpwpb_cart_progress_step.active{color: var(--mpwpb_color_theme_cc);}
 .mpwpb_cart_progress_wrapper .mpwpb_cart_progress_step.active .mpwpb_cart_progress_circle {background: var(--mpwpb_color_theme_cc);}

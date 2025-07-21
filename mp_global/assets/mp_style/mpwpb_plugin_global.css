@@ -213,7 +213,8 @@
 @media only screen and (min-width: 10px) {
 	.mpwpb_service_cart_holder{
 		display: flex;
-		flex-direction: row
+		flex-direction: row;
+		background-color: #fff;
 	}
 	.mpwpb_style img,
 	.mpwpb_style [class*="dButton"], .mpwpb_style button,
