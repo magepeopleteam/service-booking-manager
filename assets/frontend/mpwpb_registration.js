@@ -158,6 +158,7 @@ function mpwpb_price_calculation($this) {
 
     $(document).on('click', '#mpwpb_show_all_category', function () {
         $(this).parent().fadeOut();
+
         $('.mpwpb_category_itemaa').fadeOut();
         $('.mpwpb_category_section').fadeIn();
         $('.mpwpb_category_item').fadeIn();
@@ -170,6 +171,8 @@ function mpwpb_price_calculation($this) {
         $('.mpwpb_selected_sub_category_text').text('');
 
         let parent =  $(this).closest('div.mpwpb_registration');
+
+        parent.find('.mpwpb_category_item').removeClass('mpActive')
         // parent.find('.mpwpb_category_item').removeClass('mpActive');
         parent.find('.mpwpb_sub_category_item').removeClass('mpActive');
 
