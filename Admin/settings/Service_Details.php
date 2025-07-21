@@ -39,13 +39,10 @@
                     </section>
                     <section>
                         <label class="label">
-                            <div>
-                                <p><?php esc_html_e('Service Features', 'service-booking-manager'); ?></p>
-                                <span><?php esc_html_e('Service Features', 'service-booking-manager'); ?></span>
-                            </div>
-                            <div>
-								<?php MPWPB_Custom_Layout::switch_button('mpwpb_features_status', $service_features_checked); ?>
-                            </div>
+                            <p><?php esc_html_e('Service Features', 'service-booking-manager'); ?></p>
+                                
+							<?php MPWPB_Custom_Layout::switch_button('mpwpb_features_status', $service_features_checked); ?>
+                            
                         </label>
                     </section>
                     <section class="mpwpb-service-features <?php echo esc_attr($features_active_class); ?>" data-collapse="#mpwpb_features_status">
@@ -79,13 +76,10 @@
                     </section>
                     <section>
                         <label class="label">
-                            <div>
-                                <p><?php esc_html_e('Enable Service Overview', 'service-booking-manager'); ?></p>
-                                <span><?php esc_html_e('Enable Service Overview', 'service-booking-manager'); ?></span>
-                            </div>
-                            <div>
-								<?php MPWPB_Custom_Layout::switch_button('mpwpb_service_overview_status', $service_overview_checked); ?>
-                            </div>
+                            <p><?php esc_html_e('Enable Service Overview', 'service-booking-manager'); ?></p>
+                                
+							<?php MPWPB_Custom_Layout::switch_button('mpwpb_service_overview_status', $service_overview_checked); ?>
+                            
                         </label>
                     </section>
                     <section class="mpwpb-service-overview <?php echo esc_attr($service_overview_class); ?>" data-collapse="#mpwpb_service_overview_status">
@@ -98,13 +92,10 @@
                     </section>
                     <section>
                         <label class="label">
-                            <div>
-                                <p><?php esc_html_e('Enable Service Details', 'service-booking-manager'); ?></p>
-                                <span><?php esc_html_e('Enable Service Details', 'service-booking-manager'); ?></span>
-                            </div>
-                            <div>
-								<?php MPWPB_Custom_Layout::switch_button('mpwpb_service_details_status', $service_details_checked); ?>
-                            </div>
+                            <p><?php esc_html_e('Enable Service Details', 'service-booking-manager'); ?></p>
+                            
+							<?php MPWPB_Custom_Layout::switch_button('mpwpb_service_details_status', $service_details_checked); ?>
+                            
                         </label>
                     </section>
                     <section class="mpwpb-service-details <?php echo esc_attr($active_class); ?>" data-collapse="#mpwpb_service_details_status">
@@ -117,28 +108,23 @@
                     </section>
                     <section>
                         <label class="label">
-                            <div>
-                                <p><?php esc_html_e('Service Review Rating', 'service-booking-manager'); ?></p>
-                                <span><?php esc_html_e('Service Review ', 'service-booking-manager'); ?></span>
-                            </div>
+                            <p><?php esc_html_e('Service Review Rating', 'service-booking-manager'); ?></p>
+                                
                             <input type="text" name="mpwpb_service_review_ratings" value="<?php echo esc_html($service_ratings); ?>" placeholder="4.5">
                         </label>
                     </section>
                     <section>
                         <label class="label">
-                            <div>
-                                <p><?php esc_html_e('Service Review Scale', 'service-booking-manager'); ?></p>
-                                <span><?php esc_html_e('Service Review Scale', 'service-booking-manager'); ?></span>
-                            </div>
+                            <p><?php esc_html_e('Service Review Scale', 'service-booking-manager'); ?></p>
+                                
                             <input type="text" name="mpwpb_service_rating_scale" value="<?php echo esc_html($service_rating_scale); ?>" placeholder="Out of 5">
                         </label>
                     </section>
                     <section>
                         <label class="label">
-                            <div>
-                                <p><?php esc_html_e('Service Review Text', 'service-booking-manager'); ?></p>
-                                <span><?php esc_html_e('Service Review Text', 'service-booking-manager'); ?></span>
-                            </div>
+                            
+                            <p><?php esc_html_e('Service Review Text', 'service-booking-manager'); ?></p>
+                            
                             <input type="text" name="mpwpb_service_rating_text" value="<?php echo esc_html($service_rating_text); ?>" placeholder="(8868 ratings on 3 services)">
                         </label>
                     </section>

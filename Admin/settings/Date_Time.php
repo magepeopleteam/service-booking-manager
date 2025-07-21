@@ -47,7 +47,7 @@
 								<div class="header">
 									<h3><?php esc_html_e('Date time settings','service-booking-manager'); ?></h3>
 								</div>
-                                <section>
+                                <div class="date-time">
                                     <label>
                                         <p><?php esc_html_e('Date Type', 'service-booking-manager'); ?> <span class="textRequired">&nbsp;*</span></p>
                                         <select class="" name="mpwpb_date_type" data-collapse-target required>
@@ -56,8 +56,8 @@
                                             <option value="repeated" data-option-target="#mp_repeated" <?php echo esc_attr($date_type == 'repeated' ? 'selected' : ''); ?>><?php esc_html_e('Repeated', 'service-booking-manager'); ?></option>
                                         </select>
                                     </label>
-                                </section>
-                                <section class="<?php echo esc_attr($date_type == 'particular' ? 'mActive' : ''); ?>" data-collapse="#mp_particular">
+                                </div>
+                                <div class="<?php echo esc_attr($date_type == 'particular' ? 'mActive' : ''); ?>" data-collapse="#mp_particular">
                                     <label>
                                         <p><?php esc_html_e('Particular Dates', 'service-booking-manager'); ?> <span class="textRequired">&nbsp;*</span></p>
                                         <div class="mp_settings_area">
@@ -81,27 +81,27 @@
                                             </div>
                                         </div>
                                     </label>
-                                </section>
-                                <section style="display: none;" >
+                                </div>
+                                <div style="display: none;" >
                                     <label>
                                         <p><?php esc_html_e('Repeated Start Date', 'service-booking-manager'); ?> <span class="textRequired">&nbsp;*</span></p>
                                         <input type="hidden" name="mpwpb_repeated_start_date" value="<?php echo esc_attr($hidden_repeated_start_date); ?>" required/>
                                         <input type="text" readonly required name="" class="date_type" value="<?php echo esc_attr($visible_repeated_start_date); ?>" placeholder="<?php echo esc_attr($now); ?>" />
                                     </label>
-                                </section> 
-                                <section style="display: none;">
+                                </div> 
+                                <div style="display: none;">
                                     <label>
                                         <p><?php esc_html_e('Repeated after', 'service-booking-manager'); ?> <span class="textRequired">&nbsp;*</span></p>
                                         <input type="text" name="mpwpb_repeated_after" class="mpwpb_number_validation" value="<?php echo esc_attr($repeated_after); ?>"/>
                                     </label>
-                                </section>
-                                <section class="<?php echo esc_attr($date_type == 'repeated' ? 'mActive' : ''); ?>" data-collapse="#mp_repeated">
+                                </div>
+                                <div class="<?php echo esc_attr($date_type == 'repeated' ? 'mActive' : ''); ?>" data-collapse="#mp_repeated">
                                     <label>
                                         <p><?php esc_html_e('Maximum advanced day booking', 'service-booking-manager'); ?> <span class="textRequired">&nbsp;*</span></p>
                                         <input type="text" name="mpwpb_active_days" class="mpwpb_number_validation" value="<?php echo esc_attr($active_days); ?>"/>
                                     </label>
-                                </section>
-                                <section>
+                                </div>
+                                <div>
                                     <label>
                                         
                                         <p><?php esc_html_e('Time Slot Length', 'service-booking-manager'); ?> <span class="textRequired">&nbsp;*</span></p>
@@ -116,13 +116,13 @@
                                             <option value="180" <?php echo esc_attr($time_slot == 180 ? 'selected' : ''); ?>><?php esc_html_e('3 Hour', 'service-booking-manager'); ?></option>
                                         </select>
                                     </label>
-                                </section>
-                                <section>
+                                </div>
+                                <div>
                                     <label>
                                         <p><?php esc_html_e('Capacity per Session', 'service-booking-manager'); ?> <span class="textRequired">&nbsp;*</span></p>
                                         <input class="formControl" name="mpwpb_capacity_per_session" type="number" value="<?php echo esc_attr($capacity); ?>" placeholder="Ex. 25"/>
                                     </label>
-                                </section>
+                                </div>
 							</div>
 							<div class="schedule-container">
 								<div class="header">

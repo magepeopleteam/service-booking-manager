@@ -35,24 +35,20 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
 				</section>
 				<section>
 					<label class="label">
-						<div>
-							<p><?php esc_html_e('Enable Recurring Bookings', 'service-booking-manager'); ?></p>
-							<span><?php esc_html_e('Allow customers to book recurring appointments', 'service-booking-manager'); ?></span>
-						</div>
-						<div class="customCheckboxLabel">
-							<select name="mpwpb_enable_recurring">
-								<option value="yes" <?php echo esc_attr($enable_recurring == 'yes' ? 'selected' : ''); ?>><?php esc_html_e('Yes', 'service-booking-manager'); ?></option>
-								<option value="no" <?php echo esc_attr($enable_recurring == 'no' ? 'selected' : ''); ?>><?php esc_html_e('No', 'service-booking-manager'); ?></option>
-							</select>
-						</div>
+                        <p><?php esc_html_e('Enable Recurring Bookings', 'service-booking-manager'); ?></p>
+                        
+                        <div class="customCheckboxLabel">
+                            <select name="mpwpb_enable_recurring">
+                                <option value="yes" <?php echo esc_attr($enable_recurring == 'yes' ? 'selected' : ''); ?>><?php esc_html_e('Yes', 'service-booking-manager'); ?></option>
+                                <option value="no" <?php echo esc_attr($enable_recurring == 'no' ? 'selected' : ''); ?>><?php esc_html_e('No', 'service-booking-manager'); ?></option>
+                            </select>
+                        </div>
 					</label>
 				</section>
 				<section>
 					<label class="label">
-						<div>
-							<p><?php esc_html_e('Recurring Types', 'service-booking-manager'); ?></p>
-							<span><?php esc_html_e('Select available recurring booking types', 'service-booking-manager'); ?></span>
-						</div>
+						<p><?php esc_html_e('Recurring Types', 'service-booking-manager'); ?></p>
+							
 						<div class="groupCheckBox flexWrap">
 							<label class="customCheckboxLabel">
 								<input type="checkbox" name="mpwpb_recurring_types[]" value="daily" <?php echo esc_attr(in_array('daily', $recurring_types) ? 'checked' : ''); ?> />
@@ -75,19 +71,15 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
 				</section>
 				<section>
 					<label class="label">
-						<div>
-							<p><?php esc_html_e('Maximum Recurring Count', 'service-booking-manager'); ?></p>
-							<span><?php esc_html_e('Maximum number of recurring bookings allowed', 'service-booking-manager'); ?></span>
-						</div>
+						<p><?php esc_html_e('Maximum Recurring Count', 'service-booking-manager'); ?></p>
+							
 						<input type="number" name="mpwpb_max_recurring_count" value="<?php echo esc_attr($max_recurring_count); ?>" min="2" max="52" />
 					</label>
 				</section>
 				<section>
 					<label class="label">
-						<div>
-							<p><?php esc_html_e('Recurring Booking Discount (%)', 'service-booking-manager'); ?></p>
-							<span><?php esc_html_e('Discount percentage for recurring bookings', 'service-booking-manager'); ?></span>
-						</div>
+						<p><?php esc_html_e('Recurring Booking Discount (%)', 'service-booking-manager'); ?></p>
+						
 						<input type="number" name="mpwpb_recurring_discount" value="<?php echo esc_attr($recurring_discount); ?>" min="0" max="100" />
 					</label>
 				</section>
