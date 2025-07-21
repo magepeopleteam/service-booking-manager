@@ -77,7 +77,7 @@
 			}
 			public function checkout_menu() {
 				$cpt = MPWPB_Function::get_cpt();
-				add_submenu_page('edit.php?post_type=' . $cpt, esc_html__('Checkout Fields', 'service-booking-manager'), esc_html__('Checkout Fields', 'service-booking-manager'), 'manage_options', 'mpwpb_wc_checkout_fields', array($this, 'wc_checkout_fields'));
+				//add_submenu_page('edit.php?post_type=' . $cpt, esc_html__('Checkout Fields', 'service-booking-manager'), esc_html__('Checkout Fields', 'service-booking-manager'), 'manage_options', 'mpwpb_wc_checkout_fields', array($this, 'wc_checkout_fields'));
 			}
 			public function wc_checkout_fields() {
 				if (!current_user_can('administrator')) {
