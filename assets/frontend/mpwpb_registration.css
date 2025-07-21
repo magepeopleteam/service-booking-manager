@@ -1451,8 +1451,8 @@ div.registration_tab_item {
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  padding: 15px 20px;
-  margin-bottom: 20px;
+  padding: 5px 20px;
+  margin-bottom: 10px;
   position: relative;
   color: var(--d_color);
   border-radius: 5px;
