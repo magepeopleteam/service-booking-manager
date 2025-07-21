@@ -9,6 +9,7 @@
 		exit;
 	}
 	$post_id = $post_id ?? get_the_id();
+    $shortcode = 'no';
 ?>
     <div class="mpwpb_style mpwpb-static-template mpwpb_registration">
         <header style="background-image: url('<?php echo esc_url(get_the_post_thumbnail_url()); ?>');">
@@ -34,6 +35,8 @@
 				<?php do_action('mpwpb_service_details'); ?>
                 <!-- dispaly service Reviews section using this hook -->
 				<?php do_action('mpwpb_service_reviews'); ?>
+
+				<?php do_action('mpwpb_added_staff_details'); ?>
             </div>
             <div class="sidebar">
 	            <?php include(MPWPB_Function::template_path('registration/static_registration.php')); ?>

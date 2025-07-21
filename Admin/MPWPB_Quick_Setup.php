@@ -103,7 +103,7 @@
 						$new_general_settings_data = is_array($general_settings_data) ? array_replace($general_settings_data, $update_general_settings_arr) : $update_general_settings_arr;
 						update_option('mpwpb_general_settings', $new_general_settings_data);
 						flush_rewrite_rules();
-						wp_redirect(admin_url('edit.php?post_type=mpwpb_item'));
+						wp_redirect(admin_url('edit.php?post_type=mpwpb_item&page=mpwpb_service_list'));
 					}
 				}
 				?>

@@ -16,7 +16,42 @@
 				add_action('mpwpb_service_faq', [$this, 'show_service_faq']);
 				add_action('mpwpb_service_details', [$this, 'show_service_details']);
 				add_action('mpwpb_service_reviews', [$this, 'show_service_reviews']);
+				add_action('mpwpb_added_staff_details', [$this, 'show_added_staff_details']);
+                add_action('mpwpb_progress_bar', [$this, 'mpwpb_progress_bar_callback'], 10, 2 );
 			}
+
+            public function mpwpb_progress_bar_callback( $service_id, $is_active ) {
+                $enable_staff_member = get_post_meta($service_id, 'mpwpb_staff_member_add', true);
+                ?>
+                <div class="mpwpb_cart_progress_wrapper">
+                    <div class="mpwpb_cart_progress_step active" id="mpwpb_progress_service">
+                        <div class="mpwpb_cart_progress_circle"><?php esc_html_e(1, 'service-booking-manager') ?></div>
+                        <div class="mpwpb_cart_progress_label"><?php esc_html_e('Service', 'service-booking-manager') ?></div>
+                    </div>
+                    <div class="mpwpb_cart_progress_arrow">→</div>
+                    <div class="mpwpb_cart_progress_step" id="mpwpb_progress_date_time">
+                        <div class="mpwpb_cart_progress_circle"><?php esc_html_e(2, 'service-booking-manager') ?></div>
+                        <div class="mpwpb_cart_progress_label"><?php esc_html_e('Date & Time', 'service-booking-manager') ?></div>
+                    </div>
+                    <div class="mpwpb_cart_progress_arrow">→</div>
+                    <?php  if ( is_plugin_active('service-booking-manager-pro/MPWPB_Plugin_Pro.php') && $enable_staff_member === 'on' ) {
+                        $number = 4;
+                        ?>
+                        <div class="mpwpb_cart_progress_step" id="mpwpb_progress_staff">
+                            <div class="mpwpb_cart_progress_circle"><?php esc_html_e(3, 'service-booking-manager') ?></div>
+                            <div class="mpwpb_cart_progress_label"><?php esc_html_e('Staff', 'service-booking-manager') ?></div>
+                        </div>
+                        <div class="mpwpb_cart_progress_arrow" id="mpwpb_staff_arrow">→</div>
+                    <?php } else {  $number = 3; }?>
+                    <div class="mpwpb_cart_progress_step" id="mpwpb_progress_checkout">
+                        <div class="mpwpb_cart_progress_circle"><?php echo esc_html( $number ) ?></div>
+                        <div class="mpwpb_cart_progress_label"><?php esc_html_e('Checkout', 'service-booking-manager') ?></div>
+                    </div>
+                </div>
+
+
+                <?php
+            }
 			public function features_heighlight($limit = '') {
 				$features_heightlight = MPWPB_Global_Function::get_post_info(get_the_ID(), 'mpwpb_features', []);
 				$limit = $limit ? $limit : 3;
@@ -171,6 +206,57 @@
                     </section>
 				<?php
 				endif;
+			}
+
+
+            public function display_staff_member( $all_staffs ) {
+                ob_start(); ?>
+                <div class="mpwpb_added_staff_holder">
+                    <?php foreach ( $all_staffs as $staff_data ) {
+                        $staff_id   = $staff_data->ID;
+                        $staff_name = $staff_data->display_name;
+                        $image_id   = get_user_meta( $staff_id, 'mpwpb_custom_profile_image', true );
+                        $image_url  = esc_url( wp_get_attachment_url( $image_id ) );
+
+                        if ( empty( $image_url ) ) {
+                            $image_url = 'https://via.placeholder.com/80'; // fallback image
+                        }
+                        ?>
+                        <div class="mpwpb_staff_card">
+                            <img src="<?php echo $image_url; ?>" alt="<?php echo esc_attr( $staff_name ); ?>" />
+                            <div class="mpwpb_staff_name"><?php echo esc_html( $staff_name ); ?></div>
+                        </div>
+                    <?php } ?>
+                </div>
+
+                <?php
+                return ob_get_clean();
+            }
+
+
+            public function show_added_staff_details() {
+                $enable_staff_member = MPWPB_Global_Function::get_post_info( get_the_ID(), 'mpwpb_staff_member_add', 'no' );
+				if ( $enable_staff_member === 'on' ){
+                    $all_staffs = [];
+                    $get_selected_staff = get_post_meta( get_the_ID(), 'mpwpb_selected_staff_ids', array() );
+                    $flat_selected_staff_ids = call_user_func_array('array_merge', $get_selected_staff);
+                    if( is_array( $flat_selected_staff_ids ) && !empty( $flat_selected_staff_ids ) ) {
+                        $all_staffs = get_users([
+                            'include' => $flat_selected_staff_ids,
+                            'role' => 'mpwpb_staff'
+                        ]);
+                    }
+                    ?>
+                    <section id="service-reviews">
+                        <h2><?php esc_html_e('Staff Members', 'service-booking-manager'); ?></h2>
+                    </section>
+				<?php
+
+                    if ( sizeof($all_staffs) > 0) {
+                        echo $this->display_staff_member( $all_staffs );
+                    }
+
+                }
 			}
 		}
 		new MPWPB_Static_Template();

@@ -1,0 +1,283 @@
+.mpwpv_service_list_container {
+    padding: 5px;
+    margin: 0 auto;
+}
+.mpwpv_service_list_header {
+    margin-bottom: 24px;
+}
+.mpwpv_service_list_header h1 {
+    color: #1f2937;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+.mpwpv_service_list_header p {
+    color: #6b7280;
+}
+.mpwpv_service_list_analytics-container {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+}
+.mpwpb_add_new_search_holder{
+    display: flex;
+    gap: 20px;
+}
+
+.mpwpb_add_new_Service{
+    border: 0;
+    box-shadow: none;
+    background-color: #5e59c7ee;
+    border-radius: 0.25rem;
+    padding: 0.5em 0.75em;
+    color: #fff;
+    font-size: 1rem;
+    transition: all 0.5s ease-in-out;
+    cursor: pointer;
+}
+
+.mpwpb_item_page_mpwpb_service_list .mpwpv_service_list_header .updated {
+    display: none;
+}
+.mpwpv_service_list_container > .mpwpv_service_list_header {
+    display: block;
+}
+
+.mpwpv_service_list_table_header {
+    display: flex;
+    font-weight: bold;
+    padding: 12px 15px;
+    background: #f4f6f8;
+    color: #333;
+    border-radius: 6px 6px 0 0;
+    font-size: 14px;
+    border-bottom: 1px solid #ddd;
+}
+
+.mpwpv_service_list_table_th {
+    padding-right: 10px;
+    white-space: nowrap;
+    text-align: left;
+    padding-left: 20px;
+}
+
+.mpwpv_service_list_analytics-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    min-width: max-content;
+}
+.mpwpv_service_list_analytics-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    font-size: 24px;
+}
+.mpwpv_service_list_analytics-icon.blue {
+    background-color: #dbeafe;
+    color: #2563eb;
+}
+.mpwpv_service_list_analytics-icon.green {
+    background-color: #dcfce7;
+    color: #16a34a;
+}
+.mpwpv_service_list_analytics-icon.purple {
+    background-color: #f3e8ff;
+    color: #9333ea;
+}
+.mpwpv_service_list_analytics-icon.orange {
+    background-color: #fed7aa;
+    color: #ea580c;
+}
+.mpwpv_service_list_analytics-text p:first-child {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 2px;
+}
+
+.mpwpv_service_list_main-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    margin-bottom: 24px;
+}
+
+.mpwpv_service_list_card-header {
+    padding: 16px;
+    border-bottom: 1px solid #e5e7eb;
+}
+.mpwpv_service_list_header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+.mpwpv_service_list_header-top h2 {
+    color: #1f2937;
+    font-size: 18px;
+    font-weight: 500;
+}
+.mpwpv_service_list_search-container {
+    position: relative;
+}
+.mpwpv_service_list_search-input {
+    padding: 10px 10px 10px 23px !important;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    outline: none;
+    width: 250px;
+}
+.mpwpv_service_list_search-icon {
+    position: absolute;
+    left: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+}
+.mpwpv_service_list_filter-buttons {
+    display: flex;
+    gap: 8px;
+}
+.mpwpv_service_list_filter-btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+
+
+/*New Design*/
+.mpwpb_service_list_table-container {
+    overflow-x: auto;
+}
+.mpwpb_service_list_services-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.mpwpb_service_list_services-table th {
+    background: #f8fafc !important;
+    padding: 16px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    color: #4a5568;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.mpwpb_service_list_services-table td {
+    padding: 16px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    vertical-align: top !important;
+}
+
+.mpwpb_service_list_service-name {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.mpwpb_service_list_status-badge.published {
+    background: #48bb78;
+    color: white;
+}
+.mpwpb_service_list_status-badge.draft {
+    background: #ed8936;
+    color: white;
+}
+.mpwpb_service_list_status-badge {
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+.mpwpb_service_list_service-title {
+    font-weight: 600;
+    color: #1a202c;
+    margin-bottom: 4px;
+}
+
+.mpwpb_service_list_shortcode {
+    font-family: 'Monaco', 'Menlo', monospace;
+    background: #f7fafc;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #4a5568;
+    border: 1px solid #e2e8f0;
+    cursor: pointer;
+}
+.mpwpb_service_list_service-subtitle {
+    font-size: 14px;
+    color: #718096;
+}
+.mpwpb_service_list_tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.mpwpb_service_list_tag {
+    padding: 6px 9px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    background: #edf2f7;
+    color: #4a5568;
+}
+.mpwpb_service_list_tag.popular {
+    background: #fed7d7;
+    color: #c53030;
+}
+.mpwpb_service_list_actions {
+    display: flex;
+    gap: 8px;
+}
+.mpwpb_service_list_action-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.mpwpb_service_list_more-link {
+    color: #4299e1;
+    font-size: 13px;
+    text-decoration: none;
+    margin-left: 8px;
+    margin-top: 7px;
+}
+
+button.mpwpv_service_list_filter-btn
+ {
+  font-size: 14px;
+ }
+table.mpwpb_service_list_services-table {
+    margin: 2px;
+    width: 99%;
+}
+table.mpwpb_service_list_services-table th
+ {
+    font-size: 14px !important;
+    background-color: #e1e1e1 !important;
+    text-transform: none;
+}
+.mpwpv_service_list_container .notice.notice-warning{display:none;}

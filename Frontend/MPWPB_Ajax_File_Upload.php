@@ -58,8 +58,8 @@ if (!class_exists('MPWPB_Ajax_File_Upload')) {
             }
             
             // Log the file upload
-            error_log('AJAX file upload started');
-            error_log('File data: ' . print_r($_FILES['file'], true));
+            // error_log('AJAX file upload started');
+            // error_log('File data: ' . print_r($_FILES['file'], true));
             
             // Check file size
             if ($_FILES['file']['size'] <= 0) {
@@ -78,7 +78,7 @@ if (!class_exists('MPWPB_Ajax_File_Upload')) {
             
             if ($movefile && !isset($movefile['error'])) {
                 $image_url = $movefile['url'];
-                error_log('File uploaded successfully via AJAX: ' . $image_url);
+                // error_log('File uploaded successfully via AJAX: ' . $image_url);
                 
                 // Store the file in the media library for better management
                 $filename = basename($movefile['file']);
@@ -95,7 +95,7 @@ if (!class_exists('MPWPB_Ajax_File_Upload')) {
                     require_once(ABSPATH . 'wp-admin/includes/image.php');
                     $attach_data = wp_generate_attachment_metadata($attach_id, $movefile['file']);
                     wp_update_attachment_metadata($attach_id, $attach_data);
-                    error_log('File added to media library with ID: ' . $attach_id);
+                    // error_log('File added to media library with ID: ' . $attach_id);
                 }
                 
                 // Return success response
@@ -106,7 +106,7 @@ if (!class_exists('MPWPB_Ajax_File_Upload')) {
                 ));
             } else {
                 $error = isset($movefile['error']) ? $movefile['error'] : 'Unknown error';
-                error_log('AJAX file upload failed: ' . $error);
+                // error_log('AJAX file upload failed: ' . $error);
                 wp_send_json_error(array('message' => $error));
             }
         }

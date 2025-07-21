@@ -29,19 +29,53 @@
 				$cpt = MPWPB_Function::get_cpt();
 				add_submenu_page('edit.php?post_type=' . $cpt, esc_html__('Staff Members', 'service-booking-manager'), esc_html__('Staff Members', 'service-booking-manager'), 'manage_options', 'mpwpb_staffs', array($this, 'mpwpb_staff_service'));
 			}
+
+            public function save_custom_user_profile_image( $user_id ) {
+                $profile_image = isset( $_POST['mpwpb_custom_profile_image'] ) ? sanitize_text_field( $_POST['mpwpb_custom_profile_image'] ) : '';
+                update_user_meta( $user_id, 'mpwpb_custom_profile_image', intval( $profile_image ) );
+            }
+
+            public static function get_custom_user_profile_image ( $user_id, $size = 'thumbnail', $class_name = '' ) {
+                $attachment_id = get_user_meta( $user_id, 'mpwpb_custom_profile_image', true);
+                if ( $attachment_id ) {
+                   $image = wp_get_attachment_image($attachment_id, $size, false, ['class' => $class_name ] );
+                } else {
+                    $image =  get_avatar( $user_id, 70); // fallback to default avatar
+                }
+
+                return $image;
+            }
+            public function custom_user_profile_image_field( $user_id ) {
+                $image_url = esc_url( wp_get_attachment_url( get_user_meta( $user_id, 'mpwpb_custom_profile_image', true) ) );
+                ?>
+                <h3><?php esc_html_e('Profile Image', 'service-booking-manager'); ?></h3>
+                <table class="form-table">
+                    <tr>
+                        <th><label for="mpwpb_custom_profile_image"><?php esc_html_e('Upload Image', 'service-booking-manager'); ?></label></th>
+                        <td>
+                            <input type="hidden" name="mpwpb_custom_profile_image" id="mpwpb_custom_profile_image" value="<?php echo esc_attr(get_user_meta( $user_id, 'mpwpb_custom_profile_image', true)); ?>" />
+                            <img src="<?php echo esc_attr( $image_url );?>" id="mpwpb_custom_profile_image_preview" style="width:100px;height:auto;" />
+                            <br/>
+                            <input type="button" class="button" value="<?php esc_attr_e('Upload Image', 'service-booking-manager'); ?>" id="upload_profile_image_button" />
+                            <input type="button" class="button" value="<?php esc_attr_e('Remove Image', 'service-booking-manager'); ?>" id="remove_profile_image_button" />
+                        </td>
+                    </tr>
+                </table>
+                <?php
+            }
 			public function mpwpb_staff_service() {
 				$this->save_staff();
 				?>
                 <div class="wrap">
                     <div class="mpwpb_style mpwpb_staff_page">
                         <div class="_dLayout_dShadow_1">
-                            <div class="mpwpb_tabs">
+                            <div class="mpwpb_staff_tabs">
                                 <div class="tabLists">
                                     <div class="buttonGroup">
-                                        <button class="_mpBtn " data-tabs-target="#mpwpb_staff_list" type="button" title="<?php esc_attr_e('Staff Lists', 'service-booking-manager'); ?>">
+                                        <button class="_mpBtn " data-staff-tabs-target="#mpwpb_staff_list" type="button" title="<?php esc_attr_e('Staff Lists', 'service-booking-manager'); ?>">
                                             <span class="fas fa-users"></span><?php esc_html_e('Staff Lists', 'service-booking-manager'); ?>
                                         </button>
-                                        <button class="_mpBtn mpwpb_add_new_staff" type="button" data-tabs-target="#mpwpb_add_new_staff" title="<?php esc_attr_e('Add New Staff', 'service-booking-manager'); ?>">
+                                        <button class="_mpBtn mpwpb_add_new_staff" type="button" data-staff-tabs-target="#mpwpb_add_new_staff" title="<?php esc_attr_e('Add New Staff', 'service-booking-manager'); ?>">
                                             <span class="fas fa-plus-square"></span><?php esc_html_e('Add/Update Staff', 'service-booking-manager'); ?>
                                         </button>
                                     </div>
@@ -75,6 +109,7 @@
                         <thead>
                         <tr>
                             <th class="_w_50"><?php esc_html_e('SI.', 'service-booking-manager'); ?></th>
+                            <th><?php esc_html_e('User Image', 'service-booking-manager'); ?></th>
                             <th><?php esc_html_e('User Name', 'service-booking-manager'); ?></th>
                             <th><?php esc_html_e('Staff Name', 'service-booking-manager'); ?></th>
                             <th><?php esc_html_e('Staff Email', 'service-booking-manager'); ?></th>
@@ -82,9 +117,12 @@
                         </tr>
                         </thead>
                         <tbody>
-						<?php foreach ($all_staffs as $staff) { ?>
+						<?php foreach ($all_staffs as $staff) {
+                            $staff_img = $this->get_custom_user_profile_image ( $staff->ID,'thumbnail', 'mpwpb_staff_image' );
+                            ?>
                             <tr>
                                 <th><?php echo esc_html($count . '.'); ?></th>
+                                <td class="mpwpb_staff_image_holder"><?php echo wp_kses_post($staff_img); ?></td>
                                 <td><?php echo esc_html($staff->user_login); ?></td>
                                 <td>                                    <?php echo esc_html($staff->display_name); ?>                                </td>
                                 <td><?php echo esc_html($staff->user_email); ?></td>
@@ -121,6 +159,8 @@
 					$staff_email = $user_id ? $user_info->user_email : '';
 					$staff_first_name = $user_id ? $user_info->first_name : '';
 					$staff_last_name = $user_id ? $user_info->last_name : '';
+
+                    $approve_holiday_modify = get_user_meta( $user_id, 'mpwpb_staff_modify_holiday', true);
 					//echo '<pre>'; print_r($user_info); echo '</pre>';
 					?>
                     <form action="" method="post">
@@ -163,6 +203,20 @@
                                     <span class="fas fa-user _w_200"><?php esc_html_e('Staff Last Name', 'service-booking-manager'); ?></span>
                                     <input type="text" class="formControl mpwpb_name_validation" name="mpwpb_staff_last_name" value="<?php echo esc_attr($staff_last_name); ?>" placeholder="<?php esc_html_e('Please Type Staff Last Name.....', 'service-booking-manager'); ?>"/>
                                 </label>
+
+                                <label class="_mT_xs">
+                                    <span class="fas fa-user _w_200"><?php esc_html_e('Staff Modify Holiday', 'service-booking-manager'); ?></span>
+                                    <select name="mpwpb_staff_modify_holiday" class="mpwpb_staff_modify_holiday">
+                                        <option value="no" <?php echo ($approve_holiday_modify === 'no') ? 'selected' : ''; ?>>No</option>
+                                        <option value="yes" <?php echo ($approve_holiday_modify === 'yes') ? 'selected' : ''; ?>>Yes</option>
+                                    </select>
+                                </label>
+
+                                <?php
+                                // Show upload field in user profile (backend)
+                                wp_kses_post( $this->custom_user_profile_image_field( $user_id ) );
+                                ?>
+
                             </div>
                             <div class="col_7 _borL_pL">
                                 <h4><?php esc_html_e('Staff Schedule', 'service-booking-manager'); ?></h4>
@@ -353,6 +407,7 @@
                 </div>
 				<?php
 			}
+
 			//*****************************//
 			public function time_slot_tr($user_id, $day) {
 				$start_name = 'mpwpb_' . $day . '_start_time';
@@ -534,6 +589,7 @@
 				if ($user_id) {
 					$first_name = isset($_POST['mpwpb_staff_first_name']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_staff_first_name'])) : '';
 					$last_name = isset($_POST['mpwpb_staff_last_name']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_staff_last_name'])) : '';
+					$modify_holiday = isset($_POST['mpwpb_staff_modify_holiday']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_staff_modify_holiday'])) : '';
 					$userinfo = array(
 						'ID' => $user_id,
 						'first_name' => $first_name,
@@ -543,6 +599,7 @@
 					wp_update_user($userinfo);
 					$date_type = isset($_POST['mpwpb_date_type']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_date_type'])) : 'repeated';
 					update_user_meta($user_id, 'date_type', $date_type);
+					update_user_meta($user_id, 'mpwpb_staff_modify_holiday', $modify_holiday);
 					//**********************//
 					$particular_dates = isset($_POST['mpwpb_particular_dates']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_particular_dates'])) : [];
 					$particular = array();
@@ -567,7 +624,7 @@
 						$this->save_schedule($user_id, $key);
 					}
 					//**********************//
-					$off_days = isset($_POST['mpwpb_off_days']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_off_days'])) : [];
+					$off_days = isset($_POST['mpwpb_off_days']) ? $_POST['mpwpb_off_days'] : [];
 					update_user_meta($user_id, 'mpwpb_off_days', $off_days);
 					//**********************//
 					$off_dates = isset($_POST['mpwpb_off_dates']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_off_dates'])) : [];
@@ -580,6 +637,8 @@
 						}
 					}
 					update_user_meta($user_id, 'mpwpb_off_dates', $_off_dates);
+
+                    $this->save_custom_user_profile_image( $user_id );
 				}
 			}
 			public function save_schedule($user_id, $day) {

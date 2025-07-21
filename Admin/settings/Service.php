@@ -215,6 +215,10 @@
                                 <input type="number" name="service_price" placeholder="10">
                             </label>
                             <label>
+                                <?php esc_html_e('Service Unit', 'service-booking-manager'); ?>
+                                <input type="text" name="service_unit" placeholder="sqft/piece">
+                            </label>
+                            <label>
 								<?php esc_html_e('Duration', 'service-booking-manager'); ?>
                                 <input type="text" name="service_duration" placeholder="10min">
                             </label>
@@ -246,13 +250,13 @@
                             </div>
                             <div class="mpwpb_service_save_button">
                                 <p>
-                                    <button id="mpwpb_service_save" class="button button-primary button-large"><?php esc_html_e('Save', 'service-booking-manager'); ?></button>
-                                    <button id="mpwpb_service_save_close" class="button button-primary button-large">save close</button>
+                                    <button id="mpwpb_service_save" class="button button-primary button-large mpwpb_service_save_close"><?php esc_html_e('Save', 'service-booking-manager'); ?></button>
+                                    <button id="mpwpb_service_save_close" class="button button-primary button-large mpwpb_service_save_close">save close</button>
                                 <p>
                             </div>
                             <div class="mpwpb_service_update_button" style="display: none;">
                                 <p>
-                                    <button id="mpwpb_service_update" class="button button-primary button-large"><?php esc_html_e('Update and Close', 'service-booking-manager'); ?></button>
+                                    <button id="mpwpb_service_update" class="button button-primary button-large mpwpb_service_save"><?php esc_html_e('Update and Close', 'service-booking-manager'); ?></button>
                                 <p>
                             </div>
                         </div>
@@ -330,6 +334,8 @@
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
 				}
+
+
 				$post_id = isset($_POST['service_postID']) ? sanitize_text_field(wp_unslash($_POST['service_postID'])) : '';
 				$services = $this->get_services($post_id);
 				$services = !empty($services) ? $services : [];
@@ -346,6 +352,7 @@
 				}
 				$parent_cat = '';
 				$sub_cat = '';
+                $service_category_status = isset( $_POST['service_category_status'] ) ? sanitize_text_field( wp_unslash( $_POST['service_category_status'] ) ) : '';
 				if (isset($_POST['service_category_status']) && sanitize_text_field(wp_unslash($_POST['service_category_status'])) == 'on') {
 					$parent_cat = isset($_POST['service_parent_cat'])?sanitize_text_field(wp_unslash($_POST['service_parent_cat'])):'';
 					$sub_cat = isset($_POST['service_sub_cat'])?sanitize_text_field(wp_unslash($_POST['service_sub_cat'])):'';
@@ -353,6 +360,7 @@
 				$new_data = [
 					'name' => isset($_POST['service_name'])?sanitize_text_field(wp_unslash($_POST['service_name'])):'',
 					'price' =>isset($_POST['service_price'])? sanitize_text_field(wp_unslash($_POST['service_price'])):'',
+					'service_unit' =>isset($_POST['service_unit'])? sanitize_text_field(wp_unslash($_POST['service_unit'])):'',
 					'duration' => isset($_POST['service_duration'])?sanitize_text_field(wp_unslash($_POST['service_duration'])):'',
 					'details' => isset($_POST['service_description'])?sanitize_text_field(wp_unslash($_POST['service_description'])):'',
 					'icon' => $iconClass,
@@ -362,7 +370,28 @@
 					'sub_cat' => $sub_cat,
 				];
 				array_push($services, $new_data);
-				
+
+                $matched_subcategories = [];
+                $all_sub_category = $all_sub_category ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_sub_category_service', array());
+                if( is_array( $all_sub_category ) && !empty( $all_sub_category ) ) {
+                    $matched_subcategories = array_filter($all_sub_category, function ($item) use ($parent_cat) {
+                        return $item['cat_id'] == $parent_cat;
+                    });
+                }
+                $count_sub_cat = count( $matched_subcategories );
+                if( $service_category_status === 'on' && $count_sub_cat > 0 &&  $parent_cat !== '' && $sub_cat === '' ){
+                    $resultMessage = esc_html__('This parent category contains subcategories. Please add this service under one of the subcategories.', 'service-booking-manager');
+                    $this->get_all_service_items($post_id);
+                    $html_output = ob_get_clean();
+                    wp_send_json_success([
+                        'message' => $resultMessage,
+                        'status' => false,
+                        'color' => '#f7430a',
+                        'html' => $html_output,
+                    ]);
+                    die;
+                }
+
 				update_post_meta($post_id, 'mpwpb_service', $services);
 				ob_start();
 				$resultMessage = esc_html__('Data Updated Successfully', 'service-booking-manager');
@@ -370,6 +399,8 @@
 				$html_output = ob_get_clean();
 				wp_send_json_success([
 					'message' => $resultMessage,
+                    'status' => true,
+                    'color' => '#303030',
 					'html' => $html_output,
 				]);
 				die;

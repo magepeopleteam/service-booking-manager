@@ -18,6 +18,11 @@
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Woocommerce.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Wc_Checkout_Fields_Helper.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Static_Template.php';
+				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_User_Dashboard.php';
+				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Waiting_List.php';
+				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Recurring_Booking.php';
+				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Staff_Booking.php';
+
 			}
 			public function load_single_template( $template ): string {
 				global $post;

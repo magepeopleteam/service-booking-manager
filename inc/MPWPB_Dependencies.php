@@ -20,11 +20,13 @@
 				load_plugin_textdomain('service-booking-manager', false, $plugin_dir);
 			}
 			private function load_file(): void {
+                require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Service_List.php';
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Function.php';
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Query.php';
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Layout.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Admin.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Frontend.php';
+
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Form_Hook.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Checkout_Form_Modifier.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Direct_Form_Modifier.php';
@@ -46,15 +48,37 @@
 					update_option( 'mpwpb_license_settings', $license_settings );
 					update_option( 'mpwpb_conflict_update', 'completed' );
 				}
+
 			}
 			public function global_enqueue() {
 				do_action('add_mpwpb_common_script');
+
+                self::staff_dashboard_enqueue_scripts();
 			}
+
+            public static function staff_dashboard_enqueue_scripts() {
+                $current_user = wp_get_current_user();
+                if (in_array('mpwpb_staff', $current_user->roles)) {
+
+                    wp_enqueue_script('jquery-ui-sortable');
+                    // your script depends on jQuery UI
+                    wp_enqueue_style('mpwpb-user-dashboard', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_user_dashboard.css', array(), time());
+                    wp_enqueue_script('mpwpb-user-dashboard', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_user_dashboard.js', array('jquery'), time(), true);
+                    wp_localize_script('mpwpb-user-dashboard', 'mpwpb_dashboard', array(
+                        'ajaxurl' => admin_url('admin-ajax.php'),
+                        'nonce' => wp_create_nonce('mpwpb_dashboard_nonce'),
+                        'cancel_confirm' => esc_html__('Are you sure you want to cancel this booking?', 'service-booking-manager'),
+                        'reschedule_confirm' => esc_html__('Are you sure you want to reschedule this booking?', 'service-booking-manager')
+                    ));
+                }
+            }
 			public function admin_scripts() {
 				$this->global_enqueue();
 				// ****custom************//
 				wp_enqueue_style('mpwpb_admin', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_admin.css', [], time());
 				wp_enqueue_style('admin_style', MPWPB_PLUGIN_URL . '/assets/admin/admin_style.css', [], time());
+                wp_enqueue_style('mpwpb_service_list', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_service_list.css', [], time());
+                wp_enqueue_style('mpwpb_staff_member', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_staff_member.css', [], time());
 				wp_enqueue_script('mpwpb_admin', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_admin.js', ['jquery'], time(), true);
 				wp_localize_script('mpwpb_admin', 'mpwpb_admin_ajax', array(
 					'ajax_url' => admin_url('admin-ajax.php'),

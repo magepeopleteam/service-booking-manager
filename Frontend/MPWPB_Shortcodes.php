@@ -12,6 +12,7 @@
 				add_shortcode('service-booking', array($this, 'service_booking'));
 			}
 			public function service_booking($attribute) {
+                $shortcode = 'yes';
 				ob_start();
 				$defaults = array(
 					'post_id' => '',

@@ -130,12 +130,12 @@
 	div.mpwpb_style h3,
 	div.mpwpb_style [class*="_fs_h3"] { font-size: var(--mpwpb_fs_h3); font-weight: var(--mpwpb_fw-medium); }
 	div.mpwpb_style h4,
-	div.mpwpb_style [class*="_fs_h4"] { font-size: var(--mpwpb_fs_h4); font-weight: var(--mpwpb_fw-medium); text-transform: inherit;}
+	div.mpwpb_style [class*="_fs_h4"] { font-size: var(--mpwpb_fs_h4); font-weight: var(--mpwpb_fw-medium); text-transform: inherit; padding-bottom:10px;}
 	div.mpwpb_style h5,
 	div.mpwpb_style [class*="_fs_h5"] { font-size: var(--mpwpb_fs_h5); font-weight: var(--mpwpb_fw-medium); text-transform: inherit;}
 	div.mpwpb_style h6,
 	div.mpwpb_style [class*="_fs_h6"] { font-size: var(--mpwpb_fs_h6); font-weight: var(--mpwpb_fw-normal); text-transform: inherit;}
-	div.mpwpb_style label,div.mpwpb_style [class*="_fs_label"]{ font-size: var(--mpwpb_fs_label); font-weight: var(--mpwpb_fw-medium); }
+	div.mpwpb_style label,div.mpwpb_style [class*="_fs_label"]{ font-size: var(--mpwpb_fs_label); font-weight: var(--mpwpb_fw-medium); margin-bottom:10px; }
 	div.mpwpb_style .fs_50, div.mpwpb_style [class*="_fs_50"] {font-size: 50px;font-weight: var(--mpwpb_fw-medium);}
 }
 /******************************************************************** Flex Section ************************************************/
@@ -211,6 +211,10 @@
 }
 /******************************************************************** Radios Section************************************************/
 @media only screen and (min-width: 10px) {
+	.mpwpb_service_cart_holder{
+		display: flex;
+		flex-direction: row
+	}
 	.mpwpb_style img,
 	.mpwpb_style [class*="dButton"], .mpwpb_style button,
 	div.filter_item,
@@ -327,7 +331,7 @@
 	.mpwpb_style .zeroBorder, .mpwpb_style [class*="_zeroBorder"] { border: none; }
 	/**************/
 	.mpwpb_style .padZero, .mpwpb_style span.padZero, .mpwpb_style [class*="_pad_zero"] { padding: 0; }
-	.mpwpb_style .padding, .mpwpb_style [class*="_padding"] { padding: var(--mpwpb_dmp); }
+	/* .mpwpb_style .padding, .mpwpb_style [class*="_padding"] { padding: var(--mpwpb_dmp); } */
 	.mpwpb_style .padding_xs, .mpwpb_style [class*="_padding_xs"] { padding: var(--mpwpb_dmp_xs); }
 	.mpwpb_style .pad_25, .mpwpb_style [class*="_pad_25"] { padding: 25px; }
 	.mpwpb_style .pT, .mpwpb_style [class*="_pT"] { padding-top: var(--mpwpb_dmp); }
@@ -780,7 +784,7 @@
 	.mpwpb_style .dLayout, .mpwpb_style [class*="_dLayout"] { padding: var(--mpwpb_dmp); margin-bottom: var(--mpwpb_dmp); background-color: var(--mpwpb_color_white); border: 1px solid var(--mpwpb_color_border); }
 	.mpwpb_style .dLayout_xs, .mpwpb_style [class*="_dLayout_xs"] { padding: var(--mpwpb_dmp_xs); background-color: var(--mpwpb_color_white); border: 1px solid var(--mpwpb_color_border); margin-bottom: var(--mpwpb_dmp_xs); }
 	/***********info***********/
-	.mpwpb_style .infoLayout, .mpwpb_style [class*="_infoLayout"] { padding: var(--mpwpb_dmp); background-color: var(--mpwpb_color_light); margin-bottom: var(--mpwpb_dmp); }
+	.mpwpb_style .infoLayout, .mpwpb_style [class*="_infoLayout"] { padding: var(--mpwpb_dmp); margin-bottom: var(--mpwpb_dmp); border-right: 1px solid #ebe8e8}
 	.mpwpb_style .infoLayout_xs, .mpwpb_style [class*="_infoLayout_xs"] { padding: var(--mpwpb_dmp_xs); margin-bottom: var(--mpwpb_dmp_xs); }
 }
 /******************************************************************** position Section************************************************/
@@ -839,7 +843,7 @@
 		background-image: url('../images/arrow_down.png');background-repeat: no-repeat;background-position: calc(100% - var(--mpwpb_dmp_xs));background-size: auto;
 		-webkit-appearance: none; padding: var(--mpwpb_dmp_xs) 35px var(--mpwpb_dmp_xs) var(--mpwpb_dmp_xs);
 	}
-	div.mpwpb_style select.formControl:focus { background-color: var(--mpwpb_color_theme_aa); }
+	/*div.mpwpb_style select.formControl:focus { background-color: var(--mpwpb_color_theme_aa); }*/
 	div.mpwpb_style .formControl.date_type_without_year,
 	div.mpwpb_style .formControl.date_type,
 	div.mpwpb_style .formControl[type='date'] {
@@ -1075,11 +1079,11 @@
 @media only screen and (min-width: 10px) {
 	div.mpwpb_style .mpPanel ,
 	div.mpwpb_style .mpPanel_xs{ position: relative; border: 1px solid var(--mpwpb_color_border); border-radius: var(--mpwpb_dbr); }
-	div.mpwpb_style .mpPanelHeader { padding: 10px var(--mpwpb_dmp); background-color: #555; color: #FFF;border-radius: var(--mpwpb_dbr) var(--mpwpb_dbr) 0 0; }
+	div.mpwpb_style .mpPanelHeader { padding: 15px var(--mpwpb_dmp); background-color: #f8fafc; color: #FFF;border-radius: var(--mpwpb_dbr) var(--mpwpb_dbr) 0 0; }
 
 	div.mpwpb_style .mpPanelHeader .panelTitle,
 	div.mpwpb_style .mpPanelHeader .panelTitle span { color: #FFF; }
-	div.mpwpb_style .mpPanelBody { padding: var(--mpwpb_dmp); background-color: var(--mpwpb_color_3); overflow-x: auto;border-radius: 0 0 var(--mpwpb_dbr) var(--mpwpb_dbr); }
+	div.mpwpb_style .mpPanelBody { padding: var(--mpwpb_dmp); background-color:  #FFF; overflow-x: auto;border-radius: 0 0 var(--mpwpb_dbr) var(--mpwpb_dbr); }
 
 	div.mpwpb_style .mpPanel_xs .mpPanelHeader,
 	div.mpwpb_style .mpPanel_xs .mpPanelBody{padding: var(--mpwpb_dmp_xs); }
@@ -1097,9 +1101,9 @@
 /******************************************************************** Popup section ************************************************/
 @media only screen and (min-width: 10px) {
 	[data-target-popup] { cursor: pointer; }
-	div.mpwpb_popup { display: none; position: fixed; left: 0; right: 0; top: 0; bottom: 0; z-index: 111111; overflow: hidden; background: #000C; }
+	div.mpwpb_popup { display: none; position: fixed; left: 0; right: 0; top: 0; bottom: 0; z-index: 999; overflow: hidden; background: #000C; }
 	div.mpwpb_popup .mpwpb_popup_main_area {
-		min-width: 500px; max-width: 700px; width: auto; min-height: 250px; max-height: 100vh; height: auto;
+		min-width: 500px; max-width: 700px; width: auto; min-height: 250px; max-height: 80vh; height: auto;
 		background-color: #FFF; border: 20px solid #444; position: relative;
 		display: -webkit-flex; display: flex;
 		-webkit-justify-content: space-between; justify-content: space-between;
@@ -1113,6 +1117,13 @@
 	div.mpwpb_popup .popupFooter { border-top: 4px double var(--mpwpb_color_border); padding: var(--mpwpb_dmp_xs); }
 	div.mpwpb_popup .dLayout, div.mpwpb_popup [class*='_dLayout'] { margin: 0; }
 }
+@media only screen and (max-width: 1024px) {
+
+	.mpwpb_service_cart_holder {
+		flex-direction: column;
+	}
+}
+
 /******************************************************************** Pagination section ************************************************/
 @media only screen and (min-width: 10px) {
 	div.mp_pagination_main_area .mp_pagination_item{position: relative;}

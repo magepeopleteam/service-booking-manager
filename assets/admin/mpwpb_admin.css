@@ -206,3 +206,230 @@
     margin: 0 var(--mpwpb_dmp_xs) 0 0;
   }
 }
+
+.category-service-area .category-container{
+    background: #f1f1f1;
+    padding: 5px;
+    padding-right: 7px !important;
+}
+.category-service-area .category-container .header button{border:#eee !important; border-radius:10px !important; background-color: #fff !important; }
+
+.mpwpb-category-lists .mpwpb-category-items .parent-category-items, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items{min-height: 40px !important; background-color: #fff !important; border:none !important;}
+
+.mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items{min-height: 40px !important; padding-right:10px !important;   background-color: #efefef !important; border:none !important;}
+.mpwpb-category-lists .mpwpb-category-items .parent-category-items .image-block i, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items .image-block i{ width:40px !important; font-size: 16px !important;background: none !important;}
+.mpwpb-category-lists .mpwpb-category-items .parent-category-items .action i, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items .action i{border:1px solid #ddd; border-radius:10px !important; color: var(--mage-primary) !important;}
+
+.category-service-area{border:5px solid #f1f1f1 !important; border-radius:10px !important; }
+.service-container{padding:10px;}
+
+button.button.mpwpb-extra-service-new, button.button.mpwpb-faq-item-new, button.button.mpwpb-service-new, button.button.mpwpb-category-new{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--mage-primary);;
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    margin-top: 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: var(--transition);
+}
+
+button.button.mpwpb-extra-service-new:hover, button.button.mpwpb-faq-item-new:hover, button.button.mpwpb-service-new:hover, button.button.mpwpb-category-new:hover{
+    background-color: var(--mage-primary);
+    opacity: 0.85;
+}
+
+
+.mpwpb_extra_service_settings table.table tbody tr td{text-align:left !important;}
+.button.button.mpwpb-category-new::before, button.button.mpwpb-service-new::before {
+    content: "+ ";
+    font-weight: bold; /* Optional */
+    margin-right: 4px;  /* Optional spacing */
+}
+.mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items {
+    margin-left: 25px !important;
+}
+.mpwpb-category-lists .mpwpb-category-items .parent-category-items{padding:5px 10px !important}
+.service-container table.table thead tr th{background: #f1f1f1 !important;}
+.service-container table.table tbody tr td:first-child i{border:none !important; border-radius:10px;}
+
+.service-container table.table thead tr th {
+    color: #333 !important;
+    text-align: left !important;
+    border-bottom: 2px solid #ddd !important;
+}
+
+/* Odd row styling */
+.service-container table.table tbody tr:nth-child(odd) {
+    background-color: #ffffff !important;
+}
+
+/* Even row styling */
+.service-container table.table tbody tr:nth-child(even) {
+    background-color: #f9f9f9 !important;
+}
+
+/* Hover effect on rows */
+.service-container table.table tbody tr:hover {
+    background-color: #e6f7ff !important;
+    cursor: pointer !important;
+}
+
+/* Optional: td styling for spacing */
+.service-container table.table tbody tr td {
+    border-bottom: 1px solid #eee !important;
+}
+
+
+/* Odd row styling */
+.mpwpb_extra_service_settings table.table tbody tr:nth-child(odd), .service-container table.table tbody tr:nth-child(odd) {
+    background-color: #ffffff !important;
+}
+
+/* Even row styling */
+.mpwpb_extra_service_settings table.table tbody tr:nth-child(even), .service-container table.table tbody tr:nth-child(even) {
+    background-color: #f9f9f9 !important;
+}
+
+/* Hover effect on rows */
+.mpwpb_extra_service_settings table.table tbody tr:hover, .service-container table.table tbody tr:hover {
+    background-color: #e6f7ff !important;
+    cursor: pointer !important;
+}
+
+/* Optional: td styling for spacing */
+.mpwpb_extra_service_settings table.table tbody tr td, .service-container table.table tbody tr td {
+    border-bottom: 1px solid #eee !important;
+}
+
+#mp_meta_box_panel table.table thead tr th {
+    background: #f1f1f1 !important;
+}
+#mp_meta_box_panel table.table tbody tr td:first-child i{width:40px !important; border:none !important;}
+.mpwpb-faq-items section.faq-header {
+    background: #f7f7f9;
+}
+
+.mp_settings_area .formControl
+ {
+  width: 99% !important;  
+  min-height: 40px !important;
+}
+#mp_meta_box_panel .metabox .tabsContent section label.label input, #mp_meta_box_panel .metabox .tabsContent section label.label select, #mp_meta_box_panel .metabox .tabsContent section label.label textarea
+ {
+    min-height: 40px !important;
+    background: #f5f8ff !important;
+}
+.date-time-schedule .date-time-container {
+    width: 25% !important;
+}
+#mp_meta_box_panel .mpwpb-faq-section .mpwpb-faq-item{margin-top:10px;}
+#mp_meta_box_panel .metabox .tabsContent section.section
+ {
+    border-radius: 10px 10px 0 0;
+}
+
+.date-time-schedule .date-time-container label input, .date-time-schedule .date-time-container label select
+ {
+    border: 1px solid #dbdada;
+    background: #f5f8ff !important;
+    min-height: 40px;
+    border-radius: 5px;
+}
+#mp_meta_box_panel .metabox .tabsContent{background: #eaeaef; padding:2% !important; }
+#mp_meta_box_panel .metabox .tabsContent section
+ {
+    background: #fff;
+}
+#mp_meta_box_panel .metabox .tabsContent section.section
+ {
+    background-color: #f4fdfc !important;
+    border: 1px solid #e1dbdb;
+    margin-bottom: 1px;
+}
+input[type=color], input[type=date], input[type=datetime-local], input[type=datetime], input[type=email], input[type=month], input[type=number], input[type=password], input[type=search], input[type=tel], input[type=text], input[type=time], input[type=url], input[type=week], select, textarea
+ {
+    border: 1px solid #ddd !important;
+}
+.date-time-schedule .date-time-container {
+    background: #f1f1f1;
+    padding: 20px;
+    border-radius:10px;
+}
+#mp_meta_box_panel .metabox .tabsContent section .date-time-schedule section
+ {
+    background-color: #f1f1f1 !important;
+    border:none !important;
+}
+.date-time-schedule .schedule-container {
+    width: 74% !important;
+    border: 1px solid #eee;
+    padding: 20px;
+    border-radius: 10px;
+}
+section.faq-header
+ {
+    background: #f1f1f1 !important;
+    border-radius: 10px;
+}
+.category-service-area .category-container .header button {
+    border: 1px solid #e5dede !important;
+}
+.mpwpb-category-lists .mpwpb-category-items .parent-category-items, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items {
+   border: 2px solid #f1e8e8 !important;
+   border-radius: 5px;
+}
+.mpwpb_style .themeButton, .mpwpb_style [class*=_themeButton]
+ {
+    border-radius: 5px !important;
+    margin-right:5px; 
+}
+
+.mpwpb_style .mpwpb_category_tab_active{
+    /*background-color: var(--mage-primary) !important;*/
+    color: var(--mage-primary) !important;
+}
+
+.mpwpb-modal-container .mpwpb-modal-content input[type=text], .mpwpb-modal-container .mpwpb-modal-content input[type=number], .mpwpb-modal-container .mpwpb-modal-content textarea, .mpwpb-modal-container .mpwpb-modal-content select {
+    width: 100%;
+    border: 2px solid #e5e7eb;
+    display: block;
+    font-weight: normal;
+    padding: 10px;
+    font-size: 18px;
+    border-radius:8px;
+}
+.mpwpb-modal-container .mpwpb-modal-content input[type=color], .mpwpb-modal-container .mpwpb-modal-content input[type=date], .mpwpb-modal-container .mpwpb-modal-content input[type=datetime-local], .mpwpb-modal-container .mpwpb-modal-content input[type=datetime], .mpwpb-modal-container .mpwpb-modal-content input[type=email], .mpwpb-modal-container .mpwpb-modal-content input[type=month], .mpwpb-modal-container .mpwpb-modal-content input[type=number], .mpwpb-modal-container .mpwpb-modal-content input[type=password], .mpwpb-modal-container .mpwpb-modal-content input[type=search], .mpwpb-modal-container .mpwpb-modal-content input[type=tel], .mpwpb-modal-container .mpwpb-modal-content input[type=text], .mpwpb-modal-container .mpwpb-modal-content input[type=time], .mpwpb-modal-container .mpwpb-modal-content input[type=url], .mpwpb-modal-container .mpwpb-modal-content input[type=week], .mpwpb-modal-container .mpwpb-modal-content select, .mpwpb-modal-container .mpwpb-modal-content textarea
+ {
+    border: 2px solid #e5e7eb !important;
+}
+
+.mpwpb-modal-container .mpwpb-modal-content .mActive {
+  background: #20cb8424;
+  padding: 20px;
+  border-radius: 20px;
+  position: relative;
+  margin-bottom: 42px; /* 20px (to line) + 2px (line height) + 20px (below line) */
+}
+.category-container .mpwpb-category-lists {
+    background: #fff;
+    margin-bottom: 20px;
+    padding: 5px;
+    border-radius: 5px;
+}
+.mpwpb-category-lists .mpwpb-category-items .parent-category-items:hover,
+.mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items:hover {
+  background-color: #f0f0f0; /* light grey background on hover */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  transform: scale(1.02); /* slight zoom effect */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* subtle shadow */
+}
+.category-service-area .category-container .header
+ {
+    border-radius: 8px;
+}

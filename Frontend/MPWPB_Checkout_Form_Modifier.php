@@ -57,8 +57,8 @@ if (!class_exists('MPWPB_Checkout_Form_Modifier')) {
          */
         public function modify_checkout_posted_data($data) {
             // Log the posted data
-            error_log('WooCommerce checkout posted data: ' . print_r($data, true));
-            error_log('FILES data: ' . print_r($_FILES, true));
+            // error_log('WooCommerce checkout posted data: ' . print_r($data, true));
+            // error_log('FILES data: ' . print_r($_FILES, true));
             
             // Return the data unchanged
             return $data;

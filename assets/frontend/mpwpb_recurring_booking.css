@@ -1,0 +1,438 @@
+/* Recurring Booking Styles */
+.mpwpb_recurring_booking_area {
+    margin-top: 10px;
+    padding: 0px 15px;
+    background-color: var(--mpwpb_color_light);
+    border-radius: 5px;
+    clear: both;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.mpwpb_recurring_booking header {
+    margin-bottom: 5px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.mpwpb_recurring_toggle {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    gap: 20px;
+}
+
+.mpwpb_recurring_toggle label {
+    margin-left: 10px;
+    font-weight: 500;
+}
+
+/* Toggle Switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+.slider.round {
+    border-radius: 24px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+/* Recurring Settings */
+.mpwpb_recurring_settings {
+    padding: 0px;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+.mpwpb_recurring_type,
+.mpwpb_recurring_count {
+    margin-bottom: 15px;
+}
+.mpwpb_recurring_type{margin-top:10px; }
+
+.mpwpb_recurring_type label,
+.mpwpb_recurring_count label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.mpwpb_recurring_type select,
+.mpwpb_recurring_count input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.mpwpb_recurring_count p.description {
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+}
+
+.mpwpb_recurring_discount {
+    background-color: #e9f7ef;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.mpwpb_recurring_dates {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed #ddd;
+}
+
+.mpwpb_recurring_dates h4 {
+    margin-bottom: 10px;
+}
+
+#mpwpb_recurring_dates_list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#mpwpb_recurring_dates_list li {
+    padding: 8px;
+    margin-bottom: 5px;
+    background-color: #f0f8ff;
+    border-radius: 4px;
+    border-left: 3px solid #2196F3;
+}
+
+#mpwpb_recurring_dates_list li:first-child {
+    background-color: #e6f7ff;
+    border-left: 3px solid #0078d7;
+    font-weight: bold;
+}
+
+.mpwpb_staff_member_booking_area{
+    /*margin-top: 20px;*/
+    /*padding: 15px;*/
+    /*background-color: #fff;*/
+    /*border-radius: 5px;*/
+    /*clear: both;*/
+    width: 100%;
+    box-sizing: border-box;
+}
+/*
+.mpwpb_staff_member_booking {
+    width: 100%;
+    max-width: 300px;
+    padding: 10px 15px;
+    font-size: 16px;
+    color: #333;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%23333' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px;
+    cursor: pointer;
+}
+
+.mpwpb_staff_member_booking:hover {
+    border-color: #888;
+}
+
+.mpwpb_staff_member_booking:focus {
+    outline: none;
+    border-color: #0073aa;
+    box-shadow: 0 0 0 3px rgba(0, 115, 170, 0.2);
+}*/
+
+.mpwpb_added_staff_holder {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-start;
+    padding: 5px;
+}
+
+.mpwpb_staff_card {
+    background-color: #ffffff;
+    border: 1px solid #e2e2e2;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    padding: 5px;
+    width: 110px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.mpwpb_staff_card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.mpwpb_staff_card img {
+    width: 100px !important;
+    height: 90px !important;
+    border-radius: 50% !important;
+    object-fit: cover;
+    border: 2px solid #ddd;
+    margin-bottom: 2px;
+}
+
+.mpwpb_staff_name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+.mpwpb_weekday_selector {
+    background-color: #fff;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 5px 0px 10px 0px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #e1dfdf;
+}
+.mpwpb_weekday_selector label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+
+
+
+
+/* Main list item */
+.mpwpb_recurring_days {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    margin: 6px 0;
+    background-color: #f9f9f9;
+    border-left: 4px solid #0073aa; /* optional highlight */
+    border-radius: 6px;
+    font-size: 15px;
+    font-family: Arial, sans-serif;
+    transition: background 0.2s ease;
+}
+.mpwpb_invalid_recurring_days {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    margin: 6px 0;
+    background-color: #efcec4 !important;
+    border-left: 4px solid #FF5722 !important; /* optional highlight */
+    border-radius: 6px;
+    font-size: 15px;
+    font-family: Arial, sans-serif;
+    transition: background 0.2s ease;
+    text-decoration: line-through;
+}
+.mpwpb_recurring_days:hover {
+    background-color: #eef6fa;
+}
+.mpwpb_recurring_actions {
+    display: flex;
+    gap: 10px;
+}
+.mpwpb_recurring_edit_icon,
+.mpwpb_recurring_delete_icon {
+    cursor: pointer;
+    font-size: 16px;
+    transition: transform 0.2s ease;
+}
+.mpwpb_recurring_edit_icon:hover {
+    color: #0073aa;
+    transform: scale(1.2);
+}
+.mpwpb_recurring_delete_icon:hover {
+    color: #d63638;
+    transform: scale(1.2);
+}
+
+
+.mpwpb_edit_recurring_datetime_popup {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.mpwpb_edit_recurring_datetime_overlay {
+    position: absolute;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+}
+.mpwpb_edit_recurring_datetime_modal {
+    position: relative;
+    background: #fff;
+    padding: 20px;
+    z-index: 10000;
+    width: 300px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    text-align: center;
+}
+.mpwpb_edit_recurring_datetime_timeslot_wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    justify-content: start;
+    margin: 15px 0;
+}
+.mpwpb_select_datetime_timeslot {
+    padding: 10px 12px;
+    background: #f0f0f0;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.mpwpb_selected_datetime_timeslot {
+    padding: 10px 12px;
+    background: #ebcfcf;
+    border-radius: 6px;
+    transition: 0.3s;
+    color: #fff;
+}
+.mpwpb_select_datetime_timeslot:hover {
+    background: #0073aa;
+    color: #fff;
+}
+.mpwpb_edit_recurring_datetime_input_wrap {
+    margin-bottom: 15px;
+}
+.mpwpb_edit_recurring_datetime_input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+.mpwpb_edit_recurring_datetime_close {
+    background: #d63638;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.mpwpb_recurring_datetime_set {
+    background: #03A9F4;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.mpwpb_edit_recurring_datetime_close:hover {
+    background: #b32d2e;
+}
+
+.mpwpb_edit_date_btn_holder{
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+.mpwpb_selected_time{
+    background: #03A9F4;
+    color: #fff;
+}
+.mpwpb_recurring_time_holedr{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: start;
+}
+.mpwpb_seleted_date_text{
+    text-decoration: line-through;
+    color: #d9947e;
+}
+
+.mpwpb_style.mpwpb-static-template .sidebar .mpwpb_static_area
+ {
+    z-index: 999;
+}
+.mpwpb_service_button span{font-size:14px;}
+button.to-book.mpwpb_time_btn
+ {
+    font-size: 14px;
+    padding: 10px !important;
+}
+.mpwpb-popup-content .mpwpb_cart_progress_step.active{color: var(--mpwpb_color_theme_cc);}
+.mpwpb_cart_progress_wrapper .mpwpb_cart_progress_step.active .mpwpb_cart_progress_circle {background: var(--mpwpb_color_theme_cc);}
+button._mpBtn_dBR.mActive.mpwpb_service_next {font-size: 16px;}
+.mpwpb-static-template .sidebar [class*=_mpBtn]{font-size:16px !important;}
+.mpwpb_style .mpBtn, .mpwpb_style [class*="_mpBtn"], .mpwpb_style button{font-size:16px;}
+.mpwpb_extra_service_item span[data-text] {font-size: 12px;}
+.mpwpb_service_item ._equalChild span {font-size: 12px;}
+.mpwpb_item-template-default .mpwpb-static-template .sidebar .mpwpb_static_theme .mpwpb_popup .mpwpb_popup_main_area .mpwpb_popup_body .mpwpb-popup-content .service-items .mpwpb_category_section .mpwpb_sub_category_area {
+    margin-left: 0px;
+}
+input#mpwpb_recurring_count {
+    margin-bottom: 15px;
+}
+button.to-book.mpwpb_time_btn {
+    width: 18%;
+}
+select#mpwpb_recurring_type, input#mpwpb_recurring_count {
+    border-radius:5px;
+}
+div#mpwpb_recurring_booking_area {
+    padding-bottom: 5px;
+}
