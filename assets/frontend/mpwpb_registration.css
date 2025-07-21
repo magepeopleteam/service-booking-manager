@@ -1447,7 +1447,7 @@ div.registration_tab_item {
 }
 .mpwpb-static-template  .mpwpb_static_area .mpwpb_static .mp_title .ratings {
   background-color: #fff;
-  color: var(--mpwpb_color_theme_alter);
+  color: #333;
 }
 .mpwpb-static-template  .mpwpb_static_area .mpwpb_static .mpwpb_item_box {
   display: flex;
