@@ -749,39 +749,66 @@ function mpwpb_price_calculation($this) {
             $(this).find('i').toggleClass('fa-plus fa-minus');
         });
 
-        var staticArea = $('.mpwpb_static_area');
-        if (staticArea.length > 0) {
-            var staticOffset = staticArea.offset().top;
+        // var staticArea = $('.mpwpb_static_area');
+        // if (staticArea.length > 0) {
+        //     var staticOffset = staticArea.offset().top;
 
-            let width = $('#service-overview').width() + 150;
+        //     let width = $('#service-overview').width() + 150;
 
-            var windowWidth = $(window).width();
-            if( windowWidth > 1024 ) {
-                $(window).on('scroll', function () {
-                    var scrollTop = $(window).scrollTop();
+        //     var windowWidth = $(window).width();
+        //     if( windowWidth > 1024 ) {
+        //         $(window).on('scroll', function () {
+        //             var scrollTop = $(window).scrollTop();
 
 
-                    // if( windowWidth > 1024 ){
-                    if (scrollTop >= staticOffset) {
-                        staticArea.css({
-                            'position': 'fixed',
-                            'top': '7%',
-                            'left': width + 'px',
-                            'width': '400px',
-                            'z-index': '1'
-                        });
-                    } else {
-                        staticArea.css({
-                            'position': 'relative',
-                            'width': '400px',
-                            'left':'0',
-                        });
-                    }
-                    // }
+        //             // if( windowWidth > 1024 ){
+        //             if (scrollTop >= staticOffset) {
+        //                 staticArea.css({
+        //                     'position': 'fixed',
+        //                     'top': '7%',
+        //                     'left': width + 'px',
+        //                     'width': '400px',
+        //                     'z-index': '1'
+        //                 });
+        //             } else {
+        //                 staticArea.css({
+        //                     'position': 'relative',
+        //                     'width': '400px',
+        //                     'left':'0',
+        //                 });
+        //             }
+        //             // }
 
-                });
-            }
-        }
+        //         });
+        //     }
+        // }
     });
 }(jQuery));
 
+jQuery(document).ready(function($) {
+  const $static = $('.sidebar .mpwpb_static_area');
+  let fixed = false;
+  let originalOffset = $static.offset().top;
+  let originalLeft = $static.offset().left;
+  let originalWidth = $static.outerWidth();
+
+  $(window).on('scroll resize', function () {
+    const scrollY = $(window).scrollTop();
+
+    if (!fixed && scrollY >= originalOffset) {
+      $static.addClass('fixed').css({
+        'top': scrollY + "-20" + 'px',
+        'left': originalLeft + 'px',
+        'width': originalWidth + 'px'
+      });
+      fixed = true;
+    } else if (fixed && scrollY < originalOffset) {
+      $static.removeClass('fixed').css({
+        'top': '',
+        'left': '',
+        'width': ''
+      });
+      fixed = false;
+    }
+  });
+});
