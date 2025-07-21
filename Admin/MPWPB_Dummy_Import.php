@@ -1354,43 +1354,49 @@
 			public static function insert_media($file_path) {
 				$attachment = self::does_attachment_exist(basename($file_path));
 				if (empty($attachment)) {
-					// Load necessary WordPress files
+					// Load required files
 					require_once(ABSPATH . 'wp-admin/includes/file.php');
 					require_once(ABSPATH . 'wp-admin/includes/media.php');
 					require_once(ABSPATH . 'wp-admin/includes/image.php');
-					// Prepare the file
-					$file = array(
-						'name' => basename($file_path),
-						'type' => mime_content_type($file_path),
-						'tmp_name' => $file_path,
-						'error' => 0,
-						'size' => filesize($file_path),
-					);
-					// Handle file upload
-					$upload = wp_handle_sideload($file, array('test_form' => false));
-					if (isset($upload['error'])) {
-						return 'File upload failed: ' . $upload['error'];
+			
+					// Read file content
+					$filename = basename($file_path);
+					$file_content = file_get_contents($file_path);
+			
+					if ($file_content === false) {
+						return 'Failed to read file content.';
 					}
-					// Add the file to the media library
+			
+					// Upload a copy to WordPress uploads dir
+					$upload = wp_upload_bits($filename, null, $file_content);
+			
+					if ($upload['error']) {
+						return 'Upload error: ' . $upload['error'];
+					}
+			
+					// Create attachment
 					$attachment = array(
-						'post_mime_type' => $upload['type'],
-						'post_title' => sanitize_file_name(pathinfo($file_path, PATHINFO_FILENAME)),
-						'post_content' => '',
-						'post_status' => 'inherit',
+						'post_mime_type' => mime_content_type($upload['file']),
+						'post_title'     => sanitize_file_name(pathinfo($filename, PATHINFO_FILENAME)),
+						'post_content'   => '',
+						'post_status'    => 'inherit',
 					);
+			
 					$attachment_id = wp_insert_attachment($attachment, $upload['file']);
 					if (is_wp_error($attachment_id)) {
 						return 'Attachment insert failed: ' . $attachment_id->get_error_message();
 					}
-					// Generate metadata and update attachment
+			
+					// Generate and update metadata
 					$attachment_data = wp_generate_attachment_metadata($attachment_id, $upload['file']);
 					wp_update_attachment_metadata($attachment_id, $attachment_data);
-					$attachment = array(
-						'id' => $attachment_id,
+			
+					return [
+						'id'  => $attachment_id,
 						'url' => wp_get_attachment_url($attachment_id),
-					);
-					return $attachment;
+					];
 				}
+			
 				return $attachment;
 			}
 			public static function does_attachment_exist($filename) {
