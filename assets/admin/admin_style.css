@@ -283,8 +283,10 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
 }
 #mp_meta_box_panel .metabox .tabsContent section label.label {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  justify-content: start;
+  align-items: start;
+  gap:5px;
   cursor: pointer;
   font-weight: normal;
   color: var(--mage-black);
@@ -297,7 +299,7 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   color: var(--mage-black);
 }
 #mp_meta_box_panel .metabox .tabsContent section label.label input, #mp_meta_box_panel .metabox .tabsContent section label.label select, #mp_meta_box_panel .metabox .tabsContent section label.label textarea {
-  width: 360px;
+  width: 100%;
 }
 #mp_meta_box_panel .metabox .tabsContent section label.label span {
   font-size: 14px;
@@ -597,7 +599,11 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   border-radius: 0;
   margin: 1px;
 }
-
+  div.mpwpb_style .customCheckboxLabel input:checked ~ .customCheckbox::after{
+    border: 2px solid #fff;
+    border-top: none;
+    border-right: none;
+  }
 .date-time-schedule {
   display: flex;
   justify-content: start;
@@ -605,6 +611,8 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
 }
 .date-time-schedule .header {
   margin-bottom: 20px;
+  padding: 10px;
+  border-radius: 5px;
 }
 .date-time-schedule .header h3 {
   font-weight: 600;
@@ -615,7 +623,6 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
 .date-time-schedule .date-time-container {
   width: 40%;
   border-right: 1px solid var(--mage-border);
-  padding-right: 20px;
 }
 .date-time-schedule .date-time-container label {
   display: flex;

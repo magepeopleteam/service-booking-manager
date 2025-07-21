@@ -26,40 +26,32 @@
                         <h2><?php esc_html_e('General Information Settings', 'service-booking-manager'); ?></h2>
                         <span><?php MPWPB_Settings::info_text('mpwpb_short_code'); ?></span>
                     </section>
-                    <section>
+                    <section class="shortcode">
                         <label class="label">
                             <div>
                                 <p><?php esc_html_e('Add To Cart Form Shortcode', 'service-booking-manager'); ?></p>
-                                <span><?php MPWPB_Settings::info_text('mpwpb_short_code'); ?></span>
+                                
                             </div>
                             <code> [service-booking post_id="<?php echo esc_html($post_id); ?>"]</code>
                         </label>
                     </section>
-                    <section>
+                    <section class="service-title">
                         <label class="label">
-                            <div>
-                                <p><?php esc_html_e('Service Title', 'service-booking-manager'); ?></p>
-                                <span><?php esc_html_e('Service Title', 'service-booking-manager'); ?></span>
-                            </div>
-                            <div class=" d-flex justify-content-between">
-                                <input type="text" name="mpwpb_shortcode_title" class="" value="<?php echo esc_attr($title); ?>" placeholder="<?php esc_attr_e('Service Title', 'service-booking-manager'); ?>"/>
-                            </div>
+                            <p><?php esc_html_e('Service Title', 'service-booking-manager'); ?></p>
+                            <input type="text" name="mpwpb_shortcode_title" class="" value="<?php echo esc_attr($title); ?>" placeholder="<?php esc_attr_e('Service Title', 'service-booking-manager'); ?>"/>
                         </label>
                     </section>
-                    <section>
+                    <section class="service-sub-title">
                         <label class="label">
-                            <div>
-                                <p><?php esc_html_e('Service sub title', 'service-booking-manager'); ?></p>
-                                <span><?php esc_html_e('Service sub title', 'service-booking-manager'); ?></span>
-                            </div>
+                            <p><?php esc_html_e('Service sub title', 'service-booking-manager'); ?></p>
+                            
                             <textarea rows="3" cols="50" name="mpwpb_shortcode_sub_title"><?php echo esc_attr($sub_title); ?></textarea>
                         </label>
                     </section>
-                    <section>
+                    <section class="service-template">
                         <label class="label">
-                            <div>
-                                <p><?php esc_html_e('Service template', 'service-booking-manager'); ?></p>
-                            </div>
+                            <p><?php esc_html_e('Service template', 'service-booking-manager'); ?></p>
+                            
                             <select class="" name="mpwpb_template">
                                 <option disabled selected><?php esc_html_e('Please select ...', 'service-booking-manager'); ?></option>
                                 <option value="default.php" <?php echo esc_attr($mpwpb_template == 'default.php' ? 'selected' : ''); ?>><?php esc_html_e('Regular', 'service-booking-manager'); ?></option>

@@ -42,30 +42,23 @@ if (!class_exists('Service_Settings')) {
                 </header>
                 <section>
                     <label class="label">
-                        <div>
-                            <p><?php esc_html_e('Enable Multiple Category Check', 'service-booking-manager'); ?></p>
-                            <span><?php esc_html_e('Enable Multiple Category Check', 'service-booking-manager'); ?></span>
-                        </div>
-                        <div>
-                            <label class="roundSwitchLabel">
-                                <input type="checkbox" name="mpwpb_service_multiple_category_check" <?php echo esc_attr( $checked )?>>
-                                <span class="roundSwitch" data-collapse-target="#mpwpb_service_multiple_category_check"></span>
-                            </label>
-                        </div>
+                        
+                        <p><?php esc_html_e('Enable Multiple Category Check', 'service-booking-manager'); ?></p>
+                        
+                        <label class="roundSwitchLabel">
+                            <input type="checkbox" name="mpwpb_service_multiple_category_check" <?php echo esc_attr( $checked )?>>
+                            <span class="roundSwitch" data-collapse-target="#mpwpb_service_multiple_category_check"></span>
+                        </label>
                     </label>
                 </section>
                 <section>
                     <label class="label">
-                        <div>
-                            <p><?php esc_html_e('Enable Multiple Service Select', 'service-booking-manager'); ?></p>
-                            <span><?php esc_html_e('Enable Multiple Service Select', 'service-booking-manager'); ?></span>
-                        </div>
-                        <div>
-                            <label class="roundSwitchLabel">
-                                <input type="checkbox" name="mpwpb_multiple_service_select" <?php echo esc_attr( $mp_service_checked )?>>
-                                <span class="roundSwitch" data-collapse-target="#mpwpb_multiple_service_select"></span>
-                            </label>
-                        </div>
+                        <p><?php esc_html_e('Enable Multiple Service Select', 'service-booking-manager'); ?></p>
+                        
+                        <label class="roundSwitchLabel">
+                            <input type="checkbox" name="mpwpb_multiple_service_select" <?php echo esc_attr( $mp_service_checked )?>>
+                            <span class="roundSwitch" data-collapse-target="#mpwpb_multiple_service_select"></span>
+                        </label>
                     </label>
                 </section>
             </div>
