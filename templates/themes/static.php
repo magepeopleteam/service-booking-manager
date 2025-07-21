@@ -38,7 +38,7 @@
 
 				<?php do_action('mpwpb_added_staff_details'); ?>
             </div>
-            <div class="sidebar">
+            <div class="sidebar" id="mpwpb_static_sidbar">
 	            <?php include(MPWPB_Function::template_path('registration/static_registration.php')); ?>
             </div>
         </main>

@@ -30,6 +30,7 @@ if (!class_exists('MPWPB_Extended_Settings')) {
 		}
 		
 		public function add_settings_tabs($post_id) {
+            if ( is_plugin_active('service-booking-manager-pro/MPWPB_Plugin_Pro.php') ) {
 			?>
 			<li data-tabs-target="#mpwpb_recurring_booking">
 				<i class="fas fa-redo pe-1"></i><?php esc_html_e('Recurring Booking', 'service-booking-manager'); ?>
@@ -38,6 +39,7 @@ if (!class_exists('MPWPB_Extended_Settings')) {
 				<i class="fas fa-user-clock pe-1"></i><?php /*esc_html_e('Waiting List', 'service-booking-manager'); */?>
 			</li>-->
 			<?php
+            }
 		}
 	}
 	
