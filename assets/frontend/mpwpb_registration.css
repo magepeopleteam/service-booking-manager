@@ -121,6 +121,10 @@ div.registration_tab_item {
   display: flex;
   gap: 16px;
 }
+.mpwpb_style .next_service_area .mpwpb_service_next, .mpwpb_style .next_service_area .mpwpb_service_next{
+  color: #fff;
+}
+
 .mpwpd_service_date{
   list-style-type: none;
 }
@@ -129,10 +133,7 @@ div.registration_tab_item {
 }
 
 .selection-header {
-  padding-top: 5px;
-  background-color: var(--light-bg);
-  /*border-bottom: 1px solid rgba(0, 0, 0, 0.05);*/
-  margin-bottom:20px;
+  margin:10px 0;
 }
 .mpwpb_selected_control{
   display: flex;
@@ -211,9 +212,7 @@ div.registration_tab_item {
   }
 
   div.mpwpb_registration .service-items{
-    margin-top: 10px !important;
     border-radius: 10px ;
-    background-color: #fff;
   }
 
 }
@@ -573,16 +572,15 @@ div.registration_tab_item {
 }
 .mpwpb-default-template .sidebar .booking-area {
   background-color: #f4f5f8;
+  padding:10px;
+  border-radius: 10px;
 }
 .mpwpb-default-template .sidebar .content {
   display: flex;
   overflow: auto;
   flex-direction: column;
 }
-.mpwpb-default-template .sidebar  {
-  width: 100%;
-  padding: 10px;
-}
+
 .mpwpb-default-template   .mpwpb_category_section {
   margin-bottom: 5px;
 }
@@ -788,7 +786,6 @@ div.registration_tab_item {
 .mpwpb-default-template  .content .service-cart {
   width: auto;
   overflow-y: scroll;
-  padding: 10px;
   background-color: #f4f5f8;
 }
 .mpwpb-default-template  .content .service-cart .mpwpb_summary_area_left_content {
@@ -884,7 +881,6 @@ div.registration_tab_item {
 }
 .mpwpb_registration > header  ul.features li i {
   margin-right: 10px;
-  color: var(--mpwpb_color_theme);
 }
 .mpwpb_registration > header  .popup-features .mpwpb_popup_main_area {
   background-color: #FFF;
@@ -907,7 +903,7 @@ div.registration_tab_item {
   margin: 10px 0;
   padding: 5px 10px;
   border-radius: 5px;
-  color: var(--mpwpb_color_theme_alter);
+  color: #fff;
   font-size: 16px;
   font-weight: bold;
   display: inline-block;
@@ -1362,6 +1358,7 @@ div.registration_tab_item {
 }
 .mpwpb-static-template   .mpwpb_popup .popupFooter button.mpwpb_date_time_next {
   padding: 10px;
+  color: #fff;
 }
 .mpwpb_static_area {
   width: auto;
@@ -1437,11 +1434,11 @@ div.registration_tab_item {
   margin-bottom: 20px;
 }
 .mpwpb-static-template  .mpwpb_static_area .mpwpb_static .mp_title h2 {
-  color: var(--mpwpb_color_theme_alter);
+  color:#fff;
   text-align: left;
 }
 .mpwpb-static-template  .mpwpb_static_area .mpwpb_static .mp_title p {
-  color: var(--mpwpb_color_theme_alter);
+  color:#fff;
   text-align: left;
 
 }
@@ -1477,7 +1474,7 @@ div.registration_tab_item {
 /*# sourceMappingURL=mpwpb_registration.css.map */
 
 .mpwpb_popup_body{background:#f5f7fa; }
-._dShadow_7.mpwpb_category_area, ._dShadow_7_mB_xs.mpwpb_service_area, ._dShadow_7_mB_xs.mpwpb_extra_service_area, ._dShadow_7.mpwpb_category_area{background:#fff; padding:0px; }
+._dShadow_7.mpwpb_category_area, ._dShadow_7_mB_xs.mpwpb_service_area, ._dShadow_7_mB_xs.mpwpb_extra_service_area, ._dShadow_7.mpwpb_category_area{padding:0px; }
 ._dShadow_7.mpwpb_category_area {margin-top:10px !important; border-radius:10px !important; border-radius:10px !important}
 .service-cart{ background: #fff !important; overflow-y: auto !important;}
 .mpwpb_service_item, .mpwpb_extra_service_item {
@@ -1539,6 +1536,10 @@ button.mpwpb_service_button.mActive:hover{
 }
 .mpwpb-popup-content{ padding: 10px; }
 
+#service-overview h1,#service-overview h2,#service-overview h3,#service-overview h4,#service-overview h5,#service-overview h6{
+  margin: 10px 0;
+  margin-top: 20px;
+}
 
 
 /* Container */
