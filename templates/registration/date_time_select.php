@@ -88,79 +88,81 @@
                 ?>
                     <h5><?php esc_html_e('Date not available', 'service-booking-manager'); ?></h5> <?php
                 }
-                if ($enable_recurring === 'yes') { ?>
-                    <div class="_dShadow_7_mB_xs mpwpb_recurring_booking_area" id="mpwpb_recurring_booking_area" style="display: none;">
-                        <div class="mpwpb_recurring_booking">
-                            <header class="_dFlex_alignCenter_justifyBetween">
-                                <h3><?php esc_html_e('Recurring Booking Options', 'service-booking-manager'); ?></h3>
-                            </header>
-                            <div class="mpwpb_recurring_options">
-                                <div class="mpwpb_recurring_toggle">
-                                    <label class="switch">
-                                        <input type="checkbox" name="mpwpb_enable_recurring_booking" id="mpwpb_enable_recurring_booking">
-                                        <span class="slider round"></span>
-                                    </label>
-                                    <label for="mpwpb_enable_recurring_booking"><?php esc_html_e('Enable Recurring Booking', 'service-booking-manager'); ?></label>
-                                </div>
-
-                                <div class="mpwpb_recurring_settings" style="display: none;">
-                                    <div class="mpwpb_weekday_selector" id="mpwpb_weekday_selector" style="display: none">
-                                        <label><input type="checkbox" name="recurring_days[]" value="sun"> <?php esc_html_e('Sunday', 'service-booking-manager'); ?></label>
-                                        <label><input type="checkbox" name="recurring_days[]" value="mon"> <?php esc_html_e('Monday', 'service-booking-manager'); ?></label>
-                                        <label><input type="checkbox" name="recurring_days[]" value="tue"> <?php esc_html_e('Tuesday', 'service-booking-manager'); ?></label>
-                                        <label><input type="checkbox" name="recurring_days[]" value="wed"> <?php esc_html_e('Wednesday', 'service-booking-manager'); ?></label>
-                                        <label><input type="checkbox" name="recurring_days[]" value="thu"> <?php esc_html_e('Thursday', 'service-booking-manager'); ?></label>
-                                        <label><input type="checkbox" name="recurring_days[]" value="fri"> <?php esc_html_e('Friday', 'service-booking-manager'); ?></label>
-                                        <label><input type="checkbox" name="recurring_days[]" value="sat"> <?php esc_html_e('Saturday', 'service-booking-manager'); ?></label>
-                                    </div>
-                                    <div class="mpwpb_recurring_type">
-                                        <label><?php esc_html_e('Recurring Type', 'service-booking-manager'); ?></label>
-                                        <select name="mpwpb_recurring_type" id="mpwpb_recurring_type">
-                                            <option value=""><?php esc_html_e('Select Recurring Type', 'service-booking-manager'); ?></option>
-                                            <?php foreach ($recurring_types as $type) {
-                                                $label = '';
-                                                switch ($type) {
-                                                    case 'daily':
-                                                        $label = esc_html__('Daily', 'service-booking-manager');
-                                                        break;
-                                                    case 'weekly':
-                                                        $label = esc_html__('Weekly', 'service-booking-manager');
-                                                        break;
-                                                    case 'bi-weekly':
-                                                        $label = esc_html__('Bi-Weekly', 'service-booking-manager');
-                                                        break;
-                                                    case 'monthly':
-                                                        $label = esc_html__('Monthly', 'service-booking-manager');
-                                                        break;
-                                                }
-                                                ?>
-                                                <option value="<?php echo esc_attr($type); ?>"><?php echo $label; ?></option>
-                                            <?php } ?>
-                                        </select>
+                if ( is_plugin_active('service-booking-manager-pro/MPWPB_Plugin_Pro.php') ) {
+                    if ($enable_recurring === 'yes') { ?>
+                        <div class="_dShadow_7_mB_xs mpwpb_recurring_booking_area" id="mpwpb_recurring_booking_area" style="display: none;">
+                            <div class="mpwpb_recurring_booking">
+                                <header class="_dFlex_alignCenter_justifyBetween">
+                                    <h3><?php esc_html_e('Recurring Booking Options', 'service-booking-manager'); ?></h3>
+                                </header>
+                                <div class="mpwpb_recurring_options">
+                                    <div class="mpwpb_recurring_toggle">
+                                        <label class="switch">
+                                            <input type="checkbox" name="mpwpb_enable_recurring_booking" id="mpwpb_enable_recurring_booking">
+                                            <span class="slider round"></span>
+                                        </label>
+                                        <label for="mpwpb_enable_recurring_booking"><?php esc_html_e('Enable Recurring Booking', 'service-booking-manager'); ?></label>
                                     </div>
 
-                                    <div class="mpwpb_recurring_count">
-                                        <label><?php esc_html_e('Number of Occurrences', 'service-booking-manager'); ?></label>
-                                        <input type="number" name="mpwpb_recurring_count" id="mpwpb_recurring_count" min="2" max="<?php echo esc_attr($max_recurring_count); ?>" value="2">
-                                        <input type="hidden" name="mpwpb_recurring_count_hidden" id="mpwpb_recurring_count_hidden" min="2" max="<?php echo esc_attr($max_recurring_count); ?>" value="2">
-                                        <p class="description"><?php esc_html_e('Maximum allowed:', 'service-booking-manager'); ?> <?php echo esc_html($max_recurring_count); ?></p>
-                                    </div>
-
-                                    <?php if ($recurring_discount > 0) { ?>
-                                        <div class="mpwpb_recurring_discount">
-                                            <p data-discount="<?php echo esc_attr($recurring_discount); ?>"><?php esc_html_e('Discount Applied:', 'service-booking-manager'); ?> <?php echo esc_html($recurring_discount); ?>%</p>
+                                    <div class="mpwpb_recurring_settings" style="display: none;">
+                                        <div class="mpwpb_weekday_selector" id="mpwpb_weekday_selector" style="display: none">
+                                            <label><input type="checkbox" name="recurring_days[]" value="sun"> <?php esc_html_e('Sunday', 'service-booking-manager'); ?></label>
+                                            <label><input type="checkbox" name="recurring_days[]" value="mon"> <?php esc_html_e('Monday', 'service-booking-manager'); ?></label>
+                                            <label><input type="checkbox" name="recurring_days[]" value="tue"> <?php esc_html_e('Tuesday', 'service-booking-manager'); ?></label>
+                                            <label><input type="checkbox" name="recurring_days[]" value="wed"> <?php esc_html_e('Wednesday', 'service-booking-manager'); ?></label>
+                                            <label><input type="checkbox" name="recurring_days[]" value="thu"> <?php esc_html_e('Thursday', 'service-booking-manager'); ?></label>
+                                            <label><input type="checkbox" name="recurring_days[]" value="fri"> <?php esc_html_e('Friday', 'service-booking-manager'); ?></label>
+                                            <label><input type="checkbox" name="recurring_days[]" value="sat"> <?php esc_html_e('Saturday', 'service-booking-manager'); ?></label>
                                         </div>
-                                    <?php } ?>
+                                        <div class="mpwpb_recurring_type">
+                                            <label><?php esc_html_e('Recurring Type', 'service-booking-manager'); ?></label>
+                                            <select name="mpwpb_recurring_type" id="mpwpb_recurring_type">
+                                                <option value=""><?php esc_html_e('Select Recurring Type', 'service-booking-manager'); ?></option>
+                                                <?php foreach ($recurring_types as $type) {
+                                                    $label = '';
+                                                    switch ($type) {
+                                                        case 'daily':
+                                                            $label = esc_html__('Daily', 'service-booking-manager');
+                                                            break;
+                                                        case 'weekly':
+                                                            $label = esc_html__('Weekly', 'service-booking-manager');
+                                                            break;
+                                                        case 'bi-weekly':
+                                                            $label = esc_html__('Bi-Weekly', 'service-booking-manager');
+                                                            break;
+                                                        case 'monthly':
+                                                            $label = esc_html__('Monthly', 'service-booking-manager');
+                                                            break;
+                                                    }
+                                                    ?>
+                                                    <option value="<?php echo esc_attr($type); ?>"><?php echo $label; ?></option>
+                                                <?php } ?>
+                                            </select>
+                                        </div>
 
-                                    <div class="mpwpb_recurring_dates" style="display: none;">
-                                        <h4><?php esc_html_e('Recurring Dates', 'service-booking-manager'); ?></h4>
-                                        <ul id="mpwpb_recurring_dates_list"></ul>
+                                        <div class="mpwpb_recurring_count">
+                                            <label><?php esc_html_e('Number of Occurrences', 'service-booking-manager'); ?></label>
+                                            <input type="number" name="mpwpb_recurring_count" id="mpwpb_recurring_count" min="2" max="<?php echo esc_attr($max_recurring_count); ?>" value="2">
+                                            <input type="hidden" name="mpwpb_recurring_count_hidden" id="mpwpb_recurring_count_hidden" min="2" max="<?php echo esc_attr($max_recurring_count); ?>" value="2">
+                                            <p class="description"><?php esc_html_e('Maximum allowed:', 'service-booking-manager'); ?> <?php echo esc_html($max_recurring_count); ?></p>
+                                        </div>
+
+                                        <?php if ($recurring_discount > 0) { ?>
+                                            <div class="mpwpb_recurring_discount">
+                                                <p data-discount="<?php echo esc_attr($recurring_discount); ?>"><?php esc_html_e('Discount Applied:', 'service-booking-manager'); ?> <?php echo esc_html($recurring_discount); ?>%</p>
+                                            </div>
+                                        <?php } ?>
+
+                                        <div class="mpwpb_recurring_dates" style="display: none;">
+                                            <h4><?php esc_html_e('Recurring Dates', 'service-booking-manager'); ?></h4>
+                                            <ul id="mpwpb_recurring_dates_list"></ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                <?php }
+                    <?php }
+                }
                 ?>
             </div>
         </div>
