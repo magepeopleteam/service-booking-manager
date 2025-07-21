@@ -48,7 +48,8 @@ Let's See Demos To Get A Clear Idea
 🏥 [Medical & Dental Service Appointment Demo](https://wpbookingly.com/service/medical-dental/)
 🎵 [Musical Class Appointment Booking Demo](https://wpbookingly.com/service/musical-class/)
 🔧 [Repair Service Booking Demo](https://wpbookingly.com/service/repair-service/)
-💇‍♀️ [Salon & Spa Appointment Booking Demo](https://wpbookingly.com/service/car-repair-service/)
+💇‍♀️ [Salon & Spa Appointment Booking Demo](https://salon.wpbookingly.com/)
+💇‍♀️ [Cleaning Service Booking Demo](https://clean.wpbookingly.com/)
 👉 [Buy WordPress Service Booking & Scheduling Plugin Pro](https://mage-people.com/product/wordpress-service-booking-plugin-all-kind-of-service-booking-solution/) 👈
 
 
