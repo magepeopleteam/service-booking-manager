@@ -21,56 +21,56 @@ WPBookingly Basic is a fantastic choice for businesses, freelancers, and service
 Crafted with a mobile-first mindset, WpBookingly works seamlessly on any device, ensuring you and your clients can book with ease, regardless of location.
 
 = 🧩 Essential Features of a Great Booking Website: =
-**Simple Booking Interface: ** Clean, conversion-optimized form for fast scheduling.
-**WooCommerce Support: ** Accept payments via PayPal, Stripe, and other WooCommerce gateways.
-**Shortcode Support: ** Add forms via shortcode anywhere on your site.
-**Staff Management (Pro): ** Assign services to specific staff members and manage schedules.
-**Google Calendar Sync (Pro): ** Prevent double bookings with real-time calendar integration.
-**Recurring Bookings (Pro): ** Enable repeat appointments for long-term clients.
-**PDF Invoices & Tickets (Pro): ** Send downloadable booking confirmations.
-**Email Notifications: ** Automated reminders and confirmations to reduce no-shows.
-**Multilingual & Theme Compatible:** Fully translatable and fits seamlessly into any theme.
-**CSV Data Export:** Export all your booking data for offline use and reporting.
+**Simple Booking Interface**: Clean, conversion-optimized form for fast scheduling.
+**WooCommerce Support**: Accept payments via PayPal, Stripe, and other WooCommerce gateways.
+**Shortcode Support**: Add forms via shortcode anywhere on your site.
+**Staff Management (Pro)**: Assign services to specific staff members and manage schedules.
+**Google Calendar Sync (Pro)**: Prevent double bookings with real-time calendar integration.
+**Recurring Bookings (Pro)**: Enable repeat appointments for long-term clients.
+**PDF Invoices & Tickets (Pro)**: Send downloadable booking confirmations.
+**Email Notifications**: Automated reminders and confirmations to reduce no-shows.
+**Multilingual & Theme Compatible**: Fully translatable and fits seamlessly into any theme.
+**CSV Data Export**: Export all your booking data for offline use and reporting.
 
 
 
 = 💡 What Makes WPBookingly Stand Out  =
 Since its debut, WpBookingly has grown with regular updates, giving service-based businesses a winning edge. Here's why it's a cut above:
-* Unlimited Service Packages:* Create as many services as you want, complete with pricing, categories, staff assignments, and add-ons (e.g., extra spa treatments).
-* Effortless Booking Flow:* A clean, conversion-friendly booking form adjusts pricing for add-ons or group bookings, making reservations quick and boosting client satisfaction.
-* WooCommerce Payments:* Tap into WooCommerce's wide range of payment gateways for secure, speedy transactions, supporting global and local options.
-* Staff Scheduling (Pro):* Assign staff to services, manage their schedules, and let clients pick their favourite provider—perfect for salons or clinics.
-* Google Calendar Integration (Pro):* Sync staff schedules in real-time to prevent conflicts, ideal for busy professionals.
-* Recurring Appointments (Pro):* Let clients book regular sessions (e.g., weekly yoga or monthly consultations), driving loyalty and revenue.
-* Custom Notifications:* Personalize email confirmations and reminders to keep clients informed and reduce no-shows.
-* Flexible Shortcodes:* Pop booking forms on any page with shortcodes (e.g., [bookingplus post_id='id']) for seamless integration.
+**Unlimited Service Packages**: Create as many services as you want, complete with pricing, categories, staff assignments, and add-ons (e.g., extra spa treatments).
+**Effortless Booking Flow**: A clean, conversion-friendly booking form adjusts pricing for add-ons or group bookings, making reservations quick and boosting client satisfaction.
+**WooCommerce Payments**: Tap into WooCommerce's wide range of payment gateways for secure, speedy transactions, supporting global and local options.
+**Staff Scheduling (Pro)**: Assign staff to services, manage their schedules, and let clients pick their favourite provider—perfect for salons or clinics.
+**Google Calendar Integration (Pro)**: Sync staff schedules in real-time to prevent conflicts, ideal for busy professionals.
+**Recurring Appointments (Pro)**: Let clients book regular sessions (e.g., weekly yoga or monthly consultations), driving loyalty and revenue.
+**Custom Notifications**: Personalize email confirmations and reminders to keep clients informed and reduce no-shows.
+**Flexible Shortcodes**: Pop booking forms on any page with shortcodes (e.g., [bookingplus post_id='id']) for seamless integration.
 
 
 = 👉 Other Features =
-* Pricing for different service types (e.g., standard vs. premium)
-* Group booking support
-* Custom schedules for staff
-* Service duration settings
-* Automated time slot management
-* PDF ticket generation
-* Custom input fields for client details
-* Multilingual support
-* Edit booking options
-* Featured services
-* Coupon code support for discounts
+- **Pricing for different service types (e.g., standard vs. premium)
+- **Group booking support
+- **Custom schedules for staff
+- **Service duration settings
+- **Automated time slot management
+- **PDF ticket generation
+- **Custom input fields for client details
+- **Multilingual support
+- **Edit booking options
+- **Featured services
+- **Coupon code support for discounts
 
 
 = 👥 Who Can Use WPBookingly? =
  WPBookingly is ideal for:
-* Beauty & Wellness:* Salons, spas, massage centers
-* Healthcare:* Clinics, doctors, dentists, nutritionists
-* Education:* Tutors, coaching centers, music lessons
-* Fitness:* Gyms, yoga, personal training
-* Professional Services:* Lawyers, consultants, photographers
-* Automotive:* Car rental, repair services
-* Hospitality & Events:* Restaurants, event planners, workshops
-* Repair Service:* Car repair & maintenance, Television, Mobile, Laptop Service Booking.
-* Cleaning and Wash Service Booking:* Car wash, House cleaning, and more.
+- **Beauty & Wellness**: Salons, spas, massage centers
+- **Healthcare**: Clinics, doctors, dentists, nutritionists
+- **Education**: Tutors, coaching centers, music lessons
+- **Fitness**: Gyms, yoga, personal training
+- **Professional Services**: Lawyers, consultants, photographers
+- **Automotive**: Car rental, repair services
+- **Hospitality & Events**: Restaurants, event planners, workshops
+- **Repair Service**: Car repair & maintenance, Television, Mobile, Laptop Service Booking.
+- **Cleaning and Wash Service Booking**: Car wash, House cleaning, and more.
 
 
 =  Let's See Demos To Get A Clear Idea =
