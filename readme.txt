@@ -1,4 +1,4 @@
-=== Appointment Booking and Service Scheduling manager for WooCommerce | All-in-one Booking Systems ===
+=== Appointment Booking and Service Scheduling Manager for WooCommerce | All-in-one Booking Solution | WpBookingly ===
 Contributors: aamahin, magepeopleteam
 Tags: appointment booking, Car Wash Booking, Booking calendar, Service Booking
 Requires at least: 5.3
