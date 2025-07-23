@@ -13,7 +13,6 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Supercharge your appointment and service scheduling with WPBookingly – the modern, mobile-ready booking plugin built to streamline your business.
 
-
 == Description ==
 Get ready to supercharge your appointment and service scheduling with WPBookingly, the ultimate WordPress plugin for hassle-free bookings! This dynamic booking system makes managing appointments and services effortless, making it ideal for any business seeking to streamline its operations.
 With its super-simple interface and smooth design, WpBookingly delivers a top-notch booking experience that your clients will love. 
@@ -88,111 +87,34 @@ Since its debut, WpBookingly has grown with regular updates, giving service-base
 
 Experience the convenience of a versatile and powerful service booking solution with WPBookingly. Streamline your booking processes and offer a seamless experience to your clients across diverse industries.
 
-= How Salon & Spa Businesses Use WPBookingly Features =
-WpBookingly simplifies booking for hair salons, nail salons, and massage centers with its free and Pro features, tailored for efficient scheduling and client satisfaction.
-* Booking & Services (Free):* Offer services such as haircuts, manicures, or massages through a customizable booking form. Clients select services and time slots on a clear calendar, embedded with shortcodes (e.g., [bookingplus post_id='id']).
-* Pricing & Customization (Free):* Set service durations (e.g., 30 min for a haircut), prices, and add-ons (e.g., $10 nail art). Edit bookings for flexibility. Categories organize services (e.g., Hair, Nails).
-* Design & Usability (Free):* A mobile-friendly, SEO-optimized booking form ensures quick and easy reservations. Automated time slot management prevents overbooking.
-* WooCommerce & Integration (Free):* Accept payments via WooCommerce gateways (e.g., PayPal, Stripe). Multilingual support reaches diverse clients. Works with any WordPress theme.
-* Pro Features:* Assign staff to services, sync schedules with Google Calendar to avoid conflicts, and enable recurring bookings for regular clients (e.g., weekly massages).
-* Additional Features:* Send email reminders to reduce no-shows and generate professional PDF invoices.
-
-* Example:* A nail salon offers a “Gel Manicure” ($40, 45 minutes) with a glitter add-on ($10). Clients book via a responsive form, pay with Stripe, and receive reminders. Pro features allow technician assignments and recurring bookings.
-* Benefit:* Simplifies scheduling, boosts revenue, and enhances client experience. The Pro version is required for staff management and recurring bookings.
-
+= How Salon & Spa Businesses Use WPBookingly =
+Salons and spas love WpBookingly for its insanely simple way of handling bookings right on their WordPress site! Clients just pick out their desired services—like a cool new 'do or relaxing massage—and book whenever they want with a silky, mobile-friendly form. It comes with WooCommerce for safe payment through Stripe or PayPal, so that transactions are easy. Reminders and an easy-to-use calendar eliminate no-shows and books in advance. With fun personalization and real-time analytics, WpBookingly makes salon life easy and clients happier!
 
 = How Education Platforms Use WPBookingly Features =
-WpBookingly enables tutors, language teachers, and music instructors to manage scheduling efficiently, offering a seamless booking experience for students and streamlined operations for educators.
-* Booking & Services (Free):* Schedule tutoring sessions, language classes, or music lessons via a customizable booking form. Students select services and time slots on a clear calendar, embedded with shortcodes (e.g., [bookingplus post_id='id']).
-* Pricing & Customization (Free):* Set durations (e.g., 60 min for a language lesson, 45 min for a music class) and prices. Organize services into categories (e.g., Math Tutoring, Piano Lessons) with add-ons (e.g., $10 for extra practice materials). Edit bookings for flexibility.
-* Design & Usability (Free):* A mobile-friendly, SEO-optimized booking form ensures easy access. Automated time slot management prevents double bookings.
-* WooCommerce & Integration (Free):* Accept secure payments via WooCommerce gateways (e.g., PayPal, Stripe). Multilingual support reaches diverse students. Compatible with any WordPress theme.
-* Pro Features:* Assign teachers to specific classes, sync schedules with Google Calendar to avoid conflicts, and enable recurring bookings for regular lessons (e.g., weekly Spanish courses).
-* Additional Features:* Send email reminders to reduce no-shows and provide PDF invoices for professional records.
-
-*Example:* A language teacher offers "Spanish Conversation" ($30, 60 min). Students book via a responsive form, pay with PayPal, and receive reminders. Pro features allow teacher assignments, Google Calendar sync, and recurring weekly lessons.
-*Benefit:* Simplifies scheduling, boosts student engagement, and minimizes missed classes. The Pro version is required for staff assignments and recurring bookings.
+WpBookingly is transforming how education websites handle bookings, making the learning experience smoother and more personalized than ever! Students can effortlessly reserve their spots for classes, webinars, or one-on-one tutoring through a vibrant, mobile-friendly system right on their WordPress site, choosing times that perfectly fit their schedule. Our innovative calendar keeps teacher schedules perfectly aligned and clash-free, while automated email reminders ensure students are always prepped and punctual. With secure WooCommerce payments, customizable forms, and smart analytics, WpBookingly helps education platforms craft tailored experiences and discover what truly excites their learners!
 
 = How Healthcare Businesses Use WPBookingly Features =
-WpBookingly empowers doctors, dentists, and nutritionists to manage appointments efficiently, ensuring a seamless booking experience for patients and streamlined operations for providers.
-* Booking & Services (Free):* Offer appointments, such as checkups, dental cleanings, or nutrition consultations, via a customizable booking form. Patients select services and time slots on an intuitive calendar, embedded with shortcodes (e.g., [bookingplus post_id='id']).
-* Pricing & Customization (Free):* Set durations (e.g., 30 min for a checkup, 60 min for a consultation) and prices. Organize services into categories (e.g., Dental, Nutrition) with add-ons (e.g., $50 for a diet plan). Edit bookings to handle rescheduling.
-* Design & Usability (Free):* A mobile-friendly, SEO-optimized booking form ensures easy access. Automated time slot management prevents double bookings.
-* WooCommerce & Integration (Free):* Accept secure payments via WooCommerce gateways (e.g., PayPal, Stripe). Multilingual support caters to diverse patients. Compatible with any WordPress theme.
-* Pro Features:* Assign doctors or specialists to services, sync schedules with Google Calendar to avoid conflicts, and enable recurring bookings for ongoing care (e.g., weekly nutrition sessions).
-*Additional Features:* Send email reminders to reduce no-shows and provide PDF invoices for professional patient records.
-
-*Example:* A dentist sets up "Teeth Cleaning" ($100, 45 min) and "Consultation" ($50, 30 min). Patients book via a responsive form, pay with Stripe, and receive reminders. Pro features allow assigning dentists, syncing Google Calendar, and scheduling recurring checkups.
-*Benefit:* Simplifies patient scheduling, enhances professionalism, and reduces the number of missed appointments. The Pro version is required for staff assignments and recurring bookings.
-
-= How Fitness & Gym Businesses Use WpBookingly Features =
-WpBookingly empowers yoga studios, personal trainers, and dance studios to manage bookings efficiently, offering a seamless experience for clients and streamlined operations for instructors.
-* Booking & Services (Free):* Schedule yoga classes, personal training sessions, or dance workshops via a customizable booking form. Clients select services and time slots on a clear calendar, embedded with shortcodes (e.g., [bookingplus post_id='id']).
-* Pricing & Customization (Free):* Set durations (e.g., 60 min for yoga, 45 min for training) and prices. Organize services into categories (e.g., Yoga, Dance) with add-ons (e.g., $15 for a yoga mat rental). Edit bookings for flexibility.
-* Design & Usability (Free):* A mobile-friendly, SEO-optimized booking form ensures easy access. Automated time slot management prevents double bookings.
-* WooCommerce & Integration (Free):* Accept secure payments via WooCommerce gateways (e.g., PayPal, Stripe). Multilingual support reaches diverse clients. Compatible with any WordPress theme.
-* Pro Features:* Assign instructors to classes, sync schedules with Google Calendar to avoid conflicts, and enable recurring bookings for regular sessions (e.g., weekly yoga classes).
-* Additional Features:* Send email reminders to reduce no-shows and provide PDF invoices for professional records.
-
-* Example:* A yoga studio offers "Vinyasa Flow" ($20, 60 min) and "Private Session" ($50, 45 min). Clients book via a responsive form, pay with Stripe, and receive reminders. Pro features allow instructor assignments, Google Calendar sync, and recurring weekly classes.
-* Benefit:* Simplifies class scheduling, boosts client retention, and minimizes missed sessions. The Pro version is required for instructor assignments and recurring bookings.
+WpBookingly is revolutionizing healthcare appointments, making booking a breeze for both patients and clinics! Patients can effortlessly schedule their visits 24/7 right from the clinic's website using a super user-friendly, mobile-optimized form. They simply pick their doctor or service, see real-time availability, and book with just a few clicks. Behind the scenes, our smart calendar syncs with staff schedules to prevent any overlaps, and automated email reminders keep patients perfectly on track. Plus, secure payments via WooCommerce gateways like Stripe make settling bills simple, while customizable forms and handy analytics help clinics reduce no-shows and keep every patient smiling!
 
 
-= How Consultancy & Coaching Platforms Use WpBookingly Features =
-WpBookingly streamlines scheduling for life coaches, lawyers, and psychologists, offering a seamless booking experience for clients and efficient management for professionals.
-* Booking & Services (Free):* Schedule consultations, legal advice sessions, or therapy appointments via a customizable booking form. Clients select services and time slots on an intuitive calendar, embedded with shortcodes (e.g., [bookingplus post_id='id']).
-* Pricing & Customization (Free):* Set durations (e.g., 60 min for coaching, 30 min for legal consults) and prices. Organize services into categories (e.g., Life Coaching, Therapy) with add-ons (e.g., $20 for a personalized plan). Edit bookings for flexibility.
-* Design & Usability (Free):* A mobile-friendly, SEO-optimized booking form ensures easy access. Automated time slot management prevents double bookings.
-* WooCommerce & Integration (Free):* Accept secure payments via WooCommerce gateways (e.g., PayPal, Stripe). Multilingual support reaches diverse clients. Compatible with any WordPress theme.
-* Pro Features:* Assign consultants to services, sync schedules with Google Calendar to avoid conflicts, and enable recurring bookings for regular sessions (e.g., weekly coaching).
-* Additional Features:* Send email reminders to reduce no-shows and provide PDF invoices for professional records.
-
-* Example:* A life coach offers "Career Coaching" ($80, 60 min). Clients book via a responsive form, pay with PayPal, and receive reminders. Pro features allow coach assignments, Google Calendar sync, and recurring weekly sessions.
-* Benefit:* Simplifies scheduling, enhances client engagement, and minimizes missed appointments. The Pro version is required for staff assignments and recurring bookings.
+= How Fitness & Gym Businesses Use WPBookingly Features =
+Tired of clunky class bookings? WpBookingly is the ultimate upgrade for gyms, yoga, and fitness studios! This plugin delivers a slick, mobile-friendly booking experience for your clients to easily reserve their spot for any class. Trainers stay organized with smart, double-booking-free calendars, and automated reminders keep clients excited and on time. Secure payments via WooCommerce, custom forms, and handy analytics mean your fitness business stays energized and effortlessly managed!
 
 
-= How Professional Service Websites Use WPBookingly Features = 
-WpBookingly simplifies scheduling for photographers, cleaners, and automotive technicians, providing a seamless booking experience for clients and efficient management for service providers.
-* Booking & Services (Free):* Offer services such as photo shoots, cleaning sessions, or car repairs through a customizable booking form. Clients select services and time slots on a clear calendar, embedded with shortcodes (e.g., [bookingplus post_id='id']).
-* Pricing & Customization (Free):* Set durations (e.g., 2 hours for a photo session, 90 min for cleaning) and prices. Organize services into categories (e.g., Photography, Auto Repair) with add-ons (e.g., $25 for photo editing). Edit bookings for flexibility.
-* Design & Usability (Free):* A mobile-friendly, SEO-optimized booking form ensures easy access. Automated time slot management prevents double bookings.
-* WooCommerce & Integration (Free):* Accept secure payments via WooCommerce gateways (e.g., PayPal, Stripe). Multilingual support reaches diverse clients. Compatible with any WordPress theme.
-* Pro Features:* Assign staff to services, sync schedules with Google Calendar to avoid conflicts, and enable recurring bookings for regular services (e.g., weekly cleaning).
-* Additional Features:* Send email reminders to reduce no-shows and provide PDF invoices for professional records.
-
-* Example:* A photographer offers "Portrait Session" ($150, 2 hours). Clients book via a responsive form, pay with Stripe, and receive reminders. Pro features allow assistant assignments, Google Calendar sync, and recurring bookings for event photography.
-* Benefit:* Streamlines scheduling, boosts client satisfaction, and minimizes missed appointments. The Pro version is required for staff assignments and recurring bookings.
+= How Consultancy & Coaching Platforms Use WPBookingly =
+For life coaches, lawyers, and psychologists, WpBookingly turns session booking into a total breeze! Clients can effortlessly schedule consultations or coaching calls using a vibrant, mobile-friendly form right on your WordPress site, picking slots that perfectly match their availability. Our smart calendar syncs seamlessly with your schedule, preventing any mix-ups, while snappy email reminders keep clients ready and on time. Plus, secure payments through WooCommerce make transactions smooth, and with customizable forms and insightful analytics to spot trends, WpBookingly lets professionals focus on transforming lives while running a perfectly organized practice!
 
 
-= How Car Rental & Repair Services Use WpBookingly Features =
-WpBookingly streamlines scheduling for car rental and repair services, offering a seamless booking experience for clients and efficient management for businesses.
-* Booking & Services (Free): Schedule car rentals (e.g., daily SUV rentals) or repair services (e.g., oil changes, tire replacements) via a customizable booking form. Clients select services and time slots on a clear calendar, embedded with shortcodes (e.g., [bookingplus post_id='id']).enterprise.com
-* Pricing & Customization (Free): Set durations (e.g., 1 day for rentals, 1 hour for repairs) and prices. Organize services into categories (e.g., Rentals, Repairs) with add-ons (e.g., $20 for GPS rental). Edit bookings to accommodate changes. dollar.com.
-* Design & Usability (Free): A mobile-friendly, SEO-optimized booking form ensures easy access. Automated time slot management prevents double bookings, making it ideal for situations with limited vehicle or technician availability. discovercars.com.
-* WooCommerce & Integration (Free): Accept secure payments via WooCommerce gateways (e.g., PayPal, Stripe), supporting debit/credit cards for rentals. Multilingual support reaches diverse clients. Compatible with any WordPress theme. booking.com.
-* Pro Features: Assign staff (e.g., mechanics) to repair services, sync schedules with Google Calendar to avoid conflicts, and enable recurring bookings for regular maintenance (e.g., monthly fleet servicing).
-* Additional Features: Send email reminders to reduce no-shows and provide PDF invoices for professional records, enhancing trust for rental or repair clients.
-
-* Example: A car rental business offers "Compact Car Rental" ($50/day) and "Oil Change" ($40, 45 min). Clients book via a responsive form, pay with Stripe, and receive reminders. Pro features allow mechanic assignments, Google Calendar sync, and recurring maintenance bookings for corporate clients.
-* Benefit: Simplifies booking for rentals and repairs, boosts client convenience, and minimizes scheduling errors. The Pro version is required for staff assignments and recurring bookings.
-
-
-= How Restaurant & Hospitality Businesses Use WpBookingly Features  =
-WpBookingly streamlines reservations for restaurants, cafes, and hotels, providing a seamless booking experience for guests and efficient management for businesses.
-* Booking & Services (Free):* Manage table reservations, private dining, or hotel room bookings via a customizable booking form. Guests select services (e.g., dinner for two, suite stay) and time slots on a clear calendar, embedded with shortcodes (e.g., [bookingplus post_id='id']).
-* Pricing & Customization (Free):* Set durations (e.g., 2 hours for dining, 1 night for hotel stays) and prices. Organize services into categories (e.g., Dining, Lodging) with add-ons (e.g., $15 for wine pairing). Edit bookings to accommodate changes, such as adjustments to party size.
-* Design & Usability (Free):* A mobile-friendly, SEO-optimized booking form ensures easy access. Automated time slot management prevents overbooking, critical for limited tables or rooms.
-* WooCommerce & Integration (Free):* Accept secure payments or deposits via WooCommerce gateways (e.g., PayPal, Stripe). Multilingual support caters to international guests. Compatible with any WordPress theme.
-* Pro Features:* Assign staff (e.g., servers, concierges) to services, sync schedules with Google Calendar to avoid conflicts, and enable recurring bookings for regular guests (e.g., weekly dining reservations).
-* Additional Features:* Send email reminders to reduce no-shows and provide PDF invoices for professional records, enhancing guest trust.
-
-* Example:* A restaurant offers "Dinner Reservation" ($50 deposit, 2 hours). Guests book via a responsive form, pay with Stripe, and receive reminders. Pro features allow server assignments, Google Calendar sync, and recurring bookings for loyal patrons.
-* Benefit:* Simplifies reservations, enhances guest convenience, and reduces the number of no-shows. The Pro version is required for staff assignments and recurring bookings.
+= How Professional Service Websites Use WPBookingly =
+Booking your professional services just got easier! WpBookingly empowers photographers, cleaners, and automotive technicians to make their expertise a snap to book. Clients can quickly lock in photo shoots, cleaning gigs, or car tune-ups on your sleek, mobile-friendly WordPress site, choosing times that fit their vibe. Our smart calendar prevents double bookings, while cheerful email reminders keep clients ready to go. Secure WooCommerce payments, custom forms, and handy analytics ensure your operations run smoothly and stress-free, letting you shine!
 
 
 
+= How Car Rental & Repair Services Use WPBookingly  =
+Accelerate your car rental or repair business with WpBookingly! Turn your WordPress site into a seamless booking hub where customers can quickly rent vehicles or schedule repairs. Our vibrant, mobile-friendly forms let clients pick exactly what they need and pinpoint dates with absolute ease. Behind the scenes, the plugin's sharp calendar keeps staff and vehicle availability perfectly synchronized, eliminating scheduling mix-ups. Automated email reminders ensure clients are always informed. And with secure WooCommerce payments (Stripe, PayPal, etc.) handling transactions, along with customizable forms and powerful analytics to spot demand, WpBookingly helps you stay in control and on top of every booking!
 
-
+= How Restaurant & Hospitality Businesses Use WPBookingly =
+WpBookingly helps restaurants and hospitality businesses spice up their operations, turning their WordPress site into a reservation hotspot! Guests can effortlessly book tables, private dining, or even hotel stays through a lively, mobile-friendly form, picking dates and times that perfectly suit their vibe. The plugin’s clever calendar syncs seamlessly with staff and venue availability, sidestepping any overbookings, while snappy email reminders ensure guests show up hungry and ready. Secure payments via WooCommerce gateways like Stripe make settling bills effortless. Plus, customizable forms paired with powerful analytics help businesses fine-tune menus or services and spot trending demands, keeping that hospitality glow strong!
 
 
 
@@ -208,7 +130,7 @@ Navigate to the Service Booking Manager settings page to configure your options
 A. Yes! Service Booking Manager Basic is free to use and we are working on the Pro version and which will have more features.
 
 = Q.I installed correctly but 404 error what can I do?  =
-A. You need to Re-save permalink settings it will solve the 404. if still does not work that means your permalink not working, or you may have an access problem or you have a server permission problem.
+A. You need to Re-save the permalink settings it will solve the 404. if still does not work that means your permalink not working, or you may have an access problem or you have a server permission problem.
 
 = Q. What is Shortcode to display the booking section  =
 A. Here is shortcode  [bookingplus post_id='id'] you can display the booking section on any page.
