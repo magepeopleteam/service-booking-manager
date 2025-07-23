@@ -1,6 +1,6 @@
 <?php
 	/**
-	 * Plugin Name: Service Booking & Scheduling Solution | All-in-one Booking Systems
+	 * Plugin Name: Appointment Booking Plugin for WooCommerce – WpBookingly | All-in-One Service Manager
 	 * Plugin URI: http://mage-people.com
 	 * Description: A complete solution for Any kind of service booking.
 	 * Version: 1.2.2
