@@ -47,17 +47,17 @@ Since its debut, WpBookingly has grown with regular updates, giving service-base
 
 
 = 👉 Other Features =
-- **Pricing for different service types (e.g., standard vs. premium)
-- **Group booking support
-- **Custom schedules for staff
-- **Service duration settings
-- **Automated time slot management
-- **PDF ticket generation
-- **Custom input fields for client details
-- **Multilingual support
-- **Edit booking options
-- **Featured services
-- **Coupon code support for discounts
+- Pricing for different service types (e.g., standard vs. premium)
+- Group booking support
+- Custom schedules for staff
+- Service duration settings
+- Automated time slot management
+- PDF ticket generation
+- Custom input fields for client details
+- Multilingual support
+- Edit booking options
+- Featured services
+- Coupon code support for discounts
 
 
 = 👥 Who Can Use WPBookingly? =
