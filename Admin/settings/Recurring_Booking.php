@@ -23,7 +23,8 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
 			$recurring_types = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_recurring_types', array('daily, weekly', 'bi-weekly', 'monthly'));
 			$max_recurring_count = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_max_recurring_count', 10);
 			$recurring_discount = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_recurring_discount', 0);
-			?>
+            $checked = $enable_recurring == 'yes' ? 'checked' : '';
+            ?>
 			<div class="tabsItem" data-tabs="#mpwpb_recurring_booking">
 				<header>
 					<h2><?php esc_html_e('Recurring Booking Settings', 'service-booking-manager'); ?></h2>
@@ -37,12 +38,7 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
 					<label class="label">
                         <p><?php esc_html_e('Enable Recurring Bookings', 'service-booking-manager'); ?></p>
                         
-                        <div class="customCheckboxLabel">
-                            <select name="mpwpb_enable_recurring">
-                                <option value="yes" <?php echo esc_attr($enable_recurring == 'yes' ? 'selected' : ''); ?>><?php esc_html_e('Yes', 'service-booking-manager'); ?></option>
-                                <option value="no" <?php echo esc_attr($enable_recurring == 'no' ? 'selected' : ''); ?>><?php esc_html_e('No', 'service-booking-manager'); ?></option>
-                            </select>
-                        </div>
+                        <?php MPWPB_Custom_Layout::switch_button('mpwpb_enable_recurring', $checked); ?>
 					</label>
 				</section>
 				<section>
@@ -224,7 +220,7 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
 		}
 		
 		// Save enable recurring setting
-		$enable_recurring = isset($_POST['mpwpb_enable_recurring']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_enable_recurring'])) : 'no';
+		$enable_recurring = isset($_POST['mpwpb_enable_recurring']) ? sanitize_text_field('yes') : 'no';
 		update_post_meta($post_id, 'mpwpb_enable_recurring', $enable_recurring);
 		
 		// Save recurring types
