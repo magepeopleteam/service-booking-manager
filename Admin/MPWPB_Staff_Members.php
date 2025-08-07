@@ -96,7 +96,7 @@ if (!class_exists('MPWPB_Staff_Members')) {
                                             <i class="mi mi-users"></i> <?php esc_html_e('Staff Lists', 'service-booking-manager'); ?>
                                         </button>
                                         <button class="_mpBtn mpwpb_add_new_staff mpwpb_staff_tab_switch" id="mpwpb_staff_members" type="button" title="<?php esc_attr_e('Add New Staff', 'service-booking-manager'); ?>">
-                                            <i class="fas fa-plus-square"></i> <?php esc_html_e('Add/Update Staff', 'service-booking-manager'); ?>
+                                            <i class="mi mi-plus"></i> <?php esc_html_e('Add/Update Staff', 'service-booking-manager'); ?>
                                         </button>
                                 </div>
                             </div>
