@@ -175,3 +175,6 @@ select.mpwpb_staff_modify_holiday:focus {
     height: 100%;
     object-fit: cover;
 }
+.buttonGroup i{
+    margin-right: 5px;
+}
