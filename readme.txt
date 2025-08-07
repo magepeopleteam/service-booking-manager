@@ -82,6 +82,7 @@ Since its debut, WpBookingly has grown with regular updates, giving service-base
 🔧 [Repair Service Booking Demo](https://wpbookingly.com/service/repair-service/)
 💇‍♀️ [Salon & Spa Appointment Booking Demo](https://salon.wpbookingly.com/)
 💇‍♀️ [Cleaning Service Booking Demo](https://clean.wpbookingly.com/)
+💇‍♀️ [Pet Care Booking Demo](https://wpbookingly.com/service/pet-care-service/)
 👉 [Buy WordPress Service Booking & Scheduling Plugin Pro](https://mage-people.com/product/wordpress-service-booking-plugin-all-kind-of-service-booking-solution/) 👈
 
 

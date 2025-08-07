@@ -184,6 +184,17 @@
 							'default' => 0,
 							'placeholder' => esc_html__('Ex:50', 'service-booking-manager'),
 						),
+                        array(
+                            'name' => 'booking_widget_sticky_on_scrolling',
+                            'label' => esc_html__('Booking widget sticky on scrolling', 'service-booking-manager'),
+                            'desc'   => 'A booking widget sticky on scrolling refers to a booking form or section that remains visible in a fixed position while the user scrolls the page. Instead of disappearing as the user scrolls down',
+                            'type' => 'select',
+                            'default' => 'yes',
+                            'options' => array(
+                                'yes' => esc_html__('Yes', 'service-booking-manager'),
+                                'no' => esc_html__('No', 'service-booking-manager')
+                            )
+                        ),
 					)),
 					'mpwpb_global_settings' => apply_filters('filter_mpwpb_global_settings', array(
 						array(

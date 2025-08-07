@@ -755,29 +755,32 @@ function mpwpb_price_calculation($this) {
 }(jQuery));
 
 jQuery(document).ready(function($) {
+  let mpwpb_sticky_on_scrolling = $('#mpwpb_sticky_on_scrolling').val().trim();
   const $static = $('.sidebar .mpwpb_static_area');
   let fixed = false;
   let originalOffset = $static.offset().top;
   let originalLeft = $static.offset().left;
   let originalWidth = $static.outerWidth();
 
-  $(window).on('scroll resize', function () {
-    const scrollY = $(window).scrollTop();
+  if( mpwpb_sticky_on_scrolling === 'yes' ) {
+      $(window).on('scroll resize', function () {
+          const scrollY = $(window).scrollTop();
 
-    if (!fixed && scrollY >= originalOffset) {
-      $static.addClass('fixed').css({
-        'top': scrollY + "-20" + 'px',
-        'left': originalLeft + 'px',
-        'width': originalWidth + 'px'
+          if (!fixed && scrollY >= originalOffset) {
+              $static.addClass('fixed').css({
+                  'top': scrollY + "-20" + 'px',
+                  'left': originalLeft + 'px',
+                  'width': originalWidth + 'px'
+              });
+              fixed = true;
+          } else if (fixed && scrollY < originalOffset) {
+              $static.removeClass('fixed').css({
+                  'top': '',
+                  'left': '',
+                  'width': ''
+              });
+              fixed = false;
+          }
       });
-      fixed = true;
-    } else if (fixed && scrollY < originalOffset) {
-      $static.removeClass('fixed').css({
-        'top': '',
-        'left': '',
-        'width': ''
-      });
-      fixed = false;
-    }
-  });
+  }
 });
