@@ -139,7 +139,7 @@ if (!class_exists('MPWPB_Staff_Members')) {
                     </thead>
                     <tbody>
                     <?php foreach ($all_staffs as $staff) {
-                        $staff_img = $this->get_custom_user_profile_image ( $staff->ID,'thumbnail', 'mpwpb_staff_image' );
+                        $staff_img = $this->get_custom_user_profile_image ( $staff->ID,'large', 'mpwpb_staff_image' );
                         ?>
                         <tr>
                             <th><?php echo esc_html($count . '.'); ?></th>
