@@ -14,9 +14,14 @@
 
     $is_multiselect = get_post_meta( $post_id, 'mpwpb_service_multiple_category_check', true );
     $enable_recurring = MPWPB_Global_Function::get_post_info( $post_id, 'mpwpb_enable_recurring', 'no');
+
+
+    $mpwpb_general_settings = get_option( 'mpwpb_general_settings', [] );
+    $is_sticky_on_scrolling = isset( $mpwpb_general_settings['booking_widget_sticky_on_scrolling'] ) ? $mpwpb_general_settings['booking_widget_sticky_on_scrolling'] : 'yes';
 ?>
     <div class="mpwpb_static_theme">
         <div class="mpwpb_static_area">
+            <input type="hidden" name="mpwpb_sticky_on_scrolling" id="mpwpb_sticky_on_scrolling" value="<?php echo esc_attr( $is_sticky_on_scrolling )?>">
             <?php if( $shortcode === 'yes' ){ ?>
             <div class="mpwpb_static " id="mpwpb_make_static_booking">
 				<?php include(MPWPB_Function::template_path('layout/title_details_page.php')); ?>
