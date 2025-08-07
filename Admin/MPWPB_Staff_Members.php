@@ -91,14 +91,13 @@ if (!class_exists('MPWPB_Staff_Members')) {
                                     <?php esc_html_e('Staff Management', 'service-booking-manager'); ?>
                                 </h1>
                                 <div class="mpwpb_add_update_tab">
-                                    <div class="buttonGroup">
+                                   
                                         <button class="_mpBtn mpwpb_staff_tab_switch mpwpb_staff_tab_active" id="mpwpb_staff_lists"  type="button" title="<?php esc_attr_e('Staff Lists', 'service-booking-manager'); ?>">
-                                            <span class="fas fa-users"></span><?php esc_html_e('Staff Lists', 'service-booking-manager'); ?>
+                                            <i class="mi mi-users"></i> <?php esc_html_e('Staff Lists', 'service-booking-manager'); ?>
                                         </button>
                                         <button class="_mpBtn mpwpb_add_new_staff mpwpb_staff_tab_switch" id="mpwpb_staff_members" type="button" title="<?php esc_attr_e('Add New Staff', 'service-booking-manager'); ?>">
-                                            <span class="fas fa-plus-square"></span><?php esc_html_e('Add/Update Staff', 'service-booking-manager'); ?>
+                                            <i class="fas fa-plus-square"></i> <?php esc_html_e('Add/Update Staff', 'service-booking-manager'); ?>
                                         </button>
-                                    </div>
                                 </div>
                             </div>
 
@@ -139,7 +138,7 @@ if (!class_exists('MPWPB_Staff_Members')) {
                     </thead>
                     <tbody>
                     <?php foreach ($all_staffs as $staff) {
-                        $staff_img = $this->get_custom_user_profile_image ( $staff->ID,'thumbnail', 'mpwpb_staff_image' );
+                        $staff_img = $this->get_custom_user_profile_image ( $staff->ID,'large', 'mpwpb_staff_image' );
                         ?>
                         <tr>
                             <th><?php echo esc_html($count . '.'); ?></th>

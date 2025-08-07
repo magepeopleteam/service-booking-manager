@@ -163,10 +163,23 @@
 				<?php
 				add_action('admin_footer', array($this, 'icon_popup'));
 			}
+			public static function mi_icon($icon_type="fi") {
+				$mi_icon_json = file_get_contents(MPWPB_PLUGIN_URL . '/assets/mage-icon/data.json');
+				$mi_icons = json_decode($mi_icon_json, true);
+				$all_icon = [];
+				foreach($mi_icons as $mi_icon){
+					$all_icon["{$icon_type} mi-{$mi_icon}"] = $mi_icon;
+				}
+				return $all_icon;
+			}
 			//==============//
 			public function all_icon_array(): array {
 				return [
-					0 => [
+					[
+						'title' => 'Mage icon',
+						'icon' 	=> self::mi_icon('mi'),
+					],
+					[
 						'title' => 'Accessibility',
 						'icon' => [
 							'fab fa-accessible-icon' => 'Accessible Icon',
@@ -188,7 +201,7 @@
 							'fas fa-sign-language' => 'Sign Language'
 						]
 					],
-					1 => [
+					[
 						'title' => 'Alert icons',
 						'icon' => [
 							'fas fa-bell' => 'Bell',
@@ -203,7 +216,7 @@
 							'fas fa-skull-crossbones' => 'Skull Crossbones'
 						]
 					],
-					2 => [
+					[
 						'title' => 'Animals icons',
 						'icon' => [
 							'fas fa-cat' => 'Cat',
@@ -224,7 +237,7 @@
 							'fas fa-spider' => 'Spider'
 						]
 					],
-					3 => [
+					[
 						'title' => 'Arrows icons',
 						'icon' => [
 							'fas fa-angle-double-down' => 'Angle Double Down',
@@ -342,7 +355,7 @@
 							'fas fa-upload' => 'Upload'
 						]
 					],
-					4 => [
+					[
 						'title' => 'Audio & Video icons',
 						'icon' => [
 							'fas fa-audio-description' => 'Audio Description',
@@ -404,7 +417,7 @@
 							'fab fa-youtube' => 'Youtube'
 						]
 					],
-					5 => [
+					[
 						'title' => 'Automotive icons',
 						'icon' => [
 							'fas fa-air-freshener' => 'Air Freshener',
@@ -430,7 +443,7 @@
 							'fas fa-truck-pickup' => 'Truck Pickup'
 						]
 					],
-					6 => [
+					[
 						'title' => 'Autumn icons',
 						'icon' => [
 							'fas fa-apple-alt' => 'Apple Alt',
@@ -446,7 +459,7 @@
 							'fas fa-wine-bottle' => 'Wine Bottle'
 						]
 					],
-					7 => [
+					[
 						'title' => 'Beverage icons',
 						'icon' => [
 							'fas fa-beer' => 'Beer',
@@ -464,7 +477,7 @@
 							'fas fa-wine-glass-alt' => 'Wine Glass Alt'
 						]
 					],
-					8 => [
+					[
 						'title' => 'Buildings icons',
 						'icon' => [
 							'fas fa-archway' => 'Archway',
@@ -500,7 +513,7 @@
 							'fas fa-warehouse' => 'Warehouse'
 						]
 					],
-					9 => [
+					[
 						'title' => 'Business icons',
 						'icon' => [
 							'fas fa-address-book' => 'Address Book',
@@ -598,7 +611,7 @@
 							'fas fa-wallet' => 'Wallet'
 						]
 					],
-					10 => [
+					[
 						'title' => 'Camping icons',
 						'icon' => [
 							'fas fa-binoculars' => 'Binoculars',
@@ -615,7 +628,7 @@
 							'fas fa-toilet-paper' => 'Toilet Paper'
 						]
 					],
-					11 => [
+					[
 						'title' => 'Charity icons',
 						'icon' => [
 							'fas fa-dollar-sign' => 'Dollar Sign',
@@ -637,7 +650,7 @@
 							'fas fa-seedling' => 'Seedling'
 						]
 					],
-					12 => [
+					[
 						'title' => 'Chat icons',
 						'icon' => [
 							'fas fa-comment' => 'Comment',
@@ -664,7 +677,7 @@
 							'fas fa-video-slash' => 'Video Slash'
 						]
 					],
-					13 => [
+					[
 						'title' => 'Chess icons',
 						'icon' => [
 							'fas fa-chess' => 'Chess',
@@ -678,7 +691,7 @@
 							'fas fa-square-full' => 'Square Full'
 						]
 					],
-					14 => [
+					[
 						'title' => 'Childhood icons',
 						'icon' => [
 							'fas fa-baby' => 'Baby',
@@ -697,7 +710,7 @@
 							'fas fa-snowman' => 'Snowman'
 						]
 					],
-					15 => [
+					[
 						'title' => 'Clothing icons',
 						'icon' => [
 							'fas fa-graduation-cap' => 'Graduation Cap',
@@ -711,7 +724,7 @@
 							'fas fa-user-tie' => 'User Tie'
 						]
 					],
-					16 => [
+					[
 						'title' => 'Code icons',
 						'icon' => [
 							'fas fa-archive' => 'Archive',
@@ -745,7 +758,7 @@
 							'far fa-window-restore' => 'Window Restore',
 						]
 					],
-					17 => [
+					[
 						'title' => 'Construction icons',
 						'icon' => [
 							'fas fa-brush' => 'Brush',
@@ -767,7 +780,7 @@
 							'fas fa-wrench' => 'Wrench',
 						]
 					],
-					18 => [
+					[
 						'title' => 'Currency icons',
 						'icon' => [
 							'fab fa-bitcoin' => 'Bitcoin',
@@ -795,7 +808,7 @@
 							'fas fa-yen-sign' => 'Yen Sign'
 						]
 					],
-					19 => [
+					[
 						'title' => 'Design icons',
 						'icon' => [
 							'fas fa-adjust' => 'Adjust',
@@ -846,7 +859,7 @@
 							'fas fa-vector-square' => 'Vector Square'
 						]
 					],
-					20 => [
+					[
 						'title' => 'Editors icons',
 						'icon' => [
 							'fas fa-align-center' => 'Align Center',
@@ -884,7 +897,7 @@
 							'fas fa-unlink' => 'Unlink'
 						]
 					],
-					21 => [
+					[
 						'title' => 'Emoji icons',
 						'icon' => [
 							'fas fa-angry' => 'Angry',
@@ -959,7 +972,7 @@
 							'far fa-tired' => 'Tired'
 						]
 					],
-					23 => [
+					[
 						'title' => 'Energy icons',
 						'icon' => [
 							'fas fa-atom' => 'Atom',
@@ -989,7 +1002,7 @@
 							'fas fa-wind' => 'Wind',
 						]
 					],
-					24 => [
+					[
 						'title' => 'Finance icons',
 						'icon' => [
 							'fas fa-credit-card' => 'Credit Card',
@@ -998,7 +1011,7 @@
 							'fas fa-file-invoice-dollar' => 'Hand Holding Usd'
 						]
 					],
-					25 => [
+					[
 						'title' => 'Fitness icons',
 						'icon' => [
 							'fas fa-bicycle' => 'Bicycle',
@@ -1014,7 +1027,7 @@
 							'fas fa-walking' => 'Walking'
 						]
 					],
-					26 => [
+					[
 						'title' => 'Food icons',
 						'icon' => [
 							'fas fa-bacon' => 'Bacon',
@@ -1039,7 +1052,7 @@
 							'fas fa-stroopwafel' => 'Stroopwafel',
 						]
 					],
-					27 => [
+					[
 						'title' => 'Animals icons',
 						'icon' => [
 							'fas fa-apple-alt' => 'fa-apple-alt',
@@ -1051,7 +1064,7 @@
 							'fas fa-seedling' => 'Seedling'
 						]
 					],
-					28 => [
+					[
 						'title' => 'Games icons',
 						'icon' => [
 							'fas fa-chess' => 'Chess',
@@ -1083,7 +1096,7 @@
 							'fas fa-xbox' => 'Xbox'
 						]
 					],
-					29 => [
+					[
 						'title' => 'Health icons',
 						'icon' => [
 							'fas fa-medkit' => 'Medkit',
@@ -1095,7 +1108,7 @@
 							'fas fa-wheelchair' => 'Wheelchair'
 						]
 					],
-					30 => [
+					[
 						'title' => 'Holiday icons',
 						'icon' => [
 							'fas fa-candy-cane' => 'Candy Cane',
@@ -1110,7 +1123,7 @@
 							'fas fa-snowman' => 'Snowman'
 						]
 					],
-					31 => [
+					[
 						'title' => 'Interfaces icons',
 						'icon' => [
 							'fas fa-award' => 'Award',
@@ -1231,7 +1244,7 @@
 							'fas fa-wrench' => 'Wrench',
 						]
 					],
-					32 => [
+					[
 						'title' => 'Payments icons',
 						'icon' => [
 							'fab fa-alipay' => 'Alipay',
@@ -1268,7 +1281,7 @@
 							'fab fa-stripe-s' => 'Stripe S'
 						]
 					],
-					33 => [
+					[
 						'title' => 'Music icons',
 						'icon' => [
 							'fas fa-drum' => 'Drum',
@@ -1282,7 +1295,7 @@
 							'fas fa-spotify' => 'Spotify'
 						]
 					],
-					34 => [
+					[
 						'title' => 'Moving icons',
 						'icon' => [
 							'fas fa-box-open' => 'Box Open',
@@ -1300,7 +1313,7 @@
 							'fas fa-wine-glass' => 'Wine Glass'
 						]
 					],
-					35 => [
+					[
 						'title' => 'Mathematics icons',
 						'icon' => [
 							'fas fa-divide' => 'Divide',
@@ -1321,7 +1334,7 @@
 							'fas fa-wave-square' => 'Wave Square',
 						]
 					],
-					36 => [
+					[
 						'title' => 'Logistics icons',
 						'icon' => [
 							'fas fa-box' => 'Box',
@@ -1337,7 +1350,7 @@
 							'fas fa-warehouse' => 'Warehouse',
 						]
 					],
-					37 => [
+					[
 						'title' => 'Weather icons',
 						'icon' => [
 							'fas fa-bolt' => 'Bolt',
@@ -1366,7 +1379,7 @@
 							'fas fa-wind' => 'Wind'
 						]
 					],
-					38 => [
+					[
 						'title' => 'Pharmacy icons',
 						'icon' => [
 							'fas fa-band-aid' => 'Band Aid',
@@ -1398,7 +1411,7 @@
 							'fas fa-vials' => 'Vials'
 						]
 					],
-					39 => [
+					[
 						'title' => 'Sports icons',
 						'icon' => [
 							'fas fa-baseball-ball' => 'Baseball Ball',
@@ -1422,7 +1435,7 @@
 							'fas fa-volleyball-ball' => 'Volleyball Ball',
 						]
 					],
-					40 => [
+					[
 						'title' => 'Medical icons',
 						'icon' => [
 							'fas fa-allergies' => 'Allergies',
@@ -1454,7 +1467,7 @@
 							'fas fa-x-ray' => 'Ray',
 						]
 					],
-					41 => [
+					[
 						'title' => 'Summer icons',
 						'icon' => [
 							'fas fa-anchor' => 'Anchor',
@@ -1466,7 +1479,7 @@
 							'fas fa-water' => 'Water'
 						]
 					],
-					42 => [
+					[
 						'title' => 'Security icons',
 						'icon' => [
 							'fas fa-door-closed' => 'Door Closed',
@@ -1488,7 +1501,7 @@
 							'fas fa-user-shield' => 'User Shield'
 						]
 					],
-					43 => [
+					[
 						'title' => 'Halloween icons',
 						'icon' => [
 							'fas fa-book-dead' => 'Book Dead',
@@ -1504,7 +1517,7 @@
 							'fas fa-toilet-paper' => 'Toilet Paper'
 						]
 					],
-					44 => [
+					[
 						'title' => 'Religion icons',
 						'icon' => [
 							'fas fa-ankh' => 'Ankh',
@@ -1540,7 +1553,7 @@
 							'fas fa-yin-yang' => 'Yin Yang',
 						]
 					],
-					45 => [
+					[
 						'title' => 'Genders icons',
 						'icon' => [
 							'fas fa-genderless' => 'Genderless',
@@ -1558,7 +1571,7 @@
 							'fas fa-venus-mars' => 'Venus Mars'
 						]
 					],
-					46 => [
+					[
 						'title' => 'Science Fiction icons',
 						'icon' => [
 							'fab fa-atom' => 'Atom',
@@ -1582,7 +1595,7 @@
 							'fas fa-user-astronaut' => 'User Astronaut'
 						]
 					],
-					47 => [
+					[
 						'title' => 'Spinners icons',
 						'icon' => [
 							'fas fa-asterisk' => 'Asterisk',
@@ -1609,7 +1622,7 @@
 							'fas fa-yin-yang' => 'Yin Yang',
 						]
 					],
-					48 => [
+					[
 						'title' => 'Toggle icons',
 						'icon' => [
 							'fas fa-bullseye' => 'Bullseye',
@@ -1631,7 +1644,7 @@
 							'fas fa-wifi' => 'Wifi',
 						]
 					],
-					49 => [
+					[
 						'title' => 'Tabletop Gaming icons',
 						'icon' => [
 							'fab fa-acquisitions-incorporated' => 'Acquisitions Incorporated',
@@ -1653,7 +1666,7 @@
 							'fab fa-wizards-of-the-coast' => 'Wizards Of The Coast'
 						]
 					],
-					50 => [
+					[
 						'title' => 'Writing icons',
 						'icon' => [
 							'fas fa-archive' => 'Archive',
@@ -1695,7 +1708,7 @@
 							'fas fa-thumbtack' => 'Thumbtack',
 						]
 					],
-					51 => [
+					[
 						'title' => 'Winter icons',
 						'icon' => [
 							'fas fa-glass-whiskey' => 'Glass Whiskey	',
@@ -1710,7 +1723,7 @@
 							'fas fa-tram' => 'Tram',
 						]
 					],
-					52 => [
+					[
 						'title' => 'Vehicles icons',
 						'icon' => [
 							'fab fa-accessible-icon' => 'Accessible Icon',
@@ -1748,7 +1761,7 @@
 							'fas fa-wheelchair' => 'Wheelchair'
 						]
 					],
-					53 => [
+					[
 						'title' => 'Science icons',
 						'icon' => [
 							'fas fa-atom' => 'Atom',
@@ -1782,7 +1795,7 @@
 							'fas fa-vials' => 'Vials'
 						]
 					],
-					54 => [
+					[
 						'title' => 'Maritime icons',
 						'icon' => [
 							'fas fa-anchor' => 'Anchor',
@@ -1798,7 +1811,7 @@
 							'fas fa-wind' => 'Wind',
 						]
 					],
-					55 => [
+					[
 						'title' => 'Images icons',
 						'icon' => [
 							'fas fa-adjust' => 'Adjust',
@@ -1834,7 +1847,7 @@
 							'fab fa-unsplash' => 'Unsplash',
 						]
 					],
-					56 => [
+					[
 						'title' => 'Shapes icons',
 						'icon' => [
 							'fas fa-bookmark' => 'Bookmark',
@@ -1863,7 +1876,7 @@
 							'far fa-star' => 'Star',
 						]
 					],
-					57 => [
+					[
 						'title' => 'Hotel icons',
 						'icon' => [
 							'fas fa-baby-carriage' => 'Baby Carriage',
