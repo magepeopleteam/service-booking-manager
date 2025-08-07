@@ -52,7 +52,8 @@
 			}
 			public function global_enqueue() {
 				do_action('add_mpwpb_common_script');
-
+				wp_enqueue_style('mage-icon', MPWPB_PLUGIN_URL . '/assets/mage-icon/css/mage-icon.css', array(), time());
+				
                 self::staff_dashboard_enqueue_scripts();
 			}
 
