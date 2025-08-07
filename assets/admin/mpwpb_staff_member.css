@@ -34,6 +34,10 @@
     cursor: pointer;
     transition: background-color 0.2s;
     font-size: 14px;
+    display: flex;
+    justify-content: end;
+    gap:15px;
+    align-items: center;
 }
 
 .add-staff-btn {
@@ -175,6 +179,13 @@ select.mpwpb_staff_modify_holiday:focus {
     height: 100%;
     object-fit: cover;
 }
-.buttonGroup i{
-    margin-right: 5px;
+.mpwpb_add_update_tab ._mpBtn{
+    font-weight: normal;
+}
+.mpwpb_add_update_tab i{
+    margin-right: 10px;
+}
+.mpwpb_add_update_tab .mpwpb_add_new_staff{
+    background-color: var(--mpwpb_color_theme);
+    color: #fff;
 }
