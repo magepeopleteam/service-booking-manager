@@ -107,8 +107,8 @@
 					}
 				}
 				?>
-                <div class="mpwpb_style">
-                    <div class=_dShadow_6_adminLayout">
+                <div class="mpStyle mpwpb_style mep-quick-setup">
+                    <div class="_dShadow_6_adminLayout">
                         <form method="post" action="">
 							<?php wp_nonce_field('mpwpb_quick_setup_nonce', 'mpwpb_quick_setup_nonce'); ?>
                             <div class="mpwpb_tabs_next">
@@ -194,8 +194,8 @@
                     <div class="section">
                         <h2><?php esc_html_e('General settings', 'service-booking-manager'); ?></h2>
                         <p class="mTB_xs"><?php esc_html_e('Choose some general option.', 'service-booking-manager'); ?></p>
-                        <div class="_dLayout_mT">
-                            <label class="fullWidth">
+                        <div class="_mT">
+                            <label class="_fullWidth">
                                 <span class="min_300"><?php esc_html_e('Service Booking Manager Label:', 'service-booking-manager'); ?></span>
                                 <input type="text" class="formControl" name="mpwpb_label" value='<?php echo esc_attr($label); ?>'/>
                             </label>
@@ -203,8 +203,7 @@
                                 <span class="fas fa-info-circle"></span>
 								<?php esc_html_e('It will change the Service Booking Manager post type label on the entire plugin.', 'service-booking-manager'); ?>
                             </i>
-                            <div class="divider"></div>
-                            <label class="fullWidth">
+                            <label class="_fullWidth">
                             <span
                                 class="min_300"><?php esc_html_e('Service Booking Manager Slug:', 'service-booking-manager'); ?></span>
                                 <input type="text" class="formControl" name="mpwpb_slug" value='<?php echo esc_attr($slug); ?>'/>

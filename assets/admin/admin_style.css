@@ -684,5 +684,81 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   vertical-align: middle;
   padding: 2px 5px;
 }
+/* quick setup */
 
-/*# sourceMappingURL=admin_style.css.map */
+
+div.mpStyle.mep-quick-setup  .formControl{
+	max-width: 100%;
+	margin:8px 0;
+	padding: 14px 16px;
+	border: 2px solid #e5e7eb;
+	border-radius: 12px;
+	font-size: 16px;
+	transition: all 0.3s ease;
+	background: white;
+	color: #374151;
+	font-weight: normal;
+}
+div.mpStyle.mep-quick-setup  select.formControl:focus{
+	background-color: transparent;
+	border: 1px solid #0080F0;
+}
+
+div.mpStyle.mep-quick-setup label{
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+
+div.mpStyle.mep-quick-setup .info_text{
+	color: #6b7280;
+	margin-bottom: 28px;
+	font-style:normal;
+}
+
+div.mpStyle.mep-quick-setup .info_text span{
+	color: #b1b4bc;
+}
+
+div.mpStyle.mep-quick-setup .tabsContentNext{
+	padding:20px 0;
+}
+
+div.mpStyle.mep-quick-setup [class*="_adminLayout"]{
+	background-color: #f8f7fc;
+
+}
+
+.mep-quick-setup .mpwpb_tabs_next .tabItemNext.active [class*="circleIcon"]::after {
+    border-color: var(--mage-primary);
+}
+
+.mep-quick-setup .mpwpb_tabs_next .tabItemNext.active [class*="circleIcon"]{
+background-color: var(--mage-primary);
+border: 1px solid var(--mage-primary);
+}
+
+.mep-quick-setup .mpwpb_tabs_next .tabItemNext [class*="circleIcon"]{
+border: 1px solid #d6d6d6;
+}
+
+.mep-quick-setup .mpwpb_tabs_next .tabItemNext.active .circleTitle {
+    color: var(--mage-primary);
+  }
+
+  .mep-quick-setup .nextTab_prev{
+	border: 1px solid #333;
+  }
+
+.mep-quick-setup .nextTab_prev:hover, .mep-quick-setup .nextTab_prev:focus{
+	background-color: #ddd;
+	color: #000;
+}
+
+ div.mpwpb_style.mep-quick-setup h4{
+  padding-bottom: 0;
+}
+
+.mep-quick-setup .nextTab_prev:hover span, .mep-quick-setup .nextTab_prev:focus span{
+	color: #000;
+}
