@@ -50,10 +50,12 @@ if (!class_exists('Staff_Member')) {
         }
 
         public function add_staff_member_meta_on_post_create($post_id) {
+            // Verify nonce
             if (!isset($_POST['mpwpb_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['mpwpb_nonce'])), 'mpwpb_nonce')) {
                 return;
             }
 
+            // Save staff member enable setting
             $enable_staff_member = isset($_POST['mpwpb_staff_member_add']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_staff_member_add'])) : 'no';
             update_post_meta($post_id, 'mpwpb_staff_member_add', $enable_staff_member);
         }
@@ -114,14 +116,20 @@ if (!class_exists('Staff_Member')) {
         }
 
         public function save_selected_staff_meta() {
+            // Verify nonce
+            if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
+                wp_send_json_error('Invalid nonce!');
+            }
+            
             $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
             $staff_ids = isset($_POST['staff_ids']) ? array_map('intval', $_POST['staff_ids']) : [];
 
             if ($post_id && current_user_can('edit_post', $post_id)) {
+                // Save the selected staff IDs as an array
                 update_post_meta($post_id, 'mpwpb_selected_staff_ids', $staff_ids);
-                wp_send_json_success();
+                wp_send_json_success('Staff members saved successfully');
             } else {
-                wp_send_json_error();
+                wp_send_json_error('Invalid post ID or insufficient permissions');
             }
         }
     }

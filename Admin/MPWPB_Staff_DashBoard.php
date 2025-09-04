@@ -548,11 +548,17 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
                 'orderby'        => 'date',
                 'order'          => 'DESC',
                 'meta_query'     => array(
+                    'relation' => 'AND',
                     array(
                         'key'   => 'mpwpb_staff_term_id',
                         'value' => $user_id,
                         'compare' => '=',
                     ),
+                    array(
+                        'key' => 'mpwpb_backend_order',
+                        'value' => 'yes',
+                        'compare' => '!='
+                    )
                 ),
             );
 

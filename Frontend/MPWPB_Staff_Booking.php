@@ -48,6 +48,11 @@ if (!class_exists('MPWPB_Staff_Booking')) {
                         'value'   => $datetime,
                         'compare' => 'LIKE'
                     ),
+                    array(
+                        'key' => 'mpwpb_backend_order',
+                        'value' => 'yes',
+                        'compare' => '!='
+                    )
                 ),
             );
 

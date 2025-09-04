@@ -1,0 +1,167 @@
+.mpwpb-analytics-dashboard {
+    margin: 20px 0;
+}
+
+.mpwpb-dashboard-filters {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    box-shadow: 0 1px 1px rgba(0,0,0,.04);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.mpwpb-filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 15px;
+}
+
+.mpwpb-filter-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mpwpb-filter-group label {
+    font-weight: 600;
+    margin-right: 5px;
+}
+
+.mpwpb-dashboard-widgets {
+    margin-top: 20px;
+}
+
+.mpwpb-widget-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -10px 20px;
+}
+
+.mpwpb-widget {
+    padding: 0 10px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
+
+.mpwpb-widget-1-4 {
+    flex: 0 0 25%;
+    max-width: 25%;
+}
+
+.mpwpb-widget-1-3 {
+    flex: 0 0 33.333%;
+    max-width: 33.333%;
+}
+
+.mpwpb-widget-1-2 {
+    flex: 0 0 50%;
+    max-width: 50%;
+}
+
+.mpwpb-widget-full {
+    flex: 0 0 100%;
+    max-width: 100%;
+}
+
+.mpwpb-widget-content {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    box-shadow: 0 1px 1px rgba(0,0,0,.04);
+    padding: 20px;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.mpwpb-widget-content h3 {
+    margin-top: 0;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.mpwpb-widget-value {
+    font-size: 2em;
+    font-weight: bold;
+    color: #2271b1;
+    margin: 10px 0;
+}
+
+.mpwpb-widget-description {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.mpwpb-chart-container {
+    position: relative;
+    height: 300px;
+    margin-top: 20px;
+}
+
+.mpwpb-recent-bookings table {
+    width: 100%;
+}
+
+.mpwpb-recent-bookings table th,
+.mpwpb-recent-bookings table td {
+    padding: 10px;
+    text-align: left;
+}
+
+.mpwpb-recent-bookings table th {
+    background: #f1f1f1;
+    font-weight: 600;
+}
+
+.mpwpb-status {
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 0.85em;
+    font-weight: 600;
+}
+
+.mpwpb-status-completed {
+    background: #d4edda;
+    color: #155724;
+}
+
+.mpwpb-status-processing {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.mpwpb-status-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.mpwpb-status-cancelled {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .mpwpb-widget-1-4 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+@media (max-width: 768px) {
+    .mpwpb-widget-1-4,
+    .mpwpb-widget-1-3,
+    .mpwpb-widget-1-2 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    
+    .mpwpb-filter-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .mpwpb-filter-group {
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+}

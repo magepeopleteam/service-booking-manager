@@ -1,5 +1,5 @@
 <?php
-	/*
+/*
 * @Author 		engr.sumonazma@gmail.com
 * Copyright: 	mage-people.com
 */
@@ -36,7 +36,8 @@
 				wp_enqueue_script('jquery');
 				wp_enqueue_script('jquery-ui-core');
 				wp_enqueue_script('jquery-ui-datepicker');
-				wp_localize_script('mpwpb_ajax_url', 'mpwpb_ajax_url', array('url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('mpwpb-ajax-nonce')));
+				// Removed duplicate mpwpb_ajax_url localization to prevent conflicts
+				// wp_localize_script('mpwpb_ajax_url', 'mpwpb_ajax_url', array('url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('mpwpb-ajax-nonce')));
 				wp_enqueue_style('mp_jquery_ui', MPWPB_GLOBAL_PLUGIN_URL . '/assets/jquery-ui.min.css', array(), '1.13.2');
 				wp_enqueue_style('mp_font_awesome', MPWPB_GLOBAL_PLUGIN_URL . '/assets/admin/all.min.css', array(), '5.15.3');
 				wp_enqueue_style('mp_select_2', MPWPB_GLOBAL_PLUGIN_URL . '/assets/select_2/select2.min.css', array(), '4.0.13');
@@ -81,21 +82,43 @@
 			public function js_constant() {
 				?>
 				<script type="text/javascript">
-					let mpwpb_currency_symbol = "";
-					let mpwpb_currency_position = "";
-					let mpwpb_currency_decimal = "";
-					let mpwpb_currency_thousands_separator = "";
-					let mpwpb_num_of_decimal = "";
-					let mpwpb_price_suffix="<?php echo get_option('woocommerce_price_display_suffix'); ?>";
-					let mpwpb_ajax_url = "<?php echo esc_js(admin_url('admin-ajax.php')); ?>";
-					let mpwpb_empty_image_url = "<?php echo esc_js(MPWPB_GLOBAL_PLUGIN_URL . '/assets/images/no_image.png'); ?>";
-					let mpwpb_date_format = "<?php echo esc_js(MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'date_format', 'D d M , yy')); ?>";
-					let mpwpb_date_format_without_year = "<?php echo esc_js(MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'date_format_without_year', 'D d M')); ?>";
+					// Declare variables only if they don't already exist to prevent duplicate declaration errors
+					if (typeof mpwpb_currency_symbol === 'undefined') {
+						var mpwpb_currency_symbol = "";
+					}
+					if (typeof mpwpb_currency_position === 'undefined') {
+						var mpwpb_currency_position = "";
+					}
+					if (typeof mpwpb_currency_decimal === 'undefined') {
+						var mpwpb_currency_decimal = "";
+					}
+					if (typeof mpwpb_currency_thousands_separator === 'undefined') {
+						var mpwpb_currency_thousands_separator = "";
+					}
+					if (typeof mpwpb_num_of_decimal === 'undefined') {
+						var mpwpb_num_of_decimal = "";
+					}
+					if (typeof mpwpb_price_suffix === 'undefined') {
+						var mpwpb_price_suffix="<?php echo get_option('woocommerce_price_display_suffix'); ?>";
+					}
+					if (typeof mpwpb_ajax_url === 'undefined') {
+						var mpwpb_ajax_url = "<?php echo esc_js(admin_url('admin-ajax.php')); ?>";
+					}
+					if (typeof mpwpb_empty_image_url === 'undefined') {
+						var mpwpb_empty_image_url = "<?php echo esc_js(MPWPB_GLOBAL_PLUGIN_URL . '/assets/images/no_image.png'); ?>";
+					}
+					if (typeof mpwpb_date_format === 'undefined') {
+						var mpwpb_date_format = "<?php echo esc_js(MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'date_format', 'D d M , yy')); ?>";
+					}
+					if (typeof mpwpb_date_format_without_year === 'undefined') {
+						var mpwpb_date_format_without_year = "<?php echo esc_js(MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'date_format_without_year', 'D d M')); ?>";
+					}
 				</script>
 				<?php
 				if (MPWPB_Global_Function::check_woocommerce() == 1) {
 					?>
 					<script type="text/javascript">
+						// Set WooCommerce-specific values
 						mpwpb_currency_symbol = "<?php echo esc_js(get_woocommerce_currency_symbol()); ?>";
 						mpwpb_currency_position = "<?php echo esc_js(get_option('woocommerce_currency_pos')); ?>";
 						mpwpb_currency_decimal = "<?php echo esc_js(wc_get_price_decimal_separator()); ?>";
@@ -118,3 +141,4 @@
 		}
 		new MPWPB_Global_File_Load();
 	}
+?>
