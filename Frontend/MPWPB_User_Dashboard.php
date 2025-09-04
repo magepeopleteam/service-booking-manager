@@ -346,9 +346,11 @@ $tabs = array(
                 $wpdb->prepare(
                     "SELECT * FROM {$wpdb->prefix}posts p
                     JOIN {$wpdb->prefix}postmeta pm ON p.ID = pm.post_id
+                    LEFT JOIN {$wpdb->prefix}postmeta pm2 ON p.ID = pm2.post_id AND pm2.meta_key = 'mpwpb_backend_order'
                     WHERE p.post_type = 'mpwpb_booking'
                     AND pm.meta_key = 'mpwpb_user_id'
                     AND pm.meta_value = %d
+                    AND (pm2.meta_value != 'yes' OR pm2.meta_value IS NULL)
                     ORDER BY p.post_date DESC",
                     $user_id
                 )

@@ -467,6 +467,8 @@
 				if ($cpt_name == 'mpwpb_booking') {
 					$pin = $meta_data['mpwpb_user_id'] . $meta_data['mpwpb_order_id'] . $meta_data['mpwpb_id'] . $post_id;
 					update_post_meta($post_id, 'mpwpb_pin', $pin);
+					// Mark frontend orders as not backend orders
+					update_post_meta($post_id, 'mpwpb_backend_order', 'no');
 				}
 				wp_reset_postdata();
 			}

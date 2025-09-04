@@ -138,9 +138,17 @@ function mpwpb_load_date_picker(parent = jQuery('.mpwpb_style')) {
 }
 function mpwpb_load_date_picker_edit_curring_date(  off_days, off_dates ) {
 
-    let blockedDates = off_dates.split(',');
+    // Add checks for undefined parameters
+    let blockedDates = [];
+    if (off_dates && typeof off_dates === 'string') {
+        blockedDates = off_dates.split(',');
+    }
 
-    let offDays  = off_days.split(',');
+    let offDays = [];
+    if (off_days && typeof off_days === 'string') {
+        offDays = off_days.split(',');
+    }
+    
     let weekDays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
     let numericOffDays = offDays.map(day => weekDays.indexOf(day.toLowerCase())).filter(i => i !== -1);
 
@@ -186,7 +194,7 @@ function mpwpb_load_date_picker_edit_curring_date(  off_days, off_dates ) {
 
                 let dateOnly = formattedDate;
                 console.log( dateOnly );
-                let ajaxUrl = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.ajax_url : mpwpb_ajax.ajax_url;
+                let ajaxUrl = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.ajax_url : mpwpb_ajax_url;
                 let nonce = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.nonce : mpwpb_ajax.nonce;
                 let postId = mpwpb_recurring_data.post_id;
 
@@ -203,7 +211,7 @@ function mpwpb_load_date_picker_edit_curring_date(  off_days, off_dates ) {
                         if (response.success && response.data && response.data.dates) {
                             jQuery("#mpwpb_recurring_time_holedr").html(response.data.dates );
                         } else {
-                            console.error('AJAX Data Loadinf error:');
+                            console.error('AJAX Data Loading error:');
                         }
                     },
                     error: function(xhr, status, error) {
@@ -227,13 +235,28 @@ function mpwpb_alert($this, attr = 'alert') {
     "use strict";
     $(document).ready(function () {
 
-        let off_days = $("#mpwpb_off_days_data").val();
-        let off_dates = $("#mpwpb_off_dates_data").val();
+        let off_days = '';
+        let off_dates = '';
+        
+        // Check if elements exist before trying to get their values
+        if ($("#mpwpb_off_days_data").length > 0) {
+            off_days = $("#mpwpb_off_days_data").val() || '';
+        }
+        
+        if ($("#mpwpb_off_dates_data").length > 0) {
+            off_dates = $("#mpwpb_off_dates_data").val() || '';
+        }
+
         let off_days_ary = ['2025-09-07', '2025-09-10']; // YYYY-MM-DD format
         var off_dates_ary = [ 0, 6 ];
 
         mpwpb_load_date_picker();
-        mpwpb_load_date_picker_edit_curring_date( off_days, off_dates );
+        
+        // Only call the function if we have valid data or if it's needed for the current page
+        if (off_days || off_dates || $('.date_type_edit_recurring').length > 0) {
+            mpwpb_load_date_picker_edit_curring_date( off_days, off_dates );
+        }
+        
         $('.mpwpb_select2').select2({});
     });
 }(jQuery));
