@@ -32,7 +32,7 @@
                                 if ($available > 0) {
                                     ?>
                                     <button type="button" class=" to-book mpwpb_time_btn" data-date="<?php echo esc_attr(MPWPB_Global_Function::date_format($slot, 'full')); ?>" data-radio-check="<?php echo esc_attr($slot); ?>" data-open-icon="fas fa-check" data-close-icon="">
-                                        <!-- <span data-icon></span> --><?php echo esc_html(date_i18n('h:i A', strtotime($slot))); ?>
+                                        <!-- <span data-icon></span> --><?php echo esc_html(MPWPB_Global_Function::date_format($slot, 'time')); ?>
                                     </button>
                                 <?php } else {
                                     ?>

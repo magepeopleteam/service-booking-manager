@@ -100,7 +100,8 @@
 				wp_enqueue_script('mpwpb_registration', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_registration.js', ['jquery'], time());
 				wp_localize_script('mpwpb_registration', 'mpwpb_ajax', array(
 					'ajax_url' => admin_url('admin-ajax.php'),
-					'nonce'    => wp_create_nonce('mpwpb_nonce')
+					'nonce'    => wp_create_nonce('mpwpb_nonce'),
+					'use_24hour' => MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'time_format_24hour', 'no')
 				));
 				do_action('add_mpwpb_frontend_script');
 			}

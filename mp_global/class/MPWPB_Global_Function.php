@@ -150,6 +150,13 @@
 			public static function date_format($date, $format = 'date') {
 				$date_format = get_option('date_format');
 				$time_format = get_option('time_format');
+				
+				// Check if 24-hour format is enabled
+				$use_24hour = self::get_settings('mpwpb_global_settings', 'time_format_24hour', 'no');
+				if ($use_24hour === 'yes') {
+					$time_format = 'H:i'; // Force 24-hour format
+				}
+				
 				$wp_settings = $date_format . '  ' . $time_format;
 				//$timezone = wp_timezone_string();
 				$timestamp = strtotime($date);
@@ -424,6 +431,13 @@
 				public static function date_format($date, $format = 'date') {
 					$date_format = get_option('date_format');
 					$time_format = get_option('time_format');
+					
+					// Check if 24-hour format is enabled
+					$use_24hour = self::get_settings('mpwpb_global_settings', 'time_format_24hour', 'no');
+					if ($use_24hour === 'yes') {
+						$time_format = 'H:i'; // Force 24-hour format
+					}
+					
 					$wp_settings = $date_format . '  ' . $time_format;
 					//$timezone = wp_timezone_string();
 					$timestamp = strtotime($date);

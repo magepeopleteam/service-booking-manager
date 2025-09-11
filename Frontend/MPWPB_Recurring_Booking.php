@@ -45,7 +45,8 @@ if (!class_exists('MPWPB_Recurring_Booking')) {
                     'post_id' => is_object($post) ? $post->ID : 0,
                     'ajax_url' => admin_url('admin-ajax.php'),
                     'nonce' => wp_create_nonce('mpwpb_nonce'),
-                    'plugin_url' => MPWPB_PLUGIN_URL
+                    'plugin_url' => MPWPB_PLUGIN_URL,
+                    'use_24hour' => MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'time_format_24hour', 'no')
                 ));
 //            }
         }

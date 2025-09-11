@@ -270,6 +270,17 @@
 								'M' => date_i18n('M', strtotime($current_date)),
 							)
 						),
+						array(
+							'name' => 'time_format_24hour',
+							'label' => esc_html__('24 Hour Time Format', 'service-booking-manager'),
+							'desc' => esc_html__('Enable 24 hour time format everywhere in the plugin (frontend, PDF, email, admin order list, etc.)', 'service-booking-manager'),
+							'type' => 'select',
+							'default' => 'no',
+							'options' => array(
+								'yes' => esc_html__('Yes', 'service-booking-manager'),
+								'no' => esc_html__('No', 'service-booking-manager')
+							)
+						),
 					)),
 					'mpwpb_slider_settings' => array(
 						array(

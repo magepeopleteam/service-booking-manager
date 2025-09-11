@@ -299,6 +299,25 @@
 				$available = $total - $sold;
 				return max(0, $available);
 			}
+			
+			/**
+			 * Format time based on 24-hour setting
+			 *
+			 * @param string $time Time in H:i format
+			 * @return string Formatted time
+			 */
+			public static function format_time($time) {
+				$use_24hour = MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'time_format_24hour', 'no');
+				
+				if ($use_24hour === 'yes') {
+					// Already in 24-hour format, return as is
+					return $time;
+				} else {
+					// Convert to 12-hour format
+					$time_obj = date_create($time);
+					return date_format($time_obj, 'g:i A');
+				}
+			}
 		}
 		new MPWPB_Function();
 	}
