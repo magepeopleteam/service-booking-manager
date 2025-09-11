@@ -518,7 +518,7 @@ if (!class_exists('MPWPB_Staff_Members')) {
                 for ($i = $time_count; $i <= $end_time; $i = $i + 0.5) {
                     if ($stat_time == 'yes' || $i > $time_count) {
                         ?>
-                        <option value="<?php echo esc_attr($i); ?>" <?php echo esc_attr($time != '' && $time == $i ? 'selected' : ''); ?>><?php echo esc_html(date_i18n('h:i A', $i * 3600)); ?></option>
+                        <option value="<?php echo esc_attr($i); ?>" <?php echo esc_attr($time != '' && $time == $i ? 'selected' : ''); ?>><?php echo esc_html($this->format_time_option($i)); ?></option>
                         <?php
                     }
                 }
@@ -671,6 +671,26 @@ if (!class_exists('MPWPB_Staff_Members')) {
             $end_name_break = 'mpwpb_' . $day . '_end_break_time';
             $end_time_break = isset($_POST[$end_name_break]) ? sanitize_text_field(wp_unslash($_POST[$end_name_break])) : '';
             update_user_meta($user_id, $end_name_break, $end_time_break);
+        }
+        
+        /**
+         * Format time option based on 24-hour setting
+         *
+         * @param float $hour Hour value (e.g., 10.5 for 10:30)
+         * @return string Formatted time
+         */
+        public function format_time_option($hour) {
+            $use_24hour = MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'time_format_24hour', 'no');
+            
+            if ($use_24hour === 'yes') {
+                // Format as 24-hour (H:i)
+                $hours = floor($hour);
+                $minutes = ($hour - $hours) * 60;
+                return sprintf('%02d:%02d', $hours, $minutes);
+            } else {
+                // Format as 12-hour (h:i A)
+                return date_i18n('h:i A', $hour * 3600);
+            }
         }
 
     }

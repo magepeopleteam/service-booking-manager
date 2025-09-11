@@ -339,6 +339,17 @@
             hour: '2-digit',
             minute: '2-digit'
         };
+        
+        // Check if 24-hour format is enabled
+        let use24Hour = 'no';
+        if (typeof mpwpb_recurring_data !== 'undefined' && mpwpb_recurring_data.use_24hour) {
+            use24Hour = mpwpb_recurring_data.use_24hour;
+        }
+        
+        if (use24Hour === 'yes') {
+            options.hour12 = false; // Use 24-hour format
+        }
+        
         return date.toLocaleDateString(undefined, options);
     }
     
