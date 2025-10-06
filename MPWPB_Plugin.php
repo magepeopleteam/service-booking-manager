@@ -70,7 +70,7 @@
 				<div class="error" style="background-color: #ffe0e0;">
 					<p>
 						<?php esc_html_e('You Must Install WooCommerce Plugin before activating Service Booking Manager, Because It is dependent on Woocommerce Plugin.', 'service-booking-manager');?>
-						<a class="btn button" href="<?php esc_html($wc_install_url); ?>"><?php esc_html_e('Click Here to Install', 'service-booking-manager'); ?></a>
+						<a class="btn button" href="<?php echo esc_url($wc_install_url); ?>"><?php esc_html_e('Click Here to Install', 'service-booking-manager'); ?></a>
 					</p>
 				</div>
 				<?php
