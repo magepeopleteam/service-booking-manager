@@ -112,14 +112,14 @@
 				$images = is_array($images) ? MPWPB_Global_Function::array_to_string($images) : $images;
 				?>
                 <div class="mpwpb_multi_image_area">
-                    <input type="hidden" class="mpwpb_multi_image_value" name="<?php echo esc_attr($name); ?>" value="<?php esc_attr($images); ?>"/>
+                    <input type="hidden" class="mpwpb_multi_image_value" name="<?php echo esc_attr($name); ?>" value="<?php echo esc_attr($images); ?>"/>
                     <div class="mpwpb_multi_image">
 						<?php
 							$all_images = explode(',', $images);
 							if ($images && sizeof($all_images) > 0) {
 								foreach ($all_images as $image) {
 									?>
-                                    <div class="mpwpb_multi_image_item" data-image-id="<?php esc_attr($image); ?>">
+                                    <div class="mpwpb_multi_image_item" data-image-id="<?php echo esc_attr($image); ?>">
                                         <span class="fas fa-times circleIcon_xs mpwpb_remove_multi_image"></span>
 										<?php echo wp_get_attachment_image($image, 'medium'); ?>
                                     </div>
