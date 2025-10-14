@@ -104,13 +104,11 @@ if (!class_exists('MPWPB_Recurring_Booking')) {
         private function calculate_recurring_dates($recurring_type, $recurring_count, $start_date) {
             $dates = [];
             $dates[] = $start_date; // Add the initial date
-
             // Make sure we have a valid date format
             if (!strtotime($start_date)) {
                 // error_log('Invalid start date format: ' . $start_date);
                 return $dates;
             }
-
             // Parse the date and time
             $date_parts = date_parse($start_date);
             if ($date_parts === false) {
