@@ -98,6 +98,9 @@
 				wp_enqueue_script('mpwpb', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb.js', ['jquery'], time(), true);
 				wp_enqueue_style('mpwpb_registration', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_registration.css', [], time());
 				wp_enqueue_script('mpwpb_registration', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_registration.js', ['jquery'], time());
+				// FIXED: Off day setting not working in frontend - 2025-01-14 by Shahnur Alam
+				// Added off days filter script to handle frontend off day filtering
+				wp_enqueue_script('mpwpb_off_days_filter', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_off_days_filter.js', ['jquery', 'mpwpb_registration'], time(), true);
 				wp_localize_script('mpwpb_registration', 'mpwpb_ajax', array(
 					'ajax_url' => admin_url('admin-ajax.php'),
 					'nonce'    => wp_create_nonce('mpwpb_nonce'),

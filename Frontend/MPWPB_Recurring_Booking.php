@@ -93,6 +93,8 @@ if (!class_exists('MPWPB_Recurring_Booking')) {
         
         /**
          * Calculate recurring dates based on the recurring type and count
+         * FIXED: Off day setting not working in frontend - 2025-01-14 by Shahnur Alam
+         * Now properly filters out off days and off dates when generating recurring dates
          *
          * @param string $recurring_type
          * @param int $recurring_count
@@ -116,6 +118,24 @@ if (!class_exists('MPWPB_Recurring_Booking')) {
                 return $dates;
             }
 
+            // Get post ID from the AJAX request to fetch off days and off dates
+            $post_id = isset($_POST['post_id']) ? absint($_POST['post_id']) : 0;
+            
+            // Get off days and off dates for this service - FIXED: Added off day filtering
+            $off_days = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_off_days', '');
+            $all_off_days = !empty($off_days) ? explode(',', $off_days) : [];
+            $all_off_dates = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_off_dates', array());
+            
+            // Format off dates for comparison
+            $off_dates = [];
+            if (is_array($all_off_dates)) {
+                foreach ($all_off_dates as $off_date) {
+                    if (!empty($off_date)) {
+                        $off_dates[] = date_i18n('Y-m-d', strtotime($off_date));
+                    }
+                }
+            }
+
             // Create a DateTime object from the start date
             try {
                 $date_obj = new DateTime($start_date);
@@ -123,8 +143,10 @@ if (!class_exists('MPWPB_Recurring_Booking')) {
                 $time_string = $date_obj->format($time_format);
 
                 $current_date = strtotime($start_date);
+                $generated_count = 1; // We already have the start date
 
-                for ($i = 1; $i < $recurring_count; $i++) {
+                // Keep generating dates until we have the required count, skipping off days/dates
+                while ($generated_count < $recurring_count) {
                     switch ($recurring_type) {
                         case 'weekly':
                             $current_date = strtotime('+1 week', $current_date);
@@ -139,9 +161,24 @@ if (!class_exists('MPWPB_Recurring_Booking')) {
                             break;
                     }
 
-                    // Format the date with the original time
+                    // Format the date for checking
                     $date_string = date('Y-m-d', $current_date);
-                    $dates[] = $date_string . ' ' . $time_string;
+                    $day_name = strtolower(date_i18n('l', $current_date));
+                    
+                    // FIXED: Check if this date is an off day or off date
+                    $is_off_day = in_array($day_name, $all_off_days);
+                    $is_off_date = in_array($date_string, $off_dates);
+                    
+                    // Only add the date if it's not an off day or off date
+                    if (!$is_off_day && !$is_off_date) {
+                        $dates[] = $date_string . ' ' . $time_string;
+                        $generated_count++;
+                    }
+                    
+                    // Safety check to prevent infinite loop (max 365 days ahead)
+                    if ($current_date > strtotime('+365 days', strtotime($start_date))) {
+                        break;
+                    }
                 }
             } catch (Exception $e) {
                 // error_log('Error creating DateTime object: ' . $e->getMessage());
