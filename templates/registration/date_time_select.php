@@ -9,7 +9,6 @@
 	$post_id = $post_id ?? get_the_id();
 	$all_dates = $all_dates ?? MPWPB_Function::get_date($post_id);
 
-
 	$enable_waiting_list = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_enable_waiting_list', 'no');
 	$enable_recurring = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_enable_recurring', 'no');
 	$recurring_types = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_recurring_types', array( 'daily','weekly', 'bi-weekly', 'monthly' ) );

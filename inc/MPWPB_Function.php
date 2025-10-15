@@ -190,12 +190,13 @@
 				$date_type = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_date_type', 'repeated');
 				$all_dates = [];
 				$off_days = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_off_days');
-				$all_off_days = explode(',', $off_days);
+				$all_off_days = array_map('strtolower', array_map('trim', explode(',', $off_days)));
 				$all_off_dates = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_off_dates', array());
 				$off_dates = [];
 				foreach ($all_off_dates as $off_date) {
 					$off_dates[] = date_i18n('Y-m-d', strtotime($off_date));
 				}
+				
 				if ($date_type == 'repeated') {
 					$start_date = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_repeated_start_date', $now);
 					if (strtotime($now) >= strtotime($start_date) && !$expire) {
@@ -207,8 +208,17 @@
 					$dates = MPWPB_Global_Function::date_separate_period($start_date, $end_date, $repeated_after);
 					foreach ($dates as $date) {
 						$date = $date->format('Y-m-d');
-						$day = strtolower(date_i18n('l', strtotime($date)));
-						if (!in_array($date, $off_dates) && !in_array($day, $all_off_days)) {
+						
+						// Get English day name regardless of locale
+						$day_num = date('w', strtotime($date)); // 0=Sunday, 1=Monday, etc.
+						$english_days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+						$day = $english_days[$day_num];
+						
+						// Check if date should be excluded (either off date OR off day)
+						$is_off_date = in_array($date, $off_dates);
+						$is_off_day = in_array($day, $all_off_days);
+						
+						if (!$is_off_date && !$is_off_day) {
 							$all_dates[] = $date;
 						}
 					}
@@ -217,7 +227,12 @@
 					$particular_date_lists = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_particular_dates', array());
 					if (sizeof($particular_date_lists)) {
 						foreach ($particular_date_lists as $particular_date) {
-							if ($particular_date && ($expire || strtotime($now) <= strtotime($particular_date)) && !in_array($particular_date, $off_dates) && !in_array($particular_date, $all_off_days)) {
+							// Get English day name regardless of locale
+							$day_num = date('w', strtotime($particular_date)); // 0=Sunday, 1=Monday, etc.
+							$english_days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+							$day = $english_days[$day_num];
+							
+							if ($particular_date && ($expire || strtotime($now) <= strtotime($particular_date)) && !in_array($particular_date, $off_dates) && !in_array($day, $all_off_days)) {
 								$all_dates[] = $particular_date;
 							}
 						}
@@ -231,12 +246,18 @@
 				$all_slots = [];
 				$slot_length = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_time_slot_length', 30);
 				$slot_length = $slot_length * 60;
-				$day_name = strtolower(date_i18n('l', strtotime($start_date)));
+				// Get English day name regardless of locale
+				$day_num = date('w', strtotime($start_date)); // 0=Sunday, 1=Monday, etc.
+				$english_days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+				$day_name = $english_days[$day_num];
+				
+				
 				$start_time = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_start_time');
 				if (!$start_time) {
 					$day_name = 'default';
 					$start_time = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_start_time', 10);
 				}
+				
 				$start_time = $start_time * 3600;
 				$end_time = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_end_time', 18) * 3600;
 				$start_time_break = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_start_break_time', 0) * 3600;
