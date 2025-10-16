@@ -77,6 +77,32 @@ function pageScrollTo(target) {
 
 //====================================================Load Date picker==============//
 function mpwpb_load_date_picker(parent = jQuery('.mpwpb_style')) {
+    // Get off days and off dates data
+    let off_days = '';
+    let off_dates = '';
+    
+    if (jQuery("#mpwpb_off_days_data").length > 0) {
+        off_days = jQuery("#mpwpb_off_days_data").val() || '';
+    }
+    
+    if (jQuery("#mpwpb_off_dates_data").length > 0) {
+        off_dates = jQuery("#mpwpb_off_dates_data").val() || '';
+    }
+    
+    // Parse off days and dates for filtering
+    let blockedDates = [];
+    if (off_dates && typeof off_dates === 'string') {
+        blockedDates = off_dates.split(',');
+    }
+
+    let offDays = [];
+    if (off_days && typeof off_days === 'string') {
+        offDays = off_days.split(',');
+    }
+    
+    let weekDays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    let numericOffDays = offDays.map(day => weekDays.indexOf(day.toLowerCase())).filter(i => i !== -1);
+    
     parent.find(".date_type.hasDatepicker").each(function () {
         jQuery(this).removeClass('hasDatepicker').attr('id', '').removeData('datepicker').unbind();
     }).promise().done(function () {
@@ -86,6 +112,22 @@ function mpwpb_load_date_picker(parent = jQuery('.mpwpb_style')) {
             autoSize: true,
             changeMonth: true,
             changeYear: true,
+            beforeShowDay: function(date) {
+                // Only apply filtering if we have off days or off dates configured
+                if (off_days || off_dates) {
+                    let yyyy = date.getFullYear();
+                    let mm = ('0' + (date.getMonth() + 1)).slice(-2);
+                    let dd = ('0' + date.getDate()).slice(-2);
+                    let formatted = `${yyyy}-${mm}-${dd}`;
+
+                    let day = date.getDay(); // Sunday = 0
+
+                    if (blockedDates.includes(formatted) || numericOffDays.includes(day)) {
+                        return [false]; // disabled
+                    }
+                }
+                return [true]; // enabled
+            },
             onSelect: function (dateString, data) {
                 let date = data.selectedYear + '-' + ('0' + (parseInt(data.selectedMonth) + 1)).slice(-2) + '-' + ('0' + parseInt(data.selectedDay)).slice(-2);
                 jQuery(this).closest('label').find('input[type="hidden"]').val(date).trigger('change');
@@ -101,6 +143,22 @@ function mpwpb_load_date_picker(parent = jQuery('.mpwpb_style')) {
             autoSize: true,
             changeMonth: true,
             changeYear: false,
+            beforeShowDay: function(date) {
+                // Only apply filtering if we have off days or off dates configured
+                if (off_days || off_dates) {
+                    let yyyy = date.getFullYear();
+                    let mm = ('0' + (date.getMonth() + 1)).slice(-2);
+                    let dd = ('0' + date.getDate()).slice(-2);
+                    let formatted = `${yyyy}-${mm}-${dd}`;
+
+                    let day = date.getDay(); // Sunday = 0
+
+                    if (blockedDates.includes(formatted) || numericOffDays.includes(day)) {
+                        return [false]; // disabled
+                    }
+                }
+                return [true]; // enabled
+            },
             onSelect: function (dateString, data) {
                 //console.log(mpwpb_date_format_without_year);
                 let date = ('0' + (parseInt(data.selectedMonth) + 1)).slice(-2) + '-' + ('0' + parseInt(data.selectedDay)).slice(-2);
@@ -152,7 +210,6 @@ function mpwpb_load_date_picker_edit_curring_date(  off_days, off_dates ) {
     let weekDays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
     let numericOffDays = offDays.map(day => weekDays.indexOf(day.toLowerCase())).filter(i => i !== -1);
 
-    console.log( numericOffDays );
 
     parent = jQuery('.mpwpb_style')
     parent.find(".date_type_edit_recurring.hasDatepicker").each(function () {
@@ -193,7 +250,6 @@ function mpwpb_load_date_picker_edit_curring_date(  off_days, off_dates ) {
                 let formattedDate = `${year}-${month}-${day}`;
 
                 let dateOnly = formattedDate;
-                console.log( dateOnly );
                 let ajaxUrl = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.ajax_url : mpwpb_ajax_url;
                 let nonce = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.nonce : mpwpb_ajax.nonce;
                 let postId = mpwpb_recurring_data.post_id;
@@ -497,8 +553,6 @@ function mpwpb_sticky_management() {
                 let content_top = target_content.offset().top;
                 let scroll_height = target_content.innerHeight() - current.innerHeight();
                 if (jQuery('body').outerWidth() > 800) {
-                    console.log(target_content.innerHeight() + ' - ' + current.innerHeight() + ' = ' + scroll_height);
-                    console.log(scroll_top + ' + ' + scroll_height + ' = ' + scroll_top + scroll_height);
                     //console.log(content_top);
                     //console.log(scroll_top+scroll_height);
                     if (scroll_top > content_top + scroll_height - 100) {
