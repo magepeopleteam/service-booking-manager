@@ -37,6 +37,7 @@ if (!class_exists('Staff_Member')) {
                             action: 'save_selected_staff_meta',
                             staff_ids: selectedStaff,
                             post_id: postId,
+                            nonce: mpwpb_admin_ajax.nonce,
                         }, function(response) {
                             if (response.success) {
                                 console.log('Saved');
@@ -117,6 +118,7 @@ if (!class_exists('Staff_Member')) {
 
         public function save_selected_staff_meta() {
             // Verify nonce
+
             if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
                 wp_send_json_error('Invalid nonce!');
             }
