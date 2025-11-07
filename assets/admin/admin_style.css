@@ -210,78 +210,100 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   justify-content: space-between;
   align-items: stretch;
 }
-#mp_meta_box_panel .metabox .tabLists {
+#mp_meta_box_panel  .tabLists {
   width: 20%;
   display: flex;
   flex-direction: column;
-  background-color: var(--mage-light);
+  background-color: #fff;
   border: 0;
-  padding: 25px 0 25px 25px;
+  padding:10px;
 }
-#mp_meta_box_panel .metabox .tabLists li {
-  position: relative;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  padding: 15px;
-  color: var(--mage-black);
-  border-left: 2px solid transparent;
-  font-size: 16px;
-  margin: 0;
+#mp_meta_box_panel  .tabLists li {
+  padding: 10px;
+  color: var(--mpcrbm-secondary);
+  margin: 5px 0;
+  background-color: #f8f8f8;
+  border-left: 0;
 }
-#mp_meta_box_panel .metabox .tabLists li i {
+#mp_meta_box_panel  .tabLists li i {
   margin: 0 10px 0 0;
   color: var(--mage-primary);
 }
-#mp_meta_box_panel .metabox .tabLists li.active, #mp_meta_box_panel .metabox .tabLists li:hover {
-  background-color: var(--mage-white);
-  color: var(--mage-black);
-  border-left: 2px solid var(--mage-primary);
+
+#mp_meta_box_panel  .tabLists li:hover {
+  background-color: #EAF6FF;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 119, 204, 0.15);
+  border-left: 0;
+  font-size: 16px;
   font-weight: normal;
 }
-#mp_meta_box_panel .metabox .tabLists li.active::after, #mp_meta_box_panel .metabox .tabLists li:hover::after {
-  width: 100%;
+
+#mp_meta_box_panel  .tabLists li.active{
+  background-color: var(--mage-primary);
+  color: #fff;
+  font-weight: normal;
 }
-#mp_meta_box_panel .metabox .tabLists li::after {
-  content: "";
+#mp_meta_box_panel  .tabLists li.active::after {
+  content: '';
   position: absolute;
-  left: 0;
-  bottom: 0;
-  border-bottom: 1px solid var(--mage-border);
-  width: 90%;
+  top: 50%;
+  left: 100%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 8px solid var(--mage-primary);
 }
-#mp_meta_box_panel .metabox .tabsContent {
+#mp_meta_box_panel  .tabLists li.active i{
+  color: #fff;
+}
+
+#mp_meta_box_panel  .tabsContent {
   width: 80%;
   width: 80%;
   padding: 2% 5%;
   overflow: hidden;
+  background-color: #f5f5f5;
 }
-#mp_meta_box_panel .metabox .tabsContent header {
+
+#mp_meta_box_panel  .tabsContent .tabsItem{
+border-radius: 8px;
+  background-color: #FFF;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1019607843);
+  padding: 24px;
+  margin-bottom: 24px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  width: 100%;
+}
+
+#mp_meta_box_panel  .tabsContent header {
   margin: 20px 0;
+  margin-top:0;
 }
-#mp_meta_box_panel .metabox .tabsContent header h2 {
+#mp_meta_box_panel  .tabsContent header h2 {
   padding: 0;
   color: var(--mage-black);
   margin-bottom: 10px;
   font-size: 22px;
   font-weight: 700;
 }
-#mp_meta_box_panel .metabox .tabsContent section {
+#mp_meta_box_panel  .tabsContent section {
   padding: 20px;
   border: 1px solid var(--mage-light);
   margin-top: -1px;
 }
-#mp_meta_box_panel .metabox .tabsContent section.section {
+#mp_meta_box_panel  .tabsContent section.section {
   background-color: var(--mage-light);
-  margin-top: 50px;
 }
-#mp_meta_box_panel .metabox .tabsContent section.section h2 {
+#mp_meta_box_panel  .tabsContent section.section h2 {
   font-weight: 600;
   color: var(--mage-black);
   padding: 0;
   font-size: 16px;
 }
-#mp_meta_box_panel .metabox .tabsContent section label.label {
+#mp_meta_box_panel  .tabsContent section label.label {
   display: flex;
   flex-direction: column;
   justify-content: start;
@@ -292,16 +314,16 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   color: var(--mage-black);
   font-size: 14px;
 }
-#mp_meta_box_panel .metabox .tabsContent section label.label p {
+#mp_meta_box_panel  .tabsContent section label.label p {
   font-weight: bold;
   line-height: 1.2;
   margin-bottom: 5px;
   color: var(--mage-black);
 }
-#mp_meta_box_panel .metabox .tabsContent section label.label input, #mp_meta_box_panel .metabox .tabsContent section label.label select, #mp_meta_box_panel .metabox .tabsContent section label.label textarea {
+#mp_meta_box_panel  .tabsContent section label.label input, #mp_meta_box_panel  .tabsContent section label.label select, #mp_meta_box_panel  .tabsContent section label.label textarea {
   width: 100%;
 }
-#mp_meta_box_panel .metabox .tabsContent section label.label span {
+#mp_meta_box_panel  .tabsContent section label.label span {
   font-size: 14px;
   font-weight: normal;
 }
@@ -669,18 +691,18 @@ div.mpwpb_category_header, div.mpwpb_category_header div.mpwpb_service_area {
   font-weight: normal;
 }
 
-#mp_meta_box_panel .metabox .tabsContent section .date-time-schedule section {
+#mp_meta_box_panel  .tabsContent section .date-time-schedule section {
   padding: 10px 20px;
   background-color: var(--mage-light-2);
   margin: 10px 0;
 }
-#mp_meta_box_panel .metabox .tabsContent section .date-time-schedule select.formControl:focus {
+#mp_meta_box_panel  .tabsContent section .date-time-schedule select.formControl:focus {
   background-color: transparent;
 }
-#mp_meta_box_panel .metabox .tabsContent section .date-time-schedule table tr:nth-child(2n) {
+#mp_meta_box_panel  .tabsContent section .date-time-schedule table tr:nth-child(2n) {
   background-color: var(--mage-light-2);
 }
-#mp_meta_box_panel .metabox .tabsContent section .date-time-schedule table td {
+#mp_meta_box_panel  .tabsContent section .date-time-schedule table td {
   vertical-align: middle;
   padding: 2px 5px;
 }
