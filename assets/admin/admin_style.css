@@ -855,13 +855,15 @@ div.mpwpb_style.mpwpb_global_settings .tabLists {
   .mpwpb_style .tabsContent{
     background-color: #f0f0f1;
   }
-
-  div.mpwpb_global_settings th label, 
-  div.mpwpb_global_settings td fieldset label{
+ 
+  div.mpwpb_global_settings .formControl{
     font-weight: normal;
     font-size: 15px;
   }
 
   div.mpwpb_global_settings th label {
     font-size: 15px;
+  }
+  div.mpwpb_style .info_text span{
+    color: #b3b3b3;
   }
