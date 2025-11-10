@@ -46,7 +46,7 @@
 									<i class="mi mi-rectangle-list"></i><?php esc_html_e('Service Details', 'service-booking-manager'); ?>
 								</li>
 								<li  data-tabs-target="#mpwpb_service_settings">
-                                    <i class="mi mi-check"></i><?php esc_html_e('Service Settings', 'service-booking-manager'); ?>
+                                    <i class="mi mi-workflow-setting-alt"></i><?php esc_html_e('Service Settings', 'service-booking-manager'); ?>
 								</li>
 								<?php do_action('add_mpwpb_settings_tab_after_date', $post_id); ?>
 
