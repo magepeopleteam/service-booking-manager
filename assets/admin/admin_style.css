@@ -784,3 +784,84 @@ border: 1px solid #d6d6d6;
 .mep-quick-setup .nextTab_prev:hover span, .mep-quick-setup .nextTab_prev:focus span{
 	color: #000;
 }
+
+div.mpwpb_global_settings {
+  max-width: 1700px;
+  width: calc(100% - 20px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1019607843);
+}
+
+.post-type-mpwpb_item .notice,
+.post-type-mpwpb_item .error{
+  display: none;
+}
+
+div.mpwpb_global_settings .mpPanelHeader{
+  background-color: var(--mage-primary);
+  color: var(--mage-white);
+  padding:5px;
+}
+
+div.mpwpb_style.mpwpb_global_settings .tabLists {
+  border-right:0;
+  padding: 10px;
+}
+
+  .mpwpb_style [data-tabs-target].active,
+  .mpwpb_style [data-tabs-target].active:hover {
+    font-weight: normal;
+    background-color: var(--mage-primary);
+    color: #fff;
+  }
+  .mpwpb_style [data-tabs-target].active::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 8px solid var(--mage-primary);
+  }
+  .mpwpb_style [data-tabs-target]{
+    padding: 10px;
+    color: var(--mpcrbm-secondary);
+    margin: 5px 0;
+    background-color: #f8f8f8;
+    border: 0;
+  }
+  .mpwpb_style [data-tabs-target]:hover{
+    background-color: #EAF6FF;
+    color: var(--mpcrbm-secondary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 119, 204, 0.15);
+    border-left: 0;
+    font-size: 16px;
+    font-weight: normal;
+  }
+
+  .mpwpb_style .tabsContent .tabsItem{
+    border-radius: 8px;
+    background-color: #FFF;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1019607843);
+    padding: 24px;
+    margin-bottom: 24px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    width: 100%;
+  }
+
+  .mpwpb_style .tabsContent{
+    background-color: #f0f0f1;
+  }
+
+  div.mpwpb_global_settings th label, 
+  div.mpwpb_global_settings td fieldset label{
+    font-weight: normal;
+    font-size: 15px;
+  }
+
+  div.mpwpb_global_settings th label {
+    font-size: 15px;
+  }

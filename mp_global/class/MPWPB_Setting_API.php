@@ -337,7 +337,7 @@
 				$count = count($this->settings_sections);
 				if ($count > 1) {
 					?>
-                    <ul class="tabLists bgLight">
+                    <ul class="tabLists">
 						<?php foreach ($this->settings_sections as $tab) { ?>
                             <li data-tabs-target="#<?php echo esc_attr($tab['id']); ?>">
                                 <span class="<?php echo esc_attr(array_key_exists('icon', $tab) ? $tab['icon'] : ''); ?>"></span><?php echo esc_html($tab['title']); ?>
