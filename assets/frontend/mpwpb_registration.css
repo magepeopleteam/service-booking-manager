@@ -925,12 +925,14 @@ div.registration_tab_item {
   align-items: center;
 }
 .mpwpb_registration nav ul li {
-  margin: 5px 15px;
+  margin: 5px 10px;
   background-color: #fff;
   color: #333;
   border-radius: 20px;
   font-size: 16px;
   border: 1px solid #333;
+  min-width: 100px;
+  text-align: center;
 }
 .mpwpb_registration nav ul li:first-child {
   margin-left: 0;
