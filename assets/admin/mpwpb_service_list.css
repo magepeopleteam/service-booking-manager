@@ -1,3 +1,16 @@
+
+div.mpwpb_order_filter_area {margin: 30px 0 0 0;}
+div.mpwpb_order_filter_area .customCheckboxLabel.only_checkbox{margin: 0 auto;}
+div.mpwpb_order_filter_area label {margin: 0 var(--mpwpb_dmp_xs) 0 0;}
+#mpwpb_order_list_result table td {padding: 5px;}
+#mpwpb_order_list_result table td div.buttonGroup > * {padding: 5px;}
+#mpwpb_order_list_result table label span {white-space: nowrap;}
+#mpwpb_order_list_result table td {font-size: 15px !important; vertical-align: top;}
+#mpwpb_order_list_result table tr:nth-of-type(even) {background-color: #fafafa;}
+#mpwpb_order_list_result table tr:nth-of-type(even) td {vertical-align: top;}
+div.attendee_filter_list h5 {margin: 0 20px 0 0;}
+.pagination_input {width: 150px !important;display: inline-block !important;}
+
 .mpwpv_service_list_container {
     padding: 5px;
     margin: 0 auto;
@@ -245,17 +258,37 @@
     display: flex;
     gap: 8px;
 }
+.mpwpb_service_list_actions a:nth-child(1) i{
+    color: #0da573;
+}
+.mpwpb_service_list_actions a:nth-child(2) i{
+    color: #ff9500;
+}
+.mpwpb_service_list_actions a:nth-child(3) i{
+    color: #0f88c0;
+}
+.mpwpb_service_list_actions a:nth-child(4) i{
+    color: #c80303;
+}
 .mpwpb_service_list_action-btn {
     width: 32px;
     height: 32px;
     border-radius: 6px;
     border: 1px solid #e2e8f0;
-    background: white;
+    background: #f3f4f6;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
+}
+.mpwpb_service_list_actions .mpwpb_service_list_action-btn:hover,
+.mpwpb_service_list_actions .mpwpb_service_list_action-btn:focus{
+    background-color:#f3f4f6;
+    opacity:1;
+}
+.mpwpb_service_list_action-btn i{
+    color: #5e59c7;
 }
 
 .mpwpb_service_list_more-link {

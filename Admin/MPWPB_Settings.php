@@ -28,25 +28,25 @@
 						<div class="tabLists">
 							<ul>
 								<li  data-tabs-target="#mpwpb_general_info">
-									<i class="fas fa-tools pe-1"></i><?php esc_html_e('General Info', 'service-booking-manager'); ?>
+									<i class="mi mi-settings"></i><?php esc_html_e('General Info', 'service-booking-manager'); ?>
 								</li>
 								<li  data-tabs-target="#mpwpb_settings_date_time">
-									<i class="fas fa-clock pe-1"></i><?php esc_html_e('Date & Time', 'service-booking-manager'); ?>
+									<i class="mi mi-calendar-clock"></i><?php esc_html_e('Date & Time', 'service-booking-manager'); ?>
 								</li>
 								<li  data-tabs-target="#mpwpb_price_settings">
-									<i class="fas fa-hand-holding-usd pe-1"></i><?php esc_html_e('Services & Pricing', 'service-booking-manager'); ?>
+									<i class="mi mi-coins"></i><?php esc_html_e('Services & Pricing', 'service-booking-manager'); ?>
 								</li>
 								<li  data-tabs-target="#mpwpb_extra_service_settings">
-									<i class="fas fa-funnel-dollar pe-1"></i><?php esc_html_e('Extra Service', 'service-booking-manager'); ?>
+									<i class="mi mi-basket-shopping-plus"></i><?php esc_html_e('Extra Service', 'service-booking-manager'); ?>
 								</li>
 								<li  data-tabs-target="#mpwpb_faq_settings">
-									<i class="fas fa-question-circle pe-1"></i><?php esc_html_e('FAQ', 'service-booking-manager'); ?>
+									<i class="mi mi-messages-question"></i><?php esc_html_e('FAQ', 'service-booking-manager'); ?>
 								</li>
 								<li  data-tabs-target="#mpwpb_service_details">
-									<i class="fas fa-wrench pe-1"></i><?php esc_html_e('Service Details', 'service-booking-manager'); ?>
+									<i class="mi mi-rectangle-list"></i><?php esc_html_e('Service Details', 'service-booking-manager'); ?>
 								</li>
 								<li  data-tabs-target="#mpwpb_service_settings">
-                                    <i class="fa-solid fa-gear"></i><?php esc_html_e('Service Settings', 'service-booking-manager'); ?>
+                                    <i class="mi mi-workflow-setting-alt"></i><?php esc_html_e('Service Settings', 'service-booking-manager'); ?>
 								</li>
 								<?php do_action('add_mpwpb_settings_tab_after_date', $post_id); ?>
 
@@ -54,7 +54,7 @@
                                 if ( is_plugin_active('service-booking-manager-pro/MPWPB_Plugin_Pro.php') ) {
                                 ?>
                                 <li  data-tabs-target="#mpwpb_staff_members">
-                                    <i class="fa-solid fa-gear"></i><?php esc_html_e('Staff Member', 'service-booking-manager'); ?>
+                                    <i class="mi mi-users-alt"></i><?php esc_html_e('Staff Member', 'service-booking-manager'); ?>
                                 </li>
                                 <?php }?>
 							</ul>

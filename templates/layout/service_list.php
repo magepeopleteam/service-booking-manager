@@ -57,10 +57,7 @@ function mpwpb_display_service_list( $query ){ ?>
             <tr class="mpwpv_service_list_table-container" data-service-status="<?php echo esc_attr( $status );?>" data-service-title="<?php echo esc_attr( $service_name )?>">
                 <td>
                     <div class="mpwpb_service_list_service-name">
-                        <div>
-                            <div class="mpwpb_service_list_service-title"><?php echo esc_html( $service_name ); ?></div>
-                        </div>
-                        <span class="mpwpb_service_list_status-badge <?php echo esc_attr( $status_class );?>"><?php echo esc_attr( $status_text )?></span>
+                        <div class="mpwpb_service_list_service-title"><?php echo esc_html( $service_name ); ?></div>
                     </div>
                 </td>
                 <td>
@@ -68,6 +65,9 @@ function mpwpb_display_service_list( $query ){ ?>
                 </td>
                 <td>
                     <div class="mpwpb_service_list_service-subtitle"><?php echo esc_attr( $sub_title );?></div>
+                </td>
+                <td>
+                    <span class="mpwpb_service_list_status-badge <?php echo esc_attr( $status_class );?>"><?php echo esc_attr( $status_text )?></span>
                 </td>
                 <td>
                     <div class="mpwpb_service_list_tags">
@@ -94,24 +94,23 @@ function mpwpb_display_service_list( $query ){ ?>
                             <span class="mpwpb_service_list_more-link">+<?php echo esc_attr( $remainig_service_count );?> more</span>
                         <?php }?>
                     </div>
-
-
-
                 </td>
                 <td>
                     <div class="mpwpb_service_list_actions">
-                        <a href="<?php echo esc_url( $view_link );?>"><button class="mpwpb_service_list_action-btn">👁</button></a>
-                        <a href="<?php echo  esc_url( $edit_link );?>"><button class="mpwpb_service_list_action-btn">✏️</button></a>
+                        <a href="<?php echo esc_url( $view_link );?>"><button class="mpwpb_service_list_action-btn"><i class="mi mi-eye"></i></button></a>
+                        <a href="<?php echo  esc_url( $edit_link );?>"><button class="mpwpb_service_list_action-btn"><i class="mi mi-pencil"></i></button></a>
                         <a title="<?php echo esc_attr__('Duplicate Post ', 'service-booking-manager') . ' : ' . get_the_title($post_id); ?>" class="mpwpb_duplicate_post" href="<?php echo wp_nonce_url(
                             admin_url('admin.php?action=mpwpb_duplicate_post&post_id=' . $post_id),
                             'mpwpb_duplicate_post_' . $post_id
                         ); ?>">
-                            <i class="fa fa-clone" style="padding-top: 6px"></i>
+                        <button class="mpwpb_service_list_action-btn">
+                            <i class="mi mi-clone"></i>
+                        </button>
                         </a>
                         <a class=" delete"
                            href="<?php echo esc_url($delete_link); ?>"
                            onclick="return confirm('Are you sure you want to move this to trash?');"
-                           title="Trash"><button class="mpwpb_service_list_action-btn">🗑️</button></a>
+                           title="Trash"><button class="mpwpb_service_list_action-btn"><i class="mi mi-trash"></i></button></a>
                     </div>
                 </td>
             </tr>
@@ -281,6 +280,7 @@ $total_user = get_total_customer();
                     <th><?php esc_attr_e( 'Service', 'service-booking-manager')?></th>
                     <th><?php esc_attr_e( 'Shortcode', 'service-booking-manager')?></th>
                     <th><?php esc_attr_e( 'Sub Title', 'service-booking-manager')?></th>
+                    <th><?php esc_attr_e( 'Status', 'service-booking-manager')?></th>
                     <th><?php esc_attr_e( 'Popular Services', 'service-booking-manager')?></th>
                     <th><?php esc_attr_e( 'Actions', 'service-booking-manager')?></th>
                 </tr>

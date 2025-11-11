@@ -27,7 +27,7 @@
 				$label = MPWPB_Function::get_name();
 				?>
 				<div class="mpwpb_style mpwpb_global_settings">
-					<div class="_dShadow_6 mpPanel">
+					<div class="mpPanel">
 						<div class="mpPanelHeader"><?php echo esc_html($label . esc_html__(' Global Settings', 'service-booking-manager')); ?></div>
 						<div class="mpPanelBody mp_zero">
 							<div class="mpwpb_tabs leftTabs">
@@ -58,11 +58,12 @@
 				$sections = array(
 					array(
 						'id' => 'mpwpb_general_settings',
-						'icon' => 'fas fa-sliders-h',
+						'icon' => 'mi mi-settings',
 						'title' => __('General Settings', 'service-booking-manager')
 					),
 					array(
 						'id' => 'mpwpb_global_settings',
+						'icon' => 'mi mi-globe',
 						'title' => esc_html__('Global Settings', 'service-booking-manager')
 					)
 				);
@@ -73,18 +74,22 @@
 
 					array(
 						'id' => 'mpwpb_slider_settings',
+						'icon' => 'mi mi-gallery',
 						'title' => esc_html__('Slider Settings', 'service-booking-manager')
 					),
 					array(
 						'id' => 'mpwpb_style_settings',
+						'icon' => 'mi mi-paintbrush-pencil',
 						'title' => esc_html__('Style Settings', 'service-booking-manager')
 					),
 					array(
 						'id' => 'mpwpb_custom_css',
+						'icon' => 'mi mi-rectangle-code',
 						'title' => esc_html__('Custom CSS', 'service-booking-manager')
 					),
 					array(
 						'id' => 'mpwpb_license_settings',
+						'icon' => 'mi mi-compliance-document',
 						'title' => esc_html__('Mage-People License', 'service-booking-manager')
 					)
 				);
@@ -377,116 +382,116 @@
 					'mpwpb_style_settings' => apply_filters('filter_mpwpb_style_settings', array(
 						array(
 							'name' => 'theme_color',
-							'label' => esc_html__('Theme Color', 'service-booking-manager'),
+							'label' => esc_html__('Primary Color', 'service-booking-manager'),
 							'desc' => esc_html__('Select Default Theme Color', 'service-booking-manager'),
 							'type' => 'color',
-							'default' => '#0793C9'
+							'default' => '#f12971'
 						),
 						array(
 							'name' => 'theme_alternate_color',
-							'label' => esc_html__('Theme Alternate Color', 'service-booking-manager'),
+							'label' => esc_html__('Secondary Color', 'service-booking-manager'),
 							'desc' => esc_html__('Select Default Theme Alternate  Color that means, if background theme color then it will be text color.', 'service-booking-manager'),
 							'type' => 'color',
 							'default' => '#fff'
 						),
-						array(
-							'name' => 'default_text_color',
-							'label' => esc_html__('Default Text Color', 'service-booking-manager'),
-							'desc' => esc_html__('Select Default Text  Color.', 'service-booking-manager'),
-							'type' => 'color',
-							'default' => '#000'
-						),
-						array(
-							'name' => 'default_font_size',
-							'label' => esc_html__('Default Font Size', 'service-booking-manager'),
-							'desc' => esc_html__('Type Default Font Size(in PX Unit).', 'service-booking-manager'),
-							'type' => 'number',
-							'default' => '15'
-						),
-						array(
-							'name' => 'font_size_h1',
-							'label' => esc_html__('Font Size h1 Title', 'service-booking-manager'),
-							'desc' => esc_html__('Type Font Size Main Title(in PX Unit).', 'service-booking-manager'),
-							'type' => 'number',
-							'default' => '35'
-						),
-						array(
-							'name' => 'font_size_h2',
-							'label' => esc_html__('Font Size h2 Title', 'service-booking-manager'),
-							'desc' => esc_html__('Type Font Size h2 Title(in PX Unit).', 'service-booking-manager'),
-							'type' => 'number',
-							'default' => '25'
-						),
-						array(
-							'name' => 'font_size_h3',
-							'label' => esc_html__('Font Size h3 Title', 'service-booking-manager'),
-							'desc' => esc_html__('Type Font Size h3 Title(in PX Unit).', 'service-booking-manager'),
-							'type' => 'number',
-							'default' => '22'
-						),
-						array(
-							'name' => 'font_size_h4',
-							'label' => esc_html__('Font Size h4 Title', 'service-booking-manager'),
-							'desc' => esc_html__('Type Font Size h4 Title(in PX Unit).', 'service-booking-manager'),
-							'type' => 'number',
-							'default' => '20'
-						),
-						array(
-							'name' => 'font_size_h5',
-							'label' => esc_html__('Font Size h5 Title', 'service-booking-manager'),
-							'desc' => esc_html__('Type Font Size h5 Title(in PX Unit).', 'service-booking-manager'),
-							'type' => 'number',
-							'default' => '18'
-						),
-						array(
-							'name' => 'font_size_h6',
-							'label' => esc_html__('Font Size h6 Title', 'service-booking-manager'),
-							'desc' => esc_html__('Type Font Size h6 Title(in PX Unit).', 'service-booking-manager'),
-							'type' => 'number',
-							'default' => '16'
-						),
-						array(
-							'name' => 'button_font_size',
-							'label' => esc_html__('Button Font Size ', 'service-booking-manager'),
-							'desc' => esc_html__('Type Font Size Button(in PX Unit).', 'service-booking-manager'),
-							'type' => 'number',
-							'default' => '18'
-						),
-						array(
-							'name' => 'button_color',
-							'label' => esc_html__('Button Text Color', 'service-booking-manager'),
-							'desc' => esc_html__('Select Button Text  Color.', 'service-booking-manager'),
-							'type' => 'color',
-							'default' => '#FFF'
-						),
-						array(
-							'name' => 'button_bg',
-							'label' => esc_html__('Button Background Color', 'service-booking-manager'),
-							'desc' => esc_html__('Select Button Background  Color.', 'service-booking-manager'),
-							'type' => 'color',
-							'default' => '#222'
-						),
-						array(
-							'name' => 'font_size_label',
-							'label' => esc_html__('Label Font Size ', 'service-booking-manager'),
-							'desc' => esc_html__('Type Font Size Label(in PX Unit).', 'service-booking-manager'),
-							'type' => 'number',
-							'default' => '18'
-						),
-						array(
-							'name' => 'warning_color',
-							'label' => esc_html__('Warning Color', 'service-booking-manager'),
-							'desc' => esc_html__('Select Warning  Color.', 'service-booking-manager'),
-							'type' => 'color',
-							'default' => '#E67C30'
-						),
-						array(
-							'name' => 'section_bg',
-							'label' => esc_html__('Section Background color', 'service-booking-manager'),
-							'desc' => esc_html__('Select Background  Color.', 'service-booking-manager'),
-							'type' => 'color',
-							'default' => '#FAFCFE'
-						),
+						// array(
+						// 	'name' => 'default_text_color',
+						// 	'label' => esc_html__('Default Text Color', 'service-booking-manager'),
+						// 	'desc' => esc_html__('Select Default Text  Color.', 'service-booking-manager'),
+						// 	'type' => 'color',
+						// 	'default' => '#000'
+						// ),
+						// array(
+						// 	'name' => 'default_font_size',
+						// 	'label' => esc_html__('Default Font Size', 'service-booking-manager'),
+						// 	'desc' => esc_html__('Type Default Font Size(in PX Unit).', 'service-booking-manager'),
+						// 	'type' => 'number',
+						// 	'default' => '15'
+						// ),
+						// array(
+						// 	'name' => 'font_size_h1',
+						// 	'label' => esc_html__('Font Size h1 Title', 'service-booking-manager'),
+						// 	'desc' => esc_html__('Type Font Size Main Title(in PX Unit).', 'service-booking-manager'),
+						// 	'type' => 'number',
+						// 	'default' => '35'
+						// ),
+						// array(
+						// 	'name' => 'font_size_h2',
+						// 	'label' => esc_html__('Font Size h2 Title', 'service-booking-manager'),
+						// 	'desc' => esc_html__('Type Font Size h2 Title(in PX Unit).', 'service-booking-manager'),
+						// 	'type' => 'number',
+						// 	'default' => '25'
+						// ),
+						// array(
+						// 	'name' => 'font_size_h3',
+						// 	'label' => esc_html__('Font Size h3 Title', 'service-booking-manager'),
+						// 	'desc' => esc_html__('Type Font Size h3 Title(in PX Unit).', 'service-booking-manager'),
+						// 	'type' => 'number',
+						// 	'default' => '22'
+						// ),
+						// array(
+						// 	'name' => 'font_size_h4',
+						// 	'label' => esc_html__('Font Size h4 Title', 'service-booking-manager'),
+						// 	'desc' => esc_html__('Type Font Size h4 Title(in PX Unit).', 'service-booking-manager'),
+						// 	'type' => 'number',
+						// 	'default' => '20'
+						// ),
+						// array(
+						// 	'name' => 'font_size_h5',
+						// 	'label' => esc_html__('Font Size h5 Title', 'service-booking-manager'),
+						// 	'desc' => esc_html__('Type Font Size h5 Title(in PX Unit).', 'service-booking-manager'),
+						// 	'type' => 'number',
+						// 	'default' => '18'
+						// ),
+						// array(
+						// 	'name' => 'font_size_h6',
+						// 	'label' => esc_html__('Font Size h6 Title', 'service-booking-manager'),
+						// 	'desc' => esc_html__('Type Font Size h6 Title(in PX Unit).', 'service-booking-manager'),
+						// 	'type' => 'number',
+						// 	'default' => '16'
+						// ),
+						// array(
+						// 	'name' => 'button_font_size',
+						// 	'label' => esc_html__('Button Font Size ', 'service-booking-manager'),
+						// 	'desc' => esc_html__('Type Font Size Button(in PX Unit).', 'service-booking-manager'),
+						// 	'type' => 'number',
+						// 	'default' => '18'
+						// ),
+						// array(
+						// 	'name' => 'button_color',
+						// 	'label' => esc_html__('Button Text Color', 'service-booking-manager'),
+						// 	'desc' => esc_html__('Select Button Text  Color.', 'service-booking-manager'),
+						// 	'type' => 'color',
+						// 	'default' => '#FFF'
+						// ),
+						// array(
+						// 	'name' => 'button_bg',
+						// 	'label' => esc_html__('Button Background Color', 'service-booking-manager'),
+						// 	'desc' => esc_html__('Select Button Background  Color.', 'service-booking-manager'),
+						// 	'type' => 'color',
+						// 	'default' => '#222'
+						// ),
+						// array(
+						// 	'name' => 'font_size_label',
+						// 	'label' => esc_html__('Label Font Size ', 'service-booking-manager'),
+						// 	'desc' => esc_html__('Type Font Size Label(in PX Unit).', 'service-booking-manager'),
+						// 	'type' => 'number',
+						// 	'default' => '18'
+						// ),
+						// array(
+						// 	'name' => 'warning_color',
+						// 	'label' => esc_html__('Warning Color', 'service-booking-manager'),
+						// 	'desc' => esc_html__('Select Warning  Color.', 'service-booking-manager'),
+						// 	'type' => 'color',
+						// 	'default' => '#E67C30'
+						// ),
+						// array(
+						// 	'name' => 'section_bg',
+						// 	'label' => esc_html__('Section Background color', 'service-booking-manager'),
+						// 	'desc' => esc_html__('Select Background  Color.', 'service-booking-manager'),
+						// 	'type' => 'color',
+						// 	'default' => '#FAFCFE'
+						// ),
 					)),
 					'mpwpb_custom_css' => apply_filters('filter_mpwpb_custom_css', array(
 						array(

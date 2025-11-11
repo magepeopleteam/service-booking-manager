@@ -54,7 +54,7 @@
                             
                             <select class="" name="mpwpb_template">
                                 <option disabled selected><?php esc_html_e('Please select ...', 'service-booking-manager'); ?></option>
-                                <option value="default.php" <?php echo esc_attr($mpwpb_template == 'default.php' ? 'selected' : ''); ?>><?php esc_html_e('Regular', 'service-booking-manager'); ?></option>
+                                <!-- <option value="default.php" <?php echo esc_attr($mpwpb_template == 'default.php' ? 'selected' : ''); ?>><?php esc_html_e('Regular', 'service-booking-manager'); ?></option> -->
                                 <option value="static.php" <?php echo esc_attr($mpwpb_template == 'static.php' ? 'selected' : ''); ?>><?php esc_html_e('Static', 'service-booking-manager'); ?></option>
                             </select>
                         </label>
