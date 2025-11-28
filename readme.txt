@@ -18,6 +18,8 @@ Manage appointments and services the easy way with WPBookingly, the ultimate Wor
 You will love its clean & lightweight codebase, shortcode support and smooth integration with any theme or page builder. Get a reliable system for your business that keeps bookings organised, reduces no-shows, and saves time every day.
 Transfer your stress of bookings by organising your services in a clear, responsive calendar. Customers can view availability in real time, select their preferred time slots, and confirm appointments instantly - all from your website. Crafted with a mobile-first design, WPBookingly ensures flawless performance across all devices, giving both you and your clients a fast, reliable, and user-friendly booking system
 
+Here is Quick Overview:
+https://youtu.be/46_WERFyyGc
 
 = 🧩 See Who’s Winning with WPBookingly =
 WPBookingly is an easy-to-use appointment and service booking plugin for WordPress.
