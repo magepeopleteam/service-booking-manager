@@ -19,7 +19,8 @@ You will love its clean & lightweight codebase, shortcode support and smooth int
 Transfer your stress of bookings by organising your services in a clear, responsive calendar. Customers can view availability in real time, select their preferred time slots, and confirm appointments instantly - all from your website. Crafted with a mobile-first design, WPBookingly ensures flawless performance across all devices, giving both you and your clients a fast, reliable, and user-friendly booking system
 
 Here is Quick Overview:
-https://youtu.be/46_WERFyyGc
+https://www.youtube.com/watch?v=46_WERFyyGc
+
 
 = 🧩 See Who’s Winning with WPBookingly =
 WPBookingly is an easy-to-use appointment and service booking plugin for WordPress.
@@ -69,35 +70,35 @@ Up-to-date, practical, and user-friendly features help a booking site stand out 
 = Discover the Key Features of WPBookingly =
 WPBookingly gives you everything you need to manage appointments smoothly - no coding required.
 Perfect for small businesses, freelancers, and developers building booking systems for clients.
-🧭  **Effortless Booking Interface **:
+🧭 **Effortless Booking Interface**:
  Clean, user-friendly forms let clients schedule appointments in seconds — helping you convert visitors into customers.
-🧩  **Flexible Form Placement **:
+🧩 **Flexible Form Placement**:
  Use simple shortcodes to place booking forms anywhere on your WordPress site for maximum convenience.
-📱  **Fully Responsive Design **:
+📱 **Fully Responsive Design**:
  Optimised for desktops, tablets, and smartphones — ensuring a seamless booking experience on every device.
-📨  **Automated Email Notifications **:
+📨 **Automated Email Notifications**:
  Reduce no-shows with instant confirmations and reminders sent automatically to your clients.
-💳  **WooCommerce Payment Support **:
+💳 **WooCommerce Payment Support**:
  Accept secure online payments through PayPal, Stripe, and other popular WooCommerce gateways.
-🌍  **Multilingual & Theme Compatible **:
+🌍 **Multilingual & Theme Compatible**:
  Fully translatable and visually adaptable to any WordPress theme or layout.
-💰  **Flexible Pricing Options **:
+💰 **Flexible Pricing Options**:
  Set different prices for each service type (e.g., standard vs. premium).
-👨‍👩‍👧  **Group Booking Support **:
+👨‍👩‍👧 **Group Booking Support**:
  Allow multiple clients to book the same service at once.
-🕒  **Custom Staff Schedules **:
+🕒 **Custom Staff Schedules**:
  Define unique working hours for each team member.
-⏱️  **Service Duration Settings **:
+⏱️ **Service Duration Settings**:
  Configure custom time lengths for different services.
-📅  **Automated Time Slot Management **:
+📅 **Automated Time Slot Management**:
  Prevent overlapping bookings and manage availability automatically.
-🧍  **Custom Input Fields **:
+🧍**Custom Input Fields**:
  Collect additional client details with fully customizable form fields.
-✏️  **Edit Booking Options **:
+✏️ **Edit Booking Options**:
  Modify or update existing bookings directly from the dashboard.
-⭐  **Featured Services **:
+⭐ **Featured Services**:
  Highlight popular or high-demand services for better visibility.
-🎟️  **Coupon Code Support **:
+🎟️ **Coupon Code Support**:
  Offer discount codes to attract new clients and reward loyal ones.
 
  
