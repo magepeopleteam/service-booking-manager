@@ -15,16 +15,16 @@ Supercharge your appointment and service scheduling with WPBookingly – the mod
 
 == Description ==
 Manage appointments and services the easy way with WPBookingly, the ultimate WordPress service and [appointment booking plugin](https://mage-people.com/product/service-booking-plugin-wpbookingly/) for effortless appointments and service bookings.
-You will love its clean & lightweight codebase, shortcode support and smooth integration with any theme or page builder. Get a reliable system for your business that keeps bookings organised, reduces no-shows, and saves time every day.
-Transfer your stress of bookings by organising your services in a clear, responsive calendar. Customers can view availability in real time, select their preferred time slots, and confirm appointments instantly - all from your website. Crafted with a mobile-first design, WPBookingly ensures flawless performance across all devices, giving both you and your clients a fast, reliable, and user-friendly booking system
+You will love its clean & lightweight codebase, shortcode support and smooth integration with any theme or page builder. You can get a reliable system for your business that keeps bookings organised, reduces no-shows, and saves time every day.
+You can just transfer your stress of bookings by organising your services in a clear, responsive calendar. Customers can view availability in real time, select their preferred time slots, and confirm appointments instantly - all from your website. Crafted with a mobile-first design, WPBookingly ensures flawless performance across all devices, giving both you and your clients a fast, reliable, and user-friendly booking system
 
-Here is Quick Overview:
+Here is a Quick Overview:
 https://www.youtube.com/watch?v=46_WERFyyGc
 
 
 = 🧩 See Who’s Winning with WPBookingly =
 WPBookingly is an easy-to-use appointment and service booking plugin for WordPress.
-It offe rs a code-free setup and a clean, modern interface, making it the perfect solution for users from different backgrounds, including:
+It offers a code-free setup and a clean, modern interface, making it the perfect solution for users from different backgrounds, including:
 💇‍♀️ **Salon & Spa Owner - Manage Salon & Spa Bookings**:
  Let clients choose their preferred stylist, service, and time slot - all from your website.
 🧹**Cleaning and Repair Service Providers**:
