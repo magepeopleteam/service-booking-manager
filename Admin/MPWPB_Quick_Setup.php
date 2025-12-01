@@ -94,7 +94,15 @@
 					}
 					if (isset($_POST['finish_quick_setup'])) {
 						$label = isset($_POST['mpwpb_label']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_label'])) : 'service-booking-manager';
-						$slug = isset($_POST['mpwpb_slug']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_slug'])) : 'service-booking-manager';
+
+						// Slug should always be a URL‑safe string. Using sanitize_title
+						// here prevents spaces or invalid characters from being stored
+						// and keeps behaviour consistent with permalink handling.
+						$raw_slug = isset($_POST['mpwpb_slug']) ? wp_unslash($_POST['mpwpb_slug']) : 'service-booking-manager';
+						$slug     = sanitize_title($raw_slug);
+						if (empty($slug)) {
+							$slug = 'service-booking-manager';
+						}
 						$general_settings_data = get_option('mpwpb_general_settings');
 						$update_general_settings_arr = [
 							'label' => $label,

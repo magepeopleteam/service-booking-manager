@@ -300,22 +300,29 @@
 				);
 				wp_dropdown_pages(esc_attr($dropdown_args));
 			}
-			// function sanitize_options($options) {
-			// 	if (!$options) {
-			// 		return $options;
-			// 	}
-			// 	foreach ($options as $option_slug => $option_value) {
-			// 		$sanitize_callback = $this->get_sanitize_callback($option_slug);
-			// 		// If callback is set, call it
-			// 		if ($sanitize_callback) {
-			// 			$options[$option_slug] = call_user_func($sanitize_callback, $option_value);
-			// 			continue;
-			// 		}
-			// 	}
-			// 	return $options;
-			// }
 			public function sanitize_options($input) {
-				return is_array($input) ? array_map('sanitize_text_field', $input) : sanitize_text_field($input);
+				// Ensure we always work with an array for section based options
+				if (!is_array($input)) {
+					return sanitize_text_field($input);
+				}
+
+				// General text sanitization for all fields first
+				$sanitized = array_map('sanitize_text_field', $input);
+
+				// Fine‑tune sanitization for known slug fields so that
+				// spaces and invalid characters are converted into
+				// proper URL‑safe slugs instead of being stored as raw strings.
+				if (isset($sanitized['slug'])) {
+					$sanitized['slug'] = sanitize_title($sanitized['slug']);
+				}
+				if (isset($sanitized['category_slug'])) {
+					$sanitized['category_slug'] = sanitize_title($sanitized['category_slug']);
+				}
+				if (isset($sanitized['organizer_slug'])) {
+					$sanitized['organizer_slug'] = sanitize_title($sanitized['organizer_slug']);
+				}
+
+				return $sanitized;
 			}
 			function get_sanitize_callback($slug = '') {
 				if (empty($slug)) {

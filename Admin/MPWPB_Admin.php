@@ -13,6 +13,10 @@
 				add_action('init', [$this, 'add_dummy_data']);
 				add_action('upgrader_process_complete', [$this, 'flush_rewrite']);
 				add_filter('use_block_editor_for_post_type', [$this, 'disable_gutenberg'], 10, 2);
+				// When the general settings (including slugs) are updated,
+				// make sure to refresh rewrite rules so that new/changed
+				// service URLs do not return 404 until permalinks are resaved.
+				add_action('update_option_mpwpb_general_settings', [$this, 'maybe_flush_rewrite_on_slug_change'], 10, 3);
 				add_action('admin_action_mpwpb_item_duplicate', [$this, 'mpwpb_item_duplicate']);
 				add_filter('post_row_actions', [$this, 'post_duplicator'], 10, 2);
 				add_filter('wp_mail_content_type', array($this, 'email_content_type'));
@@ -62,6 +66,31 @@
 			}
 			public function flush_rewrite() {
 				flush_rewrite_rules();
+			}
+			/**
+			 * Flush rewrite rules only when the main service slug changes.
+			 *
+			 * This prevents the situation where a newly created service
+			 * page returns 404 until the admin manually saves permalinks.
+			 *
+			 * @param mixed  $old_value Previous option value.
+			 * @param mixed  $value     New option value.
+			 * @param string $option    Option name.
+			 */
+			public function maybe_flush_rewrite_on_slug_change($old_value, $value, $option) {
+				if ($option !== 'mpwpb_general_settings') {
+					return;
+				}
+
+				$old_value = is_array($old_value) ? $old_value : [];
+				$value     = is_array($value) ? $value : [];
+
+				$old_slug = isset($old_value['slug']) ? $old_value['slug'] : '';
+				$new_slug = isset($value['slug']) ? $value['slug'] : '';
+
+				if ($new_slug && $old_slug !== $new_slug) {
+					flush_rewrite_rules();
+				}
 			}
 			//************Disable Gutenberg************************//
 			public function disable_gutenberg($current_status, $post_type) {
