@@ -17,6 +17,8 @@
 				add_filter('mpwpb_settings_sec_reg', array($this, 'global_sec_reg'), 90);
 				add_filter('mpwpb_settings_sec_fields', array($this, 'settings_sec_fields'), 10);
 				add_action('wsa_form_bottom_mpwpb_license_settings', [$this, 'license_settings'], 5);
+				add_action('updated_option', array($this, 'handle_slug_change'), 10, 3);
+				add_filter('pre_update_option_mpwpb_general_settings', array($this, 'sanitize_slug_field'), 10, 2);
 			}
 			public function global_settings_menu() {
 				$label = MPWPB_Function::get_name();
@@ -110,9 +112,10 @@
 						array(
 							'name' => 'slug',
 							'label' => $label . ' ' . esc_html__('Slug', 'service-booking-manager'),
-							'desc' => esc_html__('Please enter the slug name you want. Remember, after changing this slug; you need to flush permalink; go to', 'service-booking-manager') . '<strong>' . esc_html__('Settings-> Permalinks', 'service-booking-manager') . '</strong> ' . esc_html__('hit the Save Settings button.', 'service-booking-manager'),
+							'desc' => esc_html__('Please enter the slug name you want. The slug will be automatically sanitized and converted to URL-friendly format.', 'service-booking-manager'),
 							'type' => 'text',
-							'default' => 'service-booking-manager'
+							'default' => 'service-booking',
+							'sanitize_callback' => 'sanitize_title'
 						),
 						array(
 							'name' => 'icon',
@@ -542,6 +545,47 @@
                     </div>
                 </div>
 				<?php
+			}
+
+			/**
+			 * Sanitize slug field when saved via Settings API
+			 * 
+			 * @param mixed $value The new option value
+			 * @param mixed $old_value The old option value
+			 * @return mixed Sanitized value
+			 */
+			public function sanitize_slug_field($value, $old_value) {
+				if (is_array($value) && isset($value['slug']) && !empty($value['slug'])) {
+					$value['slug'] = sanitize_title($value['slug']);
+				}
+				return $value;
+			}
+
+			/**
+			 * Handle slug changes - re-register post type and flush rewrite rules
+			 * 
+			 * @param string $option_name Name of the option being updated
+			 * @param mixed $old_value The old option value
+			 * @param mixed $value The new option value
+			 */
+			public function handle_slug_change($option_name, $old_value, $value) {
+				if ($option_name !== 'mpwpb_general_settings') {
+					return;
+				}
+
+				// Check if slug has changed
+				$old_slug = is_array($old_value) && isset($old_value['slug']) ? $old_value['slug'] : '';
+				$new_slug = is_array($value) && isset($value['slug']) ? $value['slug'] : '';
+
+				if ($old_slug !== $new_slug && !empty($new_slug)) {
+					// Re-register post type with new slug
+					if (class_exists('MPWPB_CPT')) {
+						MPWPB_CPT::register_service_post_type();
+					}
+					
+					// Set flag to flush rewrite rules on next request
+					set_transient('mpwpb_flush_rewrite_rules', 1, 60);
+				}
 			}
 		}
 		new  MPWPB_Settings_Global();

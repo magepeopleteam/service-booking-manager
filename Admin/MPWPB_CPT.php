@@ -10,6 +10,8 @@
 		class MPWPB_CPT {
 			public function __construct() {
 				add_action('init', [$this, 'add_cpt']);
+				add_action('transition_post_status', [$this, 'flush_rewrite_on_service_publish'], 10, 3);
+				add_action('init', [$this, 'maybe_flush_rewrite_rules']);
 //                add_action('init', [$this, 'mpwpb_register_staff_taxonomy']);
 			}
 
@@ -29,6 +31,14 @@
                 );
             }
 			public function add_cpt(): void {
+				self::register_service_post_type();
+			}
+
+			/**
+			 * Register or re-register the service post type
+			 * Can be called statically to re-register after slug changes
+			 */
+			public static function register_service_post_type(): void {
 				$cpt = MPWPB_Function::get_cpt();
 				$label = MPWPB_Function::get_name();
 				$slug = MPWPB_Function::get_slug();
@@ -75,9 +85,39 @@
 					'show_in_nav_menus' => false,  // you shouldn't be able to add it to menus
 					
 					'has_archive' 	=> false,  // it shouldn't have archive page
-					'rewrite' => ['slug' => $slug],
+					'rewrite' => ['slug' => $slug, 'with_front' => false],
 				];
 				register_post_type($cpt, $args);
+			}
+
+			/**
+			 * Flush rewrite rules when a service is published for the first time
+			 * This prevents 404 errors on new service pages
+			 *
+			 * @param string $new_status New post status
+			 * @param string $old_status Old post status
+			 * @param WP_Post $post Post object
+			 */
+			public function flush_rewrite_on_service_publish($new_status, $old_status, $post) {
+				if ($post->post_type !== MPWPB_Function::get_cpt()) {
+					return;
+				}
+
+				// Only flush when transitioning to publish and it wasn't already published
+				if ($new_status === 'publish' && $old_status !== 'publish') {
+					set_transient('mpwpb_flush_rewrite_rules', 1, 60);
+				}
+			}
+
+			/**
+			 * Flush rewrite rules on next request if flag is set
+			 * Uses transient to avoid flushing on every request
+			 */
+			public function maybe_flush_rewrite_rules() {
+				if (get_transient('mpwpb_flush_rewrite_rules')) {
+					flush_rewrite_rules(false);
+					delete_transient('mpwpb_flush_rewrite_rules');
+				}
 			}
 		}
 		new MPWPB_CPT();
