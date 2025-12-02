@@ -92,19 +92,28 @@
                         </script>
 						<?php
 					}
-					if (isset($_POST['finish_quick_setup'])) {
-						$label = isset($_POST['mpwpb_label']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_label'])) : 'service-booking-manager';
-						$slug = isset($_POST['mpwpb_slug']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_slug'])) : 'service-booking-manager';
-						$general_settings_data = get_option('mpwpb_general_settings');
-						$update_general_settings_arr = [
-							'label' => $label,
-							'slug' => $slug
-						];
-						$new_general_settings_data = is_array($general_settings_data) ? array_replace($general_settings_data, $update_general_settings_arr) : $update_general_settings_arr;
-						update_option('mpwpb_general_settings', $new_general_settings_data);
-						flush_rewrite_rules();
-						wp_redirect(admin_url('edit.php?post_type=mpwpb_item&page=mpwpb_service_list'));
+				if (isset($_POST['finish_quick_setup'])) {
+					$label = isset($_POST['mpwpb_label']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_label'])) : 'service-booking-manager';
+					$slug = isset($_POST['mpwpb_slug']) ? sanitize_title(wp_unslash($_POST['mpwpb_slug'])) : 'service-booking';
+					$general_settings_data = get_option('mpwpb_general_settings');
+					$update_general_settings_arr = [
+						'label' => $label,
+						'slug' => $slug
+					];
+					$new_general_settings_data = is_array($general_settings_data) ? array_replace($general_settings_data, $update_general_settings_arr) : $update_general_settings_arr;
+					update_option('mpwpb_general_settings', $new_general_settings_data);
+					
+					// Re-register post type with new slug before flushing rewrite rules
+					if (class_exists('MPWPB_CPT')) {
+						MPWPB_CPT::register_service_post_type();
 					}
+					
+					// Flush rewrite rules to apply the new slug
+					flush_rewrite_rules(false);
+					
+					wp_redirect(admin_url('edit.php?post_type=mpwpb_item&page=mpwpb_service_list'));
+					exit;
+				}
 				}
 				?>
                 <div class="mpStyle mpwpb_style mep-quick-setup">

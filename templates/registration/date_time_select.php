@@ -74,12 +74,18 @@
             <div class="" >
                 <div class="owl-theme mpwpb-owl-carousel" id="mpwpb_datetime_holder1">
                     <?php if (sizeof($all_dates) > 0) {
-                        wp_kses_post( MPWPB_Details_Layout::display_booking_date( $post_id, $all_dates ) );
+                        $booking_date_output = MPWPB_Details_Layout::display_booking_date( $post_id, $all_dates );
+                        if ( $booking_date_output !== null ) {
+                            echo wp_kses_post( $booking_date_output );
+                        }
                     ?>
                 </div>
                 <div class="mpwpb_select_time_holder" id="<?php echo esc_attr( $post_id );?>">
                     <?php
-                        wp_kses_post( MPWPB_Details_Layout::display_booking_time( $post_id, $all_dates ) );
+                        $booking_time_output = MPWPB_Details_Layout::display_booking_time( $post_id, $all_dates );
+                        if ( $booking_time_output !== null ) {
+                            echo wp_kses_post( $booking_time_output );
+                        }
                     ?>
                 </div>
                 <?php
