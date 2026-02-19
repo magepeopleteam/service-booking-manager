@@ -68,13 +68,24 @@
 				<?php
 			}
 			public function save_settings($post_id) {
-				if (!isset($_POST['mpwpb_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['mpwpb_nonce'])), 'mpwpb_nonce') && defined('DOING_AUTOSAVE') && DOING_AUTOSAVE && !current_user_can('edit_post', $post_id)) {
+				if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+					return;
+				}
+				if (get_post_type($post_id) !== MPWPB_Function::get_cpt()) {
+					return;
+				}
+				if (!current_user_can('edit_post', $post_id)) {
+					return;
+				}
+				if (!isset($_POST['mpwpb_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['mpwpb_nonce'])), 'mpwpb_nonce')) {
 					return;
 				}
 				if (get_post_type($post_id) == MPWPB_Function::get_cpt()) {
 					$title = isset($_POST['mpwpb_shortcode_title']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_shortcode_title'])) : '';
 					$sub_title = isset($_POST['mpwpb_shortcode_sub_title']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_shortcode_sub_title'])) : '';
 					$mpwpb_template = isset($_POST['mpwpb_template']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_template'])) : 'default.php';
+					$mpwpb_template = MPWPB_Function::sanitize_details_template_name($mpwpb_template);
+					
 					update_post_meta($post_id, 'mpwpb_shortcode_title', $title);
 					update_post_meta($post_id, 'mpwpb_shortcode_sub_title', $sub_title);
 					update_post_meta($post_id, 'mpwpb_template', $mpwpb_template);
@@ -175,7 +186,13 @@
 				do_action('mpwpb_settings_save', $post_id);
 			}
 			public function save_schedule($post_id, $day) {
-				if (!isset($_POST['mpwpb_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['mpwpb_nonce'])), 'mpwpb_nonce') && defined('DOING_AUTOSAVE') && DOING_AUTOSAVE && !current_user_can('edit_post', $post_id)) {
+				if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+					return;
+				}
+				if (!current_user_can('edit_post', $post_id)) {
+					return;
+				}
+				if (!isset($_POST['mpwpb_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['mpwpb_nonce'])), 'mpwpb_nonce')) {
 					return;
 				}
 				$start_name = 'mpwpb_' . $day . '_start_time';

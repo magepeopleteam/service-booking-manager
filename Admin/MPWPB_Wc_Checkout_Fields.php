@@ -21,11 +21,13 @@
 				add_action('admin_notices', array($this, 'mp_admin_notice'));
 				add_action('add_switch_button', array($this, 'switch_button'), 10, 3);
 				add_action('wp_ajax_mpwpb_disable_field', array($this, 'mpwpb_disable_field'));
-				add_action('wp_ajax_nopriv_mpwpb_disable_field', [$this, 'mpwpb_disable_field']);
 			}
 			public function mpwpb_disable_field() {
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
+				}
+				if (!current_user_can('manage_options')) {
+					wp_send_json_error('Unauthorized request');
 				}
 				$response = 'failed';
 				$key = isset($_POST['key']) ? sanitize_text_field(wp_unslash($_POST['key'])) : null;
