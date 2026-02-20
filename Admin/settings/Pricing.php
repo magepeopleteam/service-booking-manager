@@ -11,11 +11,16 @@
 			public function __construct() {
 				add_action('add_mpwpb_settings_tab_content', [$this, 'price_settings'], 10, 1);
 				add_action('wp_ajax_mpwpb_import_old_data', [$this, 'import_old_data'], 10, 1);
-				add_action('wp_ajax_nopriv_mpwpb_import_old_data', [$this, 'import_old_data'],10);
 			}
 
 			public function import_old_data() {
-				$post_id = sanitize_text_field($_POST['postId']);
+				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
+					wp_send_json_error('Invalid nonce!');
+				}
+				$post_id = isset($_POST['postId']) ? absint(wp_unslash($_POST['postId'])) : 0;
+				if (!$post_id || !current_user_can('edit_post', $post_id)) {
+					wp_send_json_error('Unauthorized request');
+				}
 				
 				ob_start();
 				$resultMessage = esc_html__('Data Updated Successfully', 'service-booking-manager');

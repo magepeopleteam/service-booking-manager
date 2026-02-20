@@ -21,11 +21,21 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
 
 
         function mpwpb_save_specific_schedule() {
-
+            if (!is_user_logged_in()) {
+                wp_send_json_error('User not logged in');
+            }
+            if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_dashboard_nonce')) {
+                wp_send_json_error('Security check failed');
+            }
             $user_id = get_current_user_id();
+            $current_user = wp_get_current_user();
+            $is_staff = in_array('mpwpb_staff', (array) $current_user->roles, true);
+            if (!$is_staff && !current_user_can('create_users') && !current_user_can('manage_options')) {
+                wp_send_json_error('Unauthorized request');
+            }
 
-            $off_dates_json = isset( $_POST['offDates_str'] ) ? stripslashes( sanitize_text_field( $_POST['offDates_str'] ) ) : '';
-            $off_days = isset( $_POST['offDays'] ) ? stripslashes( sanitize_text_field( $_POST['offDays'] ) ) : '';
+            $off_dates_json = isset($_POST['offDates_str']) ? wp_unslash(sanitize_text_field($_POST['offDates_str'])) : '';
+            $off_days = isset($_POST['offDays']) ? sanitize_text_field(wp_unslash($_POST['offDays'])) : '';
             $off_dates = json_decode($off_dates_json, true);
             if (!$user_id) {
                 wp_send_json_error('User not logged in');
@@ -580,7 +590,10 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
                 $booking_data->mpwpb_date         = isset($meta['mpwpb_date'][0]) ? $meta['mpwpb_date'][0] : '';
                 $booking_data->mpwpb_order_id     = isset($meta['mpwpb_order_id'][0]) ? $meta['mpwpb_order_id'][0] : '';
                 $booking_data->mpwpb_order_status = isset($meta['mpwpb_order_status'][0]) ? $meta['mpwpb_order_status'][0] : '';
-                $booking_data->mpwpb_service = isset($meta['mpwpb_service'][0]) ? unserialize( $meta['mpwpb_service'][0] ) : array();
+                $booking_data->mpwpb_service = isset($meta['mpwpb_service'][0]) ? maybe_unserialize($meta['mpwpb_service'][0]) : array();
+                if (!is_array($booking_data->mpwpb_service)) {
+                    $booking_data->mpwpb_service = array();
+                }
                 $formatted_bookings[] = $booking_data;
             }
 

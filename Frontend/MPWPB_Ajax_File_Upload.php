@@ -46,7 +46,8 @@ if (!class_exists('MPWPB_Ajax_File_Upload')) {
          */
         public function handle_file_upload() {
             // Check nonce
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'mpwpb_file_upload_nonce')) {
+            $nonce = isset($_POST['nonce']) ? sanitize_text_field(wp_unslash($_POST['nonce'])) : '';
+            if (!$nonce || !wp_verify_nonce($nonce, 'mpwpb_file_upload_nonce')) {
                 wp_send_json_error(array('message' => 'Invalid nonce'));
                 return;
             }
@@ -66,6 +67,22 @@ if (!class_exists('MPWPB_Ajax_File_Upload')) {
                 wp_send_json_error(array('message' => 'File has zero size'));
                 return;
             }
+            $max_upload_size = apply_filters('mpwpb_max_checkout_upload_size', 5 * MB_IN_BYTES);
+            if ($_FILES['file']['size'] > $max_upload_size) {
+                wp_send_json_error(array('message' => 'File is too large'));
+                return;
+            }
+            $filename = isset($_FILES['file']['name']) ? sanitize_file_name(wp_unslash($_FILES['file']['name'])) : '';
+            $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+            if (!$filename || !in_array($extension, $this->allowed_extensions, true)) {
+                wp_send_json_error(array('message' => 'Invalid file type'));
+                return;
+            }
+            $file_type = wp_check_filetype_and_ext($_FILES['file']['tmp_name'], $filename, $this->allowed_mime_types);
+            if (empty($file_type['ext']) || empty($file_type['type'])) {
+                wp_send_json_error(array('message' => 'Invalid file content'));
+                return;
+            }
             
             // Create upload overrides
             $upload_overrides = array(
@@ -81,11 +98,11 @@ if (!class_exists('MPWPB_Ajax_File_Upload')) {
                 // error_log('File uploaded successfully via AJAX: ' . $image_url);
                 
                 // Store the file in the media library for better management
-                $filename = basename($movefile['file']);
-                $wp_filetype = wp_check_filetype($filename, null);
+                $saved_filename = basename($movefile['file']);
+                $wp_filetype = wp_check_filetype($saved_filename, null);
                 $attachment = array(
                     'post_mime_type' => $wp_filetype['type'],
-                    'post_title' => sanitize_file_name($filename),
+                    'post_title' => sanitize_file_name($saved_filename),
                     'post_content' => '',
                     'post_status' => 'inherit'
                 );
@@ -101,8 +118,8 @@ if (!class_exists('MPWPB_Ajax_File_Upload')) {
                 // Return success response
                 wp_send_json_success(array(
                     'url' => $image_url,
-                    'filename' => $_FILES['file']['name'],
-                    'field_name' => isset($_POST['field_name']) ? sanitize_text_field($_POST['field_name']) : '',
+                    'filename' => $filename,
+                    'field_name' => isset($_POST['field_name']) ? sanitize_text_field(wp_unslash($_POST['field_name'])) : '',
                 ));
             } else {
                 $error = isset($movefile['error']) ? $movefile['error'] : 'Unknown error';

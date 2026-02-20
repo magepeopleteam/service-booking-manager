@@ -16,35 +16,39 @@
 				add_action('mpwpb_show_category', [$this, 'category_settings_section']);
 				// save category service
 				add_action('wp_ajax_mpwpb_save_category_service', [$this, 'save_category_service']);
-				add_action('wp_ajax_nopriv_mpwpb_save_category_service', [$this, 'save_category_service']);
 				// mpwpb update category service
 				add_action('wp_ajax_mpwpb_update_category_service', [$this, 'update_category_service']);
-				add_action('wp_ajax_nopriv_mpwpb_update_category_service', [$this, 'update_category_service']);
 				// mpwpb update sub category service
 				add_action('wp_ajax_mpwpb_update_sub_category', [$this, 'update_sub_category_service']);
-				add_action('wp_ajax_nopriv_mpwpb_update_sub_category', [$this, 'update_sub_category_service']);
 				// mpwpb delete category service
 				add_action('wp_ajax_mpwpb_category_service_delete_item', [$this, 'delete_category_service']);
-				add_action('wp_ajax_nopriv_mpwpb_category_service_delete_item', [$this, 'delete_category_service']);
 				// Load  category by ajax
 				add_action('wp_ajax_mpwpb_load_parent_category', [$this, 'load_parent_category']);
-				add_action('wp_ajax_nopriv_mpwpb_load_parent_category', [$this, 'load_parent_category']);
 				// Load  category by ajax
 				add_action('wp_ajax_mpwpb_load_sub_category', [$this, 'load_sub_category']);
-				add_action('wp_ajax_nopriv_mpwpb_load_sub_category', [$this, 'load_sub_category']);
 				// Del sub category by ajax
 				add_action('wp_ajax_mpwpb_sub_category_delete', [$this, 'delete_sub_category']);
-				add_action('wp_ajax_nopriv_mpwpb_sub_category_delete', [$this, 'delete_sub_category']);
 				// Category sort order
 				add_action('wp_ajax_mpwpb_sort_category',[$this,'sort_category']);
 				// Sub Category sort order
 				add_action('wp_ajax_mpwpb_sort_sub_category',[$this,'sort_sub_category']);
 			}
+			private function ensure_post_edit_permission($post_id): bool {
+				$post_id = absint($post_id);
+				if (!$post_id || !current_user_can('edit_post', $post_id)) {
+					wp_send_json_error('Unauthorized request');
+					return false;
+				}
+				return true;
+			}
 			public function sort_category() {
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
 				}
-				$post_id = isset($_POST['postID']) ? sanitize_text_field(wp_unslash($_POST['postID'])) : '';
+				$post_id = isset($_POST['postID']) ? absint(wp_unslash($_POST['postID'])) : 0;
+				if (!$this->ensure_post_edit_permission($post_id)) {
+					return;
+				}
 				$sorted_ids = isset($_POST['sortedIDs']) ? array_map('intval', $_POST['sortedIDs']) : [];
 				$categories = $this->get_categories($post_id);
 				$new_ordered = [];
@@ -68,7 +72,10 @@
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
 				}
-				$post_id = isset($_POST['postID']) ? sanitize_text_field(wp_unslash($_POST['postID'])) : '';
+				$post_id = isset($_POST['postID']) ? absint(wp_unslash($_POST['postID'])) : 0;
+				if (!$this->ensure_post_edit_permission($post_id)) {
+					return;
+				}
 				$sorted_ids = isset($_POST['sortedIDs']) ? array_map('intval', $_POST['sortedIDs']) : [];
 				$categories = $this->get_sub_categories($post_id);
 				$new_ordered = [];
@@ -148,7 +155,10 @@
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
 				}
-				$post_id = isset($_POST['postID']) ? sanitize_text_field(wp_unslash($_POST['postID'])) : '';
+				$post_id = isset($_POST['postID']) ? absint(wp_unslash($_POST['postID'])) : 0;
+				if (!$this->ensure_post_edit_permission($post_id)) {
+					return;
+				}
 				ob_start();
 				$resultMessage = esc_html__('Data Updated Successfully', 'service-booking-manager');
 				$this->show_parent_category_lists($post_id);
@@ -163,7 +173,10 @@
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
 				}
-				$post_id = isset($_POST['postID']) ? sanitize_text_field(wp_unslash($_POST['postID'])) : '';
+				$post_id = isset($_POST['postID']) ? absint(wp_unslash($_POST['postID'])) : 0;
+				if (!$this->ensure_post_edit_permission($post_id)) {
+					return;
+				}
 				$parentId = isset($_POST['parentId']) ? sanitize_text_field(wp_unslash($_POST['parentId'])) : '';
 				ob_start();
 				$resultMessage = esc_html__('Data Updated Successfully', 'service-booking-manager');
@@ -363,7 +376,10 @@
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
 				}
-				$post_id = isset($_POST['category_postID']) ? sanitize_text_field(wp_unslash($_POST['category_postID'])) : '';
+				$post_id = isset($_POST['category_postID']) ? absint(wp_unslash($_POST['category_postID'])) : 0;
+				if (!$this->ensure_post_edit_permission($post_id)) {
+					return;
+				}
 				$categories = $this->get_categories($post_id);
 				$sub_categories = $this->get_sub_categories($post_id);
 				$iconClass = '';
@@ -410,7 +426,10 @@
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
 				}
-				$post_id = isset($_POST['category_postID']) ? sanitize_text_field(wp_unslash($_POST['category_postID'])) : '';
+				$post_id = isset($_POST['category_postID']) ? absint(wp_unslash($_POST['category_postID'])) : 0;
+				if (!$this->ensure_post_edit_permission($post_id)) {
+					return;
+				}
 				$sub_categories = $this->get_sub_categories($post_id);
 				$iconClass = '';
 				$imageID = '';
@@ -452,7 +471,10 @@
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
 				}
-				$post_id = isset($_POST['category_postID']) ? sanitize_text_field(wp_unslash($_POST['category_postID'])) : '';
+				$post_id = isset($_POST['category_postID']) ? absint(wp_unslash($_POST['category_postID'])) : 0;
+				if (!$this->ensure_post_edit_permission($post_id)) {
+					return;
+				}
 				$categories = $this->get_categories($post_id);
 				$iconClass = '';
 				$imageID = '';
@@ -493,7 +515,10 @@
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
 				}
-				$post_id = isset($_POST['category_postID']) ? sanitize_text_field(wp_unslash($_POST['category_postID'])) : '';
+				$post_id = isset($_POST['category_postID']) ? absint(wp_unslash($_POST['category_postID'])) : 0;
+				if (!$this->ensure_post_edit_permission($post_id)) {
+					return;
+				}
 				$categories = $this->get_categories($post_id);
 				if (!empty($categories)) {
 					if (isset($_POST['itemId'])) {
@@ -527,7 +552,10 @@
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
 				}
-				$post_id = isset($_POST['category_postID']) ? sanitize_text_field(wp_unslash($_POST['category_postID'])) : '';
+				$post_id = isset($_POST['category_postID']) ? absint(wp_unslash($_POST['category_postID'])) : 0;
+				if (!$this->ensure_post_edit_permission($post_id)) {
+					return;
+				}
 				$sub_categories = $this->get_sub_categories($post_id);
 				if (!empty($sub_categories)) {
 					if (isset($_POST['itemId'])) {

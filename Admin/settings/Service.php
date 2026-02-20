@@ -12,32 +12,37 @@
 				add_action('mpwpb_show_service', [$this, 'view_all_services']);
 				// show_all_services
 				add_action('wp_ajax_mpwpb_show_all_services', [$this, 'show_all_services']);
-				add_action('wp_ajax_nopriv_mpwpb_show_all_services', [$this, 'show_all_services']);
 				// save service
 				add_action('wp_ajax_mpwpb_save_service', [$this, 'save_service']);
-				add_action('wp_ajax_nopriv_mpwpb_save_service', [$this, 'save_service']);
 				//update service
 				add_action('wp_ajax_mpwpb_service_update', [$this, 'update_service']);
-				add_action('wp_ajax_nopriv_mpwpb_service_update', [$this, 'update_service']);
 				// delete service
 				add_action('wp_ajax_mpwpb_service_delete_item', [$this, 'delete_service']);
-				add_action('wp_ajax_nopriv_mpwpb_service_delete_item', [$this, 'delete_service']);
 				// load service by category
 				add_action('wp_ajax_mpwpb_load_service_by_category', [$this, 'load_service_by_category']);
-				add_action('wp_ajax_nopriv_mpwpb_load_service_by_category', [$this, 'load_service_by_category']);
 				// load service by category
 				add_action('wp_ajax_mpwpb_load_service_by_sub_category', [$this, 'load_service_by_sub_category']);
-				add_action('wp_ajax_nopriv_mpwpb_load_service_by_sub_category', [$this, 'load_service_by_sub_category']);
 				// service order
 				add_action('wp_ajax_mpwpb_sort_service',[$this,'sort_service']);
 				// service order
 				add_action('wp_ajax_mpwpb_clone_service',[$this,'clone_services']);
 			}
+			private function ensure_post_edit_permission($post_id): bool {
+				$post_id = absint($post_id);
+				if (!$post_id || !current_user_can('edit_post', $post_id)) {
+					wp_send_json_error('Unauthorized request');
+					return false;
+				}
+				return true;
+			}
 			public function sort_service() {
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
 				}
-				$post_id = isset($_POST['postID']) ? sanitize_text_field(wp_unslash($_POST['postID'])) : '';
+				$post_id = isset($_POST['postID']) ? absint(wp_unslash($_POST['postID'])) : 0;
+				if (!$this->ensure_post_edit_permission($post_id)) {
+					return;
+				}
 				$sorted_ids = isset($_POST['sortedIDs']) ? array_map('intval', $_POST['sortedIDs']) : [];
 				$services = $this->get_services($post_id);
 				$new_ordered = [];
@@ -62,7 +67,10 @@
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
 				}
-				$post_id = isset($_POST['service_postID']) ? sanitize_text_field(wp_unslash($_POST['service_postID'])) : '';
+				$post_id = isset($_POST['service_postID']) ? absint(wp_unslash($_POST['service_postID'])) : 0;
+				if (!$this->ensure_post_edit_permission($post_id)) {
+					return;
+				}
 				$services = $this->get_services($post_id);
 				$iconClass = '';
 				$imageID = '';
@@ -113,7 +121,10 @@
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
 				}
-				$post_id = isset($_POST['postID']) ? sanitize_text_field(wp_unslash($_POST['postID'])) : '';
+				$post_id = isset($_POST['postID']) ? absint(wp_unslash($_POST['postID'])) : 0;
+				if (!$this->ensure_post_edit_permission($post_id)) {
+					return;
+				}
 				ob_start();
 				$resultMessage = esc_html__('Data Updated Successfully', 'service-booking-manager');
 				$this->get_all_service_items($post_id);
@@ -127,7 +138,10 @@
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
 				}
-				$post_id = isset($_POST['postId']) ? sanitize_text_field(wp_unslash($_POST['postId'])) : '';
+				$post_id = isset($_POST['postId']) ? absint(wp_unslash($_POST['postId'])) : 0;
+				if (!$this->ensure_post_edit_permission($post_id)) {
+					return;
+				}
 				$category_id = isset($_POST['itemId']) ? sanitize_text_field(wp_unslash($_POST['itemId'])) : '';
 				ob_start();
 				$resultMessage = __('Data Loaded Successfully', 'service-booking-manager');
@@ -143,7 +157,10 @@
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
 				}
-				$post_id = isset($_POST['postId']) ? sanitize_text_field(wp_unslash($_POST['postId'])) : '';
+				$post_id = isset($_POST['postId']) ? absint(wp_unslash($_POST['postId'])) : 0;
+				if (!$this->ensure_post_edit_permission($post_id)) {
+					return;
+				}
 				$sub_cat = isset($_POST['itemId']) ? sanitize_text_field(wp_unslash($_POST['itemId'])) : '';
 				$parent_cat = isset($_POST['parentId']) ? sanitize_text_field(wp_unslash($_POST['parentId'])) : '';
 				ob_start();
@@ -284,7 +301,10 @@
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
 				}
-				$post_id = isset($_POST['service_postID']) ? sanitize_text_field(wp_unslash($_POST['service_postID'])) : '';
+				$post_id = isset($_POST['service_postID']) ? absint(wp_unslash($_POST['service_postID'])) : 0;
+				if (!$this->ensure_post_edit_permission($post_id)) {
+					return;
+				}
 				$services = $this->get_services($post_id);
 				$iconClass = '';
 				$imageID = '';
@@ -336,7 +356,10 @@
 				}
 
 
-				$post_id = isset($_POST['service_postID']) ? sanitize_text_field(wp_unslash($_POST['service_postID'])) : '';
+				$post_id = isset($_POST['service_postID']) ? absint(wp_unslash($_POST['service_postID'])) : 0;
+				if (!$this->ensure_post_edit_permission($post_id)) {
+					return;
+				}
 				$services = $this->get_services($post_id);
 				$services = !empty($services) ? $services : [];
 				$iconClass = '';
@@ -409,7 +432,10 @@
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
 				}
-				$post_id = isset($_POST['service_postID']) ? sanitize_text_field(wp_unslash($_POST['service_postID'])) : '';
+				$post_id = isset($_POST['service_postID']) ? absint(wp_unslash($_POST['service_postID'])) : 0;
+				if (!$this->ensure_post_edit_permission($post_id)) {
+					return;
+				}
 				$services = $this->get_services($post_id);
 				if (!empty($services)) {
 					if (isset($_POST['itemId'])) {

@@ -12,23 +12,31 @@
 				add_action('add_mpwpb_settings_tab_content', [$this, 'extra_service_settings'], 10, 1);
 				// save extra service
 				add_action('wp_ajax_mpwpb_save_ex_service', [$this, 'save_ex_service']);
-				add_action('wp_ajax_nopriv_mpwpb_save_ex_service', [$this, 'save_ex_service']);
 				// mpwpb update extra service
 				add_action('wp_ajax_mpwpb_ext_service_update', [$this, 'ext_service_update_item']);
-				add_action('wp_ajax_nopriv_mpwpb_ext_service_update', [$this, 'ext_service_update_item']);
 				// mpwpb delete extra service
 				add_action('wp_ajax_mpwpb_ext_service_delete_item', [$this, 'extra_service_delete_item']);
-				add_action('wp_ajax_nopriv_mpwpb_ext_service_delete_item', [$this, 'extra_service_delete_item']);
 				// sort extra service
 				add_action('wp_ajax_mpwpb_sort_extra_service',[$this,'sort_extra_service']);
 				// clone extra service
 				add_action('wp_ajax_mpwpb_clone_ext_service',[$this,'clone_ext_service']);
 			}
+			private function ensure_post_edit_permission($post_id): bool {
+				$post_id = absint($post_id);
+				if (!$post_id || !current_user_can('edit_post', $post_id)) {
+					wp_send_json_error('Unauthorized request');
+					return false;
+				}
+				return true;
+			}
 			public function sort_extra_service() {
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
 				}
-				$post_id = isset($_POST['postID']) ? sanitize_text_field(wp_unslash($_POST['postID'])) : '';
+				$post_id = isset($_POST['postID']) ? absint(wp_unslash($_POST['postID'])) : 0;
+				if (!$this->ensure_post_edit_permission($post_id)) {
+					return;
+				}
 				$sorted_ids = isset($_POST['sortedIDs']) ? array_map('intval', $_POST['sortedIDs']) : [];
 				$ext_services = $this->get_extra_services($post_id);
 				$new_ordered = [];
@@ -53,7 +61,10 @@
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
 				}
-				$post_id = isset($_POST['service_postID']) ? sanitize_text_field(wp_unslash($_POST['service_postID'])) : '';
+				$post_id = isset($_POST['service_postID']) ? absint(wp_unslash($_POST['service_postID'])) : 0;
+				if (!$this->ensure_post_edit_permission($post_id)) {
+					return;
+				}
 				$ext_services = $this->get_extra_services($post_id);
 				$iconClass = '';
 				$imageID = '';
@@ -94,7 +105,10 @@
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
 				}
-				$post_id = isset($_POST['service_postID']) ? sanitize_text_field(wp_unslash($_POST['service_postID'])) : '';
+				$post_id = isset($_POST['service_postID']) ? absint(wp_unslash($_POST['service_postID'])) : 0;
+				if (!$this->ensure_post_edit_permission($post_id)) {
+					return;
+				}
 				$ext_services = $this->get_extra_services($post_id);
 				$iconClass = '';
 				$imageID = '';
@@ -135,7 +149,10 @@
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
 				}
-				$post_id = isset($_POST['service_postID']) ? sanitize_text_field(wp_unslash($_POST['service_postID'])) : '';
+				$post_id = isset($_POST['service_postID']) ? absint(wp_unslash($_POST['service_postID'])) : 0;
+				if (!$this->ensure_post_edit_permission($post_id)) {
+					return;
+				}
 				update_post_meta($post_id, 'mpwpb_extra_service_active', 'on');
 				$extra_services = $this->get_extra_services($post_id);
 				$iconClass = '';
@@ -326,7 +343,10 @@
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
 				}
-				$post_id = isset($_POST['service_postID']) ? sanitize_text_field(wp_unslash($_POST['service_postID'])) : '';
+				$post_id = isset($_POST['service_postID']) ? absint(wp_unslash($_POST['service_postID'])) : 0;
+				if (!$this->ensure_post_edit_permission($post_id)) {
+					return;
+				}
 				$extra_services = $this->get_extra_services($post_id);
 				if (!empty($extra_services)) {
 					if (isset($_POST['itemId'])) {

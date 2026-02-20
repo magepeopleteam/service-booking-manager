@@ -11,9 +11,26 @@
 			public function __construct() {}
 			//************************************************************Partially custom Function******************************//
 			//***********Template********************//
+			public static function sanitize_details_template_name($template_name): string {
+				$allowed_templates = array('default.php', 'static.php');
+				$template_name = sanitize_file_name((string)$template_name);
+				$template_name = basename($template_name);
+				if (!in_array($template_name, $allowed_templates, true)) {
+					return 'default.php';
+				}
+				return $template_name;
+			}
+			private static function normalize_template_relative_path($file_name): string {
+				$file_name = wp_normalize_path(ltrim((string)$file_name, '/\\'));
+				if ($file_name === '' || strpos($file_name, '..') !== false) {
+					return '';
+				}
+				return preg_replace('#/+#', '/', $file_name);
+			}
 			public static function details_template_path($post_id = ''): string {
 				$post_id = $post_id ?? get_the_id();
 				$template_name = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_template', 'default.php');
+				$template_name = self::sanitize_details_template_name($template_name);
 				$file_name = 'themes/' . $template_name;
 				$dir = MPWPB_PLUGIN_DIR . '/templates/' . $file_name;
 				if (!file_exists($dir)) {
@@ -22,11 +39,36 @@
 				return self::template_path($file_name);
 			}
 			public static function template_path($file_name): string {
-				$template_path = get_stylesheet_directory() . '/mpwpb_templates/';
-				$default_dir = MPWPB_PLUGIN_DIR . '/templates/';
-				$dir = is_dir($template_path) ? $template_path : $default_dir;
-				$file_path = $dir . $file_name;
-				return locate_template(['mpwpb_templates/' . $file_name]) ? $file_path : $default_dir . $file_name;
+				$default_dir = trailingslashit(MPWPB_PLUGIN_DIR . '/templates');
+				$file_name = self::normalize_template_relative_path($file_name);
+				if (!$file_name) {
+					return $default_dir . 'themes/default.php';
+				}
+				$default_file_path = $default_dir . $file_name;
+				if (!file_exists($default_file_path)) {
+					return $default_dir . 'themes/default.php';
+				}
+				$theme_file = locate_template(array('mpwpb_templates/' . $file_name));
+				if ($theme_file) {
+					$resolved_theme_file = realpath($theme_file);
+					$allowed_theme_dirs = array(
+						realpath(get_stylesheet_directory() . '/mpwpb_templates'),
+						realpath(get_template_directory() . '/mpwpb_templates'),
+					);
+					if ($resolved_theme_file) {
+						$resolved_theme_file = wp_normalize_path($resolved_theme_file);
+						foreach ($allowed_theme_dirs as $allowed_theme_dir) {
+							if (!$allowed_theme_dir) {
+								continue;
+							}
+							$allowed_theme_dir = trailingslashit(wp_normalize_path($allowed_theme_dir));
+							if (strpos($resolved_theme_file, $allowed_theme_dir) === 0) {
+								return $resolved_theme_file;
+							}
+						}
+					}
+				}
+				return $default_file_path;
 			}
 			//************************//
 			public static function get_general_settings($key, $default = '') {

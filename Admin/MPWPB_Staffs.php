@@ -11,19 +11,21 @@
 			public function __construct() {
 				add_action('admin_menu', array($this, 'staffs_menu'));
 				add_action('wp_ajax_get_mpwpb_get_staff_form', array($this, 'get_mpwpb_get_staff_form'));
-				add_action('wp_ajax_nopriv_get_mpwpb_get_staff_form', array($this, 'get_mpwpb_get_staff_form'));
 				/*********************************************/
 				add_action('wp_ajax_mpwpb_delete_staff', array($this, 'mpwpb_delete_staff'));
-				add_action('wp_ajax_nopriv_mpwpb_delete_staff', array($this, 'mpwpb_delete_staff'));
 				/************************/
 				add_action('wp_ajax_get_mpwpb_staff_end_time_slot', array($this, 'get_mpwpb_staff_end_time_slot'));
-				add_action('wp_ajax_nopriv_get_mpwpb_staff_end_time_slot', array($this, 'get_mpwpb_staff_end_time_slot'));
 				/***/
 				add_action('wp_ajax_get_mpwpb_staff_start_break_time', array($this, 'get_mpwpb_staff_start_break_time'));
-				add_action('wp_ajax_nopriv_get_mpwpb_staff_start_break_time', array($this, 'get_mpwpb_staff_start_break_time'));
 				/***/
 				add_action('wp_ajax_get_mpwpb_staff_end_break_time', array($this, 'get_mpwpb_staff_end_break_time'));
-				add_action('wp_ajax_nopriv_get_mpwpb_staff_end_break_time', array($this, 'get_mpwpb_staff_end_break_time'));
+			}
+			private function ensure_staff_manage_permission(): bool {
+				if (!current_user_can('create_users')) {
+					wp_send_json_error('Unauthorized request');
+					return false;
+				}
+				return true;
 			}
 			public function staffs_menu() {
 				$cpt = MPWPB_Function::get_cpt();
@@ -522,6 +524,9 @@
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
 				}
+				if (!$this->ensure_staff_manage_permission()) {
+					return;
+				}
 				$user_id = isset($_POST['user_id']) ? sanitize_text_field(wp_unslash($_POST['user_id'])) : '';
 				$this->staff_form($user_id);
 				die();
@@ -529,6 +534,9 @@
 			public function mpwpb_delete_staff() {
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
+				}
+				if (!$this->ensure_staff_manage_permission()) {
+					return;
 				}
 				$staff_id = isset($_POST['staff_id']) ? sanitize_text_field(wp_unslash($_POST['staff_id'])) : '';
 				if ($staff_id > 0) {
@@ -541,6 +549,9 @@
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
 				}
+				if (!$this->ensure_staff_manage_permission()) {
+					return;
+				}
 				$user_id = isset($_POST['user_id']) ? sanitize_text_field(wp_unslash($_POST['user_id'])) : '';
 				$day = isset($_POST['day_name']) ? sanitize_text_field(wp_unslash($_POST['day_name'])) : '';
 				$start_time = isset($_POST['start_time']) ? sanitize_text_field(wp_unslash($_POST['start_time'])) : '';
@@ -550,6 +561,9 @@
 			public function get_mpwpb_staff_start_break_time() {
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
+				}
+				if (!$this->ensure_staff_manage_permission()) {
+					return;
 				}
 				$user_id = isset($_POST['user_id']) ? sanitize_text_field(wp_unslash($_POST['user_id'])) : '';
 				$day = isset($_POST['day_name']) ? sanitize_text_field(wp_unslash($_POST['day_name'])) : '';
@@ -562,6 +576,9 @@
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
 				}
+				if (!$this->ensure_staff_manage_permission()) {
+					return;
+				}
 				$user_id = isset($_POST['user_id']) ? sanitize_text_field(wp_unslash($_POST['user_id'])) : '';
 				$day = isset($_POST['day_name']) ? sanitize_text_field(wp_unslash($_POST['day_name'])) : '';
 				$start_time = isset($_POST['start_time']) ? sanitize_text_field(wp_unslash($_POST['start_time'])) : '';
@@ -571,7 +588,13 @@
 			}
 			/*************************************/
 			public function save_staff() {
-				if (!isset($_POST['mpwpb_add_staff_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['mpwpb_add_staff_nonce'])), 'mpwpb_add_staff_nonce') && defined('DOING_AUTOSAVE') && DOING_AUTOSAVE && !current_user_can('create_users')) {
+				if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+					return;
+				}
+				if (!current_user_can('create_users')) {
+					return;
+				}
+				if (!isset($_POST['mpwpb_add_staff_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['mpwpb_add_staff_nonce'])), 'mpwpb_add_staff_nonce')) {
 					return;
 				}
 				$user_id = isset($_POST['mpwpb_user']) ? absint(wp_unslash($_POST['mpwpb_user'])) : '';
@@ -624,7 +647,7 @@
 						$this->save_schedule($user_id, $key);
 					}
 					//**********************//
-					$off_days = isset($_POST['mpwpb_off_days']) ? $_POST['mpwpb_off_days'] : [];
+					$off_days = isset($_POST['mpwpb_off_days']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_off_days'])) : '';
 					update_user_meta($user_id, 'mpwpb_off_days', $off_days);
 					//**********************//
 					$off_dates = isset($_POST['mpwpb_off_dates']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_off_dates'])) : [];
@@ -642,7 +665,13 @@
 				}
 			}
 			public function save_schedule($user_id, $day) {
-				if (!isset($_POST['mpwpb_add_staff_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['mpwpb_add_staff_nonce'])), 'mpwpb_add_staff_nonce') && defined('DOING_AUTOSAVE') && DOING_AUTOSAVE && !current_user_can('create_users')) {
+				if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+					return;
+				}
+				if (!current_user_can('create_users')) {
+					return;
+				}
+				if (!isset($_POST['mpwpb_add_staff_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['mpwpb_add_staff_nonce'])), 'mpwpb_add_staff_nonce')) {
 					return;
 				}
 				$start_name = 'mpwpb_' . $day . '_start_time';

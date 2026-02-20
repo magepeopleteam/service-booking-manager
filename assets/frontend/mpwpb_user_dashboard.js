@@ -298,6 +298,7 @@ jQuery(document).ready(function($) {
             schedule: schedule,
             offDays: offDays,
             offDates_str: offDates_str,
+            nonce: (typeof mpwpb_dashboard !== 'undefined' && mpwpb_dashboard.nonce) ? mpwpb_dashboard.nonce : '',
         }, function(response) {
             if (response.success) {
                 alert('Schedule saved successfully!');

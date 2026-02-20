@@ -12,13 +12,18 @@
 				add_action('add_mpwpb_settings_tab_content', [$this, 'date_time_settings'], 10, 1);
 				/************************/
 				add_action('wp_ajax_get_mpwpb_end_time_slot', array($this, 'get_mpwpb_end_time_slot'));
-				add_action('wp_ajax_nopriv_get_mpwpb_end_time_slot', array($this, 'get_mpwpb_end_time_slot'));
 				/***/
 				add_action('wp_ajax_get_mpwpb_start_break_time', array($this, 'get_mpwpb_start_break_time'));
-				add_action('wp_ajax_nopriv_get_mpwpb_start_break_time', array($this, 'get_mpwpb_start_break_time'));
 				/***/
 				add_action('wp_ajax_get_mpwpb_end_break_time', array($this, 'get_mpwpb_end_break_time'));
-				add_action('wp_ajax_nopriv_get_mpwpb_end_break_time', array($this, 'get_mpwpb_end_break_time'));
+			}
+			private function ensure_post_edit_permission($post_id): bool {
+				$post_id = absint($post_id);
+				if (!$post_id || !current_user_can('edit_post', $post_id)) {
+					wp_send_json_error('Unauthorized request');
+					return false;
+				}
+				return true;
 			}
 			public function date_time_settings($post_id) {
 				$date_format = MPWPB_Global_Function::date_picker_format();
@@ -323,7 +328,10 @@
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
 				}
-				$post_id = isset($_POST['post_id']) ? sanitize_text_field(wp_unslash($_POST['post_id'])) : '';
+				$post_id = isset($_POST['post_id']) ? absint(wp_unslash($_POST['post_id'])) : 0;
+				if (!$this->ensure_post_edit_permission($post_id)) {
+					return;
+				}
 				$day = isset($_POST['day_name']) ? sanitize_text_field(wp_unslash($_POST['day_name'])) : '';
 				$start_time = isset($_POST['start_time']) ? sanitize_text_field(wp_unslash($_POST['start_time'])) : '';
 				$this->end_time_slot($post_id, $day, $start_time);
@@ -333,7 +341,10 @@
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
 				}
-				$post_id = isset($_POST['post_id']) ? sanitize_text_field(wp_unslash($_POST['post_id'])) : '';
+				$post_id = isset($_POST['post_id']) ? absint(wp_unslash($_POST['post_id'])) : 0;
+				if (!$this->ensure_post_edit_permission($post_id)) {
+					return;
+				}
 				$day = isset($_POST['day_name']) ? sanitize_text_field(wp_unslash($_POST['day_name'])) : '';
 				$start_time = isset($_POST['start_time']) ? sanitize_text_field(wp_unslash($_POST['start_time'])) : '';
 				$end_time = isset($_POST['end_time']) ? sanitize_text_field(wp_unslash($_POST['end_time'])) : '';
@@ -344,7 +355,10 @@
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
 				}
-				$post_id = isset($_POST['post_id']) ? sanitize_text_field(wp_unslash($_POST['post_id'])) : '';
+				$post_id = isset($_POST['post_id']) ? absint(wp_unslash($_POST['post_id'])) : 0;
+				if (!$this->ensure_post_edit_permission($post_id)) {
+					return;
+				}
 				$day = isset($_POST['day_name']) ? sanitize_text_field(wp_unslash($_POST['day_name'])) : '';
 				$start_time = isset($_POST['start_time']) ? sanitize_text_field(wp_unslash($_POST['start_time'])) : '';
 				$end_time = isset($_POST['end_time']) ? sanitize_text_field(wp_unslash($_POST['end_time'])) : '';
