@@ -607,6 +607,8 @@ function mpwpb_price_calculation($this) {
             let mpwpb_extra_service = {};
             let mpwpb_extra_service_type = {};
             let mpwpb_extra_service_qty = {};
+            let mpwpb_custom_form_values = {};
+            let missingCustomFieldLabel = '';
             let count = 0;
             parent.find('[name="mpwpb_extra_service_type[]"]').each(function () {
                 let ex_name = $(this).val();
@@ -620,6 +622,58 @@ function mpwpb_price_calculation($this) {
                     count++;
                 }
             });
+
+            parent.find('.mpwpb-custom-form-group').each(function () {
+                let fieldGroup = $(this);
+                let fieldKey = fieldGroup.data('field-key');
+                let fieldLabel = fieldGroup.data('field-label');
+                let fieldType = fieldGroup.data('field-type');
+                let isRequired = String(fieldGroup.data('required')) === '1';
+                let fieldValue = '';
+
+                if (!fieldKey) {
+                    return;
+                }
+
+                if (fieldType === 'checkbox') {
+                    fieldValue = [];
+                    fieldGroup.find('input.mpwpb-custom-form-field:checked').each(function () {
+                        let currentValue = $(this).val();
+                        if (currentValue) {
+                            fieldValue.push(String(currentValue).trim());
+                        }
+                    });
+                } else if (fieldType === 'radio') {
+                    fieldValue = fieldGroup.find('input.mpwpb-custom-form-field:checked').val() || '';
+                    fieldValue = String(fieldValue).trim();
+                } else {
+                    fieldValue = fieldGroup.find('.mpwpb-custom-form-field').first().val() || '';
+                    fieldValue = String(fieldValue).trim();
+                }
+
+                if (isRequired) {
+                    let isEmpty = Array.isArray(fieldValue) ? fieldValue.length === 0 : fieldValue === '';
+                    if (isEmpty) {
+                        missingCustomFieldLabel = fieldLabel || fieldKey;
+                        return false;
+                    }
+                }
+
+                if (Array.isArray(fieldValue)) {
+                    if (fieldValue.length > 0) {
+                        mpwpb_custom_form_values[fieldKey] = fieldValue;
+                    }
+                } else if (fieldValue !== '') {
+                    mpwpb_custom_form_values[fieldKey] = fieldValue;
+                }
+            });
+
+            if (missingCustomFieldLabel) {
+                let requiredText = mpwpb_ajax.custom_form_required_text || 'Please fill out required field:';
+                alert(requiredText + ' ' + missingCustomFieldLabel);
+                return;
+            }
+
             $.ajax({
                 type: 'POST',
                 url: mpwpb_ajax.ajax_url,
@@ -638,6 +692,7 @@ function mpwpb_price_calculation($this) {
                     "mpwpb_extra_service_type": mpwpb_extra_service_type,
                     "mpwpb_extra_service_qty": mpwpb_extra_service_qty,
                     "mpwpb_staff_member": staff_member,
+                    "mpwpb_custom_form_values": mpwpb_custom_form_values,
                     nonce: mpwpb_ajax.nonce
                 },
                 beforeSend: function () {

@@ -24,6 +24,7 @@
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Function.php';
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Query.php';
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Layout.php';
+				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Custom_Form_Builder_Helper.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Admin.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Frontend.php';
 
@@ -101,7 +102,8 @@
 				wp_localize_script('mpwpb_registration', 'mpwpb_ajax', array(
 					'ajax_url' => admin_url('admin-ajax.php'),
 					'nonce'    => wp_create_nonce('mpwpb_nonce'),
-					'use_24hour' => MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'time_format_24hour', 'no')
+					'use_24hour' => MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'time_format_24hour', 'no'),
+					'custom_form_required_text' => esc_html__('Please fill out required field:', 'service-booking-manager')
 				));
 				do_action('add_mpwpb_frontend_script');
 			}

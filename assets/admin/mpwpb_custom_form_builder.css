@@ -1,0 +1,30 @@
+.mpwpb-cfb-template-row {
+    align-items: flex-start;
+}
+
+.mpwpb-cfb-template-control {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.mpwpb-cfb-template-control select {
+    min-width: 220px;
+}
+
+.mpwpb-cfb-table-wrap {
+    margin-top: 15px;
+}
+
+.mpwpb-cfb-table th,
+.mpwpb-cfb-table td {
+    vertical-align: middle;
+}
+
+.mpwpb-cfb-table .regular-text {
+    width: 100%;
+}
+
+.mpwpb-cfb-add-row {
+    margin-top: 10px;
+}

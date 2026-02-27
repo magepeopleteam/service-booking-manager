@@ -216,6 +216,8 @@
 								$total_price = $total_price ? sanitize_text_field( wp_unslash( $total_price ) ): '';
 								$ex_service = wc_get_order_item_meta($item_id, '_mpwpb_extra_service_info');
 								$ex_service_infos = $ex_service ??  [];
+								$custom_form_values = wc_get_order_item_meta($item_id, '_mpwpb_custom_form_values');
+								$custom_form_values = is_array($custom_form_values) ? $custom_form_values : array();
 								$data['mpwpb_id'] = $post_id;
 								$data['mpwpb_date'] = $date;
 								if ($category) {
@@ -237,6 +239,7 @@
 								$data['mpwpb_billing_email'] = $order->get_billing_email();
 								$data['mpwpb_billing_phone'] = $order->get_billing_phone();
 								$data['mpwpb_billing_address'] = $order->get_billing_address_1() . ' ' . $order->get_billing_address_2();
+								$data['mpwpb_custom_form_values'] = $custom_form_values;
 								$booking_data = apply_filters('add_mpwpb_booking_data', $data, $post_id);
 								self::add_cpt_data('mpwpb_booking', $booking_data['mpwpb_billing_name'], $booking_data);
 								if (is_array($ex_service_infos) && sizeof($ex_service_infos) > 0) {

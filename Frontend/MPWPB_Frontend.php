@@ -22,6 +22,7 @@
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Waiting_List.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Recurring_Booking.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Staff_Booking.php';
+				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Custom_Form_Builder.php';
 
 			}
 			public function load_single_template( $template ): string {

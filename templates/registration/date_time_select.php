@@ -172,9 +172,11 @@
             </div>
         </div>
 
-    </div>
+</div>
 
 <?php
+    do_action('mpwpb_render_custom_form_fields', $post_id);
+
     if ( $enable_staff_member === 'on' ) { ?>
         <div class="_dShadow_7_mB_xs mpwpb_date_time_area">
             <div class="mpwpb_date_carousel groupRadioCheck" id="mpwpb_staff_member_booking_area" style="display: none;">
