@@ -10,6 +10,7 @@
 		class MPWPB_Services {
 			public function __construct() {
 				add_action('mpwpb_show_service', [$this, 'view_all_services']);
+				add_action('mpwpb_show_service_new', [$this, 'view_all_services_new']);
 				// show_all_services
 				add_action('wp_ajax_mpwpb_show_all_services', [$this, 'show_all_services']);
 				// save service
@@ -281,11 +282,110 @@
                 </div>
 				<?php
 			}
+			public function view_all_services_new($post_id) {
+				$show_category_status = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_show_category_status', 'off');
+				$active_class = $show_category_status == 'on' ? 'mActive' : '';
+				$show_category_status = $show_category_status == 'on' ? 'checked' : '';
+				?>
+                <div class="mpwpb-service-table" data-post-id="<?php echo esc_attr($post_id); ?>">
+                    <div class="table">
+                        <div class="mpwpb-service-rows">
+						    <?php $this->get_all_service_items_new($post_id); ?>
+                        </div>
+                    </div>
+                </div>
+                <!-- sidebar collapse open -->
+                <div class="mpwpb-modal-container" data-modal-target="mpwpb-service-new">
+                    <div class="mpwpb-modal-content">
+                        <span class="mpwpb-modal-close"><i class="fas fa-times"></i></span>
+                        <div class="title">
+                            <h3><?php esc_html_e('Add Service', 'service-booking-manager'); ?></h3>
+                            <div id="mpwpb-service-msg"></div>
+                        </div>
+                        <div class="content">
+                            <input type="hidden" name="mpwpb_post_id" value="<?php echo esc_attr($post_id); ?>">
+                            <input type="hidden" name="service_item_id" value="">
+                            <input type="hidden" name="mpwpb_parent_cat_id" value="">
+                            <input type="hidden" name="mpwpb_sub_cat_id" value="">
+                            <label><?php esc_html_e('Use Category', 'service-booking-manager'); ?></label>
+							<?php MPWPB_Custom_Layout::switch_button('mpwpb_show_category_status', $show_category_status); ?>
+                            <div class="<?php echo esc_attr($active_class); ?>" data-collapse="#mpwpb_show_category_status" style="display:none;">
+                                <label><?php esc_html_e('Select Category', 'service-booking-manager'); ?> </label>
+                                <div class="mpwpb-parent-category">
+									<?php
+										$MPWPB_Service_Category = new MPWPB_Service_Category();
+										$MPWPB_Service_Category->show_parent_category_lists($post_id); ?>
+                                </div>
+                                <div class="sub-category-container" style="display: none;">
+                                    <label><?php esc_html_e('Select Sub Category', 'service-booking-manager'); ?> </label>
+                                    <div class="mpwpb-sub-category">
+										<?php $MPWPB_Service_Category->show_sub_category_lists($post_id); ?>
+                                    </div>
+                                </div>
+                            </div>
+                            <label>
+								<?php esc_html_e('Service Name', 'service-booking-manager'); ?>
+                                <input type="text" name="service_name" placeholder="Service Name">
+                            </label>
+                            <label>
+								<?php esc_html_e('Price', 'service-booking-manager'); ?>
+                                <input type="number" name="service_price" placeholder="10">
+                            </label>
+                            <label>
+                                <?php esc_html_e('Service Unit', 'service-booking-manager'); ?>
+                                <input type="text" name="service_unit" placeholder="sqft/piece">
+                            </label>
+                            <label>
+								<?php esc_html_e('Duration', 'service-booking-manager'); ?>
+                                <input type="text" name="service_duration" placeholder="10min">
+                            </label>
+                            <label>
+								<?php esc_html_e('Description', 'service-booking-manager'); ?>
+                                <textarea name="service_description" rows="5"></textarea>
+                            </label>
+                            <label>
+								<?php esc_html_e('Image/Icon', 'service-booking-manager'); ?>
+                            </label>
+                            <div class="mpwpb_add_icon_image_area">
+                                <input type="hidden" name="service_image_icon" value="">
+                                <div class="mpwpb_icon_item dNone">
+                                    <span class="" data-add-icon=""></span>
+                                    <span class="fas fa-times mpwpb_remove_icon mpwpb_icon_remove"></span>
+                                </div>
+                                <div class="mpwpb_image_item dNone">
+                                    <img  alt=""/>
+                                    <span class="fas fa-times mpwpb_remove_icon mpwpb_image_remove"></span>
+                                </div>
+                                <div class="mpwpb_add_icon_image_button_area ">
+                                    <button class="mpwpb_image_add" type="button">
+                                        <span class="fas fa-images"></span> <?php _e('Image','service-booking-manager'); ?>
+                                    </button>
+                                    <button class="mpwpb_icon_add" type="button" data-target-popup="#mpwpb_add_icon_popup">
+                                        <span class="fas fa-plus"></span><?php _e('Icon','service-booking-manager'); ?>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mpwpb_service_save_button">
+                                <p>
+                                    <button id="mpwpb_service_save" class="button button-primary button-large mpwpb_service_save_close"><?php esc_html_e('Save', 'service-booking-manager'); ?></button>
+                                    <button id="mpwpb_service_save_close" class="button button-primary button-large mpwpb_service_save_close">save close</button>
+                                <p>
+                            </div>
+                            <div class="mpwpb_service_update_button" style="display: none;">
+                                <p>
+                                    <button id="mpwpb_service_update" class="button button-primary button-large mpwpb_service_save"><?php esc_html_e('Update and Close', 'service-booking-manager'); ?></button>
+                                <p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+				<?php
+			}
 			public function show_service_by_category($post_id, $category_id) {
 				$services = $this->get_services($post_id);
 				foreach ($services as $key => $service) {
 					if ($service['parent_cat'] == $category_id) {
-						$this->get_service_item($post_id,$key, $service);
+						$this->get_service_item_new($post_id,$key, $service);
 					}
 				}
 			}
@@ -293,7 +393,7 @@
 				$services = $this->get_services($post_id);
 				foreach ($services as $key => $service) {
 					if (($service['parent_cat'] == $parent_cat) && ($service['sub_cat'] == $sub_cat)) {
-						$this->get_service_item($post_id, $key, $service);
+						$this->get_service_item_new($post_id, $key, $service);
 					}
 				}
 			}
@@ -469,7 +569,14 @@
 				$services = $this->get_services($post_id);
 				$services = is_array($services) ? $services : [];
 				foreach ($services as $key => $service) {
-					$this->get_service_item($post_id,$key, $service);
+					$this->get_service_item_new($post_id,$key, $service);
+				}
+			}
+			public function get_all_service_items_new($post_id) {
+				$services = $this->get_services($post_id);
+				$services = is_array($services) ? $services : [];
+				foreach ($services as $key => $service) {
+					$this->get_service_item_new($post_id,$key, $service);
 				}
 			}
 			public function get_service_item($post_id,$key, $service) {
@@ -480,7 +587,13 @@
 				$sub_cat = $MPWPB_Category->get_sub_category_by_id($post_id,$sub_cat_id);
 				
 				?>
-                <tr data-id="<?php echo esc_attr($key); ?>" data-cat-status="<?php echo esc_attr($service['show_cat_status']); ?>" data-parent-cat="<?php echo esc_attr($service['parent_cat']); ?>" data-sub-cat="<?php echo esc_attr($service['sub_cat']); ?>" title="<?php echo esc_attr($service['details']); ?>">
+                <tr
+                        data-id="<?php echo esc_attr($key); ?>"
+                        data-cat-status="<?php echo esc_attr($service['show_cat_status']); ?>"
+                        data-parent-cat="<?php echo esc_attr($service['parent_cat']); ?>"
+                        data-sub-cat="<?php echo esc_attr($service['sub_cat']); ?>"
+                        title="<?php echo esc_attr($service['details']); ?>"
+                >
                     <td data-imageid="<?php echo esc_attr($service['image']); ?>">
 						<?php if (!empty($service['image'])): ?>
 							<?php echo wp_get_attachment_image($service['image'], 'medium'); ?>
@@ -502,6 +615,58 @@
                         <span class="mpwpb-service-delete"><i class="fas fa-trash"></i></span>
                     </td>
                 </tr>
+				<?php
+			}
+			public function get_service_item_new($post_id,$key, $service ) {
+
+                error_log( print_r( [ '$service' => $service ], true ) );
+
+				$MPWPB_Category = new MPWPB_Service_Category();
+				$parent_cat_id = $service['parent_cat'];
+				$sub_cat_id =  $service['sub_cat'];
+				$details =  isset( $service['details'] ) ? $service['details'] : '';
+				$parent_cat = $MPWPB_Category->get_category_by_id($post_id,$parent_cat_id);
+				$sub_cat = $MPWPB_Category->get_sub_category_by_id($post_id,$sub_cat_id);
+
+				?>
+                <div class="mpwpb_service_card"
+                     data-id="<?php echo esc_attr($key); ?>"
+                     data-cat-status="<?php echo esc_attr($service['show_cat_status']); ?>"
+                     data-parent-cat="<?php echo esc_attr($service['parent_cat']); ?>"
+                     data-sub-cat="<?php echo esc_attr($service['sub_cat']); ?>"
+                     title="<?php echo esc_attr($service['details']); ?>"
+                >
+                    <div class="mpwpb_service_icon" data-imageid="<?php echo esc_attr($service['image']); ?>">
+                        <?php if (!empty($service['image'])): ?>
+                            <?php echo wp_get_attachment_image($service['image'], 'medium'); ?>
+                        <?php endif; ?>
+                        <?php if (!empty($service['icon'])): ?>
+                            <i class="<?php echo esc_attr($service['icon']); ?> mpwpb_icon"></i>
+                        <?php endif; ?>
+                        <span style="display: none;"><?php echo esc_html($service['details']); ?></span>
+                    </div>
+
+                    <div class="mpwpb_service_info">
+                        <h3><strong class="service-name"><?php echo esc_html($service['name']); ?></strong><br></h3>
+                        <?php if( isset($parent_cat['name']) || isset($sub_cat['name'])){?>
+                            <p class="mpwpb_service_badge"><?php echo esc_html(isset($parent_cat['name']))?$parent_cat['name']:''; ?><?php echo esc_html(isset($sub_cat['name']))?' > '.$sub_cat['name']:''; ?></p>
+                        <?php }?>
+<!--                        <span class="mpwpb_service_badge">Standard</span>-->
+                        <p><?php echo esc_html( $details );?></p>
+                        <div class="mpwpb_service_meta">
+                            <span class="mpwpb_service_price"><?php echo esc_html($service['price']); ?></span>
+                            <div class="">
+                                <span>⏱ </span>
+                                <span class="mpwpb_service_duration"><?php echo esc_html($service['duration']); ?></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mpwpb_service_delete">
+                        <span class="mpwpb-service-clone" title="Clone"><i class="far fa-copy"></i></span>
+                        <span class="mpwpb-service-edit" data-modal="mpwpb-service-new"><i class="fas fa-edit"></i></span>
+                        <span class="mpwpb-service-delete"><i class="fas fa-trash"></i></span>
+                    </div>
+                </div>
 				<?php
 			}
 		}

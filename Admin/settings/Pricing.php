@@ -49,7 +49,7 @@
 							<div class="category-container">
 								<div class="header">
 									<h3><?php esc_html_e('Categories','service-booking-manager'); ?></h3>
-									<button class="button show-all-services" type="button"><?php esc_html_e('Show All service','service-booking-manager'); ?></button>
+									<button class="button show-all-services" type="button"><?php esc_html_e('☰ Show All service','service-booking-manager'); ?></button>
 								</div>
 								<?php do_action('mpwpb_show_category',$post_id); ?>
 							</div>
@@ -58,7 +58,8 @@
 									<h3 class="service-title"><?php esc_html_e('All Services','service-booking-manager'); ?></h3>
 									<button class="button mpwpb-service-new" data-modal="mpwpb-service-new" type="button"><?php esc_html_e('Add New Service','service-booking-manager'); ?></button>
 								</div>
-								<?php do_action('mpwpb_show_service',$post_id); ?>
+<!--								--><?php //do_action('mpwpb_show_service',$post_id); ?>
+								<?php do_action('mpwpb_show_service_new',$post_id); ?>
 							</div>
 						</div>
 					</section>

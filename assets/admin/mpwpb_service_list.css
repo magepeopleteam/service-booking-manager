@@ -314,3 +314,82 @@ table.mpwpb_service_list_services-table th
     text-transform: none;
 }
 .mpwpv_service_list_container .notice.notice-warning{display:none;}
+
+
+.mpwpb_category_header {
+    flex-direction: column;
+    margin-bottom: 10px;
+
+    border-radius: 8px;
+    align-items: center;
+    background: white;
+    padding: 5px 5px;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Cards */
+.mpwpb_service_card {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 15px;
+    margin-top: 15px;
+    position: relative;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    border: 1px solid #eee8e8;
+}
+
+.mpwpb_service_icon {
+    display: flex;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    background: #eef0f3;
+    border-radius: 10px;
+}
+
+.mpwpb_icon{
+    margin-top: 20px;
+}
+
+.mpwpb_service_info h3 {
+    margin: 0;
+}
+
+.mpwpb_service_badge {
+    display: inline-block;
+    background: #eef0f3;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    margin: 5px 0;
+}
+
+.mpwpb_service_badge_alt {
+    background: #dfe7ff;
+}
+
+.mpwpb_service_info p {
+    margin: 5px 0 10px;
+    color: #666;
+    font-size: 14px;
+}
+
+.mpwpb_service_meta {
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+    color: #2e7d32;
+}
+
+.mpwpb_service_delete {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    cursor: pointer;
+    color: #888;
+}

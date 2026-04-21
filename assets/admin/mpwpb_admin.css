@@ -380,7 +380,7 @@ section.faq-header
     border: 1px solid #e5dede !important;
 }
 .mpwpb-category-lists .mpwpb-category-items .parent-category-items, .mpwpb-category-lists .mpwpb-category-items .mpwpb-sub-category-items {
-   border: 2px solid #f1e8e8 !important;
+   border: 1px solid #f1e8e8 !important;
    border-radius: 5px;
 }
 .mpwpb_style .themeButton, .mpwpb_style [class*=_themeButton]
