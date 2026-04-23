@@ -853,24 +853,24 @@
         let rowCount = $('.mpwpb_service_card').length;
         let itemId = rowCount++; // Generate a new ID
 
-        console.log( rowCount, itemId );
         row.attr('data-id', itemId);
         let sortedIDs = [];
         $('.mpwpb_service_card').each(function() {
             sortedIDs.push($(this).attr('data-id'));
         });
 
-        // Extract values from each <td> in the original
         let postId =  $('.mpwpb-service-table').data('post-id');
-        let imageId = originalRow.find('td[data-imageid]').attr('data-imageid');
-        var icon = originalRow.find('td:nth-child(1) i').attr('class');
-        let serviceName = originalRow.find('td:nth-child(2) .service-name').text();
         let descriptoin = originalRow.attr('title');
-        let cat_status = originalRow.attr('data-cat-status');
-        let parent_cat = originalRow.attr('data-parent-cat');
-        let sub_cat = originalRow.attr('data-sub-cat');
-        let price = originalRow.find('td:nth-child(3)').text();
-        let duration = originalRow.find('td:nth-child(4)').text();
+        let cat_status = $(this).closest('.mpwpb_service_card').data('cat-status');
+        let parent_cat = $(this).closest('.mpwpb_service_card').data('parent-cat');
+        let sub_cat = $(this).closest('.mpwpb_service_card').data('sub-cat');
+        let parent = $(this).closest('.mpwpb_service_card');
+        let icon = parent.find('.mpwpb_service_icon i').attr('class');
+        let imageId = parent.find('.mpwpb_service_icon').data('imageid');
+        let serviceName = parent.find('.service-name').text().trim();
+        let price = parent.find('.mpwpb_service_price').text().trim();
+        let duration = parent.find('.mpwpb_service_duration').text().trim();
+
         // Insert the cloned row right below the original row
         row.insertAfter(originalRow);
         let service_image_icon;
