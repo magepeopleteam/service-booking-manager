@@ -67,7 +67,7 @@
 					return;
 				}
 //				$ext_services = $this->get_extra_services($post_id);
-				$ext_services = $this->show_extra_service_new($post_id);
+				$ext_services = $this->get_extra_services($post_id);
 				$iconClass = '';
 				$imageID = '';
 				if (isset($_POST['service_image_icon'])) {
@@ -347,7 +347,7 @@
                                     <?php echo wp_get_attachment_image($value['image'], 'medium'); ?>
                                 <?php endif; ?>
                                 <?php if (!empty($value['icon'])): ?>
-                                    <i class="<?php echo esc_attr($value['icon']); ?>"></i>
+                                    <span class="" style="margin-top: 20px"><i class="<?php echo esc_attr($value['icon']); ?>"></i></span>
                                 <?php endif; ?>
                             </div>
 
@@ -356,9 +356,9 @@
 
                                 <p class="mpwpb_ex_service_details"><?php echo esc_html( $value['details'] );?></p>
                                 <div class="mpwpb_service_meta">
-                                    <span class="mpwpb_ex_service_price"><?php echo esc_html($value['price']); ?></span>
+                                    <span class="mpwpb_ex_service_price"><?php echo wp_kses_post( wc_price( $value['price'] ) ); ?></span>
                                     <div class="">
-                                        <span>Q </span>
+                                        <span><i class="fa-solid fa-box"></i></span>
                                         <span class="mpwpb_ex_service_qty"><?php echo esc_html($value['qty']); ?></span>
                                     </div>
                                 </div>
