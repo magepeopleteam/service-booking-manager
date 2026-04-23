@@ -48,7 +48,8 @@
 				update_post_meta($post_id, 'mpwpb_extra_service', $new_ordered);
 				ob_start();
 				$resultMessage = esc_html__('Data Updated Successfully', 'service-booking-manager');
-				$this->show_extra_service($post_id);
+//				$this->show_extra_service($post_id);
+				$this->show_extra_service_new($post_id);
 				$html_output = ob_get_clean();
 				wp_send_json_success([
 					'message' => $resultMessage,
@@ -65,7 +66,8 @@
 				if (!$this->ensure_post_edit_permission($post_id)) {
 					return;
 				}
-				$ext_services = $this->get_extra_services($post_id);
+//				$ext_services = $this->get_extra_services($post_id);
+				$ext_services = $this->show_extra_service_new($post_id);
 				$iconClass = '';
 				$imageID = '';
 				if (isset($_POST['service_image_icon'])) {
@@ -137,7 +139,8 @@
 				update_post_meta($post_id, 'mpwpb_extra_service', $ext_services);
 				ob_start();
 				$resultMessage = esc_html__('Data Updated Successfully', 'service-booking-manager');
-				$this->show_extra_service($post_id);
+//				$this->show_extra_service($post_id);
+				$this->show_extra_service_new($post_id);
 				$html_output = ob_get_clean();
 				wp_send_json_success([
 					'message' => $resultMessage,
@@ -178,7 +181,8 @@
 				update_post_meta($post_id, 'mpwpb_extra_service', $extra_services);
 				ob_start();
 				$resultMessage = esc_html__('Data Updated Successfully', 'service-booking-manager');
-				$this->show_extra_service($post_id);
+//				$this->show_extra_service($post_id);
+				$this->show_extra_service_new($post_id);
 				$html_output = ob_get_clean();
 				wp_send_json_success([
 					'message' => $resultMessage,
@@ -227,21 +231,11 @@
                         </label>
                     </section>
                     <section class="mpwpb-extra-section <?php echo esc_attr($active_class); ?>" data-collapse="#mpwpb_extra_service_active">
-                        <table class="table extra-service-table mB" data-post-id="<?php echo esc_attr($post_id); ?>">
-                            <thead>
-                            <tr>
-                                <th style="width:66px"><?php esc_html_e('Image', 'service-booking-manager'); ?></th>
-                                <th style="width:150px"><?php esc_html_e('Service Title', 'service-booking-manager'); ?></th>
-                                <th><?php esc_html_e('Description', 'service-booking-manager'); ?></th>
-                                <th style="width:90px"><?php esc_html_e('Quantity', 'service-booking-manager'); ?></th>
-                                <th style="width:90px"><?php esc_html_e('Price', 'service-booking-manager'); ?></th>
-                                <th style="width:92px"><?php esc_html_e('Action', 'service-booking-manager'); ?></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-							<?php $this->show_extra_service($post_id); ?>
-                            </tbody>
-                        </table>
+                        <div class="table extra-service-table mB" data-post-id="<?php echo esc_attr($post_id); ?>">
+                            <div class="mpwpb_extra_service_show">
+							<?php $this->show_extra_service_new($post_id); ?>
+                            </div>
+                        </div>
                         <button class="button mpwpb-extra-service-new" data-modal="mpwpb-extra-service-new" type="button"><?php esc_html_e('Add Extra Service', 'service-booking-manager'); ?></button>
                     </section>
                     <!-- sidebar collapse open -->
@@ -339,6 +333,46 @@
 					endforeach;
 				endif;
 			}
+			public function show_extra_service_new($post_id) {
+				$extra_services = $this->get_extra_services($post_id);
+				if (!empty($extra_services)):
+					foreach ($extra_services as $key => $value) :
+						?>
+
+                        <div class="mpwpb_ex_service_card"
+                             data-id="<?php echo esc_attr($key); ?>"
+                        >
+                            <div class="mpwpb_ex_service_icon" data-imageId="<?php echo esc_attr($value['image']); ?>">
+                                <?php if (!empty($value['image'])): ?>
+                                    <?php echo wp_get_attachment_image($value['image'], 'medium'); ?>
+                                <?php endif; ?>
+                                <?php if (!empty($value['icon'])): ?>
+                                    <i class="<?php echo esc_attr($value['icon']); ?>"></i>
+                                <?php endif; ?>
+                            </div>
+
+                            <div class="mpwpb_service_info">
+                                <h3><strong class="mpwpb_ex_service_name"><?php echo esc_html($value['name']); ?></strong><br></h3>
+
+                                <p class="mpwpb_ex_service_details"><?php echo esc_html( $value['details'] );?></p>
+                                <div class="mpwpb_service_meta">
+                                    <span class="mpwpb_ex_service_price"><?php echo esc_html($value['price']); ?></span>
+                                    <div class="">
+                                        <span>Q </span>
+                                        <span class="mpwpb_ex_service_qty"><?php echo esc_html($value['qty']); ?></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mpwpb_service_delete">
+                                <span class="mpwpb-ext-service-clone" title="Clone"><i class="far fa-copy"></i></span>
+                                <span class="mpwpb-ext-service-edit" title="Edit" data-modal="mpwpb-extra-service-new"><i class="fas fa-edit"></i></span>
+                                <span class="mpwpb-ext-service-delete" title="Delete"><i class="fas fa-trash"></i></span>
+                            </div>
+                        </div>
+					<?php
+					endforeach;
+				endif;
+			}
 			public function extra_service_delete_item() {
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
 					wp_send_json_error('Invalid nonce!'); // Prevent unauthorized access
@@ -358,7 +392,8 @@
 				if ($result) {
 					ob_start();
 					$resultMessage = esc_html__('Data Deleted Successfully', 'service-booking-manager');
-					$this->show_extra_service($post_id);
+//					$this->show_extra_service($post_id);
+					$this->show_extra_service_new($post_id);
 					$html_output = ob_get_clean();
 					wp_send_json_success([
 						'message' => $resultMessage,

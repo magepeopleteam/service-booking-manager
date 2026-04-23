@@ -618,9 +618,6 @@
 				<?php
 			}
 			public function get_service_item_new($post_id,$key, $service ) {
-
-                error_log( print_r( [ '$service' => $service ], true ) );
-
 				$MPWPB_Category = new MPWPB_Service_Category();
 				$parent_cat_id = $service['parent_cat'];
 				$sub_cat_id =  $service['sub_cat'];
@@ -651,7 +648,6 @@
                         <?php if( isset($parent_cat['name']) || isset($sub_cat['name'])){?>
                             <p class="mpwpb_service_badge"><?php echo esc_html(isset($parent_cat['name']))?$parent_cat['name']:''; ?><?php echo esc_html(isset($sub_cat['name']))?' > '.$sub_cat['name']:''; ?></p>
                         <?php }?>
-<!--                        <span class="mpwpb_service_badge">Standard</span>-->
                         <p><?php echo esc_html( $details );?></p>
                         <div class="mpwpb_service_meta">
                             <span class="mpwpb_service_price"><?php echo esc_html($service['price']); ?></span>

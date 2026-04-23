@@ -342,8 +342,20 @@ table.mpwpb_service_list_services-table th
     box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     border: 1px solid #eee8e8;
 }
+.mpwpb_ex_service_card {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 15px;
+    margin-top: 15px;
+    position: relative;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    border: 1px solid #eee8e8;
+}
 
-.mpwpb_service_icon {
+.mpwpb_service_icon, .mpwpb_ex_service_icon {
     display: flex;
     justify-content: center;
     width: 60px;

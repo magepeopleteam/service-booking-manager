@@ -958,8 +958,8 @@
             },
             success: function (response) {
                 $('#mpwpb-ex-service-msg').html(response.data.message);
-                $('.extra-service-table tbody').html('');
-                $('.extra-service-table tbody').append(response.data.html);
+                $('.extra-service-table .mpwpb_extra_service_show').html('');
+                $('.extra-service-table .mpwpb_extra_service_show').append(response.data.html);
                 empty_ex_service_form();
             },
             error: function (error) {
@@ -970,7 +970,7 @@
     $(document).on('click', '.mpwpb-ext-service-delete', function (e) {
         e.preventDefault();
         e.stopPropagation();
-        var itemId = $(this).closest('tr').data('id');
+        var itemId = $(this).closest('.mpwpb_ex_service_card').data('id');
         var isConfirmed = confirm('Are you sure you want to delete this row?');
         if (isConfirmed) {
             delete_ext_service(itemId);
@@ -990,8 +990,8 @@
                 nonce: mpwpb_admin_ajax.nonce
             },
             success: function (response) {
-                $('.extra-service-table tbody').html('');
-                $('.extra-service-table tbody').append(response.data.html);
+                $('.extra-service-table .mpwpb_extra_service_show').html('');
+                $('.extra-service-table .mpwpb_extra_service_show').append(response.data.html);
             },
             error: function (error) {
                 console.log('Error:', error);
@@ -1000,25 +1000,35 @@
     }
 
     $(document).on('click', '.mpwpb-ext-service-clone', function (e) {
-        let originalRow = $(this).closest('tr'); // Get the original row
+        let originalRow = $(this).closest('.mpwpb_ex_service_card'); // Get the original row
         let row = originalRow.clone(); // Clone the row
         
         // Get the row count
-        let rowCount = $('.extra-service-table tbody tr').length;
+        let rowCount = $('.extra-service-table .mpwpb_extra_service_show .mpwpb_ex_service_card').length;
         let itemId = rowCount++; // Generate a new ID
         row.attr('data-id', itemId);
         let sortedIDs = [];
-        $('.extra-service-table tbody tr').each(function() {
+        $('.extra-service-table .mpwpb_extra_service_show .mpwpb_ex_service_card').each(function() {
             sortedIDs.push($(this).attr('data-id'));
         });
+
+        console.log( sortedIDs );
+
         // Extract values from each <td> in the original 
         let postId =  $('.extra-service-table').data('post-id');
-        let imageId = originalRow.find('td[data-imageid]').attr('data-imageid');
-        var icon = originalRow.find('td:nth-child(1) i').attr('class');
-        let serviceName = originalRow.find('td:nth-child(2)').text();
-        let description = originalRow.find('td:nth-child(3)').text();
-        let quantity = originalRow.find('td:nth-child(4)').text();
-        let price = originalRow.find('td:nth-child(5)').text();
+
+
+        let parent = $(this).closest('.mpwpb_ex_service_card');
+        // let itemId = $(this).closest('.mpwpb_ex_service_card').data('id');
+
+        let icon = parent.find('.mpwpb_ex_service_icon i').attr('class');
+        let imageId = parent.find('.mpwpb_ex_service_icon').attr('data-imageId');
+        let imageSrc = parent.find('.mpwpb_ex_service_icon img').attr('src');
+        let serviceName = parent.find('.mpwpb_ex_service_name').text().trim();
+        let description = parent.find('.mpwpb_ex_service_details').text().trim();
+        let quantity = parent.find('.mpwpb_ex_service_qty').text().trim();
+        let price = parent.find('.mpwpb_ex_service_price').text().trim();
+
         // Insert the cloned row right below the original row
         row.insertAfter(originalRow);
         let service_image_icon;
@@ -1050,7 +1060,7 @@
         });
     });
 
-    $(document).on('click', '.mpwpb-ext-service-edit', function (e) {
+    $(document).on('click', '.mpwpb-ext-service-edit_old', function (e) {
         $('#mpwpb-ex-service-msg').html('');
         $('.mpwpb_ex_service_save_button').hide();
         $('.mpwpb_ex_service_update_button').show();
@@ -1066,6 +1076,40 @@
         var price = parent.find('td:nth-child(5)').text().trim();
         $('input[name="mpwpb_ext_service_item_id"]').val(itemId);
         
+        $('.mpwpb_icon_item').hide();
+        $('.mpwpb_image_item').hide();
+        if (icon) {
+            $('input[name="mpwpb_ext_service_image_icon"]').val(icon);
+            $('.mpwpb_icon_item').show();
+            $('.mpwpb_icon_item span').addClass(icon);
+            console.log(icon);
+        } else if (imageId) {
+            $('input[name="mpwpb_ext_service_image_icon"]').val(imageId);
+            $('.mpwpb_image_item').show();
+            $('.mpwpb_image_item img').attr('src',imageSrc);
+        }
+        $('input[name="mpwpb_ext_service_name"]').val(name);
+        $('input[name="mpwpb_ext_service_price"]').val(price);
+        $('input[name="mpwpb_ext_service_qty"]').val(qty);
+        $('textarea[name="mpwpb_ext_service_description"]').val(details);
+    });
+
+    $(document).on('click', '.mpwpb-ext-service-edit', function (e) {
+        $('#mpwpb-ex-service-msg').html('');
+        $('.mpwpb_ex_service_save_button').hide();
+        $('.mpwpb_ex_service_update_button').show();
+        let parent = $(this).closest('.mpwpb_ex_service_card');
+        let itemId = $(this).closest('.mpwpb_ex_service_card').data('id');
+
+        let icon = parent.find('.mpwpb_ex_service_icon i').attr('class');
+        let imageId = parent.find('.mpwpb_ex_service_icon').attr('data-imageId');
+        let imageSrc = parent.find('.mpwpb_ex_service_icon img').attr('src');
+        let name = parent.find('.mpwpb_ex_service_name').text().trim();
+        let details = parent.find('.mpwpb_ex_service_details').text().trim();
+        let qty = parent.find('.mpwpb_ex_service_qty').text().trim();
+        let price = parent.find('.mpwpb_ex_service_price').text().trim();
+        $('input[name="mpwpb_ext_service_item_id"]').val(itemId);
+
         $('.mpwpb_icon_item').hide();
         $('.mpwpb_image_item').hide();
         if (icon) {
@@ -1111,8 +1155,8 @@
             },
             success: function (response) {
                 $('#mpwpb-ex-service-msg').html(response.data.message);
-                $('.extra-service-table tbody').html('');
-                $('.extra-service-table tbody').append(response.data.html);
+                $('.extra-service-table .mpwpb_extra_service_show').html('');
+                $('.extra-service-table .mpwpb_extra_service_show').append(response.data.html);
                 setTimeout(function () {
                     $('.mpwpb-modal-container').removeClass('open');
                     empty_ex_service_form();
