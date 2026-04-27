@@ -10,6 +10,7 @@
 		class MPWPB_Extra_service_Settings {
 			public function __construct() {
 				add_action('add_mpwpb_settings_tab_content', [$this, 'extra_service_settings'], 10, 1);
+				add_action('mpwpb_settings_save', [$this, 'save_extra_service_settings'], 10, 1);
 				// save extra service
 				add_action('wp_ajax_mpwpb_save_ex_service', [$this, 'save_ex_service']);
 				// mpwpb update extra service
@@ -144,6 +145,13 @@
 					'html' => $html_output,
 				]);
 				die;
+			}
+			// Fixed by Shahnur — 2026-04-27 07:23 AM (Asia/Dhaka)
+			public function save_extra_service_settings($post_id) {
+				$extra_service_active = isset($_POST['mpwpb_extra_service_active']) && sanitize_text_field(wp_unslash($_POST['mpwpb_extra_service_active'])) === 'on'
+					? 'on'
+					: 'off';
+				update_post_meta($post_id, 'mpwpb_extra_service_active', $extra_service_active);
 			}
 			public function save_ex_service() {
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_admin_nonce')) {
