@@ -103,7 +103,9 @@
                 <div class="mpwpb-category-lists">
 					<?php $this->show_category_items($post_id); ?>
                 </div>
-                <button class="button mpwpb-category-new" data-modal="mpwpb-category-new" type="button"><?php esc_html_e('Add Category', 'service-booking-manager'); ?></button>
+                <div class="mpwpb_add_new_category_btn_holder">
+                    <button class="button mpwpb-category-new mpwpb-category-new-width" data-modal="mpwpb-category-new" type="button"><?php esc_html_e('Add Category', 'service-booking-manager'); ?></button>
+                </div>
                 <!-- sidebar collapse open -->
                 <div class="mpwpb-modal-container" data-modal-target="mpwpb-category-new">
                     <div class="mpwpb-modal-content">
