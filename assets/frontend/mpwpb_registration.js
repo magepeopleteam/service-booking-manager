@@ -3,18 +3,22 @@ function mpwpb_price_calculation($this) {
     let price = 0;
     parent.find(' .mpwpb_service_item[data-price].mpActive').each(function () {
         let qty = parseInt( jQuery(this).attr('data-service-qty') );
+        qty = qty > 0 ? qty : 1;
         let current_price = jQuery(this).data('price') ?? 0;
-        current_price = current_price && current_price > 0 ? current_price : 0;
-        price = price + parseFloat(current_price) * qty ;
+        current_price = parseFloat(current_price);
+        current_price = !isNaN(current_price) && current_price > 0 ? current_price : 0;
+        price = price + current_price * qty ;
     });
     parent.find('.mpwpb_extra_service_item').each(function () {
         let service_name = jQuery(this).find('[name="mpwpb_extra_service_type[]"]').val();
         if (service_name) {
-            let ex_target = jQuery(this).find('[name="mpwpb_extra_service_qty[]');
+            let ex_target = jQuery(this).find('[name="mpwpb_extra_service_qty[]"]');
             let ex_qty = parseInt(ex_target.val());
+            ex_qty = ex_qty > 0 ? ex_qty : 1;
             let ex_price = ex_target.data('price');
-            ex_price = ex_price && ex_price > 0 ? ex_price : 0;
-            price = price + parseFloat(ex_price) * ex_qty;
+            ex_price = parseFloat(ex_price);
+            ex_price = !isNaN(ex_price) && ex_price > 0 ? ex_price : 0;
+            price = price + ex_price * ex_qty;
         }
     });
 

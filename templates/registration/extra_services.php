@@ -54,7 +54,16 @@
                                         <h6 class="_textTheme_min_100"><?php echo wp_kses_post($ex_service_price); ?></h6>
                                         <div class="alignCenter quantity-box">
                                             <div class="mR_xs min_100 mpwpd_ex_service_qty_inc_dec_holder" data-collapse="<?php echo esc_attr($ex_unique_id); ?>">
-												<?php MPWPB_Custom_Layout::qty_input('mpwpb_extra_service_qty[]', $ex_service_price_raw, $ex_service_info['qty'], 1, 0, $ex_service_info['qty']); ?>
+												<?php
+													// Fixed by Shahnur — extra service single quantity NaN and 2026-04-28 12:14 PM
+													if ((int) $ex_service_info['qty'] > 1) {
+														MPWPB_Custom_Layout::qty_input('mpwpb_extra_service_qty[]', $ex_service_price_raw, $ex_service_info['qty'], 1, 0, $ex_service_info['qty']);
+													} else {
+														?>
+                                                        <input type="hidden" name="mpwpb_extra_service_qty[]" data-price="<?php echo esc_attr($ex_service_price_raw); ?>" value="1"/>
+														<?php
+													}
+												?>
                                             </div>
                                             <button type="button" class="_mpBtn_btLight_2_min_150 mpwpb_price_calculation mpwpb_ex_service_button" data-extra-item data-collapse-target="<?php echo esc_attr($ex_unique_id); ?>" data-open-text="<?php esc_attr_e('Add', 'service-booking-manager'); ?>" data-close-text="<?php esc_attr_e('Added', 'service-booking-manager'); ?>" data-add-class="mActive">
                                                 <input type="hidden" name="mpwpb_extra_service_type[]" data-value="<?php echo esc_attr($ex_service_info['name']); ?>" value=""/>
