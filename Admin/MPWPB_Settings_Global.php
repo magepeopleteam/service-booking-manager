@@ -388,7 +388,7 @@
 							'label' => esc_html__('Primary Color', 'service-booking-manager'),
 							'desc' => esc_html__('Select Default Theme Color', 'service-booking-manager'),
 							'type' => 'color',
-							'default' => '#f12971'
+							'default' => '#00685f'
 						),
 						array(
 							'name' => 'theme_alternate_color',
