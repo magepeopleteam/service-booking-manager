@@ -756,6 +756,14 @@ function mpwpb_price_calculation($this) {
             $(this).find('i').toggleClass('fa-plus fa-minus');
         });
     });
+
+    $(document).on('click', '.mpwpb-details-page-tab li a', function (e) {
+        $('.mpwpb-details-page-tab li').removeClass('active');
+        $(this).closest('li').addClass('active');
+        $('.mpwpb-details-page-content .tab-content').removeClass('active');
+        $(tabId).addClass('active');
+    });
+
 }(jQuery));
 
 jQuery(document).ready(function($) {
