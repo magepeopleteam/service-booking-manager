@@ -10,7 +10,7 @@
 		class MPWPB_Admin {
 			public function __construct() {
 				$this->load_file();
-				add_action('init', [$this, 'add_dummy_data']);
+				new MPWPB_Dummy_Import();
 				add_action('upgrader_process_complete', [$this, 'flush_rewrite']);
 				add_filter('use_block_editor_for_post_type', [$this, 'disable_gutenberg'], 10, 2);
 				add_action('admin_action_mpwpb_item_duplicate', [$this, 'mpwpb_item_duplicate']);
@@ -22,13 +22,10 @@
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Dummy_Import.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Hidden_Product.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_CPT.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Quick_Setup.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Status.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Reviews_Admin.php';
 		        require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Extended_Settings.php';
-	
 
-//				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Staffs.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Staff_Members.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Staff_DashBoard.php';
 				//*************Global Settings*****************//
@@ -52,13 +49,9 @@
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Fields.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Billing.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Shipping.php';
-				//require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Account.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Order.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Analytics_Dashboard.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Analytics_Ajax.php';
-			}
-			public function add_dummy_data() {
-				new MPWPB_Dummy_Import();
 			}
 			public function flush_rewrite() {
 				flush_rewrite_rules();
@@ -101,37 +94,25 @@
 						'menu_order' => $post->menu_order
 					);
 					$new_post_id = wp_insert_post($args);
-					$taxonomies = get_object_taxonomies($post->post_type); // returns array of taxonomy names for post type, ex array("category", "post_tag");
+					$taxonomies = get_object_taxonomies($post->post_type);
 					foreach ($taxonomies as $taxonomy) {
 						$post_terms = wp_get_object_terms($post_id, $taxonomy, array('fields' => 'slugs'));
 						wp_set_object_terms($new_post_id, $post_terms, $taxonomy, false);
 					}
 
-					// $post_meta_infos = $wpdb->get_results(
-					// 	$wpdb->prepare("SELECT meta_key, meta_value FROM {$wpdb->postmeta}  WHERE post_id = %d  AND meta_key != %s", $post_id, 'total_booking')
-					// );
-
-					// Generate a unique cache key based on the post ID
 					$cache_key = 'post_meta_' . $post_id;
 					$post_meta_infos = wp_cache_get($cache_key, 'custom_cache_group');
 
 					if ($post_meta_infos === false) {
-						// Fetch all post meta
 						$all_meta = get_post_meta($post_id);
-
-						// Remove the "total_booking" meta key
 						unset($all_meta['total_booking']);
-
-						// Convert to expected format (array of objects with meta_key and meta_value)
 						$post_meta_infos = [];
 						foreach ($all_meta as $key => $value) {
 							$post_meta_infos[] = (object) [
 								'meta_key'   => $key,
-								'meta_value' => is_array($value) ? $value[0] : $value, // Handle multiple values
+								'meta_value' => is_array($value) ? $value[0] : $value,
 							];
 						}
-
-						// Store the result in cache for 1 hour
 						wp_cache_set($cache_key, $post_meta_infos, 'custom_cache_group', HOUR_IN_SECONDS);
 					}
 
@@ -142,21 +123,6 @@
 								continue;
 							}
 							$meta_value = addslashes($meta_info->meta_value);
-							
-							// $wpdb->insert(
-							// 	$wpdb->postmeta,
-							// 	[
-							// 		'post_id' => $new_post_id,
-							// 		'meta_key' => $meta_key,
-							// 		'meta_value' => $meta_value
-							// 	],
-							// 	[
-							// 		'%d', // post_id is an integer
-							// 		'%s', // meta_key is a string
-							// 		'%s'  // meta_value is a string
-							// 	]
-							// );
-
 							add_post_meta($new_post_id, $meta_key, $meta_value, false);
 						}
 					}
