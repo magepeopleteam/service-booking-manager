@@ -31,8 +31,8 @@
 					add_action('activated_plugin', array($this, 'activation_redirect'), 90, 1);
 					require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Dependencies.php';
 				} else {
-					require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Quick_Setup.php';
-					 //add_action('admin_notices', [$this, 'woocommerce_not_active']);
+					require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Woo_Installer.php';
+					new MPWPB_Woo_Installer();
 					add_action('activated_plugin', array($this, 'activation_redirect_setup'), 90, 1);
 				}
 				$this->appsero_init_tracker_service_booking_manager();
@@ -56,12 +56,12 @@
 						));
 					}
 					flush_rewrite_rules();
-					exit(esc_url_raw(wp_redirect(admin_url('edit.php?post_type=mpwpb_item&page=mpwpb_quick_setup'))));
+					exit(esc_url_raw(wp_redirect(admin_url('edit.php?post_type=mpwpb_item&page=mpwpb_service_list'))));
 				}
 			}
 			public function activation_redirect_setup($plugin) {
 				if ($plugin == plugin_basename(__FILE__)) {
-					exit(esc_url_raw(wp_redirect(admin_url('admin.php?post_type=mpwpb_item&page=mpwpb_quick_setup'))));
+					exit(esc_url_raw(wp_redirect(admin_url('edit.php?post_type=mpwpb_item&page=mpwpb_service_list'))));
 				}
 			}
 			public function woocommerce_not_active() {
@@ -76,7 +76,7 @@
 				<?php
 			}
 			public static function plugin_activate() {
-				// error_log('MPWPB_Plugin activated.', 0);
+				set_transient('mpwpb_plugin_activated', true, 30);
 				flush_rewrite_rules();
 			}
 		}
