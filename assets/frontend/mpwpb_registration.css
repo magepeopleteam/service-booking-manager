@@ -1,5 +1,5 @@
 :root {
-  --mage-primary:#f12971;
+  --mage-primary:#00685f;
   --mage-light:#F2F2F2;
   --mage-black: #000;
   --mage-white: #FFFFFF;
@@ -306,7 +306,7 @@ div.registration_tab_item {
     background-color: var(--mpwpb_color_light_2);
     color: var(--d_color);
     border-radius: 5px;
-    border: 1px solid var(--mpwpb_color_light_3);
+    border: 1px solid #ddd;
   }
   .mpwpb_item_box.mpwpb_extra_service_item {
     display: block;
@@ -849,7 +849,7 @@ div.registration_tab_item {
   width: 100%;
   max-width: 1160px;
   margin: auto;
-  padding: 10px;
+  padding: 20vh 10px;
 }
 .mpwpb_registration > header .template-header .header-content {
   z-index: 1;
@@ -913,27 +913,35 @@ div.registration_tab_item {
   font-weight: normal;
 }
 .mpwpb_registration nav {
+  padding: 5px;
   margin-bottom: 20px;
+  background-color: #fbffff;
 }
 .mpwpb_registration nav ul {
   margin: 0;
   padding: 0;
   list-style-type: none;
   display: flex;
-  flex-direction: row;
+  gap: 5px;
   justify-content: start;
   align-items: center;
 }
 .mpwpb_registration nav ul li {
-  margin: 5px 10px;
-  background-color: #fff;
   color: #333;
-  border-radius: 20px;
+
   font-size: 16px;
-  border: 1px solid #333;
-  min-width: 100px;
   text-align: center;
 }
+
+.mpwpb_registration nav ul li.active a{
+  color: #fff;
+  border-radius: 10px;
+  border-radius: 10px;
+  font-size: 16px;
+  text-align: center;
+  background-color: var(--mage-primary);
+}
+
 .mpwpb_registration nav ul li:first-child {
   margin-left: 0;
 }
@@ -943,7 +951,7 @@ div.registration_tab_item {
   height: 100%;
   width: 100%;
   padding: 10px;
-  color: #333 !important;
+  color: #333;
 }
 .mpwpb_registration nav ul li a:hover {
   color: var(--mpwpb_color_theme);
@@ -1017,7 +1025,7 @@ div.registration_tab_item {
 }
 @media (min-width: 1024px) {
   .mpwpb-static-template .main {
-    width: 80%;
+    width: 60%;
   }
 }
 .mpwpb-static-template .sidebar {
@@ -1026,7 +1034,7 @@ div.registration_tab_item {
 }
 @media (min-width: 1024px) {
   .mpwpb-static-template .sidebar {
-    width: 20%;
+    width: 40%;
   }
 }
 .mpwpb-static-template .sidebar [class*=_mpBtn] {
@@ -1382,8 +1390,8 @@ div.registration_tab_item {
 
 .mpwpb-static-template  .mpwpb_static_area .mpwpb_static {
   display: block;
-  background-color: var(--mpwpb_color_theme);
-  padding: 30px;
+  background-color:#fff;
+  padding: 15px;
   border-radius: 10px;
   box-shadow: 0 0 5px #333;
   margin: 10px;
@@ -1463,7 +1471,7 @@ div.registration_tab_item {
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  padding: 10px 20px;
+  padding:20px;
   margin-bottom: 10px;
   position: relative;
   color: var(--d_color);

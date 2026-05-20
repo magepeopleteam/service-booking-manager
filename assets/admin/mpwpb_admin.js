@@ -579,9 +579,12 @@
             $('input[name="mpwpb_show_category_status"]').prop('checked', true);
             $('[data-collapse="#mpwpb_show_category_status"]').slideDown();
             $('select[name="mpwpb_parent_cat"]').val(parentCat);
+            // FIX: Populate hidden inputs so category is preserved on update
+            $('input[name="mpwpb_parent_cat_id"]').val(parentCat);
             if (subCat != '') {
                 $('.sub-category-container').slideDown('fast');
                 $('select[name="mpwpb_sub_category"]').val(subCat);
+                $('input[name="mpwpb_sub_cat_id"]').val(subCat);
             }
         } else {
             $('input[name="mpwpb_show_category_status"]').val('off');
@@ -628,9 +631,12 @@
             $('input[name="mpwpb_show_category_status"]').prop('checked', true);
             $('[data-collapse="#mpwpb_show_category_status"]').slideDown();
             $('select[name="mpwpb_parent_cat"]').val(parentCat);
+            // FIX: Populate hidden inputs so category is preserved on update
+            $('input[name="mpwpb_parent_cat_id"]').val(parentCat);
             if (subCat != '') {
                 $('.sub-category-container').slideDown('fast');
                 $('select[name="mpwpb_sub_category"]').val(subCat);
+                $('input[name="mpwpb_sub_cat_id"]').val(subCat);
             }
         } else {
             $('input[name="mpwpb_show_category_status"]').val('off');

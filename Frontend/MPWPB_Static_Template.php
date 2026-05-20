@@ -117,7 +117,7 @@
 				$service_details_status = get_post_meta(get_the_ID(), 'mpwpb_service_details_status', true);
 				$reviews_status = 'off';
 				?>
-                <nav>
+                <nav class="mpwpb-details-page-tab">
                     <ul>
 						<?php if ($service_overview_status === 'on'): ?>
                             <li>
