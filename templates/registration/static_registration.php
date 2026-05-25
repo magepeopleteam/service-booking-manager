@@ -32,7 +32,6 @@
             <?php } else{?>
                 <div class="mpwpb_static " id="mpwpb_make_static_booking">
                     <div class="mpwpb_static_registration_popup_close" id="mpwpb_static_registration_popup_close">X</div>
-                    <?php include(MPWPB_Function::template_path('layout/title_details_page.php')); ?>
                     <div class="mpwpb_static_cateogry">
                         <?php include(MPWPB_Function::template_path('registration/category_selection_static.php')); ?>
                     </div>

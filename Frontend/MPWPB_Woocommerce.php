@@ -108,14 +108,24 @@
 				}
 				return $thumbnail;
 			}
+			/**
+			 * FIX: Only show "Booking Details" for service booking items, not regular products
+			 * AUTHOR: Kiro
+			 * ISSUE: #6 "Booking Details:" text shows on all cart items including non-booking products
+			 * SOLVED: 2025-01-20
+			 * CONTEXT: $item_data[] was outside the post type check, causing it to append empty "Booking Details" to all products
+			 */
 			public function get_item_data($item_data, $cart_item) {
-				ob_start();
 				$post_id = array_key_exists('mpwpb_id', $cart_item) ? $cart_item['mpwpb_id'] : 0;
 				if (get_post_type($post_id) == MPWPB_Function::get_cpt()) {
+					ob_start();
 					$this->show_cart_item($cart_item, $post_id);
 					do_action('mpwpb_show_cart_item', $cart_item, $post_id);
+					$booking_html = ob_get_clean();
+					if (!empty($booking_html)) {
+						$item_data[] = array('key' => esc_html__('Booking Details ', 'service-booking-manager'), 'value' => $booking_html);
+					}
 				}
-				$item_data[] = array('key' => esc_html__('Booking Details ', 'service-booking-manager'), 'value' => ob_get_clean());
 				return $item_data;
 			}
 			//**************//
