@@ -651,7 +651,6 @@ function mpwpb_price_calculation($this) {
                     window.location.href = data;
                 },
                 error: function (response) {
-                    console.log(response);
                 }
             });
         } else {
@@ -751,7 +750,6 @@ function mpwpb_price_calculation($this) {
 
     $(document).ready(function () {
         $('.faq-header').on('click', function () {
-            console.log('test');
             $(this).next('.faq-content').slideToggle();
             $(this).find('i').toggleClass('fa-plus fa-minus');
         });
