@@ -315,7 +315,22 @@
 			// 	return $options;
 			// }
 			public function sanitize_options($input) {
-				return is_array($input) ? array_map('sanitize_text_field', $input) : sanitize_text_field($input);
+				if (!is_array($input)) {
+					return sanitize_text_field($input);
+				}
+
+				$output = array();
+				foreach ($input as $key => $value) {
+					$sanitize_callback = $this->get_sanitize_callback($key);
+					if ($sanitize_callback && is_callable($sanitize_callback)) {
+						$output[$key] = call_user_func($sanitize_callback, $value);
+					} elseif (is_array($value)) {
+						$output[$key] = array_map('sanitize_text_field', $value);
+					} else {
+						$output[$key] = sanitize_text_field($value);
+					}
+				}
+				return $output;
 			}
 			function get_sanitize_callback($slug = '') {
 				if (empty($slug)) {
