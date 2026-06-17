@@ -158,8 +158,18 @@
 					$service_rating = isset($_POST['mpwpb_service_review_ratings']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_service_review_ratings'])) : '';
 					$service_rating_scale = isset($_POST['mpwpb_service_rating_scale']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_service_rating_scale'])) : '';
 					$service_rating_text = isset($_POST['mpwpb_service_rating_text']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_service_rating_text'])) : '';
-					$service_overview_content =  isset($_POST['mpwpb_service_overview_content']) ? wp_kses_post(wp_unslash($_POST['mpwpb_service_overview_content'])):'';
-					$service_details_content =  isset($_POST['mpwpb_service_details_content']) ? wp_kses_post(wp_unslash($_POST['mpwpb_service_details_content'])):'';
+					// Mirror WordPress core post_content handling: trusted users (with the
+					// 'unfiltered_html' capability, e.g. administrators/editors) may save raw
+					// markup such as <style> blocks and advanced inline CSS; everyone else is
+					// limited to wp_kses_post(). This fixes rich HTML being stripped on save.
+					$service_overview_content =  isset($_POST['mpwpb_service_overview_content']) ? self::sanitize_rich_content(wp_unslash($_POST['mpwpb_service_overview_content'])):'';
+					$service_details_content =  isset($_POST['mpwpb_service_details_content']) ? self::sanitize_rich_content(wp_unslash($_POST['mpwpb_service_details_content'])):'';
+					if (!empty($service_overview_content) && $service_overview_status === 'off') {
+						$service_overview_status = 'on';
+					}
+					if (!empty($service_details_content) && $service_details_status === 'off') {
+						$service_details_status = 'on';
+					}
                     $service_multiple_category_check = isset($_POST['mpwpb_service_multiple_category_check']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_service_multiple_category_check'])) : 'off';
                     $multiple_service_select = isset($_POST['mpwpb_multiple_service_select']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_multiple_service_select'])) : 'off';
                     update_post_meta($post_id, 'mpwpb_features_status', $service_features_status);
@@ -207,6 +217,22 @@
 				$end_name_break = 'mpwpb_' . $day . '_end_break_time';
 				$end_time_break = isset($_POST[$end_name_break]) ? sanitize_text_field(wp_unslash($_POST[$end_name_break])) : '';
 				update_post_meta($post_id, $end_name_break, $end_time_break);
+			}
+			/**
+			 * Sanitize rich editor content (Service Overview / Service Details).
+			 *
+			 * Trusted users with the 'unfiltered_html' capability may store raw markup
+			 * (e.g. <style> blocks / advanced CSS), mirroring how WordPress core treats
+			 * post_content. All other users are restricted to wp_kses_post().
+			 *
+			 * @param string $content Unslashed content from the editor.
+			 * @return string
+			 */
+			public static function sanitize_rich_content($content) {
+				if (current_user_can('unfiltered_html')) {
+					return $content;
+				}
+				return wp_kses_post($content);
 			}
 			public static function description_array($key) {
 				$des = array(

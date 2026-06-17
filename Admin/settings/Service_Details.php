@@ -145,10 +145,16 @@
 				<?php
 			}
 			public function show_editor($content, $field_name) {
-				$content = $content; // You can set default content if needed.
-				$editor_id = $field_name; // ID for the editor (used internally by wp_editor).
-				$settings = array();
-				wp_editor($content, $editor_id, $settings);
+				$settings = array(
+					'wpautop'          => false,
+					'media_buttons'    => true,
+					'textarea_name'    => $field_name,
+					'textarea_rows'    => 15,
+					'tinymce'          => array(
+						'toolbar1' => 'formatselect,bold,italic,underline,bullist,numlist,link,unlink,forecolor,removeformat',
+					),
+				);
+				wp_editor($content, $field_name, $settings);
 			}
 		}
 		new MPWPB_Service_Details();

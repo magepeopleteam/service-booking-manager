@@ -642,14 +642,20 @@ function mpwpb_sticky_management() {
         let targetTab = target.children('[data-tabs-target-next]:nth-child(' + num_of_tab + ')').data('tabs-target-next');
         active_next_tab(parent, targetTab);
     });
-    $(document).ready(function () {
+    function mpwpb_activate_default_tabs() {
         $('.mpwpb_style .mpwpb_tabs').each(function () {
             let tabLists = $(this).find('.tabLists:first');
             // let tabLists = $(this).find('.mpwpb_add_update_tab:first');
-            let activeTab = tabLists.find('[data-tabs-target].active');
-            let targetTab = activeTab.length > 0 ? activeTab : tabLists.find('[data-tabs-target]').first();
-            targetTab.trigger('click');
+            // Skip groups that already have an active tab so this is safe to call
+            // repeatedly and never disturbs the user's current selection.
+            if (tabLists.find('[data-tabs-target].active').length > 0) {
+                return;
+            }
+            tabLists.find('[data-tabs-target]').first().trigger('click');
         });
+    }
+    $(document).ready(function () {
+        mpwpb_activate_default_tabs();
         $('.mpwpb_style .mpwpb_tabs_next').each(function () {
             let parent = $(this);
             if (parent.find('[data-tabs-target-next].active').length < 1) {
@@ -659,6 +665,23 @@ function mpwpb_sticky_management() {
                 active_next_tab(parent, targetTab);
             }
         });
+    });
+    // The block (Gutenberg) editor mounts/relocates classic meta boxes asynchronously
+    // after DOM ready, so the settings panel can render without an active tab and look
+    // empty. Re-activate the default tab once the page has fully loaded, with a short
+    // bounded retry while the block editor finishes building its meta box area. Guarded
+    // to block-editor screens and idempotent, so the classic editor is unaffected.
+    $(window).on('load', function () {
+        mpwpb_activate_default_tabs();
+        if ($('body').hasClass('block-editor-page')) {
+            let retries = 0;
+            let timer = setInterval(function () {
+                mpwpb_activate_default_tabs();
+                if (++retries >= 10) {
+                    clearInterval(timer);
+                }
+            }, 400);
+        }
     });
     $(document).on('click', '.mpwpb_style [data-tabs-target]', function () {
         if (!$(this).hasClass('active')) {

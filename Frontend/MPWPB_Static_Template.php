@@ -150,7 +150,12 @@
 					?>
                     <section id="service-overview">
                         <h2><?php esc_html_e('Service Overview', 'service-booking-manager'); ?></h2>
-						<?php echo wp_kses_post($service_overview_content); ?>
+						<?php
+							// Content is sanitized on save according to the author's capability
+							// (see MPWPB_Settings::sanitize_rich_content), mirroring core post_content.
+							// Re-running wp_kses_post() here would strip admin-authored <style>/CSS.
+							echo do_shortcode($service_overview_content); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						?>
                     </section>
 				<?php
 				endif;
@@ -192,7 +197,12 @@
 					?>
                     <section id="service-details">
                         <h2><?php esc_html_e('Service Details', 'service-booking-manager'); ?></h2>
-						<?php echo wp_kses_post($service_details_content); ?>
+						<?php
+							// Content is sanitized on save according to the author's capability
+							// (see MPWPB_Settings::sanitize_rich_content), mirroring core post_content.
+							// Re-running wp_kses_post() here would strip admin-authored <style>/CSS.
+							echo do_shortcode($service_details_content); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						?>
                     </section>
 				<?php
 				endif;
