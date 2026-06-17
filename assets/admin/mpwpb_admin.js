@@ -457,6 +457,7 @@
         $('input[name="service_price"]').val('');
         $('input[name="service_price"]').removeClass('required');
 
+        $('input[name="service_unit"]').val('');
         $('input[name="service_duration"]').val('');
         $('textarea[name="service_description"]').val('');
         $('textarea[name="service_image_icon"]').val('');
@@ -556,6 +557,8 @@
         var name = parent.find('td .service-name').text().trim();
         var price = parent.find('td:nth-child(3)').text().trim();
         var duratoin = parent.find('td:nth-child(4)').text().trim();
+        var serviceUnit = parent.data('service-unit');
+        $('input[name="service_unit"]').val(serviceUnit === undefined ? '' : serviceUnit);
         $('.mpwpb_icon_item').hide();
         $('.mpwpb_image_item').hide();
         $('input[name="service_item_id"]').val(itemId);
@@ -608,6 +611,8 @@
         var name = parent.find('.service-name').text().trim();
         var price = parent.find('.mpwpb_service_price').text().trim();
         var duratoin = parent.find('.mpwpb_service_duration').text().trim();
+        var serviceUnit = parent.data('service-unit');
+        $('input[name="service_unit"]').val(serviceUnit === undefined ? '' : serviceUnit);
         $('.mpwpb_icon_item').hide();
         $('.mpwpb_image_item').hide();
         $('input[name="service_item_id"]').val(itemId);
@@ -654,6 +659,7 @@
         var service_image_icon = $('input[name="service_image_icon"]');
         var service_name = $('input[name="service_name"]');
         var service_price = $('input[name="service_price"]');
+        var service_unit = $('input[name="service_unit"]');
         var service_duration = $('input[name="service_duration"]');
         var service_description = $('textarea[name="service_description"]');
         var show_category_status = $('input[name="mpwpb_show_category_status"]');
@@ -668,6 +674,7 @@
                     service_image_icon: service_image_icon.val(),
                     service_name: service_name.val(),
                     service_price: service_price.val(),
+                    service_unit: service_unit.val(),
                     service_duration: service_duration.val(),
                     service_description: service_description.val(),
                     service_postID: postID.val(),
