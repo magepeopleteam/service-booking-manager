@@ -22,7 +22,7 @@
 				add_action('woocommerce_store_api_checkout_order_processed', array($this, 'checkout_order_processed'), 90, 3);
 				add_filter('woocommerce_order_status_changed', array($this, 'order_status_changed'), 10, 4);
 				add_filter('woocommerce_get_return_url', array($this, 'filter_return_url'), 10, 2);
-				add_filter('woocommerce_checkout_fields', array($this, 'maybe_hide_billing_fields'), 5);
+				add_filter('woocommerce_checkout_fields', array($this, 'maybe_hide_billing_fields'), 999);
 				add_filter('query_vars', array($this, 'add_thank_you_query_var'));
 				add_action('template_redirect', array($this, 'maybe_render_wc_thank_you'));
 				/*****************************/
