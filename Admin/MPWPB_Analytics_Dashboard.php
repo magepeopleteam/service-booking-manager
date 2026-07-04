@@ -112,7 +112,7 @@ if (!class_exists('MPWPB_Analytics_Dashboard')) {
                         <div class="mpwpb-widget mpwpb-widget-1-4">
                             <div class="mpwpb-widget-content">
                                 <h3><?php esc_html_e('Revenue', 'service-booking-manager'); ?></h3>
-                                <div class="mpwpb-widget-value mpwpb-total-revenue"><?php echo wp_kses_post(wc_price($this->get_total_revenue())); ?></div>
+                                <div class="mpwpb-widget-value mpwpb-total-revenue"><?php echo wp_kses_post(MPWPB_Global_Function::format_price($this->get_total_revenue())); ?></div>
                                 <div class="mpwpb-widget-description"><?php esc_html_e('Total revenue generated', 'service-booking-manager'); ?></div>
                             </div>
                         </div>
@@ -120,7 +120,7 @@ if (!class_exists('MPWPB_Analytics_Dashboard')) {
                         <div class="mpwpb-widget mpwpb-widget-1-4">
                             <div class="mpwpb-widget-content">
                                 <h3><?php esc_html_e('Avg. Booking Value', 'service-booking-manager'); ?></h3>
-                                <div class="mpwpb-widget-value mpwpb-avg-booking-value"><?php echo wp_kses_post(wc_price($this->get_average_booking_value())); ?></div>
+                                <div class="mpwpb-widget-value mpwpb-avg-booking-value"><?php echo wp_kses_post(MPWPB_Global_Function::format_price($this->get_average_booking_value())); ?></div>
                                 <div class="mpwpb-widget-description"><?php esc_html_e('Average per booking', 'service-booking-manager'); ?></div>
                             </div>
                         </div>
@@ -502,7 +502,7 @@ if (!class_exists('MPWPB_Analytics_Dashboard')) {
                     $booking_id = get_the_ID();
                     $order_id = get_post_meta($booking_id, 'mpwpb_order_id', true);
                     if ($order_id) {
-                        $order = wc_get_order($order_id);
+                        $order = MPWPB_Global_Function::get_order($order_id);
                         if ($order && $order->get_id() && $order->get_status() !== 'trash') {
                             $valid_bookings++;
                         }
@@ -562,7 +562,7 @@ if (!class_exists('MPWPB_Analytics_Dashboard')) {
                     $query->the_post();
                     $order_id = get_post_meta(get_the_ID(), 'mpwpb_order_id', true);
                     if ($order_id) {
-                        $order = wc_get_order($order_id);
+                        $order = MPWPB_Global_Function::get_order($order_id);
                         if ($order && $order->get_status() !== 'trash' && ($order->get_status() === 'completed' || $order->get_status() === 'processing')) {
                             $total_revenue += $order->get_total();
                         }
@@ -670,7 +670,7 @@ if (!class_exists('MPWPB_Analytics_Dashboard')) {
                         $query->the_post();
                         $order_id = get_post_meta(get_the_ID(), 'mpwpb_order_id', true);
                         if ($order_id) {
-                            $order = wc_get_order($order_id);
+                            $order = MPWPB_Global_Function::get_order($order_id);
                             if ($order && $order->get_id() && $order->get_status() !== 'trash') {
                                 $valid_bookings++;
                             }
@@ -750,7 +750,7 @@ if (!class_exists('MPWPB_Analytics_Dashboard')) {
                     $query->the_post();
                     $order_id = get_post_meta(get_the_ID(), 'mpwpb_order_id', true);
                     if ($order_id) {
-                        $order = wc_get_order($order_id);
+                        $order = MPWPB_Global_Function::get_order($order_id);
                         if ($order && $order->get_id() && $order->get_status() !== 'trash') {
                             $service_id = get_post_meta(get_the_ID(), 'mpwpb_id', true);
                             if ($service_id) {
@@ -845,7 +845,7 @@ if (!class_exists('MPWPB_Analytics_Dashboard')) {
                     $query->the_post();
                     $order_id = get_post_meta(get_the_ID(), 'mpwpb_order_id', true);
                     if ($order_id) {
-                        $order = wc_get_order($order_id);
+                        $order = MPWPB_Global_Function::get_order($order_id);
                         if ($order && $order->get_id() && $order->get_status() !== 'trash') {
                             $valid_bookings[] = array(
                                 'id' => get_the_ID(),
@@ -903,7 +903,7 @@ if (!class_exists('MPWPB_Analytics_Dashboard')) {
                                         <?php echo esc_html(ucfirst($order_status)); ?>
                                     </span>
                                 </td>
-                                <td><?php echo $order ? wp_kses_post(wc_price($amount)) : 'N/A'; ?></td>
+                                <td><?php echo $order ? wp_kses_post(MPWPB_Global_Function::format_price($amount)) : 'N/A'; ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>

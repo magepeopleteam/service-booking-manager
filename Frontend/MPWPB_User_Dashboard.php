@@ -449,7 +449,7 @@ $tabs = array(
             // Get order ID and update WooCommerce order if applicable
             $order_id = get_post_meta($booking_id, 'mpwpb_order_id', true);
             if ($order_id) {
-                $order = wc_get_order($order_id);
+                $order = MPWPB_Global_Function::get_order($order_id);
                 if ($order) {
                     $order->update_status('cancelled', esc_html__('Booking cancelled by customer', 'service-booking-manager'));
                 }
@@ -494,7 +494,7 @@ $tabs = array(
             // Add note to order if applicable
             $order_id = get_post_meta($booking_id, 'mpwpb_order_id', true);
             if ($order_id) {
-                $order = wc_get_order($order_id);
+                $order = MPWPB_Global_Function::get_order($order_id);
                 if ($order) {
                     $order->add_order_note(
                         sprintf(

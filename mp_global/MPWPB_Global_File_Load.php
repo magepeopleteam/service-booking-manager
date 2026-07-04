@@ -115,7 +115,7 @@
 					}
 				</script>
 				<?php
-				if (MPWPB_Global_Function::check_woocommerce() == 1) {
+				if (MPWPB_Global_Function::is_wc_payment_mode()) {
 					?>
 					<script type="text/javascript">
 						// Set WooCommerce-specific values
@@ -124,6 +124,17 @@
 						mpwpb_currency_decimal = "<?php echo esc_js(wc_get_price_decimal_separator()); ?>";
 						mpwpb_currency_thousands_separator = "<?php echo esc_js(wc_get_price_thousand_separator()); ?>";
 						mpwpb_num_of_decimal = "<?php echo esc_js(get_option('woocommerce_price_num_decimals', 2)); ?>";
+					</script>
+					<?php
+				} else {
+					?>
+					<script type="text/javascript">
+						// Set native (non-WooCommerce) currency values
+						mpwpb_currency_symbol = "<?php echo esc_js(MPWPB_Global_Function::native_currency_setting('symbol', '$')); ?>";
+						mpwpb_currency_position = "<?php echo esc_js(MPWPB_Global_Function::native_currency_setting('position', 'left')); ?>";
+						mpwpb_currency_decimal = "<?php echo esc_js(MPWPB_Global_Function::native_currency_setting('decimal_separator', '.')); ?>";
+						mpwpb_currency_thousands_separator = "<?php echo esc_js(MPWPB_Global_Function::native_currency_setting('thousand_separator', ',')); ?>";
+						mpwpb_num_of_decimal = "<?php echo esc_js(MPWPB_Global_Function::native_currency_setting('decimals', 2)); ?>";
 					</script>
 					<?php
 				}

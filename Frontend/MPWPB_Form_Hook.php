@@ -53,7 +53,7 @@ if (!class_exists('MPWPB_Form_Hook')) {
          * This is added to the footer to make sure it runs after the form is loaded
          */
         public function add_checkout_form_script() {
-            if (is_checkout()) {
+            if (MPWPB_Global_Function::is_mpwpb_checkout_page()) {
                 echo '<script type="text/javascript">
                     jQuery(document).ready(function($) {
                         // Set the enctype attribute on page load

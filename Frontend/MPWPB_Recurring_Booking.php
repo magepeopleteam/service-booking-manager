@@ -315,7 +315,12 @@ if (!class_exists('MPWPB_Recurring_Booking')) {
          */
         public function process_recurring_bookings($booking_data, $post_id) {
             $order_id = $booking_data['mpwpb_order_id'];
-            $order = wc_get_order($order_id);
+            $order = MPWPB_Global_Function::get_order($order_id);
+            if (!$order) {
+                // Native (non-WooCommerce) orders don't carry recurring data
+                // on order line items the way WC orders do; nothing to do.
+                return $booking_data;
+            }
 
             foreach ($order->get_items() as $item_id => $item) {
                 $is_recurring = wc_get_order_item_meta($item_id, '_mpwpb_is_recurring', true);

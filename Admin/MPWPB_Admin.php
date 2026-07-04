@@ -20,7 +20,9 @@
 			private function load_file(): void {
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Taxonomy.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Dummy_Import.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Hidden_Product.php';
+				if (MPWPB_Global_Function::is_wc_payment_mode()) {
+					require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Hidden_Product.php';
+				}
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_CPT.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Status.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Reviews_Admin.php';
@@ -45,11 +47,16 @@
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Staff_Member.php';
 
 				//****************Woocommerce Checkout*********************** */
-				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Settings.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Fields.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Billing.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Shipping.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Order.php';
+				if (MPWPB_Global_Function::is_wc_payment_mode()) {
+					require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Settings.php';
+					require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Fields.php';
+					require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Billing.php';
+					require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Shipping.php';
+					require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Order.php';
+				}
+				//****************Native (non-WooCommerce) Checkout*********************** */
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Native_Order.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Native_Checkout_Settings.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Analytics_Dashboard.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Analytics_Ajax.php';
 			}

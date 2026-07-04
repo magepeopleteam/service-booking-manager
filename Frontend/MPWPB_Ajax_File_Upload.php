@@ -32,7 +32,7 @@ if (!class_exists('MPWPB_Ajax_File_Upload')) {
          * Enqueue scripts for file upload
          */
         public function enqueue_scripts() {
-            if (is_checkout()) {
+            if (MPWPB_Global_Function::is_mpwpb_checkout_page()) {
                 wp_enqueue_script('mpwpb-file-upload', MPWPB_PLUGIN_URL . '/assets/checkout/front/js/mpwpb-file-upload.js', array('jquery'), time(), true);
                 wp_localize_script('mpwpb-file-upload', 'mpwpb_file_upload', array(
                     'ajax_url' => admin_url('admin-ajax.php'),

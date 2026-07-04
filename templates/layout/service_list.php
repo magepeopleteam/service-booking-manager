@@ -126,6 +126,9 @@ function get_total_customer(){
     return count( $users );
 }
 function get_upcomming_service_order_count(){
+    if (!MPWPB_Global_Function::is_wc_payment_mode()) {
+        return 0;
+    }
     $start_date = date('Y-m-d') . 'T00:00:00' . date('P');
     $end_date = date('Y-12-31') . 'T23:59:59' . date('P');
     $args = array(
@@ -157,6 +160,10 @@ function get_upcomming_service_order_count(){
     return count( $all_booking_dates );
 }
 function get_monthly_sales_totals() {
+    if (!MPWPB_Global_Function::is_wc_payment_mode()) {
+        // Native (non-WooCommerce) revenue reporting isn't wired up yet.
+        return [];
+    }
     $start_date = date('Y-m-d') . 'T00:00:00' . date('P');
     $end_date   = date('Y-12-31') . 'T23:59:59' . date('P');
 
@@ -230,7 +237,7 @@ $total_user = get_total_customer();
 
                         $current_month = date('Y-m');
                         $revinue = isset( $monthly_totals[ $current_month ] ) ? $monthly_totals[ $current_month ] : 0 ;
-                        echo wp_kses_post( wc_price( $revinue ) );
+                        echo wp_kses_post( MPWPB_Global_Function::format_price( $revinue ) );
                     ?>
                 </p>
             </div>

@@ -21,11 +21,76 @@
 				add_action('woocommerce_checkout_order_processed', array($this, 'checkout_order_processed'), 90, 3);
 				add_action('woocommerce_store_api_checkout_order_processed', array($this, 'checkout_order_processed'), 90, 3);
 				add_filter('woocommerce_order_status_changed', array($this, 'order_status_changed'), 10, 4);
+				add_filter('woocommerce_get_return_url', array($this, 'filter_return_url'), 10, 2);
+				add_filter('woocommerce_checkout_fields', array($this, 'maybe_hide_billing_fields'), 5);
+				add_filter('query_vars', array($this, 'add_thank_you_query_var'));
+				add_action('template_redirect', array($this, 'maybe_render_wc_thank_you'));
 				/*****************************/
 				add_action('wp_ajax_mpwpb_add_to_cart', [$this, 'mpwpb_add_to_cart']);
 				add_action('wp_ajax_nopriv_mpwpb_add_to_cart', [$this, 'mpwpb_add_to_cart']);
 			}
+			/**
+			 * "Show Billing Info" setting: hides WooCommerce's billing fieldset
+			 * on checkout when the admin turns it off. Default 'on' preserves
+			 * the plugin's existing (unmodified) checkout behavior.
+			 */
+			public function maybe_hide_billing_fields($fields) {
+				if (MPWPB_Global_Function::get_payment_setting('wc_show_billing_info', 'on') !== 'on') {
+					unset($fields['billing']);
+				}
+				return $fields;
+			}
+			/**
+			 * "After Confirming the Order, Redirect To" setting.
+			 */
+			public function filter_return_url($return_url, $order) {
+				if (!$order || MPWPB_Global_Function::get_payment_setting('wc_order_confirm_redirect', 'default') !== 'plugin_thank_you') {
+					return $return_url;
+				}
+				return add_query_arg(['mpwpb_wc_thankyou' => '1', 'mpwpb_order' => $order->get_id()], home_url('/'));
+			}
+			public function add_thank_you_query_var($vars) {
+				$vars[] = 'mpwpb_wc_thankyou';
+				return $vars;
+			}
+			public function maybe_render_wc_thank_you(): void {
+				if (!get_query_var('mpwpb_wc_thankyou')) {
+					return;
+				}
+				$order_id = isset($_GET['mpwpb_order']) ? absint($_GET['mpwpb_order']) : 0;
+				$order = $order_id ? wc_get_order($order_id) : null;
+				get_header();
+				echo '<div class="mpwpb_style" style="max-width:640px;margin:40px auto;">';
+				if ($order) {
+					echo '<h2>' . esc_html__('Thank you, your booking is confirmed!', 'service-booking-manager') . '</h2>';
+					echo '<p>' . esc_html(
+						sprintf(
+							/* translators: %s: order reference number */
+							__('Order reference: #%s', 'service-booking-manager'),
+							$order_id
+						)
+					) . '</p>';
+				} else {
+					echo '<p>' . esc_html__('No booking information found.', 'service-booking-manager') . '</p>';
+				}
+				echo '</div>';
+				get_footer();
+				exit;
+			}
 			public function add_cart_item_data($cart_item_data, $product_id) {
+				$booking_item = self::build_booking_item_from_request($product_id);
+				if (!empty($booking_item)) {
+					$cart_item_data = array_merge($cart_item_data, $booking_item);
+				}
+				return $cart_item_data;
+			}
+			/**
+			 * Builds the booking selection array from the current $_POST request.
+			 * Shared by the WooCommerce cart bridge (add_cart_item_data) and the
+			 * native (non-WooCommerce) add-to-cart path so both stay in sync.
+			 */
+			public static function build_booking_item_from_request($product_id): array {
+				$cart_item_data = array();
 				$linked_id = MPWPB_Global_Function::get_post_info($product_id, 'link_mpwpb_id', $product_id);
 				$product_id = is_string(get_post_status($linked_id)) ? $linked_id : $product_id;
                 $enable_recurring = MPWPB_Global_Function::get_post_info( $product_id, 'mpwpb_enable_recurring', 'no');
@@ -204,72 +269,147 @@
 				if (is_object($order_id)) {
 					$order_id = $order_id->get_id();
 				}
-				if ($order_id) {
-					$order = wc_get_order($order_id);
-					$order_status = $order->get_status();
-					if ($order_status != 'failed') {
-						//$item_id = current( array_keys( $order->get_items() ) );
-						foreach ($order->get_items() as $item_id => $item) {
-							$post_id = wc_get_order_item_meta($item_id, '_mpwpb_id');
-							if (get_post_type($post_id) == MPWPB_Function::get_cpt()) {
-								$date = wc_get_order_item_meta($item_id, '_mpwpb_date');
-
-								$mpwpb_staff = wc_get_order_item_meta($item_id, '_mpwpb_staff_term_id');
-								$date = $date ? sanitize_text_field( wp_unslash( $date ) ) : '';
-								$category = wc_get_order_item_meta($item_id, '_mpwpb_category');
-								$category = $category ? sanitize_text_field( wp_unslash( $category ) )  : '';
-								$sub_category = wc_get_order_item_meta($item_id, '_mpwpb_sub_category');
-								$sub_category = $sub_category ? sanitize_text_field( wp_unslash( $sub_category ) ) : '';
-								$service = wc_get_order_item_meta($item_id, '_mpwpb_service');
-//								$service = $service ? array_map( 'sanitize_text_field', wp_unslash( $service ) ) : [];
-								$total_price = wc_get_order_item_meta($item_id, '_mpwpb_tp');
-								$total_price = $total_price ? sanitize_text_field( wp_unslash( $total_price ) ): '';
-								$ex_service = wc_get_order_item_meta($item_id, '_mpwpb_extra_service_info');
-								$ex_service_infos = $ex_service ??  [];
-								$data['mpwpb_id'] = $post_id;
-								$data['mpwpb_date'] = $date;
-								if ($category) {
-									$data['mpwpb_category'] = $category;
-									if ($sub_category) {
-										$data['mpwpb_sub_category'] = $sub_category;
-									}
-								}
-								$data['mpwpb_service'] = $service;
-								$data['mpwpb_staff_term_id'] = $mpwpb_staff;
-								$data['mpwpb_tp'] = $total_price;
-								$data['mpwpb_service_info'] = $ex_service_infos;
-								$data['mpwpb_order_id'] = $order_id;
-								$data['mpwpb_order_status'] = $order_status;
-								$data['mpwpb_payment_method'] = $order->get_payment_method();
-								$data['mpwpb_user_id'] = $order->get_user_id() ?? '';
-								$data['mpwpb_extra_service_info'] = $ex_service_infos;
-								$data['mpwpb_billing_name'] = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
-								$data['mpwpb_billing_email'] = $order->get_billing_email();
-								$data['mpwpb_billing_phone'] = $order->get_billing_phone();
-								$data['mpwpb_billing_address'] = $order->get_billing_address_1() . ' ' . $order->get_billing_address_2();
-								$booking_data = apply_filters('add_mpwpb_booking_data', $data, $post_id);
-								self::add_cpt_data('mpwpb_booking', $booking_data['mpwpb_billing_name'], $booking_data);
-								if (is_array($ex_service_infos) && sizeof($ex_service_infos) > 0) {
-									foreach ($ex_service_infos as $ex_service_info) {
-										$ex_data['mpwpb_id'] = $post_id;
-										$ex_data['mpwpb_date'] = $date;
-										$ex_data['mpwpb_order_id'] = $order_id;
-										$ex_data['mpwpb_order_status'] = $order_status;
-										$ex_data['mpwpb_ex_name'] = $ex_service_info['ex_name'];
-										$ex_data['mpwpb_ex_price'] = $ex_service_info['ex_price'];
-										$ex_data['mpwpb_ex_qty'] = $ex_service_info['ex_qty'];
-										$ex_data['mpwpb_payment_method'] = $order->get_payment_method();
-										$ex_data['mpwpb_user_id'] = $order->get_user_id() ?? '';
-										self::add_cpt_data('mpwpb_extra_service_booking', '#' . $order_id . $ex_data['mpwpb_ex_name'], $ex_data);
-									}
-								}
-							}
+				if (!$order_id) {
+					return;
+				}
+				$order = wc_get_order($order_id);
+				$this->maybe_create_bookings_for_order($order_id, $order);
+			}
+			/**
+			 * Reads the mpwpb-tagged line items and billing details off a WC order.
+			 */
+			private function get_order_context($order): array {
+				$line_items = [];
+				foreach ($order->get_items() as $item_id => $item) {
+					$post_id = wc_get_order_item_meta($item_id, '_mpwpb_id');
+					if (get_post_type($post_id) != MPWPB_Function::get_cpt()) {
+						continue;
+					}
+					$date = wc_get_order_item_meta($item_id, '_mpwpb_date');
+					$category = wc_get_order_item_meta($item_id, '_mpwpb_category');
+					$sub_category = wc_get_order_item_meta($item_id, '_mpwpb_sub_category');
+					$total_price = wc_get_order_item_meta($item_id, '_mpwpb_tp');
+					$line_items[] = [
+						'post_id' => $post_id,
+						'date' => $date ? sanitize_text_field(wp_unslash($date)) : '',
+						'staff_term_id' => wc_get_order_item_meta($item_id, '_mpwpb_staff_term_id'),
+						'category' => $category ? sanitize_text_field(wp_unslash($category)) : '',
+						'sub_category' => $sub_category ? sanitize_text_field(wp_unslash($sub_category)) : '',
+						'service' => wc_get_order_item_meta($item_id, '_mpwpb_service'),
+						'total_price' => $total_price ? sanitize_text_field(wp_unslash($total_price)) : '',
+						'extra_service_info' => wc_get_order_item_meta($item_id, '_mpwpb_extra_service_info') ?: [],
+					];
+				}
+				$billing = [
+					'first_name' => $order->get_billing_first_name(),
+					'last_name' => $order->get_billing_last_name(),
+					'email' => $order->get_billing_email(),
+					'phone' => $order->get_billing_phone(),
+					'address_1' => $order->get_billing_address_1(),
+					'address_2' => $order->get_billing_address_2(),
+				];
+				return [$line_items, $billing];
+			}
+			/**
+			 * Creates bookings for a WC order the first time it reaches one of the
+			 * admin-configured "Confirm Booking Based on Payment Status" statuses
+			 * (Settings > Payment Method > Additional Settings). Idempotent — safe
+			 * to call again on later status transitions (e.g. on-hold -> completed)
+			 * without creating duplicate bookings.
+			 */
+			public function maybe_create_bookings_for_order($order_id, $order): void {
+				if (!$order_id || !$order) {
+					return;
+				}
+				$order_status = $order->get_status();
+				$confirm_statuses = MPWPB_Global_Function::get_payment_setting('wc_confirm_statuses', ['pending', 'processing', 'on-hold', 'completed']);
+				$confirm_statuses = is_array($confirm_statuses) && !empty($confirm_statuses) ? $confirm_statuses : ['pending', 'processing', 'on-hold', 'completed'];
+				if (!in_array($order_status, $confirm_statuses, true)) {
+					return;
+				}
+				$existing = get_posts([
+					'post_type' => 'mpwpb_booking',
+					'posts_per_page' => 1,
+					'fields' => 'ids',
+					'meta_query' => [['key' => 'mpwpb_order_id', 'value' => $order_id]],
+				]);
+				if (!empty($existing)) {
+					return;
+				}
+				[$line_items, $billing] = $this->get_order_context($order);
+				if (empty($line_items)) {
+					return;
+				}
+				self::create_bookings_from_data($order_id, $order_status, $order->get_payment_method(), $order->get_user_id() ?: '', $billing, $line_items);
+			}
+			/**
+			 * Creates the mpwpb_booking / mpwpb_extra_service_booking posts for a completed order.
+			 * Source-agnostic: fed from a WC order (checkout_order_processed above) or from a
+			 * native (non-WooCommerce) order (see MPWPB_Native_Order::process_order()).
+			 *
+			 * @param array $line_items Each item: post_id, date, staff_term_id, category, sub_category, service, total_price, extra_service_info
+			 * @param array $billing Keys: first_name, last_name, email, phone, address_1, address_2
+			 */
+			public static function create_bookings_from_data($order_id, $order_status, $payment_method, $user_id, $billing, $line_items): void {
+				if ($order_status == 'failed') {
+					return;
+				}
+				foreach ($line_items as $line_item) {
+					$post_id = $line_item['post_id'] ?? 0;
+					if (get_post_type($post_id) != MPWPB_Function::get_cpt()) {
+						continue;
+					}
+					$ex_service_infos = $line_item['extra_service_info'] ?: [];
+					$data = [];
+					$data['mpwpb_id'] = $post_id;
+					$data['mpwpb_date'] = $line_item['date'] ?? '';
+					if (!empty($line_item['category'])) {
+						$data['mpwpb_category'] = $line_item['category'];
+						if (!empty($line_item['sub_category'])) {
+							$data['mpwpb_sub_category'] = $line_item['sub_category'];
+						}
+					}
+					$data['mpwpb_service'] = $line_item['service'] ?? [];
+					$data['mpwpb_staff_term_id'] = $line_item['staff_term_id'] ?? '';
+					$data['mpwpb_tp'] = $line_item['total_price'] ?? '';
+					$data['mpwpb_service_info'] = $ex_service_infos;
+					$data['mpwpb_order_id'] = $order_id;
+					$data['mpwpb_order_status'] = $order_status;
+					$data['mpwpb_payment_method'] = $payment_method;
+					$data['mpwpb_user_id'] = $user_id ?: '';
+					$data['mpwpb_extra_service_info'] = $ex_service_infos;
+					$data['mpwpb_billing_name'] = trim(($billing['first_name'] ?? '') . ' ' . ($billing['last_name'] ?? ''));
+					$data['mpwpb_billing_email'] = $billing['email'] ?? '';
+					$data['mpwpb_billing_phone'] = $billing['phone'] ?? '';
+					$data['mpwpb_billing_address'] = trim(($billing['address_1'] ?? '') . ' ' . ($billing['address_2'] ?? ''));
+					$booking_data = apply_filters('add_mpwpb_booking_data', $data, $post_id);
+					self::add_cpt_data('mpwpb_booking', $booking_data['mpwpb_billing_name'], $booking_data);
+					if (is_array($ex_service_infos) && sizeof($ex_service_infos) > 0) {
+						foreach ($ex_service_infos as $ex_service_info) {
+							$ex_data = [];
+							$ex_data['mpwpb_id'] = $post_id;
+							$ex_data['mpwpb_date'] = $line_item['date'] ?? '';
+							$ex_data['mpwpb_order_id'] = $order_id;
+							$ex_data['mpwpb_order_status'] = $order_status;
+							$ex_data['mpwpb_ex_name'] = $ex_service_info['ex_name'];
+							$ex_data['mpwpb_ex_price'] = $ex_service_info['ex_price'];
+							$ex_data['mpwpb_ex_qty'] = $ex_service_info['ex_qty'];
+							$ex_data['mpwpb_payment_method'] = $payment_method;
+							$ex_data['mpwpb_user_id'] = $user_id ?: '';
+							self::add_cpt_data('mpwpb_extra_service_booking', '#' . $order_id . $ex_data['mpwpb_ex_name'], $ex_data);
 						}
 					}
 				}
 			}
 			public function order_status_changed($order_id) {
 				$order = wc_get_order($order_id);
+				if (!$order) {
+					return;
+				}
+				// Confirms the booking retroactively if this transition just
+				// reached one of the configured "confirm on" statuses and it
+				// wasn't already created on an earlier status.
+				$this->maybe_create_bookings_for_order($order_id, $order);
 				$order_status = $order->get_status();
 				foreach ($order->get_items() as $item_id => $item_values) {
 					$post_id = wc_get_order_item_meta($item_id, '_mpwpb_id');
@@ -486,13 +626,22 @@
 			public function mpwpb_add_to_cart() {
 				if (isset($_POST['nonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_nonce')) {
 					$link_id = isset($_POST['link_id']) ? sanitize_text_field(wp_unslash($_POST['link_id'])) : '';
+					if (!MPWPB_Global_Function::is_wc_payment_mode()) {
+						echo esc_url(MPWPB_Native_Checkout::add_to_cart($link_id));
+						die();
+					}
+					if (MPWPB_Global_Function::get_payment_setting('wc_require_login') === 'on' && !is_user_logged_in()) {
+						echo esc_url(wp_login_url(wp_get_referer() ?: home_url('/')));
+						die();
+					}
 					$product_id = apply_filters('woocommerce_add_to_cart_product_id', $link_id);
 					$quantity = 1;
 					$passed_validation = apply_filters('woocommerce_add_to_cart_validation', true, $product_id, $quantity);
 					$product_status = get_post_status($product_id);
 					WC()->cart->empty_cart();
 					if ($passed_validation && WC()->cart->add_to_cart($product_id, 1) && 'publish' === $product_status) {
-						echo esc_url(wc_get_checkout_url());
+						$redirect_mode = MPWPB_Global_Function::get_payment_setting('wc_add_to_cart_redirect', 'checkout');
+						echo esc_url($redirect_mode === 'cart' ? wc_get_cart_url() : wc_get_checkout_url());
 					}
 				}
 				die();

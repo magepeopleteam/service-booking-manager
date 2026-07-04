@@ -91,7 +91,7 @@
 			}
 			public function hide_hidden_wc_product_from_frontend() {
 				global $post, $wp_query;
-				if ( is_product() ) {
+				if ( function_exists( 'is_product' ) && is_product() ) {
 					$post_id    = $post->ID;
 					$visibility = get_the_terms( $post_id, 'product_visibility' );
 					if ( is_object( $visibility ) ) {

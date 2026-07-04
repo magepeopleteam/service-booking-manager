@@ -364,7 +364,7 @@
 
                                 <p class="mpwpb_ex_service_details"><?php echo esc_html( $value['details'] );?></p>
                                 <div class="mpwpb_service_meta">
-                                    <span class="mpwpb_ex_service_price"><?php echo wp_kses_post( wc_price( $value['price'] ) ); ?></span>
+                                    <span class="mpwpb_ex_service_price"><?php echo wp_kses_post( MPWPB_Global_Function::format_price( $value['price'] ) ); ?></span>
                                     <div class="">
                                         <span><i class="fa-solid fa-box"></i></span>
                                         <span class="mpwpb_ex_service_qty"><?php echo esc_html($value['qty']); ?></span>
