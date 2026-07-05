@@ -17,6 +17,7 @@
 				add_action('admin_notices', [$this, 'maybe_show_payment_notice']);
 				add_action('wp_ajax_mpwpb_install_activate_woocommerce', [$this, 'install_activate_woocommerce']);
 				add_action('wp_ajax_mpwpb_toggle_wc_gateway', [$this, 'toggle_wc_gateway']);
+				add_action('wp_ajax_mpwpb_save_wc_gateway_settings', [$this, 'save_wc_gateway_settings']);
 			}
 			/**
 			 * Enables/disables a real WooCommerce payment gateway from our
@@ -40,6 +41,37 @@
 				$enabled = !empty($_POST['enabled']) && $_POST['enabled'] === '1';
 				$gateways[$gateway_id]->update_option('enabled', $enabled ? 'yes' : 'no');
 				wp_send_json_success(['enabled' => $enabled]);
+			}
+			/**
+			 * Saves a WooCommerce gateway's own settings fields from our inline
+			 * panel. Delegates to the gateway's own process_admin_options(),
+			 * which reads $_POST using the same field keys as WooCommerce's
+			 * native settings screen and writes to the same option — so this
+			 * is not a separate copy of the settings, it IS the WooCommerce
+			 * gateway settings.
+			 */
+			public function save_wc_gateway_settings(): void {
+				if (!current_user_can('manage_woocommerce') && !current_user_can('manage_options')) {
+					wp_send_json_error(['message' => esc_html__('You do not have permission to do this.', 'service-booking-manager')]);
+				}
+				$gateway_id = isset($_POST['gateway']) ? sanitize_key(wp_unslash($_POST['gateway'])) : '';
+				if (!$gateway_id || !isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_save_wc_gateway_' . $gateway_id)) {
+					wp_send_json_error(['message' => esc_html__('Security check failed.', 'service-booking-manager')]);
+				}
+				if (!MPWPB_Global_Function::check_woocommerce()) {
+					wp_send_json_error(['message' => esc_html__('WooCommerce is not active.', 'service-booking-manager')]);
+				}
+				$gateways = WC()->payment_gateways()->payment_gateways();
+				if (!isset($gateways[$gateway_id])) {
+					wp_send_json_error(['message' => esc_html__('Unknown payment gateway.', 'service-booking-manager')]);
+				}
+				$gateway = $gateways[$gateway_id];
+				$gateway->process_admin_options();
+				$errors = $gateway->get_errors();
+				if (!empty($errors)) {
+					wp_send_json_error(['message' => implode(' ', array_map('wp_strip_all_tags', $errors))]);
+				}
+				wp_send_json_success(['message' => esc_html__('Settings saved.', 'service-booking-manager')]);
 			}
 			public function sec_reg($default_sec): array {
 				$sections = [
@@ -111,6 +143,7 @@
 				$payment_type = MPWPB_Global_Function::get_payment_method_type();
 				$wc_status = MPWPB_Global_Function::check_woocommerce();
 				$wc_active = $wc_status == 1;
+				$pro_active = MPWPB_Global_Function::is_pro_active();
 				$option = 'mpwpb_payment_method_settings';
 				$gateways = [
 					'paypal' => [
@@ -135,6 +168,9 @@
 					.mpwpb-pm-toggle-btn { border: none; background: #fff; padding: 10px 22px; font-weight: 600; cursor: pointer; color: #1d2327; }
 					.mpwpb-pm-toggle-btn.is-active { background: #2451e0; color: #fff; }
 					.mpwpb-pm-panel { border: 1px solid #dcdcde; border-radius: 8px; padding: 20px; background: #fff; }
+					.mpwpb-custom-dependent.mpwpb-locked { opacity: .5; pointer-events: none; user-select: none; }
+					.mpwpb-pro-badge { display: inline-block; background: linear-gradient(135deg,#f7b733,#fc4a1a); color: #fff; font-size: 10px; font-weight: 700; letter-spacing: .5px; border-radius: 999px; padding: 2px 8px; margin-left: 6px; vertical-align: middle; }
+					.mpwpb-toggle-switch input:disabled + .mpwpb-toggle-slider { cursor: not-allowed; opacity: .5; }
 					.mpwpb-pm-notice { border-radius: 6px; padding: 14px 16px; }
 					.mpwpb-pm-notice-warning { background: #fff6dd; border: 1px solid #f0dfa6; }
 					.mpwpb-pm-notice-success { background: #eaf7ee; border: 1px solid #b7e3c4; }
@@ -151,6 +187,10 @@
 					.mpwpb-gw-panel { border: 1px solid #dcdcde; border-top: none; border-radius: 0 0 8px 8px; padding: 16px 18px; margin: -14px 0 14px; background: #fafafa; }
 					.mpwpb-gw-panel label { display: block; margin-bottom: 12px; font-weight: 600; }
 					.mpwpb-gw-panel input[type=text], .mpwpb-gw-panel input[type=password], .mpwpb-gw-panel select, .mpwpb-gw-panel textarea { width: 100%; max-width: 420px; margin-top: 4px; font-weight: normal; }
+					.mpwpb-gw-panel label.mpwpb-gw-field { display: flex; align-items: flex-start; gap: 14px; padding-top: 6px; }
+					.mpwpb-gw-panel .mpwpb-gw-field-label { flex: 0 0 160px; }
+					.mpwpb-gw-panel .mpwpb-gw-field-control { flex: 1 1 auto; }
+					.mpwpb-gw-panel .mpwpb-gw-field-control input[type=text], .mpwpb-gw-panel .mpwpb-gw-field-control input[type=password], .mpwpb-gw-panel .mpwpb-gw-field-control select, .mpwpb-gw-panel .mpwpb-gw-field-control textarea { margin-top: 0; }
 					.mpwpb-toggle-switch { position: relative; display: inline-block; width: 40px; height: 22px; vertical-align: middle; }
 					.mpwpb-toggle-switch input { opacity: 0; width: 0; height: 0; }
 					.mpwpb-toggle-slider { position: absolute; inset: 0; background: rgba(255,255,255,.35); border-radius: 999px; transition: .15s; cursor: pointer; }
@@ -159,23 +199,35 @@
 					.mpwpb-toggle-switch input:checked + .mpwpb-toggle-slider:before { transform: translateX(18px); }
 					.mpwpb-confirmation-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-top: 18px; padding-top: 18px; border-top: 1px solid #dcdcde; }
 					.mpwpb-confirmation-row .description { color: #646970; margin: 4px 0 0; }
-					.mpwpb-toggle-row { display: flex; align-items: center; gap: 14px; padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid #dcdcde; }
+					.mpwpb-toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid #dcdcde; }
 					.mpwpb-toggle-row .description { color: #646970; }
 					.mpwpb-toggle-switch-lg .mpwpb-toggle-slider { background: rgba(0,0,0,.15); }
 					.mpwpb-toggle-switch-lg input:checked + .mpwpb-toggle-slider { background: #2451e0; }
 					.mpwpb-accordion { border: 1px solid #dcdcde; border-radius: 6px; margin-bottom: 14px; overflow: hidden; }
 					.mpwpb-accordion-header { display: flex; align-items: center; justify-content: space-between; width: 100%; text-align: left; background: #f6f7f7; border: none; padding: 12px 16px; font-weight: 600; cursor: pointer; }
 					.mpwpb-accordion-header.is-open { background: #eaf1ff; color: #2451e0; }
+					button.mpwpb-accordion-header { justify-content: left; }
+					.mpwpb-accordion mpwpb span.fas.fa-chevron-down { margin-left: 20px; }
+					span.fas.fa-chevron-down { margin-left: 10px; }
 					.mpwpb-accordion-body { padding: 16px; border-top: 1px solid #dcdcde; }
+					.mpwpb-accordion-body p { margin-bottom: 5px !important; }
 					.mpwpb-pm-btn-outline { display: inline-block; border: 1px solid #2451e0; color: #2451e0; background: #fff; border-radius: 5px; padding: 6px 14px; text-decoration: none; font-size: 13px; font-weight: 600; }
 					.mpwpb-wc-gateway-card { border: 1px solid #dcdcde; border-radius: 6px; padding: 14px 16px; margin-bottom: 10px; display: grid; grid-template-columns: auto auto 1fr auto; align-items: center; gap: 14px; }
 					.mpwpb-wc-gateway-name { font-weight: 600; }
-					.mpwpb-wc-gateway-status { border-radius: 999px; padding: 2px 10px; font-size: 11px; font-weight: 700; background: #f0f0f1; color: #646970; justify-self: end; }
+					.mpwpb-wc-gateway-status { border-radius: 999px; padding: 2px 10px; font-size: 11px; font-weight: 700; background: #fdecea; color: #b32d2e; justify-self: end; }
 					.mpwpb-wc-gateway-status.is-enabled { background: #eaf7ee; color: #1c9a5b; }
 					.mpwpb-wc-gateway-desc { grid-column: 1 / -1; color: #646970; font-size: 13px; }
+					.mpwpb-wc-gw-panel { border: 1px solid #dcdcde; border-top: none; border-radius: 0 0 8px 8px; padding: 16px 18px; margin: -10px 0 10px; background: #fafafa; }
+					.mpwpb-wc-gw-panel .form-table th { width: 220px; }
+					.mpwpb-wc-gw-panel .form-table input[type=text], .mpwpb-wc-gw-panel .form-table input[type=password], .mpwpb-wc-gw-panel .form-table select, .mpwpb-wc-gw-panel .form-table textarea { width: 100%; max-width: 420px; }
 					.mpwpb-settings-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 14px 0; border-top: 1px solid #eee; }
 					.mpwpb-settings-row:first-child { border-top: none; padding-top: 0; }
 					.mpwpb-settings-row .description { color: #646970; margin: 4px 0 0; }
+					.mpwpb-settings-row.mpwpb-settings-row-top { align-items: flex-start; }
+					.mpwpb-settings-row.mpwpb-settings-row-top > div:first-child { padding-top: 2px; }
+					.mpwpb-settings-row label { display: flex; align-items: center; gap: 6px; font-weight: 400; }
+					.mpwpb-settings-row label[style*="display:block"] { display: flex !important; margin-bottom: 8px; }
+					.mpwpb-settings-row label[style*="display:block"]:last-child { margin-bottom: 0; }
 				</style>
 				<div class="mpwpb-pm-toggle">
 					<button type="button" class="mpwpb-pm-toggle-btn <?php echo $payment_type !== 'custom' ? 'is-active' : ''; ?>" data-value="woocommerce"><?php esc_html_e('WooCommerce', 'service-booking-manager'); ?></button>
@@ -200,15 +252,15 @@
 						<div class="mpwpb-toggle-row">
 							<div>
 								<strong><?php esc_html_e('Enable WooCommerce Payment', 'service-booking-manager'); ?></strong>
+								<p class="description"><?php esc_html_e('If enabled, WooCommerce payment gateway will be used for checkout.', 'service-booking-manager'); ?></p>
 							</div>
 							<label class="mpwpb-toggle-switch mpwpb-toggle-switch-lg">
 								<input type="checkbox" id="mpwpb_wc_enable_toggle" <?php checked($payment_type !== 'custom'); ?>/>
 								<span class="mpwpb-toggle-slider"></span>
 							</label>
-							<span class="description"><?php esc_html_e('If enabled, WooCommerce payment gateway will be used for checkout.', 'service-booking-manager'); ?></span>
 						</div>
 
-						<div class="mpwpb-accordion">
+						<div class="mpwpb-accordion mpwpb-wc-dependent" <?php echo $payment_type !== 'custom' ? '' : 'style="display:none;"'; ?>>
 							<button type="button" class="mpwpb-accordion-header" data-target="mpwpb-acc-wc-gateways">
 								<?php esc_html_e('WooCommerce Payment Methods', 'service-booking-manager'); ?>
 								<span class="fas fa-chevron-down"></span>
@@ -219,24 +271,37 @@
 										<?php esc_html_e('Open in WooCommerce', 'service-booking-manager'); ?> <span class="fas fa-arrow-up-right-from-square"></span>
 									</a>
 								</p>
-								<?php foreach (WC()->payment_gateways()->payment_gateways() as $wc_gateway) : ?>
+								<?php foreach (WC()->payment_gateways()->payment_gateways() as $wc_gateway) :
+									$config_panel_id = 'mpwpb-wc-gw-config-' . $wc_gateway->id;
+									$config_fields = $wc_gateway->get_form_fields();
+									unset($config_fields['enabled']);
+									?>
 									<div class="mpwpb-wc-gateway-card">
-										<label class="mpwpb-toggle-switch">
-											<input type="checkbox" class="mpwpb-wc-gateway-toggle" data-gateway="<?php echo esc_attr($wc_gateway->id); ?>" data-nonce="<?php echo esc_attr(wp_create_nonce('mpwpb_toggle_wc_gateway_' . $wc_gateway->id)); ?>" <?php checked($wc_gateway->enabled === 'yes'); ?>/>
+										<label class="mpwpb-toggle-switch mpwpb-toggle-switch-lg">
+											<input type="checkbox" class="mpwpb-wc-gateway-toggle" data-gateway="<?php echo esc_attr($wc_gateway->id); ?>" data-nonce="<?php echo esc_attr(wp_create_nonce('mpwpb_toggle_wc_gateway_' . $wc_gateway->id)); ?>" data-enabled-field="<?php echo esc_attr($wc_gateway->get_field_key('enabled')); ?>" <?php checked($wc_gateway->enabled === 'yes'); ?>/>
 											<span class="mpwpb-toggle-slider"></span>
 										</label>
 										<span class="mpwpb-wc-gateway-name"><?php echo esc_html($wc_gateway->get_method_title()); ?></span>
 										<span class="mpwpb-wc-gateway-status <?php echo $wc_gateway->enabled === 'yes' ? 'is-enabled' : ''; ?>" data-status-for="<?php echo esc_attr($wc_gateway->id); ?>">
 											<?php echo $wc_gateway->enabled === 'yes' ? esc_html__('ENABLED', 'service-booking-manager') : esc_html__('DISABLED', 'service-booking-manager'); ?>
 										</span>
-										<a class="mpwpb-pm-btn-outline" href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=checkout&section=' . $wc_gateway->id)); ?>" target="_blank" rel="noopener"><?php esc_html_e('Configure', 'service-booking-manager'); ?></a>
+										<button type="button" class="mpwpb-pm-btn-outline mpwpb-gateway-configure" data-target="<?php echo esc_attr($config_panel_id); ?>"><?php esc_html_e('Configure', 'service-booking-manager'); ?></button>
 										<div class="mpwpb-wc-gateway-desc"><?php echo wp_kses_post($wc_gateway->get_method_description()); ?></div>
+									</div>
+									<div class="mpwpb-wc-gw-panel" id="<?php echo esc_attr($config_panel_id); ?>" style="display:none;">
+										<table class="form-table">
+											<?php echo $wc_gateway->generate_settings_html($config_fields, false); ?>
+										</table>
+										<p>
+											<button type="button" class="mpwpb-pm-btn-primary mpwpb-wc-gw-save" data-gateway="<?php echo esc_attr($wc_gateway->id); ?>" data-nonce="<?php echo esc_attr(wp_create_nonce('mpwpb_save_wc_gateway_' . $wc_gateway->id)); ?>"><?php esc_html_e('Save Changes', 'service-booking-manager'); ?></button>
+											<span class="mpwpb-wc-gw-save-status" style="margin-left:10px;"></span>
+										</p>
 									</div>
 								<?php endforeach; ?>
 							</div>
 						</div>
 
-						<div class="mpwpb-accordion">
+						<div class="mpwpb-accordion mpwpb-wc-dependent" <?php echo $payment_type !== 'custom' ? '' : 'style="display:none;"'; ?>>
 							<button type="button" class="mpwpb-accordion-header" data-target="mpwpb-acc-wc-additional">
 								<?php esc_html_e('Additional Settings', 'service-booking-manager'); ?>
 								<span class="fas fa-chevron-down"></span>
@@ -282,7 +347,7 @@
 										<?php esc_html_e('Show billing info on the WooCommerce checkout page.', 'service-booking-manager'); ?>
 									</label>
 								</div>
-								<div class="mpwpb-settings-row">
+								<div class="mpwpb-settings-row mpwpb-settings-row-top">
 									<div>
 										<strong><?php esc_html_e('Confirm Booking Based on Payment Status', 'service-booking-manager'); ?></strong>
 										<p class="description"><?php esc_html_e('Select the order statuses that will trigger booking confirmation.', 'service-booking-manager'); ?></p>
@@ -302,6 +367,29 @@
 				</div>
 
 				<div class="mpwpb-pm-panel" data-panel="custom" style="<?php echo $payment_type === 'custom' ? '' : 'display:none;'; ?>">
+					<div class="mpwpb-toggle-row">
+						<div>
+							<strong>
+								<?php esc_html_e('Enable Custom Payment Method', 'service-booking-manager'); ?>
+								<?php if (!$pro_active) : ?>
+									<span class="mpwpb-pro-badge"><?php esc_html_e('PRO', 'service-booking-manager'); ?></span>
+								<?php endif; ?>
+							</strong>
+							<p class="description">
+								<?php if ($pro_active) : ?>
+									<?php esc_html_e('If enabled, the custom payment gateways below (PayPal, Stripe, Offline) will be used for checkout.', 'service-booking-manager'); ?>
+								<?php else : ?>
+									<?php esc_html_e('Requires the service-booking-manager-pro plugin to be installed and activated.', 'service-booking-manager'); ?>
+								<?php endif; ?>
+							</p>
+						</div>
+						<label class="mpwpb-toggle-switch mpwpb-toggle-switch-lg">
+							<input type="checkbox" id="mpwpb_custom_enable_toggle" <?php disabled(!$pro_active); ?> <?php checked($payment_type === 'custom'); ?>/>
+							<span class="mpwpb-toggle-slider"></span>
+						</label>
+					</div>
+
+					<div class="mpwpb-custom-dependent <?php echo ($payment_type === 'custom' && $pro_active) ? '' : 'mpwpb-locked'; ?>">
 					<?php foreach ($gateways as $key => $gw) :
 						$enabled = MPWPB_Global_Function::get_payment_setting($key . '_enabled') === 'on';
 						?>
@@ -318,53 +406,69 @@
 						<div class="mpwpb-gw-panel" id="mpwpb-gw-panel-<?php echo esc_attr($key); ?>" style="display:none;">
 							<label>
 								<input type="hidden" name="<?php echo esc_attr($option); ?>[<?php echo esc_attr($key); ?>_enabled]" value="off"/>
-								<span class="mpwpb-toggle-switch">
+								<span class="mpwpb-toggle-switch mpwpb-toggle-switch-lg">
 									<input type="checkbox" class="mpwpb-gw-enable-toggle" data-status-for="<?php echo esc_attr($key); ?>" name="<?php echo esc_attr($option); ?>[<?php echo esc_attr($key); ?>_enabled]" value="on" <?php checked($enabled); ?>/>
 									<span class="mpwpb-toggle-slider"></span>
 								</span>
 								&nbsp;<?php esc_html_e('Enable this payment method', 'service-booking-manager'); ?>
 							</label>
 							<?php if ($key === 'offline') : ?>
-								<label>
-									<?php esc_html_e('Instructions shown to the customer at checkout', 'service-booking-manager'); ?>
-									<textarea rows="3" name="<?php echo esc_attr($option); ?>[offline_instructions]"><?php echo esc_textarea(MPWPB_Global_Function::get_payment_setting('offline_instructions', esc_html__('Please pay via bank transfer. We will confirm your booking once payment is received.', 'service-booking-manager'))); ?></textarea>
+								<label class="mpwpb-gw-field">
+									<span class="mpwpb-gw-field-label"><?php esc_html_e('Instructions shown to the customer at checkout', 'service-booking-manager'); ?></span>
+									<span class="mpwpb-gw-field-control">
+										<textarea rows="3" name="<?php echo esc_attr($option); ?>[offline_instructions]"><?php echo esc_textarea(MPWPB_Global_Function::get_payment_setting('offline_instructions', esc_html__('Please pay via bank transfer. We will confirm your booking once payment is received.', 'service-booking-manager'))); ?></textarea>
+									</span>
 								</label>
 							<?php elseif ($key === 'stripe') : ?>
-								<label>
-									<?php esc_html_e('Mode', 'service-booking-manager'); ?>
-									<select name="<?php echo esc_attr($option); ?>[stripe_mode]">
-										<option value="test" <?php selected(MPWPB_Global_Function::get_payment_setting('stripe_mode', 'test'), 'test'); ?>><?php esc_html_e('Test', 'service-booking-manager'); ?></option>
-										<option value="live" <?php selected(MPWPB_Global_Function::get_payment_setting('stripe_mode'), 'live'); ?>><?php esc_html_e('Live', 'service-booking-manager'); ?></option>
-									</select>
+								<label class="mpwpb-gw-field">
+									<span class="mpwpb-gw-field-label"><?php esc_html_e('Mode', 'service-booking-manager'); ?></span>
+									<span class="mpwpb-gw-field-control">
+										<select name="<?php echo esc_attr($option); ?>[stripe_mode]">
+											<option value="test" <?php selected(MPWPB_Global_Function::get_payment_setting('stripe_mode', 'test'), 'test'); ?>><?php esc_html_e('Test', 'service-booking-manager'); ?></option>
+											<option value="live" <?php selected(MPWPB_Global_Function::get_payment_setting('stripe_mode'), 'live'); ?>><?php esc_html_e('Live', 'service-booking-manager'); ?></option>
+										</select>
+									</span>
 								</label>
-								<label>
-									<?php esc_html_e('Publishable Key', 'service-booking-manager'); ?>
-									<input type="text" name="<?php echo esc_attr($option); ?>[stripe_publishable_key]" value="<?php echo esc_attr(MPWPB_Global_Function::get_payment_setting('stripe_publishable_key')); ?>"/>
+								<label class="mpwpb-gw-field">
+									<span class="mpwpb-gw-field-label"><?php esc_html_e('Publishable Key', 'service-booking-manager'); ?></span>
+									<span class="mpwpb-gw-field-control">
+										<input type="text" name="<?php echo esc_attr($option); ?>[stripe_publishable_key]" value="<?php echo esc_attr(MPWPB_Global_Function::get_payment_setting('stripe_publishable_key')); ?>"/>
+									</span>
 								</label>
-								<label>
-									<?php esc_html_e('Secret Key', 'service-booking-manager'); ?>
-									<input type="password" name="<?php echo esc_attr($option); ?>[stripe_secret_key]" value="<?php echo esc_attr(MPWPB_Global_Function::get_payment_setting('stripe_secret_key')); ?>"/>
+								<label class="mpwpb-gw-field">
+									<span class="mpwpb-gw-field-label"><?php esc_html_e('Secret Key', 'service-booking-manager'); ?></span>
+									<span class="mpwpb-gw-field-control">
+										<input type="password" name="<?php echo esc_attr($option); ?>[stripe_secret_key]" value="<?php echo esc_attr(MPWPB_Global_Function::get_payment_setting('stripe_secret_key')); ?>"/>
+									</span>
 								</label>
-								<label>
-									<?php esc_html_e('Webhook Secret', 'service-booking-manager'); ?>
-									<input type="password" name="<?php echo esc_attr($option); ?>[stripe_webhook_secret]" value="<?php echo esc_attr(MPWPB_Global_Function::get_payment_setting('stripe_webhook_secret')); ?>"/>
+								<label class="mpwpb-gw-field">
+									<span class="mpwpb-gw-field-label"><?php esc_html_e('Webhook Secret', 'service-booking-manager'); ?></span>
+									<span class="mpwpb-gw-field-control">
+										<input type="password" name="<?php echo esc_attr($option); ?>[stripe_webhook_secret]" value="<?php echo esc_attr(MPWPB_Global_Function::get_payment_setting('stripe_webhook_secret')); ?>"/>
+									</span>
 								</label>
 								<p class="description"><?php esc_html_e('Note: real Stripe charge processing is not wired up yet — enabling Stripe currently confirms the booking immediately, the same as Offline.', 'service-booking-manager'); ?></p>
 							<?php elseif ($key === 'paypal') : ?>
-								<label>
-									<?php esc_html_e('Mode', 'service-booking-manager'); ?>
-									<select name="<?php echo esc_attr($option); ?>[paypal_mode]">
-										<option value="sandbox" <?php selected(MPWPB_Global_Function::get_payment_setting('paypal_mode', 'sandbox'), 'sandbox'); ?>><?php esc_html_e('Sandbox', 'service-booking-manager'); ?></option>
-										<option value="live" <?php selected(MPWPB_Global_Function::get_payment_setting('paypal_mode'), 'live'); ?>><?php esc_html_e('Live', 'service-booking-manager'); ?></option>
-									</select>
+								<label class="mpwpb-gw-field">
+									<span class="mpwpb-gw-field-label"><?php esc_html_e('Mode', 'service-booking-manager'); ?></span>
+									<span class="mpwpb-gw-field-control">
+										<select name="<?php echo esc_attr($option); ?>[paypal_mode]">
+											<option value="sandbox" <?php selected(MPWPB_Global_Function::get_payment_setting('paypal_mode', 'sandbox'), 'sandbox'); ?>><?php esc_html_e('Sandbox', 'service-booking-manager'); ?></option>
+											<option value="live" <?php selected(MPWPB_Global_Function::get_payment_setting('paypal_mode'), 'live'); ?>><?php esc_html_e('Live', 'service-booking-manager'); ?></option>
+										</select>
+									</span>
 								</label>
-								<label>
-									<?php esc_html_e('Client ID', 'service-booking-manager'); ?>
-									<input type="text" name="<?php echo esc_attr($option); ?>[paypal_client_id]" value="<?php echo esc_attr(MPWPB_Global_Function::get_payment_setting('paypal_client_id')); ?>"/>
+								<label class="mpwpb-gw-field">
+									<span class="mpwpb-gw-field-label"><?php esc_html_e('Client ID', 'service-booking-manager'); ?></span>
+									<span class="mpwpb-gw-field-control">
+										<input type="text" name="<?php echo esc_attr($option); ?>[paypal_client_id]" value="<?php echo esc_attr(MPWPB_Global_Function::get_payment_setting('paypal_client_id')); ?>"/>
+									</span>
 								</label>
-								<label>
-									<?php esc_html_e('Client Secret', 'service-booking-manager'); ?>
-									<input type="password" name="<?php echo esc_attr($option); ?>[paypal_client_secret]" value="<?php echo esc_attr(MPWPB_Global_Function::get_payment_setting('paypal_client_secret')); ?>"/>
+								<label class="mpwpb-gw-field">
+									<span class="mpwpb-gw-field-label"><?php esc_html_e('Client Secret', 'service-booking-manager'); ?></span>
+									<span class="mpwpb-gw-field-control">
+										<input type="password" name="<?php echo esc_attr($option); ?>[paypal_client_secret]" value="<?php echo esc_attr(MPWPB_Global_Function::get_payment_setting('paypal_client_secret')); ?>"/>
+									</span>
 								</label>
 								<p class="description"><?php esc_html_e('Note: real PayPal charge processing is not wired up yet — enabling PayPal currently confirms the booking immediately, the same as Offline.', 'service-booking-manager'); ?></p>
 							<?php endif; ?>
@@ -386,6 +490,7 @@
 						]);
 						?>
 					</div>
+					</div>
 				</div>
 				<div class="justifyBetween _mT">
 					<div></div>
@@ -395,19 +500,42 @@
 					(function ($) {
 						"use strict";
 						$(document).ready(function () {
-							function mpwpbSetPaymentMode(value) {
-								$('.mpwpb-pm-toggle-btn').removeClass('is-active');
-								$('.mpwpb-pm-toggle-btn[data-value="' + value + '"]').addClass('is-active');
+							var mpwpbProActive = <?php echo $pro_active ? 'true' : 'false'; ?>;
+							// Single source of truth for both "which gateway is enabled" toggles
+							// (WooCommerce tab's and Custom tab's) plus their dependent sections —
+							// only one of WooCommerce/Custom can ever be active at a time. Custom is
+							// a Pro feature: silently refuses to activate it without Pro (mirrored by
+							// a real server-side gate in MPWPB_Global_Function::is_custom_payment_mode(),
+							// this is just so the UI doesn't show a state it won't actually run in).
+							function mpwpbSyncPaymentToggles(value) {
+								if (value === 'custom' && !mpwpbProActive) {
+									value = 'woocommerce';
+								}
 								$('#mpwpb_payment_method_type_input').val(value);
 								$('#mpwpb_wc_enable_toggle').prop('checked', value === 'woocommerce');
-								$('.mpwpb-pm-panel[data-panel="woocommerce"]').toggle(value === 'woocommerce');
-								$('.mpwpb-pm-panel[data-panel="custom"]').toggle(value === 'custom');
+								$('#mpwpb_custom_enable_toggle').prop('checked', value === 'custom');
+								$('.mpwpb-wc-dependent').toggle(value === 'woocommerce');
+								$('.mpwpb-custom-dependent').toggleClass('mpwpb-locked', value !== 'custom');
+							}
+							function mpwpbSetPaymentMode(value, keepPanel) {
+								$('.mpwpb-pm-toggle-btn').removeClass('is-active');
+								$('.mpwpb-pm-toggle-btn[data-value="' + value + '"]').addClass('is-active');
+								mpwpbSyncPaymentToggles(value);
+								if (!keepPanel) {
+									$('.mpwpb-pm-panel[data-panel="woocommerce"]').toggle(value === 'woocommerce');
+									$('.mpwpb-pm-panel[data-panel="custom"]').toggle(value === 'custom');
+								}
 							}
 							$('.mpwpb-pm-toggle-btn').on('click', function () {
 								mpwpbSetPaymentMode($(this).data('value'));
 							});
 							$('#mpwpb_wc_enable_toggle').on('change', function () {
-								mpwpbSetPaymentMode(this.checked ? 'woocommerce' : 'custom');
+								// Independent of the top tab selector: only flips which gateway is functionally
+								// active. Deliberately does not touch the top buttons or panel visibility.
+								mpwpbSyncPaymentToggles(this.checked ? 'woocommerce' : 'custom');
+							});
+							$('#mpwpb_custom_enable_toggle').on('change', function () {
+								mpwpbSyncPaymentToggles(this.checked ? 'custom' : 'woocommerce');
 							});
 							$('.mpwpb-accordion-header').on('click', function () {
 								var $header = $(this);
@@ -437,6 +565,38 @@
 							});
 							$('.mpwpb-gateway-configure').on('click', function () {
 								$('#' + $(this).data('target')).slideToggle(150);
+							});
+							$('.mpwpb-wc-gw-save').on('click', function () {
+								var $btn = $(this);
+								var $panel = $btn.closest('.mpwpb-wc-gw-panel');
+								var $status = $panel.find('.mpwpb-wc-gw-save-status');
+								var gatewayId = $btn.data('gateway');
+								var $enableToggle = $('.mpwpb-wc-gateway-toggle[data-gateway="' + gatewayId + '"]');
+								var data = $panel.find('table.form-table :input').serializeArray();
+								// The panel intentionally omits the gateway's own "enabled" field (we have a
+								// dedicated switch for that), but process_admin_options() still expects it —
+								// a HTML checkbox is only present in submitted data when checked, so mirror
+								// that: include it only if the dedicated switch is currently on, otherwise
+								// omit it entirely so the gateway isn't silently disabled on save.
+								if ($enableToggle.is(':checked')) {
+									data.push({name: $enableToggle.data('enabledField'), value: 'yes'});
+								}
+								data.push({name: 'action', value: 'mpwpb_save_wc_gateway_settings'});
+								data.push({name: 'gateway', value: gatewayId});
+								data.push({name: 'nonce', value: $btn.data('nonce')});
+								$btn.prop('disabled', true);
+								$status.css('color', '').text(<?php echo wp_json_encode(esc_html__('Saving…', 'service-booking-manager')); ?>);
+								$.post(ajaxurl, data).done(function (resp) {
+									if (resp && resp.success) {
+										$status.css('color', '#1c9a5b').text(<?php echo wp_json_encode(esc_html__('Saved.', 'service-booking-manager')); ?>);
+									} else {
+										$status.css('color', '#b32d2e').text((resp && resp.data && resp.data.message) ? resp.data.message : <?php echo wp_json_encode(esc_html__('Something went wrong.', 'service-booking-manager')); ?>);
+									}
+								}).fail(function () {
+									$status.css('color', '#b32d2e').text(<?php echo wp_json_encode(esc_html__('Request failed.', 'service-booking-manager')); ?>);
+								}).always(function () {
+									$btn.prop('disabled', false);
+								});
 							});
 							$('.mpwpb-gw-enable-toggle').on('change', function () {
 								var key = $(this).data('status-for');

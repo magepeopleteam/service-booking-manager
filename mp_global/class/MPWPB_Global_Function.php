@@ -450,8 +450,20 @@
 			public static function is_wc_payment_mode(): bool {
 				return self::get_payment_method_type() === 'woocommerce' && self::check_woocommerce() == 1;
 			}
+			/**
+			 * Custom Payment (native Stripe/PayPal/Offline checkout) is a Pro
+			 * feature. Gated here (not just in the settings-screen JS) so it
+			 * can never actually run just because 'custom' happens to be
+			 * stored — e.g. if Pro was later deactivated.
+			 */
+			public static function is_pro_active(): bool {
+				if (!function_exists('is_plugin_active')) {
+					include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+				}
+				return is_plugin_active('service-booking-manager-pro/MPWPB_Plugin_Pro.php');
+			}
 			public static function is_custom_payment_mode(): bool {
-				return self::get_payment_method_type() === 'custom';
+				return self::get_payment_method_type() === 'custom' && self::is_pro_active();
 			}
 			public static function get_payment_setting($key, $default = '') {
 				return self::get_settings('mpwpb_payment_method_settings', $key, $default);
