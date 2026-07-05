@@ -23,7 +23,7 @@
 			public function global_settings_menu() {
 				$label = MPWPB_Function::get_name();
 				$cpt = MPWPB_Function::get_cpt();
-				add_submenu_page('edit.php?post_type=' . $cpt, $label . esc_html__(' Settings', 'service-booking-manager'), $label . esc_html__(' Settings', 'service-booking-manager'), 'manage_options', 'mpwpb_settings_page', array($this, 'settings_page'));
+				add_submenu_page('edit.php?post_type=' . $cpt, $label . esc_html__(' Settings', 'service-booking-manager'), esc_html__('Settings', 'service-booking-manager'), 'manage_options', 'mpwpb_settings_page', array($this, 'settings_page'));
 			}
 			public function settings_page() {
 				$label = MPWPB_Function::get_name();
