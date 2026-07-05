@@ -42,8 +42,10 @@
 			private function date_card($name, $date, $sub_label) {
 				?>
 				<div class="mpwpb-dtm__date-card">
-					<span class="dashicons dashicons-calendar-alt mpwpb-dtm__date-card-icon"></span>
-					<?php MPWPB_Date_Time_Settings::particular_date_item($name, $date); ?>
+					<div class="mpwpb-dtm__date-card-row">
+						<span class="dashicons dashicons-calendar-alt mpwpb-dtm__date-card-icon"></span>
+						<?php MPWPB_Date_Time_Settings::particular_date_item($name, $date); ?>
+					</div>
 					<p class="mpwpb-dtm__date-card-sub"><?php echo esc_html($sub_label); ?></p>
 				</div>
 				<?php

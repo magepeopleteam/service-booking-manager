@@ -441,12 +441,24 @@
 			}
 
 			/**
-			 * "Post Title" / "Post Content" fields, placed at the top of the
-			 * General step. #mpwpb-sme-title-inline just mirrors the real
-			 * #title input (kept in sync by JS, same as the topbar title); the
-			 * content slot is where JS relocates the real #postdivrich editor,
-			 * so WordPress' own Visual/Text tabs, Add Media button and autosave
-			 * keep working against the one true #content textarea.
+			 * "Post Title" / "Service Title" / "Service Sub Title" /
+			 * "Service Overview" fields, placed at the top of the General
+			 * step. #mpwpb-sme-title-inline just mirrors the real #title
+			 * input (kept in sync by JS, same as the topbar title). Service
+			 * Title, Service Sub Title (from MPWPB_General_Settings::
+			 * general_settings()'s card further down this step) and Service
+			 * Overview content (from MPWPB_Service_Details::
+			 * service_details(), likewise) are all relocated here by JS —
+			 * those methods render normally, unchanged, in their own cards
+			 * first; JS then moves the real <input>/<textarea> DOM nodes up
+			 * here (so each field still submits exactly once) and removes
+			 * the now-empty wrapper left behind, so nothing shows twice in
+			 * one step. Service Overview has no visible toggle here — the
+			 * modern editor always submits mpwpb_service_overview_status=on
+			 * via a hidden field (Classic mode's own real toggle is
+			 * untouched and still fully functional there).
+			 * WordPress' native post_content editor (#postdivrich) is not
+			 * used by the modern editor at all; it's hidden via CSS instead.
 			 */
 			private function render_post_fields_subsection($post_id) {
 				$title = get_the_title($post_id);
@@ -462,10 +474,22 @@
 						</div>
 						<input type="text" class="formControl" id="mpwpb-sme-title-inline" value="<?php echo esc_attr($title); ?>" placeholder="<?php esc_attr_e('Service name', 'service-booking-manager'); ?>"/>
 
-						<div class="mpwpb-sme__subsection-label mpwpb-sme__postfields-content-label">
-							<label><?php esc_html_e('Description', 'service-booking-manager'); ?></label>
+						<div class="mpwpb-sme__subsection-label">
+							<label><?php esc_html_e('Service Title', 'service-booking-manager'); ?></label>
 						</div>
-						<div class="mpwpb-sme__content-slot" data-sme-content-slot></div>
+						<div class="mpwpb-sme__field-slot" data-sme-service-title-slot></div>
+
+						<div class="mpwpb-sme__subsection-label">
+							<label><?php esc_html_e('Service Sub Title', 'service-booking-manager'); ?></label>
+						</div>
+						<div class="mpwpb-sme__field-slot" data-sme-service-subtitle-slot></div>
+
+						<?php // Modern editor keeps Service Overview always on — no toggle shown; Classic mode's own toggle is untouched. ?>
+						<input type="hidden" name="mpwpb_service_overview_status" value="on"/>
+						<div class="mpwpb-sme__subsection-label">
+							<label><?php esc_html_e('Service Overview', 'service-booking-manager'); ?></label>
+						</div>
+						<div class="mpwpb-sme__content-slot" data-sme-overview-slot></div>
 					</div>
 				</div>
 				<?php

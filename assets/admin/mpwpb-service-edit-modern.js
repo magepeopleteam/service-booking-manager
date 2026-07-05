@@ -228,16 +228,58 @@
 	}
 
 	/* ---------------------------------------------------------------- *
-	 *  Relocate the REAL WP content editor (#postdivrich) into the Basic
-	 *  Information card's content slot — reusing the same editor instance
-	 *  (TinyMCE, Add Media, Visual/Text tabs) rather than a duplicate, so
-	 *  #content is submitted exactly once.
+	 *  Relocate the real "Service Overview" editor (rendered normally,
+	 *  once, by the reused MPWPB_Service_Details::service_details() further
+	 *  down this same step) up into the Basic Information card — a real DOM
+	 *  node moved via appendTo(), not a duplicate render, so
+	 *  mpwpb_service_overview_content still submits exactly once. The
+	 *  now-empty heading + toggle wrapper left behind in the Service
+	 *  Details card are discarded entirely (including the real classic
+	 *  on/off checkbox) — the modern editor always submits Service Overview
+	 *  as "on" via a hidden field placed in Basic Information instead
+	 *  (Classic mode's own toggle is untouched and still fully functional
+	 *  there).
 	 * ---------------------------------------------------------------- */
-	(function relocateContentEditor() {
-		var $slot = $root.find('[data-sme-content-slot]');
-		var $editor = $('#postdivrich');
-		if ($slot.length && $editor.length) {
-			$editor.appendTo($slot);
+	(function relocateServiceOverview() {
+		var $overviewSection = $root.find('[data-sme-section="MPWPB_Service_Details"] .mpwpb-service-overview');
+		var $contentSlot = $root.find('[data-sme-overview-slot]');
+		if (!$overviewSection.length || !$contentSlot.length) {
+			return;
+		}
+		var $toggleSection = $overviewSection.prev();
+		var $headingSection = $toggleSection.prev();
+
+		$overviewSection.appendTo($contentSlot);
+		$toggleSection.remove();
+		$headingSection.remove();
+	})();
+
+	/* ---------------------------------------------------------------- *
+	 *  Relocate "Service Title" / "Service Sub Title" (rendered normally,
+	 *  once, by the reused MPWPB_General_Settings::general_settings()
+	 *  further down this same step) up into the Basic Information card —
+	 *  only the real <input>/<textarea> is moved (so mpwpb_shortcode_title
+	 *  / mpwpb_shortcode_sub_title still submit exactly once); the classic
+	 *  section wrapper + its own label text are decorative-only once the
+	 *  field is gone, so they're removed to avoid an empty leftover row.
+	 * ---------------------------------------------------------------- */
+	(function relocateServiceTitleFields() {
+		var $card = $root.find('[data-sme-section="MPWPB_General_Settings"]');
+		if (!$card.length) {
+			return;
+		}
+		var $titleSection = $card.find('.service-title');
+		var $subTitleSection = $card.find('.service-sub-title');
+		var $titleSlot = $root.find('[data-sme-service-title-slot]');
+		var $subTitleSlot = $root.find('[data-sme-service-subtitle-slot]');
+
+		if ($titleSection.length && $titleSlot.length) {
+			$titleSection.find('input[name="mpwpb_shortcode_title"]').appendTo($titleSlot);
+			$titleSection.remove();
+		}
+		if ($subTitleSection.length && $subTitleSlot.length) {
+			$subTitleSection.find('textarea[name="mpwpb_shortcode_sub_title"]').appendTo($subTitleSlot);
+			$subTitleSection.remove();
 		}
 	})();
 
@@ -250,7 +292,8 @@
 	 * ---------------------------------------------------------------- */
 	(function relocateHeaderToggles() {
 		var sectionsWithHeaderToggle = {
-			'MPWPB_Extra_Service_Modern': 'mpwpb_extra_service_active'
+			'MPWPB_Extra_Service_Modern': 'mpwpb_extra_service_active',
+			'MPWPB_Service_Details': 'mpwpb_features_status'
 		};
 		Object.keys(sectionsWithHeaderToggle).forEach(function (sectionClass) {
 			var $card = $root.find('[data-sme-section="' + sectionClass + '"]');
@@ -260,6 +303,24 @@
 				$toggle.appendTo($slot);
 			}
 		});
+	})();
+
+	/* ---------------------------------------------------------------- *
+	 *  The classic "Enable Service Features" row (label text + the toggle
+	 *  just relocated to the card header above) would otherwise be left
+	 *  behind as an empty leftover line right under the "Service Features"
+	 *  heading. Only removed once confirmed empty (no checkbox left inside),
+	 *  so it's a no-op if the header-toggle relocation above didn't run.
+	 * ---------------------------------------------------------------- */
+	(function cleanupServiceFeaturesToggleRow() {
+		var $featuresList = $root.find('[data-sme-section="MPWPB_Service_Details"] .mpwpb-service-features');
+		if (!$featuresList.length) {
+			return;
+		}
+		var $toggleRow = $featuresList.prev();
+		if ($toggleRow.length && !$toggleRow.find('input[type="checkbox"]').length) {
+			$toggleRow.remove();
+		}
 	})();
 
 	/* ---------------------------------------------------------------- *

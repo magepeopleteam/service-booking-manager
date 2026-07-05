@@ -41,7 +41,7 @@
 
 .mpwpb-dtm__field{margin-bottom:16px;}
 .mpwpb-dtm__field:last-child{margin-bottom:0;}
-.mpwpb-dtm__field-label{display:block;font-size:12.5px;font-weight:600;color:var(--ink-2,#475569);margin-bottom:6px;}
+.mpwpb-dtm__field-label{display:block;font-size:13px !important;font-weight:600;color:var(--ink-2,#475569);margin-bottom:6px;}
 .mpwpb-dtm__collapse{display:none;}
 .mpwpb-dtm__collapse.mActive{display:block;}
 
@@ -102,15 +102,15 @@
  * -------------------------------------------------------------------- */
 .mpwpb-dtm__date-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;}
 .mpwpb-dtm__date-card{
-	display:flex;flex-wrap:wrap;align-items:center;gap:10px;
 	padding:11px 14px;border:1px solid var(--line,#e4e9f0);border-radius:10px;background:var(--inset,#f8fafc);
 }
+.mpwpb-dtm__date-card-row.mpwpb-dtm__date-card-row{display:flex;flex-wrap:nowrap;align-items:center;gap:10px;}
 .mpwpb-dtm__date-card-icon.mpwpb-dtm__date-card-icon{
-	flex:0 0 auto;align-self:center;order:-1;
+	flex:0 0 auto;align-self:center;
 	display:inline-flex;align-items:center;justify-content:center;
 	color:var(--brand,#2451e0);font-size:18px;width:18px;height:18px;line-height:1;
 }
-.mpwpb-dtm__date-card .mp_remove_area{flex:1 1 auto;min-width:0;margin:0;}
+.mpwpb-dtm__date-card .mp_remove_area{flex:1 1 auto;min-width:0;margin:0;background:transparent;border:0;padding:0;border-radius:0;}
 .mpwpb-dtm__date-card .justifyBetween{display:flex;align-items:center;gap:8px;justify-content:space-between;flex-wrap:nowrap;}
 .mpwpb-dtm__date-card .justifyBetween > label{flex:1 1 auto;min-width:0;display:block !important;margin:0 !important;padding:0 !important;}
 .mpwpb-dtm__date-card .formControl.date_type{
@@ -118,7 +118,9 @@
 	cursor:pointer;box-shadow:none !important;width:100% !important;min-width:0;max-width:100%;min-height:0 !important;height:auto !important;
 	font-size:12.5px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-.mpwpb-dtm__date-card-sub{flex:0 0 100%;margin:0;padding-left:28px;font-size:11.5px;color:var(--muted,#94a3b8);}
+.mpwpb-dtm__date-card-sub{margin:6px 0 0 28px;font-size:11.5px;color:var(--muted,#94a3b8);}
+p.mpwpb-dtm__date-card-sub{text-align:right;}
+.mpwpb-dtm__special-area .mpwpb-dtm__date-card .formControl.date_type{background:#fff !important;}
 .mpwpb-dtm__date-card .allCenter{flex:0 0 auto;}
 .mpwpb-dtm__date-card .buttonGroup.max_100.max_100{display:flex;gap:4px;max-width:none;width:auto;flex:0 0 auto;}
 .mpwpb-dtm__date-card ._themeButton_xs._themeButton_xs{
