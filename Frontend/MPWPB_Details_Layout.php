@@ -51,6 +51,9 @@
                 $start_date = $all_dates[0];
                 $end_date = end($all_dates);
 
+                $today = date_i18n('Y-m-d');
+                $tomorrow = date_i18n('Y-m-d', strtotime('+1 day'));
+
                 $loop_start = 0;
                 while (strtotime($start_date) <= strtotime($end_date)) {
                     if( $loop_start === 0 ){
@@ -67,10 +70,22 @@
                                 <div class="mpwpb_close_date"><?php echo esc_html(MPWPB_Global_Function::date_format($start_date)); ?></div>
                             </div>
                         <?php } else {
-                            $day = date('l', strtotime( $start_date ) );
+                            // "Today"/"Tomorrow" read clearer than the full
+                            // date + weekday name in a compact card -- falls
+                            // back to the short weekday (Wed, Thu...) beyond
+                            // that, with the day-of-month as the big number.
+                            if ( $start_date === $today ) {
+                                $day_label = esc_html__('Today', 'service-booking-manager');
+                            } elseif ( $start_date === $tomorrow ) {
+                                $day_label = esc_html__('Tomorrow', 'service-booking-manager');
+                            } else {
+                                $day_label = date_i18n('D', strtotime($start_date));
+                            }
+                            $day_number = date_i18n('j', strtotime($start_date));
                             ?>
                             <div class="<?php echo esc_attr( $selected );?> mpwpb_get_date" data-find-time="<?php echo esc_attr( $start_date );?>">
-                                <strong><?php echo esc_html(MPWPB_Global_Function::date_format($start_date)).'</br> <span class="mptrs_day_with_date">'; echo esc_attr( $day ).'</span>';?></strong>
+                                <span class="mptrs_day_with_date"><?php echo esc_html( $day_label ); ?></span>
+                                <strong class="mpwpb-date-number"><?php echo esc_html( $day_number ); ?></strong>
                             </div>
                         <?php } ?>
                     </div>

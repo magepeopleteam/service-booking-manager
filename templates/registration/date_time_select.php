@@ -8,6 +8,11 @@
 	}
 	$post_id = $post_id ?? get_the_id();
 	$all_dates = $all_dates ?? MPWPB_Function::get_date($post_id);
+	// The static template shows every available date at once as a wrapped
+	// grid (see mpwpb-service-page-modern.css), so it opts out of the
+	// sliding owl-carousel entirely -- other templates (e.g. default.php)
+	// keep the carousel unchanged.
+	$mpwpb_is_static_template = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_template', 'default.php') === 'static.php';
 
 	$enable_waiting_list = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_enable_waiting_list', 'no');
 	$enable_recurring = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_enable_recurring', 'no');
@@ -72,7 +77,7 @@
 				<?php include(MPWPB_Function::template_path('layout/carousel_indicator.php')); ?>
             </header>
             <div class="" >
-                <div class="owl-theme mpwpb-owl-carousel" id="mpwpb_datetime_holder1">
+                <div class="<?php echo $mpwpb_is_static_template ? 'mpwpb-date-grid' : 'owl-theme mpwpb-owl-carousel'; ?>" id="mpwpb_datetime_holder1">
                     <?php if (sizeof($all_dates) > 0) {
                         $booking_date_output = MPWPB_Details_Layout::display_booking_date( $post_id, $all_dates );
                         if ( $booking_date_output !== null ) {

@@ -334,6 +334,54 @@
 		});
 	}
 
+	// Date grid (.mpwpb-date-grid, static template only -- see
+	// date_time_select.php) shows 8 dates at a time (2 rows x 4 columns)
+	// instead of the old single-row sliding carousel. The header's real
+	// .prev/.next arrows (carousel_indicator.php) are reused as page
+	// controls rather than owlCarousel's slide-by-one -- mpwpb_active_
+	// carousel() in mpwpb.js still runs and binds its own click handlers
+	// to the same .prev/.next too, but since it only ever finds/triggers
+	// .owl-next/.owl-prev (which no longer exist once owlCarousel itself
+	// is skipped), that's a harmless no-op alongside this.
+	function initDateGridPagination($registration) {
+		var pageSize = 8;
+		$registration.find('.mpwpb-date-grid').each(function () {
+			var $grid = $(this);
+			if ($grid.data('mpwpbPaginated')) {
+				return;
+			}
+			$grid.data('mpwpbPaginated', true);
+
+			var $items = $grid.children('.mpwpb_date_time_line');
+			var pageCount = Math.ceil($items.length / pageSize);
+			var currentPage = 0;
+			var $nav = $grid.closest('.mpwpb_date_carousel').find('#mpwpb_carousel_area').first();
+
+			function renderPage() {
+				$items.hide();
+				$items.slice(currentPage * pageSize, currentPage * pageSize + pageSize).show();
+				$nav.toggle(pageCount > 1);
+				$nav.find('.prev').toggleClass('mpDisabled', currentPage === 0);
+				$nav.find('.next').toggleClass('mpDisabled', currentPage >= pageCount - 1);
+			}
+
+			$nav.on('click', '.prev', function () {
+				if (currentPage > 0) {
+					currentPage--;
+					renderPage();
+				}
+			});
+			$nav.on('click', '.next', function () {
+				if (currentPage < pageCount - 1) {
+					currentPage++;
+					renderPage();
+				}
+			});
+
+			renderPage();
+		});
+	}
+
 	// "Proceed to Checkout" is forced always-visible via CSS (see
 	// mpwpb-service-page-modern.css) instead of the plain display:none/
 	// fadeIn toggling mpwpb_registration.js and mpwpb_recurring_booking.js
@@ -353,6 +401,7 @@
 		$('div.mpwpb_registration').each(function () {
 			initBookingTree($(this));
 			initExtraServiceDetails($(this));
+			initDateGridPagination($(this));
 			updateCheckoutReadyState($(this));
 		});
 	});

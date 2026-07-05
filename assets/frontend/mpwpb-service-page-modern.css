@@ -416,7 +416,7 @@
    so this is a from-scratch look rather than an override. */
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row{
 	position:relative;display:flex !important;align-items:center;gap:10px;
-	margin:0 0 9px 15px;padding:10px 12px !important;border:1px solid #e5e9f0;border-radius:10px;background:#fff;
+	margin:0 0 9px 15px;padding:10px 12px !important;border:1px solid #c1c3c7;border-radius:10px;background:#fff;
 	transition:.15s;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row:last-child{margin-bottom:0;}
@@ -469,7 +469,7 @@
    relocateService() in mpwpb-booking-tree.js) and purely reskinned here. */
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row .mpwpb_service_button{
 	width:26px !important;height:26px;min-width:0 !important;padding:0 !important;flex:0 0 auto;
-	border-radius:50% !important;border:2px solid #cbd5e1 !important;background:#fff !important;
+	border-radius:50% !important;border:2px solid #c3c5c7 !important;background:#fff !important;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row .mpwpb_service_button span{display:none !important;}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row .mpwpb_service_button.mActive{
@@ -511,6 +511,47 @@ button._mpBtn.mActive.booked{
 }
 
 h4.alignCenter.mpwpb-total{font-size:16px !important;}
+
+/* -------------------------------------------------------------------- *
+ *  Date picker -> wrapped 2-row grid (8 dates per page) instead of a
+ *  sliding owl-carousel. Static-template-only (date_time_select.php
+ *  outputs .mpwpb-date-grid instead of .mpwpb-owl-carousel for it -- the
+ *  default template's carousel is untouched). The prev/next arrows are
+ *  kept, now paging between groups of 8 instead of sliding one at a time
+ *  (see initDateGridPagination() in mpwpb-booking-tree.js); hidden
+ *  automatically when everything already fits on one page.
+ * -------------------------------------------------------------------- */
+.mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_carousel_area{
+	display:flex !important;align-items:center;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_carousel_area h4{
+	margin:0 !important;width:auto !important;justify-content:flex-end !important;gap:10px;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_carousel_area .prev,
+.mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_carousel_area .next{
+	width:26px;height:26px;display:flex;align-items:center;justify-content:center;
+	border-radius:50%;border:1px solid #e5e9f0;color:var(--mpwpb_color_theme);font-size:11px;cursor:pointer;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_carousel_area .prev:hover,
+.mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_carousel_area .next:hover{background:#F0FDFA;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid{
+	display:flex !important;flex-wrap:wrap;gap:8px;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid .mpwpb_date_time_line{
+	flex:1 1 calc(25% - 6px);width:auto !important;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid .mpwpb_get_date,
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid .mpwpb_get_close_date{
+	display:flex !important;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+	min-height:0 !important;height:100%;padding:12px 6px !important;border:1px solid #e5e9f0 !important;border-radius:12px;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid .mptrs_day_with_date{font-size:11.5px;font-weight:600;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid .mpwpb-date-number{font-size:18px;font-weight:800;color:#1e293b;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid .mpwpb_get_date_selected .mpwpb-date-number{color:#fff !important;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid .mpwpb_close_date{font-size:11px;color:#94a3b8;text-align:center;}
+@media(max-width:420px){
+	.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid .mpwpb_date_time_line{flex-basis:calc(33.33% - 6px);}
+}
 
 /* -------------------------------------------------------------------- *
  *  "Choose Extra Features" (extra_services.php) -- modern card rows,
