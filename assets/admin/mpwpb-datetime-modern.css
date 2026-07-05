@@ -1,0 +1,141 @@
+/* =====================================================================
+ * Date & Time (Availability step)  ·  mpwpb-datetime-modern.css
+ * Card-based layout replacing the classic tabbed table for the modern
+ * editor only. Reuses the classic field names / AJAX cascade / repeater
+ * (mp_add_item, mpwpb_item_remove, mpwpb_sortable_button, data-collapse,
+ * groupCheckBox) markup and JS untouched — only the visual layer is new,
+ * scoped under .mpwpb-dtm. Relies on --brand/--line/--ink/--muted custom
+ * properties defined on the .mpwpb-sme shell root (mpwpb-service-edit-
+ * modern.css), which always wraps this section.
+ * ===================================================================== */
+
+.mpwpb-dtm *,
+.mpwpb-dtm *::before,
+.mpwpb-dtm *::after{box-sizing:border-box;}
+
+.mpwpb-dtm__grid{display:flex;align-items:flex-start;gap:20px;}
+.mpwpb-dtm__col--side{flex:0 0 320px;display:flex;flex-direction:column;gap:20px;min-width:0;}
+.mpwpb-dtm__col--main{flex:1;min-width:0;}
+
+.mpwpb-dtm__card{background:var(--surface,#fff);border:1px solid var(--line,#e4e9f0);border-radius:var(--radius,14px);overflow:hidden;}
+.mpwpb-dtm__card--full{margin-top:20px;}
+
+.mpwpb-dtm__card-head{display:flex;align-items:flex-start;gap:10px;padding:16px 18px;border-bottom:1px solid var(--line,#e4e9f0);}
+.mpwpb-dtm__card-head > .dashicons{color:var(--brand,#2451e0);font-size:19px;width:19px;height:19px;margin-top:2px;flex:0 0 auto;}
+.mpwpb-dtm__card-head > div{flex:1;min-width:0;}
+.mpwpb-dtm__card-head h3{font-size:14.5px;font-weight:700;color:var(--ink,#0f172a);}
+.mpwpb-dtm__card-head p{margin:3px 0 0;font-size:12px;color:var(--muted,#94a3b8);}
+.mpwpb_settings_date_time .mpwpb-dtm__card-head h3{font-size:15px !important;}
+
+.mpwpb-dtm__badge{flex:0 0 auto;background:var(--brand-soft,#eaf0ff);color:var(--brand,#2451e0);font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:999px;white-space:nowrap;}
+
+.mpwpb-dtm .mpwpb-dtm__add-btn.mpwpb-dtm__add-btn{
+	flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;
+	padding:8px 15px;border-radius:999px;border:0;background:var(--brand,#2451e0);color:#fff;
+	font-size:12.5px;font-weight:600;cursor:pointer;transition:.15s;line-height:1;white-space:nowrap;
+}
+.mpwpb-dtm .mpwpb-dtm__add-btn.mpwpb-dtm__add-btn:hover{filter:brightness(1.08);}
+.mpwpb-dtm .mpwpb-dtm__add-btn.mpwpb-dtm__add-btn .dashicons{font-size:15px;width:15px;height:15px;}
+
+.mpwpb-dtm__card-body{padding:18px;}
+
+.mpwpb-dtm__field{margin-bottom:16px;}
+.mpwpb-dtm__field:last-child{margin-bottom:0;}
+.mpwpb-dtm__field-label{display:block;font-size:12.5px;font-weight:600;color:var(--ink-2,#475569);margin-bottom:6px;}
+.mpwpb-dtm__collapse{display:none;}
+.mpwpb-dtm__collapse.mActive{display:block;}
+
+.mpwpb-dtm__hint{margin:0 0 12px;font-size:12px;color:var(--muted,#94a3b8);}
+
+/* -------------------------------------------------------------------- *
+ *  Weekly off-day pills — reuses .groupCheckBox/.customCheckboxLabel so
+ *  the shared click handler (mpwpb_plugin_global.js) keeps recomputing
+ *  the mpwpb_off_days hidden field; only the visual is overridden here,
+ *  replacing the legacy checkbox-square look with a pill toggle.
+ * -------------------------------------------------------------------- */
+.mpwpb-dtm .groupCheckBox.mpwpb-dtm__offdays{display:flex;flex-wrap:wrap;gap:8px;}
+.mpwpb-dtm .customCheckboxLabel.mpwpb-dtm__pill{width:auto !important;padding:0 !important;margin:0 !important;}
+.mpwpb-dtm .customCheckboxLabel.mpwpb-dtm__pill .customCheckbox.mpwpb-dtm__pill-txt{
+	padding:8px 14px !important;min-width:44px;display:inline-flex;align-items:center;justify-content:center;
+	border-radius:999px;border:1.5px solid var(--line,#e4e9f0);background:#fff;color:var(--ink-2,#475569);
+	font-size:12.5px;font-weight:700;text-transform:capitalize;white-space:nowrap !important;transition:.15s;
+}
+.mpwpb-dtm .customCheckboxLabel.mpwpb-dtm__pill .customCheckbox.mpwpb-dtm__pill-txt::before,
+.mpwpb-dtm .customCheckboxLabel.mpwpb-dtm__pill .customCheckbox.mpwpb-dtm__pill-txt::after{display:none !important;}
+.mpwpb-dtm .customCheckboxLabel.mpwpb-dtm__pill input:checked ~ .customCheckbox.mpwpb-dtm__pill-txt{
+	background:var(--brand,#2451e0);border-color:var(--brand,#2451e0);color:#fff;
+}
+
+/* -------------------------------------------------------------------- *
+ *  Weekly schedule table
+ * -------------------------------------------------------------------- */
+.mpwpb-dtm__table-wrap{overflow-x:auto;}
+.mpwpb-dtm__table{width:100%;border-collapse:collapse;font-size:13px;}
+.mpwpb-dtm__table th{text-align:center;padding:0 12px 10px;font-size:11px;font-weight:700;color:var(--muted,#94a3b8);text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid var(--line,#e4e9f0);white-space:nowrap;}
+.mpwpb-dtm__table th:first-child{text-align:left;}
+.mpwpb-dtm__table td{padding:10px 12px;border-bottom:1px solid var(--line,#eef1f6);vertical-align:middle;}
+.mpwpb-dtm__table tbody tr:last-child td{border-bottom:0;}
+.mpwpb-dtm__table td:first-child{text-transform:capitalize;font-weight:600;color:var(--ink-2,#475569);white-space:nowrap;}
+.mpwpb-dtm__table tbody tr:first-child td:first-child{color:var(--brand,#2451e0);font-weight:700;}
+.mpwpb-dtm__table select.formControl{min-width:112px;}
+
+.mpwpb-dtm__table tr.mpwpb-dtm-row-off td.mpwpb_start_time,
+.mpwpb-dtm__table tr.mpwpb-dtm-row-off td.mpwpb_end_time,
+.mpwpb-dtm__table tr.mpwpb-dtm-row-off td.mpwpb_start_break_time,
+.mpwpb-dtm__table tr.mpwpb-dtm-row-off td.mpwpb_end_break_time{position:relative;}
+.mpwpb-dtm__table tr.mpwpb-dtm-row-off td.mpwpb_start_time label,
+.mpwpb-dtm__table tr.mpwpb-dtm-row-off td.mpwpb_end_time label,
+.mpwpb-dtm__table tr.mpwpb-dtm-row-off td.mpwpb_start_break_time label,
+.mpwpb-dtm__table tr.mpwpb-dtm-row-off td.mpwpb_end_break_time label{visibility:hidden;}
+.mpwpb-dtm__table tr.mpwpb-dtm-row-off td.mpwpb_start_time::after,
+.mpwpb-dtm__table tr.mpwpb-dtm-row-off td.mpwpb_end_time::after,
+.mpwpb-dtm__table tr.mpwpb-dtm-row-off td.mpwpb_start_break_time::after,
+.mpwpb-dtm__table tr.mpwpb-dtm-row-off td.mpwpb_end_break_time::after{
+	content:"Closed";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+	color:var(--muted,#94a3b8);font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+}
+
+/* -------------------------------------------------------------------- *
+ *  Date cards — shared by "Particular Dates" and "Special Dates &
+ *  Holidays"; wraps the classic .mp_remove_area repeater row (untouched
+ *  markup/JS) with an icon + a static sub-label.
+ * -------------------------------------------------------------------- */
+.mpwpb-dtm__date-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;}
+.mpwpb-dtm__date-card{
+	display:flex;flex-wrap:wrap;align-items:center;gap:10px;
+	padding:11px 14px;border:1px solid var(--line,#e4e9f0);border-radius:10px;background:var(--inset,#f8fafc);
+}
+.mpwpb-dtm__date-card-icon.mpwpb-dtm__date-card-icon{
+	flex:0 0 auto;align-self:center;order:-1;
+	display:inline-flex;align-items:center;justify-content:center;
+	color:var(--brand,#2451e0);font-size:18px;width:18px;height:18px;line-height:1;
+}
+.mpwpb-dtm__date-card .mp_remove_area{flex:1 1 auto;min-width:0;margin:0;}
+.mpwpb-dtm__date-card .justifyBetween{display:flex;align-items:center;gap:8px;justify-content:space-between;flex-wrap:nowrap;}
+.mpwpb-dtm__date-card .justifyBetween > label{flex:1 1 auto;min-width:0;display:block !important;margin:0 !important;padding:0 !important;}
+.mpwpb-dtm__date-card .formControl.date_type{
+	border:0 !important;background:transparent !important;padding:0 !important;margin:0 !important;font-weight:600;color:var(--ink,#0f172a);
+	cursor:pointer;box-shadow:none !important;width:100% !important;min-width:0;max-width:100%;min-height:0 !important;height:auto !important;
+	font-size:12.5px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.mpwpb-dtm__date-card-sub{flex:0 0 100%;margin:0;padding-left:28px;font-size:11.5px;color:var(--muted,#94a3b8);}
+.mpwpb-dtm__date-card .allCenter{flex:0 0 auto;}
+.mpwpb-dtm__date-card .buttonGroup.max_100.max_100{display:flex;gap:4px;max-width:none;width:auto;flex:0 0 auto;}
+.mpwpb-dtm__date-card ._themeButton_xs._themeButton_xs{
+	width:24px;height:24px;min-width:24px;flex:0 0 auto;padding:0 !important;display:inline-flex;align-items:center;justify-content:center;
+	border-radius:6px;background:#fff;border:1px solid var(--line,#e4e9f0);color:var(--muted,#94a3b8);
+}
+/* The legacy [class*="_themeButton"] span rule forces icon spans to the
+   theme's white "alt" color (for its own solid-blue button look); beat it
+   explicitly here since our button is white, not solid-colored. */
+.mpwpb-dtm__date-card ._themeButton_xs._themeButton_xs .fas{font-size:10px;color:var(--muted,#94a3b8) !important;}
+.mpwpb-dtm__date-card ._themeButton_xs.mpwpb_item_remove:hover{background:#fee2e2;border-color:#fecaca;color:#dc2626;}
+.mpwpb-dtm__date-card ._themeButton_xs.mpwpb_item_remove:hover .fas{color:#dc2626 !important;}
+.mpwpb-dtm__date-card ._themeButton_xs.mpwpb_sortable_button{cursor:grab;}
+
+.mpwpb-dtm__empty{margin:0;padding:20px 0;text-align:center;font-size:12.5px;color:var(--muted,#94a3b8);}
+
+@media (max-width:900px){
+	.mpwpb-dtm__grid{flex-direction:column;}
+	.mpwpb-dtm__col--side{flex:1 1 auto;width:100%;}
+}

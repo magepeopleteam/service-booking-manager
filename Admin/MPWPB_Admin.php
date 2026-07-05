@@ -47,6 +47,7 @@
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Staff_Member.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings-modern/MPWPB_Categories_Services_Modern.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings-modern/MPWPB_Extra_Service_Modern.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings-modern/MPWPB_Date_Time_Modern.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings-modern/MPWPB_Settings_Modern.php';
 
 				//****************Woocommerce Checkout*********************** */

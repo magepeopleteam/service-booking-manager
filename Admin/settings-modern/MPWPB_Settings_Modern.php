@@ -116,7 +116,7 @@
 						'id' => 'availability',
 						'label' => __('Availability', 'service-booking-manager'),
 						'sections' => array(
-							array('MPWPB_Date_Time_Settings', 'date_time_settings', __('Date & Time', 'service-booking-manager'), __('Available dates, weekly schedule, off days and time slots.', 'service-booking-manager')),
+							array('MPWPB_Date_Time_Modern', 'render', __('Date & Time', 'service-booking-manager'), __('Available dates, weekly schedule, off days and time slots.', 'service-booking-manager')),
 						),
 					),
 					array(
@@ -401,14 +401,16 @@
 			/** Wrap one reused classic section in a modern card. */
 			private function render_section_card($section, $post_id) {
 				list($class, $method, $title, $subtitle) = $section;
-				// This one renders its own full-width card (sidebar + list, not a
-				// simple field form), so it's called directly instead of being
-				// wrapped in the generic card below. It has no constructor side
-				// effects to avoid (unlike the classic sections), so no need to
-				// go through section_instance()'s Reflection-based cache.
-				if ($class === 'MPWPB_Categories_Services_Modern') {
+				// These render their own full-width layout (sidebar + list, or
+				// multiple cards in a custom grid — not a single simple field
+				// form), so they're called directly instead of being wrapped in
+				// the generic card below. Neither has constructor side effects to
+				// avoid (unlike the classic sections), so no need to go through
+				// section_instance()'s Reflection-based cache.
+				$self_rendering = array('MPWPB_Categories_Services_Modern', 'MPWPB_Date_Time_Modern');
+				if (in_array($class, $self_rendering, true)) {
 					if (class_exists($class)) {
-						$instance = new MPWPB_Categories_Services_Modern();
+						$instance = new $class();
 						$instance->$method($post_id);
 					}
 					return;
@@ -590,6 +592,15 @@
 					// rather than duplicating near-identical list/row/modal styles.
 					wp_enqueue_style('mpwpb-extra-service-modern', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb-extra-service-modern.css', array('mpwpb-categories-services-modern'), $this->asset_ver('/assets/admin/mpwpb-extra-service-modern.css'));
 					wp_enqueue_script('mpwpb-extra-service-modern', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb-extra-service-modern.js', array('jquery'), $this->asset_ver('/assets/admin/mpwpb-extra-service-modern.js'), true);
+
+					// Date & Time card layout (Availability step). Self-contained;
+					// only needs the shell's CSS custom properties (--brand, --line,
+					// --ink) from mpwpb-service-edit-modern.css.
+					wp_enqueue_style('mpwpb-datetime-modern', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb-datetime-modern.css', array('mpwpb-service-edit-modern'), $this->asset_ver('/assets/admin/mpwpb-datetime-modern.css'));
+					wp_enqueue_script('mpwpb-datetime-modern', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb-datetime-modern.js', array('jquery'), $this->asset_ver('/assets/admin/mpwpb-datetime-modern.js'), true);
+					wp_localize_script('mpwpb-datetime-modern', 'mpwpbDtm', array(
+						'daysOpenLabel' => esc_html__('Days Open', 'service-booking-manager'),
+					));
 				}
 			}
 		}

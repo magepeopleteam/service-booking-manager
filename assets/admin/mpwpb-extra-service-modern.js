@@ -67,7 +67,7 @@
 			+ (item.desc ? '<p class="mpwpb-csm__row-desc">' + esc(item.desc) + '</p>' : '')
 			+ '</div>'
 			+ '<div class="mpwpb-csm__row-nums">'
-			+ '<span class="mpwpb-csm__row-price">' + esc(item.price) + '</span>'
+			+ '<span class="mpwpb-csm__row-price">' + esc(cfg.currencySymbol || '$') + esc(item.price) + '</span>'
 			+ '<span class="mpwpb-csm__row-dur"><span class="dashicons dashicons-archive"></span>' + esc(item.qty) + '</span>'
 			+ '</div>'
 			+ '<div class="mpwpb-csm__row-acts">'

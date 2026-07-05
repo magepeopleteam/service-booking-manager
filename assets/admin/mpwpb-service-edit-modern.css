@@ -289,12 +289,12 @@ button.mpwpb-sme__btn.mpwpb-sme__btn--primary.mpwpb-sme__split-caret{border-radi
 .mpwpb-sme.mpwpb_style button.mpwpb_add_item{
 	display:inline-flex;align-items:center;gap:6px;margin-top:10px;
 	padding:7px 14px;border-radius:999px;border:1.5px dashed var(--brand);
-	background:transparent;color:var(--brand);font-size:12.5px;font-weight:600;
+	background:var(--brand);color:#fff;font-size:12.5px;font-weight:600;
 	cursor:pointer;transition:.15s;line-height:1;text-transform:none;
 }
 .mpwpb-sme.mpwpb_style ._themeButton_xs_mT_xs:hover,
 .mpwpb-sme.mpwpb_style button.mp_add_item:hover,
-.mpwpb-sme.mpwpb_style button.mpwpb_add_item:hover{background:var(--brand);color:#fff;}
+.mpwpb-sme.mpwpb_style button.mpwpb_add_item:hover{filter:brightness(1.08);}
 
 /* Remove/move row buttons */
 .mpwpb-sme.mpwpb_style .buttonGroup{display:inline-flex;align-items:center;gap:6px;}
