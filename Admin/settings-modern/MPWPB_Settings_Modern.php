@@ -654,6 +654,11 @@
 					wp_localize_script('mpwpb-datetime-modern', 'mpwpbDtm', array(
 						'daysOpenLabel' => esc_html__('Days Open', 'service-booking-manager'),
 					));
+
+					// FAQ (Advanced step). Pure CSS reskin of the classic accordion —
+					// no new JS/PHP; the classic AJAX handlers, TinyMCE-backed modal
+					// and jQuery UI sortable are reused completely unchanged.
+					wp_enqueue_style('mpwpb-faq-modern', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb-faq-modern.css', array('mpwpb-service-edit-modern'), $this->asset_ver('/assets/admin/mpwpb-faq-modern.css'));
 				}
 			}
 		}

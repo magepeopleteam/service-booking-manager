@@ -143,7 +143,11 @@ button.mpwpb-sme__btn.mpwpb-sme__btn--primary.mpwpb-sme__split-caret{border-radi
 /* Panels + cards */
 .mpwpb-sme__panel{display:none;}
 .mpwpb-sme__panel.active{display:block;animation:mpwpbSmeFade .25s ease;}
-@keyframes mpwpbSmeFade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+/* Opacity-only (no transform): a transformed ancestor becomes the
+   containing block for any position:fixed descendant (e.g. the FAQ
+   modal's centered overlay), which would break its viewport-relative
+   centering for the animation's duration. */
+@keyframes mpwpbSmeFade{from{opacity:0;}to{opacity:1;}}
 .mpwpb-sme__postfields{background:#fff;border:1px solid #e2e8f0;border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:visible;margin-bottom:22px;}
 .mpwpb-sme__postfields-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 24px;border-bottom:1px solid var(--band-line);background:linear-gradient(180deg,#fbfcfe,var(--band));border-radius:var(--radius) var(--radius) 0 0;}
 .mpwpb-sme__postfields-header-text{min-width:0;}
@@ -182,7 +186,7 @@ body.mpwpb-sme-active #postdivrich{display:none;}
 /* Body = main column + sticky preview rail */
 .mpwpb-sme__body{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:24px;align-items:start;}
 .mpwpb-sme__main{min-width:0;}
-.mpwpb-sme__rail{position:sticky;top:84px;display:flex;flex-direction:column;gap:18px;}
+.mpwpb-sme__rail{position:sticky;top:84px;z-index:5;display:flex;flex-direction:column;gap:18px;}
 .mpwpb-sme__rail-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;}
 
 /* Featured Image card — title, big preview, text-link actions. */
@@ -232,8 +236,12 @@ body.mpwpb-sme-active #postdivrich{display:none;}
 	.mpwpb-sme__rail-card{flex:1 1 240px;}
 }
 
-/* Sticky bottom navbar */
-.mpwpb-sme__navbar{position:sticky;bottom:0;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border-top:1px solid var(--line);margin-top:8px;}
+/* Sticky bottom navbar. Explicit low z-index: position:sticky always
+   creates its own stacking context (even with z-index:auto), and without
+   an explicit value here it can end up compositing above the FAQ modal's
+   overlay (z-index:100010) depending on where that overlay's containing
+   block resolves, cutting the modal off at this bar. */
+.mpwpb-sme__navbar{position:sticky;bottom:0;z-index:5;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border-top:1px solid var(--line);margin-top:8px;}
 .mpwpb-sme__navinner{max-width:1320px;margin:0 auto;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:14px 26px;}
 .mpwpb-sme__stepof{justify-self:center;font-size:13px;color:var(--muted);font-weight:500;}
 .mpwpb-sme__nav-back{justify-self:start;}
