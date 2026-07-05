@@ -312,9 +312,48 @@
 		$(this).find('.mpwpb_service_button').first().trigger('click');
 	});
 
+	function initExtraServiceDetails($registration) {
+		// extra_services.php's own "View Details" trigger has the exact same
+		// inline-expand-breaks-the-row problem the main list had, fixed the
+		// same way: hover tooltip instead (CSS hides .service-details and
+		// renders .mpwpb-tree-view-details:hover::after -- shared with the
+		// main list). [data-read] is required in the selector because the
+		// "Add" button in this section ALSO carries a (unrelated)
+		// data-collapse-target, used to reveal its own qty stepper -- only
+		// the real "View Details" trigger carries data-read too.
+		$registration.find('.mpwpb_extra_service_item [data-collapse-target][data-read]').each(function () {
+			var $trigger = $(this);
+			if ($trigger.hasClass('mpwpb-tree-view-details')) {
+				return;
+			}
+			var $desc = $trigger.closest('.mpwpb_extra_service_item').find('> .service-details[data-collapse]').first();
+			$trigger
+				.removeAttr('data-collapse-target')
+				.addClass('mpwpb-tree-view-details')
+				.attr('data-tooltip', $desc.length ? $.trim($desc.text()) : '');
+		});
+	}
+
+	// "Proceed to Checkout" is forced always-visible via CSS (see
+	// mpwpb-service-page-modern.css) instead of the plain display:none/
+	// fadeIn toggling mpwpb_registration.js and mpwpb_recurring_booking.js
+	// already do -- this just tracks whether a date/time is actually
+	// selected yet and toggles a class controlling its greyed-out vs solid
+	// look. The real click validation (its own data-alert) is untouched.
+	function updateCheckoutReadyState($registration) {
+		var date = $registration.find('[name="mpwpb_date"]').val();
+		$registration.find('#mpwpb_date_time_next_btn_id').toggleClass('mpwpb-cta-ready', !!date);
+	}
+
+	$(document).on('change', 'div.mpwpb_registration [name="mpwpb_date"]', function () {
+		updateCheckoutReadyState($(this).closest('div.mpwpb_registration'));
+	});
+
 	$(function () {
 		$('div.mpwpb_registration').each(function () {
 			initBookingTree($(this));
+			initExtraServiceDetails($(this));
+			updateCheckoutReadyState($(this));
 		});
 	});
 

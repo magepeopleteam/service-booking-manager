@@ -20,7 +20,7 @@
 
             <button class="_mpBtn_dBR mpActive mpwpb_date_time_prev" type="button" id="mpwpb_display_service_btn">
                 <i class="fas fa-long-arrow-alt-left _mR_xs"></i>
-				<?php echo esc_html__('Previous', 'service-booking-manager') . ' ' . esc_html($service_text); ?>
+				<?php esc_html_e('Back', 'service-booking-manager'); ?>
             </button>
             <h4 class="alignCenter mpwpb-total">
 				<?php esc_html_e('Total :', 'service-booking-manager'); ?>&nbsp;&nbsp;

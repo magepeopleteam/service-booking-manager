@@ -142,14 +142,15 @@ input:checked + .slider:before {
 #mpwpb_recurring_dates_list li {
     padding: 8px;
     margin-bottom: 5px;
-    background-color: #f0f8ff;
+    background-color: #F0FDFA;
     border-radius: 4px;
-    border-left: 3px solid #2196F3;
+    border: 1px solid #ddd;
+    border-left: 2px solid #2196F3;
 }
 
 #mpwpb_recurring_dates_list li:first-child {
-    background-color: #e6f7ff;
-    border-left: 3px solid #0078d7;
+    background-color: #F0FDFA;
+    border-left: 2px solid #0078d7;
     font-weight: bold;
 }
 
@@ -293,8 +294,9 @@ input:checked + .slider:before {
 .mpwpb_recurring_edit_icon,
 .mpwpb_recurring_delete_icon {
     cursor: pointer;
-    font-size: 16px;
-    transition: transform 0.2s ease;
+    font-size: 14px;
+    color: #8a94a6;
+    transition: transform 0.2s ease, color 0.2s ease;
 }
 .mpwpb_recurring_edit_icon:hover {
     color: #0073aa;

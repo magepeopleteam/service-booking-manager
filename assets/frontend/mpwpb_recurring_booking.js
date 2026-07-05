@@ -464,8 +464,8 @@
             li.html(`
             <div>${li.index() + 1} ${formattedDate}</div>
             <div class="mpwpb_recurring_actions">
-                <span class="mpwpb_recurring_edit_icon">✏️</span>
-                <span class="mpwpb_recurring_delete_icon">✖</span>
+                <span class="mpwpb_recurring_edit_icon"><i class="fas fa-pen"></i></span>
+                <span class="mpwpb_recurring_delete_icon"><i class="fas fa-trash"></i></span>
             </div>
         `);
         }

@@ -182,7 +182,7 @@
 .mpwpb-tree-row{
 	display:flex;align-items:center;gap:8px;padding:10px 8px;border-radius:9px;cursor:pointer;user-select:none;
 }
-.mpwpb-tree-cat-row{font-weight:700;color:#1e293b;background:#F0FDFA;}
+.mpwpb-tree-cat-row{font-weight:700;color:#1e293b;background:#F0FDFA;border:1px solid #ede7e7;}
 .mpwpb-tree-cat-row:hover{background:#F0FDFA;}
 .mpwpb-tree-folder-icon{color:var(--mpwpb_color_theme);font-size:14px;flex:0 0 auto;}
 .mpwpb-tree-name{flex:1;min-width:0;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -194,7 +194,7 @@
 .mpwpb-tree-cat.is-open > .mpwpb-tree-children{display:block;}
 .mpwpb-tree-subcat.is-open > .mpwpb-tree-children{display:block;}
 
-.mpwpb-tree-subcat-row{font-size:13px;font-weight:600;color:#334155;border:1px solid #ddd;margin-top:10px;padding:8px 20px 10px 0px;background:#F0FDFA;}
+.mpwpb-tree-subcat-row{font-size:13px;font-weight:600;color:#334155;border:1px solid #ddd;margin-top:10px;margin-bottom:10px;padding:8px 20px 10px 0px;background:#F0FDFA;}
 .mpwpb-tree-subcat-row:hover{background:#d5f7ef;}
 .mpwpb-tree-corner{
 	position:relative;flex:0 0 auto;width:14px;height:14px;margin-right:2px;
@@ -346,17 +346,24 @@
    labels + arrows: each step becomes a thin rounded track, filled solid
    for the active step, empty gray for the rest. */
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_wrapper{
-	background:#fff !important;padding:16px 20px 14px !important;gap:8px !important;
+	background:#fff !important;padding:25px 20px 0px 20px !important;gap:8px !important;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_step{
-	flex:1;height:4px !important;border-radius:999px;background:#e2e8f0;overflow:hidden;
+	position:relative;flex:1;height:4px !important;border-radius:999px;background:#e2e8f0;overflow:visible;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_step.active{
 	background:var(--mpwpb_color_theme);
 }
-.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_circle,
-.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_label{display:none !important;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_circle{display:none !important;}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_arrow{display:none !important;}
+/* Only the active step's name shows, as a small caption sitting above its
+   own segment of the bar (tracks left-to-right as the active step moves
+   from Service -> Date & Time -> Checkout). */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_label{display:none !important;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_step.active .mpwpb_cart_progress_label{
+	display:block !important;position:absolute;left:0;bottom:100%;margin-bottom:6px;
+	font-size:12px;font-weight:700;color:var(--mpwpb_color_theme);white-space:nowrap;
+}
 
 .mpwpb-static-template .sidebar .mpwpb_popup .selection-header h3{font-size:15px !important;}
 .mpwpb-static-template .sidebar .mpwpb_popup .selection-header p{font-size:12.5px !important;}
@@ -367,6 +374,7 @@
 	   the drawer when content is shorter than the viewport, instead of the
 	   body stretching to push it there (see .mpwpb_popup_body above). */
 	margin-top:auto !important;
+	border-top:2px solid #ddd !important;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpd_btn_proceed{
 	flex:0 0 auto;background:var(--mpwpb_color_theme) !important;opacity:1 !important;
@@ -474,10 +482,100 @@
 
 /* Footer: "N selected" label + relabelled Continue button. */
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-selected-label{
-	display:none;font-size:18px;font-weight:600;color:#64748b;margin-right:8px;
+	display:none;font-size:16px;font-weight:600;color:#64748b;margin-right:8px;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .next_service_area .justifyBetween{flex-wrap:wrap;}
-.mpwpb-static-template .sidebar .mpwpb_popup .next_service_area h3{font-size:18px;display:flex;align-items:center;flex-wrap:wrap;}
+.mpwpb-static-template .sidebar .mpwpb_popup .next_service_area h3{font-size:16px;display:flex;align-items:center;flex-wrap:wrap;}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_service_next{
 	background-color:var(--mpwpb_color_theme) !important;border-radius:999px !important;
 }
+
+/* "Proceed to Checkout" -- always visible (overrides the inline
+   style="display:none" / the JS .hide()/.fadeIn() calls tied to the date/
+   time + optional staff-selection flow in mpwpb_registration.js and
+   mpwpb_recurring_booking.js) instead of only appearing once a date/time
+   is picked. It's greyed out and non-interactive-looking by default and
+   only turns solid once a date/time is actually selected (.mpwpb-cta-ready,
+   toggled in mpwpb-booking-tree.js) -- the real validation on click (its
+   existing data-alert) is untouched either way. */
+.mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_date_time_next_btn_id{
+	display:flex !important;border-radius:10px !important;
+	background-color:#00685f !important;opacity:.5;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_date_time_next_btn_id.mpwpb-cta-ready{
+	background-color:var(--mpwpb_color_theme) !important;opacity:1;
+}
+
+button._mpBtn.mActive.booked{
+	background-color:#cbcfcf !important;color:#262626 !important;
+}
+
+h4.alignCenter.mpwpb-total{font-size:16px !important;}
+
+/* -------------------------------------------------------------------- *
+ *  "Choose Extra Features" (extra_services.php) -- modern card rows,
+ *  matching the main tree's look. Markup/classes/click handlers are
+ *  completely untouched; this only restyles what's already there.
+ * -------------------------------------------------------------------- */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_area{
+	background:transparent !important;box-shadow:none !important;margin-top:16px !important;padding:0 !important;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_area > h5{
+	font-size:11px !important;font-weight:800;text-transform:uppercase;letter-spacing:.05em;
+	color:#94a3b8;margin:0 0 8px !important;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item{
+	display:block !important;background:#fff;border:1px solid #e5e9f0;border-radius:10px;
+	padding:10px 12px !important;margin-bottom:8px;transition:.15s;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item:last-child{margin-bottom:0;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item:hover{border-color:var(--mpwpb_color_theme);}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item.mActive{
+	border-color:var(--mpwpb_color_theme);background:var(--mpwpb_color_theme_88,#f6fbfa);
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item .alignCenter > .fas:first-child{
+	flex:0 0 auto;width:26px;height:26px;display:inline-flex !important;align-items:center;justify-content:center;
+	border-radius:50%;background:#F0FDFA;color:var(--mpwpb_color_theme) !important;font-size:11px;margin-right:0 !important;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item h6{font-size:13px;margin:0;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item ._textTheme_min_100{
+	color:var(--mpwpb_color_theme) !important;font-weight:800;font-size:13px;white-space:nowrap;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item .quantity-box{gap:8px;}
+
+/* Qty pill -- same look as the main list's, but scoped to this section's
+   own inner classes (.incQty/.decQty here, not .service_incQty/_decQty). */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item .qtyIncDec{
+	display:flex !important;align-items:center;width:auto !important;max-width:none !important;
+	border:1px solid var(--mpwpb_color_theme) !important;border-radius:999px !important;
+	background:#fff !important;padding:0px !important;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item .qtyIncDec > *{border-left:0 !important;margin:0 !important;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item .addonGroupContent{
+	width:20px !important;height:20px;min-width:20px !important;
+	display:flex !important;align-items:center;justify-content:center;
+	border-radius:50% !important;background:transparent !important;color:var(--mpwpb_color_theme) !important;
+	font-size:9px;cursor:pointer;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item .addonGroupContent:hover{background:#F0FDFA !important;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item .qtyIncDec label{margin:0 !important;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item .inputIncDec{
+	width:24px !important;height:20px;border:0 !important;background:transparent !important;
+	text-align:center !important;font-size:12px;font-weight:700;color:#1e293b;padding:0 !important;
+}
+
+/* "Add" -- small rounded pill, solid teal once added. */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_ex_service_button{
+	display:inline-flex !important;align-items:center;gap:4px;
+	border-radius:999px !important;border:1px solid var(--mpwpb_color_theme) !important;
+	background:#fff !important;padding:5px 12px !important;font-size:11.5px !important;font-weight:700;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_ex_service_button span{color:var(--mpwpb_color_theme) !important;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_ex_service_button.mActive{background:var(--mpwpb_color_theme) !important;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_ex_service_button.mActive span{color:#fff !important;}
+
+/* "View Details" -- same hover-tooltip treatment as the main list
+   (.mpwpb-tree-view-details, added by initExtraServiceDetails() in
+   mpwpb-booking-tree.js); the old inline description is hidden outright. */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item .service-details{display:none !important;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item .mpwpb-tree-view-details{font-size:11px;}
