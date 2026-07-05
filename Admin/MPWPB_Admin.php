@@ -45,6 +45,9 @@
 
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Service_Settings.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Staff_Member.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings-modern/MPWPB_Categories_Services_Modern.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings-modern/MPWPB_Extra_Service_Modern.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings-modern/MPWPB_Settings_Modern.php';
 
 				//****************Woocommerce Checkout*********************** */
 				if (MPWPB_Global_Function::is_wc_payment_mode()) {

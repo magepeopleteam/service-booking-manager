@@ -1,0 +1,249 @@
+/* =====================================================================
+ * Categories & Services (Pricing step)  ·  mpwpb-categories-services-modern.css
+ * Always rendered inside .mpwpb-sme, so it inherits that shell's CSS
+ * custom properties (--brand, --ink, --line, --radius, etc.) rather than
+ * redefining them here.
+ *
+ * The shell also carries the legacy `mpwpb_style` class (so classic JS
+ * elsewhere keeps working), and mpwpb_plugin_global.css has a broad rule
+ * `.mpwpb_style small, .mpwpb_style span, .mpwpb_style strong { display:
+ * inline-block; }` (specificity 0,1,1) that silently wins over any of our
+ * OWN single-class rules on a <span> (0,1,0) regardless of load order —
+ * e.g. `.mpwpb-csm__tree-acts{display:none}` would never actually apply,
+ * so the row's hover-only icons showed permanently, mis-stacked, because
+ * inline-block doesn't establish the flex context their children need.
+ * Every rule below that sets `display` on an element that's a <span> in
+ * the JS-generated markup uses the class twice (`.foo.foo{...}`) to bump
+ * specificity to (0,2,0), which reliably wins regardless of stylesheet
+ * order. Selectors that already combine 2+ classes elsewhere don't need
+ * this (their specificity already wins on its own).
+ * ===================================================================== */
+
+/* The card this lives in needs to be edge-to-edge for the sidebar+list
+   layout, not the usual 20px/24px card padding used by simple field cards. */
+.mpwpb-sme__postfields--full > .mpwpb-sme__postfields-body{padding:0;}
+
+.mpwpb-csm{display:flex;gap:20px;align-items:flex-start;padding:20px;}
+.mpwpb-csm *,
+.mpwpb-csm *::before,
+.mpwpb-csm *::after{box-sizing:border-box;}
+
+/* ---------------------------------------------------------------- *
+ *  Sidebar
+ * ---------------------------------------------------------------- */
+.mpwpb-csm__sidebar{width:320px;flex:0 0 320px;}
+.mpwpb-csm__sidebar-inner{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);padding:10px;}
+
+.mpwpb-csm__side-row{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border-radius:10px;border:0;background:transparent;font-size:13px;color:var(--ink-2);cursor:pointer;text-align:left;margin-bottom:4px;transition:.15s;}
+.mpwpb-csm__side-row:hover{background:var(--band);}
+.mpwpb-csm__side-row.is-active{
+	background:linear-gradient(135deg,var(--brand),var(--brand-600));
+	color:#fff;padding:14px;box-shadow:0 6px 16px var(--brand-ring);
+}
+.mpwpb-csm__side-row .dashicons{font-size:15px;width:15px;height:15px;color:var(--muted);}
+.mpwpb-csm__side-row.is-active .dashicons{color:#fff;font-size:18px;width:18px;height:18px;}
+.mpwpb-csm__side-label{flex:1;font-weight:600;}
+.mpwpb-csm__side-row.is-active .mpwpb-csm__side-label{font-weight:700;font-size:14px;}
+.mpwpb-csm__side-count{border-radius:999px;padding:2px 8px;font-size:11px;font-weight:700;background:var(--band);color:var(--ink-2);}
+.mpwpb-csm__side-row.is-active .mpwpb-csm__side-count{background:rgba(255,255,255,.25);color:#fff;font-size:12px;padding:3px 10px;}
+.mpwpb-csm__side-row.is-muted .mpwpb-csm__side-count{color:var(--muted);background:transparent;}
+
+.mpwpb-csm__side-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:14px 4px 10px;}
+.mpwpb-csm__side-head-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);}
+.mpwpb-csm__side-add{display:flex;align-items:center;gap:5px;border:0;background:var(--brand);color:#fff;font-size:11.5px;font-weight:700;padding:6px 12px;border-radius:999px;cursor:pointer;white-space:nowrap;box-shadow:0 2px 6px var(--brand-ring);}
+button.mpwpb-csm__side-add{font-size:12px;}
+.mpwpb-csm__side-add:hover{filter:brightness(1.08);}
+.mpwpb-csm__side-add .dashicons{font-size:13px;width:13px;height:13px;}
+
+.mpwpb-csm__side-empty{padding:16px 8px;text-align:center;font-size:12px;color:var(--muted);}
+
+.mpwpb-csm__hint{margin:10px 4px 0;font-size:11px;line-height:1.5;color:var(--muted);}
+p.mpwpb-csm__hint {
+	margin-top: 20px !important;
+	font-size: 12px !important;
+}
+.mpwpb-csm__hint strong{color:var(--ink-2);font-weight:600;}
+
+/* Tree */
+.mpwpb-csm__tree-row{display:flex;align-items:center;gap:2px;border-radius:8px;padding-right:6px;padding-top:1px;padding-bottom:1px;cursor:pointer;line-height:1;min-height:30px;}
+.mpwpb-csm__tree-row:hover{background:var(--band);}
+.mpwpb-csm__tree-row.is-active{background:var(--brand);color:#fff;}
+.mpwpb-csm__tree-row.is-sub-row{margin-top:1px;}
+.mpwpb-csm__tree-toggle{display:flex;align-items:center;justify-content:center;width:20px;height:20px;border:0;background:transparent;color:var(--muted);border-radius:5px;flex:0 0 auto;cursor:pointer;line-height:1;}
+.mpwpb-csm__tree-toggle:hover{background:var(--inset);}
+.mpwpb-csm__tree-toggle.is-invisible{visibility:hidden;}
+.mpwpb-csm__tree-row.is-active .mpwpb-csm__tree-toggle{color:rgba(255,255,255,.8);}
+/* Subcategory row's "corner" connector — a small L-shaped tick drawn from
+   two pseudo-elements, self-contained per row (no cross-row measurement). */
+.mpwpb-csm__tree-corner{position:relative;width:20px;height:26px;flex:0 0 auto;}
+.mpwpb-csm__tree-corner::before{content:"";position:absolute;left:9px;top:-3px;width:1px;height:16px;background:var(--line);}
+.mpwpb-csm__tree-corner::after{content:"";position:absolute;left:9px;top:13px;width:8px;height:1px;background:var(--line);}
+.mpwpb-csm__tree-row.is-active .mpwpb-csm__tree-corner::before,
+.mpwpb-csm__tree-row.is-active .mpwpb-csm__tree-corner::after{background:rgba(255,255,255,.5);}
+.mpwpb-csm__tree-btn.mpwpb-csm__tree-btn{display:flex;min-width:0;flex:1;align-items:center;gap:6px;padding:8px 0;border:0;background:transparent;text-align:left;cursor:pointer;color:inherit;line-height:1;}
+.mpwpb-csm__tree-btn .dashicons{display:flex;align-items:center;justify-content:center;font-size:14px;width:14px;height:14px;line-height:1;color:var(--muted);flex:0 0 auto;}
+.mpwpb-csm__tree-row.is-active .mpwpb-csm__tree-btn .dashicons{color:rgba(255,255,255,.8);}
+.mpwpb-csm__tree-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;line-height:1;font-weight:700;}
+.mpwpb-csm__tree-name.is-sub{font-weight:500;font-size:12.5px;}
+.mpwpb-csm__tree-acts.mpwpb-csm__tree-acts{display:none;align-items:center;gap:2px;line-height:1;}
+.mpwpb-csm__tree-row:hover .mpwpb-csm__tree-acts,
+.mpwpb-csm__tree-row.is-active .mpwpb-csm__tree-acts{display:flex;}
+.mpwpb-csm__tree-icon-btn{display:flex;align-items:center;justify-content:center;width:18px;height:18px;border:0;background:transparent;color:var(--muted);opacity:.7;border-radius:5px;cursor:pointer;line-height:1;}
+.mpwpb-csm__tree-icon-btn:hover{background:var(--inset);opacity:1;}
+.mpwpb-csm__tree-row.is-active .mpwpb-csm__tree-icon-btn{color:rgba(255,255,255,.7);opacity:1;}
+.mpwpb-csm__tree-row.is-active .mpwpb-csm__tree-icon-btn:hover{background:rgba(255,255,255,.18);color:#fff;}
+.mpwpb-csm__tree-icon-btn.is-danger:hover{background:#fdecea;color:#b32d2e;opacity:1;}
+.mpwpb-csm__tree-icon-btn .dashicons{display:flex;align-items:center;justify-content:center;font-size:12px;width:12px;height:12px;line-height:1;}
+.mpwpb-csm__tree-count.mpwpb-csm__tree-count{display:flex;align-items:center;justify-content:flex-end;min-width:14px;height:20px;text-align:right;font-size:12px;line-height:1;font-weight:600;color:var(--muted);}
+.mpwpb-csm__tree-count.has-value{color:var(--brand);font-weight:700;}
+.mpwpb-csm__tree-row.is-active .mpwpb-csm__tree-count{color:rgba(255,255,255,.85);}
+.mpwpb-csm__tree-row.is-active .mpwpb-csm__tree-count.has-value{color:#fff;}
+
+/* Persistent "Add subcategory" pill at the bottom of each expanded category's
+   children list — replaces the old hover-only icon button on the row itself. */
+.mpwpb-csm__add-sub-btn{
+	display:flex;align-items:center;gap:6px;margin:4px 6px 6px;
+	border:1.5px dashed var(--brand);background:transparent;color:var(--brand);
+	font-size:12px;font-weight:700;padding:6px 12px;border-radius:999px;cursor:pointer;
+}
+.mpwpb-csm__add-sub-btn:hover{background:var(--brand-soft);}
+.mpwpb-csm__add-sub-btn .dashicons{font-size:13px;width:13px;height:13px;}
+button.mpwpb-csm__add-sub-btn {
+	border: 1px dotted #ddd;
+	font-size: 11px;
+	background: #e9f5ff;
+	margin: 5px;
+}
+
+/* ---------------------------------------------------------------- *
+ *  Main
+ * ---------------------------------------------------------------- */
+.mpwpb-csm__main{flex:1;min-width:0;}
+.mpwpb-csm__header{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;}
+.mpwpb-csm__crumbs{display:flex;align-items:center;gap:6px;flex:1;min-width:0;font-size:13.5px;}
+.mpwpb-csm__crumb{border:0;background:transparent;padding:3px 6px;border-radius:6px;font-size:13.5px;color:var(--muted);cursor:pointer;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mpwpb-csm__crumb:hover{background:var(--band);}
+.mpwpb-csm__crumb.is-last{color:var(--ink);font-weight:700;}
+.mpwpb-csm__crumb-sep{color:var(--muted);font-size:13px;}
+.mpwpb-csm__count-badge{border-radius:999px;background:var(--band);color:var(--ink-2);font-size:11px;font-weight:600;padding:2px 9px;}
+
+.mpwpb-csm__search{position:relative;}
+.mpwpb-csm__search .dashicons{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:14px;width:14px;height:14px;color:var(--muted);pointer-events:none;}
+.mpwpb-csm__search input{width:220px;border:1px solid var(--line);border-radius:9px;background:var(--surface);padding:7px 10px 7px 30px;font-size:13px;color:var(--ink);}
+/* mpwpb-service-edit-modern.css's generic form-control rule
+   (.mpwpb-sme.mpwpb_style input[type=text]{padding:10px 15px}) has higher
+   specificity (2 classes + a type+attribute selector) than a plain
+   .mpwpb-csm__search input rule, so it silently won the padding and pushed
+   the search icon and typed text on top of each other. !important forces
+   this one to actually win instead of just being dead code. */
+.mpwpb-csm__search input{padding:10px 40px !important;}
+.mpwpb-csm__search input:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-ring);}
+
+.mpwpb-csm__add-btn{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:9px;background:var(--brand);color:#fff;font-size:13px;font-weight:600;padding:8px 14px;cursor:pointer;white-space:nowrap;}
+.mpwpb-csm__add-btn:hover{filter:brightness(1.06);}
+.mpwpb-csm__add-btn .dashicons{font-size:15px;width:15px;height:15px;}
+
+/* List */
+.mpwpb-csm__list{display:flex;flex-direction:column;gap:8px;}
+.mpwpb-csm__row{display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);padding:12px 14px;}
+.mpwpb-csm__row:hover{box-shadow:var(--shadow-sm);}
+.mpwpb-csm__row-main{flex:1;min-width:0;}
+.mpwpb-csm__row-top{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;}
+.mpwpb-csm__row-name{font-size:13.5px;font-weight:700;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:260px;}
+.mpwpb-csm__row-desc{margin:3px 0 0;font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mpwpb-csm__chip{display:inline-flex;align-items:center;border:0;background:var(--band);color:var(--ink-2);border-radius:999px;padding:2px 9px;font-size:11px;font-weight:600;cursor:pointer;}
+.mpwpb-csm__chip:hover{background:var(--brand-soft);color:var(--brand-600);}
+button.mpwpb-csm__chip {
+	font-size: 12px;
+}
+.mpwpb-csm__chip-sep{color:var(--muted);font-size:10px;}
+.mpwpb-csm__chip--none{background:transparent;border:1px dashed var(--line);color:var(--muted);}
+.mpwpb-csm__chip--none:hover{border-color:var(--brand);color:var(--brand-600);}
+
+.mpwpb-csm__row-nums{display:flex;flex:0 0 auto;align-items:center;gap:16px;font-size:13px;}
+.mpwpb-csm__row-price{width:64px;text-align:right;font-weight:700;color:var(--ink);}
+.mpwpb-csm__row-dur.mpwpb-csm__row-dur{display:flex;align-items:center;gap:4px;width:64px;color:var(--muted);}
+.mpwpb-csm__row-dur .dashicons{font-size:13px;width:13px;height:13px;}
+
+.mpwpb-csm__row-acts{display:flex;flex:0 0 auto;align-items:center;gap:2px;opacity:0;transition:opacity .12s;}
+.mpwpb-csm__row:hover .mpwpb-csm__row-acts,
+.mpwpb-csm__row-acts:focus-within{opacity:1;}
+.mpwpb-csm__icon-btn{display:flex;align-items:center;justify-content:center;width:28px;height:28px;border:0;background:transparent;color:var(--muted);border-radius:7px;cursor:pointer;}
+.mpwpb-csm__icon-btn:hover{background:var(--band);color:var(--ink);}
+.mpwpb-csm__icon-btn.is-danger:hover{background:#fdecea;color:#b32d2e;}
+.mpwpb-csm__icon-btn .dashicons{font-size:15px;width:15px;height:15px;}
+
+/* Empty state */
+.mpwpb-csm__empty{display:flex;flex-direction:column;align-items:center;text-align:center;border:1px dashed var(--line);border-radius:var(--radius);background:var(--surface);padding:44px 24px;}
+.mpwpb-csm__empty .dashicons{font-size:30px;width:30px;height:30px;color:var(--muted);margin-bottom:8px;}
+.mpwpb-csm__empty-title{font-size:13.5px;font-weight:700;color:var(--ink);}
+.mpwpb-csm__empty-sub{margin:4px 0 0;font-size:12px;color:var(--muted);}
+
+@media(max-width:900px){
+	.mpwpb-csm{flex-direction:column;}
+	.mpwpb-csm__sidebar{width:100%;flex:1 1 auto;}
+}
+
+/* ---------------------------------------------------------------- *
+ *  Modals (Add/Edit Service, Add Category, Confirm Delete)
+ * ---------------------------------------------------------------- */
+.mpwpb-csm__overlay{position:fixed;inset:0;z-index:100010;display:flex;align-items:center;justify-content:center;background:rgba(15,23,42,.45);padding:16px;}
+.mpwpb-csm__modal{width:100%;max-width:440px;background:#fff;border-radius:14px;box-shadow:0 20px 60px rgba(15,23,42,.25);overflow:hidden;font-family:'Inter',system-ui,sans-serif;}
+.mpwpb-csm__modal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line);}
+.mpwpb-csm__modal-title{font-size:14.5px;font-weight:700;color:var(--ink);}
+.mpwpb-csm__modal-close{border:0;background:transparent;color:var(--muted);cursor:pointer;padding:3px;border-radius:6px;display:flex;}
+.mpwpb-csm__modal-close:hover{background:var(--band);color:var(--ink);}
+.mpwpb-csm__modal-body{padding:18px 20px;max-height:66vh;overflow-y:auto;}
+.mpwpb-csm__modal-body p{margin:4px 0 0;font-size:12.5px;color:var(--muted);}
+.mpwpb-csm__modal-foot{display:flex;justify-content:flex-end;gap:8px;padding:14px 20px;border-top:1px solid var(--line);}
+.mpwpb-csm__modal-btn{border:0;border-radius:9px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;background:transparent;color:var(--ink-2);}
+.mpwpb-csm__modal-btn:hover{background:var(--band);}
+.mpwpb-csm__modal-btn--primary{background:var(--brand);color:#fff;}
+.mpwpb-csm__modal-btn--primary:hover{filter:brightness(1.06);}
+.mpwpb-csm__modal-btn--primary:disabled{opacity:.4;cursor:not-allowed;filter:none;}
+.mpwpb-csm__modal-btn--danger{background:#dc2626;color:#fff;}
+.mpwpb-csm__modal-btn--danger:hover{filter:brightness(1.08);}
+.mpwpb-csm__modal-error{margin:0 0 12px;padding:8px 12px;border-radius:8px;background:#fdecea;color:#b32d2e;font-size:12.5px;}
+
+/* mpwpb_plugin_global.css has `.mpwpb_style label{display:flex;align-items:
+   center;flex-wrap:nowrap;}` (0,1,1) which otherwise beats a single-class
+   rule here (0,1,0) on every <label> — turning each stacked "label above
+   input" field into a squeezed horizontal row. Doubled for (0,2,0). */
+.mpwpb-csm__field.mpwpb-csm__field{display:block;margin-bottom:14px;}
+.mpwpb-csm__field:last-child{margin-bottom:0;}
+.mpwpb-csm__field-label.mpwpb-csm__field-label{display:flex;align-items:baseline;gap:5px;font-size:12px;font-weight:600;color:var(--ink-2);margin-bottom:5px;}
+.mpwpb-csm__field-optional{font-weight:400;color:var(--muted);}
+.mpwpb-csm__field-hint.mpwpb-csm__field-hint{display:block;margin-top:6px;font-size:11px;line-height:1.5;color:var(--muted);}
+.mpwpb-csm__field input[type=text],
+.mpwpb-csm__field input[type=number],
+.mpwpb-csm__field textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:9px 11px;font-size:13px;color:var(--ink);background:#fff;font-family:inherit;}
+.mpwpb-csm__field input:focus,
+.mpwpb-csm__field textarea:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-ring);}
+.mpwpb-csm__field textarea{resize:none;}
+/* Hide the native up/down spinner so the Price box matches the clean,
+   spinner-free look of the other fields instead of looking mismatched. */
+.mpwpb-csm__field input[type=number]::-webkit-inner-spin-button,
+.mpwpb-csm__field input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+.mpwpb-csm__field input[type=number]{-moz-appearance:textfield;}
+.mpwpb-csm__grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+.mpwpb-csm__pick-list{max-height:180px;overflow-y:auto;border:1px solid var(--line);border-radius:9px;}
+.mpwpb-csm__pick-row{display:flex;align-items:center;gap:8px;width:100%;border:0;border-bottom:1px solid var(--band-line);background:transparent;text-align:left;padding:8px 10px;font-size:13px;color:var(--ink-2);cursor:pointer;}
+.mpwpb-csm__pick-row:last-child{border-bottom:0;}
+.mpwpb-csm__pick-row:hover{background:var(--band);}
+.mpwpb-csm__pick-row.is-active{background:var(--brand-soft);color:var(--brand-600);}
+.mpwpb-csm__pick-row .dashicons{font-size:14px;width:14px;height:14px;color:var(--muted);}
+.mpwpb-csm__pick-row.is-active .dashicons{color:var(--brand);}
+.mpwpb-csm__pick-check{margin-left:auto;color:var(--brand);}
+/* Same hierarchy convention as the sidebar tree: top-level names are bold,
+   subcategory names are lighter/smaller with a corner-branch connector
+   instead of a plain arrow, so the picker reads as a tree, not a flat list. */
+.mpwpb-csm__pick-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mpwpb-csm__pick-name--top{font-weight:700;color:var(--ink);}
+.mpwpb-csm__pick-row.is-active .mpwpb-csm__pick-name{color:inherit;font-weight:700;}
+.mpwpb-csm__pick-row--sub{padding-left:14px;}
+.mpwpb-csm__pick-row--sub .mpwpb-csm__pick-name{font-weight:400;color:var(--ink-2);font-size:12.5px;}
+.mpwpb-csm__pick-row--sub.is-active .mpwpb-csm__pick-name{color:var(--brand-600);}
+.mpwpb-csm__pick-corner{position:relative;width:16px;height:32px;flex:0 0 auto;}
+.mpwpb-csm__pick-corner::before{content:"";position:absolute;left:7px;top:-9px;width:1px;height:18px;background:var(--line);}
+.mpwpb-csm__pick-corner::after{content:"";position:absolute;left:7px;top:9px;width:7px;height:1px;background:var(--line);}

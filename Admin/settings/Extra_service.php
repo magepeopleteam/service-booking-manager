@@ -392,8 +392,9 @@
 				$extra_services = $this->get_extra_services($post_id);
 				if (!empty($extra_services)) {
 					if (isset($_POST['itemId'])) {
+						// Not array_values()-reindexed on purpose — same stable-id fix
+						// applied to services/categories (see Category.php/Service.php).
 						unset($extra_services[sanitize_text_field(wp_unslash($_POST['itemId']))]);
-						$extra_services = array_values($extra_services);
 					}
 				}
 				$result = update_post_meta($post_id, 'mpwpb_extra_service', $extra_services);
