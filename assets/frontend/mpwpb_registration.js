@@ -291,18 +291,22 @@ function mpwpb_price_calculation($this) {
         let current = $(this);
         let parent = current.closest('div.mpwpb_registration');
         let category = parseInt(current.data('category'));
+        let service = parseInt(current.data('service'));
         load_service_tab(parent);
-        if (category && category > 0) {
-            parent.find('.mpwpb_category_item').each(function () {
-                if (parseInt($(this).data('category')) === category) {
-                    $(this).trigger('click');
-                }
-            });
-        } else {
-            let service = parseInt(current.data('service'));
+        // A leaf service box (data-service set) should pre-select that exact
+        // service directly -- checked before the category-only branch, since
+        // every real service leaf also carries its parent data-category and
+        // would otherwise only reveal the category without selecting anything.
+        if (service && service > 0) {
             parent.find('.mpwpb_service_item').each(function () {
                 if (parseInt($(this).data('service')) === service) {
                     $(this).find('.mpwpb_service_button').trigger('click');
+                }
+            });
+        } else if (category && category > 0) {
+            parent.find('.mpwpb_category_item').each(function () {
+                if (parseInt($(this).data('category')) === category) {
+                    $(this).trigger('click');
                 }
             });
         }

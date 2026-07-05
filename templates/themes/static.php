@@ -15,6 +15,7 @@
         <header style="background-image: url('<?php echo esc_url(get_the_post_thumbnail_url()); ?>');">
             <div class="template-header">
                 <div class="header-content">
+                    <span class="mpwpb-hero-eyebrow"><i class="fas fa-store"></i> <?php echo esc_html(get_bloginfo('name')); ?></span>
                     <h2><?php the_title(); ?></h2>
                     <!-- dispaly service static page reatings using this hook -->
 					<?php do_action('mpwpb_service_show_ratings'); ?>

@@ -5,8 +5,15 @@
 	$post_id = $post_id ?? get_the_id();
 	$service_text = $service_text ?? MPWPB_Function::get_service_text($post_id);
 	$all_services = $all_services ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
-	$all_category = $all_category ?? MPWPB_Function::get_category($post_id);
-	$all_sub_category = $all_sub_category ?? MPWPB_Function::get_sub_category($post_id);
+	// Not MPWPB_Function::get_category()/get_sub_category() -- those read the
+	// legacy, unused 'mpwpb_category_infos' meta shape. Pre-seeding these two
+	// variable names with that (always-empty) legacy data blocked every child
+	// template's own `?? get_post_info(...)` fallback from ever running,
+	// since `??` only triggers on null/unset, not on an already-empty array.
+	// That silently broke the category/sub-category picker and hid the
+	// Continue button below on every post using the current data model.
+	$all_category = $all_category ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_category_service', array());
+	$all_sub_category = $all_sub_category ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_sub_category_service', array());
 	$all_service_list = $all_service_list ?? MPWPB_Function::get_all_service($post_id);
 	$extra_services = $extra_services ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', array());
 	$title = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_shortcode_title');
@@ -71,8 +78,8 @@
                                     </div>
 
                                     <div class="selection-header">
-                                        <h3><?php esc_html_e('Select Service Type', 'service-booking-manager'); ?></h3>
-                                        <p><?php esc_html_e('Choose the perfect wash for your vehicle', 'service-booking-manager'); ?></p>
+                                        <h3><?php esc_html_e('Your services', 'service-booking-manager'); ?></h3>
+                                        <p><?php esc_html_e('Tick services from any category — use the −/+ control to set quantity.', 'service-booking-manager'); ?></p>
                                     </div>
 
 

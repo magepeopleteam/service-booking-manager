@@ -1,0 +1,483 @@
+/* =====================================================================
+ * Front-end single service page — modern redesign
+ * mpwpb-service-page-modern.css
+ *
+ * Visual redesign of the "static" front-end template's hero, tab bar,
+ * Overview/FAQ/Details sections. Reuses the existing markup produced by
+ * Frontend/MPWPB_Static_Template.php and templates/themes/static.php —
+ * only new sub-sections added there (stats/how-it-works/checklist/
+ * guarantee/hours) are net-new markup; the FAQ accordion's real
+ * slideToggle behavior (assets/frontend/mpwpb_registration.js:751-756)
+ * and the booking widget/popup are completely untouched by this file.
+ * Uses the plugin's own configurable --mpwpb_color_theme (default
+ * #00685f, a dark teal) as the accent, so this adapts to whatever brand
+ * color a site has configured rather than hardcoding one.
+ * Scoped under .mpwpb-static-template so the (separate, older)
+ * .mpwpb-default-template layout is not affected.
+ * ===================================================================== */
+
+.mpwpb-static-template{--mpwpb-sp-radius:14px;}
+.mpwpb-static-template *,
+.mpwpb-static-template *::before,
+.mpwpb-static-template *::after{box-sizing:border-box;}
+
+/* -------------------------------------------------------------------- *
+ *  Hero
+ * -------------------------------------------------------------------- */
+.mpwpb-static-template.mpwpb_registration > header{
+	background-color:var(--mpwpb_color_theme);background-size:cover;background-position:center;position:relative;overflow:hidden;
+}
+.mpwpb-static-template.mpwpb_registration > header::before{
+	background:linear-gradient(120deg,var(--mpwpb_color_theme_ee,rgba(0,0,0,.75)) 20%,var(--mpwpb_color_theme_cc,rgba(0,0,0,.55)) 70%);
+}
+.mpwpb-static-template .mpwpb-hero-eyebrow{
+	display:inline-flex;align-items:center;gap:8px;color:#fff;opacity:.85;
+	font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+}
+.mpwpb-static-template.mpwpb_registration > header h2{
+	font-size:clamp(28px,4vw,44px);font-weight:800;margin:12px 0 14px;line-height:1.1;
+}
+.mpwpb-static-template .ratings{
+	background:rgba(255,255,255,.16) !important;border:1px solid rgba(255,255,255,.3);
+	backdrop-filter:blur(4px);font-size:13px !important;
+}
+.mpwpb-static-template.mpwpb_registration > header ul.features{margin:22px 0 6px !important;}
+.mpwpb-static-template.mpwpb_registration > header ul.features li{
+	display:flex;align-items:center;gap:10px;font-size:14px !important;margin:8px 0 !important;
+}
+.mpwpb-static-template.mpwpb_registration > header ul.features li i{
+	display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;flex:0 0 auto;
+	border-radius:999px;background:rgba(255,255,255,.16);font-size:12px;margin-right:0 !important;color:#fff;
+}
+.mpwpb-static-template.mpwpb_registration > header .view_more{
+	font-size:13px;font-weight:700;text-decoration:underline;text-underline-offset:3px;opacity:.9;cursor:pointer;
+}
+
+/* -------------------------------------------------------------------- *
+ *  Tab bar — reused .mpwpb-details-page-tab / nav markup, restyled as a
+ *  sticky pill switcher; the active tab is now driven by real JS
+ *  (mpwpb-service-page-modern.js) instead of the previously-dead handler.
+ * -------------------------------------------------------------------- */
+.mpwpb-static-template .mpwpb-details-page-tab,
+.mpwpb-static-template nav.mpwpb-details-page-tab{
+	position:sticky;top:8px;z-index:5;background:#fff !important;border:1px solid #eef1f6;
+	border-radius:12px;box-shadow:0 1px 3px rgba(15,23,42,.06);padding:6px !important;margin-bottom:24px !important;
+}
+.mpwpb-static-template nav ul{gap:4px !important;}
+.mpwpb-static-template nav ul li{flex:1;font-size:13.5px !important;}
+.mpwpb-static-template nav ul li a{
+	border-radius:9px;padding:10px 14px !important;font-weight:600;color:#475569;transition:.15s;
+}
+.mpwpb-static-template nav ul li a:hover{background:#f8fafc;color:var(--mpwpb_color_theme);}
+.mpwpb-static-template nav ul li.active a,
+.mpwpb-static-template nav ul li a.mpwpb-tab-active{
+	background-color:var(--mpwpb_color_theme) !important;color:#fff !important;
+}
+
+/* -------------------------------------------------------------------- *
+ *  Section shells
+ * -------------------------------------------------------------------- */
+.mpwpb-static-template section#service-overview,
+.mpwpb-static-template section#service-faq,
+.mpwpb-static-template section#service-details{scroll-margin-top:80px;}
+.mpwpb-static-template section#service-overview > h2,
+.mpwpb-static-template section#service-faq > h2,
+.mpwpb-static-template section#service-details > h2{
+	font-size:19px !important;font-weight:800;color:var(--mpwpb_color_theme) !important;border-bottom:0 !important;margin:0 0 16px !important;
+}
+
+/* Stats cards */
+.mpwpb-overview-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0;}
+.mpwpb-overview-stat{
+	text-align:center;padding:16px 10px;border:1px solid #e5e9f0;border-radius:var(--mpwpb-sp-radius);background:#fff;
+}
+.mpwpb-overview-stat-num{margin:0;font-size:20px;font-weight:800;color:var(--mpwpb_color_theme);}
+.mpwpb-overview-stat-label{margin:4px 0 0;font-size:11.5px;color:#8892a4;}
+
+.mpwpb-overview-subhead{font-size:14.5px;font-weight:700;color:#1e293b;margin:28px 0 12px;}
+
+/* How it works */
+.mpwpb-how-it-works{border:1px solid #e5e9f0;border-radius:var(--mpwpb-sp-radius);overflow:hidden;background:#fff;}
+.mpwpb-how-step{display:flex;gap:14px;padding:16px;border-bottom:1px solid #f1f4f9;}
+.mpwpb-how-step:last-child{border-bottom:0;}
+.mpwpb-how-step-num{
+	flex:0 0 auto;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;
+	border-radius:999px;background:var(--mpwpb_color_theme);color:#fff;font-weight:800;font-size:13px;
+}
+.mpwpb-how-step-title{margin:0;display:flex;align-items:center;gap:7px;font-size:14px;font-weight:700;color:#1e293b;}
+.mpwpb-how-step-title i{color:var(--mpwpb_color_theme);font-size:13px;}
+.mpwpb-how-step-desc{margin:4px 0 0;font-size:13px;color:#64748b;line-height:1.5;}
+
+/* Included checklist */
+.mpwpb-included-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.mpwpb-included-item{
+	display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px solid #e5e9f0;border-radius:10px;background:#fff;
+	font-size:13.5px;color:#334155;
+}
+.mpwpb-included-item i{
+	flex:0 0 auto;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;
+	border-radius:999px;background:var(--mpwpb_color_theme_88,rgba(0,0,0,.1));color:var(--mpwpb_color_theme);font-size:10px;
+}
+
+/* Guarantee banner */
+.mpwpb-guarantee-banner{
+	display:flex;align-items:center;gap:16px;margin-top:28px;padding:18px;border-radius:var(--mpwpb-sp-radius);
+	background:var(--mpwpb_color_theme);color:#fff;
+}
+.mpwpb-guarantee-icon{
+	flex:0 0 auto;width:42px;height:42px;display:inline-flex;align-items:center;justify-content:center;
+	border-radius:999px;background:rgba(255,255,255,.16);font-size:19px;
+}
+.mpwpb-guarantee-title{margin:0;font-size:14px;font-weight:800;}
+.mpwpb-guarantee-text{margin:3px 0 0;font-size:12.5px;color:rgba(255,255,255,.85);line-height:1.5;}
+
+/* Hours */
+.mpwpb-hours-strip{
+	display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin-top:14px;
+	padding:13px 16px;border:1px solid #e5e9f0;border-radius:12px;background:#fff;
+}
+.mpwpb-hours-open{margin:0;display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:700;color:#334155;}
+.mpwpb-hours-open i{color:var(--mpwpb_color_theme);}
+.mpwpb-hours-time{margin:0;font-size:13px;color:#64748b;}
+
+/* -------------------------------------------------------------------- *
+ *  FAQ — reused .mpwpb-serivice-faq / .faq-header / .faq-content markup
+ *  and the existing slideToggle behavior, restyled as row cards with a
+ *  circular +/- badge.
+ * -------------------------------------------------------------------- */
+.mpwpb-static-template .mpwpb-serivice-faq{
+	border:1px solid #e5e9f0;border-radius:12px;overflow:hidden;background:#fff;margin-bottom:10px;
+}
+.mpwpb-static-template .mpwpb-serivice-faq .faq-header{
+	display:flex;align-items:center;gap:12px;padding:15px 16px !important;margin:0 !important;font-size:13.5px;font-weight:700;color:#1e293b;
+}
+.mpwpb-static-template .mpwpb-serivice-faq .faq-header i{
+	flex:0 0 auto;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;
+	border-radius:999px;background:var(--mpwpb_color_theme_88,rgba(0,0,0,.1));color:var(--mpwpb_color_theme);font-size:10px;margin:0 !important;
+}
+.mpwpb-static-template .mpwpb-serivice-faq .faq-content{
+	padding:0 16px 16px 50px !important;font-size:13px;color:#64748b;line-height:1.6;
+}
+
+/* -------------------------------------------------------------------- *
+ *  Details — free-text WYSIWYG block; just tighten typography.
+ * -------------------------------------------------------------------- */
+.mpwpb-static-template #service-details{font-size:13.5px;color:#475569;line-height:1.6;}
+
+/* -------------------------------------------------------------------- *
+ *  "Our services" sidebar tree (templates/registration/
+ *  category_selection_static.php). Leaf rows keep the classic
+ *  .mpwpb_item_box class/data-attributes so the existing click handler
+ *  (mpwpb_registration.js:290-309) still opens the booking popup/drawer
+ *  and simulates the real selection click inside it — this stylesheet
+ *  and mpwpb-service-tree.js only add the always-expanded tree look and
+ *  its own local expand/collapse state, nothing selection-related.
+ * -------------------------------------------------------------------- */
+.mpwpb-tree-header{margin-bottom:12px;}
+.mpwpb-tree-header h4{margin:0 0 4px;font-size:15px;font-weight:800;color:#1e293b;padding-bottom:0px !important;}
+.mpwpb-tree-header p{margin:0;font-size:12px;color:#94a3b8;line-height:1.4;}
+.mpwpb_static_area .mpwpb_static_registration h4{padding-bottom:0px !important;}
+
+.mpwpb-service-tree{display:flex;flex-direction:column;gap:6px;}
+.mpwpb-tree-row{
+	display:flex;align-items:center;gap:8px;padding:10px 8px;border-radius:9px;cursor:pointer;user-select:none;
+}
+.mpwpb-tree-cat-row{font-weight:700;color:#1e293b;background:#F0FDFA;}
+.mpwpb-tree-cat-row:hover{background:#F0FDFA;}
+.mpwpb-tree-folder-icon{color:var(--mpwpb_color_theme);font-size:14px;flex:0 0 auto;}
+.mpwpb-tree-name{flex:1;min-width:0;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mpwpb-tree-count{flex:0 0 auto;font-size:11px;color:#94a3b8;font-weight:600;}
+.mpwpb-tree-chevron{flex:0 0 auto;font-size:11px;color:#94a3b8;transition:transform .15s;}
+.mpwpb-tree-cat.is-open > .mpwpb-tree-cat-row .mpwpb-tree-chevron,
+.mpwpb-tree-subcat.is-open > .mpwpb-tree-subcat-row .mpwpb-tree-chevron{transform:rotate(180deg);}
+.mpwpb-tree-children{display:none;padding-left:0px;margin-top:2px;}
+.mpwpb-tree-cat.is-open > .mpwpb-tree-children{display:block;}
+.mpwpb-tree-subcat.is-open > .mpwpb-tree-children{display:block;}
+
+.mpwpb-tree-subcat-row{font-size:13px;font-weight:600;color:#334155;border:1px solid #ddd;margin-top:10px;padding:8px 20px 10px 0px;background:#F0FDFA;}
+.mpwpb-tree-subcat-row:hover{background:#d5f7ef;}
+.mpwpb-tree-corner{
+	position:relative;flex:0 0 auto;width:14px;height:14px;margin-right:2px;
+}
+.mpwpb-tree-corner::before{
+	content:"";position:absolute;left:6px;top:-12px;bottom:7px;width:1px;background:#e2e8f0;
+}
+.mpwpb-tree-corner::after{
+	content:"";position:absolute;left:6px;top:7px;width:8px;height:1px;background:#e2e8f0;
+}
+
+.mpwpb-tree-service{
+	/* Everything (checkbox, name, duration, price, tap-hint) now sits on a
+	   single line, so plain vertical centering is correct here. line-height:1
+	   here overrides whatever taller line-height this row would otherwise
+	   inherit, so it can't throw off the centering of any child text/icon. */
+	display:flex;align-items:center;line-height:1;gap:10px;padding:11px 12px;margin-bottom:6px;
+	border:1px solid #e5e9f0;border-radius:10px;background:#fff;cursor:pointer;transition:.15s;
+}
+.mpwpb-tree-service:last-child{margin-bottom:0;}
+.mpwpb-tree-service:hover{border-color:var(--mpwpb_color_theme);background:var(--mpwpb_color_theme_88,#f8fafc);}
+.mpwpb-tree-service.mpActive{border-color:var(--mpwpb_color_theme);background:var(--mpwpb_color_theme_88,#f6fbfa);}
+
+/* Quick-add checkbox -- proxies to the real service's own button
+   (mpwpb-service-tree.js), state mirrored via the .mpActive class this
+   script adds to .mpwpb-tree-service itself. */
+.mpwpb-tree-checkbox{
+	position:relative;flex:0 0 auto;width:20px;height:20px;border-radius:50%;
+	border:2px solid #cbd5e1;background:#fff;transition:.15s;
+}
+.mpwpb-tree-service.mpActive .mpwpb-tree-checkbox{
+	border-color:var(--mpwpb_color_theme);background:var(--mpwpb_color_theme);
+}
+.mpwpb-tree-service.mpActive .mpwpb-tree-checkbox::after{
+	content:"\f00c";font-family:"Font Awesome 5 Free";font-weight:900;color:#fff;font-size:10px;
+	position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+}
+
+.mpwpb-tree-service-main{flex:0 1 auto;min-width:0;display:flex;align-items:center;line-height:1;gap:8px;overflow:hidden;}
+.mpwpb-tree-service-name{flex:0 1 auto;min-width:0;font-size:13px;font-weight:700;line-height:1;color:#1e293b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* line-height:1 on both the wrapper and the icon keeps the clock glyph
+   from sitting a few px higher/lower than the "1h 30m" text baseline --
+   the default line-height a browser gives a small icon font can otherwise
+   throw it out of line with plain text next to it. */
+.mpwpb-tree-duration{flex:0 0 auto;display:inline-flex;align-items:center;line-height:1;gap:4px;font-size:10.5px;color:#94a3b8;white-space:nowrap;}
+/* The icon is turned into its own small centered flex box (fixed width/
+   height, glyph centered inside via its own flex context) rather than
+   relying on inline-text metrics -- icon fonts carry built-in
+   ascent/descent padding that inline/vertical-align tweaks don't fully
+   cancel out, which is what kept nudging it off the "1h 30m" baseline. */
+.mpwpb-tree-duration i{
+	color:#94a3b8 !important;font-size:8px;line-height:1;
+	display:inline-flex !important;align-items:center;justify-content:center;
+	width:9px;height:9px;flex:0 0 auto;
+}
+
+/* margin-left:auto pushes price + tap-hint flush right on the same line
+   as the checkbox/name/duration, instead of stacking below them. */
+.mpwpb-tree-service-side{flex:0 0 auto;margin-left:auto;display:flex;align-items:center;gap:8px;}
+.mpwpb-tree-price{font-size:13px;font-weight:800;color:var(--mpwpb_color_theme);white-space:nowrap;}
+.mpwpb-tree-tap-hint{font-size:10px;color:#94a3b8;white-space:nowrap;}
+
+/* No click action anymore -- description shows as a small CSS tooltip on
+   hover instead (mpwpb-booking-tree.js sets data-tooltip to the text). */
+.mpwpb-tree-view-details{
+	position:relative;display:inline-block;cursor:help;
+	color:#94a3b8;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:2px;
+	transition:color .15s;
+}
+.mpwpb-tree-view-details:hover{color:var(--mpwpb_color_theme);}
+/* :not([data-tooltip=""]) guards against an empty box with no text ever
+   showing (e.g. if a description somehow came through blank). */
+.mpwpb-tree-view-details:not([data-tooltip=""]):hover::after{
+	content:attr(data-tooltip);
+	position:absolute;left:0;top:100%;margin-top:6px;z-index:20;
+	display:block;width:max-content;max-width:220px;white-space:normal;
+	background:#1e293b;color:#fff !important;font-size:11px;font-weight:400;line-height:1.4;
+	text-decoration:none;padding:8px 10px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.15);
+	pointer-events:none;
+}
+
+.mpwpb-service-tree--flat .mpwpb-tree-service{margin-bottom:8px;}
+
+@media(max-width:640px){
+	.mpwpb-overview-stats,
+	.mpwpb-included-grid{grid-template-columns:1fr;}
+}
+
+/* -------------------------------------------------------------------- *
+ *  Booking popup -> right-side slide-in drawer.
+ *  Scoped to .mpwpb-static-template .sidebar .mpwpb_popup (the exact
+ *  precedent already used by mpwpb_registration.css for this popup).
+ *  Only restyles the existing overlay/main-area/header/body/footer
+ *  boxes into a docked full-height panel; the show/hide mechanism
+ *  itself (display:none -> .in{display:flex}, mp_global/assets/
+ *  mp_style/mpwpb_plugin_global.js) and every inner picker/date-time/
+ *  cart/checkout element are completely untouched.
+ * -------------------------------------------------------------------- */
+.mpwpb-static-template .sidebar .mpwpb_popup{
+	align-items:stretch !important;justify-content:flex-end !important;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_popup_main_area{
+	margin:0 !important;width:100% !important;max-width:560px !important;min-width:0 !important;
+	top:30px !important;
+	height:100vh !important;max-height:96vh !important;border-radius:0 !important;
+	box-shadow:-8px 0 30px rgba(15,23,42,.18) !important;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup.in .mpwpb_popup_main_area{
+	animation:mpwpbDrawerIn .32s cubic-bezier(.16,1,.3,1);
+}
+@keyframes mpwpbDrawerIn{
+	from{transform:translateX(36px);opacity:0;}
+	to{transform:translateX(0);opacity:1;}
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_popup_header{
+	position:relative;border-radius:0 !important;padding:22px 46px 18px 22px !important;flex:0 0 auto;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_popup_header h5{font-size:19px !important;text-align:left !important;font-weight:800;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_popup_header p{font-size:12.5px !important;text-align:left !important;opacity:.85;margin-top:4px !important;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_popup_close{
+	/* Pushed down past the WordPress admin toolbar (fixed at the very top
+	   of the viewport, same as this drawer) so it doesn't sit hidden/half
+	   -covered behind it for logged-in users. */
+	position:absolute !important;top:30px !important;right:16px !important;width:30px !important;height:30px !important;
+	border-radius:999px !important;background:rgba(255,255,255,.18) !important;font-size:13px !important;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_popup_close:hover{background:rgba(255,255,255,.3) !important;}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_popup_body{
+	/* flex-grow:0 (not 1) so short content isn't stretched to fill the full
+	   100vh drawer -- that left a large dead area painted in this element's
+	   own #f5f7fa background before the docked footer. flex-shrink stays so
+	   long content still yields to the header/footer and scrolls internally. */
+	flex:0 1 auto !important;min-height:0 !important;padding:0 !important;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_popup_body .mpwpb-popup-content{
+	flex-direction:column !important;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .service-items{width:100% !important;padding:16px !important;}
+/* Redundant now: the unified tree already shows checked state inline and
+   the footer already shows the live total + "N selected" -- this separate
+   list of every possible service (shown/hidden via inline style as each is
+   toggled) is pure visual duplication in the new design, not a data source
+   anything else reads. */
+.mpwpb-static-template .sidebar .mpwpb_popup .service-cart{display:none !important;}
+
+/* Step indicator -- plain 3-segment bar instead of numbered circles +
+   labels + arrows: each step becomes a thin rounded track, filled solid
+   for the active step, empty gray for the rest. */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_wrapper{
+	background:#fff !important;padding:16px 20px 14px !important;gap:8px !important;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_step{
+	flex:1;height:4px !important;border-radius:999px;background:#e2e8f0;overflow:hidden;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_step.active{
+	background:var(--mpwpb_color_theme);
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_circle,
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_label{display:none !important;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_arrow{display:none !important;}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .selection-header h3{font-size:15px !important;}
+.mpwpb-static-template .sidebar .mpwpb_popup .selection-header p{font-size:12.5px !important;}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .popupFooter{
+	flex:0 0 auto !important;background:#fff !important;
+	/* Docks the footer (and the Continue button after it) to the bottom of
+	   the drawer when content is shorter than the viewport, instead of the
+	   body stretching to push it there (see .mpwpb_popup_body above). */
+	margin-top:auto !important;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpd_btn_proceed{
+	flex:0 0 auto;background:var(--mpwpb_color_theme) !important;opacity:1 !important;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpd_btn_proceed:hover{filter:brightness(.92);}
+
+@media(max-width:640px){
+	.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_popup_main_area{max-width:100vw !important;}
+}
+
+/* -------------------------------------------------------------------- *
+ *  Popup's inner picker -> unified checkbox-tree (mpwpb-booking-tree.js).
+ *  The old two-stage category-card + flat-service-list markup is left
+ *  completely intact for its real click handlers/hidden inputs -- it is
+ *  just hidden here. Real .mpwpb_service_item nodes get relocated (not
+ *  duplicated) into the tree built by that script and gain the
+ *  .mpwpb-tree-service-row class restyled below; the tree's own header
+ *  rows reuse the .mpwpb-tree-* rules already defined above for the
+ *  sidebar tree, for visual consistency between sidebar and popup.
+ * -------------------------------------------------------------------- */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_category_area,
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_without_cat_service_area,
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_service_area,
+.mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_selected_control{
+	display:none !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-booking-tree{margin-top:14px;}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-quick-options{margin-top:10px;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-quick-label{
+	font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#94a3b8;
+	padding:6px 8px 4px;
+}
+
+/* Relocated real .mpwpb_service_item, restyled as a flat checkbox row.
+   Its old card CSS (border/background/padding scoped through the now-
+   hidden .mpwpb_service_area ancestor) no longer applies once moved out,
+   so this is a from-scratch look rather than an override. */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row{
+	position:relative;display:flex !important;align-items:center;gap:10px;
+	margin:0 0 9px 15px;padding:10px 12px !important;border:1px solid #e5e9f0;border-radius:10px;background:#fff;
+	transition:.15s;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row:last-child{margin-bottom:0;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row.mpActive{
+	border-color:#3a5856;background:#F0FDFA;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row > ._dFlex{width:100%;display:flex !important;align-items:center;gap:10px;cursor:pointer;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row h6{font-size:13px;margin:0;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row .quantity-box{gap:8px;}
+/* The real button now sits at the front of the row (relocateService() in
+   mpwpb-booking-tree.js), no longer a DOM sibling of the qty stepper --
+   the real click handler's $this.siblings('.mpwpb_service_inc_dec_holder')
+   reveal no longer finds it, so visibility is driven directly off this
+   row's own .mActive class instead (set correctly regardless of the
+   button's position, since it's added via .closest('.mpwpb_service_item')). */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row .mpwpb_service_inc_dec_holder{
+	display:none !important;min-width:0 !important;width:auto !important;margin:0 !important;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row.mpActive .mpwpb_service_inc_dec_holder{
+	display:block !important;
+}
+/* Rounded pill stepper (-  qty  +), overriding the base bordered/divided
+   groupContent look for a compact, seamless capsule matching the mockup. */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row .qtyIncDec{
+	display:flex !important;align-items:center;width:auto !important;max-width:none !important;
+	border:1px solid var(--mpwpb_color_theme) !important;border-radius:999px !important;
+	background:#fff !important;padding:0px !important;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row .qtyIncDec > *{
+	border-left:0 !important;margin:0 !important;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row .addonGroupContent{
+	width:20px !important;height:20px;min-width:20px !important;flex:0 0 auto;
+	display:flex !important;align-items:center;justify-content:center;
+	border-radius:50% !important;background:transparent !important;color:var(--mpwpb_color_theme) !important;
+	font-size:9px;cursor:pointer;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row .addonGroupContent:hover{
+	background:var(--mpwpb_color_theme_88,#f0f9f8) !important;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row .qtyIncDec label{margin:0 !important;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row .inputIncDec{
+	width:24px !important;height:20px;border:0 !important;background:transparent !important;
+	text-align:center !important;font-size:12px;font-weight:700;color:#1e293b;padding:0 !important;
+}
+
+/* The real Add/Added button, restyled into a small circular checkbox --
+   same element, same .mpwpb_service_button click handler and .mActive
+   toggle from mpwpb_registration.js, moved to the front of the row (see
+   relocateService() in mpwpb-booking-tree.js) and purely reskinned here. */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row .mpwpb_service_button{
+	width:26px !important;height:26px;min-width:0 !important;padding:0 !important;flex:0 0 auto;
+	border-radius:50% !important;border:2px solid #cbd5e1 !important;background:#fff !important;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row .mpwpb_service_button span{display:none !important;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row .mpwpb_service_button.mActive{
+	border-color:var(--mpwpb_color_theme) !important;background:var(--mpwpb_color_theme) !important;position:relative;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row .mpwpb_service_button.mActive::after{
+	content:"\f00c";font-family:"Font Awesome 5 Free";font-weight:900;color:#fff;font-size:10px;
+	position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+}
+
+/* Footer: "N selected" label + relabelled Continue button. */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-selected-label{
+	display:none;font-size:18px;font-weight:600;color:#64748b;margin-right:8px;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .next_service_area .justifyBetween{flex-wrap:wrap;}
+.mpwpb-static-template .sidebar .mpwpb_popup .next_service_area h3{font-size:18px;display:flex;align-items:center;flex-wrap:wrap;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_service_next{
+	background-color:var(--mpwpb_color_theme) !important;border-radius:999px !important;
+}

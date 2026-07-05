@@ -144,8 +144,9 @@
 				<?php
 			}
 			public function show_service_overview() {
-				$service_overview_status = get_post_meta(get_the_ID(), 'mpwpb_service_overview_status', true);
-				$service_overview_content = get_post_meta(get_the_ID(), 'mpwpb_service_overview_content', true);
+				$post_id = get_the_ID();
+				$service_overview_status = get_post_meta($post_id, 'mpwpb_service_overview_status', true);
+				$service_overview_content = get_post_meta($post_id, 'mpwpb_service_overview_content', true);
 				if ($service_overview_status === 'on'):
 					?>
                     <section id="service-overview">
@@ -156,9 +157,150 @@
 							// Re-running wp_kses_post() here would strip admin-authored <style>/CSS.
 							echo do_shortcode($service_overview_content); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 						?>
+						<?php $this->show_overview_stats($post_id); ?>
+						<?php $this->show_how_it_works(); ?>
+						<?php $this->show_included_checklist(); ?>
+						<?php $this->show_guarantee_banner(); ?>
+						<?php $this->show_hours($post_id); ?>
                     </section>
 				<?php
 				endif;
+			}
+
+			/**
+			 * Real, computed numbers — not decorative placeholders: total
+			 * bookings made against this service, its configured time-slot
+			 * length, and how many bookable services it offers (including
+			 * ones nested under categories/sub-categories).
+			 */
+			private function show_overview_stats($post_id) {
+				$bookings = get_posts(array(
+					'post_type' => 'mpwpb_booking',
+					'posts_per_page' => -1,
+					'fields' => 'ids',
+					'meta_key' => 'mpwpb_id',
+					'meta_value' => $post_id,
+				));
+				$booking_count = count($bookings);
+				$time_slot_length = (int) MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_time_slot_length', 0);
+				// Not MPWPB_Function::get_all_service() — that reads the older,
+				// unused 'mpwpb_category_infos' meta shape. Real service data
+				// (confirmed against live posts) lives in 'mpwpb_service', the
+				// same flat array the booking widget itself reads from.
+				$service_count = count(MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service', array()));
+				?>
+                <div class="mpwpb-overview-stats">
+                    <div class="mpwpb-overview-stat">
+                        <p class="mpwpb-overview-stat-num"><?php echo esc_html($booking_count > 0 ? number_format_i18n($booking_count) . '+' : '—'); ?></p>
+                        <p class="mpwpb-overview-stat-label"><?php esc_html_e('Bookings completed', 'service-booking-manager'); ?></p>
+                    </div>
+                    <div class="mpwpb-overview-stat">
+                        <p class="mpwpb-overview-stat-num"><?php echo esc_html($time_slot_length > 0 ? $time_slot_length . ' ' . __('min', 'service-booking-manager') : '—'); ?></p>
+                        <p class="mpwpb-overview-stat-label"><?php esc_html_e('Typical slot length', 'service-booking-manager'); ?></p>
+                    </div>
+                    <div class="mpwpb-overview-stat">
+                        <p class="mpwpb-overview-stat-num"><?php echo esc_html($service_count); ?></p>
+                        <p class="mpwpb-overview-stat-label"><?php esc_html_e('Services offered', 'service-booking-manager'); ?></p>
+                    </div>
+                </div>
+				<?php
+			}
+
+			/**
+			 * Static, business-agnostic copy (this plugin isn't limited to
+			 * car washes) describing the same 3-step flow every booking
+			 * follows here, regardless of what's being booked.
+			 */
+			private function show_how_it_works() {
+				$steps = array(
+					array('fas fa-sliders-h', __('Pick your service', 'service-booking-manager'), __('Browse the categories on the right and choose one or more services.', 'service-booking-manager')),
+					array('fas fa-calendar-alt', __('Choose a time slot', 'service-booking-manager'), __('Book a day and time that suits you — slots are confirmed instantly.', 'service-booking-manager')),
+					array('fas fa-check-double', __("We'll take it from there", 'service-booking-manager'), __('Complete your details at checkout and your booking is set.', 'service-booking-manager')),
+				);
+				?>
+                <h3 class="mpwpb-overview-subhead"><?php esc_html_e('How it works', 'service-booking-manager'); ?></h3>
+                <div class="mpwpb-how-it-works">
+					<?php foreach ($steps as $i => $step): ?>
+                        <div class="mpwpb-how-step">
+                            <span class="mpwpb-how-step-num"><?php echo esc_html($i + 1); ?></span>
+                            <div class="mpwpb-how-step-body">
+                                <p class="mpwpb-how-step-title"><i class="<?php echo esc_attr($step[0]); ?>"></i> <?php echo esc_html($step[1]); ?></p>
+                                <p class="mpwpb-how-step-desc"><?php echo esc_html($step[2]); ?></p>
+                            </div>
+                        </div>
+					<?php endforeach; ?>
+                </div>
+				<?php
+			}
+
+			private function show_included_checklist() {
+				$items = array(
+					__('Instant booking confirmation', 'service-booking-manager'),
+					__('Flexible rescheduling', 'service-booking-manager'),
+					__('Secure online payment', 'service-booking-manager'),
+					__('No hidden fees', 'service-booking-manager'),
+					__('Friendly, responsive support', 'service-booking-manager'),
+					__('Satisfaction guaranteed', 'service-booking-manager'),
+				);
+				?>
+                <h3 class="mpwpb-overview-subhead"><?php esc_html_e('Included with every booking', 'service-booking-manager'); ?></h3>
+                <div class="mpwpb-included-grid">
+					<?php foreach ($items as $item): ?>
+                        <div class="mpwpb-included-item"><i class="fas fa-check"></i> <span><?php echo esc_html($item); ?></span></div>
+					<?php endforeach; ?>
+                </div>
+				<?php
+			}
+
+			private function show_guarantee_banner() {
+				?>
+                <div class="mpwpb-guarantee-banner">
+                    <span class="mpwpb-guarantee-icon"><i class="fas fa-shield-alt"></i></span>
+                    <div>
+                        <p class="mpwpb-guarantee-title"><?php esc_html_e('Our commitment', 'service-booking-manager'); ?></p>
+                        <p class="mpwpb-guarantee-text"><?php esc_html_e("If anything about your booking isn't right, reach out and we'll make it right.", 'service-booking-manager'); ?></p>
+                    </div>
+                </div>
+				<?php
+			}
+
+			/**
+			 * Real configured hours (per-day start/end times + off days),
+			 * simplified to the default schedule + a list of closed days
+			 * rather than a full day-by-day breakdown.
+			 */
+			private function show_hours($post_id) {
+				$default_start = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_default_start_time', '');
+				$default_end = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_default_end_time', '');
+				if ($default_start === '' || $default_end === '') {
+					return;
+				}
+				$off_days = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_off_days', '');
+				$off_day_keys = array_filter(explode(',', (string) $off_days));
+				$days = MPWPB_Global_Function::week_day();
+				$open_days = array();
+				foreach ($days as $key => $day) {
+					if (!in_array($key, $off_day_keys, true)) {
+						$open_days[] = $day;
+					}
+				}
+				?>
+                <div class="mpwpb-hours-strip">
+                    <p class="mpwpb-hours-open">
+                        <i class="fas fa-clock"></i>
+						<?php echo esc_html(!empty($open_days) ? implode(', ', $open_days) : __('By appointment', 'service-booking-manager')); ?>
+                    </p>
+                    <p class="mpwpb-hours-time"><?php echo esc_html($this->format_hour($default_start) . ' – ' . $this->format_hour($default_end)); ?></p>
+                </div>
+				<?php
+			}
+
+			private function format_hour($hour) {
+				if ($hour === '' || $hour === null) {
+					return '';
+				}
+				$use_24hour = MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'time_format_24hour', 'no');
+				return $use_24hour === 'yes' ? date_i18n('H:i', $hour * 3600) : date_i18n('h:i A', $hour * 3600);
 			}
 			public function show_service_faq() {
 				$mpwpb_faq = get_post_meta(get_the_ID(), 'mpwpb_faq', true);

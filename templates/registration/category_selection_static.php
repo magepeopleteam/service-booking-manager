@@ -40,53 +40,133 @@
         }
     }
 
-	if (sizeof($all_category) > 0) {
-		foreach ($all_category as $cat_key => $category) {
-			$category_icon = array_key_exists('icon', $category) ? $category['icon'] : '';
-			$category_image = array_key_exists('image', $category) ? $category['image'] : '';
-
-            if( in_array( $cat_key, $filtered_sub_category ) || in_array( $cat_key, $filtered_parent_cat ) ){
+	/**
+	 * Always-visible category/sub-category/service tree (replaces the old
+	 * click-to-drill-down cards). Leaf service nodes keep the exact same
+	 * .mpwpb_item_box class + data-category/data-sub-category/data-service
+	 * attributes as before, so the existing click handler (assets/frontend/
+	 * mpwpb_registration.js:290-309) still opens the booking popup and
+	 * simulates the matching real selection click inside it, completely
+	 * unchanged. Category/sub-category rows are new — they only toggle
+	 * expand/collapse locally (assets/frontend/mpwpb-service-tree.js), they
+	 * never open the popup themselves.
+	 */
+	if (!function_exists('mpwpb_service_leaf')) {
+		function mpwpb_service_leaf($post_id, $svc_key, $service_item, $cat_attr, $sub_attr) {
+			$service_name = array_key_exists('name', $service_item) ? $service_item['name'] : '';
+			$price = array_key_exists('price', $service_item) ? $service_item['price'] : 0;
+			$wc_price = MPWPB_Global_Function::wc_price($post_id, $price);
+			$duration = array_key_exists('duration', $service_item) ? $service_item['duration'] : '';
 			?>
-            <div class="mpwpb_item_box" data-category="<?php echo esc_attr($cat_key + 1); ?>" data-target-popup="#mpwpb_static_popup">
-                <div class="alignCenter">
-					<?php if ($category_icon) { ?>
-                        <span class="<?php echo esc_attr($category_icon); ?> _mR_xs"></span>
-					<?php } ?>
-					<?php if ($category_image) { ?>
-                        <div class="bg_image_area">
-                            <div data-bg-image="<?php echo esc_attr(MPWPB_Global_Function::get_image_url('', $category_image, 'medium')); ?>"></div>
-                        </div>
-					<?php } ?>
-                    <h2><?php echo esc_html($category['name']); ?></h2>
-                </div>
-                <i class="fas fa-chevron-right mpwpb_item_check"></i>
-            </div>
-		<?php }
-        }
-	} else {
-		if (sizeof($all_services) > 0) {
-			foreach ($all_services as $key => $service_item) {
-				$category_name = array_key_exists('parent_cat', $service_item) && ($service_item['parent_cat'] || $service_item['parent_cat'] == 0) ? (int)$service_item['parent_cat'] + 1 : '';
-				$sub_category_name = array_key_exists('sub_cat', $service_item) && ($service_item['sub_cat'] || $service_item['sub_cat'] == 0) ? (int)$service_item['sub_cat'] + 1 : '';
-				$service_name = array_key_exists('name', $service_item) ? $service_item['name'] : '';
-				$service_image = array_key_exists('image', $service_item) ? $service_item['image'] : '';
-				$service_icon = array_key_exists('icon', $service_item) ? $service_item['icon'] : '';
-
-                ?>
-                <div class="mpwpb_item_box" data-target-popup="#mpwpb_static_popup" data-category="<?php echo esc_attr($category_name); ?>" data-sub-category="<?php echo esc_attr($sub_category_name); ?>" data-service="<?php echo esc_attr($key + 1); ?>">
-                <div class="alignCenter">
-	                <?php if ($service_icon) { ?>
-                        <span class="<?php echo esc_attr($service_icon); ?> _mR_xs"></span>
-	                <?php } ?>
-	                <?php if ($service_image) { ?>
-                        <div class="bg_image_area">
-                            <div data-bg-image="<?php echo esc_attr(MPWPB_Global_Function::get_image_url('', $service_image, 'medium')); ?>"></div>
-                        </div>
-	                <?php } ?>
-                    <h2><?php echo esc_html($service_name); ?></h2>
-                </div>
-                    <i class="fas fa-chevron-right mpwpb_item_check"></i>
-                </div>
-			<?php }
+	        <div class="mpwpb_item_box mpwpb-tree-service" data-target-popup="#mpwpb_static_popup" data-category="<?php echo esc_attr($cat_attr); ?>" data-sub-category="<?php echo esc_attr($sub_attr); ?>" data-service="<?php echo esc_attr($svc_key + 1); ?>">
+	            <span class="mpwpb-tree-checkbox" data-tree-checkbox></span>
+	            <span class="mpwpb-tree-service-main">
+	                <span class="mpwpb-tree-service-name"><?php echo esc_html($service_name); ?></span>
+					<?php if ($duration) { ?><span class="mpwpb-tree-duration"><i class="fas fa-clock"></i> <?php echo wp_kses_post($duration); ?></span><?php } ?>
+	            </span>
+	            <span class="mpwpb-tree-service-side">
+	                <span class="mpwpb-tree-price"><?php echo wp_kses_post($wc_price); ?></span>
+	                <span class="mpwpb-tree-tap-hint" data-tree-tap-hint><?php esc_html_e('Tap to add', 'service-booking-manager'); ?></span>
+	            </span>
+	        </div>
+			<?php
 		}
+	}
+
+	if (sizeof($all_category) > 0 || sizeof($all_services) > 0) { ?>
+		<div class="mpwpb-tree-header">
+			<h4><?php esc_html_e('Our services', 'service-booking-manager'); ?></h4>
+			<p><?php esc_html_e('Tap a service to start booking. You can add more inside.', 'service-booking-manager'); ?></p>
+		</div>
+	<?php }
+
+	if (sizeof($all_category) > 0) {
+		// Group services under their category / sub-category (raw 0-based
+		// array indices as keys — the +1 display convention is applied only
+		// when rendering data-category/data-sub-category attributes below).
+		$tree = array();
+		foreach ($all_category as $cat_key => $category) {
+			// Loose comparison intentional: parent_cat/cat_id are stored as
+			// numeric strings ("0", "1"...) while $cat_key is always an int.
+			if (in_array($cat_key, $filtered_sub_category) || in_array($cat_key, $filtered_parent_cat)) {
+				$tree[$cat_key] = array(
+					'name' => array_key_exists('name', $category) ? $category['name'] : '',
+					'own_services' => array(),
+					'subcats' => array(),
+				);
+			}
+		}
+		if (sizeof($all_sub_category) > 0) {
+			foreach ($all_sub_category as $sub_key => $sub_item) {
+				$cat_id = array_key_exists('cat_id', $sub_item) && $sub_item['cat_id'] !== '' ? (int) $sub_item['cat_id'] : null;
+				if ($cat_id !== null && isset($tree[$cat_id])) {
+					$tree[$cat_id]['subcats'][$sub_key] = array(
+						'name' => array_key_exists('name', $sub_item) ? $sub_item['name'] : '',
+						'services' => array(),
+					);
+				}
+			}
+		}
+		foreach ($all_services as $svc_key => $svc) {
+			$parent = array_key_exists('parent_cat', $svc) && $svc['parent_cat'] !== '' && $svc['parent_cat'] !== null ? (int) $svc['parent_cat'] : null;
+			$sub = array_key_exists('sub_cat', $svc) && $svc['sub_cat'] !== '' && $svc['sub_cat'] !== null ? (int) $svc['sub_cat'] : null;
+			if ($parent === null || !isset($tree[$parent])) {
+				continue;
+			}
+			if ($sub !== null && isset($tree[$parent]['subcats'][$sub])) {
+				$tree[$parent]['subcats'][$sub]['services'][$svc_key] = $svc;
+			} else {
+				$tree[$parent]['own_services'][$svc_key] = $svc;
+			}
+		}
+		?>
+        <div class="mpwpb-service-tree">
+			<?php foreach ($tree as $cat_key => $cat_node):
+				$own_count = sizeof($cat_node['own_services']);
+				$sub_total = 0;
+				foreach ($cat_node['subcats'] as $sub_node) { $sub_total += sizeof($sub_node['services']); }
+				$total_count = $own_count + $sub_total;
+				if ($total_count < 1) { continue; }
+				?>
+                <div class="mpwpb-tree-cat">
+                    <div class="mpwpb-tree-row mpwpb-tree-cat-row" data-tree-toggle>
+                        <i class="fas fa-folder mpwpb-tree-folder-icon"></i>
+                        <span class="mpwpb-tree-name"><?php echo esc_html($cat_node['name']); ?></span>
+                        <span class="mpwpb-tree-count"><?php echo esc_html($total_count); ?></span>
+                        <i class="fas fa-chevron-down mpwpb-tree-chevron"></i>
+                    </div>
+                    <div class="mpwpb-tree-children">
+						<?php foreach ($cat_node['own_services'] as $svc_key => $svc) {
+							mpwpb_service_leaf($post_id, $svc_key, $svc, $cat_key + 1, '');
+						} ?>
+						<?php foreach ($cat_node['subcats'] as $sub_key => $sub_node):
+							$sub_count = sizeof($sub_node['services']);
+							if ($sub_count < 1) { continue; }
+							?>
+                            <div class="mpwpb-tree-subcat">
+                                <div class="mpwpb-tree-row mpwpb-tree-subcat-row" data-tree-toggle>
+                                    <span class="mpwpb-tree-corner"></span>
+                                    <span class="mpwpb-tree-name"><?php echo esc_html($sub_node['name']); ?></span>
+                                    <span class="mpwpb-tree-count"><?php echo esc_html($sub_count); ?></span>
+                                    <i class="fas fa-chevron-down mpwpb-tree-chevron"></i>
+                                </div>
+                                <div class="mpwpb-tree-children mpwpb-tree-children--sub">
+									<?php foreach ($sub_node['services'] as $svc_key => $svc) {
+										mpwpb_service_leaf($post_id, $svc_key, $svc, $cat_key + 1, $sub_key + 1);
+									} ?>
+                                </div>
+                            </div>
+						<?php endforeach; ?>
+                    </div>
+                </div>
+			<?php endforeach; ?>
+        </div>
+	<?php } else {
+		if (sizeof($all_services) > 0) { ?>
+        <div class="mpwpb-service-tree mpwpb-service-tree--flat">
+			<?php foreach ($all_services as $key => $service_item) {
+				mpwpb_service_leaf($post_id, $key, $service_item, '', '');
+			} ?>
+        </div>
+	<?php }
 	}

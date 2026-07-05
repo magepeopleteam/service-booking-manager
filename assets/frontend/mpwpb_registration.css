@@ -849,7 +849,7 @@ div.registration_tab_item {
   width: 100%;
   max-width: 1160px;
   margin: auto;
-  padding: 20vh 10px;
+  padding: 10vh 10px;
 }
 .mpwpb_registration > header .template-header .header-content {
   z-index: 1;
@@ -1393,7 +1393,8 @@ div.registration_tab_item {
   background-color:#fff;
   padding: 15px;
   border-radius: 10px;
-  box-shadow: 0 0 5px #333;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03);
   margin: 10px;
 }
 
@@ -1471,8 +1472,8 @@ div.registration_tab_item {
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  padding:20px;
-  margin-bottom: 10px;
+  padding: 15px 5px;
+  margin-bottom: 5px;
   position: relative;
   color: var(--d_color);
   border-radius: 5px;
