@@ -100,8 +100,9 @@
 						'id' => 'general',
 						'label' => __('General', 'service-booking-manager'),
 						'sections' => array(
-							array('MPWPB_General_Settings', 'general_settings', __('General Information', 'service-booking-manager'), __('Shortcode, title, sub title and display template for this service.', 'service-booking-manager')),
-							array('MPWPB_Service_Details', 'service_details', __('Service Details', 'service-booking-manager'), __('Feature list, overview and details content shown on the service page.', 'service-booking-manager')),
+							array('MPWPB_General_Settings', 'general_settings', __('Customer Reviews', 'service-booking-manager'), __('Rating, scale and review count shown for this service.', 'service-booking-manager')),
+							array('MPWPB_Service_Features_Modern', 'render', __('Service Feature Details', 'service-booking-manager'), __('Highlight key features of this service.', 'service-booking-manager')),
+							array('MPWPB_Service_Details', 'service_details', __('Service Details', 'service-booking-manager'), __('Overview and details content shown on the service page.', 'service-booking-manager')),
 						),
 					),
 					array(
@@ -124,7 +125,6 @@
 						'label' => __('Advanced', 'service-booking-manager'),
 						'sections' => array(
 							array('MPWPB_Faq_Settings', 'faq_settings', __('FAQ', 'service-booking-manager'), __('Frequently asked questions shown on the service page.', 'service-booking-manager')),
-							array('Service_Settings', 'service_settings', __('Service Settings', 'service-booking-manager'), __('Multiple category / multiple service selection behavior.', 'service-booking-manager')),
 						),
 					),
 				);
@@ -217,6 +217,15 @@
 				wp_nonce_field('mpwpb_nonce', 'mpwpb_nonce');
 				?>
 				<input type="hidden" name="mpwpb_sme_post_id" value="<?php echo esc_attr($post_id); ?>"/>
+				<?php
+				/* Service_Settings' "Enable Multiple Category Check" / "Enable
+				 * Multiple Service Select" toggles have no card in the modern
+				 * wizard — always submitted as "on" via hidden fields instead
+				 * (Classic mode's own card with real toggles is untouched and
+				 * still fully functional there). */
+				?>
+				<input type="hidden" name="mpwpb_service_multiple_category_check" value="on"/>
+				<input type="hidden" name="mpwpb_multiple_service_select" value="on"/>
 				<?php // The mpwpb_style class keeps classic JS (tabs, collapse, sortable, datepicker) working for the reused sections. ?>
 				<div class="mpwpb-sme mpwpb_style" id="mpwpb-sme" data-total="<?php echo esc_attr($total); ?>" data-step="general">
 
@@ -326,6 +335,23 @@
 						<div class="mpwpb-sme__feat-acts">
 							<button type="button" class="mpwpb-sme__feat-link" data-sme-feat-set><?php echo esc_html($thumb_id ? __('Change image', 'service-booking-manager') : __('Set image', 'service-booking-manager')); ?></button>
 							<button type="button" class="mpwpb-sme__feat-link mpwpb-sme__feat-link--rm" data-sme-feat-remove style="<?php echo $thumb_id ? '' : 'display:none'; ?>"><?php esc_html_e('Remove', 'service-booking-manager'); ?></button>
+						</div>
+					</div>
+
+					<?php
+					/* "Add To Cart Form Shortcode" (read-only display) + "Service
+					 * template" (real <select name="mpwpb_template">) — relocated
+					 * here by JS from MPWPB_General_Settings::general_settings()'s
+					 * card in the General step (still rendered normally there
+					 * first, untouched), so mpwpb_template still submits exactly
+					 * once. */
+					?>
+					<div class="mpwpb-sme__rail-card mpwpb-sme__rail-card--loading">
+						<?php $this->render_rail_card_skeleton('info'); ?>
+						<div class="mpwpb-sme__feat-head"><?php esc_html_e('Shortcode &amp; Template', 'service-booking-manager'); ?></div>
+						<div class="mpwpb-sme__rail-field-list">
+							<div class="mpwpb-sme__field-slot" data-sme-shortcode-slot></div>
+							<div class="mpwpb-sme__field-slot" data-sme-template-slot></div>
 						</div>
 					</div>
 
@@ -441,24 +467,29 @@
 			}
 
 			/**
-			 * "Post Title" / "Service Title" / "Service Sub Title" /
-			 * "Service Overview" fields, placed at the top of the General
-			 * step. #mpwpb-sme-title-inline just mirrors the real #title
-			 * input (kept in sync by JS, same as the topbar title). Service
-			 * Title, Service Sub Title (from MPWPB_General_Settings::
-			 * general_settings()'s card further down this step) and Service
-			 * Overview content (from MPWPB_Service_Details::
-			 * service_details(), likewise) are all relocated here by JS —
-			 * those methods render normally, unchanged, in their own cards
-			 * first; JS then moves the real <input>/<textarea> DOM nodes up
-			 * here (so each field still submits exactly once) and removes
-			 * the now-empty wrapper left behind, so nothing shows twice in
-			 * one step. Service Overview has no visible toggle here — the
-			 * modern editor always submits mpwpb_service_overview_status=on
-			 * via a hidden field (Classic mode's own real toggle is
-			 * untouched and still fully functional there).
-			 * WordPress' native post_content editor (#postdivrich) is not
-			 * used by the modern editor at all; it's hidden via CSS instead.
+			 * "Post Title" / "Service Sub Title" / "Service Overview"
+			 * fields, placed at the top of the General step.
+			 * #mpwpb-sme-title-inline just mirrors the real #title input
+			 * (kept in sync by JS, same as the topbar title). Service Sub
+			 * Title (from MPWPB_General_Settings::general_settings()'s card
+			 * further down this step) and Service Overview content (from
+			 * MPWPB_Service_Details::service_details(), likewise) are
+			 * relocated here by JS — those methods render normally,
+			 * unchanged, in their own cards first; JS then moves the real
+			 * <textarea> DOM node up here (so each field still submits
+			 * exactly once) and removes the now-empty wrapper left behind,
+			 * so nothing shows twice in one step. Service Title isn't shown
+			 * in the modern editor at all — a hidden field preserves its
+			 * existing value unchanged (Classic mode's own field is
+			 * untouched and still fully editable there); the classic
+			 * .service-title section is removed by JS from wherever it
+			 * would otherwise render. Service Overview has no visible
+			 * toggle here — the modern editor always submits
+			 * mpwpb_service_overview_status=on via a hidden field (Classic
+			 * mode's own real toggle is untouched and still fully
+			 * functional there). WordPress' native post_content editor
+			 * (#postdivrich) is not used by the modern editor at all; it's
+			 * hidden via CSS instead.
 			 */
 			private function render_post_fields_subsection($post_id) {
 				$title = get_the_title($post_id);
@@ -474,10 +505,8 @@
 						</div>
 						<input type="text" class="formControl" id="mpwpb-sme-title-inline" value="<?php echo esc_attr($title); ?>" placeholder="<?php esc_attr_e('Service name', 'service-booking-manager'); ?>"/>
 
-						<div class="mpwpb-sme__subsection-label">
-							<label><?php esc_html_e('Service Title', 'service-booking-manager'); ?></label>
-						</div>
-						<div class="mpwpb-sme__field-slot" data-sme-service-title-slot></div>
+						<?php // Service Title isn't shown in the modern editor — its existing value is preserved unchanged on save (Classic mode's own field is untouched and still fully editable there). ?>
+						<input type="hidden" name="mpwpb_shortcode_title" value="<?php echo esc_attr(MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_shortcode_title')); ?>"/>
 
 						<div class="mpwpb-sme__subsection-label">
 							<label><?php esc_html_e('Service Sub Title', 'service-booking-manager'); ?></label>

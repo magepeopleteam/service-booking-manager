@@ -211,6 +211,21 @@ body.mpwpb-sme-active #postdivrich{display:none;}
 .mpwpb-sme__rail-pill.is-on{color:var(--ok);background:var(--ok-soft);}
 .mpwpb-sme__rail-pill.is-off{color:var(--muted);background:var(--inset);}
 
+/* Shortcode & Template rail card — Add To Cart shortcode display + the
+   classic mpwpb_template <select> (no .formControl class, styled by name),
+   relocated here from the General Settings card in the main panel. */
+.mpwpb-sme__rail-field-list{padding:8px 16px 16px;display:flex;flex-direction:column;gap:14px;}
+.mpwpb-sme__rail-field-list .label{font-size:12px;margin-bottom:6px;}
+.mpwpb-sme__rail-field-list .shortcode code{
+	display:block;width:100%;padding:8px 10px;background:var(--inset);border:1px solid var(--line);border-radius:8px;
+	font-size:11px;line-height:1.5;color:var(--ink-2);word-break:break-all;white-space:normal;
+}
+.mpwpb-sme__rail-field-list select[name="mpwpb_template"]{
+	width:100%;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:13px;
+	font-family:inherit;color:var(--ink);background:#fff;box-shadow:none;
+}
+.mpwpb-sme__rail-field-list select[name="mpwpb_template"]:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-ring);}
+
 @media(max-width:1100px){
 	.mpwpb-sme__body{grid-template-columns:1fr;}
 	.mpwpb-sme__rail{position:static;flex-direction:row;flex-wrap:wrap;}

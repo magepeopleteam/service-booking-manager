@@ -255,28 +255,26 @@
 	})();
 
 	/* ---------------------------------------------------------------- *
-	 *  Relocate "Service Title" / "Service Sub Title" (rendered normally,
-	 *  once, by the reused MPWPB_General_Settings::general_settings()
-	 *  further down this same step) up into the Basic Information card —
-	 *  only the real <input>/<textarea> is moved (so mpwpb_shortcode_title
-	 *  / mpwpb_shortcode_sub_title still submit exactly once); the classic
-	 *  section wrapper + its own label text are decorative-only once the
-	 *  field is gone, so they're removed to avoid an empty leftover row.
+	 *  Relocate "Service Sub Title" (rendered normally, once, by the reused
+	 *  MPWPB_General_Settings::general_settings() further down this same
+	 *  step) up into the Basic Information card — only the real <textarea>
+	 *  is moved (so mpwpb_shortcode_sub_title still submits exactly once);
+	 *  the classic section wrapper + its own label text are decorative-only
+	 *  once the field is gone, so it's removed to avoid an empty leftover
+	 *  row. "Service Title" is discarded outright, not relocated — the
+	 *  modern editor doesn't show it at all (Basic Information carries a
+	 *  hidden field preserving its existing value instead, so nothing is
+	 *  lost on save); Classic mode's own field is untouched.
 	 * ---------------------------------------------------------------- */
 	(function relocateServiceTitleFields() {
 		var $card = $root.find('[data-sme-section="MPWPB_General_Settings"]');
 		if (!$card.length) {
 			return;
 		}
-		var $titleSection = $card.find('.service-title');
-		var $subTitleSection = $card.find('.service-sub-title');
-		var $titleSlot = $root.find('[data-sme-service-title-slot]');
-		var $subTitleSlot = $root.find('[data-sme-service-subtitle-slot]');
+		$card.find('.service-title').remove();
 
-		if ($titleSection.length && $titleSlot.length) {
-			$titleSection.find('input[name="mpwpb_shortcode_title"]').appendTo($titleSlot);
-			$titleSection.remove();
-		}
+		var $subTitleSection = $card.find('.service-sub-title');
+		var $subTitleSlot = $root.find('[data-sme-service-subtitle-slot]');
 		if ($subTitleSection.length && $subTitleSlot.length) {
 			$subTitleSection.find('textarea[name="mpwpb_shortcode_sub_title"]').appendTo($subTitleSlot);
 			$subTitleSection.remove();
@@ -293,7 +291,8 @@
 	(function relocateHeaderToggles() {
 		var sectionsWithHeaderToggle = {
 			'MPWPB_Extra_Service_Modern': 'mpwpb_extra_service_active',
-			'MPWPB_Service_Details': 'mpwpb_features_status'
+			'MPWPB_Service_Details': 'mpwpb_service_details_status',
+			'MPWPB_Faq_Settings': 'mpwpb_faq_active'
 		};
 		Object.keys(sectionsWithHeaderToggle).forEach(function (sectionClass) {
 			var $card = $root.find('[data-sme-section="' + sectionClass + '"]');
@@ -306,20 +305,172 @@
 	})();
 
 	/* ---------------------------------------------------------------- *
-	 *  The classic "Enable Service Features" row (label text + the toggle
-	 *  just relocated to the card header above) would otherwise be left
-	 *  behind as an empty leftover line right under the "Service Features"
-	 *  heading. Only removed once confirmed empty (no checkbox left inside),
-	 *  so it's a no-op if the header-toggle relocation above didn't run.
+	 *  Clean up what's left in the Service Details card after Service
+	 *  Features and Service Review were relocated elsewhere and its own
+	 *  toggle moved to the card header above:
+	 *   1) the classic "Enable Service Details" row (label text + toggle,
+	 *      now toggle-less) — only removed once confirmed empty (no
+	 *      checkbox left inside), so this is a no-op if the header-toggle
+	 *      relocation didn't run.
+	 *   2) the "Service Details" sub-heading — now redundant with this
+	 *      card's own title, since the editor below is the only content
+	 *      left in the card. Safe to remove even though it's a
+	 *      section.section: Service Features' (hidden, further up, never
+	 *      removed) remains the true first-of-type in this card either way.
 	 * ---------------------------------------------------------------- */
-	(function cleanupServiceFeaturesToggleRow() {
-		var $featuresList = $root.find('[data-sme-section="MPWPB_Service_Details"] .mpwpb-service-features');
-		if (!$featuresList.length) {
+	(function cleanupServiceDetailsCard() {
+		var $detailsSection = $root.find('[data-sme-section="MPWPB_Service_Details"] .mpwpb-service-details');
+		if (!$detailsSection.length) {
 			return;
 		}
-		var $toggleRow = $featuresList.prev();
+		var $toggleRow = $detailsSection.prev();
 		if ($toggleRow.length && !$toggleRow.find('input[type="checkbox"]').length) {
 			$toggleRow.remove();
+		}
+		var $headingSection = $detailsSection.prev();
+		if ($headingSection.length && $headingSection.is('section.section')) {
+			$headingSection.remove();
+		}
+	})();
+
+	/* ---------------------------------------------------------------- *
+	 *  The classic "Enable FAQ Section" row (label text + the toggle just
+	 *  relocated to the FAQ card header above) would otherwise be left
+	 *  behind as an empty leftover line. Only removed once confirmed empty
+	 *  (no checkbox left inside), so it's a no-op if the header-toggle
+	 *  relocation didn't run.
+	 * ---------------------------------------------------------------- */
+	(function cleanupFaqToggleRow() {
+		var $faqSection = $root.find('[data-sme-section="MPWPB_Faq_Settings"] .mpwpb-faq-section');
+		if (!$faqSection.length) {
+			return;
+		}
+		var $toggleRow = $faqSection.prev();
+		if ($toggleRow.length && !$toggleRow.find('input[type="checkbox"]').length) {
+			$toggleRow.remove();
+		}
+	})();
+
+	/* ---------------------------------------------------------------- *
+	 *  Relocate the "Enable Recurring Bookings" / "Enable Staff Member Add"
+	 *  toggles (Pro-only cards, rendered normally by the reused classic
+	 *  methods) up into their own card headers, next to the title — same
+	 *  pattern as the other header-toggle relocations above, just written
+	 *  as dedicated functions since neither card has a uniquely-classed
+	 *  content section to anchor a .prev() cleanup off of. Instead, the
+	 *  toggle's original wrapping <section> is captured by reference
+	 *  *before* the toggle itself is moved out of it, so it can be safely
+	 *  discarded afterwards regardless of DOM order (it never held anything
+	 *  but decorative label text once the switch is gone).
+	 * ---------------------------------------------------------------- */
+	function relocateToggleToCardHeader(sectionClass, inputName) {
+		var $card = $root.find('[data-sme-section="' + sectionClass + '"]');
+		var $slot = $card.find('[data-sme-header-actions]').first();
+		if (!$card.length || !$slot.length) {
+			return;
+		}
+		var $toggleInput = $card.find('input[name="' + inputName + '"]');
+		var $toggleRow = $toggleInput.closest('section');
+		var $toggle = $toggleInput.closest('.roundSwitchLabel');
+		if ($toggle.length) {
+			$toggle.appendTo($slot);
+		}
+		if ($toggleRow.length) {
+			$toggleRow.remove();
+		}
+	}
+	relocateToggleToCardHeader('MPWPB_Recurring_Booking_Settings', 'mpwpb_enable_recurring');
+	relocateToggleToCardHeader('Staff_Member', 'mpwpb_staff_member_add');
+
+	/* ---------------------------------------------------------------- *
+	 *  Relocate the real "Service Features" repeater (rendered normally,
+	 *  once, by the reused MPWPB_Service_Details::service_details()) out of
+	 *  the Service Details card into its own "Service Feature Details"
+	 *  card — a real DOM node moved via appendTo(), not a duplicate render,
+	 *  so mpwpb_features[] still submits exactly once. Its "Enable Service
+	 *  Features" toggle moves to the new card's header (next to the title)
+	 *  instead of staying with Service Details, since it now gates this
+	 *  card's content, not that one. The now-empty toggle row left behind
+	 *  is discarded (decorative only, no form fields); its heading row is
+	 *  left in place (already hidden via CSS's section.section:first-of-
+	 *  type rule) rather than removed — removing it would make the *next*
+	 *  section.section (Service Details' own heading) become the new
+	 *  first-of-type and get hidden by that same rule instead.
+	 * ---------------------------------------------------------------- */
+	(function relocateServiceFeatures() {
+		var $featuresSection = $root.find('[data-sme-section="MPWPB_Service_Details"] .mpwpb-service-features');
+		var $contentSlot = $root.find('[data-sme-features-slot]');
+		if (!$featuresSection.length || !$contentSlot.length) {
+			return;
+		}
+		var $toggleRow = $featuresSection.prev();
+		var $toggle = $toggleRow.find('input[name="mpwpb_features_status"]').closest('.roundSwitchLabel');
+		var $headerSlot = $root.find('[data-sme-section="MPWPB_Service_Features_Modern"] [data-sme-header-actions]').first();
+
+		if ($toggle.length && $headerSlot.length) {
+			$toggle.appendTo($headerSlot);
+		}
+		$featuresSection.appendTo($contentSlot);
+		$toggleRow.remove();
+	})();
+
+	/* ---------------------------------------------------------------- *
+	 *  Relocate the real "Service Review" heading + its 3 fields (rating,
+	 *  scale, text — rendered normally, once, by the reused
+	 *  MPWPB_Service_Details::service_details()) into the General
+	 *  Settings card (now titled "Customer Reviews", since Shortcode and
+	 *  Service template are relocated out of it below) — whole <section>
+	 *  nodes moved via appendTo() (each is entirely self-contained: one
+	 *  label + one input, nothing else to leave behind), so
+	 *  mpwpb_service_review_ratings / _rating_scale / _rating_text still
+	 *  submit exactly once. Appended at the end of that card's body, after
+	 *  its own (CSS-hidden) first section.section, so that heading stays
+	 *  correctly "first" there — same first-of-type reasoning as the
+	 *  Service Features relocation above.
+	 * ---------------------------------------------------------------- */
+	(function relocateServiceReview() {
+		var $card = $root.find('[data-sme-section="MPWPB_Service_Details"]');
+		var $generalBody = $root.find('[data-sme-section="MPWPB_General_Settings"] .mpwpb-sme__postfields-body');
+		if (!$card.length || !$generalBody.length) {
+			return;
+		}
+		var $ratingSection = $card.find('input[name="mpwpb_service_review_ratings"]').closest('section');
+		var $scaleSection = $card.find('input[name="mpwpb_service_rating_scale"]').closest('section');
+		var $textSection = $card.find('input[name="mpwpb_service_rating_text"]').closest('section');
+		if (!$ratingSection.length) {
+			return;
+		}
+		var $headingSection = $ratingSection.prev();
+
+		$headingSection.appendTo($generalBody);
+		$ratingSection.appendTo($generalBody);
+		$scaleSection.appendTo($generalBody);
+		$textSection.appendTo($generalBody);
+	})();
+
+	/* ---------------------------------------------------------------- *
+	 *  Relocate the real "Add To Cart Form Shortcode" display + "Service
+	 *  template" <select> (rendered normally, once, by the reused
+	 *  MPWPB_General_Settings::general_settings()) into their own rail
+	 *  card in the sticky sidebar, right after Featured Image — whole
+	 *  <section> nodes moved via appendTo() (.shortcode / .service-template
+	 *  are each self-contained: one label + one control), so mpwpb_template
+	 *  still submits exactly once.
+	 * ---------------------------------------------------------------- */
+	(function relocateShortcodeAndTemplate() {
+		var $card = $root.find('[data-sme-section="MPWPB_General_Settings"]');
+		var $shortcodeSlot = $root.find('[data-sme-shortcode-slot]');
+		var $templateSlot = $root.find('[data-sme-template-slot]');
+		if (!$card.length) {
+			return;
+		}
+		var $shortcodeSection = $card.find('.shortcode');
+		var $templateSection = $card.find('.service-template');
+		if ($shortcodeSection.length && $shortcodeSlot.length) {
+			$shortcodeSection.appendTo($shortcodeSlot);
+		}
+		if ($templateSection.length && $templateSlot.length) {
+			$templateSection.appendTo($templateSlot);
 		}
 	})();
 
