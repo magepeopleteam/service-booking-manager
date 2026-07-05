@@ -88,10 +88,13 @@ if (!class_exists('MPWPB_Staff_Members')) {
                     <div class="_dLayout_dShadow_1">
                         <div class="mpwpb_staff_tabs">
                             <div class="header">
-                                <h1>
-                                    <div class="header-icon">👥</div>
-                                    <?php esc_html_e('Staff Management', 'service-booking-manager'); ?>
-                                </h1>
+                                <div class="mpwpb_staff_header_text">
+                                    <h1>
+                                        <div class="header-icon">👥</div>
+                                        <?php esc_html_e('Staff Management', 'service-booking-manager'); ?>
+                                    </h1>
+                                    <p class="mpwpb_staff_header_sub"><?php esc_html_e('Configure staff details and recurring scheduling parameters.', 'service-booking-manager'); ?></p>
+                                </div>
                                 <div class="mpwpb_add_update_tab">
                                    
                                         <button class="_mpBtn mpwpb_staff_tab_switch mpwpb_staff_tab_active" id="mpwpb_staff_lists"  type="button" title="<?php esc_attr_e('Staff Lists', 'service-booking-manager'); ?>">
@@ -336,12 +339,17 @@ if (!class_exists('MPWPB_Staff_Members')) {
             <?php
         }
         public function schedule_settings($user_id = '') {
+            $use_24hour = MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'time_format_24hour', 'no');
+            $off_days = $user_id ? get_user_meta($user_id, 'mpwpb_off_days') : [];
+            $off_days = sizeof($off_days) > 0 ? current($off_days) : '';
+            $off_day_keys = array_filter(explode(',', (string) $off_days));
             ?>
             <div class="mpPanel mT_xs">
                 <div class="mpPanelHeader _bgColor_6" data-collapse-target="#mpwpb_staff_schedule_setting" data-open-icon="fa-minus" data-close-icon="fa-plus">
                     <h6 class="_textBlack">
                         <span data-icon class="fas fa-plus mR_xs"></span><?php esc_html_e('Time Schedule Settings', 'service-booking-manager'); ?>
                     </h6>
+                    <span class="mpwpb_staff_format_badge<?php echo esc_attr($use_24hour === 'yes' ? ' is-on' : ''); ?>" title="<?php esc_attr_e('Set under Settings → 24 Hour Time Format', 'service-booking-manager'); ?>"><?php echo esc_html($use_24hour === 'yes' ? __('24H Format', 'service-booking-manager') : __('12H Format', 'service-booking-manager')); ?></span>
                 </div>
                 <div class="mpPanelBody" data-collapse="#mpwpb_staff_schedule_setting">
                     <table>
@@ -359,7 +367,7 @@ if (!class_exists('MPWPB_Staff_Members')) {
                         $this->time_slot_tr($user_id, 'default');
                         $days = MPWPB_Global_Function::week_day();
                         foreach ($days as $key => $day) {
-                            $this->time_slot_tr($user_id, $key);
+                            $this->time_slot_tr($user_id, $key, in_array($key, $off_day_keys, true));
                         }
                         ?>
                         </tbody>
@@ -425,7 +433,7 @@ if (!class_exists('MPWPB_Staff_Members')) {
         }
 
         //*****************************//
-        public function time_slot_tr($user_id, $day) {
+        public function time_slot_tr($user_id, $day, $is_off = false) {
             $start_name = 'mpwpb_' . $day . '_start_time';
             $default_start_time = $day == 'default' ? 10 : '';
             $start_time = $user_id ? get_user_meta($user_id, $start_name) : [];
@@ -438,7 +446,7 @@ if (!class_exists('MPWPB_Staff_Members')) {
             $start_time_break = $user_id ? get_user_meta($user_id, $start_name_break) : [];
             $start_time_break = sizeof($start_time_break) > 0 ? current($start_time_break) : '';
             ?>
-            <tr>
+            <tr<?php echo $is_off ? ' class="mpwpb-staff-row-off"' : ''; ?>>
                 <th style="text-transform: capitalize;"><?php echo esc_html($day); ?></th>
                 <td class="mpwpb_start_time" data-day-name="<?php echo esc_attr($day); ?>">
                     <?php //echo '<pre>'; print_r( $start_time );echo '</pre>'; ?>
