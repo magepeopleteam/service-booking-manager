@@ -46,5 +46,7 @@
 	            <?php include(MPWPB_Function::template_path('registration/static_registration.php')); ?>
             </div>
         </main>
+        <!-- dispaly service past work gallery section using this hook -->
+		<?php do_action('mpwpb_service_gallery'); ?>
     </div>
 <?php

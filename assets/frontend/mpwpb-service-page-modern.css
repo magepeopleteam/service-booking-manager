@@ -188,6 +188,102 @@
 .mpwpb-static-template #service-details{font-size:13.5px;color:#475569;line-height:1.6;}
 
 /* -------------------------------------------------------------------- *
+ *  "Our Past Work" gallery — images uploaded via the admin "Gallery
+ *  Images" field (mpwpb_slider_images), rendered 4-up and driven as an
+ *  owl carousel (mp_global's bundled Owl Carousel 2, already enqueued
+ *  plugin-wide) so any images beyond the first 4 stay reachable via the
+ *  prev/next controls instead of growing the section's height. Default
+ *  owl nav/dots are hidden by the shared .mpwpb_style .owl-nav rule
+ *  (mp_global/assets/mp_style/mpwpb_plugin_global.css) — only the custom
+ *  round prev/next buttons here are shown, same as the date carousel.
+ * -------------------------------------------------------------------- */
+/* Now a sibling of <main> (moved there in static.php), not a flex child of
+   it -- <main> itself is the .main(60%)/.sidebar(40%) flex row (see
+   .mpwpb_registration main in mpwpb_registration.css), and putting this
+   inside that row as a 3rd item (even with flex-wrap) knocked .sidebar onto
+   its own line too, since .main + gap + .sidebar's hypothetical size already
+   slightly exceeds 100% before shrinking is applied. Sitting outside <main>
+   avoids that flex math entirely; the same max-width/centering/padding as
+   .mpwpb_registration main is repeated here so it still lines up visually. */
+.mpwpb-static-template .mpwpb-gallery-section{
+	max-width:1160px;width:100%;margin:28px auto 0;padding:0 10px;box-sizing:border-box;scroll-margin-top:80px;
+}
+.mpwpb-static-template .mpwpb-gallery-head{
+	display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px;
+}
+.mpwpb-static-template .mpwpb-gallery-section h2{
+	font-size:19px !important;font-weight:800;color:var(--mpwpb_color_theme) !important;border-bottom:0 !important;margin:0 !important;
+}
+.mpwpb-static-template .mpwpb-gallery-sub{margin:4px 0 0;font-size:13px;color:#64748b;}
+.mpwpb-static-template .mpwpb-gallery-nav{display:flex;align-items:center;gap:8px;flex:0 0 auto;padding-top:2px;}
+.mpwpb-static-template .mpwpb-gallery-nav .prev,
+.mpwpb-static-template .mpwpb-gallery-nav .next{
+	width:30px;height:30px;display:flex;align-items:center;justify-content:center;
+	border-radius:50%;border:1px solid #e5e9f0;color:var(--mpwpb_color_theme);font-size:12px;cursor:pointer;transition:.15s;
+}
+.mpwpb-static-template .mpwpb-gallery-nav .prev:hover,
+.mpwpb-static-template .mpwpb-gallery-nav .next:hover{background:#F0FDFA;}
+/* mpwpb-owl-carousel is a custom stand-in for the library's own
+   ".owl-carousel" class (never added to the markup here, matching the
+   existing .mpwpb_date_carousel widget in mpwpb_registration.css) — the
+   library's float-based layout rules are all scoped under ".owl-carousel"
+   so they never apply; the same flex-based replacement rules used there
+   are repeated here for this section. */
+.mpwpb-static-template .mpwpb-gallery-section .mpwpb-owl-carousel{overflow:hidden;}
+.mpwpb-static-template .mpwpb-gallery-section .mpwpb-owl-carousel .owl-stage{display:flex;}
+.mpwpb-static-template .mpwpb-gallery-section .mpwpb-owl-carousel .owl-item{display:flex;padding:0 6px;}
+.mpwpb-static-template .mpwpb-gallery-item{
+	position:relative;width:100%;border-radius:var(--mpwpb-sp-radius);overflow:hidden;aspect-ratio:4/3;
+	border:1px solid #e5e9f0;background:#f1f4f9;cursor:zoom-in;
+}
+.mpwpb-static-template .mpwpb-gallery-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s;}
+.mpwpb-gallery-item img:not(.mp_wp_editor img) {height: 100% !important; }
+.mpwpb-static-template .mpwpb-gallery-item:hover img{transform:scale(1.05);}
+.mpwpb-static-template .mpwpb-gallery-zoom{
+	position:absolute;top:8px;right:8px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;
+	border-radius:50%;background:rgba(15,23,42,.55);color:#fff;font-size:11px;opacity:0;transition:opacity .15s;
+}
+.mpwpb-static-template .mpwpb-gallery-item:hover .mpwpb-gallery-zoom{opacity:1;}
+
+/* -------------------------------------------------------------------- *
+ *  "Our Past Work" click-to-zoom lightbox — reuses the plugin's existing
+ *  generic popup mechanism (.mpwpb_popup + data-target-popup/data-popup,
+ *  document-delegated open/close in mp_global/assets/mp_style/
+ *  mpwpb_plugin_global.js) purely for show/hide; everything below just
+ *  restyles that mechanism's default 500-700px bordered white card
+ *  (meant for text content) into a full-viewport dark image viewer.
+ * -------------------------------------------------------------------- */
+.mpwpb-gallery-lightbox .mpwpb_popup_main_area{
+	min-width:0;max-width:min(92vw,1100px);width:auto;min-height:0;max-height:90vh;height:auto;
+	background:transparent;border:0;box-shadow:none;
+}
+.mpwpb-gallery-lightbox .mpwpb_popup_close{
+	top:20px;right:20px;width:42px;height:42px;border-radius:50%;background:rgba(15,23,42,.65);font-size:16px;
+	box-shadow:0 2px 8px rgba(0,0,0,.35);
+}
+.mpwpb-gallery-lightbox .mpwpb_popup_close:hover{background:rgba(15,23,42,.85);}
+.mpwpb-gallery-lightbox-body{position:relative;display:flex;align-items:center;justify-content:center;}
+.mpwpb-gallery-lightbox-img{max-width:100%;max-height:80vh;width:auto;height:auto;border-radius:8px;display:block;}
+/* Sit just outside the image itself (not overlapping it) whenever there's
+   room, so the dark-on-dark/light-on-light contrast of the button never
+   depends on what's near the edge of the photo underneath. */
+.mpwpb-gallery-lightbox-prev,
+.mpwpb-gallery-lightbox-next{
+	position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;display:flex;align-items:center;justify-content:center;
+	border-radius:50%;background:rgba(15,23,42,.65);color:#fff;font-size:16px;cursor:pointer;transition:.15s;
+	box-shadow:0 2px 8px rgba(0,0,0,.35);
+}
+.mpwpb-gallery-lightbox-prev:hover,
+.mpwpb-gallery-lightbox-next:hover{background:rgba(15,23,42,.85);}
+.mpwpb-gallery-lightbox-prev{left:-56px;}
+.mpwpb-gallery-lightbox-next{right:-56px;}
+@media(max-width:900px){
+	.mpwpb-gallery-lightbox-prev{left:10px;}
+	.mpwpb-gallery-lightbox-next{right:10px;}
+}
+.mpwpb-gallery-lightbox-counter{margin-top:10px;text-align:center;color:rgba(255,255,255,.8);font-size:13px;}
+
+/* -------------------------------------------------------------------- *
  *  "Our services" sidebar tree (templates/registration/
  *  category_selection_static.php). Leaf rows keep the classic
  *  .mpwpb_item_box class/data-attributes so the existing click handler
@@ -196,16 +292,25 @@
  *  and mpwpb-service-tree.js only add the always-expanded tree look and
  *  its own local expand/collapse state, nothing selection-related.
  * -------------------------------------------------------------------- */
-.mpwpb-tree-header{margin-bottom:14px;border-bottom:1px solid #ddd;padding-bottom:10px;}
-.mpwpb-tree-header h4{margin:0;font-size:19px;font-weight:800;color:#0f172a;padding-bottom:0px !important;}
-.mpwpb-tree-header p{margin:4px 0 0;font-size:12.5px;color:var(--mpwpb_color_theme);line-height:1.4;}
+/* Bleeds to the card's edges -- .mpwpb_static (the white card, mpwpb_registration.css)
+   has padding:15px, so a matching -15px on left/right/top cancels that inset
+   exactly instead of leaving a gap around this banner. Top corners are
+   reduced to nest inside the card's own 10px radius/1px border; bottom
+   corners are square since this banner's bottom edge sits mid-card, not
+   against a rounded card edge. */
+.mpwpb-tree-header{
+	margin:-15px -15px 14px -15px;padding:16px 18px;
+	border-radius:9px 9px 0 0;background:var(--mpwpb_color_theme);
+}
+.mpwpb-tree-header h4{margin:0;font-size:16px;font-weight:800;color:#fff;padding-bottom:0px !important;}
+.mpwpb-tree-header p{margin:4px 0 0;font-size:12.5px;color:rgba(255,255,255,.8);line-height:1.4;}
 .mpwpb_static_area .mpwpb_static_registration h4{padding-bottom:0px !important;}
 
 .mpwpb-service-tree{display:flex;flex-direction:column;gap:6px;padding-right:10px;}
 .mpwpb-tree-row{
 	display:flex;align-items:center;gap:8px;padding:10px 8px;border-radius:9px;cursor:pointer;user-select:none;
 }
-.mpwpb-tree-cat-row{font-weight:700;color:#1e293b;background:#F0FDFA;border:1px solid #ede7e7;}
+.mpwpb-tree-cat-row{font-weight:700;color:#1e293b;background:#F0FDFA;border:1px solid #ede7e7;margin-top:5px;}
 .mpwpb-tree-cat-row:hover{background:#F0FDFA;}
 .mpwpb-tree-folder-icon{color:var(--mpwpb_color_theme);font-size:14px;flex:0 0 auto;}
 .mpwpb-tree-name{flex:1;min-width:0;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -262,6 +367,7 @@
 .mpwpb-tree-service-main{flex:0 1 auto;min-width:0;display:flex;align-items:center;line-height:1;gap:8px;overflow:hidden;}
 .mpwpb-tree-service-icon{flex:0 0 auto;color:var(--mpwpb_color_theme);font-size:13px;line-height:1;}
 .mpwpb-tree-service-name{flex:0 1 auto;min-width:0;font-size:13px;font-weight:600;line-height:1;color:#1e293b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+span.mpwpb-tree-service-name{padding-left:5px;}
 /* line-height:1 on both the wrapper and the icon keeps the clock glyph
    from sitting a few px higher/lower than the "1h 30m" text baseline --
    the default line-height a browser gives a small icon font can otherwise
@@ -290,10 +396,20 @@
    here). */
 .mpwpb-tree-cta-footer{margin-top:20px;text-align:center;}
 .mpwpb-tree-cta-btn{
-	display:block;width:100%;border:none;border-radius:999px;background:var(--mpwpb_color_theme);
+	display:block;width:100%;border:none;border-radius:15px !important;background:var(--mpwpb_color_theme);
 	color:#fff;font-size:15px;font-weight:700;padding:14px 20px;cursor:pointer;transition:.15s;
 }
 .mpwpb-tree-cta-btn:hover{filter:brightness(0.92);}
+
+/* Trust badges under the CTA -- static reassurance copy, no interaction. */
+.mpwpb-tree-trust{
+	margin-top:14px;border:none;border-radius:10px;background:#fff;overflow:hidden;
+}
+.mpwpb-tree-trust-item{
+	display:flex;align-items:center;gap:10px;padding:11px 14px;font-size:12.5px;font-weight:600;color:#475569;
+}
+.mpwpb-tree-trust-item + .mpwpb-tree-trust-item{border-top:1px solid #e5e9f0;}
+.mpwpb-tree-trust-item i{flex:0 0 auto;width:16px;text-align:center;color:var(--mpwpb_color_theme);font-size:13px;}
 
 /* No click action anymore -- description shows as a small CSS tooltip on
    hover instead (mpwpb-booking-tree.js sets data-tooltip to the text). */

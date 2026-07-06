@@ -1528,7 +1528,7 @@ div.registration_tab_item {
   margin-bottom: 5px;
   position: relative;
   color: var(--d_color);
-  border-radius: 0;
+  border-radius: 10px;
   border: 1px solid #ebe5e5;
   background-color: #F8F9FF;
 }

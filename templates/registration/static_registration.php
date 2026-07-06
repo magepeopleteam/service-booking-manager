@@ -40,7 +40,17 @@
 			}
 			?>
 			<div class="mpwpb-tree-cta-footer">
-				<button type="button" class="mpwpb-tree-cta-btn" data-target-popup="#mpwpb_static_popup"><?php esc_html_e('Select a service', 'service-booking-manager'); ?></button>
+				<button type="button" class="mpwpb-tree-cta-btn" data-target-popup="#mpwpb_static_popup"><?php esc_html_e('Select Service & Confirm Booking', 'service-booking-manager'); ?></button>
+			</div>
+			<div class="mpwpb-tree-trust">
+				<div class="mpwpb-tree-trust-item">
+					<i class="fas fa-shield-alt"></i>
+					<span><?php esc_html_e('Secure Payment Protection', 'service-booking-manager'); ?></span>
+				</div>
+				<div class="mpwpb-tree-trust-item">
+					<i class="fas fa-calendar-alt"></i>
+					<span><?php esc_html_e('Free Rescheduling up to 24h', 'service-booking-manager'); ?></span>
+				</div>
 			</div>
 			<?php
 		}

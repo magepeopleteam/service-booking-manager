@@ -15,6 +15,7 @@
 				add_action('mpwpb_service_overview', [$this, 'show_service_overview']);
 				add_action('mpwpb_service_faq', [$this, 'show_service_faq']);
 				add_action('mpwpb_service_details', [$this, 'show_service_details']);
+				add_action('mpwpb_service_gallery', [$this, 'show_service_gallery']);
 				add_action('mpwpb_service_reviews', [$this, 'show_service_reviews']);
 				add_action('mpwpb_added_staff_details', [$this, 'show_added_staff_details']);
                 add_action('mpwpb_progress_bar', [$this, 'mpwpb_progress_bar_callback'], 10, 2 );
@@ -330,6 +331,69 @@
                     </section>
 				<?php
 				endif;
+			}
+			/**
+			 * "Our Past Work" — renders the same per-service gallery images
+			 * uploaded via the admin "Gallery Images" field (Admin/settings/
+			 * Gallery.php & the Modern editor's rail card, both save to the
+			 * 'mpwpb_slider_images' meta gated by 'mpwpb_display_slider').
+			 * Nothing else on the front end reads this meta yet, so this is
+			 * the first consumer of it. Hidden entirely when the gallery is
+			 * off or has no images -- no empty section/heading is shown.
+			 */
+			public function show_service_gallery() {
+				$post_id = get_the_ID();
+				$display_status = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_display_slider', 'off');
+				$image_ids = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_slider_images', array());
+				$image_ids = is_array($image_ids) ? array_values(array_filter($image_ids)) : array();
+				if ($display_status !== 'on' || empty($image_ids)) {
+					return;
+				}
+				?>
+                <section id="service-gallery" class="mpwpb-gallery-section">
+                    <div class="mpwpb-gallery-head">
+                        <div>
+                            <h2><?php esc_html_e('Our Past Work', 'service-booking-manager'); ?></h2>
+                            <p class="mpwpb-gallery-sub"><?php esc_html_e('See the stunning results of our meticulous work.', 'service-booking-manager'); ?></p>
+                        </div>
+                        <div class="mpwpb-gallery-nav">
+                            <span class="fas fa-chevron-left prev"></span>
+                            <span class="fas fa-chevron-right next"></span>
+                        </div>
+                    </div>
+                    <div class="owl-theme mpwpb-owl-carousel">
+						<?php foreach ($image_ids as $image_id):
+							$image_url = MPWPB_Global_Function::get_image_url('', $image_id, 'large');
+							if (!$image_url) {
+								continue;
+							}
+							$full_url = MPWPB_Global_Function::get_image_url('', $image_id, 'full') ?: $image_url;
+							?>
+                            <div class="mpwpb-gallery-item" data-target-popup="#mpwpb_gallery_lightbox" data-full="<?php echo esc_url($full_url); ?>">
+                                <img src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_attr(get_the_title($post_id)); ?>"/>
+                                <span class="mpwpb-gallery-zoom"><i class="fas fa-search-plus"></i></span>
+                            </div>
+						<?php endforeach; ?>
+                    </div>
+                </section>
+                <!-- Click-to-zoom viewer: reuses the plugin's existing generic
+                     popup mechanism (data-target-popup/data-popup, document-
+                     delegated open/close in mp_global/assets/mp_style/
+                     mpwpb_plugin_global.js) -- only the image swap on click
+                     and prev/next cycling are custom JS (mpwpb-service-page-
+                     modern.js). -->
+                <div class="mpwpb_popup mpwpb_style mpwpb-gallery-lightbox" data-popup="#mpwpb_gallery_lightbox">
+                    <div class="mpwpb_popup_main_area">
+                        <span class="fas fa-times mpwpb_popup_close"></span>
+                        <div class="mpwpb-gallery-lightbox-body">
+                            <span class="fas fa-chevron-left mpwpb-gallery-lightbox-prev"></span>
+                            <img src="" alt="" class="mpwpb-gallery-lightbox-img"/>
+                            <span class="fas fa-chevron-right mpwpb-gallery-lightbox-next"></span>
+                        </div>
+                        <div class="mpwpb-gallery-lightbox-counter"></div>
+                    </div>
+                </div>
+				<?php
 			}
 			public function show_service_reviews() {
 				$review_status = 'off';

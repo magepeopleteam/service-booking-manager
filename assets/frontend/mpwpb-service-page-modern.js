@@ -32,6 +32,50 @@
 		$('body').append($viewMorePopup);
 	}
 
+	// "Our Past Work" gallery -- reuses the same owl-carousel init helper
+	// (mpwpb.js, mpwpb_active_carousel) and .prev/.next -> .owl-prev/.owl-next
+	// click-proxy pattern already used for the date/time carousel elsewhere
+	// in the plugin. No-ops via .each() if the section isn't rendered
+	// (gallery off or no images -- see MPWPB_Static_Template::show_service_gallery()).
+	if (typeof mpwpb_active_carousel === 'function') {
+		mpwpb_active_carousel($('.mpwpb-static-template .mpwpb-gallery-section'), 4);
+	}
+
+	// "Our Past Work" click-to-zoom -- opening/closing the lightbox itself is
+	// the plugin's existing generic popup mechanism (data-target-popup/
+	// data-popup, document-delegated in mp_global/assets/mp_style/
+	// mpwpb_plugin_global.js); this only swaps the lightbox <img> to whichever
+	// thumbnail was clicked and cycles prev/next through the same image set.
+	var $galleryItems = $('.mpwpb-static-template .mpwpb-gallery-item');
+	if ($galleryItems.length) {
+		var $lightboxImg = $('.mpwpb-gallery-lightbox-img');
+		var $lightboxCounter = $('.mpwpb-gallery-lightbox-counter');
+		var galleryIndex = 0;
+
+		var showGalleryImage = function (index) {
+			var total = $galleryItems.length;
+			galleryIndex = (index + total) % total;
+			var $item = $galleryItems.eq(galleryIndex);
+			$lightboxImg.attr({
+				src: $item.data('full'),
+				alt: $item.find('img').attr('alt') || ''
+			});
+			$lightboxCounter.text((galleryIndex + 1) + ' / ' + total);
+		};
+
+		$galleryItems.on('click', function () {
+			showGalleryImage($galleryItems.index(this));
+		});
+		$('.mpwpb-gallery-lightbox-next').on('click', function (e) {
+			e.stopPropagation();
+			showGalleryImage(galleryIndex + 1);
+		});
+		$('.mpwpb-gallery-lightbox-prev').on('click', function (e) {
+			e.stopPropagation();
+			showGalleryImage(galleryIndex - 1);
+		});
+	}
+
 	var $tabNav = $('.mpwpb-static-template .mpwpb-details-page-tab, .mpwpb-static-template nav.mpwpb-details-page-tab');
 	if (!$tabNav.length) {
 		return;
