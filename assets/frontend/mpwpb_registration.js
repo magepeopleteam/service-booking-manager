@@ -540,20 +540,31 @@ function mpwpb_price_calculation($this) {
 
 
     });
+    // Tracked on the registration wrapper so updateSelectedSummary()
+    // (mpwpb-booking-tree.js) knows which step is active without needing
+    // its own copy of this show/hide logic -- the summary is deliberately
+    // hidden on the Service step (the tree above it already shows what's
+    // selected) and only shown from Date & Time onward.
     function load_date_time_tab(parent) {
         parent.find('.mpwpb_date_time_area,.next_date_area').slideDown(350);
         parent.find('.all_service_area,.mpwpb_order_proceed_area,.next_service_area').slideUp(300)
         mpwpb_load_bg_image();
+        parent.data('mpwpbStep', 'date_time');
+        if (typeof updateSelectedSummary === 'function') { updateSelectedSummary(parent); }
     }
     function load_service_tab(parent) {
         parent.find('.all_service_area,.next_service_area').slideDown(350);
         parent.find('.mpwpb_date_time_area,.mpwpb_order_proceed_area,.next_date_area').slideUp(300);
         mpwpb_load_bg_image();
+        parent.data('mpwpbStep', 'service');
+        if (typeof updateSelectedSummary === 'function') { updateSelectedSummary(parent); }
     }
     function load_order_proceed_tab(parent) {
         parent.find('.mpwpb_order_proceed_area').slideDown(350);
         parent.find('.all_service_area,.mpwpb_date_time_area,.next_date_area,.next_service_area').slideUp(300)
         mpwpb_load_bg_image();
+        parent.data('mpwpbStep', 'checkout');
+        if (typeof updateSelectedSummary === 'function') { updateSelectedSummary(parent); }
     }
     //==========date============//
     $(document).on('change', 'div.mpwpb_registration [name="mpwpb_date"]', function () {

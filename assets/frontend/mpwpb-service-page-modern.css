@@ -709,10 +709,16 @@ label.mpwpb-checkout-field{display:inline-block;}
 /* "What you've picked" summary -- one row per currently-selected main/
    extra service (name, qty if >1, price), built entirely client-side
    (updateSelectedSummary() in mpwpb-booking-tree.js, called from
-   mpwpb_price_calculation() on every selection/qty change). Hidden by
-   default; JS shows it only once at least one row exists. */
+   mpwpb_price_calculation() on every selection/qty change, and from the
+   load_*_tab() step switchers in mpwpb_registration.js). Lives inside
+   .popupFooter now (static_registration.php), so no side margin needed --
+   the footer's own padding (mp_global/mpwpb_plugin_global.css,
+   div.mpwpb_popup .popupFooter) already insets it. Hidden by default; JS
+   only shows it on the Date & Time / Checkout steps once at least one row
+   exists (deliberately not on the Service step -- the tree above it
+   already shows what's selected there, this would be pure duplication). */
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary{
-	display:none;flex:0 0 auto;margin:0 16px 12px;border:1px solid #e5e9f0;border-radius:10px;
+	display:none;flex:0 0 auto;margin:0 0 10px;border:1px solid #e5e9f0;border-radius:10px;
 	background:#f8fafc;overflow:hidden;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-row{
@@ -730,6 +736,19 @@ label.mpwpb-checkout-field{display:inline-block;}
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-price{
 	flex:0 0 auto;font-weight:700;color:var(--mpwpb_color_theme);white-space:nowrap;
+}
+/* "View N more" toggle -- sits in the same row slot, expands the rest of
+   the list inline (slideToggle in mpwpb-booking-tree.js) instead of
+   growing the visible list past 3 rows by default. */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-more-btn{
+	display:flex;align-items:center;gap:6px;width:100%;border:none;background:transparent;cursor:pointer;
+	padding:9px 14px;font-size:12px;font-weight:700;color:var(--mpwpb_color_theme);text-align:left;
+	border-top:1px solid #e5e9f0;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-more-btn:hover{background:#f0fdfa;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-more-btn i{font-size:10px;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-more-rows .mpwpb-selected-summary-row{
+	border-top:1px solid #e5e9f0;
 }
 
 .mpwpb-static-template .sidebar .mpwpb_popup .popupFooter{

@@ -160,14 +160,25 @@
 			'<span class="mpwpb-selected-summary-price">' + price + '</span>' +
 			'</div>';
 	}
+	// Only 3 rows show by default -- beyond that the list can run long
+	// enough to push the actual Continue/Checkout button out of view,
+	// which reads as broken rather than just long. A "view N more" toggle
+	// (mpwpb-selected-summary-more, handler below) reveals the rest inline
+	// instead. Re-rendered on every call, so an already-expanded state is
+	// read back off the DOM first and re-applied -- otherwise expanding it
+	// would collapse right back on the next qty change/selection.
 	window.updateSelectedSummary = function ($registration) {
 		var $container = $registration.find('#mpwpb_selected_summary');
 		if (!$container.length) {
 			return;
 		}
-		var rows = '';
+		var step = $registration.data('mpwpbStep') || 'service';
+		var rowsList = [];
 		$registration.find('.mpwpb_service_item.mpActive').each(function () {
-			rows += appendSummaryRow($(this));
+			var row = appendSummaryRow($(this));
+			if (row) {
+				rowsList.push(row);
+			}
 		});
 		// Keyed off the same [name="mpwpb_extra_service_type[]"] value
 		// mpwpb_price_calculation() itself checks -- not .mpActive. This
@@ -179,15 +190,48 @@
 		$registration.find('.mpwpb_extra_service_item').each(function () {
 			var $item = $(this);
 			if ($item.find('[name="mpwpb_extra_service_type[]"]').val()) {
-				rows += appendSummaryRow($item);
+				var row = appendSummaryRow($item);
+				if (row) {
+					rowsList.push(row);
+				}
 			}
 		});
-		if (rows) {
-			$container.html(rows).show();
-		} else {
+
+		if (!rowsList.length || step === 'service') {
 			$container.empty().hide();
+			return;
 		}
+
+		var visibleLimit = 3;
+		var wasExpanded = $container.find('.mpwpb-selected-summary-more').hasClass('is-open');
+		var html = rowsList.slice(0, visibleLimit).join('');
+		var hiddenCount = rowsList.length - visibleLimit;
+		if (hiddenCount > 0) {
+			html += '<div class="mpwpb-selected-summary-more' + (wasExpanded ? ' is-open' : '') + '">' +
+				'<button type="button" class="mpwpb-selected-summary-more-btn" data-remaining="' + hiddenCount + '">' +
+				(wasExpanded ? mpwpb_summary_less_text() : mpwpb_summary_more_text(hiddenCount)) +
+				'</button>' +
+				'<div class="mpwpb-selected-summary-more-rows"' + (wasExpanded ? '' : ' style="display:none"') + '>' +
+				rowsList.slice(visibleLimit).join('') +
+				'</div>' +
+				'</div>';
+		}
+		$container.html(html).show();
 	};
+	function mpwpb_summary_more_text(count) {
+		return 'View ' + count + ' more <i class="fas fa-chevron-down"></i>';
+	}
+	function mpwpb_summary_less_text() {
+		return 'Show less <i class="fas fa-chevron-up"></i>';
+	}
+	$(document).on('click', '.mpwpb-selected-summary-more-btn', function () {
+		var $btn = $(this);
+		var $more = $btn.closest('.mpwpb-selected-summary-more');
+		var isOpen = $more.hasClass('is-open');
+		$more.toggleClass('is-open', !isOpen);
+		$more.find('.mpwpb-selected-summary-more-rows').slideToggle(200);
+		$btn.html(isOpen ? mpwpb_summary_more_text($btn.data('remaining')) : mpwpb_summary_less_text());
+	});
 
 	function relabelContinueButton($registration) {
 		var $btn = $registration.find('.mpwpb_service_next');
