@@ -57,10 +57,12 @@
 			$price = array_key_exists('price', $service_item) ? $service_item['price'] : 0;
 			$wc_price = MPWPB_Global_Function::wc_price($post_id, $price);
 			$duration = array_key_exists('duration', $service_item) ? $service_item['duration'] : '';
+			$service_icon = array_key_exists('icon', $service_item) ? $service_item['icon'] : '';
 			?>
 	        <div class="mpwpb_item_box mpwpb-tree-service" data-target-popup="#mpwpb_static_popup" data-category="<?php echo esc_attr($cat_attr); ?>" data-sub-category="<?php echo esc_attr($sub_attr); ?>" data-service="<?php echo esc_attr($svc_key + 1); ?>">
 	            <span class="mpwpb-tree-checkbox" data-tree-checkbox></span>
 	            <span class="mpwpb-tree-service-main">
+					<?php if ($service_icon) { ?><span class="<?php echo esc_attr($service_icon); ?> mpwpb-tree-service-icon"></span><?php } ?>
 	                <span class="mpwpb-tree-service-name"><?php echo esc_html($service_name); ?></span>
 					<?php if ($duration) { ?><span class="mpwpb-tree-duration"><i class="fas fa-clock"></i> <?php echo wp_kses_post($duration); ?></span><?php } ?>
 	            </span>
@@ -91,6 +93,7 @@
 			if (in_array($cat_key, $filtered_sub_category) || in_array($cat_key, $filtered_parent_cat)) {
 				$tree[$cat_key] = array(
 					'name' => array_key_exists('name', $category) ? $category['name'] : '',
+					'icon' => array_key_exists('icon', $category) ? $category['icon'] : '',
 					'own_services' => array(),
 					'subcats' => array(),
 				);
@@ -102,6 +105,7 @@
 				if ($cat_id !== null && isset($tree[$cat_id])) {
 					$tree[$cat_id]['subcats'][$sub_key] = array(
 						'name' => array_key_exists('name', $sub_item) ? $sub_item['name'] : '',
+						'icon' => array_key_exists('icon', $sub_item) ? $sub_item['icon'] : '',
 						'services' => array(),
 					);
 				}
@@ -130,7 +134,7 @@
 				?>
                 <div class="mpwpb-tree-cat">
                     <div class="mpwpb-tree-row mpwpb-tree-cat-row" data-tree-toggle>
-                        <i class="fas fa-folder mpwpb-tree-folder-icon"></i>
+                        <i class="<?php echo $cat_node['icon'] ? esc_attr($cat_node['icon']) : 'fas fa-folder'; ?> mpwpb-tree-folder-icon"></i>
                         <span class="mpwpb-tree-name"><?php echo esc_html($cat_node['name']); ?></span>
                         <span class="mpwpb-tree-count"><?php echo esc_html($total_count); ?></span>
                         <i class="fas fa-chevron-down mpwpb-tree-chevron"></i>
@@ -145,7 +149,9 @@
 							?>
                             <div class="mpwpb-tree-subcat">
                                 <div class="mpwpb-tree-row mpwpb-tree-subcat-row" data-tree-toggle>
-                                    <span class="mpwpb-tree-corner"></span>
+									<?php if ($sub_node['icon']) { ?>
+                                    <i class="<?php echo esc_attr($sub_node['icon']); ?> mpwpb-tree-folder-icon"></i>
+									<?php } ?>
                                     <span class="mpwpb-tree-name"><?php echo esc_html($sub_node['name']); ?></span>
                                     <span class="mpwpb-tree-count"><?php echo esc_html($sub_count); ?></span>
                                     <i class="fas fa-chevron-down mpwpb-tree-chevron"></i>

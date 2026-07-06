@@ -25,6 +25,26 @@
 
     $mpwpb_general_settings = get_option( 'mpwpb_general_settings', [] );
     $is_sticky_on_scrolling = isset( $mpwpb_general_settings['booking_widget_sticky_on_scrolling'] ) ? $mpwpb_general_settings['booking_widget_sticky_on_scrolling'] : 'yes';
+
+	/**
+	 * Rendered as a sibling AFTER .mpwpb_static_cateogry closes (not inside
+	 * category_selection_static.php) so it sits outside that wrapper's
+	 * scrollable tree -- only the category/service list itself scrolls
+	 * (mpwpb_registration.css, .mpwpb-service-tree), this CTA stays fixed
+	 * in view underneath it.
+	 */
+	if (!function_exists('mpwpb_static_cta_footer')) {
+		function mpwpb_static_cta_footer($all_category, $all_services) {
+			if (sizeof($all_category) < 1 && sizeof($all_services) < 1) {
+				return;
+			}
+			?>
+			<div class="mpwpb-tree-cta-footer">
+				<button type="button" class="mpwpb-tree-cta-btn" data-target-popup="#mpwpb_static_popup"><?php esc_html_e('Select a service', 'service-booking-manager'); ?></button>
+			</div>
+			<?php
+		}
+	}
 ?>
     <div class="mpwpb_static_theme">
         <div class="mpwpb_static_area">
@@ -35,6 +55,7 @@
                 <div class="mpwpb_static_cateogry">
 					<?php include(MPWPB_Function::template_path('registration/category_selection_static.php')); ?>
                 </div>
+				<?php mpwpb_static_cta_footer($all_category, $all_services); ?>
             </div>
             <?php } else{?>
                 <div class="mpwpb_static " id="mpwpb_make_static_booking">
@@ -42,6 +63,7 @@
                     <div class="mpwpb_static_cateogry">
                         <?php include(MPWPB_Function::template_path('registration/category_selection_static.php')); ?>
                     </div>
+					<?php mpwpb_static_cta_footer($all_category, $all_services); ?>
                 </div>
                 <div class="mpwpb_mobile_booking" id="mpwpb_mobile_booking_mobile"><?php esc_html_e('Make Service Booking', 'service-booking-manager'); ?></div>
             <?php }?>

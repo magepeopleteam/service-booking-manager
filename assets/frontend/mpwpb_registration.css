@@ -1394,7 +1394,7 @@ div.registration_tab_item {
   padding: 15px;
   border-radius: 10px;
   border: 1px solid #ddd;
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 12px 28px rgba(15, 23, 42, 0.09);
   margin: 10px;
 }
 
@@ -1447,9 +1447,26 @@ div.registration_tab_item {
     margin: 0;
   }
 }
-.mpwpb-static-template  .mpwpb_static_area .mpwpb_static .mpwpb_static_cateogry {
-  max-height: 80vh;
+/* Only the actual category/service list scrolls -- the "Our services"
+   header above it and the "Select a service" CTA footer below it (rendered
+   as siblings outside .mpwpb_static_cateogry in static_registration.php)
+   stay put outside the scrollable area instead of scrolling away with it. */
+.mpwpb-static-template  .mpwpb_static_area .mpwpb_static .mpwpb_static_cateogry .mpwpb-service-tree {
+  max-height: 85vh;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--mpwpb_color_theme) #f1f5f9;
+}
+.mpwpb-static-template  .mpwpb_static_area .mpwpb_static .mpwpb_static_cateogry .mpwpb-service-tree::-webkit-scrollbar {
+  width: 6px;
+}
+.mpwpb-static-template  .mpwpb_static_area .mpwpb_static .mpwpb_static_cateogry .mpwpb-service-tree::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 999px;
+}
+.mpwpb-static-template  .mpwpb_static_area .mpwpb_static .mpwpb_static_cateogry .mpwpb-service-tree::-webkit-scrollbar-thumb {
+  background: var(--mpwpb_color_theme);
+  border-radius: 999px;
 }
 .mpwpb-static-template  .mpwpb_static_area .mpwpb_static .mp_title {
   margin-bottom: 20px;

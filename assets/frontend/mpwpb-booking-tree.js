@@ -57,14 +57,21 @@
 		}
 	}
 
-	function buildRow(kind, name) {
-		var iconHtml = kind === 'cat'
-			? '<i class="fas fa-folder mpwpb-tree-folder-icon"></i>'
-			: '<span class="mpwpb-tree-corner"></span>';
+	// Reads the real per-category/sub-category icon class the admin picked
+	// (rendered by category_selection.php as a <span class="ICON_CLASS
+	// _mR_xs" ...> inside .mpwpd_bg_image_area, next to the item's name) off
+	// the original, already-relocated DOM node -- falls back to the generic
+	// folder/corner marker used everywhere else in the tree when no custom
+	// icon was configured for that category/sub-category.
+	function readConfiguredIcon($item) {
+		var $icon = $item.find('.mpwpd_bg_image_area > span[class*="fa-"]').first();
+		return $icon.length ? $icon.attr('class').replace(/\s*_mR_xs\s*/, '').trim() : '';
+	}
+
+	function buildRow(kind, name, iconClass) {
 		var $wrap = $(
 			'<div class="mpwpb-tree-' + (kind === 'cat' ? 'cat' : 'subcat') + '">' +
 				'<div class="mpwpb-tree-row mpwpb-tree-' + (kind === 'cat' ? 'cat' : 'subcat') + '-row" data-tree-toggle>' +
-					iconHtml +
 					'<span class="mpwpb-tree-name"></span>' +
 					'<span class="mpwpb-tree-count"></span>' +
 					'<i class="fas fa-chevron-down mpwpb-tree-chevron"></i>' +
@@ -72,6 +79,15 @@
 				'<div class="mpwpb-tree-children' + (kind === 'cat' ? '' : ' mpwpb-tree-children--sub') + '"></div>' +
 			'</div>'
 		);
+		// Built via addClass (not string-interpolated into the markup above) so
+		// an icon class read off admin-configured data can never break out of
+		// an HTML attribute.
+		var $icon = iconClass
+			? $('<i class="mpwpb-tree-folder-icon"></i>').addClass(iconClass)
+			: (kind === 'cat'
+				? $('<i class="fas fa-folder mpwpb-tree-folder-icon"></i>')
+				: $('<span class="mpwpb-tree-corner"></span>'));
+		$wrap.find('> .mpwpb-tree-row').prepend($icon);
 		$wrap.find('.mpwpb-tree-name').text(name);
 		return $wrap;
 	}
@@ -164,7 +180,7 @@
 				var catId = parseInt($catItem.data('category'), 10);
 				var catName = $.trim($catItem.find('h6').first().text());
 
-				var $catRow = buildRow('cat', catName);
+				var $catRow = buildRow('cat', catName, readConfiguredIcon($catItem));
 				$catRow.addClass('is-open');
 				var $catChildren = $catRow.find('> .mpwpb-tree-children');
 
@@ -200,7 +216,7 @@
 					var subId = parseInt($subItem.data('sub-category'), 10);
 					var subName = $.trim($subItem.find('h6').first().text());
 
-					var $subRow = buildRow('sub', subName);
+					var $subRow = buildRow('sub', subName, readConfiguredIcon($subItem));
 					var $subChildren = $subRow.find('> .mpwpb-tree-children');
 
 					$serviceArea.find('.mpwpb_service_item').filter(function () {

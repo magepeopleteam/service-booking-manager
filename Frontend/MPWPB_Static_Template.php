@@ -185,12 +185,19 @@
 				// (confirmed against live posts) lives in 'mpwpb_service', the
 				// same flat array the booking widget itself reads from.
 				$service_count = count(MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service', array()));
+				// Only a real, non-zero count is worth a card -- an empty "—"
+				// placeholder next to two real numbers reads as broken rather
+				// than honest, so this card is dropped entirely instead, and
+				// the remaining two split the row 50/50 (mpwpb-overview-stats--two).
+				$show_bookings_stat = $booking_count > 0;
 				?>
-                <div class="mpwpb-overview-stats">
+                <div class="mpwpb-overview-stats<?php echo $show_bookings_stat ? '' : ' mpwpb-overview-stats--two'; ?>">
+					<?php if ($show_bookings_stat): ?>
                     <div class="mpwpb-overview-stat">
-                        <p class="mpwpb-overview-stat-num"><?php echo esc_html($booking_count > 0 ? number_format_i18n($booking_count) . '+' : '—'); ?></p>
+                        <p class="mpwpb-overview-stat-num"><?php echo esc_html(number_format_i18n($booking_count) . '+'); ?></p>
                         <p class="mpwpb-overview-stat-label"><?php esc_html_e('Bookings completed', 'service-booking-manager'); ?></p>
                     </div>
+					<?php endif; ?>
                     <div class="mpwpb-overview-stat">
                         <p class="mpwpb-overview-stat-num"><?php echo esc_html($time_slot_length > 0 ? $time_slot_length . ' ' . __('min', 'service-booking-manager') : '—'); ?></p>
                         <p class="mpwpb-overview-stat-label"><?php esc_html_e('Typical slot length', 'service-booking-manager'); ?></p>

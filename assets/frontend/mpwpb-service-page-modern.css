@@ -88,6 +88,9 @@
 
 /* Stats cards */
 .mpwpb-overview-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0;}
+/* "Bookings completed" is omitted entirely (not just blanked) when there are
+   no bookings yet -- the remaining two stats then split the row evenly. */
+.mpwpb-overview-stats.mpwpb-overview-stats--two{grid-template-columns:repeat(2,1fr);}
 .mpwpb-overview-stat{
 	text-align:center;padding:16px 10px;border:1px solid #e5e9f0;border-radius:var(--mpwpb-sp-radius);background:#fff;
 }
@@ -173,12 +176,12 @@
  *  and mpwpb-service-tree.js only add the always-expanded tree look and
  *  its own local expand/collapse state, nothing selection-related.
  * -------------------------------------------------------------------- */
-.mpwpb-tree-header{margin-bottom:12px;}
-.mpwpb-tree-header h4{margin:0 0 4px;font-size:15px;font-weight:800;color:#1e293b;padding-bottom:0px !important;}
-.mpwpb-tree-header p{margin:0;font-size:12px;color:#94a3b8;line-height:1.4;}
+.mpwpb-tree-header{margin-bottom:14px;}
+.mpwpb-tree-header h4{margin:0;font-size:19px;font-weight:800;color:#0f172a;padding-bottom:0px !important;}
+.mpwpb-tree-header p{margin:4px 0 0;font-size:12.5px;color:var(--mpwpb_color_theme);line-height:1.4;}
 .mpwpb_static_area .mpwpb_static_registration h4{padding-bottom:0px !important;}
 
-.mpwpb-service-tree{display:flex;flex-direction:column;gap:6px;}
+.mpwpb-service-tree{display:flex;flex-direction:column;gap:6px;padding-right:10px;}
 .mpwpb-tree-row{
 	display:flex;align-items:center;gap:8px;padding:10px 8px;border-radius:9px;cursor:pointer;user-select:none;
 }
@@ -191,19 +194,22 @@
 .mpwpb-tree-cat.is-open > .mpwpb-tree-cat-row .mpwpb-tree-chevron,
 .mpwpb-tree-subcat.is-open > .mpwpb-tree-subcat-row .mpwpb-tree-chevron{transform:rotate(180deg);}
 .mpwpb-tree-children{display:none;padding-left:0px;margin-top:2px;}
-.mpwpb-tree-cat.is-open > .mpwpb-tree-children{display:block;}
+/* Continuous vertical guide running the full height of everything nested
+   under this category (own services + sub-categories alike) -- anchored to
+   the category row above via this border, rather than each row drawing its
+   own disconnected stub, so it visibly connects back up to the category. */
+.mpwpb-tree-cat.is-open > .mpwpb-tree-children{
+	display:block;margin-left:15px;padding-left:14px;border-left:1px dotted #d5d7d7;
+}
 .mpwpb-tree-subcat.is-open > .mpwpb-tree-children{display:block;}
 
-.mpwpb-tree-subcat-row{font-size:13px;font-weight:600;color:#334155;border:1px solid #ddd;margin-top:10px;margin-bottom:10px;padding:8px 20px 10px 0px;background:#F0FDFA;}
+.mpwpb-tree-subcat-row{position:relative;font-size:13px;font-weight:600;color:#334155;border:1px solid #ddd;margin-top:10px;margin-bottom:10px;padding:8px 20px 10px 10px;background:#F0FDFA;}
 .mpwpb-tree-subcat-row:hover{background:#d5f7ef;}
-.mpwpb-tree-corner{
-	position:relative;flex:0 0 auto;width:14px;height:14px;margin-right:2px;
-}
-.mpwpb-tree-corner::before{
-	content:"";position:absolute;left:6px;top:-12px;bottom:7px;width:1px;background:#e2e8f0;
-}
-.mpwpb-tree-corner::after{
-	content:"";position:absolute;left:6px;top:7px;width:8px;height:1px;background:#e2e8f0;
+/* Horizontal tick on the LEFT side of the row, reaching back to meet the
+   vertical guide line on .mpwpb-tree-children above (left:-14px == the
+   guide's own position, since that container's padding-left is 14px). */
+.mpwpb-tree-subcat-row::before{
+	content:"";position:absolute;left:-14px;top:50%;transform:translateY(-50%);width:14px;height:2px;background:#d5d7d7;
 }
 
 .mpwpb-tree-service{
@@ -234,6 +240,7 @@
 }
 
 .mpwpb-tree-service-main{flex:0 1 auto;min-width:0;display:flex;align-items:center;line-height:1;gap:8px;overflow:hidden;}
+.mpwpb-tree-service-icon{flex:0 0 auto;color:var(--mpwpb_color_theme);font-size:13px;line-height:1;}
 .mpwpb-tree-service-name{flex:0 1 auto;min-width:0;font-size:13px;font-weight:700;line-height:1;color:#1e293b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 /* line-height:1 on both the wrapper and the icon keeps the clock glyph
    from sitting a few px higher/lower than the "1h 30m" text baseline --
@@ -256,6 +263,17 @@
 .mpwpb-tree-service-side{flex:0 0 auto;margin-left:auto;display:flex;align-items:center;gap:8px;}
 .mpwpb-tree-price{font-size:13px;font-weight:800;color:var(--mpwpb_color_theme);white-space:nowrap;}
 .mpwpb-tree-tap-hint{font-size:10px;color:#94a3b8;white-space:nowrap;}
+
+/* Sidebar-wide CTA below the tree -- opens the same booking popup as tapping
+   any individual service (data-target-popup is handled generically by
+   mp_global/assets/mp_style/mpwpb_plugin_global.js, no dedicated JS needed
+   here). */
+.mpwpb-tree-cta-footer{margin-top:20px;text-align:center;}
+.mpwpb-tree-cta-btn{
+	display:block;width:100%;border:none;border-radius:999px;background:var(--mpwpb_color_theme);
+	color:#fff;font-size:15px;font-weight:700;padding:14px 20px;cursor:pointer;transition:.15s;
+}
+.mpwpb-tree-cta-btn:hover{filter:brightness(0.92);}
 
 /* No click action anymore -- description shows as a small CSS tooltip on
    hover instead (mpwpb-booking-tree.js sets data-tooltip to the text). */
@@ -280,6 +298,7 @@
 
 @media(max-width:640px){
 	.mpwpb-overview-stats,
+	.mpwpb-overview-stats.mpwpb-overview-stats--two,
 	.mpwpb-included-grid{grid-template-columns:1fr;}
 }
 
@@ -416,7 +435,7 @@
    so this is a from-scratch look rather than an override. */
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row{
 	position:relative;display:flex !important;align-items:center;gap:10px;
-	margin:0 0 9px 15px;padding:10px 12px !important;border:1px solid #c1c3c7;border-radius:10px;background:#fff;
+	margin:0 0 9px 5px;padding:10px 12px !important;border:1px solid #c1c3c7;border-radius:10px;background:#fff;
 	transition:.15s;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row:last-child{margin-bottom:0;}
