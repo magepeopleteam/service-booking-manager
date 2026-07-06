@@ -214,6 +214,12 @@
 
                     </div>
                 </div>
+                <!-- Live summary of what's currently checked in the tree above (name,
+                     qty, price per row) so the user can confirm their selection
+                     before continuing -- populated/updated entirely client-side
+                     (updateSelectedSummary() in mpwpb-booking-tree.js), hidden
+                     whenever nothing is selected. -->
+                <div class="mpwpb-selected-summary" id="mpwpb_selected_summary"></div>
                 <div class="popupFooter _justifyBetween">
 					<?php include(MPWPB_Function::template_path('registration/next_service.php')); ?>
 					<?php include(MPWPB_Function::template_path('registration/next_date_time.php')); ?>

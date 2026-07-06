@@ -134,6 +134,61 @@
 		}
 	}
 
+	// Live "what you've picked" summary shown above the popup footer
+	// (#mpwpb_selected_summary, static_registration.php) -- one row per
+	// currently-selected main/extra service (name, qty if >1, price), read
+	// straight off the real .mpwpb_service_item/.mpwpb_extra_service_item
+	// elements (same .mpActive/.inputIncDec/._textTheme_min_100 this file
+	// and mpwpb_registration.js already rely on elsewhere). Exposed on
+	// window rather than kept module-scoped so mpwpb_price_calculation()
+	// (mpwpb_registration.js, the single choke point every selection/qty
+	// change already runs through) can call it without this file needing
+	// to duplicate handlers for every one of those triggers.
+	function escapeForSummary(str) {
+		return $('<div>').text(str).html();
+	}
+	function appendSummaryRow($item) {
+		var name = $.trim($item.find('h6').first().text());
+		if (!name) {
+			return '';
+		}
+		var qty = parseInt($item.find('.inputIncDec').first().val(), 10) || 1;
+		var price = $item.find('._textTheme_min_100').first().html() || '';
+		return '<div class="mpwpb-selected-summary-row">' +
+			'<span class="mpwpb-selected-summary-name">' + escapeForSummary(name) +
+			(qty > 1 ? ' <em>&times;' + qty + '</em>' : '') + '</span>' +
+			'<span class="mpwpb-selected-summary-price">' + price + '</span>' +
+			'</div>';
+	}
+	window.updateSelectedSummary = function ($registration) {
+		var $container = $registration.find('#mpwpb_selected_summary');
+		if (!$container.length) {
+			return;
+		}
+		var rows = '';
+		$registration.find('.mpwpb_service_item.mpActive').each(function () {
+			rows += appendSummaryRow($(this));
+		});
+		// Keyed off the same [name="mpwpb_extra_service_type[]"] value
+		// mpwpb_price_calculation() itself checks -- not .mpActive. This
+		// function is called FROM mpwpb_price_calculation(), which for the
+		// extra-service button is reached via a handler bound in
+		// mpwpb_registration.js (loaded before this file), so it always runs
+		// before this file's own click handler above sets .mpActive on the
+		// item; reading .mpActive here would miss the row on every fresh add.
+		$registration.find('.mpwpb_extra_service_item').each(function () {
+			var $item = $(this);
+			if ($item.find('[name="mpwpb_extra_service_type[]"]').val()) {
+				rows += appendSummaryRow($item);
+			}
+		});
+		if (rows) {
+			$container.html(rows).show();
+		} else {
+			$container.empty().hide();
+		}
+	};
+
 	function relabelContinueButton($registration) {
 		var $btn = $registration.find('.mpwpb_service_next');
 		if (!$btn.length || $btn.data('mpwpbRelabelled')) {
@@ -350,6 +405,54 @@
 		});
 	}
 
+	// Extra Features rows get the same click-anywhere-to-select + moved-to-
+	// front Add button treatment as the main tree rows above (relocateService()
+	// / the row click handler further up this file). The real
+	// .mpwpb_ex_service_button is only relocated, never cloned -- its existing
+	// delegated click handlers (mpwpb_price_calculation's generic data-
+	// collapse-target/data-add-class handling in mp_global/assets/mp_style/
+	// mpwpb_plugin_global.js) keep working unchanged.
+	function relocateExtraServiceButton($item) {
+		var $flex = $item.find('> .dFlex').first();
+		var $btn = $item.find('.mpwpb_ex_service_button').first();
+		if ($flex.length && $btn.length) {
+			$flex.prepend($btn);
+		}
+	}
+
+	function initExtraServiceLayout($registration) {
+		$registration.find('.mpwpb_extra_service_item').each(function () {
+			relocateExtraServiceButton($(this));
+		});
+	}
+
+	// .mpwpb_extra_service_item never got an "active" class of its own from
+	// any existing handler -- only its button does (.mActive, via the
+	// generic data-add-class mechanism above) -- so this mirrors that onto
+	// the item as .mpActive, the same way the real .mpwpb_service_button
+	// click handler in mpwpb_registration.js already does for
+	// .mpwpb_service_item. Bound after mp_global's/mpwpb_registration.js's
+	// own delegated handlers run (this script loads later), so the button's
+	// .mActive class already reflects the new state by the time this reads it.
+	$(document).on('click', '.mpwpb_extra_service_item .mpwpb_ex_service_button', function () {
+		$(this).closest('.mpwpb_extra_service_item').toggleClass('mpActive', $(this).hasClass('mActive'));
+	});
+
+	// Clicking anywhere on an extra-service row (name, price) selects/
+	// deselects it, same as clicking its Add button -- except over the
+	// button itself, the qty stepper, or the "View Details" tooltip trigger,
+	// which must keep their own behavior (identical exclusions to the main
+	// tree row's click handler above).
+	$(document).on('click', '.mpwpb_extra_service_item', function (e) {
+		var $target = $(e.target);
+		if ($target.closest('.mpwpb_ex_service_button').length ||
+			$target.closest('.quantity-box').length ||
+			$target.closest('.mpwpb-tree-view-details').length) {
+			return;
+		}
+		$(this).find('.mpwpb_ex_service_button').first().trigger('click');
+	});
+
 	// Date grid (.mpwpb-date-grid, static template only -- see
 	// date_time_select.php) shows 8 dates at a time (2 rows x 4 columns)
 	// instead of the old single-row sliding carousel. The header's real
@@ -417,6 +520,7 @@
 		$('div.mpwpb_registration').each(function () {
 			initBookingTree($(this));
 			initExtraServiceDetails($(this));
+			initExtraServiceLayout($(this));
 			initDateGridPagination($(this));
 			updateCheckoutReadyState($(this));
 		});

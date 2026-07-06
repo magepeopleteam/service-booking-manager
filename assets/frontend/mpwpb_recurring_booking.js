@@ -461,11 +461,18 @@
         if (li && li.length) {
             li.attr('data-date-time', dateTime);
             li.addClass('mpwpb_recurring_days');
+            let dObj = new Date(dateTime.replace(' ', 'T'));
+            let dateOnly = dObj.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+            let dayTime = dObj.toLocaleDateString(undefined, { weekday: 'long' }) + ' at ' + dObj.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
             li.html(`
-            <div>${li.index() + 1} ${formattedDate}</div>
+            <span class="mpwpb_recurring_number">${li.index() + 1}</span>
+            <div class="mpwpb_recurring_date_text">
+                <strong>${dateOnly}</strong>
+                <span class="mpwpb_recurring_daytime">${dayTime}</span>
+            </div>
             <div class="mpwpb_recurring_actions">
                 <span class="mpwpb_recurring_edit_icon"><i class="fas fa-pen"></i></span>
-                <span class="mpwpb_recurring_delete_icon"><i class="fas fa-trash"></i></span>
+                <span class="mpwpb_recurring_delete_icon"><i class="fas fa-times"></i></span>
             </div>
         `);
         }

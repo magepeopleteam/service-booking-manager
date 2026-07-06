@@ -211,7 +211,7 @@ body.mpwpb-sme-active #postdivrich{display:none;}
 	padding:16px;background:linear-gradient(180deg,#fbfcfe,var(--band));border-bottom:1px solid var(--band-line);
 }
 .mpwpb-sme__gallery-head .mpwpb-sme__feat-head{padding:0;}
-.mpwpb-sme__gallery-sub{margin:2px 0 0;font-size:12.5px;font-weight:500;color:var(--blue);}
+.mpwpb-sme__gallery-sub{margin:2px 0 0;font-size:12.5px;font-weight:500;color:#333;}
 .mpwpb-sme__gallery-head .roundSwitch{width:40px;height:22px;}
 .mpwpb-sme__gallery-head .roundSwitch::before{height:18px;width:18px;}
 .mpwpb-sme__gallery-head .roundSwitchLabel input:checked + .roundSwitch{background-color:var(--brand);}

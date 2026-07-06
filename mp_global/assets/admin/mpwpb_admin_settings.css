@@ -256,3 +256,6 @@
 /********Info Text******************/
 div.mpwpb_style .info_text {display: block;font-weight: normal;font-size: var(--mpwpb_fs_small);color: #666;}
 div.mpwpb_style .info_text span {margin: 0 5px 0 0;}
+button._dButton_bgColor_1.add_multi_image {
+    color: #fff;
+}

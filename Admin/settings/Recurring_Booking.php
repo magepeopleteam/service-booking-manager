@@ -166,35 +166,41 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
 
                 if( !empty( $valid_recurring_dates )){
                     foreach ( $valid_recurring_dates as $index => $dates ){
-                        if ( $index == 0) {
-                            $count_li = '<strong>' . ($index + 1) . '</strong>';
-                        } else {
-                            $count_li = $index + 1;
-                        }
+                        $count_li = $index + 1;
                         $date = $dates['date'];
                         $valid = $dates['valid'];
 
                         $formattedDate = date('F j, Y \a\t g:i A', strtotime($date));
+                        $dateOnly = date('F j, Y', strtotime($date));
+                        $dayTime = date('l \a\t g:i A', strtotime($date));
 
                         if( $valid == 1 ){
-                            $html .= '<li data-date-time="'.$date.'" class="mpwpb_recurring_days">
-                                <div><strong>'.$count_li.'</strong>'.$formattedDate.'</div>
+                            $html .= '<li data-date-time="'.esc_attr($date).'" class="mpwpb_recurring_days">
+                                <span class="mpwpb_recurring_number">'.esc_html($count_li).'</span>
+                                <div class="mpwpb_recurring_date_text">
+                                    <strong>'.esc_html($dateOnly).'</strong>
+                                    <span class="mpwpb_recurring_daytime">'.esc_html($dayTime).'</span>
+                                </div>
                                 <div class="mpwpb_recurring_actions">
-                                    <span class="mpwpb_recurring_edit_icon">✏️</span>
-                                    <span class="mpwpb_recurring_delete_icon">✖</span>
+                                    <span class="mpwpb_recurring_edit_icon"><i class="fas fa-pen"></i></span>
+                                    <span class="mpwpb_recurring_delete_icon"><i class="fas fa-times"></i></span>
                                 </div>
                             </li>';
 
-                            $selected_html_right .= '<li class="mpwpd_service_date" data-cart-date-time="'.$date.'">'.$formattedDate.'</li>';
+                            $selected_html_right .= '<li class="mpwpd_service_date" data-cart-date-time="'.esc_attr($date).'">'.esc_html($formattedDate).'</li>';
                         }else{
                             $html .= '<li data-date-time="" class="mpwpb_invalid_recurring_days">
-                                <div class="mpwpb_invalid_recurrin"><strong>'.$count_li.'</strong>'.$formattedDate. '(Already Booked)</div>
+                                <span class="mpwpb_recurring_number">'.esc_html($count_li).'</span>
+                                <div class="mpwpb_recurring_date_text">
+                                    <strong>'.esc_html($dateOnly).'</strong>
+                                    <span class="mpwpb_recurring_daytime">'.esc_html($dayTime).' &middot; '.esc_html__('Already Booked', 'service-booking-manager').'</span>
+                                </div>
                                 <div class="mpwpb_recurring_actions">
-                                    <span class="mpwpb_recurring_delete_icon">✖</span>
+                                    <span class="mpwpb_recurring_delete_icon"><i class="fas fa-times"></i></span>
                                 </div>
                             </li>';
 
-                            $selected_html_right .= '<li class="mpwpd_service_date" data-cart-date-time="'.$date.'"><div class="mpwpb_seleted_date_text">'.$formattedDate.'</div></li>';
+                            $selected_html_right .= '<li class="mpwpd_service_date" data-cart-date-time="'.esc_attr($date).'"><div class="mpwpb_seleted_date_text">'.esc_html($formattedDate).'</div></li>';
                         }
                     }
                 }

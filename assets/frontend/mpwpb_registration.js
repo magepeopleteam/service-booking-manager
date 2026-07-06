@@ -30,6 +30,13 @@ function mpwpb_price_calculation($this) {
 
     parent.find('.mpwpb_total_bill').html(mpwpb_price_format(price));
 
+    // Static template's "what you've picked" summary (#mpwpb_selected_summary,
+    // static_registration.php) -- defined in mpwpb-booking-tree.js, which
+    // loads after this file; guarded since this function also runs on
+    // templates/pages that don't have that summary container at all.
+    if (typeof updateSelectedSummary === 'function') {
+        updateSelectedSummary(parent);
+    }
 }
 //Registration
 (function ($) {

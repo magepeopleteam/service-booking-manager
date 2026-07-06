@@ -80,7 +80,7 @@
  * -------------------------------------------------------------------- */
 .mpwpb-static-template .mpwpb-details-page-tab,
 .mpwpb-static-template nav.mpwpb-details-page-tab{
-	position:sticky;top:8px;z-index:5;background:#fff !important;border:1px solid #eef1f6;
+	position:sticky;top:8px;z-index:0;background:#fff !important;border:1px solid #eef1f6;
 	border-radius:12px;box-shadow:0 1px 3px rgba(15,23,42,.06);padding:6px !important;margin-bottom:24px !important;
 }
 .mpwpb-static-template nav ul{gap:4px !important;}
@@ -92,6 +92,16 @@
 .mpwpb-static-template nav ul li.active a,
 .mpwpb-static-template nav ul li a.mpwpb-tab-active{
 	background-color:var(--mpwpb_color_theme) !important;color:#fff !important;
+}
+
+/* Sidebar sticks on scroll the same way the tab bar above does. Only at
+   >=1024px, where .main/.sidebar actually sit side by side (see
+   .mpwpb_registration main in mpwpb_registration.css) -- align-self:flex-start
+   is required alongside position:sticky here because that flex row's default
+   align-items:stretch would otherwise stretch .sidebar to .main's full height,
+   leaving no room for it to visibly stick as the page scrolls. */
+@media (min-width:1024px){
+	.mpwpb-static-template .sidebar{position:sticky;top:8px;align-self:flex-start;}
 }
 
 /* -------------------------------------------------------------------- *
@@ -367,7 +377,7 @@
 
 .mpwpb-tree-service-main{flex:0 1 auto;min-width:0;display:flex;align-items:center;line-height:1;gap:8px;overflow:hidden;}
 .mpwpb-tree-service-icon{flex:0 0 auto;color:var(--mpwpb_color_theme);font-size:13px;line-height:1;}
-.mpwpb-tree-service-name{flex:0 1 auto;min-width:0;font-size:13px;font-weight:600;line-height:1;color:#1e293b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mpwpb-tree-service-name{flex:0 1 auto;min-width:0;font-size:13px;font-weight:600;line-height:1.3;color:#1e293b;overflow:hidden;text-overflow:ellipsis;white-space:normal;}
 span.mpwpb-tree-service-name{padding-left:5px;}
 /* line-height:1 on both the wrapper and the icon keeps the clock glyph
    from sitting a few px higher/lower than the "1h 30m" text baseline --
@@ -648,7 +658,7 @@ label.mpwpb-checkout-field{display:inline-block;}
 	   of the viewport, same as this drawer) so it doesn't sit hidden/half
 	   -covered behind it for logged-in users. */
 	position:absolute !important;top:30px !important;right:16px !important;width:30px !important;height:30px !important;
-	border-radius:999px !important;background:rgba(255,255,255,.18) !important;font-size:13px !important;
+	border-radius:999px !important;background:rgba(255,255,255,.18) !important;font-size:13px !important;color:#fff;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_popup_close:hover{background:rgba(255,255,255,.3) !important;}
 
@@ -695,6 +705,32 @@ label.mpwpb-checkout-field{display:inline-block;}
 
 .mpwpb-static-template .sidebar .mpwpb_popup .selection-header h3{font-size:15px !important;}
 .mpwpb-static-template .sidebar .mpwpb_popup .selection-header p{font-size:12.5px !important;}
+
+/* "What you've picked" summary -- one row per currently-selected main/
+   extra service (name, qty if >1, price), built entirely client-side
+   (updateSelectedSummary() in mpwpb-booking-tree.js, called from
+   mpwpb_price_calculation() on every selection/qty change). Hidden by
+   default; JS shows it only once at least one row exists. */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary{
+	display:none;flex:0 0 auto;margin:0 16px 12px;border:1px solid #e5e9f0;border-radius:10px;
+	background:#f8fafc;overflow:hidden;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-row{
+	display:flex;align-items:center;justify-content:space-between;gap:10px;
+	padding:9px 14px;font-size:12.5px;color:#334155;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-row + .mpwpb-selected-summary-row{
+	border-top:1px solid #e5e9f0;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-name{
+	flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-name em{
+	font-style:normal;color:#94a3b8;font-weight:600;margin-left:4px;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-price{
+	flex:0 0 auto;font-weight:700;color:var(--mpwpb_color_theme);white-space:nowrap;
+}
 
 .mpwpb-static-template .sidebar .mpwpb_popup .popupFooter{
 	flex:0 0 auto !important;background:#fff !important;
@@ -750,10 +786,16 @@ label.mpwpb-checkout-field{display:inline-block;}
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row:last-child{margin-bottom:0;}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row.mpActive{
-	border-color:#b6b9b9;background:#EFF4FF;
+	/* color override needed here: div.mpwpb_item_box.mpActive (mpwpb_registration.css,
+	   global/unscoped) sets color:var(--mpwpb_color_theme_alter) -- a near-white
+	   meant for its own solid dark-green active background -- which these rows
+	   also pick up (they still carry the base .mpwpb_item_box class) and would
+	   otherwise inherit onto the name text, making it nearly invisible against
+	   this light background. */
+	border-color:#b6b9b9;background:#EFF4FF;color:#1e293b;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row > ._dFlex{width:100%;display:flex !important;align-items:center;gap:10px;cursor:pointer;}
-.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row h6{font-size:13px;margin:0;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row h6{font-size:13px;margin:0;font-weight:600;}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row .quantity-box{gap:8px;}
 /* The real button now sits at the front of the row (relocateService() in
    mpwpb-booking-tree.js), no longer a DOM sibling of the qty stepper --
@@ -883,9 +925,17 @@ h4.alignCenter.mpwpb-total{font-size:16px !important;}
 }
 
 /* -------------------------------------------------------------------- *
- *  "Choose Extra Features" (extra_services.php) -- modern card rows,
- *  matching the main tree's look. Markup/classes/click handlers are
- *  completely untouched; this only restyles what's already there.
+ *  "Choose Extra Features" (extra_services.php) -- now pixel-for-pixel
+ *  matching .mpwpb-tree-service-row's design and behavior: same card
+ *  look/active state, same circular checkbox Add button moved to the
+ *  front of the row (relocateExtraServiceButton() in mpwpb-booking-
+ *  tree.js), same click-anywhere-selects-it row handler, same hidden-
+ *  until-active qty stepper. .mpwpb_extra_service_item only ever got
+ *  .mActive on its *button* from the generic data-add-class mechanism
+ *  (mp_global/assets/mp_style/mpwpb_plugin_global.js) -- never on the
+ *  item itself -- so mpwpb-booking-tree.js also now mirrors that onto
+ *  the item as .mpActive, exactly like the real .mpwpb_service_button
+ *  click handler already does for .mpwpb_service_item.
  * -------------------------------------------------------------------- */
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_area{
 	background:transparent !important;box-shadow:none !important;margin-top:16px !important;padding:0 !important;
@@ -895,23 +945,38 @@ h4.alignCenter.mpwpb-total{font-size:16px !important;}
 	color:#94a3b8;margin:0 0 8px !important;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item{
-	display:block !important;background:#fff;border:1px solid #e5e9f0;border-radius:10px;
-	padding:10px 12px !important;margin-bottom:8px;transition:.15s;
+	position:relative;display:flex !important;align-items:center;gap:10px;cursor:pointer;
+	background:#fff;border:1px solid #e1e2e5;border-radius:10px;
+	padding:10px 12px !important;margin:0 0 9px 5px;
+	box-shadow:0 1px 2px rgba(15,23,42,.04),0 4px 10px rgba(15,23,42,.06);
+	transition:.15s;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item:last-child{margin-bottom:0;}
-.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item:hover{border-color:var(--mpwpb_color_theme);}
-.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item.mActive{
-	border-color:var(--mpwpb_color_theme);background:var(--mpwpb_color_theme_88,#f6fbfa);
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item.mpActive{
+	/* Same color override as .mpwpb-tree-service-row.mpActive above, and for
+	   the same reason: div.mpwpb_item_box.mpActive (mpwpb_registration.css)
+	   is a global unscoped rule this item also matches. */
+	border-color:#b6b9b9;background:#EFF4FF;color:#1e293b;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item .alignCenter > .fas:first-child{
 	flex:0 0 auto;width:26px;height:26px;display:inline-flex !important;align-items:center;justify-content:center;
 	border-radius:50%;background:#F0FDFA;color:var(--mpwpb_color_theme) !important;font-size:11px;margin-right:0 !important;
 }
-.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item h6{font-size:13px;margin:0;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item h6{font-size:13px;margin:0;font-weight:600;}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item ._textTheme_min_100{
 	color:var(--mpwpb_color_theme) !important;font-weight:800;font-size:13px;white-space:nowrap;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item .quantity-box{gap:8px;}
+
+/* Hidden until the item is added -- same as .mpwpb_service_inc_dec_holder
+   on the main row. No !important here (unlike that main-row rule): this
+   holder is still shown/hidden by the generic [data-collapse-target]/
+   slideToggle mechanism (mp_global/assets/mp_style/mpwpb_plugin_global.js,
+   wired via the Add button's existing data-collapse-target attribute), so
+   its own inline styles need to stay able to override this default. */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item .mpwpd_ex_service_qty_inc_dec_holder{
+	display:none;min-width:0 !important;width:auto !important;margin:0 !important;
+}
 
 /* Qty pill -- same look as the main list's, but scoped to this section's
    own inner classes (.incQty/.decQty here, not .service_incQty/_decQty). */
@@ -934,15 +999,24 @@ h4.alignCenter.mpwpb-total{font-size:16px !important;}
 	text-align:center !important;font-size:12px;font-weight:700;color:#1e293b;padding:0 !important;
 }
 
-/* "Add" -- small rounded pill, solid teal once added. */
-.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_ex_service_button{
-	display:inline-flex !important;align-items:center;gap:4px;
-	border-radius:999px !important;border:1px solid var(--mpwpb_color_theme) !important;
-	background:#fff !important;padding:5px 12px !important;font-size:11.5px !important;font-weight:700;
+/* "Add" -- same circular checkbox as the main row's .mpwpb_service_button,
+   moved to the front of the row by relocateExtraServiceButton(). */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item .mpwpb_ex_service_button{
+	width:26px !important;height:26px;min-width:0 !important;padding:0 !important;flex:0 0 auto;
+	display:inline-flex !important;align-items:center;justify-content:center;
+	border-radius:50% !important;border:2px solid #c3c5c7 !important;background:#fff !important;
 }
-.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_ex_service_button span{color:var(--mpwpb_color_theme) !important;}
-.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_ex_service_button.mActive{background:var(--mpwpb_color_theme) !important;}
-.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_ex_service_button.mActive span{color:#fff !important;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item .mpwpb_ex_service_button span{display:none !important;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item .mpwpb_ex_service_button.mActive{
+	border-color:var(--mpwpb_color_theme) !important;background:var(--mpwpb_color_theme) !important;position:relative;
+}
+button._mpBtn_btLight_2_min_150.mpwpb_price_calculation.mpwpb_ex_service_button {
+    margin-right: 10px;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item .mpwpb_ex_service_button.mActive::after{
+	content:"\f00c";font-family:"Font Awesome 5 Free";font-weight:900;color:#fff;font-size:10px;
+	position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+}
 
 /* "View Details" -- same hover-tooltip treatment as the main list
    (.mpwpb-tree-view-details, added by initExtraServiceDetails() in
