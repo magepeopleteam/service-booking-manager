@@ -1027,6 +1027,12 @@
 	.mpwpb_style table th[data-collapse].mActive,
 	.mpwpb_style table td[data-collapse].mActive { display: table-cell; }
 }
+/* Event settings page */
+@media only screen and (min-width: 10px) {
+	.mpwpb_style table th, .mpwpb_style table td {
+		border-bottom: 1px solid var(--mpwpb_color_border);
+	}
+}
 /******************************************************************** Tabs section ************************************************/
 @media only screen and (min-width: 10px) {
 	.mpwpb_style .tabLists,

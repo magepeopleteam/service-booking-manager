@@ -1,18 +1,144 @@
 @charset "utf-8";
-/******************************************************************** Global settings ************************************************/
+/******************************************************************** Global settings ************************************************
+ * Reskinned to match the sidebar-nav + card admin design used by the
+ * Mage-People bus-ticket-booking plugin's settings screen (indigo #6366f1
+ * accent on a neutral slate palette, flat bordered cards, no dark header
+ * bar). Structure (Admin/MPWPB_Settings_Global.php::settings_page()) still
+ * reuses the shared, generic .mpwpb_tabs/.tabLists/.tabsContent
+ * [data-tabs-target] mechanism (mp_global/assets/mp_style/
+ * mpwpb_plugin_global.js) unchanged -- only scoped, page-specific CSS below,
+ * so no other admin screen sharing that same tab JS/markup is affected.
+ ************************************************************************/
 @media only screen and (min-width: 10px) {
 	div.mpwpb_global_settings {max-width: 1700px; margin: 30px 30px 30px 15px; width: calc(100% - 30px);}
-	div.mpwpb_global_settings .button-primary {min-width: 200px;font-size: var(--mpwpb_fs_h5);font-weight: var(--mpwpb_fw-medium);padding: var(--mpwpb_dmp_xs); }
-	div.mpwpb_global_settings .mpPanelHeader {background: #161B37; color: #FFF;padding: var(--mpwpb_dmp);font-size: var(--mpwpb_fs_h2);text-align: center;}
-	div.mpwpb_global_settings .tabLists {border-right: 1px solid var(--mpwpb_color_border);}
 	div.mpwpb_global_settings form > h2 {display: none;}
-	div.mpwpb_global_settings table {table-layout: fixed;margin: 0;}
-	div.mpwpb_global_settings table tr:nth-child(even) { background-color: #0CB32612;}
-	div.mpwpb_global_settings table tr:nth-child(odd) { background-color: #FFF;}
-	div.mpwpb_global_settings table th {width: 40%;min-width: 300px;}
-	div.mpwpb_global_settings th label {-webkit-flex-wrap: wrap;flex-wrap: wrap;}
-	div.mpwpb_global_settings label .info_text {width: 100%;margin: 5px 0 0 0;font-size: 11px;}
+
+	/* ---- Shell: sidebar + main content, flat bordered card ---- */
+	div.mpwpb_global_settings .mpwpb-settings-shell {
+		display: flex; align-items: stretch; background: #fff;
+		border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;
+	}
+	div.mpwpb_global_settings .mpwpb-settings-sidebar {
+		display: block; flex: 0 0 auto; width: 230px; min-width: 230px; max-width: 230px;
+		background: #fff; border-right: 1px solid #e2e8f0;
+	}
+	div.mpwpb_global_settings .mpwpb-settings-sidebar-header {
+		padding: 18px 16px 14px; border-bottom: 1px solid #f1f5f9;
+	}
+	div.mpwpb_global_settings .mpwpb-settings-eyebrow {
+		font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .8px; color: #94a3b8;
+	}
+	div.mpwpb_global_settings .mpwpb-settings-title {
+		display: flex; align-items: center; gap: 8px; margin-top: 3px;
+		font-size: 15px; font-weight: 600; color: #1e293b;
+	}
+	div.mpwpb_global_settings .mpwpb-settings-dot {
+		flex: 0 0 auto; width: 6px; height: 6px; border-radius: 50%; background: #6366f1;
+	}
+	div.mpwpb_global_settings .mpwpb-settings-main { flex: 1 1 auto; min-width: 0; background: #f1f5f9; }
+	div.mpwpb_global_settings .mpwpb-settings-main > .tabsContent { padding: 20px; }
+
+	/* ---- Sidebar nav (reuses .tabLists/[data-tabs-target], just restyled) ---- */
+	div.mpwpb_global_settings .tabLists {
+		display: flex; flex-direction: column; width: 100%; min-width: 0; max-width: none;
+		border-right: none; padding: 8px; gap: 2px;
+	}
+	div.mpwpb_global_settings .tabLists [data-tabs-target] {
+		border-bottom: none; border-radius: 8px; padding: 9px 10px; gap: 9px;
+		color: #64748b; font-size: 13px; font-weight: 400; transition: background .12s, color .12s;
+	}
+	div.mpwpb_global_settings .tabLists [data-tabs-target]:hover {
+		background: #f8fafc; color: #334155; font-weight: 400;
+	}
+	div.mpwpb_global_settings .tabLists [data-tabs-target].active {
+		background: #eef2ff; color: #4f46e5; font-weight: 500;
+	}
+	div.mpwpb_global_settings .tabLists [data-tabs-target] span {
+		margin: 0 !important; flex: 0 0 auto; width: 20px; text-align: center; font-size: 15px; color: #94a3b8;
+	}
+	div.mpwpb_global_settings .tabLists [data-tabs-target].active span { color: #6366f1; }
+
+	/* ---- Field table -> section card with label/control rows ---- */
+	div.mpwpb_global_settings .tabsItem > form > table {
+		table-layout: auto; display: block; width: 100%; margin: 0;
+		background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; border-collapse: collapse; overflow: hidden;
+	}
+	div.mpwpb_global_settings .tabsItem > form > table tbody { display: block; }
+	div.mpwpb_global_settings .tabsItem > form > table tr {
+		display: grid; grid-template-columns: minmax(220px, 1fr) 2fr; align-items: stretch;
+		border-bottom: 1px solid #dde0e3; background: transparent !important;
+	}
+	div.mpwpb_global_settings .tabsItem > form > table tr:last-child { border-bottom: none; }
+	div.mpwpb_global_settings .tabsItem > form > table th,
+	div.mpwpb_global_settings .tabsItem > form > table td {
+		border: none;
+	}
+	div.mpwpb_global_settings .tabsItem > form > table th {
+		display: block; width: auto; min-width: 0; text-align: left; vertical-align: top;
+		padding: 14px 18px; background: #fafafa; font-size: 14px; font-weight: 500; color: #334155;
+	}
+	div.mpwpb_global_settings .tabsItem > form > table th label { display: block; font-weight: 500; flex-wrap: wrap; }
+	div.mpwpb_global_settings .tabsItem > form > table td {
+		display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding: 12px 18px; background: #fff;
+	}
+	div.mpwpb_global_settings label .info_text {
+		display: block; width: 100%; margin: 4px 0 0; font-size: 11px; font-weight: 400; color: #94a3b8; line-height: 1.5;
+	}
+	div.mpwpb_global_settings label .info_text span { margin: 0 4px 0 0; }
 	div.mpwpb_license_settings table th{width:inherit;min-width:inherit; }
+
+	/* ---- Inputs / selects / textareas ---- */
+	div.mpwpb_global_settings .formControl {
+		width: 100%; max-width: 400px; background: #fff; color: #1e293b;
+		border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 10px;
+		font-size: 13px; min-height: 38px; line-height: 1.4; transition: border-color .15s, box-shadow .15s;
+	}
+	div.mpwpb_global_settings textarea.formControl { min-height: 110px; max-width: 100%; }
+	div.mpwpb_global_settings .formControl:focus {
+		outline: none; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, .1);
+	}
+	div.mpwpb_global_settings input.checkbox,
+	div.mpwpb_global_settings input.radio {
+		accent-color: #6366f1; width: 14px; height: 14px; margin: 0 6px 0 0;
+	}
+	div.mpwpb_global_settings fieldset label {
+		display: flex; align-items: center; font-size: 13px; color: #475569; margin: 4px 14px 4px 0; font-weight: 400;
+	}
+
+	/* ---- Buttons ---- */
+	div.mpwpb_global_settings .button-primary {
+		min-width: 0; background: #6366f1 !important; border-color: #6366f1 !important; color: #fff !important;
+		border-radius: 8px !important; padding: 6px 18px !important; font-size: 13px !important;
+		font-weight: 500 !important; box-shadow: none !important; text-shadow: none !important; height: auto !important;
+	}
+	div.mpwpb_global_settings .button-primary:hover,
+	div.mpwpb_global_settings .button-primary:focus {
+		background: #4f46e5 !important; border-color: #4f46e5 !important;
+	}
+	div.mpwpb_global_settings .tabsItem .justifyBetween._mT { justify-content: flex-end; margin-top: 16px; }
+
+	/* ---- License table ---- */
+	div.mpwpb_license_settings h3 { font-size: 16px; font-weight: 600; color: #334155; }
+	div.mpwpb_license_settings .divider { border-top: 1px solid #e2e8f0; margin: 14px 0; }
+	div.mpwpb_license_settings .mp_basic_license_area table {
+		border: 1px solid #e2e8f0; border-radius: 12px; border-collapse: collapse; overflow: hidden;
+	}
+	div.mpwpb_license_settings .mp_basic_license_area table thead th {
+		background: #f8fafc; padding: 10px 14px; font-size: 11px; font-weight: 600;
+		text-transform: uppercase; letter-spacing: .5px; color: #64748b; border-bottom: 1px solid #e2e8f0;
+	}
+	div.mpwpb_license_settings .mp_basic_license_area table tbody th,
+	div.mpwpb_license_settings .mp_basic_license_area table tbody td {
+		padding: 12px 14px; font-size: 13px; color: #334155; border-bottom: 1px solid #f8fafc; background: #fff;
+	}
+}
+/* Sidebar collapses above content on narrow admin viewports. */
+@media only screen and (max-width: 782px) {
+	div.mpwpb_global_settings .mpwpb-settings-shell { flex-direction: column; }
+	div.mpwpb_global_settings .mpwpb-settings-sidebar { width: 100%; max-width: none; border-right: none; border-bottom: 1px solid #e2e8f0; }
+	div.mpwpb_global_settings .tabsItem > form > table tr { grid-template-columns: 1fr; }
+	div.mpwpb_global_settings .tabsItem > form > table th { border-bottom: none; padding-bottom: 6px; }
+	div.mpwpb_global_settings .tabsItem > form > table td { padding-top: 6px; }
 }
 /******************************************************************** Meta tab settings ************************************************/
 @media only screen and (min-width: 10px) {

@@ -1386,6 +1386,24 @@ div.registration_tab_item {
   top:50px;
   z-index: 10;
 }
+/* "Booking widget sticky on scrolling" (General Settings). position:sticky
+   releases on its own once .sidebar's containing block runs out -- .sidebar
+   is a flex item of .mpwpb_registration main (display:flex, default
+   align-items:stretch), so it's already stretched to match the much taller
+   .main content column's height, giving the sticky widget plenty of room to
+   follow scroll without any scroll-listener/left-offset JS. Scoped to
+   min-width:768px, the actual breakpoint where .sidebar becomes a real side
+   column (see the later, higher-priority .mpwpb-static-template .sidebar
+   rule below that wins over the dead 1024px one above it) -- on mobile the
+   widget is already collapsed behind the #mpwpb_mobile_booking_mobile
+   toggle instead. */
+@media (min-width: 768px) {
+  .mpwpb-static-template .sidebar .mpwpb_static_area.mpwpb-sticky-enabled {
+    position: sticky;
+    top: 50px;
+    z-index: 10;
+  }
+}
 
 
 .mpwpb-static-template  .mpwpb_static_area .mpwpb_static {

@@ -92,6 +92,42 @@
 			public function sec_fields($default_fields): array {
 				$default_fields['mpwpb_currency_settings'] = [
 					[
+						'name' => 'currency_code',
+						'label' => esc_html__('Currency Code', 'service-booking-manager'),
+						'desc' => esc_html__('ISO currency code charged through Stripe/PayPal. This is separate from the display symbol below — Stripe/PayPal require a real currency code (a "$" alone is ambiguous between USD/CAD/AUD/etc.).', 'service-booking-manager'),
+						'type' => 'select',
+						'default' => 'USD',
+						'options' => [
+							'USD' => 'USD - US Dollar',
+							'EUR' => 'EUR - Euro',
+							'GBP' => 'GBP - British Pound',
+							'CAD' => 'CAD - Canadian Dollar',
+							'AUD' => 'AUD - Australian Dollar',
+							'NZD' => 'NZD - New Zealand Dollar',
+							'JPY' => 'JPY - Japanese Yen',
+							'CHF' => 'CHF - Swiss Franc',
+							'SEK' => 'SEK - Swedish Krona',
+							'NOK' => 'NOK - Norwegian Krone',
+							'DKK' => 'DKK - Danish Krone',
+							'PLN' => 'PLN - Polish Zloty',
+							'CZK' => 'CZK - Czech Koruna',
+							'HUF' => 'HUF - Hungarian Forint',
+							'RON' => 'RON - Romanian Leu',
+							'BGN' => 'BGN - Bulgarian Lev',
+							'INR' => 'INR - Indian Rupee',
+							'SGD' => 'SGD - Singapore Dollar',
+							'HKD' => 'HKD - Hong Kong Dollar',
+							'MYR' => 'MYR - Malaysian Ringgit',
+							'PHP' => 'PHP - Philippine Peso',
+							'THB' => 'THB - Thai Baht',
+							'AED' => 'AED - UAE Dirham',
+							'SAR' => 'SAR - Saudi Riyal',
+							'ZAR' => 'ZAR - South African Rand',
+							'MXN' => 'MXN - Mexican Peso',
+							'BRL' => 'BRL - Brazilian Real',
+						],
+					],
+					[
 						'name' => 'symbol',
 						'label' => esc_html__('Currency Symbol', 'service-booking-manager'),
 						'desc' => esc_html__('Used to format all booking prices when Payment Method is Custom.', 'service-booking-manager'),
@@ -166,7 +202,7 @@
 				<style>
 					.mpwpb-pm-toggle { display: inline-flex; border: 1px solid #dcdcde; border-radius: 6px; overflow: hidden; margin-bottom: 20px; }
 					.mpwpb-pm-toggle-btn { border: none; background: #fff; padding: 10px 22px; font-weight: 600; cursor: pointer; color: #1d2327; }
-					.mpwpb-pm-toggle-btn.is-active { background: #2451e0; color: #fff; }
+					.mpwpb-pm-toggle-btn.is-active { background: #6366f1; color: #fff; }
 					.mpwpb-pm-panel { border: 1px solid #dcdcde; border-radius: 8px; padding: 20px; background: #fff; }
 					.mpwpb-custom-dependent.mpwpb-locked { opacity: .5; pointer-events: none; user-select: none; }
 					.mpwpb-pro-badge { display: inline-block; background: linear-gradient(135deg,#f7b733,#fc4a1a); color: #fff; font-size: 10px; font-weight: 700; letter-spacing: .5px; border-radius: 999px; padding: 2px 8px; margin-left: 6px; vertical-align: middle; }
@@ -175,7 +211,7 @@
 					.mpwpb-pm-notice-warning { background: #fff6dd; border: 1px solid #f0dfa6; }
 					.mpwpb-pm-notice-success { background: #eaf7ee; border: 1px solid #b7e3c4; }
 					.mpwpb-pm-notice p { margin: 6px 0 12px; }
-					.mpwpb-pm-btn-primary { background: #2451e0; color: #fff; border: none; border-radius: 5px; padding: 9px 18px; font-weight: 600; cursor: pointer; }
+					.mpwpb-pm-btn-primary { background: #6366f1; color: #fff; border: none; border-radius: 5px; padding: 9px 18px; font-weight: 600; cursor: pointer; }
 					.mpwpb-pm-btn-primary:disabled { opacity: .6; cursor: default; }
 					.mpwpb-gateway-card { border-radius: 8px; margin-bottom: 14px; color: #fff; background: #444; }
 					.mpwpb-gateway-row { display: flex; align-items: center; gap: 12px; padding: 16px 18px; }
@@ -202,16 +238,16 @@
 					.mpwpb-toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid #dcdcde; }
 					.mpwpb-toggle-row .description { color: #646970; }
 					.mpwpb-toggle-switch-lg .mpwpb-toggle-slider { background: rgba(0,0,0,.15); }
-					.mpwpb-toggle-switch-lg input:checked + .mpwpb-toggle-slider { background: #2451e0; }
+					.mpwpb-toggle-switch-lg input:checked + .mpwpb-toggle-slider { background: #6366f1; }
 					.mpwpb-accordion { border: 1px solid #dcdcde; border-radius: 6px; margin-bottom: 14px; overflow: hidden; }
 					.mpwpb-accordion-header { display: flex; align-items: center; justify-content: space-between; width: 100%; text-align: left; background: #f6f7f7; border: none; padding: 12px 16px; font-weight: 600; cursor: pointer; }
-					.mpwpb-accordion-header.is-open { background: #eaf1ff; color: #2451e0; }
+					.mpwpb-accordion-header.is-open { background: #eaf1ff; color: #6366f1; }
 					button.mpwpb-accordion-header { justify-content: left; }
 					.mpwpb-accordion mpwpb span.fas.fa-chevron-down { margin-left: 20px; }
 					span.fas.fa-chevron-down { margin-left: 10px; }
 					.mpwpb-accordion-body { padding: 16px; border-top: 1px solid #dcdcde; }
 					.mpwpb-accordion-body p { margin-bottom: 5px !important; }
-					.mpwpb-pm-btn-outline { display: inline-block; border: 1px solid #2451e0; color: #2451e0; background: #fff; border-radius: 5px; padding: 6px 14px; text-decoration: none; font-size: 13px; font-weight: 600; }
+					.mpwpb-pm-btn-outline { display: inline-block; border: 1px solid #6366f1; color: #6366f1; background: #fff; border-radius: 5px; padding: 6px 14px; text-decoration: none; font-size: 13px; font-weight: 600; }
 					.mpwpb-wc-gateway-card { border: 1px solid #dcdcde; border-radius: 6px; padding: 14px 16px; margin-bottom: 10px; display: grid; grid-template-columns: auto auto 1fr auto; align-items: center; gap: 14px; }
 					.mpwpb-wc-gateway-name { font-weight: 600; }
 					.mpwpb-wc-gateway-status { border-radius: 999px; padding: 2px 10px; font-size: 11px; font-weight: 700; background: #fdecea; color: #b32d2e; justify-self: end; }
@@ -447,7 +483,17 @@
 										<input type="password" name="<?php echo esc_attr($option); ?>[stripe_webhook_secret]" value="<?php echo esc_attr(MPWPB_Global_Function::get_payment_setting('stripe_webhook_secret')); ?>"/>
 									</span>
 								</label>
-								<p class="description"><?php esc_html_e('Note: real Stripe charge processing is not wired up yet — enabling Stripe currently confirms the booking immediately, the same as Offline.', 'service-booking-manager'); ?></p>
+								<p class="description">
+									<?php
+									echo wp_kses_post(
+										sprintf(
+											/* translators: %s: Stripe webhook endpoint URL */
+											__('Customers pay on a Stripe-hosted page and are redirected back once done. Also add this URL as a webhook endpoint in your Stripe Dashboard (Developers → Webhooks) listening for the <code>checkout.session.completed</code> event — it confirms payment even if the customer closes the tab before returning: <code>%s</code>', 'service-booking-manager'),
+											esc_url(admin_url('admin-ajax.php?action=mpwpb_stripe_webhook'))
+										)
+									);
+									?>
+								</p>
 							<?php elseif ($key === 'paypal') : ?>
 								<label class="mpwpb-gw-field">
 									<span class="mpwpb-gw-field-label"><?php esc_html_e('Mode', 'service-booking-manager'); ?></span>
@@ -470,7 +516,7 @@
 										<input type="password" name="<?php echo esc_attr($option); ?>[paypal_client_secret]" value="<?php echo esc_attr(MPWPB_Global_Function::get_payment_setting('paypal_client_secret')); ?>"/>
 									</span>
 								</label>
-								<p class="description"><?php esc_html_e('Note: real PayPal charge processing is not wired up yet — enabling PayPal currently confirms the booking immediately, the same as Offline.', 'service-booking-manager'); ?></p>
+								<p class="description"><?php esc_html_e('Customers approve payment on a PayPal-hosted page and are redirected back once done. Use your PayPal app\'s Client ID/Secret for the mode selected above (sandbox app credentials while testing, live app credentials when ready to accept real payments).', 'service-booking-manager'); ?></p>
 							<?php endif; ?>
 						</div>
 					<?php endforeach; ?>

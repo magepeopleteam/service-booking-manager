@@ -18,6 +18,8 @@
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Woocommerce.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Wc_Checkout_Fields_Helper.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Native_Cart.php';
+				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Stripe_Gateway.php';
+				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Paypal_Gateway.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Native_Checkout.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Static_Template.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_User_Dashboard.php';

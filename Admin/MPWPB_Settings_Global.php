@@ -29,14 +29,29 @@
 				$label = MPWPB_Function::get_name();
 				?>
 				<div class="mpwpb_style mpwpb_global_settings">
-					<div class="mpPanel">
-						<div class="mpPanelHeader"><?php echo esc_html($label . esc_html__(' Global Settings', 'service-booking-manager')); ?></div>
-						<div class="mpPanelBody mp_zero">
-							<div class="mpwpb_tabs leftTabs">
-								<?php $this->settings_api->show_navigation(); ?>
-								<div class="tabsContent">
-									<?php $this->settings_api->show_forms(); ?>
+					<!--
+						.mpwpb_tabs (required ancestor of both .tabLists and .tabsContent
+						for the shared, generic [data-tabs-target] click handler in
+						mp_global/assets/mp_style/mpwpb_plugin_global.js) now wraps the
+						whole sidebar+main shell rather than sitting directly around a
+						flat tabList/content pair -- the handler only does
+						.closest('.mpwpb_tabs') / .find('.tabsContent'), so it still
+						works unchanged regardless of the extra wrapper divs in between.
+					-->
+					<div class="mpwpb_tabs leftTabs mpwpb-settings-shell">
+						<div class="mpwpb-settings-sidebar">
+							<div class="mpwpb-settings-sidebar-header">
+								<div class="mpwpb-settings-eyebrow"><?php echo esc_html($label); ?></div>
+								<div class="mpwpb-settings-title">
+									<span class="mpwpb-settings-dot"></span>
+									<?php esc_html_e('Global Settings', 'service-booking-manager'); ?>
 								</div>
+							</div>
+							<?php $this->settings_api->show_navigation(); ?>
+						</div>
+						<div class="mpwpb-settings-main">
+							<div class="tabsContent">
+								<?php $this->settings_api->show_forms(); ?>
 							</div>
 						</div>
 					</div>

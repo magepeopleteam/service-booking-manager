@@ -154,7 +154,7 @@ button.mpwpb-csm__add-sub-btn {
 .mpwpb-csm__chip{display:inline-flex;align-items:center;border:0;background:var(--band);color:var(--ink-2);border-radius:999px;padding:2px 9px;font-size:11px;font-weight:600;cursor:pointer;}
 .mpwpb-csm__chip:hover{background:var(--brand-soft);color:var(--brand-600);}
 button.mpwpb-csm__chip {
-	font-size: 12px;
+	font-size: 10px;
 }
 .mpwpb-csm__chip-sep{color:var(--muted);font-size:10px;}
 .mpwpb-csm__chip--none{background:transparent;border:1px dashed var(--line);color:var(--muted);}

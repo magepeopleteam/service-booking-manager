@@ -3,16 +3,20 @@
 	 * Native (non-WooCommerce) checkout: renders a billing form for the
 	 * single item held in MPWPB_Native_Cart, lets the customer pick from
 	 * whichever gateways are enabled under Payment Method > Custom
-	 * (Offline / Stripe / PayPal), creates a MPWPB_Native_Order, and (for
-	 * now, until real gateway processing is built) marks it paid
-	 * immediately regardless of which gateway was chosen. Entirely inert
-	 * when Payment Method is set to WooCommerce.
+	 * (Offline / Stripe / PayPal), and creates a MPWPB_Native_Order.
+	 * Offline confirms immediately (nothing to charge). Stripe and PayPal
+	 * (MPWPB_Stripe_Gateway / MPWPB_Paypal_Gateway) redirect to a real
+	 * hosted payment page and only mark the order paid once the payment is
+	 * independently verified with the gateway on return (plus a Stripe
+	 * webhook as a backstop) — never based on the return URL alone.
+	 * Entirely inert when Payment Method is set to WooCommerce.
 	 */
 	if (!defined('ABSPATH')) {
 		die;
 	} // Cannot access pages directly.
 	if (!class_exists('MPWPB_Native_Checkout')) {
 		class MPWPB_Native_Checkout {
+			private $checkout_content_rendered = false;
 			public function __construct() {
 				if (MPWPB_Global_Function::is_wc_payment_mode()) {
 					return;
@@ -23,6 +27,8 @@
 				add_action('wp_ajax_nopriv_mpwpb_native_checkout_submit', [$this, 'handle_checkout_submit']);
 				add_action('wp_ajax_mpwpb_native_checkout_form', [$this, 'ajax_render_embedded_form']);
 				add_action('wp_ajax_nopriv_mpwpb_native_checkout_form', [$this, 'ajax_render_embedded_form']);
+				add_action('wp_ajax_mpwpb_stripe_webhook', [$this, 'handle_stripe_webhook']);
+				add_action('wp_ajax_nopriv_mpwpb_stripe_webhook', [$this, 'handle_stripe_webhook']);
 				add_shortcode('mpwpb_booking_confirmation', [$this, 'render_confirmation_shortcode']);
 			}
 			public function add_query_var($vars) {
@@ -51,15 +57,20 @@
 				if (!$order_id || $status !== 'success' || get_post_type($order_id) !== MPWPB_Native_Order::CPT) {
 					return '<p>' . esc_html__('No booking information found.', 'service-booking-manager') . '</p>';
 				}
+				// Same rule as filter_checkout_content(): status=success only marks
+				// this as a return-from-checkout URL, never proof of payment by
+				// itself -- re-verify with the gateway before trusting it.
+				$this->maybe_finalize_gateway_return($order_id);
 				ob_start();
-				$this->render_thank_you($order_id);
+				if (MPWPB_Native_Order::get_status($order_id) === 'processing') {
+					$this->render_thank_you($order_id);
+				} else {
+					$this->render_payment_incomplete($order_id);
+				}
 				return ob_get_clean();
 			}
 			/**
 			 * Gateways the admin has enabled under Payment Method > Custom.
-			 * Note: Stripe/PayPal charge processing isn't built yet — selecting
-			 * either one currently confirms the booking the same way Offline
-			 * does. Real gateway integration is the next piece of work.
 			 */
 			public static function get_enabled_gateways(): array {
 				$gateways = [];
@@ -104,6 +115,97 @@
 				$this->render_embedded_form();
 				wp_send_json_success(['html' => ob_get_clean()]);
 			}
+			/**
+			 * Appointment-slot card + itemized booking summary, shared between
+			 * the pre-payment checkout form (render_embedded_form()) and the
+			 * post-payment thank-you page (render_thank_you()) -- same item
+			 * shape either way (MPWPB_Native_Cart::get_item() before payment,
+			 * the order's stored 'mpwpb_line_items' snapshot after).
+			 */
+			private function render_booking_recap(array $item, $post_id, bool $show_change_button): void {
+				$total = $item['mpwpb_tp'] ?? 0;
+
+				// First segment only -- a comma-joined value here means a recurring
+				// booking (see mpwpb_registration.js dateTimeString), and this slot
+				// card is just a "what/when am I booking" recap, not a full itinerary.
+				$date_raw = is_string($item['mpwpb_date'] ?? '') ? $item['mpwpb_date'] : '';
+				$date_ts = $date_raw ? strtotime(explode(',', $date_raw)[0]) : false;
+				$use_24hour = MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'time_format_24hour', 'no');
+				$time_format = $use_24hour === 'yes' ? 'H:i' : 'g:i A';
+				/* translators: %s: formatted time, e.g. "10:30 AM" */
+				$slot_display = $date_ts ? date_i18n(sprintf(__('l, M j \@ %s', 'service-booking-manager'), $time_format), $date_ts) : '';
+
+				$slot_location = trim(
+					implode(
+						' - ',
+						array_filter([
+							(string) ($item['mpwpb_category'] ?? ''),
+							(string) ($item['mpwpb_sub_category'] ?? ''),
+						])
+					)
+				);
+				if ($slot_location === '') {
+					$slot_location = get_bloginfo('name');
+				}
+				?>
+				<?php if ($slot_display) : ?>
+					<div class="mpwpb-checkout-slot">
+						<div class="mpwpb-checkout-slot-main">
+							<span class="mpwpb-checkout-slot-eyebrow"><?php esc_html_e('Appointment Slot', 'service-booking-manager'); ?></span>
+							<div class="mpwpb-checkout-slot-date"><?php echo esc_html($slot_display); ?></div>
+							<div class="mpwpb-checkout-slot-location"><?php echo esc_html($slot_location); ?></div>
+						</div>
+						<?php if ($show_change_button) : ?>
+							<button type="button" class="mpwpb-checkout-slot-change" data-checkout-back-to-date>
+								<i class="fas fa-pen"></i> <?php esc_html_e('Change', 'service-booking-manager'); ?>
+							</button>
+						<?php endif; ?>
+						<div class="mpwpb-checkout-slot-icon"><i class="fas fa-calendar-alt"></i></div>
+					</div>
+				<?php endif; ?>
+				<div class="mpwpb-checkout-summary">
+					<div class="mpwpb-checkout-summary-label"><?php esc_html_e('Booking Summary', 'service-booking-manager'); ?></div>
+					<?php if (!empty($item['mpwpb_service']) && is_array($item['mpwpb_service'])) : ?>
+						<div class="mpwpb-checkout-summary-subhead"><?php esc_html_e('Services', 'service-booking-manager'); ?></div>
+						<ul class="mpwpb-checkout-summary-list">
+							<?php foreach ($item['mpwpb_service'] as $service) :
+								$qty = max(1, (int) ($service['qty'] ?? 1));
+								$unit_price = (float) ($service['price'] ?? 0);
+								$line_total = $unit_price * $qty;
+								?>
+								<li>
+									<span class="fas fa-check-circle"></span>
+									<span class="mpwpb-checkout-summary-name"><?php echo esc_html($service['name'] ?? ''); ?></span>
+									<span class="mpwpb-checkout-summary-qty"><?php echo esc_html('x' . $qty); ?></span>
+									<span class="mpwpb-checkout-summary-price"><?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, $line_total)); ?></span>
+								</li>
+							<?php endforeach; ?>
+						</ul>
+					<?php endif; ?>
+					<?php if (!empty($item['mpwpb_extra_service_info']) && is_array($item['mpwpb_extra_service_info'])) : ?>
+						<div class="mpwpb-checkout-summary-subhead"><?php esc_html_e('Extra Service Addons', 'service-booking-manager'); ?></div>
+						<ul class="mpwpb-checkout-summary-list">
+							<?php foreach ($item['mpwpb_extra_service_info'] as $extra) :
+								$ex_qty = max(1, (int) ($extra['ex_qty'] ?? 1));
+								$ex_unit_price = (float) ($extra['ex_price'] ?? 0);
+								$ex_line_total = $ex_unit_price * $ex_qty;
+								?>
+								<li>
+									<span class="fas fa-plus-circle"></span>
+									<span class="mpwpb-checkout-summary-name"><?php echo esc_html($extra['ex_name'] ?? ''); ?></span>
+									<span class="mpwpb-checkout-summary-qty"><?php echo esc_html('x' . $ex_qty); ?></span>
+									<span class="mpwpb-checkout-summary-price"><?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, $ex_line_total)); ?></span>
+								</li>
+							<?php endforeach; ?>
+						</ul>
+					<?php endif; ?>
+					<div class="mpwpb-checkout-total">
+						<span><?php esc_html_e('Total', 'service-booking-manager'); ?></span>
+						<strong><?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, $total)); ?></strong>
+					</div>
+				</div>
+				<?php
+			}
 			private function render_embedded_form(): void {
 				$item = MPWPB_Native_Cart::get_item();
 				if (empty($item)) {
@@ -120,54 +222,46 @@
 					return;
 				}
 				$post_id = $item['mpwpb_id'];
-				$total = $item['mpwpb_tp'] ?? 0;
 				?>
 				<div class="mpwpb-checkout-embed">
-					<div class="mpwpb-checkout-summary">
-						<?php if (!empty($item['mpwpb_service']) && is_array($item['mpwpb_service'])) : ?>
-							<ul class="mpwpb-checkout-summary-list">
-								<?php foreach ($item['mpwpb_service'] as $service) : ?>
-									<li>
-										<span class="fas fa-check-circle"></span>
-										<?php echo esc_html($service['name'] ?? ''); ?>
-									</li>
-								<?php endforeach; ?>
-							</ul>
-						<?php endif; ?>
-						<div class="mpwpb-checkout-total">
-							<span><?php esc_html_e('Total', 'service-booking-manager'); ?></span>
-							<strong><?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, $total)); ?></strong>
-						</div>
-					</div>
+					<?php $this->render_booking_recap($item, $post_id, true); ?>
 					<p class="mpwpb-checkout-error" style="display:none;"></p>
 					<form class="mpwpb-checkout-form" method="post" action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>">
 						<input type="hidden" name="action" value="mpwpb_native_checkout_submit"/>
 						<input type="hidden" name="nonce" value="<?php echo esc_attr(wp_create_nonce('mpwpb_nonce')); ?>"/>
 						<input type="hidden" name="mpwpb_ajax_submit" value="1"/>
-						<div class="mpwpb-checkout-row">
-							<label class="mpwpb-checkout-field">
-								<span><?php esc_html_e('First Name', 'service-booking-manager'); ?></span>
-								<input type="text" name="mpwpb_billing_first_name" required/>
-							</label>
-							<label class="mpwpb-checkout-field">
-								<span><?php esc_html_e('Last Name', 'service-booking-manager'); ?></span>
-								<input type="text" name="mpwpb_billing_last_name" required/>
-							</label>
+						<div class="mpwpb-checkout-card">
+							<div class="mpwpb-checkout-card-header">
+								<span class="mpwpb-checkout-card-icon"><i class="fas fa-user"></i></span>
+								<h3 class="mpwpb-checkout-card-title"><?php esc_html_e('Customer Information', 'service-booking-manager'); ?></h3>
+							</div>
+							<div class="mpwpb-checkout-card-body">
+								<div class="mpwpb-checkout-row">
+									<label class="mpwpb-checkout-field">
+										<span><?php esc_html_e('First Name', 'service-booking-manager'); ?></span>
+										<input type="text" name="mpwpb_billing_first_name" placeholder="<?php esc_attr_e('Enter first name', 'service-booking-manager'); ?>" required/>
+									</label>
+									<label class="mpwpb-checkout-field">
+										<span><?php esc_html_e('Last Name', 'service-booking-manager'); ?></span>
+										<input type="text" name="mpwpb_billing_last_name" placeholder="<?php esc_attr_e('Enter last name', 'service-booking-manager'); ?>" required/>
+									</label>
+								</div>
+								<div class="mpwpb-checkout-row">
+									<label class="mpwpb-checkout-field">
+										<span><?php esc_html_e('Email Address', 'service-booking-manager'); ?></span>
+										<input type="email" name="mpwpb_billing_email" placeholder="name@example.com" required/>
+									</label>
+									<label class="mpwpb-checkout-field">
+										<span><?php esc_html_e('Phone Number', 'service-booking-manager'); ?></span>
+										<input type="text" name="mpwpb_billing_phone" placeholder="(555) 000-0000"/>
+									</label>
+								</div>
+								<label class="mpwpb-checkout-field">
+									<span><?php esc_html_e('Address', 'service-booking-manager'); ?></span>
+									<input type="text" name="mpwpb_billing_address_1" placeholder="<?php esc_attr_e('123 Main St, City', 'service-booking-manager'); ?>"/>
+								</label>
+							</div>
 						</div>
-						<div class="mpwpb-checkout-row">
-							<label class="mpwpb-checkout-field">
-								<span><?php esc_html_e('Email', 'service-booking-manager'); ?></span>
-								<input type="email" name="mpwpb_billing_email" required/>
-							</label>
-							<label class="mpwpb-checkout-field">
-								<span><?php esc_html_e('Phone', 'service-booking-manager'); ?></span>
-								<input type="text" name="mpwpb_billing_phone"/>
-							</label>
-						</div>
-						<label class="mpwpb-checkout-field">
-							<span><?php esc_html_e('Address', 'service-booking-manager'); ?></span>
-							<input type="text" name="mpwpb_billing_address_1"/>
-						</label>
 						<?php if (count($gateways) > 1) : ?>
 							<div class="mpwpb-checkout-gateways">
 								<span class="mpwpb-checkout-gateways-label"><?php esc_html_e('Payment Method', 'service-booking-manager'); ?></span>
@@ -186,40 +280,134 @@
 				</div>
 				<?php
 			}
+			/**
+			 * The no-Confirmation-Page-configured fallback used to call
+			 * get_header()/get_footer() directly (classic-theme template
+			 * functions) and exit -- on a block theme with no header.php/
+			 * footer.php (e.g. Twenty Twenty-Five and every other current
+			 * default theme), those are simply no-ops, so the page rendered
+			 * with no header/footer at all instead of matching every other
+			 * page. Filtering the_content() instead lets WordPress run its
+			 * completely normal front-end render for whatever home_url('/')
+			 * resolves to (classic or block theme, static front page or
+			 * posts index) -- the real header/footer for that theme comes
+			 * along for free, since we're no longer bypassing it.
+			 */
 			public function maybe_render_checkout(): void {
 				if (!get_query_var('mpwpb_checkout')) {
 					return;
 				}
-				$this->render_checkout_page();
-				exit;
+				add_filter('the_content', [$this, 'filter_checkout_content'], 999);
 			}
-			private function render_checkout_page(): void {
-				get_header();
+			public function filter_checkout_content($content) {
+				if (!in_the_loop() || !is_main_query() || $this->checkout_content_rendered) {
+					return $content;
+				}
+				$this->checkout_content_rendered = true;
 				$order_id = isset($_GET['mpwpb_order']) ? absint($_GET['mpwpb_order']) : 0;
 				$status = isset($_GET['status']) ? sanitize_text_field(wp_unslash($_GET['status'])) : '';
-				echo '<div class="mpwpb_style mpwpb_native_checkout" style="max-width:640px;margin:40px auto;">';
-				if ($order_id && $status === 'success' && get_post_type($order_id) === MPWPB_Native_Order::CPT) {
-					$this->render_thank_you($order_id);
+				$valid_order = $order_id && get_post_type($order_id) === MPWPB_Native_Order::CPT;
+				ob_start();
+				echo '<div class="mpwpb_style mpwpb_native_checkout">';
+				if ($valid_order && $status === 'success') {
+					// status=success only means "this URL is a return from checkout,
+					// not the cart" -- it is never itself treated as proof of
+					// payment. For Stripe/PayPal, maybe_finalize_gateway_return()
+					// re-verifies the real payment status with the gateway first;
+					// only then does the order's own stored status decide what
+					// renders. Offline orders are already marked paid by this
+					// point (done synchronously in handle_checkout_submit()), so
+					// this is a no-op for them.
+					$this->maybe_finalize_gateway_return($order_id);
+					if (MPWPB_Native_Order::get_status($order_id) === 'processing') {
+						$this->render_thank_you($order_id);
+					} else {
+						$this->render_payment_incomplete($order_id);
+					}
 				} else {
 					$this->render_cart_and_form();
 				}
 				echo '</div>';
-				get_footer();
+				return ob_get_clean();
 			}
+			/**
+			 * Post-payment confirmation: reuses the exact same recap markup/
+			 * CSS as the pre-payment checkout form (render_booking_recap()),
+			 * built from the order's stored 'mpwpb_line_items' snapshot
+			 * instead of the (by-now-cleared) MPWPB_Native_Cart. Everything
+			 * here is under .mpwpb-confirmation-wrap, which carries its own
+			 * self-contained box-sizing reset and a max-width, so this drops
+			 * cleanly into the [mpwpb_booking_confirmation] shortcode on any
+			 * theme/page without depending on -- or altering -- surrounding
+			 * page styles.
+			 */
 			private function render_thank_you($order_id): void {
+				$item = get_post_meta($order_id, 'mpwpb_line_items', true);
+				$item = is_array($item) ? $item : [];
+				$post_id = $item['mpwpb_id'] ?? 0;
+				if (!isset($item['mpwpb_tp'])) {
+					$item['mpwpb_tp'] = MPWPB_Native_Order::get_total($order_id);
+				}
+				$first_name = get_post_meta($order_id, 'mpwpb_billing_first_name', true);
+				$last_name = get_post_meta($order_id, 'mpwpb_billing_last_name', true);
+				$email = get_post_meta($order_id, 'mpwpb_billing_email', true);
+				$phone = get_post_meta($order_id, 'mpwpb_billing_phone', true);
+				$address = get_post_meta($order_id, 'mpwpb_billing_address_1', true);
 				?>
-				<h2><?php esc_html_e('Thank you, your booking is confirmed!', 'service-booking-manager'); ?></h2>
-				<p>
-					<?php
-					echo esc_html(
-						sprintf(
-							/* translators: %s: order reference number */
-							__('Order reference: #%s', 'service-booking-manager'),
-							$order_id
-						)
-					);
-					?>
-				</p>
+				<div class="mpwpb-confirmation-wrap">
+					<div class="mpwpb-checkout-embed">
+						<div class="mpwpb-confirmation-banner">
+							<span class="mpwpb-confirmation-icon"><i class="fas fa-check-circle"></i></span>
+							<h2 class="mpwpb-confirmation-title"><?php esc_html_e('Thank you, your booking is confirmed!', 'service-booking-manager'); ?></h2>
+							<p class="mpwpb-confirmation-ref">
+								<?php
+								echo esc_html(
+									sprintf(
+										/* translators: %s: order reference number */
+										__('Order reference: #%s', 'service-booking-manager'),
+										$order_id
+									)
+								);
+								?>
+							</p>
+						</div>
+						<?php if (!empty($item)) : ?>
+							<?php $this->render_booking_recap($item, $post_id, false); ?>
+						<?php endif; ?>
+						<?php if ($first_name || $last_name || $email || $phone || $address) : ?>
+							<div class="mpwpb-checkout-card">
+								<div class="mpwpb-checkout-card-header">
+									<span class="mpwpb-checkout-card-icon"><i class="fas fa-user"></i></span>
+									<h3 class="mpwpb-checkout-card-title"><?php esc_html_e('Customer Information', 'service-booking-manager'); ?></h3>
+								</div>
+								<div class="mpwpb-checkout-card-body">
+									<div class="mpwpb-checkout-row">
+										<div class="mpwpb-checkout-info">
+											<span><?php esc_html_e('Full Name', 'service-booking-manager'); ?></span>
+											<strong><?php echo esc_html(trim($first_name . ' ' . $last_name)); ?></strong>
+										</div>
+										<div class="mpwpb-checkout-info">
+											<span><?php esc_html_e('Email Address', 'service-booking-manager'); ?></span>
+											<strong><?php echo esc_html($email); ?></strong>
+										</div>
+									</div>
+									<?php if ($phone || $address) : ?>
+										<div class="mpwpb-checkout-row">
+											<div class="mpwpb-checkout-info">
+												<span><?php esc_html_e('Phone Number', 'service-booking-manager'); ?></span>
+												<strong><?php echo esc_html($phone ?: '—'); ?></strong>
+											</div>
+											<div class="mpwpb-checkout-info">
+												<span><?php esc_html_e('Address', 'service-booking-manager'); ?></span>
+												<strong><?php echo esc_html($address ?: '—'); ?></strong>
+											</div>
+										</div>
+									<?php endif; ?>
+								</div>
+							</div>
+						<?php endif; ?>
+					</div>
+				</div>
 				<?php
 			}
 			private function render_cart_and_form(): void {
@@ -338,11 +526,12 @@
 					'address_1' => isset($_POST['mpwpb_billing_address_1']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_billing_address_1'])) : '',
 					'address_2' => '',
 				];
+				$currency_code = MPWPB_Global_Function::native_currency_setting('currency_code', 'USD');
 				$order_id = MPWPB_Native_Order::create([
 					'billing' => $billing,
 					'line_items' => $item,
 					'total' => $item['mpwpb_tp'] ?? 0,
-					'currency' => MPWPB_Global_Function::native_currency_setting('symbol', '$'),
+					'currency' => $currency_code,
 				]);
 				if (!$order_id) {
 					if ($is_ajax_submit) {
@@ -351,17 +540,151 @@
 					wp_safe_redirect(add_query_arg('mpwpb_error', '1', self::get_checkout_url()));
 					exit;
 				}
-				// Stripe/PayPal charge processing isn't built yet, so every
-				// gateway currently confirms immediately like Offline does.
-				// Real gateways will replace this with a redirect to the
-				// gateway and defer process_order() to its webhook.
-				MPWPB_Native_Order::mark_paid($order_id, $gateway, '');
-				MPWPB_Native_Order::process_order($order_id);
-				MPWPB_Native_Cart::clear();
-				if ($is_ajax_submit) {
-					wp_send_json_success(['redirect' => self::get_confirmation_url($order_id)]);
+				// Offline still confirms immediately (there's nothing to charge
+				// through a gateway). Stripe/PayPal instead send the customer to
+				// a hosted payment page and defer mark_paid()/process_order() to
+				// filter_checkout_content()'s verification of the real payment
+				// status once they return (plus a Stripe webhook as a backstop) --
+				// never trust the return purely because the browser came back.
+				if ($gateway === 'stripe') {
+					$redirect = $this->start_stripe_payment($order_id, $item, $currency_code);
+				} elseif ($gateway === 'paypal') {
+					$redirect = $this->start_paypal_payment($order_id, $item, $currency_code);
+				} else {
+					MPWPB_Native_Order::mark_paid($order_id, $gateway, '');
+					MPWPB_Native_Order::process_order($order_id);
+					MPWPB_Native_Cart::clear();
+					$redirect = ['ok' => true, 'url' => self::get_confirmation_url($order_id)];
 				}
-				wp_safe_redirect(self::get_confirmation_url($order_id));
+				if (!$redirect['ok']) {
+					if ($is_ajax_submit) {
+						wp_send_json_error(['message' => $redirect['error']]);
+					}
+					wp_safe_redirect(add_query_arg('mpwpb_error', '1', self::get_checkout_url()));
+					exit;
+				}
+				if ($is_ajax_submit) {
+					wp_send_json_success(['redirect' => $redirect['url']]);
+				}
+				wp_safe_redirect($redirect['url']);
+				exit;
+			}
+			/**
+			 * @return array{ok:bool,url?:string,error?:string}
+			 */
+			private function start_stripe_payment($order_id, array $item, string $currency_code): array {
+				$success_url = add_query_arg('mpwpb_gateway_return', 'stripe', self::get_confirmation_url($order_id));
+				// {CHECKOUT_SESSION_ID} is a literal Stripe template placeholder --
+				// appended after add_query_arg() so it's never URL-encoded.
+				$success_url .= '&session_id={CHECKOUT_SESSION_ID}';
+				$cancel_url = self::get_checkout_url();
+				$result = MPWPB_Stripe_Gateway::create_checkout_session($order_id, $item, $currency_code, $success_url, $cancel_url);
+				if (!$result['ok']) {
+					return ['ok' => false, 'error' => $result['error']];
+				}
+				update_post_meta($order_id, 'mpwpb_stripe_session_id', $result['session_id']);
+				return ['ok' => true, 'url' => $result['url']];
+			}
+			/**
+			 * @return array{ok:bool,url?:string,error?:string}
+			 */
+			private function start_paypal_payment($order_id, array $item, string $currency_code): array {
+				$return_url = add_query_arg('mpwpb_gateway_return', 'paypal', self::get_confirmation_url($order_id));
+				$cancel_url = self::get_checkout_url();
+				$result = MPWPB_Paypal_Gateway::create_order($order_id, $item, $currency_code, $return_url, $cancel_url);
+				if (!$result['ok']) {
+					return ['ok' => false, 'error' => $result['error']];
+				}
+				update_post_meta($order_id, 'mpwpb_paypal_order_id', $result['paypal_order_id']);
+				return ['ok' => true, 'url' => $result['approve_url']];
+			}
+			/**
+			 * Verifies the real payment status with the gateway before ever
+			 * marking an order paid -- the mpwpb_gateway_return/session_id/token
+			 * query args only say which gateway to check with, they are never
+			 * trusted as proof of payment by themselves.
+			 */
+			private function maybe_finalize_gateway_return($order_id): void {
+				if (MPWPB_Native_Order::get_status($order_id) === 'processing') {
+					return;
+				}
+				$gateway_return = isset($_GET['mpwpb_gateway_return']) ? sanitize_text_field(wp_unslash($_GET['mpwpb_gateway_return'])) : '';
+				if ($gateway_return === 'stripe') {
+					$session_id = isset($_GET['session_id']) ? sanitize_text_field(wp_unslash($_GET['session_id'])) : '';
+					$result = MPWPB_Stripe_Gateway::retrieve_session($session_id);
+					if ($result['ok'] && !empty($result['paid']) && (int) ($result['order_id'] ?? 0) === (int) $order_id) {
+						$this->finalize_paid_order($order_id, 'stripe', $session_id);
+					}
+				} elseif ($gateway_return === 'paypal') {
+					$paypal_order_id = isset($_GET['token']) ? sanitize_text_field(wp_unslash($_GET['token'])) : '';
+					$result = MPWPB_Paypal_Gateway::capture_order($paypal_order_id);
+					if ($result['ok'] && !empty($result['captured']) && (int) ($result['order_id'] ?? 0) === (int) $order_id) {
+						$this->finalize_paid_order($order_id, 'paypal', $paypal_order_id);
+					}
+				}
+			}
+			private function finalize_paid_order($order_id, $gateway, $txn_id): void {
+				if (MPWPB_Native_Order::get_status($order_id) === 'processing') {
+					return;
+				}
+				MPWPB_Native_Order::mark_paid($order_id, $gateway, $txn_id);
+				MPWPB_Native_Order::process_order($order_id);
+				// Only the customer's own browser/cookie can reach this; a webhook
+				// request (Stripe, server-to-server) has no such cookie, so this
+				// is a no-op there and the cart transient just expires on its own.
+				MPWPB_Native_Cart::clear();
+			}
+			private function render_payment_incomplete($order_id): void {
+				?>
+				<div class="mpwpb-confirmation-wrap">
+					<div class="mpwpb-checkout-embed">
+						<div class="mpwpb-confirmation-banner">
+							<span class="mpwpb-confirmation-icon mpwpb-confirmation-icon--warn"><i class="fas fa-triangle-exclamation"></i></span>
+							<h2 class="mpwpb-confirmation-title"><?php esc_html_e("We couldn't confirm your payment", 'service-booking-manager'); ?></h2>
+							<p class="mpwpb-confirmation-ref"><?php esc_html_e('If you completed payment, this can take a moment to confirm — please check back shortly, or contact us with your reference below.', 'service-booking-manager'); ?></p>
+							<p class="mpwpb-confirmation-ref">
+								<?php
+								echo esc_html(
+									sprintf(
+										/* translators: %s: order reference number */
+										__('Order reference: #%s', 'service-booking-manager'),
+										$order_id
+									)
+								);
+								?>
+							</p>
+						</div>
+						<p style="text-align:center;">
+							<a class="mpwpb-checkout-submit mpwpb-checkout-retry-link" href="<?php echo esc_url(self::get_checkout_url()); ?>"><?php esc_html_e('Try again', 'service-booking-manager'); ?></a>
+						</p>
+					</div>
+				</div>
+				<?php
+			}
+			/**
+			 * Stripe webhook — a backstop alongside the inline verification in
+			 * filter_checkout_content(): covers a customer closing the tab before
+			 * the redirect back completes, or Stripe's own async payment methods.
+			 * finalize_paid_order() is idempotent, so it's harmless if the inline
+			 * check already handled it first.
+			 */
+			public function handle_stripe_webhook(): void {
+				$payload = file_get_contents('php://input');
+				$sig_header = isset($_SERVER['HTTP_STRIPE_SIGNATURE']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_STRIPE_SIGNATURE'])) : '';
+				$secret = MPWPB_Stripe_Gateway::get_webhook_secret();
+				if (!$secret || !MPWPB_Stripe_Gateway::verify_webhook_signature($payload, $sig_header, $secret)) {
+					status_header(400);
+					exit;
+				}
+				$event = json_decode($payload, true);
+				if (($event['type'] ?? '') === 'checkout.session.completed') {
+					$session = $event['data']['object'] ?? [];
+					$order_id = (int) ($session['metadata']['mpwpb_order_id'] ?? ($session['client_reference_id'] ?? 0));
+					if ($order_id && get_post_type($order_id) === MPWPB_Native_Order::CPT && ($session['payment_status'] ?? '') === 'paid') {
+						$this->finalize_paid_order($order_id, 'stripe', $session['id'] ?? '');
+					}
+				}
+				status_header(200);
 				exit;
 			}
 		}

@@ -128,6 +128,45 @@
 				wp_set_object_terms( $pid, $terms, 'product_visibility' );
 				update_post_meta( $post_id, 'check_if_run_once', true );
 			}
+			/**
+			 * Resolves the real hidden WC product for a service, creating one
+			 * on the spot if it's missing -- covers a service that was
+			 * created/last saved while Payment Method was set to Custom (this
+			 * class's save_post/wp_insert_post hooks above only run while WC
+			 * mode is active, so 'link_wc_product' never got written then).
+			 * Static/callable directly (no hook side effects) so
+			 * MPWPB_Woocommerce::mpwpb_add_to_cart() can call it lazily at
+			 * add-to-cart time instead of only at post-save time.
+			 */
+			public static function ensure_hidden_product( $post_id ): int {
+				$existing = MPWPB_Global_Function::get_post_info( $post_id, 'link_wc_product' );
+				if ( $existing && get_post_type( $existing ) === 'product' ) {
+					return (int) $existing;
+				}
+				$new_post = array(
+					'post_title'    => get_the_title( $post_id ),
+					'post_content'  => '',
+					'post_name'     => uniqid(),
+					'post_category' => array(),
+					'tags_input'    => array(),
+					'post_status'   => 'publish',
+					'post_type'     => 'product',
+				);
+				$pid = wp_insert_post( $new_post );
+				if ( is_wp_error( $pid ) || ! $pid ) {
+					return 0;
+				}
+				update_post_meta( $post_id, 'link_wc_product', $pid );
+				update_post_meta( $pid, 'link_mpwpb_id', $post_id );
+				update_post_meta( $pid, '_price', 0.01 );
+				update_post_meta( $pid, '_sold_individually', 'yes' );
+				update_post_meta( $pid, '_virtual', 'yes' );
+				update_post_meta( $pid, '_stock_status', 'instock' );
+				update_post_meta( $pid, '_manage_stock', 'no' );
+				wp_set_object_terms( $pid, array( 'exclude-from-catalog', 'exclude-from-search' ), 'product_visibility' );
+				update_post_meta( $post_id, 'check_if_run_once', true );
+				return (int) $pid;
+			}
 			public function count_hidden_wc_product( $post_id ): int {
 				$args = array(
 					'post_type'      => 'product',

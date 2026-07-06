@@ -47,7 +47,7 @@
 	}
 ?>
     <div class="mpwpb_static_theme">
-        <div class="mpwpb_static_area">
+        <div class="mpwpb_static_area<?php echo $is_sticky_on_scrolling === 'yes' ? ' mpwpb-sticky-enabled' : ''; ?>">
             <input type="hidden" name="mpwpb_sticky_on_scrolling" id="mpwpb_sticky_on_scrolling" value="<?php echo esc_attr( $is_sticky_on_scrolling )?>">
             <?php if( $shortcode === 'yes' ){ ?>
             <div class="mpwpb_static " id="mpwpb_make_static_booking">

@@ -649,7 +649,11 @@ function mpwpb_price_calculation($this) {
                     nonce: mpwpb_ajax.nonce
                 },
                 beforeSend: function () {
-                    mpwpb_loader(parent);
+                    // Full-page overlay (mpwpb_loaderBody, position:fixed on <body>)
+                    // instead of mpwpb_loader(parent) -- .mpwpb_registration only wraps
+                    // the plugin's own content area, not the whole viewport, so the
+                    // parent-scoped loader only ever covered part of the page.
+                    mpwpb_loaderBody();
                 },
                 success: function (data) {
                     // Custom Payment (WooCommerce off): stay in the same popup and
@@ -665,7 +669,7 @@ function mpwpb_price_calculation($this) {
                     }
                 },
                 error: function (response) {
-                    mpwpb_loaderRemove(parent);
+                    mpwpb_loaderRemove();
                 }
             });
         } else {
@@ -682,7 +686,7 @@ function mpwpb_price_calculation($this) {
                 nonce: mpwpb_ajax.nonce
             },
             success: function (response) {
-                mpwpb_loaderRemove(parent);
+                mpwpb_loaderRemove();
                 if (response && response.success) {
                     $target.html(response.data.html);
                     load_order_proceed_tab(parent);
@@ -692,7 +696,7 @@ function mpwpb_price_calculation($this) {
                 }
             },
             error: function () {
-                mpwpb_loaderRemove(parent);
+                mpwpb_loaderRemove();
                 $target.html('<p class="mpwpb-checkout-error">Request failed. Please try again.</p>');
                 load_order_proceed_tab(parent);
             }
@@ -717,6 +721,11 @@ function mpwpb_price_calculation($this) {
             $btn.prop('disabled', false);
             $error.text('Request failed. Please try again.').show();
         });
+    });
+    $(document).on('click', 'div.mpwpb_registration [data-checkout-back-to-date]', function () {
+        let parent = $(this).closest('div.mpwpb_registration');
+        $("#mpwpb_progress_checkout").removeClass('active');
+        load_date_time_tab(parent);
     });
     $(document).on('click', 'div.mpwpb_registration .mpwpb_date_time_prev', function () {
         let parent = $(this).closest('div.mpwpb_registration');

@@ -334,12 +334,48 @@
  *  (assets/frontend/mpwpb_registration.js, mpwpb_load_native_checkout_form).
  * -------------------------------------------------------------------- */
 .mpwpb-checkout-embed{display:flex;flex-direction:column;gap:16px;}
+
+.mpwpb-checkout-slot{
+	display:flex;align-items:center;justify-content:space-between;gap:12px;
+	border:1px solid #e5e9f0;border-radius:var(--mpwpb-sp-radius,14px);background:#fff;padding:16px 18px;
+	box-shadow:0 1px 2px rgba(15,23,42,.04),0 4px 10px rgba(15,23,42,.05);
+}
+.mpwpb-checkout-slot-main{flex:1 1 auto;min-width:0;}
+.mpwpb-checkout-slot-eyebrow{
+	display:block;margin-bottom:6px;
+	font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mpwpb_color_theme);
+}
+.mpwpb-checkout-slot-change{
+	flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;border:none;background:none;cursor:pointer;
+	font-size:12.5px;font-weight:600;color:var(--mpwpb_color_theme);padding:6px 8px;white-space:nowrap;
+}
+.mpwpb-checkout-slot-change:hover{text-decoration:underline;}
+.mpwpb-checkout-slot-change i{font-size:11px;}
+.mpwpb-checkout-slot-date{font-size:17px;font-weight:800;color:#1e293b;line-height:1.25;}
+.mpwpb-checkout-slot-location{margin-top:2px;font-size:13px;color:#64748b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mpwpb-checkout-slot-icon{
+	flex:0 0 auto;width:52px;height:52px;display:inline-flex;align-items:center;justify-content:center;
+	border-radius:14px;background:var(--mpwpb_color_theme_88,rgba(0,0,0,.06));color:var(--mpwpb_color_theme);font-size:20px;
+}
+
 .mpwpb-checkout-summary{
 	border:1px solid #e5e9f0;border-radius:var(--mpwpb-sp-radius,14px);background:#fafbfc;padding:14px 16px;
+	box-shadow:0 1px 2px rgba(15,23,42,.03);
 }
-.mpwpb-checkout-summary-list{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-direction:column;gap:6px;}
+.mpwpb-checkout-summary-label{
+	font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;margin-bottom:10px;
+}
+.mpwpb-checkout-summary-subhead{
+	font-size:11px;font-weight:700;color:var(--mpwpb_color_theme);margin:12px 0 6px;
+}
+.mpwpb-checkout-summary-subhead:first-of-type{margin-top:0;}
+.mpwpb-checkout-summary-list{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-direction:column;gap:8px;}
 .mpwpb-checkout-summary-list li{display:flex;align-items:center;gap:8px;font-size:13.5px;color:#334155;}
-.mpwpb-checkout-summary-list li .fa-check-circle{color:var(--mpwpb_color_theme);font-size:12px;}
+.mpwpb-checkout-summary-list li .fa-check-circle{flex:0 0 auto;color:var(--mpwpb_color_theme);font-size:12px;}
+.mpwpb-checkout-summary-list li .fa-plus-circle{flex:0 0 auto;color:#94a3b8;font-size:12px;}
+.mpwpb-checkout-summary-name{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mpwpb-checkout-summary-qty{flex:0 0 auto;font-size:12px;font-weight:600;color:#94a3b8;}
+.mpwpb-checkout-summary-price{flex:0 0 auto;font-weight:700;color:#1e293b;}
 .mpwpb-checkout-total{
 	display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid #e5e9f0;
 	font-size:14px;font-weight:700;color:#1e293b;
@@ -350,28 +386,112 @@
 	margin:0;padding:10px 14px;border-radius:9px;background:#fdecea;color:#b32d2e;font-size:13px;font-weight:600;
 }
 .mpwpb-checkout-form{display:flex;flex-direction:column;gap:14px;}
-.mpwpb-checkout-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-.mpwpb-checkout-field{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#334155;}
+
+.mpwpb-checkout-card{
+	border:1px solid #e5e9f0;border-radius:var(--mpwpb-sp-radius,14px);background:#fff;overflow:hidden;
+	box-shadow:0 1px 2px rgba(15,23,42,.04),0 4px 10px rgba(15,23,42,.05);
+}
+.mpwpb-checkout-card-header{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid #f1f5f9;}
+.mpwpb-checkout-card-icon{
+	flex:0 0 auto;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;
+	border-radius:50%;border:1.5px solid var(--mpwpb_color_theme);color:var(--mpwpb_color_theme);font-size:10px;
+}
+.mpwpb-checkout-card-title{margin:0;font-size:14px;font-weight:700;color:#1e293b;}
+.mpwpb-checkout-card h3.mpwpb-checkout-card-title{font-size:14px !important;}
+.mpwpb-checkout-card-body{display:flex;flex-direction:column;gap:10px;padding:14px;}
+
+.mpwpb-checkout-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.mpwpb-checkout-field{display:flex;flex-direction:column;gap:4px;font-size:11.5px;font-weight:600;color:#64748b;}
+label.mpwpb-checkout-field{display:inline-block;}
+.mpwpb-checkout-field > span{padding-left:0;}
+@media only screen and (min-width: 10px) {
+	.mpwpb-checkout-field > span{
+		white-space:nowrap !important;
+		padding-bottom:10px !important;
+	}
+	/* Scoped version of the shared .mpwpb_style small/span/strong utility
+	   rule (mp_global/assets/mp_style/mpwpb_plugin_global.css:309-310, which
+	   sets display:inline-block plugin-wide) -- deliberately only applied
+	   inside the checkout/confirmation section rather than changed globally,
+	   so nothing elsewhere in the plugin is affected. */
+	.mpwpb-checkout-embed .dInlineBlock, .mpwpb-checkout-embed [class*="_dInlineBlock"],
+	.mpwpb-checkout-embed small, .mpwpb-checkout-embed span, .mpwpb-checkout-embed strong {
+		display:flex;
+	}
+}
 .mpwpb-checkout-field input{
-	font-size:14px;font-weight:400;padding:11px 12px;border:1px solid #dcdfe4;border-radius:9px;
-	background:#fff;color:#1e293b;transition:.15s;
+	font-size:13px;font-weight:400;padding:8px 10px;border:1px solid #e5e9f0;border-radius:7px;
+	background:#f8fafc;color:#1e293b;transition:.15s;box-sizing:border-box;width:100%;
 }
-.mpwpb-checkout-field input:focus{outline:none;border-color:var(--mpwpb_color_theme);box-shadow:0 0 0 3px var(--mpwpb_color_theme_88,rgba(0,0,0,.08));}
-.mpwpb-checkout-gateways{
-	display:flex;flex-direction:column;gap:8px;padding:12px 14px;border:1px solid #e5e9f0;border-radius:10px;background:#fafbfc;
+.mpwpb-checkout-field input::placeholder{color:#a3adba;}
+.mpwpb-checkout-field input:focus{
+	outline:none;background:#fff;border-color:var(--mpwpb_color_theme);box-shadow:0 0 0 3px var(--mpwpb_color_theme_88,rgba(0,0,0,.08));
 }
+.mpwpb-checkout-gateways{display:flex;flex-direction:column;gap:8px;}
+.mpwpb-checkout-gateways label{padding:10px !important;}
 .mpwpb-checkout-gateways-label{font-size:12.5px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.04em;}
-.mpwpb-checkout-gateway{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:#334155;cursor:pointer;}
+.mpwpb-checkout-gateway{
+	display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:#334155;cursor:pointer;
+	padding:10px;border:1px solid #e5e9f0;border-radius:10px;background:#fff;transition:.15s;
+}
+.mpwpb-checkout-gateway:hover{border-color:var(--mpwpb_color_theme);}
+.mpwpb-checkout-gateway:has(input:checked){
+	padding:10px;border-color:var(--mpwpb_color_theme);background:var(--mpwpb_color_theme_88,#f6fbfa);
+}
+.mpwpb-checkout-gateway input{accent-color:var(--mpwpb_color_theme);width:15px;height:15px;flex:0 0 auto;}
 .mpwpb-checkout-submit{
 	display:block;width:100%;border:none;border-radius:999px;background:var(--mpwpb_color_theme);
 	color:#fff;font-size:15px;font-weight:700;padding:13px 20px;cursor:pointer;transition:.15s;
 }
 .mpwpb-checkout-submit:hover{filter:brightness(0.92);}
 .mpwpb-checkout-submit:disabled{opacity:.6;cursor:default;}
+.mpwpb-checkout-retry-link{display:inline-block;width:auto;text-decoration:none;padding:11px 28px;}
 
 @media(max-width:480px){
 	.mpwpb-checkout-row{grid-template-columns:1fr;}
 }
+
+/* -------------------------------------------------------------------- *
+ *  Booking confirmation ([mpwpb_booking_confirmation] shortcode /
+ *  MPWPB_Native_Checkout::render_thank_you()). This can be dropped onto
+ *  ANY page in ANY theme, so .mpwpb-confirmation-wrap carries its own
+ *  box-sizing reset and width cap instead of depending on an ancestor
+ *  (e.g. .mpwpb-static-template) that may not be present there -- nothing
+ *  here is unscoped/tag-level, so it can't leak onto surrounding theme
+ *  content either way.
+ * -------------------------------------------------------------------- */
+.mpwpb-confirmation-wrap,
+.mpwpb-confirmation-wrap *,
+.mpwpb-confirmation-wrap *::before,
+.mpwpb-confirmation-wrap *::after{box-sizing:border-box;}
+/* The no-Confirmation-Page-configured fallback (MPWPB_Native_Checkout::
+   filter_checkout_content()) renders .mpwpb_native_checkout as ordinary
+   page content inside whatever theme/template the site's front page uses
+   -- same self-contained width cap as .mpwpb-confirmation-wrap so it reads
+   as a focused single-column flow rather than stretching full-width. */
+.mpwpb_native_checkout,
+.mpwpb_native_checkout *,
+.mpwpb_native_checkout *::before,
+.mpwpb_native_checkout *::after{box-sizing:border-box;}
+.mpwpb_native_checkout{
+	max-width:640px;margin:40px auto;padding:0 16px;
+	font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+}
+.mpwpb-confirmation-wrap{
+	max-width:640px;margin:0 auto;padding:24px 16px;
+	font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+	text-align:left;
+}
+.mpwpb-confirmation-banner{text-align:center;margin-bottom:20px;}
+.mpwpb-confirmation-icon{
+	display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;margin-bottom:14px;
+	border-radius:50%;background:#eafaf0;color:#1c9a5b;font-size:30px;
+}
+.mpwpb-confirmation-icon--warn{background:#fff6dd;color:#b8860b;}
+.mpwpb-confirmation-title{margin:0 0 6px;font-size:22px;font-weight:800;color:#1e293b;line-height:1.3;}
+.mpwpb-confirmation-ref{margin:0;font-size:13.5px;color:#64748b;}
+.mpwpb-checkout-info{display:flex;flex-direction:column;gap:4px;font-size:11.5px;font-weight:600;color:#64748b;}
+.mpwpb-checkout-info strong{font-size:13.5px;font-weight:600;color:#1e293b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
 /* -------------------------------------------------------------------- *
  *  Booking popup -> right-side slide-in drawer.
@@ -512,7 +632,7 @@
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row:last-child{margin-bottom:0;}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row.mpActive{
-	border-color:#3a5856;background:#F0FDFA;
+	border-color:#b6b9b9;background:#EFF4FF;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row > ._dFlex{width:100%;display:flex !important;align-items:center;gap:10px;cursor:pointer;}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row h6{font-size:13px;margin:0;}

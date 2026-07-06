@@ -634,6 +634,18 @@
 						echo esc_url(wp_login_url(wp_get_referer() ?: home_url('/')));
 						die();
 					}
+					// $link_id is normally already the linked hidden WC product id
+					// (next_date_time.php reads the 'link_wc_product' meta), but
+					// that meta is only ever written while WC mode was active when
+					// the service was last saved (Admin/MPWPB_Hidden_Product.php) --
+					// a service created/edited while Payment Method was set to
+					// Custom instead falls back to its own raw service post id
+					// there, which WC()->cart->add_to_cart() can't add (wrong post
+					// type). Resolve/create the real hidden product now rather than
+					// silently failing to add to cart.
+					if (get_post_type($link_id) === MPWPB_Function::get_cpt() && class_exists('MPWPB_Hidden_Product')) {
+						$link_id = MPWPB_Hidden_Product::ensure_hidden_product($link_id);
+					}
 					$product_id = apply_filters('woocommerce_add_to_cart_product_id', $link_id);
 					$quantity = 1;
 					$passed_validation = apply_filters('woocommerce_add_to_cart_validation', true, $product_id, $quantity);
