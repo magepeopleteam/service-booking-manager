@@ -255,12 +255,12 @@
 								<p class="description"><?php esc_html_e('If enabled, WooCommerce payment gateway will be used for checkout.', 'service-booking-manager'); ?></p>
 							</div>
 							<label class="mpwpb-toggle-switch mpwpb-toggle-switch-lg">
-								<input type="checkbox" id="mpwpb_wc_enable_toggle" <?php checked($payment_type !== 'custom'); ?>/>
+								<input type="checkbox" id="mpwpb_wc_enable_toggle" <?php checked($payment_type === 'woocommerce'); ?>/>
 								<span class="mpwpb-toggle-slider"></span>
 							</label>
 						</div>
 
-						<div class="mpwpb-accordion mpwpb-wc-dependent" <?php echo $payment_type !== 'custom' ? '' : 'style="display:none;"'; ?>>
+						<div class="mpwpb-accordion mpwpb-wc-dependent" <?php echo $payment_type === 'woocommerce' ? '' : 'style="display:none;"'; ?>>
 							<button type="button" class="mpwpb-accordion-header" data-target="mpwpb-acc-wc-gateways">
 								<?php esc_html_e('WooCommerce Payment Methods', 'service-booking-manager'); ?>
 								<span class="fas fa-chevron-down"></span>
@@ -301,7 +301,7 @@
 							</div>
 						</div>
 
-						<div class="mpwpb-accordion mpwpb-wc-dependent" <?php echo $payment_type !== 'custom' ? '' : 'style="display:none;"'; ?>>
+						<div class="mpwpb-accordion mpwpb-wc-dependent" <?php echo $payment_type === 'woocommerce' ? '' : 'style="display:none;"'; ?>>
 							<button type="button" class="mpwpb-accordion-header" data-target="mpwpb-acc-wc-additional">
 								<?php esc_html_e('Additional Settings', 'service-booking-manager'); ?>
 								<span class="fas fa-chevron-down"></span>
@@ -502,14 +502,16 @@
 						$(document).ready(function () {
 							var mpwpbProActive = <?php echo $pro_active ? 'true' : 'false'; ?>;
 							// Single source of truth for both "which gateway is enabled" toggles
-							// (WooCommerce tab's and Custom tab's) plus their dependent sections —
-							// only one of WooCommerce/Custom can ever be active at a time. Custom is
-							// a Pro feature: silently refuses to activate it without Pro (mirrored by
-							// a real server-side gate in MPWPB_Global_Function::is_custom_payment_mode(),
-							// this is just so the UI doesn't show a state it won't actually run in).
+							// (WooCommerce tab's and Custom tab's) plus their dependent sections.
+							// Value is one of 'woocommerce', 'custom', or 'none' — both switches can
+							// be off at once, but turning one on always turns the other off, so at
+							// most one is ever active. Custom is a Pro feature: silently refuses to
+							// activate it without Pro (mirrored by a real server-side gate in
+							// MPWPB_Global_Function::is_custom_payment_mode(), this is just so the
+							// UI doesn't show a state it won't actually run in).
 							function mpwpbSyncPaymentToggles(value) {
 								if (value === 'custom' && !mpwpbProActive) {
-									value = 'woocommerce';
+									value = 'none';
 								}
 								$('#mpwpb_payment_method_type_input').val(value);
 								$('#mpwpb_wc_enable_toggle').prop('checked', value === 'woocommerce');
@@ -532,10 +534,14 @@
 							$('#mpwpb_wc_enable_toggle').on('change', function () {
 								// Independent of the top tab selector: only flips which gateway is functionally
 								// active. Deliberately does not touch the top buttons or panel visibility.
-								mpwpbSyncPaymentToggles(this.checked ? 'woocommerce' : 'custom');
+								// Unchecking disables WooCommerce payment outright — it does not hand control
+								// to Custom Payment.
+								mpwpbSyncPaymentToggles(this.checked ? 'woocommerce' : 'none');
 							});
 							$('#mpwpb_custom_enable_toggle').on('change', function () {
-								mpwpbSyncPaymentToggles(this.checked ? 'custom' : 'woocommerce');
+								// Same: unchecking disables Custom Payment outright, it does not re-enable
+								// WooCommerce.
+								mpwpbSyncPaymentToggles(this.checked ? 'custom' : 'none');
 							});
 							$('.mpwpb-accordion-header').on('click', function () {
 								var $header = $(this);

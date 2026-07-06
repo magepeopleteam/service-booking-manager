@@ -423,14 +423,16 @@
 			}
 			//***** Explicit Payment Method switch (WooCommerce vs Custom) *****//
 			/**
-			 * Returns 'woocommerce', 'custom', or '' (not yet configured).
-			 * Existing sites that already had WooCommerce active before this
-			 * setting existed are transparently migrated to 'woocommerce' the
-			 * first time this is read, so upgrading never breaks them.
+			 * Returns 'woocommerce', 'custom', 'none' (both explicitly disabled),
+			 * or '' (not yet configured). Existing sites that already had
+			 * WooCommerce active before this setting existed are transparently
+			 * migrated to 'woocommerce' the first time this is read, so
+			 * upgrading never breaks them; once a value (including 'none') is
+			 * explicitly stored, that migration no longer applies.
 			 */
 			public static function get_payment_method_type(): string {
 				$stored = self::get_settings('mpwpb_payment_method_settings', 'payment_method_type', '');
-				if (($stored === 'woocommerce' || $stored === 'custom')) {
+				if (in_array($stored, ['woocommerce', 'custom', 'none'], true)) {
 					return $stored;
 				}
 				if (self::check_woocommerce() == 1) {
