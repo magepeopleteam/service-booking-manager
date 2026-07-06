@@ -12,6 +12,26 @@
 (function ($) {
 	'use strict';
 
+	// "View more!" (Features Heighlight) popup is rendered inside <header>
+	// (Frontend/MPWPB_Static_Template.php::popup_feature_lists(), fired from
+	// templates/themes/static.php's header markup) -- that header has
+	// overflow:hidden (to crop its background image), which traps this
+	// popup's position:fixed under the sidebar/menu despite its own
+	// z-index:9999, a well-known overflow:hidden-clips-fixed-descendant
+	// browser quirk. Moving it to be a direct child of <body> once on load
+	// breaks it out of that containment; the popup's own open/close
+	// mechanism (mp_global/assets/mp_style/mpwpb_plugin_global.js,
+	// data-target-popup/data-popup, attribute-based and document-delegated)
+	// keeps working unchanged regardless of where in the DOM it now lives.
+	// Matched by its actual class/data-popup value -- nothing in the markup
+	// has id="mpwpb_view_more_popup" (that string is only ever a data-popup/
+	// data-target-popup attribute VALUE, used by the generic popup opener to
+	// match trigger <-> popup).
+	var $viewMorePopup = $('.popup-features[data-popup="#mpwpb_view_more_popup"]');
+	if ($viewMorePopup.length) {
+		$('body').append($viewMorePopup);
+	}
+
 	var $tabNav = $('.mpwpb-static-template .mpwpb-details-page-tab, .mpwpb-static-template nav.mpwpb-details-page-tab');
 	if (!$tabNav.length) {
 		return;

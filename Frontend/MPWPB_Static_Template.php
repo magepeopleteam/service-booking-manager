@@ -59,10 +59,17 @@
 					?>
                     <ul class="features">
 						<?php
+							// No per-feature icon field exists on this free-text list, so a
+							// small default set just cycles by position -- purely
+							// decorative variety (matches the design reference showing a
+							// distinct icon per item), not tied to what the admin typed.
+							$default_icons = ['fas fa-check-circle', 'fas fa-leaf', 'fas fa-map-marker-alt'];
 							foreach ($features_heightlight as $key => $value):
-								if ($key < $limit) : ?>
+								if ($key < $limit) :
+									$icon_class = $default_icons[$key % count($default_icons)];
+									?>
                                     <li>
-                                        <span class="mpwpb-feature-icon"><i class="fas fa-check-circle"></i></span>
+                                        <span class="mpwpb-feature-icon"><i class="<?php echo esc_attr($icon_class); ?>"></i></span>
                                         <span class="mpwpb-feature-label"><?php echo esc_html($value); ?></span>
                                     </li>
 								<?php endif; ?>

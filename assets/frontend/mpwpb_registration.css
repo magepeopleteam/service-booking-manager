@@ -864,7 +864,7 @@ div.registration_tab_item {
 }
 .mpwpb_registration > header .view_more{
   color: #fff;
-  margin-top: 20px;
+  margin-top: 0px;
 }
 .mpwpb_registration > header  h2, .mpwpb_registration > header  p {
   color: #fff;
@@ -882,14 +882,31 @@ div.registration_tab_item {
 .mpwpb_registration > header  ul.features li i {
   margin-right: 10px;
 }
-.mpwpb_registration > header  .popup-features .mpwpb_popup_main_area {
+/* Not scoped under "header" (or .mpwpb_registration at all) anymore --
+   assets/frontend/mpwpb-service-page-modern.js relocates
+   #mpwpb_view_more_popup (.popup-features) to a direct child of <body> on
+   load, to escape header's overflow:hidden trapping its position:fixed
+   under the sidebar/menu. Class selectors alone are enough to keep matching
+   regardless of where in the DOM it now lives -- including its own internal
+   ul.features list, which used to inherit its list-style/spacing reset
+   purely from the header-scoped rule above (".mpwpb_registration > header
+   ul.features"), now out of reach once relocated outside both ancestors. */
+.popup-features ul.features {
+  margin: 20px 0 0;
+  padding: 0;
+  list-style-type: none;
+}
+.popup-features ul.features li i {
+  margin-right: 10px;
+}
+.popup-features .mpwpb_popup_main_area {
   background-color: #FFF;
   border: 2px solid #fff;
 }
-.mpwpb_registration > header  .popup-features  .mpwpb_popup_header {
+.popup-features  .mpwpb_popup_header {
   border-bottom: 1px solid var(--mpwpb_color_border);
 }
-.mpwpb_registration > header  .popup-features  .mpwpb_popup_header .mpwpb_popup_close {
+.popup-features  .mpwpb_popup_header .mpwpb_popup_close {
   position: absolute;
   top: 0;
   right: 0;

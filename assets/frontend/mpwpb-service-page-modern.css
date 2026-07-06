@@ -46,17 +46,18 @@
 	backdrop-filter:blur(4px);font-size:13px !important;
 }
 .mpwpb-static-template.mpwpb_registration > header ul.features{
-	display:grid;grid-template-columns:repeat(2,minmax(180px,1fr));gap:14px 28px;margin:8px 0 22px !important;max-width:520px;
+	display:flex;flex-wrap:wrap;align-items:center;row-gap:12px;column-gap:32px;margin:8px 0 22px !important;max-width:none;
 }
 .mpwpb-static-template.mpwpb_registration > header ul.features li{
-	display:flex;align-items:center;gap:10px;font-size:13.5px !important;font-weight:700;margin:0 !important;
+	display:flex;align-items:center;gap:10px;font-size:13.5px !important;font-weight:700;margin:0 !important;white-space:nowrap;
 }
 .mpwpb-static-template.mpwpb_registration > header ul.features li i{
-	display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;flex:0 0 auto;
-	border-radius:999px;background:var(--mpwpb_color_theme);font-size:13px;margin-right:0 !important;color:#fff;
+	display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;flex:0 0 auto;
+	border-radius:999px;border:1.5px solid rgba(45,212,191,.6);background:rgba(45,212,191,.12);
+	font-size:11px;margin-right:0 !important;color:#2dd4bf;
 }
 .mpwpb-static-template.mpwpb_registration > header .view_more{
-	grid-column:1/-1;font-size:13px;font-weight:700;text-decoration:underline;text-underline-offset:3px;opacity:.9;cursor:pointer;
+	font-size:13px;font-weight:700;text-decoration:underline;text-underline-offset:3px;opacity:.9;cursor:pointer;
 }
 .mpwpb-static-template.mpwpb_registration > header .mpwpb-hero-rating-row{
 	display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.85);font-size:13px;
@@ -69,7 +70,7 @@
 .mpwpb-static-template.mpwpb_registration > header .mpwpb-hero-rating-text{color:rgba(255,255,255,.65);}
 
 @media(max-width:640px){
-	.mpwpb-static-template.mpwpb_registration > header ul.features{grid-template-columns:1fr;max-width:none;}
+	.mpwpb-static-template.mpwpb_registration > header ul.features{column-gap:20px;row-gap:10px;}
 }
 
 /* -------------------------------------------------------------------- *
