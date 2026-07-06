@@ -652,14 +652,71 @@ function mpwpb_price_calculation($this) {
                     mpwpb_loader(parent);
                 },
                 success: function (data) {
-                    window.location.href = data;
+                    // Custom Payment (WooCommerce off): stay in the same popup and
+                    // load the native billing form into the "Checkout" step instead
+                    // of navigating away -- mpwpb_add_to_cart still returns a URL
+                    // string here (unchanged contract), it's just not used in this
+                    // mode; the cart item it already stored server-side is what the
+                    // fetched form reads.
+                    if (mpwpb_ajax.is_custom_payment_mode) {
+                        mpwpb_load_native_checkout_form(parent);
+                    } else {
+                        window.location.href = data;
+                    }
                 },
                 error: function (response) {
+                    mpwpb_loaderRemove(parent);
                 }
             });
         } else {
             mpwpb_alert($(this));
         }
+    });
+    function mpwpb_load_native_checkout_form(parent) {
+        var $target = parent.find('.mpwpb_order_proceed_area');
+        $.ajax({
+            type: 'POST',
+            url: mpwpb_ajax.ajax_url,
+            data: {
+                action: 'mpwpb_native_checkout_form',
+                nonce: mpwpb_ajax.nonce
+            },
+            success: function (response) {
+                mpwpb_loaderRemove(parent);
+                if (response && response.success) {
+                    $target.html(response.data.html);
+                    load_order_proceed_tab(parent);
+                } else {
+                    $target.html('<p class="mpwpb-checkout-error">' + ((response && response.data && response.data.message) ? response.data.message : 'Something went wrong.') + '</p>');
+                    load_order_proceed_tab(parent);
+                }
+            },
+            error: function () {
+                mpwpb_loaderRemove(parent);
+                $target.html('<p class="mpwpb-checkout-error">Request failed. Please try again.</p>');
+                load_order_proceed_tab(parent);
+            }
+        });
+    }
+    $(document).on('submit', 'div.mpwpb_registration .mpwpb-checkout-form', function (e) {
+        e.preventDefault();
+        var $form = $(this);
+        var parent = $form.closest('div.mpwpb_registration');
+        var $btn = $form.find('.mpwpb-checkout-submit');
+        var $error = $form.siblings('.mpwpb-checkout-error');
+        $error.hide().text('');
+        $btn.prop('disabled', true);
+        $.post(mpwpb_ajax.ajax_url, $form.serialize()).done(function (response) {
+            if (response && response.success && response.data && response.data.redirect) {
+                window.location.href = response.data.redirect;
+            } else {
+                $btn.prop('disabled', false);
+                $error.text((response && response.data && response.data.message) ? response.data.message : 'Something went wrong.').show();
+            }
+        }).fail(function () {
+            $btn.prop('disabled', false);
+            $error.text('Request failed. Please try again.').show();
+        });
     });
     $(document).on('click', 'div.mpwpb_registration .mpwpb_date_time_prev', function () {
         let parent = $(this).closest('div.mpwpb_registration');

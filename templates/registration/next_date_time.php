@@ -7,7 +7,16 @@
 		exit;
 	}
 	$post_id = $post_id ?? get_the_id();
-	$link_wc_product = MPWPB_Global_Function::get_post_info($post_id, 'link_wc_product');
+	// Falls back to the real service post id when there's no linked WooCommerce
+	// product meta -- that meta is only ever written by Admin/MPWPB_Hidden_Product.php,
+	// which itself only loads when WooCommerce payment mode is active
+	// (Admin/MPWPB_Admin.php::load_file()). Without this fallback, Custom
+	// Payment mode (WooCommerce off) leaves this empty, "Proceed to Checkout"
+	// posts an empty link_id, MPWPB_Woocommerce::build_booking_item_from_request()
+	// can't resolve a valid post, MPWPB_Native_Checkout::add_to_cart() returns
+	// '', and the JS success handler does `window.location.href = ''`, which
+	// just reloads the current page instead of proceeding to checkout.
+	$link_wc_product = MPWPB_Global_Function::get_post_info($post_id, 'link_wc_product', $post_id);
 	$service_text = $service_text ?? MPWPB_Function::get_service_text($post_id);
 ?>
     <div class="next_date_area">

@@ -1489,12 +1489,13 @@ div.registration_tab_item {
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  padding: 15px 5px;
+  padding: 10px 5px;
   margin-bottom: 5px;
   position: relative;
   color: var(--d_color);
-  border-radius: 5px;
-  background-color: #fff;
+  border-radius: 0;
+  border: 1px solid #ebe5e5;
+  background-color: #F8F9FF;
 }
 .mpwpb-static-template  .mpwpb_static_area .mpwpb_static .mpwpb_item_box:last-child {
   margin-bottom: 0;

@@ -115,7 +115,12 @@
 				wp_localize_script('mpwpb_registration', 'mpwpb_ajax', array(
 					'ajax_url' => admin_url('admin-ajax.php'),
 					'nonce'    => wp_create_nonce('mpwpb_nonce'),
-					'use_24hour' => MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'time_format_24hour', 'no')
+					'use_24hour' => MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'time_format_24hour', 'no'),
+					// Lets the "Proceed to Checkout" handler decide whether the
+					// mpwpb_add_to_cart response is a URL to navigate to (WooCommerce)
+					// or a signal to load the native billing form inside the same
+					// popup instead of leaving it (Custom Payment, WooCommerce off).
+					'is_custom_payment_mode' => MPWPB_Global_Function::is_custom_payment_mode(),
 				));
 				do_action('add_mpwpb_frontend_script');
 			}

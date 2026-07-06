@@ -61,7 +61,10 @@
 						<?php
 							foreach ($features_heightlight as $key => $value):
 								if ($key < $limit) : ?>
-                                    <li><i class="fas fa-check-circle"></i><?php echo esc_html($value); ?></li>
+                                    <li>
+                                        <span class="mpwpb-feature-icon"><i class="fas fa-check-circle"></i></span>
+                                        <span class="mpwpb-feature-label"><?php echo esc_html($value); ?></span>
+                                    </li>
 								<?php endif; ?>
 							<?php endforeach; ?>
 						<?php if (count($features_heightlight) > $limit): ?>
@@ -70,6 +73,21 @@
                     </ul>
 				<?php
 				endif;
+			}
+			/**
+			 * Solid stars for the floor of the rating, one half-star for a
+			 * >=.5 remainder, outline stars for the rest -- always 5 total.
+			 */
+			private static function render_star_icons(float $rating): void {
+				for ($i = 1; $i <= 5; $i++) {
+					if ($rating >= $i) {
+						echo '<i class="fas fa-star"></i>';
+					} elseif ($rating >= $i - 0.5) {
+						echo '<i class="fas fa-star-half-alt"></i>';
+					} else {
+						echo '<i class="far fa-star"></i>';
+					}
+				}
 			}
 			public function popup_feature_lists() {
 				$features_heightlight = MPWPB_Global_Function::get_post_info(get_the_ID(), 'mpwpb_features', []);
@@ -94,12 +112,19 @@
 				<?php
 			}
 			public static function show_ratings() {
+				$rating = get_post_meta(get_the_ID(), 'mpwpb_service_review_ratings', true);
 				$rating_text = get_post_meta(get_the_ID(), 'mpwpb_service_rating_text', true);
+				if (!$rating):
+					return;
+				endif;
 				?>
-				<?php self::get_ratings(); ?>
-				<?php if ($rating_text): ?>
-                    <p><?php echo esc_html($rating_text); ?></p>
-				<?php endif; ?>
+                <div class="mpwpb-hero-rating-row">
+                    <span class="mpwpb-hero-stars"><?php self::render_star_icons((float) $rating); ?></span>
+                    <strong class="mpwpb-hero-rating-value"><?php echo esc_html($rating); ?></strong>
+					<?php if ($rating_text): ?>
+                        <span class="mpwpb-hero-rating-text"><?php echo esc_html($rating_text); ?></span>
+					<?php endif; ?>
+                </div>
 				<?php
 			}
 			public static function get_ratings() {
@@ -234,7 +259,11 @@
                 <div class="mpwpb-hours-strip">
                     <p class="mpwpb-hours-open">
                         <i class="fas fa-clock"></i>
-						<?php echo esc_html(!empty($open_days) ? implode(', ', $open_days) : __('By appointment', 'service-booking-manager')); ?>
+						<?php if (!empty($open_days)): ?>
+                            <span class="mpwpb-hours-days"><?php echo esc_html(implode(' - ', $open_days)); ?></span>
+						<?php else: ?>
+							<?php esc_html_e('By appointment', 'service-booking-manager'); ?>
+						<?php endif; ?>
                     </p>
                     <p class="mpwpb-hours-time"><?php echo esc_html($this->format_hour($default_start) . ' – ' . $this->format_hour($default_end)); ?></p>
                 </div>

@@ -17,6 +17,9 @@
                 <div class="header-content">
                     <span class="mpwpb-hero-eyebrow"><i class="fas fa-store"></i> <?php echo esc_html(get_bloginfo('name')); ?></span>
                     <h2><?php the_title(); ?></h2>
+					<?php if (has_excerpt() || get_the_content()): ?>
+                    <p class="mpwpb-hero-subtext"><?php echo esc_html(get_the_excerpt()); ?></p>
+					<?php endif; ?>
                     <!-- dispaly service static page reatings using this hook -->
 					<?php do_action('mpwpb_service_show_ratings'); ?>
                     <!-- dispaly service static page feature heighlight using this hook -->

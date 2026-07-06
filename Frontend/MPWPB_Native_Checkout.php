@@ -21,6 +21,8 @@
 				add_action('template_redirect', [$this, 'maybe_render_checkout']);
 				add_action('wp_ajax_mpwpb_native_checkout_submit', [$this, 'handle_checkout_submit']);
 				add_action('wp_ajax_nopriv_mpwpb_native_checkout_submit', [$this, 'handle_checkout_submit']);
+				add_action('wp_ajax_mpwpb_native_checkout_form', [$this, 'ajax_render_embedded_form']);
+				add_action('wp_ajax_nopriv_mpwpb_native_checkout_form', [$this, 'ajax_render_embedded_form']);
 				add_shortcode('mpwpb_booking_confirmation', [$this, 'render_confirmation_shortcode']);
 			}
 			public function add_query_var($vars) {
@@ -85,6 +87,104 @@
 				}
 				MPWPB_Native_Cart::set_item($item);
 				return self::get_checkout_url();
+			}
+			/**
+			 * AJAX-only: returns the same billing form as the standalone
+			 * checkout page, but as a bare HTML fragment (no get_header()/
+			 * get_footer()) styled to sit inside the booking popup's own
+			 * "Checkout" step (templates/registration/static_registration.php
+			 * .mpwpb_order_proceed_area) instead of navigating the browser
+			 * away to a separate page.
+			 */
+			public function ajax_render_embedded_form(): void {
+				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_nonce')) {
+					wp_send_json_error(['message' => esc_html__('Security check failed.', 'service-booking-manager')]);
+				}
+				ob_start();
+				$this->render_embedded_form();
+				wp_send_json_success(['html' => ob_get_clean()]);
+			}
+			private function render_embedded_form(): void {
+				$item = MPWPB_Native_Cart::get_item();
+				if (empty($item)) {
+					?>
+					<p class="mpwpb-checkout-empty"><?php esc_html_e('Your booking cart is empty.', 'service-booking-manager'); ?></p>
+					<?php
+					return;
+				}
+				$gateways = self::get_enabled_gateways();
+				if (empty($gateways)) {
+					?>
+					<p class="mpwpb-checkout-empty"><?php esc_html_e('No payment method is currently available. Please contact the site administrator.', 'service-booking-manager'); ?></p>
+					<?php
+					return;
+				}
+				$post_id = $item['mpwpb_id'];
+				$total = $item['mpwpb_tp'] ?? 0;
+				?>
+				<div class="mpwpb-checkout-embed">
+					<div class="mpwpb-checkout-summary">
+						<?php if (!empty($item['mpwpb_service']) && is_array($item['mpwpb_service'])) : ?>
+							<ul class="mpwpb-checkout-summary-list">
+								<?php foreach ($item['mpwpb_service'] as $service) : ?>
+									<li>
+										<span class="fas fa-check-circle"></span>
+										<?php echo esc_html($service['name'] ?? ''); ?>
+									</li>
+								<?php endforeach; ?>
+							</ul>
+						<?php endif; ?>
+						<div class="mpwpb-checkout-total">
+							<span><?php esc_html_e('Total', 'service-booking-manager'); ?></span>
+							<strong><?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, $total)); ?></strong>
+						</div>
+					</div>
+					<p class="mpwpb-checkout-error" style="display:none;"></p>
+					<form class="mpwpb-checkout-form" method="post" action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>">
+						<input type="hidden" name="action" value="mpwpb_native_checkout_submit"/>
+						<input type="hidden" name="nonce" value="<?php echo esc_attr(wp_create_nonce('mpwpb_nonce')); ?>"/>
+						<input type="hidden" name="mpwpb_ajax_submit" value="1"/>
+						<div class="mpwpb-checkout-row">
+							<label class="mpwpb-checkout-field">
+								<span><?php esc_html_e('First Name', 'service-booking-manager'); ?></span>
+								<input type="text" name="mpwpb_billing_first_name" required/>
+							</label>
+							<label class="mpwpb-checkout-field">
+								<span><?php esc_html_e('Last Name', 'service-booking-manager'); ?></span>
+								<input type="text" name="mpwpb_billing_last_name" required/>
+							</label>
+						</div>
+						<div class="mpwpb-checkout-row">
+							<label class="mpwpb-checkout-field">
+								<span><?php esc_html_e('Email', 'service-booking-manager'); ?></span>
+								<input type="email" name="mpwpb_billing_email" required/>
+							</label>
+							<label class="mpwpb-checkout-field">
+								<span><?php esc_html_e('Phone', 'service-booking-manager'); ?></span>
+								<input type="text" name="mpwpb_billing_phone"/>
+							</label>
+						</div>
+						<label class="mpwpb-checkout-field">
+							<span><?php esc_html_e('Address', 'service-booking-manager'); ?></span>
+							<input type="text" name="mpwpb_billing_address_1"/>
+						</label>
+						<?php if (count($gateways) > 1) : ?>
+							<div class="mpwpb-checkout-gateways">
+								<span class="mpwpb-checkout-gateways-label"><?php esc_html_e('Payment Method', 'service-booking-manager'); ?></span>
+								<?php foreach ($gateways as $key => $label) : ?>
+									<label class="mpwpb-checkout-gateway">
+										<input type="radio" name="mpwpb_payment_gateway" value="<?php echo esc_attr($key); ?>" <?php checked($key, array_key_first($gateways)); ?> />
+										<?php echo esc_html($label); ?>
+									</label>
+								<?php endforeach; ?>
+							</div>
+						<?php else : ?>
+							<input type="hidden" name="mpwpb_payment_gateway" value="<?php echo esc_attr(array_key_first($gateways)); ?>"/>
+						<?php endif; ?>
+						<button type="submit" class="mpwpb-checkout-submit"><?php esc_html_e('Confirm Booking', 'service-booking-manager'); ?></button>
+					</form>
+				</div>
+				<?php
 			}
 			public function maybe_render_checkout(): void {
 				if (!get_query_var('mpwpb_checkout')) {
@@ -205,7 +305,16 @@
 				<?php
 			}
 			public function handle_checkout_submit(): void {
+				// The embedded popup form (render_embedded_form()) carries this
+				// flag and is consumed via $.post/AJAX, where a redirect response
+				// can't navigate the browser -- it needs a JSON success/error
+				// reply instead. The standalone fallback page's form (no JS/
+				// direct link) omits it and keeps the classic redirect flow.
+				$is_ajax_submit = isset($_POST['mpwpb_ajax_submit']);
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_nonce')) {
+					if ($is_ajax_submit) {
+						wp_send_json_error(['message' => esc_html__('Security check failed.', 'service-booking-manager')]);
+					}
 					wp_die(esc_html__('Security check failed.', 'service-booking-manager'));
 				}
 				$item = MPWPB_Native_Cart::get_item();
@@ -215,6 +324,9 @@
 				$gateway = isset($_POST['mpwpb_payment_gateway']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_payment_gateway'])) : '';
 				$enabled_gateways = self::get_enabled_gateways();
 				if (empty($item) || !$first_name || !$last_name || !$email || !array_key_exists($gateway, $enabled_gateways)) {
+					if ($is_ajax_submit) {
+						wp_send_json_error(['message' => esc_html__('Please fill in all required fields.', 'service-booking-manager')]);
+					}
 					wp_safe_redirect(add_query_arg('mpwpb_error', '1', self::get_checkout_url()));
 					exit;
 				}
@@ -233,6 +345,9 @@
 					'currency' => MPWPB_Global_Function::native_currency_setting('symbol', '$'),
 				]);
 				if (!$order_id) {
+					if ($is_ajax_submit) {
+						wp_send_json_error(['message' => esc_html__('Something went wrong creating your booking. Please try again.', 'service-booking-manager')]);
+					}
 					wp_safe_redirect(add_query_arg('mpwpb_error', '1', self::get_checkout_url()));
 					exit;
 				}
@@ -243,6 +358,9 @@
 				MPWPB_Native_Order::mark_paid($order_id, $gateway, '');
 				MPWPB_Native_Order::process_order($order_id);
 				MPWPB_Native_Cart::clear();
+				if ($is_ajax_submit) {
+					wp_send_json_success(['redirect' => self::get_confirmation_url($order_id)]);
+				}
 				wp_safe_redirect(self::get_confirmation_url($order_id));
 				exit;
 			}
