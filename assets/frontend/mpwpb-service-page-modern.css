@@ -176,7 +176,7 @@
 }
 .mpwpb-static-template .mpwpb-serivice-faq .faq-header i{
 	flex:0 0 auto;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;
-	border-radius:999px;background:var(--mpwpb_color_theme_88,rgba(0,0,0,.1));color:var(--mpwpb_color_theme);font-size:10px;margin:0 !important;
+	border-radius:999px;background:var(--mpwpb_color_theme_88,rgba(0,0,0,.1));color:#fff;font-size:10px;margin:0 !important;
 }
 .mpwpb-static-template .mpwpb-serivice-faq .faq-content{
 	padding:0 16px 16px 50px !important;font-size:13px;color:#64748b;line-height:1.6;
@@ -186,6 +186,7 @@
  *  Details — free-text WYSIWYG block; just tighten typography.
  * -------------------------------------------------------------------- */
 .mpwpb-static-template #service-details{font-size:13.5px;color:#475569;line-height:1.6;}
+#service-details h3{ font-size: 16px !important; margin: 15px 0; }
 
 /* -------------------------------------------------------------------- *
  *  "Our Past Work" gallery — images uploaded via the admin "Gallery
@@ -206,7 +207,7 @@
    avoids that flex math entirely; the same max-width/centering/padding as
    .mpwpb_registration main is repeated here so it still lines up visually. */
 .mpwpb-static-template .mpwpb-gallery-section{
-	max-width:1160px;width:100%;margin:28px auto 0;padding:0 10px;box-sizing:border-box;scroll-margin-top:80px;
+	max-width:1440px;width:100%;margin:28px auto 0;padding:0 10px;box-sizing:border-box;scroll-margin-top:80px;
 }
 .mpwpb-static-template .mpwpb-gallery-head{
 	display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px;
