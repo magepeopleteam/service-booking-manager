@@ -199,6 +199,47 @@ body.mpwpb-sme-active #postdivrich{display:none;}
 .mpwpb-sme__feat-link:hover{text-decoration:underline;}
 .mpwpb-sme__feat-link--rm{color:var(--brand);}
 
+/* Gallery Images card — light header band (title + subtitle + real
+   MPWPB_Custom_Layout::switch_button() toggle), then the classic
+   mpwpb_add_multi_image() thumbnail row + "+ Add Image" pill, restyled to
+   match this card's look. Markup/click handlers are the untouched classic
+   ones (mp_global/assets/admin/mpwpb_admin_settings.js) — only appearance
+   is overridden here, scoped to this card so the classic Gallery tab's own
+   look elsewhere is unaffected. */
+.mpwpb-sme__gallery-head{
+	display:flex;align-items:center;justify-content:space-between;gap:12px;
+	padding:16px;background:linear-gradient(180deg,#fbfcfe,var(--band));border-bottom:1px solid var(--band-line);
+}
+.mpwpb-sme__gallery-head .mpwpb-sme__feat-head{padding:0;}
+.mpwpb-sme__gallery-sub{margin:2px 0 0;font-size:12.5px;font-weight:500;color:var(--blue);}
+.mpwpb-sme__gallery-head .roundSwitch{width:40px;height:22px;}
+.mpwpb-sme__gallery-head .roundSwitch::before{height:18px;width:18px;}
+.mpwpb-sme__gallery-head .roundSwitchLabel input:checked + .roundSwitch{background-color:var(--brand);}
+.mpwpb-sme__gallery-head .roundSwitchLabel input:checked + .roundSwitch::before{transform:translateX(18px);}
+.mpwpb-sme__gallery-body{padding:16px;}
+.mpwpb-sme__gallery-body .mpwpb_multi_image{
+	display:flex;flex-wrap:wrap;gap:10px;margin:0 0 14px;
+}
+.mpwpb-sme__gallery-body .mpwpb_multi_image_item{
+	position:relative;width:calc(25% - 8px);min-width:0;aspect-ratio:1;margin:0;border-radius:10px;overflow:hidden;border:1px solid var(--line);
+}
+.mpwpb-sme__gallery-body .mpwpb_multi_image_item img{width:100%;height:100%;object-fit:cover;display:block;}
+.mpwpb-sme__gallery-body .mpwpb_multi_image_item .mpwpb_remove_multi_image{
+	position:absolute;top:4px;right:4px;width:18px;height:18px;display:flex;align-items:center;justify-content:center;
+	border-radius:50%;background:rgba(15,23,42,.65);color:#fff;font-size:9px;opacity:0;transition:.15s;
+}
+.mpwpb-sme__gallery-body .mpwpb_multi_image_item:hover .mpwpb_remove_multi_image{opacity:1;}
+.mpwpb-sme__gallery-body .add_multi_image{
+	display:flex;align-items:center;justify-content:center;gap:8px;width:100%;
+	background:#fff;border:1px solid var(--line);border-radius:10px;color:var(--ink);
+	font-size:13px;font-weight:600;padding:10px 16px;cursor:pointer;
+}
+.mpwpb-sme__gallery-body .add_multi_image:hover{border-color:var(--brand);color:var(--brand);}
+.mpwpb-sme__gallery-body .add_multi_image .fa-images{
+	display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;
+	border-radius:5px;background:var(--ink);color:#fff;font-size:10px;margin:0 !important;
+}
+
 /* Rail cards gated by step, via the shell's data-step attribute (set in
    mpwpb-service-edit-modern.js). data-sme-step-only holds a SPACE-SEPARATED
    list of step ids (e.g. "pricing advanced"), matched with ~= (token match). */

@@ -339,6 +339,41 @@
 					</div>
 
 					<?php
+					/* Gallery Images: reuses the exact classic fields/handlers from
+					 * Admin/settings/Gallery.php (MPWPB_Gallery_Settings) —
+					 * 'mpwpb_display_slider' (real checkbox, MPWPB_Custom_Layout::
+					 * switch_button()) and 'mpwpb_slider_images' (the
+					 * mpwpb_add_multi_image action / MPWPB_Select_Icon_image::
+					 * add_multi_image(), whose click handlers in mp_global/assets/
+					 * admin/mpwpb_admin_settings.js are document-delegated and
+					 * already enqueued admin-wide regardless of editor mode) —
+					 * rather than a new field/upload mechanism. That classic tab
+					 * is Classic-only (never in get_steps()), so without a real
+					 * field here neither of these ever reaches $_POST while
+					 * editing in Modern mode, and the shared save handler
+					 * (Admin/MPWPB_Settings.php save_settings(), unconditional on
+					 * every service save) would silently wipe both to
+					 * off/empty on every Modern-mode save. */
+					$gallery_display = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_display_slider', 'off');
+					$gallery_checked = $gallery_display == 'off' ? '' : 'checked';
+					$gallery_active_class = $gallery_display == 'off' ? '' : 'mActive';
+					$gallery_image_ids = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_slider_images', array());
+					?>
+					<div class="mpwpb-sme__rail-card mpwpb-sme__gallery-card mpwpb-sme__rail-card--loading">
+						<?php $this->render_rail_card_skeleton('featured'); ?>
+						<div class="mpwpb-sme__gallery-head">
+							<div class="mpwpb-sme__gallery-head-text">
+								<div class="mpwpb-sme__feat-head"><?php esc_html_e('Gallery Images', 'service-booking-manager'); ?></div>
+								<p class="mpwpb-sme__gallery-sub"><?php esc_html_e('Additional photos.', 'service-booking-manager'); ?></p>
+							</div>
+							<?php MPWPB_Custom_Layout::switch_button('mpwpb_display_slider', $gallery_checked); ?>
+						</div>
+						<div class="mpwpb-sme__gallery-body <?php echo esc_attr($gallery_active_class); ?>" data-collapse="#mpwpb_display_slider">
+							<?php do_action('mpwpb_add_multi_image', 'mpwpb_slider_images', $gallery_image_ids); ?>
+						</div>
+					</div>
+
+					<?php
 					/* "Add To Cart Form Shortcode" (read-only display) + "Service
 					 * template" (real <select name="mpwpb_template">) — relocated
 					 * here by JS from MPWPB_General_Settings::general_settings()'s
