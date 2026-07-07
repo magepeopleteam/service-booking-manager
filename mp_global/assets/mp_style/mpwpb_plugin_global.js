@@ -313,7 +313,13 @@ function mpwpb_alert($this, attr = 'alert') {
             mpwpb_load_date_picker_edit_curring_date( off_days, off_dates );
         }
         
-        $('.mpwpb_select2').select2({});
+        // Guard against double-initialization: select2 appends its own
+        // rendered widget as a sibling of the <select> on every call, so if
+        // this ever runs twice on the same element (e.g. this script loaded
+        // under two different enqueue handles), the widget shows up twice
+        // side-by-side. select2 marks an already-initialized <select> with
+        // "select2-hidden-accessible", so skip those.
+        $('.mpwpb_select2').not('.select2-hidden-accessible').select2({});
     });
 }(jQuery));
 //====================================================================Load Bg Image=================//
