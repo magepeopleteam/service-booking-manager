@@ -55,12 +55,12 @@
                                     </div>
                                     <div class="_equalChild">
 										<?php if (!empty($service_details)) { ?>
-                                            <div data-collapse-target="<?php echo esc_attr($unique_id); ?>" data-read data-open-text="<?php esc_attr_e('Close Details', 'service-booking-manager'); ?>" data-close-text="<?php esc_attr_e('View Details', 'service-booking-manager'); ?>">
-                                                <span data-text><?php esc_html_e('View Details', 'service-booking-manager'); ?></span>
+                                            <div class="mpwpb_service_details_toggle" data-collapse-target="<?php echo esc_attr($unique_id); ?>" data-read data-open-text="<?php esc_attr_e('Close Details', 'service-booking-manager'); ?>" data-close-text="<?php esc_attr_e('Details', 'service-booking-manager'); ?>">
+                                                <span data-text><?php esc_html_e('Details', 'service-booking-manager'); ?></span>
                                             </div>
 										<?php } ?>
 										<?php if ($service_duration) { ?>
-                                            <h6 class="textTheme alignCenter">
+                                            <h6 class="textTheme alignCenter mpwpb_service_duration">
                                                 <span class="fas fa-clock mR_xs"></span>
                                                 <span><?php echo wp_kses_post($service_duration); ?></span>
                                             </h6>

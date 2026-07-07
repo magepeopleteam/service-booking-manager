@@ -1051,3 +1051,18 @@ button._mpBtn_btLight_2_min_150.mpwpb_price_calculation.mpwpb_ex_service_button 
    mpwpb-booking-tree.js); the old inline description is hidden outright. */
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item .service-details{display:none !important;}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item .mpwpb-tree-view-details{font-size:11px;}
+
+/* "Details" toggle on each service item card -- line it up under the
+   service name (which sits past the icon + its mR_xs gap) instead of
+   flush with the card's left edge, and keep it small/secondary. */
+.mpwpb_service_item .mpwpb_service_details_toggle{
+	font-size:10px;
+	padding-left:24px;
+}
+.mpwpb_service_item .mpwpb_service_details_toggle span[data-text]{
+	font-size:10px;
+	color:#4e4d4d;
+}
+.mpwpb_service_item .mpwpb_service_duration.textTheme{
+	color:#4e4d4d;
+}
