@@ -99,9 +99,18 @@
    .mpwpb_registration main in mpwpb_registration.css) -- align-self:flex-start
    is required alongside position:sticky here because that flex row's default
    align-items:stretch would otherwise stretch .sidebar to .main's full height,
-   leaving no room for it to visibly stick as the page scrolls. */
+   leaving no room for it to visibly stick as the page scrolls.
+   z-index is required too: the "Our Past Work" gallery (#service-gallery) is a
+   sibling that starts right after </main> closes, full-width. While .main's
+   content (FAQ/Details) is short, there's a scroll range where <main> hasn't
+   fully scrolled past yet (so .sidebar is still stuck) while the gallery below
+   has already scrolled into the same viewport. Without an explicit z-index,
+   .sidebar (position:sticky, z-index:auto) can lose to the carousel's own
+   internally-positioned stage/items, which sit later in DOM order — so the
+   gallery painted over the still-stuck sidebar. An explicit z-index always
+   beats a z-index:auto sibling regardless of DOM order, so this fixes it. */
 @media (min-width:1024px){
-	.mpwpb-static-template .sidebar{position:sticky;top:8px;align-self:flex-start;}
+	.mpwpb-static-template .sidebar{position:sticky;top:8px;align-self:flex-start;z-index:5;}
 }
 
 /* -------------------------------------------------------------------- *
@@ -799,8 +808,8 @@ label.mpwpb-checkout-field{display:inline-block;}
    so this is a from-scratch look rather than an override. */
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row{
 	position:relative;display:flex !important;align-items:center;gap:10px;
-	margin:0 0 9px 5px;padding:10px 12px !important;border:1px solid #e1e2e5;border-radius:10px;background:#fff;
-	box-shadow:0 1px 2px rgba(15,23,42,.04),0 4px 10px rgba(15,23,42,.06);
+	margin:0 0 9px 5px;padding:10px 12px !important;border-bottom:1px solid #e1e2e5;border-radius:0;background:#fff;
+	box-shadow:none;
 	transition:.15s;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row:last-child{margin-bottom:0;}

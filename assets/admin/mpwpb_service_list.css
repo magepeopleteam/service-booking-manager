@@ -16,13 +16,25 @@ div.attendee_filter_list h5 {margin: 0 20px 0 0;}
     margin: 0 auto;
 }
 .mpwpv_service_list_header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
     margin-bottom: 24px;
 }
 .mpwpv_service_list_header h1 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     color: #1f2937;
-    font-size: 24px;
+    font-size: 26px;
     font-weight: 700;
     margin-bottom: 4px;
+}
+.mpwpv_service_list_header-sparkle {
+    font-size: 16px;
+    color: #2563eb;
 }
 .mpwpv_service_list_header p {
     color: #6b7280;
@@ -34,28 +46,37 @@ div.attendee_filter_list h5 {margin: 0 20px 0 0;}
     overflow-x: auto;
     padding-bottom: 8px;
 }
-.mpwpb_add_new_search_holder{
-    display: flex;
-    gap: 20px;
-}
-
 .mpwpb_add_new_Service{
+    display: flex;
+    align-items: center;
+    gap: 8px;
     border: 0;
     box-shadow: none;
-    background-color: #5e59c7ee;
-    border-radius: 0.25rem;
-    padding: 0.5em 0.75em;
+    background-color: #134e4a;
+    border-radius: 8px;
+    padding: 10px 16px;
     color: #fff;
-    font-size: 1rem;
-    transition: all 0.5s ease-in-out;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background-color 0.2s ease-in-out;
     cursor: pointer;
+}
+.mpwpb_add_new_Service:hover {
+    background-color: #0d3b38;
 }
 
 .mpwpb_item_page_mpwpb_service_list .mpwpv_service_list_header .updated {
     display: none;
 }
-.mpwpv_service_list_container > .mpwpv_service_list_header {
-    display: block;
+.mpwpv_service_list_actions-inline {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+.mpwpv_service_list_actions-inline > a {
+    flex-shrink: 0;
 }
 
 .mpwpv_service_list_table_header {
@@ -78,43 +99,57 @@ div.attendee_filter_list h5 {margin: 0 20px 0 0;}
 
 .mpwpv_service_list_analytics-card {
     background: white;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-    padding: 16px;
+    border: 1px solid #eef0f3;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.06);
+    padding: 18px;
     display: flex;
     align-items: center;
-    min-width: max-content;
+    flex: 1 1 0;
+    min-width: 200px;
 }
 .mpwpv_service_list_analytics-icon {
     width: 48px;
     height: 48px;
-    border-radius: 50%;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
     margin-right: 16px;
-    font-size: 24px;
+    font-size: 18px;
 }
 .mpwpv_service_list_analytics-icon.blue {
-    background-color: #dbeafe;
-    color: #2563eb;
+    background: linear-gradient(135deg, #60a5fa, #2563eb);
+    color: #fff;
 }
 .mpwpv_service_list_analytics-icon.green {
-    background-color: #dcfce7;
-    color: #16a34a;
+    background: linear-gradient(135deg, #4ade80, #16a34a);
+    color: #fff;
 }
 .mpwpv_service_list_analytics-icon.purple {
-    background-color: #f3e8ff;
-    color: #9333ea;
+    background: linear-gradient(135deg, #c084fc, #9333ea);
+    color: #fff;
 }
 .mpwpv_service_list_analytics-icon.orange {
-    background-color: #fed7aa;
-    color: #ea580c;
+    background: linear-gradient(135deg, #fb923c, #ea580c);
+    color: #fff;
 }
-.mpwpv_service_list_analytics-text p:first-child {
-    font-size: 14px;
+.mpwpv_service_list_analytics-label {
+    font-size: 13px;
     color: #6b7280;
-    margin-bottom: 2px;
+    margin: 0 0 4px;
+}
+.mpwpv_service_list_analytics-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+}
+.mpwpv_service_list_analytics-caption {
+    font-size: 12px;
+    color: #9ca3af;
+    margin: 4px 0 0;
 }
 
 .mpwpv_service_list_main-card {
@@ -130,43 +165,98 @@ div.attendee_filter_list h5 {margin: 0 20px 0 0;}
 }
 .mpwpv_service_list_header-top {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
+    gap: 16px;
     margin-bottom: 16px;
 }
 .mpwpv_service_list_header-top h2 {
     color: #1f2937;
     font-size: 18px;
-    font-weight: 500;
+    font-weight: 600;
+    margin: 0 0 2px;
+}
+.mpwpv_service_list_header-top-titles p {
+    font-size: 13px;
+    color: #6b7280;
+    margin: 0;
 }
 .mpwpv_service_list_search-container {
     position: relative;
 }
 .mpwpv_service_list_search-input {
-    padding: 10px 10px 10px 23px !important;
+    padding: 9px 12px 9px 34px !important;
     border: 1px solid #d1d5db;
     border-radius: 8px;
     outline: none;
     width: 250px;
+    font-size: 14px;
 }
 .mpwpv_service_list_search-icon {
     position: absolute;
-    left: 6px;
+    left: 12px;
     top: 50%;
     transform: translateY(-50%);
     color: #9ca3af;
+    font-size: 13px;
+    pointer-events: none;
+}
+.mpwpv_service_list_filter-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
 }
 .mpwpv_service_list_filter-buttons {
-    display: flex;
-    gap: 8px;
+    display: inline-flex;
+    gap: 4px;
+    background: #f3f4f6;
+    border-radius: 10px;
+    padding: 4px;
+}
+.mpwpv_service_list_filter-buttons a.ttbm_trash_link {
+    text-decoration: none;
 }
 .mpwpv_service_list_filter-btn {
     padding: 8px 16px;
     border-radius: 8px;
     border: none;
+    background: transparent;
+    color: #4b5563;
     cursor: pointer;
     transition: all 0.2s;
     font-size: 14px;
+}
+.mpwpv_service_list_filter-btn.ttbm_filter_btn_bg_color {
+    background: transparent;
+    color: #4b5563;
+}
+.mpwpv_service_list_filter-btn.ttbm_filter_btn_bg_color:hover {
+    background: #e5e7eb;
+}
+.mpwpv_service_list_filter-btn.ttbm_filter_btn_active_bg_color {
+    background: #134e4a;
+    color: #fff;
+}
+/* Doubled class: mpwpb_plugin_global.css's `.mpwpb_style span { display: inline-block; }`
+   is (0,1,1) and beats a plain single-class rule on a span regardless of load order. */
+.mpwpb_service_list_filter-count.mpwpb_service_list_filter-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    margin-left: 6px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.08);
+    color: inherit;
+    font-size: 11px;
+    font-weight: 600;
+}
+.mpwpv_service_list_filter-btn.ttbm_filter_btn_active_bg_color .mpwpb_service_list_filter-count {
+    background: rgba(255, 255, 255, 0.25);
+    color: #fff;
 }
 
 
@@ -179,42 +269,81 @@ div.attendee_filter_list h5 {margin: 0 20px 0 0;}
     border-collapse: collapse;
 }
 
+/* Overrides mpwpb_plugin_global.css's `.mpwpb_style table th { border: 1px solid ... }`
+   (higher specificity via the extra `table` element) which otherwise adds unwanted side borders. */
 .mpwpb_service_list_services-table th {
     background: #f8fafc !important;
     padding: 16px;
     text-align: left;
     font-size: 12px;
-    font-weight: 600;
+    font-weight: normal !important;
     color: #4a5568;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    border-bottom: 1px solid #e2e8f0;
+    border: none !important;
+    border-bottom: 1px solid #e2e8f0 !important;
 }
 
 .mpwpb_service_list_services-table td {
     padding: 16px !important;
-    border-bottom: 1px solid #f1f5f9 !important;
+    border: none !important;
+    border-bottom: 1px solid #e6e8eb !important;
     vertical-align: top !important;
 }
 
 .mpwpb_service_list_service-name {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 12px;
 }
+.mpwpb_service_list_service-thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eef0f3;
+}
+.mpwpb_service_list_service-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.mpwpb_service_list_service-thumb-placeholder {
+    color: #9ca3af;
+    font-size: 16px;
+}
+.mpwpb_service_list_service-info {
+    min-width: 0;
+}
 .mpwpb_service_list_status-badge.published {
-    background: #48bb78;
-    color: white;
+    background: #dcfce7;
+    color: #15803d;
 }
 .mpwpb_service_list_status-badge.draft {
-    background: #ed8936;
-    color: white;
+    background: #fef3c7;
+    color: #b45309;
 }
-.mpwpb_service_list_status-badge {
-    padding: 4px 8px;
+/* Doubled class: see note above .mpwpb_service_list_filter-count */
+.mpwpb_service_list_status-badge.mpwpb_service_list_status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
     border-radius: 20px;
     font-size: 12px;
-    font-weight: 500;
+    font-weight: normal;
+}
+.mpwpb_service_list_status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    display: inline-block;
 }
 .mpwpb_service_list_service-title {
     font-weight: 600;
@@ -222,15 +351,30 @@ div.attendee_filter_list h5 {margin: 0 20px 0 0;}
     margin-bottom: 4px;
 }
 
-.mpwpb_service_list_shortcode {
+/* Doubled class: see note above .mpwpb_service_list_filter-count */
+.mpwpb_service_list_shortcode.mpwpb_service_list_shortcode {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     font-family: 'Monaco', 'Menlo', monospace;
     background: #f7fafc;
-    padding: 4px 8px;
-    border-radius: 4px;
+    padding: 6px 10px;
+    border-radius: 6px;
     font-size: 12px;
     color: #4a5568;
     border: 1px solid #e2e8f0;
     cursor: pointer;
+}
+.mpwpb_service_list_shortcode code {
+    font-family: inherit;
+    background: none;
+    padding: 0;
+    color: inherit;
+    white-space: nowrap;
+}
+.mpwpb_service_list_shortcode-icon {
+    color: #94a3b8;
+    font-size: 11px;
 }
 .mpwpb_service_list_service-subtitle {
     font-size: 14px;
@@ -243,29 +387,57 @@ div.attendee_filter_list h5 {margin: 0 20px 0 0;}
 }
 
 .mpwpb_service_list_tag {
-    padding: 6px 9px;
-    border-radius: 4px;
+    padding: 6px 10px;
+    border-radius: 6px;
     font-size: 12px;
-    font-weight: 500;
-    background: #edf2f7;
-    color: #4a5568;
+    font-weight: normal;
+    background: #e0edff;
+    color: #1e40af;
 }
-.mpwpb_service_list_tag.popular {
-    background: #fed7d7;
-    color: #c53030;
+.mpwpb_service_list_tags-blue .mpwpb_service_list_tag {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+.mpwpb_service_list_tags-green .mpwpb_service_list_tag {
+    background: #dcfce7;
+    color: #15803d;
+}
+.mpwpb_service_list_tags-purple .mpwpb_service_list_tag {
+    background: #f3e8ff;
+    color: #7e22ce;
+}
+.mpwpb_service_list_tags-orange .mpwpb_service_list_tag {
+    background: #ffedd5;
+    color: #c2410c;
+}
+.mpwpb_service_list_tags-pink .mpwpb_service_list_tag {
+    background: #fce7f3;
+    color: #be185d;
 }
 .mpwpb_service_list_actions {
     display: flex;
     gap: 8px;
 }
+.mpwpb_service_list_actions a:nth-child(1) .mpwpb_service_list_action-btn {
+    background: #dcfce7;
+}
 .mpwpb_service_list_actions a:nth-child(1) i{
     color: #0da573;
 }
+.mpwpb_service_list_actions a:nth-child(2) .mpwpb_service_list_action-btn {
+    background: #fef3c7;
+}
 .mpwpb_service_list_actions a:nth-child(2) i{
-    color: #ff9500;
+    color: #b45309;
+}
+.mpwpb_service_list_actions a:nth-child(3) .mpwpb_service_list_action-btn {
+    background: #dbeafe;
 }
 .mpwpb_service_list_actions a:nth-child(3) i{
     color: #0f88c0;
+}
+.mpwpb_service_list_actions a:nth-child(4) .mpwpb_service_list_action-btn {
+    background: #fee2e2;
 }
 .mpwpb_service_list_actions a:nth-child(4) i{
     color: #c80303;
@@ -273,8 +445,8 @@ div.attendee_filter_list h5 {margin: 0 20px 0 0;}
 .mpwpb_service_list_action-btn {
     width: 32px;
     height: 32px;
-    border-radius: 6px;
-    border: 1px solid #e2e8f0;
+    border-radius: 50%;
+    border: none;
     background: #f3f4f6;
     cursor: pointer;
     display: flex;
@@ -284,7 +456,7 @@ div.attendee_filter_list h5 {margin: 0 20px 0 0;}
 }
 .mpwpb_service_list_actions .mpwpb_service_list_action-btn:hover,
 .mpwpb_service_list_actions .mpwpb_service_list_action-btn:focus{
-    background-color:#f3f4f6;
+    filter: brightness(0.95);
     opacity:1;
 }
 .mpwpb_service_list_action-btn i{
@@ -310,7 +482,7 @@ table.mpwpb_service_list_services-table {
 table.mpwpb_service_list_services-table th
  {
     font-size: 14px !important;
-    background-color: #e1e1e1 !important;
+    background-color: #F3F4F6 !important;
     text-transform: none;
 }
 .mpwpv_service_list_container .notice.notice-warning{display:none;}
@@ -404,4 +576,48 @@ table.mpwpb_service_list_services-table th
     top: 15px;
     cursor: pointer;
     color: #888;
+}
+
+/* Pagination footer */
+.mpwpb_service_list_pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-top: 1px solid #e5e7eb;
+}
+.mpwpb_service_list_pagination-info {
+    font-size: 13px;
+    color: #6b7280;
+}
+.mpwpb_service_list_pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.mpwpb_service_list_page-arrow {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    color: #9ca3af;
+    font-size: 16px;
+    line-height: 1;
+    cursor: not-allowed;
+}
+.mpwpb_service_list_page-num {
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #4b5563;
+}
+.mpwpb_service_list_page-num.active {
+    background: #134e4a;
+    color: #fff;
+    font-weight: 600;
 }

@@ -156,7 +156,10 @@
 			public function before_calculate_totals($cart_object): void {
 				foreach ($cart_object->cart_contents as $value) {
 					$post_id = array_key_exists('mpwpb_id', $value) ? $value['mpwpb_id'] : 0;
-					if (get_post_type($post_id) == MPWPB_Function::get_cpt()) {
+					// mpwpb_tp is only set by add_cart_item_data() for booking items added
+					// through the normal flow; skip the price override entirely if it's
+					// missing rather than guessing a price for this line item.
+					if (get_post_type($post_id) == MPWPB_Function::get_cpt() && isset($value['mpwpb_tp'])) {
 						$total_price = $value['mpwpb_tp'];
 						$value['data']->set_price($total_price);
 						$value['data']->set_regular_price($total_price);

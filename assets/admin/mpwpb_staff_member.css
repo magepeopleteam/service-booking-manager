@@ -13,7 +13,7 @@
  * ===================================================================== */
 
 .mpwpb_staff_page{
-	--brand:#2451e0; --brand-600:#1d3fb8; --brand-soft:#eaf0ff; --brand-ring:rgba(36,81,224,.16);
+	--brand:#134e4a; --brand-600:#0d3b38; --brand-soft:#e6f2f1; --brand-ring:rgba(19,78,74,.16);
 	--ink:#0f172a; --ink-2:#475569; --muted:#94a3b8; --line:#e4e9f0; --surface:#fff; --inset:#f8fafc; --band-line:#eef1f6;
 	background:#eef1f6;font-family:'Inter',system-ui,-apple-system,sans-serif;
 }
@@ -31,20 +31,25 @@
 	border-radius:14px 14px 0 0;display:flex;align-items:center;justify-content:space-between;gap:16px;
 }
 .mpwpb_staff_page .mpwpb_staff_header_text{min-width:0;}
-.mpwpb_staff_page .header h1{font-size:19px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:10px;margin:0;}
-.mpwpb_staff_page .header-icon{width:34px;height:34px;background:var(--brand-soft);border-radius:9px;font-size:16px;display:flex;align-items:center;justify-content:center;}
+.mpwpb_staff_page .header h1{font-size:20px;font-weight:700;color:var(--ink);margin:0;}
 .mpwpb_staff_page .mpwpb_staff_header_sub{margin:4px 0 0;font-size:12.5px;color:var(--muted);}
 
-.mpwpb_staff_page .mpwpb_add_update_tab{flex:0 0 auto;gap:8px;}
+.mpwpb_staff_page .mpwpb_add_update_tab{flex:0 0 auto;display:flex;gap:8px;}
 .mpwpb_staff_page .mpwpb_add_update_tab ._mpBtn.mpwpb_staff_tab_switch{
 	display:inline-flex;align-items:center;gap:7px;
 	padding:9px 16px;border-radius:9px;border:1px solid var(--line);background:#fff;color:var(--ink-2);
 	font-size:13px;font-weight:600;cursor:pointer;transition:.15s;
 }
 .mpwpb_staff_page .mpwpb_add_update_tab ._mpBtn.mpwpb_staff_tab_switch:hover{background:var(--inset);}
-.mpwpb_staff_page .mpwpb_add_update_tab ._mpBtn.mpwpb_staff_tab_switch.mpwpb_staff_tab_active{
+/* "Staff Lists" toggle: subtle active indicator only — it's a view switch, not a CTA. */
+.mpwpb_staff_page .mpwpb_add_update_tab ._mpBtn.mpwpb_staff_tab_switch.mpwpb_staff_tab_active:not(.mpwpb_add_new_staff){
+	background:var(--brand-soft);border-color:var(--brand);color:var(--brand);
+}
+/* "Add/Update Staff" always reads as the primary action button, regardless of which tab is open. */
+.mpwpb_staff_page .mpwpb_add_update_tab ._mpBtn.mpwpb_add_new_staff{
 	background:var(--brand);border-color:var(--brand);color:#fff;
 }
+.mpwpb_staff_page .mpwpb_add_update_tab ._mpBtn.mpwpb_add_new_staff:hover{background:var(--brand-600);border-color:var(--brand-600);}
 .mpwpb_staff_page .mpwpb_add_update_tab i{margin-right:0;}
 
 /* -------------------------------------------------------------------- *
@@ -54,11 +59,23 @@
 	background:var(--surface);border:1px solid var(--line);border-top:0;border-radius:0 0 14px 14px;padding:22px 26px;
 }
 
-/* Staff list (unchanged structurally — light polish only) */
+/* Staff list table. The two-class selectors here (.mpwpb_staff_page .mpwpb_staff_list)
+   already out-specificity mpwpb_plugin_global.css's shared `.mpwpb_style table th/td`
+   rules (which force a full border + bold thead), so plain declarations below are
+   enough to win — no !important/doubled-class trick needed, unlike the flatter
+   single-class selectors on the Service List page. */
 .mpwpb_staff_page .mpwpb_staff_list h3{font-size:14px;color:var(--muted);font-weight:600;}
 .mpwpb_staff_page .mpwpb_staff_list table{width:100%;border-collapse:collapse;}
-.mpwpb_staff_page .mpwpb_staff_list th{font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);padding:10px 8px;}
-.mpwpb_staff_page .mpwpb_staff_list td{padding:10px 8px;font-size:13px;color:var(--ink-2);}
+.mpwpb_staff_page .mpwpb_staff_list th{
+	font-size:11.5px;font-weight:normal;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);
+	padding:12px 8px;text-align:left;border:none;border-bottom:1px solid var(--band-line);background:var(--inset);
+}
+.mpwpb_staff_page .mpwpb_staff_list td{
+	padding:12px 8px;font-size:13px;color:var(--ink-2);border:none;border-bottom:1px solid var(--band-line);vertical-align:middle;
+}
+.mpwpb_staff_page .mpwpb_staff_list tbody tr:last-child td{border-bottom:none;}
+.mpwpb_staff_page .mpwpb_staff_name_cell{font-weight:600;color:var(--ink);}
+.mpwpb_staff_page .mpwpb_staff_email_cell{color:#b45309;}
 
 /* -------------------------------------------------------------------- *
  *  Two-column layout
@@ -73,42 +90,88 @@
 }
 .mpwpb_staff_page .col_7._borL_pL{border-left:0;padding-left:0;}
 .mpwpb_staff_page .col_5 h4,
-.mpwpb_staff_page .col_7 h4{font-size:14.5px;font-weight:700;color:var(--ink);margin:0 0 16px;}
+.mpwpb_staff_page .col_7 h4{font-size:14.5px;font-weight:700;color:var(--ink);margin:0;}
+.mpwpb_staff_page .mpwpb_staff_form_sub{margin:4px 0 0;font-size:12.5px;color:var(--muted);}
+.mpwpb_staff_page .col_5 .divider{margin:14px 0 20px;}
 
 /* -------------------------------------------------------------------- *
  *  Staff Information fields
  * -------------------------------------------------------------------- */
 .mpwpb_staff_page label.mpwpb_user_info,
 .mpwpb_staff_page label:not(.mpwpb_user_info):not(.customCheckboxLabel){margin-bottom:16px !important;font-weight:400;}
+/* mpwpb_plugin_global.css's shared `.mpwpb_style label{display:flex;align-items:center}`
+   (a compact inline label+field pattern used elsewhere in this plugin) needs overriding
+   here so Staff Information's labels stack label-above-field as designed. The holiday
+   toggle row is deliberately excluded — it keeps its own flex row (text left / checkbox right). */
+.mpwpb_staff_page .col_5 > label:not(.mpwpb_holiday_toggle_row),
+.mpwpb_staff_page .col_5 label.mpwpb_user_info{
+	display:block;
+}
 .mpwpb_staff_page label span._w_200,
 .mpwpb_staff_page label > span:first-child{
 	display:block;margin-bottom:6px;font-size:12.5px;font-weight:600;color:var(--ink-2);width:auto !important;
 }
-.mpwpb_staff_page .formControl,
-.mpwpb_staff_page select.mpwpb_staff_modify_holiday{
+/* Doubled class: mpwpb_plugin_global.css's `div.mpwpb_style .formControl` (0,2,1)
+   and `div.mpwpb_style select.formControl` (0,2,2) both beat a plain single-doubled
+   .mpwpb_staff_page .formControl (0,2,0) rule regardless of load order, since classes
+   are compared before element count. Tripling the class here (0,3,0) reliably wins. */
+.mpwpb_staff_page .formControl.formControl{
 	width:100%;padding:10px 15px;font-size:13.5px;border:1px solid var(--line);border-radius:10px;
 	background:#fff;color:var(--ink);box-shadow:none;transition:.15s;
 }
-.mpwpb_staff_page .formControl:focus,
-.mpwpb_staff_page select.mpwpb_staff_modify_holiday:focus{
+.mpwpb_staff_page .formControl.formControl:focus{
 	border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-ring);outline:none;
 }
 .mpwpb_staff_page .mpwpb_input_height{min-height:0 !important;}
 
-/* Profile image upload */
-.mpwpb_staff_page .profile-section{background:transparent;border:0;padding:0;margin:20px 0 0;}
-.mpwpb_staff_page .profile-section h3{font-size:12.5px;font-weight:600;color:var(--ink-2);margin:0 0 8px;}
-.mpwpb_staff_page .upload-area{
-	border:1.5px dashed var(--line);border-radius:12px;padding:18px;background:var(--inset);cursor:default;
+/* Username/Password/Email — leading icon sits inside the field itself. */
+.mpwpb_staff_page .mpwpb_input_icon_wrap{position:relative;}
+.mpwpb_staff_page .mpwpb_input_icon_wrap .mpwpb_input_icon{
+	position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:12.5px;pointer-events:none;
 }
-.mpwpb_staff_page .upload-area:hover{border-color:var(--brand);}
-.mpwpb_staff_page .upload-area img{border-radius:8px;}
+.mpwpb_staff_page .mpwpb_input_icon_wrap .formControl{padding-left:38px;}
+
+/* First Name / Last Name side by side */
+.mpwpb_staff_page .mpwpb_name_row{display:flex;gap:14px;}
+.mpwpb_staff_page .mpwpb_name_row label.mpwpb_user_info{flex:1 1 0;min-width:0;}
+
+/* Modify Holiday Permissions — bordered row, label left / checkbox right */
+.mpwpb_staff_page .mpwpb_holiday_toggle_row{
+	display:flex;align-items:center;justify-content:space-between;gap:12px;
+	padding:12px 14px;border:1px solid var(--line);border-radius:10px;margin-bottom:0 !important;
+}
+.mpwpb_staff_page .mpwpb_holiday_toggle_row span{font-size:13px;font-weight:600;color:var(--brand);}
+.mpwpb_staff_page .mpwpb_holiday_toggle_row input[type="checkbox"]{width:16px;height:16px;accent-color:var(--brand);margin:0;flex:0 0 auto;}
+
+/* Profile image upload */
+.mpwpb_staff_page .profile-section{background:transparent;border:0;padding:0;margin:0 0 20px;}
+.mpwpb_staff_page .upload-area{
+	display:flex;flex-direction:column;align-items:center;background:transparent;padding:0;border:0;cursor:default;
+}
+.mpwpb_staff_page .mpwpb_profile_image_circle{
+	width:120px;height:120px;border-radius:50%;border:1.5px dashed var(--line);background:var(--inset);
+	display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:16px;
+}
+.mpwpb_staff_page .mpwpb_profile_image_circle img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.mpwpb_staff_page .upload-buttons{display:flex;gap:10px;}
 .mpwpb_staff_page .btn{
-	padding:7px 14px;border:1px solid var(--line);border-radius:8px;font-size:12.5px;font-weight:600;background:#fff;color:var(--ink-2);
+	padding:9px 18px;border:1px solid var(--line);border-radius:999px;font-size:12.5px;font-weight:600;background:#fff;color:var(--ink-2);cursor:pointer;
 }
 .mpwpb_staff_page .btn.btn-primary{background:var(--brand);border-color:var(--brand);color:#fff;}
 .mpwpb_staff_page .btn.btn-primary:hover{filter:brightness(1.08);}
-.mpwpb_staff_page .btn.btn-secondary:hover{background:#fee2e2;border-color:#fecaca;color:#dc2626;}
+.mpwpb_staff_page .btn.btn-secondary{background:var(--brand-soft);border-color:transparent;color:var(--brand);}
+.mpwpb_staff_page .btn.btn-secondary:hover{background:#fee2e2;color:#dc2626;}
+
+/* -------------------------------------------------------------------- *
+ *  Form footer — Cancel / Save Profile
+ * -------------------------------------------------------------------- */
+.mpwpb_staff_page .mpwpb_staff_form_actions{border-top:1px solid var(--line);padding-top:20px;}
+.mpwpb_staff_page .mpwpb_staff_form_actions_buttons{display:flex;gap:10px;}
+.mpwpb_staff_page .mpwpb_staff_cancel_btn{
+	padding:11px 22px;border-radius:10px;border:0;background:var(--brand-soft);color:var(--brand);
+	font-size:13.5px;font-weight:700;cursor:pointer;transition:.15s;
+}
+.mpwpb_staff_page .mpwpb_staff_cancel_btn:hover{filter:brightness(0.97);}
 
 /* -------------------------------------------------------------------- *
  *  Panels (General Settings / Time Schedule Settings / Off Days & Dates)
@@ -139,6 +202,46 @@
 	background:var(--inset);color:var(--muted);border:1px solid var(--line);
 }
 .mpwpb_staff_format_badge.is-on{background:var(--brand-soft);color:var(--brand);border-color:transparent;}
+
+/* Schedule Type pills — visual front-end for the real (hidden) mpwpb_date_type select. */
+.mpwpb_staff_page .mpwpb_visually_hidden{
+	position:absolute !important;width:1px !important;height:1px !important;padding:0 !important;margin:-1px !important;
+	overflow:hidden !important;clip:rect(0,0,0,0) !important;white-space:nowrap !important;border:0 !important;
+}
+.mpwpb_staff_page .mpPanelBody > span._w_200{
+	display:block;margin-bottom:8px;font-size:12.5px;font-weight:600;color:var(--ink-2);
+}
+.mpwpb_staff_page .mpwpb_schedule_type_pills{display:flex;gap:8px;margin-top:8px;margin-bottom:16px;}
+.mpwpb_staff_page .mpwpb_schedule_type_pill{
+	padding:9px 16px;border-radius:9px;border:1px solid var(--line);background:#fff;color:var(--ink-2);
+	font-size:13px;font-weight:600;cursor:pointer;transition:.15s;
+}
+.mpwpb_staff_page .mpwpb_schedule_type_pill:hover{background:var(--inset);}
+.mpwpb_staff_page .mpwpb_schedule_type_pill.mpActive{background:var(--brand-soft);border-color:var(--brand);color:var(--brand);}
+
+/* Time Schedule Settings header actions (Copy Monday to All + format badge) */
+.mpwpb_staff_page .mpwpb_staff_schedule_header_actions{display:flex;align-items:center;gap:10px;}
+.mpwpb_staff_page .mpwpb_copy_monday_btn{
+	display:inline-flex;align-items:center;padding:6px 12px;border-radius:8px;border:1px solid var(--line);
+	background:#fff;color:var(--brand);font-size:12px;font-weight:600;cursor:pointer;transition:.15s;
+}
+.mpwpb_staff_page .mpwpb_copy_monday_btn:hover{background:var(--brand-soft);}
+
+/* Weekly Availability status badge */
+.mpwpb_staff_page .mpwpb_staff_status_badge{
+	display:inline-block;padding:3px 10px;border-radius:999px;font-size:10.5px;font-weight:700;letter-spacing:.03em;
+}
+.mpwpb_staff_page .mpwpb_staff_status_badge.is-active{background:#dcfce7;color:#15803d;}
+.mpwpb_staff_page .mpwpb_staff_status_badge.is-off{background:var(--inset);color:var(--muted);}
+
+/* Off Days & Exception Dates — two cards side by side */
+.mpwpb_staff_page .mpwpb_off_day_cards{display:flex;gap:16px;align-items:flex-start;}
+.mpwpb_staff_page .mpwpb_off_day_card{
+	flex:1 1 0;min-width:0;background:var(--inset);border:1px solid var(--band-line);border-radius:10px;padding:14px;margin:0 !important;
+}
+@media(max-width:700px){
+	.mpwpb_staff_page .mpwpb_off_day_cards{flex-direction:column;}
+}
 
 /* Date Type / Particular Dates fields inside General Settings */
 .mpwpb_staff_page .mpPanelBody > label{display:block;margin-bottom:16px;}
@@ -244,7 +347,7 @@
  *  Save button
  * -------------------------------------------------------------------- */
 .mpwpb_staff_page button.themeButton{
-	display:inline-flex;align-items:center;gap:8px;margin-top:20px;
+	display:inline-flex;align-items:center;gap:8px;
 	padding:11px 22px;border-radius:10px;border:0;background:var(--brand);color:#fff;
 	font-size:13.5px;font-weight:700;cursor:pointer;transition:.15s;
 }
@@ -261,9 +364,46 @@
 }
 .mpwpb_staff_page .mpwpb_staff_list ._mpBtn_xs_textGray:hover{border-color:var(--brand);color:var(--brand);}
 .mpwpb_staff_page .mpwpb_staff_list ._mpBtn_xs_textDanger:hover{background:#fee2e2;border-color:#fecaca;color:#dc2626;}
-.mpwpb_staff_page .mpwpb_staff_image_holder{width:64px;height:44px;border-radius:8px;overflow:hidden;}
+.mpwpb_staff_page .mpwpb_staff_image_holder{width:44px;height:44px;border-radius:50%;overflow:hidden;}
+.mpwpb_staff_page .mpwpb_staff_image_holder img{width:100%;height:100%;object-fit:cover;display:block;}
 
 @media(max-width:900px){
 	.mpwpb_staff_page .mpRow{flex-direction:column;}
 	.mpwpb_staff_page .col_5{flex:1 1 auto;width:100%;}
 }
+
+/* -------------------------------------------------------------------- *
+ *  Pagination footer (Staff Lists tab)
+ * -------------------------------------------------------------------- */
+.mpwpb_staff_page .mpwpb_staff_pagination{
+	display:flex;align-items:center;justify-content:space-between;padding:16px 0 0;
+}
+.mpwpb_staff_page .mpwpb_staff_pagination-info{font-size:13px;color:var(--muted);}
+.mpwpb_staff_page .mpwpb_staff_pagination-controls{display:flex;align-items:center;gap:6px;}
+.mpwpb_staff_page .mpwpb_staff_page-arrow{
+	width:30px;height:30px;border-radius:6px;border:1px solid var(--line);background:#fff;color:var(--muted);
+	font-size:16px;line-height:1;cursor:not-allowed;
+}
+.mpwpb_staff_page .mpwpb_staff_page-num{
+	width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;
+	border-radius:6px;font-size:13px;color:var(--ink-2);
+}
+.mpwpb_staff_page .mpwpb_staff_page-num.active{background:var(--brand);color:#fff;font-weight:600;}
+
+/* -------------------------------------------------------------------- *
+ *  Stat cards (below the tabs card)
+ * -------------------------------------------------------------------- */
+.mpwpb_staff_page .mpwpb_staff_stats{display:flex;gap:16px;margin-top:16px;}
+.mpwpb_staff_page .mpwpb_staff_stats-card{
+	flex:1 1 0;min-width:200px;background:var(--surface);border:1px solid var(--line);border-radius:12px;
+	box-shadow:0 1px 3px 0 rgba(0,0,0,.06);padding:18px;display:flex;align-items:center;
+}
+.mpwpb_staff_page .mpwpb_staff_stats-icon{
+	width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+	flex-shrink:0;margin-right:16px;font-size:18px;color:#fff;
+}
+.mpwpb_staff_page .mpwpb_staff_stats-icon.blue{background:linear-gradient(135deg,#60a5fa,#2563eb);}
+.mpwpb_staff_page .mpwpb_staff_stats-icon.green{background:linear-gradient(135deg,#4ade80,#16a34a);}
+.mpwpb_staff_page .mpwpb_staff_stats-label{font-size:13px;color:var(--muted);margin:0 0 4px;}
+.mpwpb_staff_page .mpwpb_staff_stats-value{font-size:22px;font-weight:700;color:var(--ink);margin:0;}
+.mpwpb_staff_page .mpwpb_staff_stats-caption{font-size:12px;color:var(--muted);margin:4px 0 0;}

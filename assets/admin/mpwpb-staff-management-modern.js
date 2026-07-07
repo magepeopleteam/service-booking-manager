@@ -6,7 +6,10 @@
  *
  * This file only adds: toggling an off-day pill live-marks the matching
  * Time Schedule row as "Closed" (mirroring the initial state already
- * computed server-side in MPWPB_Staff_Members::schedule_settings()).
+ * computed server-side in MPWPB_Staff_Members::schedule_settings()), and
+ * keeps that row's ACTIVE/OFF status badge in sync with it — both are
+ * driven by the same server-computed $is_off, so a live checkbox toggle
+ * has to update both together or they visibly disagree.
  * Delegated off .mpwpb_staff_page (never replaced) rather than the form
  * itself, since editing a different staff member reloads the form's
  * inner HTML via AJAX (load_staff_form() in mpwpb_admin.js).
@@ -19,8 +22,15 @@
 		return;
 	}
 
+	var i18n = window.mpwpbStaffScheduleI18n || { active: 'ACTIVE', off: 'OFF' };
+
 	function syncRow(day, isOff) {
-		$page.find('[data-day-name="' + day + '"]').closest('tr').toggleClass('mpwpb-staff-row-off', isOff);
+		var $row = $page.find('[data-day-name="' + day + '"]').closest('tr');
+		$row.toggleClass('mpwpb-staff-row-off', isOff);
+		$row.find('.mpwpb_staff_status_badge')
+			.toggleClass('is-off', isOff)
+			.toggleClass('is-active', !isOff)
+			.text(isOff ? i18n.off : i18n.active);
 	}
 
 	$page.on('click', '.groupCheckBox .customCheckboxLabel', function () {
