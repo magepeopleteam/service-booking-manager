@@ -1707,49 +1707,99 @@ button.mpwpb_service_button.mActive:hover{
   cursor: pointer;
 }
 
+.mpwpb_staff_step_summary {
+  background: #f8fafc;
+  border: 1px solid #e5e9f0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin: 12px 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mpwpb_staff_step_summary_row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #475569;
+}
+
+.mpwpb_staff_step_summary_row i {
+  width: 16px;
+  text-align: center;
+  color: #8892a4;
+}
+
+.mpwpb_staff_step_summary_row strong {
+  margin-left: auto;
+  color: #1e293b;
+  font-weight: 700;
+}
+
 .mpwp_select_staff_wrapper {
   padding: 20px;
   font-family: 'Segoe UI', sans-serif;
 }
 
+/* Horizontal scroll strip of plain avatar+name picks -- no card/box chrome,
+   just a clean row that scrolls instead of wrapping when there are more
+   staff than fit on one line. */
 .mpwp_select_staff_grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 10px;
+  display: flex;
+  gap: 18px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 6px 4px 14px;
+  scrollbar-width: thin;
 }
 
 .mpwp_select_staff_card {
-  background: #fff;
-  border: 2px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 15px;
+  flex: 0 0 auto;
+  width: 84px;
   text-align: center;
   cursor: pointer;
-  transition: 0.3s ease;
+  padding: 6px 4px;
+  border-radius: 10px;
+  transition: background 0.15s ease;
+}
+
+.mpwp_select_staff_card:hover {
+  background: #f5f7fa;
 }
 
 .mpwp_select_staff_card.selected {
-  border-color: #4CAF50;
-  box-shadow: 0 0 10px rgba(76, 175, 80, 0.15);
+  background: #eef2ff;
 }
 
-.mpwp_select_staff_img {
-  width: 70px;
-  height: 70px;
-  border-radius: 10px;
+/* Shared by both the real <img> avatars and the emoji "Any Staff" icon, so
+   both render as the same size/shape circle. */
+.mpwp_select_staff_avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
   object-fit: cover;
-  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 8px;
+  font-size: 26px;
+  background: #f0f0f0;
+  border: 2px solid transparent;
+}
+
+.mpwp_select_staff_card.selected .mpwp_select_staff_avatar {
+  border-color: #4CAF50;
 }
 
 .mpwp_select_staff_name {
+  font-size: 12.5px;
   font-weight: 600;
-  font-size: 16px;
-  margin-bottom: 4px;
-}
-
-.mpwp_select_staff_email {
-  font-size: 12px;
-  color: #666;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .mpwpb_cart_progress_wrapper {
@@ -1825,6 +1875,31 @@ button.mpwpb_service_button.mActive:hover{
   padding: 15px !important;
   min-height: 80px !important;
   border-radius: 10px;
+}
+
+.mpwpb_get_date_passed{
+  background-color: #f8fafc !important;
+  cursor: not-allowed;
+  padding: 15px !important;
+  min-height: 80px !important;
+  border-radius: 10px;
+  opacity: .6;
+  text-align: center;
+}
+
+.mpwpb_get_date_passed .mptrs_day_with_date,
+.mpwpb_get_date_passed .mpwpb-date-number{
+  color: #94a3b8 !important;
+}
+
+.mpwpb_date_passed_label{
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  margin-top: 2px;
 }
 
 .mpwpb_time_display{

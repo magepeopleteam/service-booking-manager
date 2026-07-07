@@ -79,7 +79,14 @@
             <div class="" >
                 <div class="<?php echo $mpwpb_is_static_template ? 'mpwpb-date-grid' : 'owl-theme mpwpb-owl-carousel'; ?>" id="mpwpb_datetime_holder1">
                     <?php if (sizeof($all_dates) > 0) {
-                        $booking_date_output = MPWPB_Details_Layout::display_booking_date( $post_id, $all_dates );
+                        // Computed once and passed to both calls so the date
+                        // marked "selected" and the time panel shown by
+                        // default always agree on the same date -- each used
+                        // to independently default to $all_dates[0], which
+                        // could point at a date with zero actual time slots
+                        // left (already past, or fully booked).
+                        $active_date = MPWPB_Details_Layout::get_default_active_date( $post_id, $all_dates );
+                        $booking_date_output = MPWPB_Details_Layout::display_booking_date( $post_id, $all_dates, $active_date );
                         if ( $booking_date_output !== null ) {
                             echo wp_kses_post( $booking_date_output );
                         }
@@ -87,7 +94,7 @@
                 </div>
                 <div class="mpwpb_select_time_holder" id="<?php echo esc_attr( $post_id );?>">
                     <?php
-                        $booking_time_output = MPWPB_Details_Layout::display_booking_time( $post_id, $all_dates );
+                        $booking_time_output = MPWPB_Details_Layout::display_booking_time( $post_id, $all_dates, $active_date );
                         if ( $booking_time_output !== null ) {
                             echo wp_kses_post( $booking_time_output );
                         }
@@ -187,6 +194,22 @@
                     <header class="_dFlex_alignCenter_justifyBetween">
                         <h3 class="mpwpb_date_staff_select"><?php esc_html_e('Select Staff', 'service-booking-manager'); ?></h3>
                     </header>
+
+                    <!-- Populated by JS (mpwpb_registration.js) when this step is
+                         entered -- the date/time picked in the previous step
+                         otherwise isn't shown anywhere while choosing staff. -->
+                    <div class="mpwpb_staff_step_summary" id="mpwpb_staff_step_summary">
+                        <div class="mpwpb_staff_step_summary_row">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span><?php esc_html_e('Selected Date & Time', 'service-booking-manager'); ?>:</span>
+                            <strong id="mpwpb_staff_selected_datetime">&mdash;</strong>
+                        </div>
+                        <div class="mpwpb_staff_step_summary_row">
+                            <i class="fas fa-receipt"></i>
+                            <span><?php esc_html_e('Booking Total', 'service-booking-manager'); ?>:</span>
+                            <strong id="mpwpb_staff_selected_total"><?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, 0)); ?></strong>
+                        </div>
+                    </div>
 
                     <input type="hidden" class="mpwpb_staff_member_booking" name="mpwpb_staff_member_booking" id="mpwpb_staff_member_booking" value="">
                     <div class="mpwpb_staff_member_booking" id="mpwpb_staff_member_holder"></div>

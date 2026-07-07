@@ -533,9 +533,18 @@ function mpwpb_price_calculation($this) {
         $(".mpwpb_ex_service_button_remove").css({ 'display': 'none' });
 
         $("#mpwpb_staff_member_booking_area").hide();
-        if ($('#mpwpb_staff_member_holder').find('.mpwp_select_staff_grid').length > 0) {
+        // #mpwpb_staff_member_booking_area is only ever rendered server-side
+        // (date_time_select.php) when this service has staff selection
+        // enabled -- checking for it directly, instead of for staff CARDS
+        // already being loaded into #mpwpb_staff_member_holder (which can't
+        // happen yet: that AJAX only fires after a date/time is picked,
+        // i.e. strictly later than this handler), is what actually reflects
+        // "does this service need a staff step" at this point in the flow.
+        if ($('#mpwpb_staff_member_booking_area').length > 0) {
             $("#mpwpb_date_time_next_btn_id").hide();
             $("#mpwpb_show_hide_staff_member").fadeIn();
+        } else {
+            $("#mpwpb_date_time_next_btn_id").fadeIn();
         }
 
 
@@ -573,8 +582,10 @@ function mpwpb_price_calculation($this) {
         if (date) {
             let current_date = parent.find('.mpwpb_date_time_area [data-radio-check="' + date + '"]').data('date');
             parent.find('.mpwpb_summary_item[data-date]').slideDown('fast').find('h6').html(current_date);
+            parent.find('#mpwpb_staff_selected_datetime').text(current_date);
         } else {
             parent.find('.mpwpb_summary_item[data-date]').slideUp('fast');
+            parent.find('#mpwpb_staff_selected_datetime').text('—');
         }
     });
     $(document).on('click', 'div.mpwpb_registration .mpwpb_date_time_next', function () {
@@ -797,6 +808,12 @@ function mpwpb_price_calculation($this) {
 
         $("#mpwpb_display_service_btn").hide();
         $("#mpwpb_display_date_time").fadeIn();
+
+        // Mirror the running total into the staff step's own summary --
+        // #mpwpd_all_total_bill is the single element mpwpb_price_calculation()
+        // already keeps up to date, this just copies its current text.
+        let parent = $(this).closest('div.mpwpb_registration');
+        parent.find('#mpwpb_staff_selected_total').text(parent.find('#mpwpd_all_total_bill').first().text());
     });
 
     $(document).on('click', '.mpwpb_get_date', function () {
@@ -821,7 +838,12 @@ function mpwpb_price_calculation($this) {
 
         $("#mpwpb_staff_member_booking").val( staffId );
 
-        // $("#mpwpb_progress_staff").addClass('active');
+        // Only one progress circle should read as "active" at a time --
+        // #mpwpb_progress_staff was turned on when this step was entered
+        // (#mpwpb_show_hide_staff_member click handler) and never turned
+        // back off, so picking a staff member used to leave both Staff and
+        // Checkout marked active simultaneously.
+        $("#mpwpb_progress_staff").removeClass('active');
         $("#mpwpb_progress_checkout").addClass('active');
     });
 

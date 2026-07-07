@@ -19,6 +19,11 @@ if (!class_exists('MPWPB_Reviews_Admin')) {
             // Add AJAX handlers for admin actions
             add_action('wp_ajax_mpwpb_change_review_status', array($this, 'change_review_status'));
             add_action('wp_ajax_mpwpb_delete_review', array($this, 'delete_review'));
+
+            // Frontend review submission -- logged-in customers only (no
+            // nopriv variant), matching the rest of the account-area AJAX
+            // handlers (e.g. MPWPB_User_Dashboard).
+            add_action('wp_ajax_mpwpb_submit_review', array($this, 'submit_review'));
         }
         
         /**
@@ -369,14 +374,98 @@ if (!class_exists('MPWPB_Reviews_Admin')) {
             }
             
             $result = $this->delete_review_by_id($review_id);
-            
+
             if ($result) {
                 wp_send_json_success(array('message' => esc_html__('Review deleted successfully', 'service-booking-manager')));
             } else {
                 wp_send_json_error(array('message' => esc_html__('Failed to delete review', 'service-booking-manager')));
             }
         }
-        
+
+        /**
+         * True if $user_id has at least one booking on record for
+         * $service_id -- the gate for who's allowed to leave a review.
+         * Public + static so the frontend template can check this before
+         * even showing the review form, not just at submission time.
+         */
+        public static function user_can_review($service_id, $user_id) {
+            if (!$service_id || !$user_id) {
+                return false;
+            }
+            $bookings = get_posts(array(
+                'post_type'      => 'mpwpb_booking',
+                'posts_per_page' => 1,
+                'fields'         => 'ids',
+                'meta_query'     => array(
+                    'relation' => 'AND',
+                    array('key' => 'mpwpb_id', 'value' => $service_id, 'compare' => '='),
+                    array('key' => 'mpwpb_user_id', 'value' => $user_id, 'compare' => '='),
+                ),
+            ));
+            return !empty($bookings);
+        }
+
+        /**
+         * AJAX handler for a logged-in customer submitting a review. A user
+         * may submit as many reviews for the same service as they like --
+         * each is its own row, always starting 'pending'.
+         * update_service_rating() only ever averages 'approved' rows, so
+         * this can't be used to inflate a service's rating without going
+         * through admin approval first.
+         */
+        public function submit_review() {
+            check_ajax_referer('mpwpb_nonce', 'nonce');
+
+            if (!is_user_logged_in()) {
+                wp_send_json_error(array('message' => esc_html__('Please log in to leave a review.', 'service-booking-manager')));
+            }
+
+            $service_id = isset($_POST['service_id']) ? intval($_POST['service_id']) : 0;
+            $rating = isset($_POST['rating']) ? intval($_POST['rating']) : 0;
+            $title = isset($_POST['title']) ? sanitize_text_field(wp_unslash($_POST['title'])) : '';
+            $content = isset($_POST['content']) ? sanitize_textarea_field(wp_unslash($_POST['content'])) : '';
+
+            if (!$service_id || get_post_type($service_id) !== 'mpwpb_item') {
+                wp_send_json_error(array('message' => esc_html__('Invalid service.', 'service-booking-manager')));
+            }
+            if ($rating < 1 || $rating > 5) {
+                wp_send_json_error(array('message' => esc_html__('Please select a rating between 1 and 5 stars.', 'service-booking-manager')));
+            }
+            if ($content === '') {
+                wp_send_json_error(array('message' => esc_html__('Please write a short review.', 'service-booking-manager')));
+            }
+
+            $user = wp_get_current_user();
+
+            if (!self::user_can_review($service_id, $user->ID)) {
+                wp_send_json_error(array('message' => esc_html__('You can only review services you have booked.', 'service-booking-manager')));
+            }
+
+            $this->create_reviews_table();
+
+            global $wpdb;
+            $table_name = $wpdb->prefix . 'mpwpb_reviews';
+
+            $wpdb->insert(
+                $table_name,
+                array(
+                    'service_id'   => $service_id,
+                    'user_id'      => $user->ID,
+                    'user_name'    => $user->display_name,
+                    'rating'       => $rating,
+                    'title'        => $title,
+                    'content'      => $content,
+                    'status'       => 'pending',
+                    'date_created' => current_time('mysql'),
+                ),
+                array('%d', '%d', '%s', '%d', '%s', '%s', '%s', '%s')
+            );
+
+            wp_send_json_success(array(
+                'message' => esc_html__('Thank you! Your review has been submitted and is awaiting approval.', 'service-booking-manager'),
+            ));
+        }
+
         /**
          * Update review status
          */

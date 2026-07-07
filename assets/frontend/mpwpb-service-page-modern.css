@@ -118,12 +118,115 @@
  * -------------------------------------------------------------------- */
 .mpwpb-static-template section#service-overview,
 .mpwpb-static-template section#service-faq,
-.mpwpb-static-template section#service-details{scroll-margin-top:80px;}
+.mpwpb-static-template section#service-details,
+.mpwpb-static-template section#service-reviews{scroll-margin-top:80px;}
 .mpwpb-static-template section#service-overview > h2,
 .mpwpb-static-template section#service-faq > h2,
-.mpwpb-static-template section#service-details > h2{
-	font-size:19px !important;font-weight:800;color:var(--mpwpb_color_theme) !important;border-bottom:0 !important;margin:0 0 16px !important;
+.mpwpb-static-template section#service-details > h2,
+.mpwpb-static-template section#service-reviews .mpwpb-reviews-head > h2{
+	font-size:19px !important;font-weight:800;color:var(--mpwpb_color_theme) !important;border-bottom:0 !important;margin:0 !important;
 }
+
+/* Title + "Write a Review" trigger, same row, button pinned top-right. */
+.mpwpb-reviews-head{
+	display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 16px;
+}
+.mpwpb-write-review-btn{
+	flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;border:none;border-radius:999px;
+	background:var(--mpwpb_color_theme);color:#fff;font-size:12.5px;font-weight:700;
+	padding:9px 16px;cursor:pointer;transition:.15s;
+}
+.mpwpb-write-review-btn:hover{filter:brightness(.92);}
+
+/* -------------------------------------------------------------------- *
+ *  Reviews: approved-review list + the logged-in submission form
+ * -------------------------------------------------------------------- */
+.mpwpb-reviews-list{display:flex;flex-direction:column;gap:14px;margin-bottom:24px;}
+.mpwpb-no-reviews{font-size:13.5px;color:#8892a4;}
+.mpwpb-review-item{border:1px solid #e5e9f0;border-radius:var(--mpwpb-sp-radius);background:#fff;padding:16px;}
+.mpwpb-review-item-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;}
+.mpwpb-review-stars{color:#fbbf24;font-size:13px;letter-spacing:1px;}
+.mpwpb-review-stars .far.fa-star{color:#e2e8f0;}
+.mpwpb-review-author{font-size:13.5px;font-weight:700;color:#1e293b;}
+.mpwpb-review-date{font-size:12px;color:#94a3b8;margin-left:auto;}
+.mpwpb-review-title{margin:0 0 4px;font-size:14px;font-weight:700;color:#1e293b;}
+.mpwpb-review-content{margin:0;font-size:13.5px;color:#475569;line-height:1.6;}
+
+.mpwpb-review-form-wrap{padding-top:2px;}
+.mpwpb-review-login-notice{font-size:13.5px;color:#64748b;}
+.mpwpb-review-login-notice a{color:var(--mpwpb_color_theme);font-weight:700;}
+
+/* -------------------------------------------------------------------- *
+ *  "Write a Review" popup -- overrides the generic .mpwpb_popup chrome
+ *  scoped to .mpwpb-review-popup only so the gallery lightbox / features
+ *  popup elsewhere in this template keep their own look untouched.
+ *  !important is required throughout this block: mpwpb_registration.css
+ *  has bare, UNSCOPED rules (.mpwpb_popup_header{background-color:var(
+ *  --mpwpb_color_theme)}, .mpwpb_popup_body{background:#f5f7fa}) that
+ *  apply to every popup on the page, and mp_global's shared stylesheet
+ *  styles every <label> and .mpwpb_popup_main_area via `div.mpwpb_style
+ *  label` / `div.mpwpb_popup .mpwpb_popup_main_area` -- selectors that
+ *  beat a plain class-only override like `.mpwpb-review-popup X` on
+ *  specificity alone (type+class outranks two classes), independent of
+ *  source order. Without !important here, the base 700px width, the
+ *  theme-green header, the #f5f7fa body tint, and label{align-items:
+ *  center} (which squashes the Title/Review fields to a centered column
+ *  instead of stretching them) all silently win. */
+.mpwpb-review-popup .mpwpb_popup_main_area{
+	min-width:0 !important;width:92vw !important;max-width:440px !important;
+	min-height:0 !important;max-height:90vh !important;
+	background:#fff !important;border:none !important;border-radius:16px !important;
+	box-shadow:0 20px 50px rgba(15,23,42,.25) !important;
+}
+.mpwpb-review-popup .mpwpb_popup_header{
+	display:flex !important;align-items:center !important;justify-content:space-between !important;gap:12px !important;
+	padding:18px 22px !important;border-bottom:1px solid #e5e9f0 !important;background:#fff !important;
+}
+.mpwpb-review-popup .mpwpb_popup_header h3{margin:0 !important;font-size:17px !important;font-weight:800 !important;color:#1e293b !important;}
+.mpwpb-review-popup .mpwpb_popup_close{
+	position:static !important;top:auto !important;right:auto !important;width:26px !important;height:26px !important;
+	background:transparent !important;color:#94a3b8 !important;font-size:15px !important;border-radius:50% !important;
+}
+.mpwpb-review-popup .mpwpb_popup_close:hover{background:#f1f5f9 !important;color:#1e293b !important;}
+.mpwpb-review-popup .mpwpb_popup_body{padding:20px 22px !important;background:#fff !important;}
+
+.mpwpb-review-rating-group{display:flex !important;flex-direction:column !important;align-items:flex-start !important;gap:8px !important;}
+.mpwpb-review-rating-label{font-size:12.5px !important;font-weight:700 !important;color:#64748b !important;text-transform:uppercase !important;letter-spacing:.03em !important;}
+
+#mpwpb-review-form{display:flex !important;flex-direction:column !important;align-items:stretch !important;gap:18px !important;}
+.mpwpb-star-input{font-size:26px !important;color:#d8dee8 !important;cursor:pointer;letter-spacing:8px;}
+.mpwpb-star-input .fas.fa-star{color:#fbbf24 !important;}
+.mpwpb-review-field{
+	display:flex !important;flex-direction:column !important;align-items:stretch !important;gap:6px !important;
+	font-size:12.5px !important;font-weight:700 !important;color:#64748b !important;text-transform:uppercase !important;letter-spacing:.03em !important;
+}
+.mpwpb-review-field input,
+.mpwpb-review-field textarea{
+	font-family:inherit;font-size:13.5px !important;font-weight:400 !important;text-transform:none !important;letter-spacing:normal !important;color:#1e293b !important;
+	width:auto !important;min-height:0 !important;
+	border:1px solid transparent !important;border-radius:10px !important;background:#f1f4f8 !important;padding:11px 13px !important;resize:vertical;
+}
+.mpwpb-review-field input::placeholder,
+.mpwpb-review-field textarea::placeholder{color:#94a3b8;}
+.mpwpb-review-field input:focus,
+.mpwpb-review-field textarea:focus{outline:none !important;border-color:var(--mpwpb_color_theme) !important;background:#fff !important;}
+
+.mpwpb-review-actions{
+	display:flex !important;align-items:center !important;justify-content:space-between !important;gap:12px !important;
+	margin-top:4px;padding-top:18px;border-top:1px solid #e5e9f0;
+}
+.mpwpb-review-cancel,
+.mpwpb-review-submit{
+	border-radius:10px;font-size:14px;font-weight:700;padding:11px 22px;cursor:pointer;transition:.15s;
+}
+.mpwpb-review-cancel{background:#fff;border:1px solid var(--mpwpb_color_theme);color:var(--mpwpb_color_theme);}
+.mpwpb-review-cancel:hover{background:#f6f8ff;}
+.mpwpb-review-submit{border:none;background:var(--mpwpb_color_theme);color:#fff;}
+.mpwpb-review-submit:hover{filter:brightness(.92);}
+.mpwpb-review-submit:disabled{opacity:.6;cursor:default;}
+.mpwpb-review-msg{font-size:13px;}
+.mpwpb-review-msg.success{color:#16a34a;}
+.mpwpb-review-msg.error{color:#dc2626;}
 
 /* Stats cards */
 .mpwpb-overview-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0;}
@@ -808,7 +911,7 @@ label.mpwpb-checkout-field{display:inline-block;}
    so this is a from-scratch look rather than an override. */
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row{
 	position:relative;display:flex !important;align-items:center;gap:10px;
-	margin:0 0 9px 5px;padding:10px 12px !important;border-bottom:1px solid #e1e2e5;border-radius:0;background:#fff;
+	margin:0 0 9px 5px;padding:10px 12px !important;border:1px dotted #e1e2e5;border-radius:10px;background:#fff;
 	box-shadow:none;
 	transition:.15s;
 }
@@ -858,7 +961,7 @@ label.mpwpb-checkout-field{display:inline-block;}
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row .qtyIncDec label{margin:0 !important;}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row .inputIncDec{
-	width:24px !important;height:20px;border:0 !important;background:transparent !important;
+	width:24px !important;height:20px;min-height:24px;border:0 !important;background:transparent !important;
 	text-align:center !important;font-size:12px;font-weight:700;color:#1e293b;padding:0 !important;
 }
 
@@ -867,7 +970,7 @@ label.mpwpb-checkout-field{display:inline-block;}
    toggle from mpwpb_registration.js, moved to the front of the row (see
    relocateService() in mpwpb-booking-tree.js) and purely reskinned here. */
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row .mpwpb_service_button{
-	width:26px !important;height:26px;min-width:0 !important;padding:0 !important;flex:0 0 auto;
+	width:20px !important;height:20px;min-width:0 !important;padding:0 !important;flex:0 0 auto;
 	border-radius:50% !important;border:2px solid #c3c5c7 !important;background:#fff !important;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row .mpwpb_service_button span{display:none !important;}
@@ -889,16 +992,18 @@ label.mpwpb-checkout-field{display:inline-block;}
 	background-color:var(--mpwpb_color_theme) !important;border-radius:999px !important;
 }
 
-/* "Proceed to Checkout" -- always visible (overrides the inline
-   style="display:none" / the JS .hide()/.fadeIn() calls tied to the date/
-   time + optional staff-selection flow in mpwpb_registration.js and
-   mpwpb_recurring_booking.js) instead of only appearing once a date/time
-   is picked. It's greyed out and non-interactive-looking by default and
-   only turns solid once a date/time is actually selected (.mpwpb-cta-ready,
-   toggled in mpwpb-booking-tree.js) -- the real validation on click (its
-   existing data-alert) is untouched either way. */
+/* Styling only -- visibility is driven entirely by mpwpb_registration.js's
+   .hide()/.fadeIn() calls (NOT forced here anymore: for a service with staff
+   selection enabled, this button must stay hidden in favor of "Next Staff
+   Member" until the staff step is actually reached, so a blanket
+   `display:flex !important` here would show Checkout too early and let
+   customers skip picking a staff member entirely). It's greyed out and
+   non-interactive-looking by default and only turns solid once a date/time
+   is actually selected (.mpwpb-cta-ready, toggled in mpwpb-booking-tree.js)
+   -- the real validation on click (its existing data-alert) is untouched
+   either way. */
 .mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_date_time_next_btn_id{
-	display:flex !important;border-radius:10px !important;
+	border-radius:10px !important;
 	background-color:#00685f !important;opacity:.5;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_date_time_next_btn_id.mpwpb-cta-ready{
@@ -940,7 +1045,8 @@ h4.alignCenter.mpwpb-total{font-size:16px !important;}
 	flex:1 1 calc(25% - 6px);width:auto !important;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid .mpwpb_get_date,
-.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid .mpwpb_get_close_date{
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid .mpwpb_get_close_date,
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid .mpwpb_get_date_passed{
 	display:flex !important;flex-direction:column;align-items:center;justify-content:center;gap:4px;
 	min-height:0 !important;height:100%;padding:12px 6px !important;border:1px solid #e5e9f0 !important;border-radius:12px;
 }
@@ -948,6 +1054,14 @@ h4.alignCenter.mpwpb-total{font-size:16px !important;}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid .mpwpb-date-number{font-size:18px;font-weight:800;color:#1e293b;}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid .mpwpb_get_date_selected .mpwpb-date-number{color:#fff !important;}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid .mpwpb_close_date{font-size:11px;color:#94a3b8;text-align:center;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid .mpwpb_get_date_passed{
+	background-color:#f8fafc !important;cursor:not-allowed !important;opacity:.6;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid .mpwpb_get_date_passed .mptrs_day_with_date{color:#94a3b8 !important;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid .mpwpb_get_date_passed .mpwpb-date-number{color:#94a3b8 !important;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid .mpwpb_get_date_passed .mpwpb_date_passed_label{
+	font-size:10px;font-weight:600;color:#cbcfcf;text-transform:uppercase;letter-spacing:.02em;
+}
 @media(max-width:420px){
 	.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid .mpwpb_date_time_line{flex-basis:calc(33.33% - 6px);}
 }
@@ -1064,5 +1178,9 @@ button._mpBtn_btLight_2_min_150.mpwpb_price_calculation.mpwpb_ex_service_button 
 	color:#4e4d4d;
 }
 .mpwpb_service_item .mpwpb_service_duration.textTheme{
+	font-size:10px;
 	color:#4e4d4d;
+}
+.mpwpb_service_item .mpwpb_service_duration .fa-clock{
+	font-weight:400;color:#b0b3b8;
 }

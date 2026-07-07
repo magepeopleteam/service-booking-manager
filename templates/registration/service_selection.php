@@ -61,7 +61,7 @@
 										<?php } ?>
 										<?php if ($service_duration) { ?>
                                             <h6 class="textTheme alignCenter mpwpb_service_duration">
-                                                <span class="fas fa-clock mR_xs"></span>
+                                                <span class="far fa-clock mR_xs"></span>
                                                 <span><?php echo wp_kses_post($service_duration); ?></span>
                                             </h6>
 										<?php } ?>

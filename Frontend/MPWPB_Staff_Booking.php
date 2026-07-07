@@ -314,7 +314,7 @@ if (!class_exists('MPWPB_Staff_Booking')) {
                             $html = '<div class="mpwp_select_staff_grid">
                                 <div class="mpwp_select_staff_card">
                                     <input type="hidden" class="mpwpb_selected_staff" name="mpwpb_selected_staff_id[]" value="">
-                                    <div class="mpwp_select_staff_icon">👥</div>
+                                    <div class="mpwp_select_staff_avatar">👥</div>
                                     <div class="mpwp_select_staff_name">Any Staff</div>
                                 </div>
                             ';
@@ -328,13 +328,12 @@ if (!class_exists('MPWPB_Staff_Booking')) {
                                 $html .=
                                     '<div class="mpwp_select_staff_card">
                                     <input type="hidden" class="mpwpb_selected_staff" name="mpwpb_selected_staff_id[]" value="' . $staff->ID . '">
-                                    <img class="mpwpb_select_staff_image" src="' . $image_url . '" alt="' . $staff->user_nicename . '" class="mpwp_select_staff_img">
+                                    <img class="mpwp_select_staff_avatar" src="' . $image_url . '" alt="' . $staff->user_nicename . '">
                                     <div class="mpwp_select_staff_name">' . esc_html($staff->display_name) . '</div>
-                                    <div class="mpwp_select_staff_email">' . esc_html($staff->user_email) . '</div>
                                 </div>';
 
                             }
-                            $html .= '</div> </div>';
+                            $html .= '</div>';
 
                             $response['html'] = $html;
                             $response['count'] = count($available_staff);
@@ -342,9 +341,10 @@ if (!class_exists('MPWPB_Staff_Booking')) {
                             $html = '<div class="mpwp_select_staff_grid">
                                     <div class="mpwp_select_staff_card">
                                         <input type="hidden" class="mpwpb_selected_staff" name="mpwpb_selected_staff_id[]" value="">
-                                        <div class="mpwp_select_staff_icon">👥</div>
+                                        <div class="mpwp_select_staff_avatar">👥</div>
                                         <div class="mpwp_select_staff_name">Any Staff</div>
-                                    </div>';
+                                    </div>
+                                </div>';
                             $response['html'] = $html;
                             $response['count'] = 1;
                         }

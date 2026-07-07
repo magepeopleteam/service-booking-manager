@@ -33,56 +33,6 @@ if (!class_exists('MPWPB_Staff_Members')) {
             add_submenu_page('edit.php?post_type=' . $cpt, esc_html__('Staff Members', 'service-booking-manager'), esc_html__('Staff Members', 'service-booking-manager'), 'manage_options', 'mpwpb_staffs', array($this, 'mpwpb_staff_service'));
         }
 
-        /**
-         * Whether a staff member's recurring/particular schedule and off-day
-         * settings put today inside their working pattern. Mirrors the same
-         * date-type / off-day logic used to render (and live-toggle) the
-         * schedule table rows in schedule_settings()/mpwpb-staff-management-modern.js.
-         */
-        private function is_staff_on_duty_today(int $user_id): bool {
-            $today = current_time('Y-m-d');
-
-            $date_type = get_user_meta($user_id, 'date_type', true);
-            $date_type = $date_type ?: 'repeated';
-
-            if ($date_type === 'particular') {
-                $particular_dates = get_user_meta($user_id, 'mpwpb_particular_dates', true);
-                $particular_dates = is_array($particular_dates) ? $particular_dates : [];
-                if (!in_array($today, $particular_dates, true)) {
-                    return false;
-                }
-            } else {
-                $repeated_start_date = get_user_meta($user_id, 'mpwpb_repeated_start_date', true);
-                if ($repeated_start_date) {
-                    $repeated_after = (int) get_user_meta($user_id, 'mpwpb_repeated_after', true);
-                    $repeated_after = $repeated_after > 0 ? $repeated_after : 1;
-                    $start_ts = strtotime($repeated_start_date);
-                    $today_ts = strtotime($today);
-                    if ($start_ts === false || $today_ts < $start_ts) {
-                        return false;
-                    }
-                    $days_diff = (int) round(($today_ts - $start_ts) / DAY_IN_SECONDS);
-                    if ($days_diff % $repeated_after !== 0) {
-                        return false;
-                    }
-                }
-            }
-
-            $off_days = get_user_meta($user_id, 'mpwpb_off_days', true);
-            $off_day_keys = array_filter(explode(',', (string) $off_days));
-            if (in_array(strtolower(current_time('l')), $off_day_keys, true)) {
-                return false;
-            }
-
-            $off_dates = get_user_meta($user_id, 'mpwpb_off_dates', true);
-            $off_dates = is_array($off_dates) ? $off_dates : [];
-            if (in_array($today, $off_dates, true)) {
-                return false;
-            }
-
-            return true;
-        }
-
         public function save_custom_user_profile_image( $user_id ) {
             $profile_image = isset( $_POST['mpwpb_custom_profile_image'] ) ? sanitize_text_field( $_POST['mpwpb_custom_profile_image'] ) : '';
             update_user_meta( $user_id, 'mpwpb_custom_profile_image', intval( $profile_image ) );
@@ -123,15 +73,6 @@ if (!class_exists('MPWPB_Staff_Members')) {
         }
         public function mpwpb_staff_service() {
             $this->save_staff();
-
-            $all_staffs = get_users(['role' => 'mpwpb_staff']);
-            $total_staff = count($all_staffs);
-            $on_duty_count = 0;
-            foreach ($all_staffs as $staff) {
-                if ($this->is_staff_on_duty_today((int) $staff->ID)) {
-                    $on_duty_count++;
-                }
-            }
             ?>
             <div class="wrap">
                 <div class="mpwpb_style mpwpb_staff_page">
@@ -159,25 +100,6 @@ if (!class_exists('MPWPB_Staff_Members')) {
                                 </div>
                                 <div class="tabsItem  mpwpb_add_staff" id="mpwpb_staff_members_holder" style="display: none">
                                     <?php $this->staff_form(); ?>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mpwpb_staff_stats">
-                            <div class="mpwpb_staff_stats-card">
-                                <div class="mpwpb_staff_stats-icon blue"><i class="mi mi-users"></i></div>
-                                <div class="mpwpb_staff_stats-text">
-                                    <p class="mpwpb_staff_stats-label"><?php esc_html_e('Total Staff', 'service-booking-manager'); ?></p>
-                                    <p class="mpwpb_staff_stats-value"><?php echo esc_html($total_staff); ?></p>
-                                    <p class="mpwpb_staff_stats-caption"><?php esc_html_e('All staff', 'service-booking-manager'); ?></p>
-                                </div>
-                            </div>
-                            <div class="mpwpb_staff_stats-card">
-                                <div class="mpwpb_staff_stats-icon green"><i class="fas fa-calendar-check"></i></div>
-                                <div class="mpwpb_staff_stats-text">
-                                    <p class="mpwpb_staff_stats-label"><?php esc_html_e('On Duty Today', 'service-booking-manager'); ?></p>
-                                    <p class="mpwpb_staff_stats-value"><?php echo esc_html($on_duty_count); ?></p>
-                                    <p class="mpwpb_staff_stats-caption"><?php esc_html_e('Scheduled today', 'service-booking-manager'); ?></p>
                                 </div>
                             </div>
                         </div>

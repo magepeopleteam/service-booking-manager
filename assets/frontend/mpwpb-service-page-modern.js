@@ -129,4 +129,77 @@
 
 	setActive(sections[0].li);
 
+	// ── Review star-rating input + submission (#service-reviews) ──────────
+	// Click-to-select 1-5 stars: fills solid up to the clicked value, empty
+	// after it -- same fas/far icon-swap technique as the read-only hero
+	// rating (MPWPB_Static_Template::render_star_icons()), just interactive.
+	var $starInput = $('.mpwpb-star-input');
+	function paintStars($wrap, value) {
+		$wrap.find('i').each(function (i) {
+			var starValue = i + 1;
+			$(this)
+				.toggleClass('fas', starValue <= value)
+				.toggleClass('far', starValue > value);
+		});
+	}
+	$starInput.on('click', 'i', function () {
+		var $wrap = $(this).closest('.mpwpb-star-input');
+		var value = $(this).data('value');
+		$wrap.attr('data-rating', value);
+		$wrap.closest('form').find('.mpwpb-review-rating-value').val(value);
+		paintStars($wrap, value);
+	});
+	$starInput.on('mouseenter', 'i', function () {
+		paintStars($(this).closest('.mpwpb-star-input'), $(this).data('value'));
+	}).on('mouseleave', function () {
+		paintStars($(this), parseInt($(this).attr('data-rating'), 10) || 0);
+	});
+
+	$(document).on('submit', '#mpwpb-review-form', function (e) {
+		e.preventDefault();
+		var $form = $(this);
+		var $msg = $form.find('.mpwpb-review-msg');
+		var $btn = $form.find('.mpwpb-review-submit');
+		var rating = parseInt($form.find('.mpwpb-review-rating-value').val(), 10) || 0;
+
+		if (typeof mpwpb_ajax === 'undefined') {
+			return;
+		}
+		if (rating < 1) {
+			$msg.removeClass('success').addClass('error').text('Please select a star rating.');
+			return;
+		}
+
+		$btn.prop('disabled', true);
+		$msg.removeClass('success error').text('');
+
+		$.ajax({
+			url: mpwpb_ajax.ajax_url,
+			type: 'POST',
+			data: {
+				action: 'mpwpb_submit_review',
+				nonce: mpwpb_ajax.nonce,
+				service_id: $form.data('service-id'),
+				rating: rating,
+				title: $form.find('[name="title"]').val(),
+				content: $form.find('[name="content"]').val()
+			},
+			success: function (response) {
+				if (response.success) {
+					$msg.removeClass('error').addClass('success').text(response.data.message);
+					$form.find('[name="title"]').val('');
+					$form.find('[name="content"]').val('');
+				} else {
+					$msg.removeClass('success').addClass('error').text(response.data.message || 'Something went wrong.');
+				}
+			},
+			error: function () {
+				$msg.removeClass('success').addClass('error').text('Something went wrong. Please try again.');
+			},
+			complete: function () {
+				$btn.prop('disabled', false);
+			}
+		});
+	});
+
 })(jQuery);

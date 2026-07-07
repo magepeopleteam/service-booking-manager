@@ -148,7 +148,9 @@
 				$service_overview_status = get_post_meta(get_the_ID(), 'mpwpb_service_overview_status', true);
 				$faq_status = get_post_meta(get_the_ID(), 'mpwpb_faq_active', true);
 				$service_details_status = get_post_meta(get_the_ID(), 'mpwpb_service_details_status', true);
-				$reviews_status = 'off';
+				// Unlike Overview/FAQ/Details, reviews have no per-service
+				// admin on/off setting -- the tab is always shown.
+				$reviews_status = 'on';
 				?>
                 <nav class="mpwpb-details-page-tab">
                     <ul>
@@ -395,15 +397,116 @@
                 </div>
 				<?php
 			}
+			/**
+			 * Approved reviews for a service, newest first. Reads the
+			 * mpwpb_reviews table directly (MPWPB_Reviews_Admin owns that
+			 * table's schema/creation, but its query helpers are private and
+			 * scoped to the admin list-table's pagination/filters, which
+			 * doesn't fit this simpler "all approved reviews for one
+			 * service" read).
+			 */
+			private function get_approved_reviews($service_id) {
+				global $wpdb;
+				$table_name = $wpdb->prefix . 'mpwpb_reviews';
+				if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
+					return array();
+				}
+				return $wpdb->get_results($wpdb->prepare(
+					"SELECT * FROM $table_name WHERE service_id = %d AND status = 'approved' ORDER BY date_created DESC",
+					$service_id
+				));
+			}
+
 			public function show_service_reviews() {
-				$review_status = 'off';
-				if ($review_status === 'on'):
-					?>
-                    <section id="service-reviews">
-                        <h2><?php esc_html_e('Servie Reviews', 'service-booking-manager'); ?></h2>
-                    </section>
+				$post_id = get_the_ID();
+				$reviews = $this->get_approved_reviews($post_id);
+				$current_user_id = get_current_user_id();
+				$can_review = $current_user_id && class_exists('MPWPB_Reviews_Admin') && MPWPB_Reviews_Admin::user_can_review($post_id, $current_user_id);
+				?>
+                <section id="service-reviews">
+                    <div class="mpwpb-reviews-head">
+                        <h2><?php esc_html_e('Customer Reviews', 'service-booking-manager'); ?></h2>
+                        <button type="button" class="mpwpb-write-review-btn" data-target-popup="#mpwpb_write_review_popup">
+                            <i class="fas fa-pen"></i> <?php esc_html_e('Write a Review', 'service-booking-manager'); ?>
+                        </button>
+                    </div>
+
+                    <div class="mpwpb-reviews-list">
+						<?php if (empty($reviews)): ?>
+                            <p class="mpwpb-no-reviews"><?php esc_html_e('No reviews yet. Be the first to review this service!', 'service-booking-manager'); ?></p>
+						<?php else: foreach ($reviews as $review): ?>
+                            <div class="mpwpb-review-item">
+                                <div class="mpwpb-review-item-head">
+                                    <span class="mpwpb-review-stars"><?php self::render_star_icons((float) $review->rating); ?></span>
+                                    <strong class="mpwpb-review-author"><?php echo esc_html($review->user_name); ?></strong>
+                                    <span class="mpwpb-review-date"><?php echo esc_html(date_i18n(get_option('date_format'), strtotime($review->date_created))); ?></span>
+                                </div>
+								<?php if ($review->title): ?>
+                                    <h4 class="mpwpb-review-title"><?php echo esc_html($review->title); ?></h4>
+								<?php endif; ?>
+                                <p class="mpwpb-review-content"><?php echo esc_html($review->content); ?></p>
+                            </div>
+						<?php endforeach; endif; ?>
+                    </div>
+
+                    <!-- Reuses the plugin's existing generic popup mechanism
+                         (data-target-popup/data-popup, document-delegated
+                         open/close in mp_global/assets/mp_style/
+                         mpwpb_plugin_global.js) -- same pattern as the
+                         gallery lightbox / features popup elsewhere in this
+                         template, so no bespoke open/close JS is needed here. -->
+                    <div class="mpwpb_popup mpwpb_style mpwpb-review-popup" data-popup="#mpwpb_write_review_popup">
+                        <div class="mpwpb_popup_main_area">
+                            <div class="mpwpb_popup_header">
+                                <h3><?php esc_html_e('Write a Review', 'service-booking-manager'); ?></h3>
+                                <span class="fas fa-times mpwpb_popup_close"></span>
+                            </div>
+                            <div class="mpwpb_popup_body">
+                                <div class="mpwpb-review-form-wrap">
+									<?php if (!$current_user_id): ?>
+                                        <p class="mpwpb-review-login-notice">
+											<?php
+												printf(
+													/* translators: %s: login link */
+													esc_html__('Please %s to leave a review.', 'service-booking-manager'),
+													'<a href="' . esc_url(wp_login_url(get_permalink($post_id))) . '">' . esc_html__('log in', 'service-booking-manager') . '</a>'
+												);
+											?>
+                                        </p>
+									<?php elseif (!$can_review): ?>
+                                        <p class="mpwpb-review-login-notice"><?php esc_html_e('You can write a review after booking this service.', 'service-booking-manager'); ?></p>
+									<?php else: ?>
+                                        <form id="mpwpb-review-form" data-service-id="<?php echo esc_attr($post_id); ?>">
+                                            <div class="mpwpb-review-rating-group">
+                                                <span class="mpwpb-review-rating-label"><?php esc_html_e('Overall Rating', 'service-booking-manager'); ?></span>
+                                                <div class="mpwpb-star-input" data-rating="0">
+													<?php for ($i = 1; $i <= 5; $i++): ?>
+                                                        <i class="far fa-star" data-value="<?php echo esc_attr($i); ?>"></i>
+													<?php endfor; ?>
+                                                </div>
+                                            </div>
+                                            <input type="hidden" name="rating" class="mpwpb-review-rating-value" value="0">
+                                            <label class="mpwpb-review-field">
+												<?php esc_html_e('Title (optional)', 'service-booking-manager'); ?>
+                                                <input type="text" name="title" maxlength="255" placeholder="<?php esc_attr_e('Summarize your experience', 'service-booking-manager'); ?>">
+                                            </label>
+                                            <label class="mpwpb-review-field">
+												<?php esc_html_e('Your Review', 'service-booking-manager'); ?>
+                                                <textarea name="content" rows="4" required placeholder="<?php esc_attr_e('Tell us what you liked or what could be improved…', 'service-booking-manager'); ?>"></textarea>
+                                            </label>
+                                            <div class="mpwpb-review-msg" role="status"></div>
+                                            <div class="mpwpb-review-actions">
+                                                <button type="button" class="mpwpb-review-cancel mpwpb_popup_close"><?php esc_html_e('Cancel', 'service-booking-manager'); ?></button>
+                                                <button type="submit" class="mpwpb-review-submit"><?php esc_html_e('Submit Review', 'service-booking-manager'); ?></button>
+                                            </div>
+                                        </form>
+									<?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
 				<?php
-				endif;
 			}
 
 
@@ -445,7 +548,7 @@
                         ]);
                     }
                     ?>
-                    <section id="service-reviews">
+                    <section id="service-staff">
                         <h2><?php esc_html_e('Staff Members', 'service-booking-manager'); ?></h2>
                     </section>
 				<?php
