@@ -752,7 +752,11 @@
 					// MPWPB_Categories_Services_Modern::render() when that step's card
 					// actually renders — both are available by the time this script runs.
 					wp_enqueue_style('mpwpb-categories-services-modern', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb-categories-services-modern.css', array('mpwpb-service-edit-modern'), $this->asset_ver('/assets/admin/mpwpb-categories-services-modern.css'));
-					wp_enqueue_script('mpwpb-categories-services-modern', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb-categories-services-modern.js', array('jquery'), $this->asset_ver('/assets/admin/mpwpb-categories-services-modern.js'), true);
+					// Static "quick add" service-template catalogue (window.mpwpbServiceTemplates)
+					// used by the "Use Template" picker below -- pure data, kept in its own
+					// file/handle so it stays easy to extend without touching the behaviour file.
+					wp_enqueue_script('mpwpb-service-templates-data', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb-service-templates-data.js', array(), $this->asset_ver('/assets/admin/mpwpb-service-templates-data.js'), true);
+					wp_enqueue_script('mpwpb-categories-services-modern', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb-categories-services-modern.js', array('jquery', 'mpwpb-service-templates-data'), $this->asset_ver('/assets/admin/mpwpb-categories-services-modern.js'), true);
 
 					// Extra Service list (Pricing step). Visually reuses .mpwpb-csm__*
 					// classes from the stylesheet above (declared as a dependency)

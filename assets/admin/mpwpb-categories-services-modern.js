@@ -65,6 +65,18 @@
 		// than reparsing it — parseInt("1h") would wrongly read as "1 minute".
 		return dur ? String(dur) : '—';
 	}
+	// Reuses the wizard shell's own toast element (mpwpb-service-edit-modern.js
+	// owns its markup/CSS, but that file's `toast()` is private to its own
+	// closure) rather than building a second toast UI just for this file.
+	var toastTimer;
+	function toast(msg) {
+		var $t = $('[data-sme-toast]');
+		if (!$t.length) { return; }
+		$t.find('[data-sme-toast-msg]').text(msg);
+		$t.addClass('show');
+		clearTimeout(toastTimer);
+		toastTimer = setTimeout(function () { $t.removeClass('show'); }, 2200);
+	}
 	function findCat(id) {
 		return state.categories.filter(function (c) { return c.id === id; })[0];
 	}
@@ -330,6 +342,7 @@
 		'<div class="mpwpb-csm__header">' +
 		'<div class="mpwpb-csm__crumbs" data-csm-part="crumbs"></div>' +
 		'<div class="mpwpb-csm__search"><span class="dashicons dashicons-search"></span><input type="text" data-csm-search placeholder="' + esc(t.searchPlaceholder) + '"/></div>' +
+		'<button type="button" class="mpwpb-csm__add-btn mpwpb-csm__add-btn--outline" data-csm-use-template><span class="dashicons dashicons-lightbulb"></span>Use Template</button>' +
 		'<button type="button" class="mpwpb-csm__add-btn" data-csm-add-svc><span class="dashicons dashicons-plus-alt2"></span>' + esc(t.addService) + '</button>' +
 		'</div>' +
 		'<div data-csm-part="list"></div>' +
@@ -373,9 +386,9 @@
 	function closeModal() {
 		$('.mpwpb-csm__overlay').remove();
 	}
-	function openModal(innerHtml) {
+	function openModal(innerHtml, extraClass) {
 		closeModal();
-		var $ov = $('<div class="mpwpb-csm__overlay"><div class="mpwpb-csm__modal">' + innerHtml + '</div></div>');
+		var $ov = $('<div class="mpwpb-csm__overlay"><div class="mpwpb-csm__modal' + (extraClass ? ' ' + extraClass : '') + '">' + innerHtml + '</div></div>');
 		// Appended inside #mpwpb-sme (not <body>) so the modal inherits that
 		// shell's CSS custom properties (--brand, --line, --ink, etc.) — it
 		// still overlays correctly since .mpwpb-csm__overlay is position:fixed,
@@ -781,6 +794,217 @@
 			state.services.push($.extend({}, svc, { id: nextId(state.services), name: svc.name + ' (copy)' }));
 			render();
 		});
+	});
+
+	/* ---------------------------------------------------------------- *
+	 *  "Use Template" picker — quick-add ready-made services from
+	 *  window.mpwpbServiceTemplates (mpwpb-service-templates-data.js).
+	 *  Two panels in the same modal: pick a business type, then check off
+	 *  which of its suggested services to insert. Each checked item is
+	 *  saved through the exact same mpwpb_save_service endpoint the manual
+	 *  Add Service modal uses (one POST per item, sent in sequence so ids
+	 *  assigned by nextId() don't collide) -- price/duration/description
+	 *  are only starting points, fully editable afterwards like any other
+	 *  service.
+	 * ---------------------------------------------------------------- */
+	var TEMPLATES = window.mpwpbServiceTemplates || {};
+	// tpl.type is the currently-selected business type (a key into
+	// TEMPLATES) -- kept distinct from each template's own optional
+	// `.category` field (the real category name to auto-create), which is
+	// a different concept.
+	var tpl = { type: null, checked: {} };
+
+	// Same "which category/subcategory is this new service pre-assigned
+	// to" rule the manual Add Service button already uses (whatever's
+	// currently selected in the sidebar, if any). Used as the fallback for
+	// templates that don't define their own `.category`.
+	function currentCategoryPreset() {
+		var preset = (state.selected !== 'all' && state.selected !== 'none') ? state.selected : '';
+		var presetIsSub = preset && keyIsSub(preset);
+		var presetId = preset ? keyId(preset) : '';
+		var presetSub = presetIsSub ? findSub(presetId) : null;
+		var parentCat = presetIsSub ? (presetSub ? presetSub.catId : '') : presetId;
+		var subCat = presetIsSub ? presetId : '';
+		return {
+			service_category_status: preset ? 'on' : '',
+			service_parent_cat: parentCat,
+			service_sub_cat: subCat
+		};
+	}
+	function findCategoryByName(name) {
+		var lower = name.toLowerCase();
+		return state.categories.filter(function (c) { return c.name.toLowerCase() === lower; })[0];
+	}
+	// Reuses an existing top-level category with this exact name if one
+	// already exists (so re-using a template twice doesn't create
+	// duplicates), otherwise creates it via the same endpoint/shape
+	// openCategoryModal()'s own save uses.
+	function ensureCategory(name, done) {
+		var existing = findCategoryByName(name);
+		if (existing) { done(existing.id); return; }
+		post('mpwpb_save_category_service', { category_postID: cfg.postId, category_name: name }, function () {
+			var newCat = { id: nextId(state.categories), name: name };
+			state.categories.push(newCat);
+			done(newCat.id);
+		}, function () {
+			// Category creation failed -- fall back to no category rather
+			// than blocking the whole batch of services.
+			done('');
+		});
+	}
+
+	function templateCategoryListHtml() {
+		var names = Object.keys(TEMPLATES);
+		if (!names.length) {
+			return '<p class="mpwpb-csm__tpl-empty">No templates available.</p>';
+		}
+		return '<div class="mpwpb-csm__tpl-cat-grid">' + names.map(function (name) {
+			var def = TEMPLATES[name];
+			return '<button type="button" class="mpwpb-csm__tpl-cat-btn" data-tpl-cat="' + esc(name) + '">'
+				+ '<span class="mpwpb-csm__tpl-cat-icon"><span class="dashicons ' + esc(def.icon || 'dashicons-portfolio') + '"></span></span>'
+				+ '<span class="mpwpb-csm__tpl-cat-name">' + esc(name) + '</span>'
+				+ '<span class="mpwpb-csm__tpl-cat-count">' + def.items.length + ' services</span>'
+				+ (def.category ? '<span class="mpwpb-csm__tpl-cat-badge"><span class="dashicons dashicons-category"></span>' + esc(def.category) + '</span>' : '')
+				+ '</button>';
+		}).join('') + '</div>';
+	}
+
+	function templateItemListHtml() {
+		var def = TEMPLATES[tpl.type] || { items: [] };
+		var items = def.items || [];
+		var checkedCount = items.filter(function (item, i) { return !!tpl.checked[i]; }).length;
+		var rows = items.map(function (item, i) {
+			var checked = !!tpl.checked[i];
+			return '<label class="mpwpb-csm__tpl-item' + (checked ? ' is-checked' : '') + '">'
+				+ '<input type="checkbox" data-tpl-item="' + i + '"' + (checked ? ' checked' : '') + '/>'
+				+ '<span class="mpwpb-csm__tpl-item-main">'
+				+ '<span class="mpwpb-csm__tpl-item-name">' + esc(item.name) + '</span>'
+				+ '<span class="mpwpb-csm__tpl-item-desc">' + esc(item.desc) + '</span>'
+				+ '</span>'
+				+ '<span class="mpwpb-csm__tpl-item-meta">'
+				+ '<span class="mpwpb-csm__tpl-item-price">' + esc(cfg.currencySymbol || '$') + esc(item.price) + '</span>'
+				+ '<span class="mpwpb-csm__tpl-item-dur">' + esc(item.duration) + '</span>'
+				+ '</span>'
+				+ '</label>';
+		}).join('');
+		var catNote = def.category
+			? '<p class="mpwpb-csm__tpl-cat-note"><span class="dashicons dashicons-category"></span>Added services will be grouped under a new "' + esc(def.category) + '" category.</p>'
+			: '';
+		return catNote
+			+ '<label class="mpwpb-csm__tpl-selectall"><input type="checkbox" data-tpl-select-all' + (checkedCount === items.length && items.length ? ' checked' : '') + '/>Select all (' + items.length + ')</label>'
+			+ '<div class="mpwpb-csm__tpl-item-list">' + rows + '</div>';
+	}
+
+	function renderTemplateModal() {
+		var onTypePanel = !tpl.type;
+		var head = onTypePanel
+			? ('<span class="mpwpb-csm__modal-title">Use a Service Template</span>')
+			: ('<button type="button" class="mpwpb-csm__tpl-back" data-tpl-back><span class="dashicons dashicons-arrow-left-alt2"></span></button>'
+				+ '<span class="mpwpb-csm__modal-title">' + esc(tpl.type) + '</span>');
+		var body = onTypePanel
+			? ('<p class="mpwpb-csm__tpl-intro">Pick a business type to see ready-made services you can add in one click, then adjust the name, price, or duration as needed.</p>' + templateCategoryListHtml())
+			: templateItemListHtml();
+		var checkedCount = onTypePanel ? 0 : Object.keys(tpl.checked).filter(function (i) { return tpl.checked[i]; }).length;
+		var foot = onTypePanel ? '' :
+			('<div class="mpwpb-csm__modal-foot">'
+				+ '<button type="button" class="mpwpb-csm__modal-btn" data-csm-modal-close>Cancel</button>'
+				+ '<button type="button" class="mpwpb-csm__modal-btn mpwpb-csm__modal-btn--primary" data-tpl-add' + (checkedCount ? '' : ' disabled') + '>Add Selected (' + checkedCount + ')</button>'
+				+ '</div>');
+		var $ov = openModal(
+			'<div class="mpwpb-csm__modal-head">' + head
+			+ '<button type="button" class="mpwpb-csm__modal-close" data-csm-modal-close><span class="dashicons dashicons-no-alt"></span></button></div>'
+			+ '<div class="mpwpb-csm__modal-body mpwpb-csm__tpl-body">' + body + '</div>'
+			+ foot,
+			'mpwpb-csm__modal--wide'
+		);
+		$ov.find('[data-tpl-cat]').on('click', function () {
+			tpl.type = $(this).data('tpl-cat').toString();
+			tpl.checked = {};
+			renderTemplateModal();
+		});
+		$ov.find('[data-tpl-back]').on('click', function () {
+			tpl.type = null;
+			tpl.checked = {};
+			renderTemplateModal();
+		});
+		$ov.find('[data-tpl-item]').on('change', function () {
+			var i = $(this).data('tpl-item');
+			tpl.checked[i] = this.checked;
+			renderTemplateModal();
+		});
+		$ov.find('[data-tpl-select-all]').on('change', function () {
+			var items = (TEMPLATES[tpl.type] || {}).items || [];
+			var checkAll = this.checked;
+			items.forEach(function (item, i) { tpl.checked[i] = checkAll; });
+			renderTemplateModal();
+		});
+		$ov.find('[data-tpl-add]').on('click', function () {
+			var def = TEMPLATES[tpl.type] || { items: [] };
+			var items = def.items || [];
+			var selected = items.filter(function (item, i) { return !!tpl.checked[i]; });
+			if (!selected.length) { return; }
+			var $btn = $(this).prop('disabled', true).text('Adding…');
+			var addedCount = 0;
+			function addAllWithPreset(preset) {
+				(function addNext(i) {
+					if (i >= selected.length) {
+						closeModal();
+						render();
+						toast(addedCount + (addedCount === 1 ? ' service' : ' services') + ' added');
+						return;
+					}
+					var item = selected[i];
+					var data = $.extend({
+						service_postID: cfg.postId,
+						service_name: item.name,
+						service_description: item.desc,
+						service_price: item.price,
+						service_duration: item.duration,
+						service_unit: ''
+					}, preset.service_category_status ? preset : {});
+					post('mpwpb_save_service', data, function () {
+						state.services.push({
+							id: nextId(state.services),
+							name: item.name,
+							desc: item.desc,
+							price: item.price,
+							unit: '',
+							duration: item.duration,
+							catStatus: preset.service_category_status || '',
+							parentCat: preset.service_parent_cat || '',
+							subCat: preset.service_sub_cat || ''
+						});
+						addedCount++;
+						addNext(i + 1);
+					}, function () {
+						// Skip anything that fails to save rather than aborting
+						// the whole batch -- the rest are independent inserts.
+						addNext(i + 1);
+					});
+				}(0));
+			}
+			if (def.category) {
+				// This template defines its own category -- create/reuse it
+				// first, then assign every added service to it (overrides
+				// whatever's selected in the sidebar, since the template's
+				// own grouping is more specific/intentional).
+				ensureCategory(def.category, function (catId) {
+					renderSidebar();
+					addAllWithPreset(catId ? {
+						service_category_status: 'on',
+						service_parent_cat: catId,
+						service_sub_cat: ''
+					} : currentCategoryPreset());
+				});
+			} else {
+				addAllWithPreset(currentCategoryPreset());
+			}
+		});
+	}
+	$root.on('click', '[data-csm-use-template]', function () {
+		tpl.type = null;
+		tpl.checked = {};
+		renderTemplateModal();
 	});
 
 })(jQuery);
