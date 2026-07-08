@@ -198,6 +198,39 @@
 						'gradient' => 'linear-gradient(135deg,#0f5f52,#1f9c82)',
 					],
 				];
+				// Two-paragraph copy for the "switch payment method" confirm modal,
+				// one set per direction. Built server-side (not just a plain string)
+				// so the method names can render as <strong> without re-escaping HTML
+				// that isn't there — every piece going into sprintf() is already run
+				// through esc_html__() first.
+				$wc_name = '<strong>' . esc_html__('WooCommerce', 'service-booking-manager') . '</strong>';
+				$custom_name = '<strong>' . esc_html__('Custom Payment', 'service-booking-manager') . '</strong>';
+				$pm_confirm_copy = [
+					'woocommerce' => [
+						'intro' => sprintf(
+							/* translators: %s: the payment method currently active */
+							esc_html__('You currently have %s active. Adding another provider is not supported in your current configuration.', 'service-booking-manager'),
+							$custom_name
+						),
+						'question' => sprintf(
+							/* translators: 1: method to disable, 2: method to activate */
+							esc_html__('Do you want to disable %1$s and activate %2$s instead?', 'service-booking-manager'),
+							$custom_name,
+							$wc_name
+						),
+					],
+					'custom' => [
+						'intro' => sprintf(
+							esc_html__('You currently have %s active. Adding another provider is not supported in your current configuration.', 'service-booking-manager'),
+							$wc_name
+						),
+						'question' => sprintf(
+							esc_html__('Do you want to disable %1$s and activate %2$s instead?', 'service-booking-manager'),
+							$wc_name,
+							$custom_name
+						),
+					],
+				];
 				?>
 				<style>
 					.mpwpb-pm-toggle { display: inline-flex; border: 1px solid #dcdcde; border-radius: 6px; overflow: hidden; margin-bottom: 20px; }
@@ -262,6 +295,21 @@
 					.mpwpb-settings-row.mpwpb-settings-row-top { align-items: flex-start; }
 					.mpwpb-settings-row.mpwpb-settings-row-top > div:first-child { padding-top: 2px; }
 					.mpwpb-settings-row label { display: flex; align-items: center; gap: 6px; font-weight: 400; }
+					.mpwpb-pm-confirm-overlay { position: fixed; inset: 0; background: rgba(15,23,42,.55); z-index: 100000; display: none; align-items: center; justify-content: center; padding: 20px; }
+					.mpwpb-pm-confirm-box { position: relative; background: #fff; border-radius: 12px; padding: 26px 26px 22px; max-width: 440px; width: 100%; box-shadow: 0 24px 60px rgba(15,23,42,.35); overflow: hidden; }
+					.mpwpb-pm-confirm-box::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg,#6366f1,#8b8ff5); }
+					.mpwpb-pm-confirm-head { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+					.mpwpb-pm-confirm-icon { flex: 0 0 auto !important; width: 38px !important; height: 38px !important; border-radius: 50% !important; background: #fff6dd !important; display: flex !important; align-items: center !important; justify-content: center !important; color: #dba617 !important; font-size: 16px !important; }
+					.mpwpb-pm-confirm-title { margin: 0 !important; padding-top: 6px !important; font-size: 18px !important; font-weight: 700 !important; color: #1d2327 !important; line-height: 1.35 !important; }
+					.mpwpb-pm-confirm-body p { margin: 0 0 10px; font-size: 13.5px; color: #50575e; line-height: 1.6; }
+					.mpwpb-pm-confirm-body p:last-child { margin-bottom: 0; }
+					.mpwpb-pm-confirm-body strong { color: #1d2327; font-weight: 700; }
+					.mpwpb-pm-confirm-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; }
+					.mpwpb-pm-confirm-actions button { border-radius: 7px; padding: 9px 20px; font-size: 13.5px; font-weight: 600; cursor: pointer; border: none; }
+					.mpwpb-pm-confirm-actions .mpwpb-pm-btn-outline { background: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; }
+					.mpwpb-pm-confirm-actions .mpwpb-pm-btn-outline:hover { background: #e2e8f0; }
+					.mpwpb-pm-confirm-actions .mpwpb-pm-btn-primary { background: #6366f1; color: #fff; }
+					.mpwpb-pm-confirm-actions .mpwpb-pm-btn-primary:hover { background: #4f46e5; }
 					.mpwpb-settings-row label[style*="display:block"] { display: flex !important; margin-bottom: 8px; }
 					.mpwpb-settings-row label[style*="display:block"]:last-child { margin-bottom: 0; }
 				</style>
@@ -270,6 +318,20 @@
 					<button type="button" class="mpwpb-pm-toggle-btn <?php echo $payment_type === 'custom' ? 'is-active' : ''; ?>" data-value="custom"><?php esc_html_e('Custom Payment', 'service-booking-manager'); ?></button>
 				</div>
 				<input type="hidden" name="<?php echo esc_attr($option); ?>[payment_method_type]" id="mpwpb_payment_method_type_input" value="<?php echo esc_attr($payment_type ?: 'custom'); ?>"/>
+
+				<div id="mpwpb-pm-confirm-modal" class="mpwpb-pm-confirm-overlay">
+					<div class="mpwpb-pm-confirm-box" role="alertdialog" aria-modal="true" aria-labelledby="mpwpb-pm-confirm-title">
+						<div class="mpwpb-pm-confirm-head">
+							<span class="mpwpb-pm-confirm-icon"><span class="fas fa-triangle-exclamation"></span></span>
+							<h3 class="mpwpb-pm-confirm-title" id="mpwpb-pm-confirm-title"><?php esc_html_e('Only One Payment Method Allowed', 'service-booking-manager'); ?></h3>
+						</div>
+						<div class="mpwpb-pm-confirm-body" id="mpwpb-pm-confirm-text"></div>
+						<div class="mpwpb-pm-confirm-actions">
+							<button type="button" class="mpwpb-pm-btn-outline" data-mpwpb-confirm-cancel><?php esc_html_e('Cancel', 'service-booking-manager'); ?></button>
+							<button type="button" class="mpwpb-pm-btn-primary" data-mpwpb-confirm-ok><?php esc_html_e('Yes, Switch', 'service-booking-manager'); ?></button>
+						</div>
+					</div>
+				</div>
 
 				<div class="mpwpb-pm-panel" data-panel="woocommerce" style="<?php echo $payment_type === 'custom' ? 'display:none;' : ''; ?>">
 					<?php if (!$wc_active) : ?>
@@ -574,20 +636,101 @@
 									$('.mpwpb-pm-panel[data-panel="custom"]').toggle(value === 'custom');
 								}
 							}
+							// Only WooCommerce and Custom Payment are mutually exclusive (both being
+							// off at once is fine) -- gate the one real cross-over with a confirm
+							// dialog (not the browser's native window.confirm(), which reads as a
+							// jarring "this site says" popup) so switching isn't accidental, since
+							// it silently disables whichever gateway was previously active.
+							var mpwpbSwitchConfirmCopy = <?php echo wp_json_encode($pm_confirm_copy); ?>;
+							var $mpwpbConfirmModal = $('#mpwpb-pm-confirm-modal');
+							function mpwpbOpenConfirmModal(copy, onConfirm) {
+								// copy.intro/copy.question are built server-side from esc_html__()
+								// pieces only (see render_payment_method_panel()'s $pm_confirm_copy) --
+								// safe to inject as HTML so the method names can render as <strong>.
+								$mpwpbConfirmModal.find('#mpwpb-pm-confirm-text').html(
+									'<p>' + copy.intro + '</p><p>' + copy.question + '</p>'
+								);
+								$mpwpbConfirmModal.css('display', 'flex');
+								// Rebound on every open (not delegated once at ready) so each call's
+								// onConfirm closure is the only one wired up -- avoids stacking
+								// duplicate handlers from earlier opens.
+								$mpwpbConfirmModal.find('[data-mpwpb-confirm-ok]').off('click').on('click', function () {
+									mpwpbCloseConfirmModal();
+									onConfirm();
+								});
+								$mpwpbConfirmModal.find('[data-mpwpb-confirm-cancel]').off('click').on('click', mpwpbCloseConfirmModal);
+							}
+							function mpwpbCloseConfirmModal() {
+								$mpwpbConfirmModal.hide();
+							}
+							$mpwpbConfirmModal.on('click', function (e) {
+								if (e.target === this) {
+									mpwpbCloseConfirmModal();
+								}
+							});
+							$(document).on('keydown', function (e) {
+								if (e.key === 'Escape' && $mpwpbConfirmModal.is(':visible')) {
+									mpwpbCloseConfirmModal();
+								}
+							});
+							/**
+							 * Runs `apply` immediately if switching to `newValue` doesn't cross
+							 * over from the other active method; otherwise shows the confirm
+							 * modal first and only runs `apply` if the admin accepts. `onCancel`
+							 * (optional) runs if they dismiss it instead -- callers use it to
+							 * restore a checkbox's UI state, since the browser already flipped it
+							 * before the 'change' event fired.
+							 */
+							function mpwpbGuardPaymentSwitch(newValue, apply, onCancel) {
+								var current = $('#mpwpb_payment_method_type_input').val() || 'none';
+								var isCrossOver = (newValue === 'woocommerce' && current === 'custom')
+									|| (newValue === 'custom' && current === 'woocommerce');
+								if (!isCrossOver) {
+									apply();
+									return;
+								}
+								if (onCancel) {
+									onCancel();
+								}
+								mpwpbOpenConfirmModal(mpwpbSwitchConfirmCopy[newValue], apply);
+							}
 							$('.mpwpb-pm-toggle-btn').on('click', function () {
-								mpwpbSetPaymentMode($(this).data('value'));
+								var value = $(this).data('value');
+								mpwpbGuardPaymentSwitch(value, function () {
+									mpwpbSetPaymentMode(value);
+								});
 							});
 							$('#mpwpb_wc_enable_toggle').on('change', function () {
 								// Independent of the top tab selector: only flips which gateway is functionally
 								// active. Deliberately does not touch the top buttons or panel visibility.
 								// Unchecking disables WooCommerce payment outright — it does not hand control
 								// to Custom Payment.
-								mpwpbSyncPaymentToggles(this.checked ? 'woocommerce' : 'none');
+								var $toggle = $(this);
+								if (!this.checked) {
+									mpwpbSyncPaymentToggles('none');
+									return;
+								}
+								mpwpbGuardPaymentSwitch('woocommerce', function () {
+									$toggle.prop('checked', true);
+									mpwpbSyncPaymentToggles('woocommerce');
+								}, function () {
+									$toggle.prop('checked', false);
+								});
 							});
 							$('#mpwpb_custom_enable_toggle').on('change', function () {
 								// Same: unchecking disables Custom Payment outright, it does not re-enable
 								// WooCommerce.
-								mpwpbSyncPaymentToggles(this.checked ? 'custom' : 'none');
+								var $toggle = $(this);
+								if (!this.checked) {
+									mpwpbSyncPaymentToggles('none');
+									return;
+								}
+								mpwpbGuardPaymentSwitch('custom', function () {
+									$toggle.prop('checked', true);
+									mpwpbSyncPaymentToggles('custom');
+								}, function () {
+									$toggle.prop('checked', false);
+								});
 							});
 							$('.mpwpb-accordion-header').on('click', function () {
 								var $header = $(this);

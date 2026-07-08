@@ -398,7 +398,7 @@
 }
 /******************************************************************** Loader Section ************************************************/
 @media only screen and (min-width: 10px) {
-	div[class*="mpwpb_loader"]{ position: absolute; z-index: 11111; left: 0; right: 0; top: 0; bottom: 0; font-size: var(--mpwpb_fs_h1); width: 100%; height: 100%; }
+	div[class*="mpwpb_loader"]{ position: absolute; z-index: 11111; left: 0; right: 0; top: 0; bottom: 0; font-size: var(--mpwpb_fs_h1); width: 100%; height: 100%; display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: center; justify-content: center; }
 	div[class*="mpwpb_loader"] { background: #0003; color: var(--mpwpb_color_theme); }
 	div[class*="mpwpb_loader"].pFixed { position: fixed; max-width: 100vw; max-height: 100vh; }
 	div.mpwpb_loader_xs { font-size: var(--mpwpb_fs_h5); }

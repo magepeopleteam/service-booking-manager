@@ -657,6 +657,7 @@ function mpwpb_price_calculation($this) {
                     count++;
                 }
             });
+            var isCustomPaymentMode = !!mpwpb_ajax.is_custom_payment_mode;
             $.ajax({
                 type: 'POST',
                 url: mpwpb_ajax.ajax_url,
@@ -678,11 +679,30 @@ function mpwpb_price_calculation($this) {
                     nonce: mpwpb_ajax.nonce
                 },
                 beforeSend: function () {
-                    // Full-page overlay (mpwpb_loaderBody, position:fixed on <body>)
-                    // instead of mpwpb_loader(parent) -- .mpwpb_registration only wraps
-                    // the plugin's own content area, not the whole viewport, so the
-                    // parent-scoped loader only ever covered part of the page.
-                    mpwpb_loaderBody();
+                    if (isCustomPaymentMode) {
+                        // Custom Payment stays in the same popup afterwards (see the
+                        // success handler below), so ease straight into the Checkout
+                        // step now -- the same smooth slide every other step change
+                        // uses -- instead of freezing the whole screen behind the
+                        // full-page loader while mpwpb_add_to_cart (and the native
+                        // billing form fetch that follows it) run in the background.
+                        // A small local spinner in that step's own area is enough.
+                        // It's still empty at this point though (the fetched form
+                        // hasn't arrived yet), so without a floor height the spinner
+                        // has almost nothing to center inside and ends up pinned to
+                        // the top instead of looking centered on the page -- the
+                        // temporary min-height is cleared again once real content
+                        // replaces it (mpwpb_load_native_checkout_form() below).
+                        load_order_proceed_tab(parent);
+                        parent.find('.mpwpb_order_proceed_area').css('min-height', '260px');
+                        mpwpb_loader(parent.find('.mpwpb_order_proceed_area'));
+                    } else {
+                        // WooCommerce mode navigates away entirely on success, so
+                        // there's no "next step" to ease into -- the full-page
+                        // overlay (mpwpb_loaderBody, position:fixed on <body>) is
+                        // appropriate here.
+                        mpwpb_loaderBody();
+                    }
                 },
                 success: function (data) {
                     // Custom Payment (WooCommerce off): stay in the same popup and
@@ -691,14 +711,19 @@ function mpwpb_price_calculation($this) {
                     // string here (unchanged contract), it's just not used in this
                     // mode; the cart item it already stored server-side is what the
                     // fetched form reads.
-                    if (mpwpb_ajax.is_custom_payment_mode) {
+                    if (isCustomPaymentMode) {
                         mpwpb_load_native_checkout_form(parent);
                     } else {
                         window.location.href = data;
                     }
                 },
-                error: function (response) {
-                    mpwpb_loaderRemove();
+                error: function () {
+                    if (isCustomPaymentMode) {
+                        parent.find('.mpwpb_order_proceed_area').css('min-height', '');
+                        mpwpb_loaderRemove(parent.find('.mpwpb_order_proceed_area'));
+                    } else {
+                        mpwpb_loaderRemove();
+                    }
                 }
             });
         } else {
@@ -716,6 +741,7 @@ function mpwpb_price_calculation($this) {
             },
             success: function (response) {
                 mpwpb_loaderRemove();
+                $target.css('min-height', '');
                 if (response && response.success) {
                     $target.html(response.data.html);
                     load_order_proceed_tab(parent);
@@ -726,6 +752,7 @@ function mpwpb_price_calculation($this) {
             },
             error: function () {
                 mpwpb_loaderRemove();
+                $target.css('min-height', '');
                 $target.html('<p class="mpwpb-checkout-error">Request failed. Please try again.</p>');
                 load_order_proceed_tab(parent);
             }

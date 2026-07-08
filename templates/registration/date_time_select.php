@@ -73,7 +73,7 @@
         <div class="mpwpb_date_carousel groupRadioCheck" id="mpwpb_datetime_holder">
             <header class="_dFlex_alignCenter_justifyBetween">
                 <input type="hidden" name="mpwpb_date">
-                <h3 class="mpwpb_date_staff_select"><?php esc_html_e('Choose Date & Time', 'service-booking-manager'); ?></h3>
+                <h3 class="mpwpb_date_staff_select"><?php esc_html_e('Choose Date', 'service-booking-manager'); ?></h3>
 				<?php include(MPWPB_Function::template_path('layout/carousel_indicator.php')); ?>
             </header>
             <div class="" >
@@ -92,6 +92,9 @@
                         }
                     ?>
                 </div>
+                <header class="_dFlex_alignCenter_justifyBetween">
+                    <h3 class="mpwpb_date_staff_select"><?php esc_html_e('Choose Time', 'service-booking-manager'); ?></h3>
+                </header>
                 <div class="mpwpb_select_time_holder" id="<?php echo esc_attr( $post_id );?>">
                     <?php
                         $booking_time_output = MPWPB_Details_Layout::display_booking_time( $post_id, $all_dates, $active_date );

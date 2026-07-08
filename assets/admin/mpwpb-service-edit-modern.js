@@ -52,11 +52,20 @@
 	var total = parseInt($root.data('total'), 10) || order.length;
 	var cur = 0;
 
+	// Remembers which wizard step was last open, keyed per edited post (the
+	// URL's post= query arg already tells different services apart), so a
+	// plain page refresh reopens that step instead of always restarting the
+	// wizard at General.
+	function smeStepStorageKey() {
+		return 'mpwpb_sme_step::' + location.pathname + location.search;
+	}
+
 	function goStep(index) {
 		if (index < 0) { index = 0; }
 		if (index > order.length - 1) { index = order.length - 1; }
 		cur = index;
 		var name = order[cur];
+		try { sessionStorage.setItem(smeStepStorageKey(), name); } catch (e) {}
 		// Expose the current step so CSS can gate the rail's progressive
 		// summary cards per step.
 		$root.attr('data-step', name);
@@ -574,7 +583,12 @@
 		}, 500);
 	})();
 
-	// Initialise.
-	goStep(0);
+	// Initialise -- resume the last-viewed step for this post, if any.
+	var smeStartIndex = 0;
+	try {
+		var smeRememberedIndex = order.indexOf(sessionStorage.getItem(smeStepStorageKey()));
+		if (smeRememberedIndex > -1) { smeStartIndex = smeRememberedIndex; }
+	} catch (e) {}
+	goStep(smeStartIndex);
 
 })(jQuery);

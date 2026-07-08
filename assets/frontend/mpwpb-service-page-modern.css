@@ -124,7 +124,7 @@
 .mpwpb-static-template section#service-faq > h2,
 .mpwpb-static-template section#service-details > h2,
 .mpwpb-static-template section#service-reviews .mpwpb-reviews-head > h2{
-	font-size:19px !important;font-weight:800;color:var(--mpwpb_color_theme) !important;border-bottom:0 !important;margin:0 !important;
+	font-size:19px !important;font-weight:800;color:var(--mpwpb_color_theme) !important;border-bottom:0 !important;margin-bottom:10px !important;
 }
 
 /* Title + "Write a Review" trigger, same row, button pinned top-right. */

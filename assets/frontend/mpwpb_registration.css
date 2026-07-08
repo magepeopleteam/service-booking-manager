@@ -711,7 +711,7 @@ div.registration_tab_item {
   background-color: transparent;
   padding: 10px 0;
 }
-.mpwpb-default-template   .mpwpb_date_carousel header h3 {
+.mpwpb-default-template   .mpwpb_date_carousel h3.mpwpb_date_staff_select {
   font-size: 16px;
   color: var(--mpwpb_color_theme);
   font-weight: 700;
@@ -1256,7 +1256,7 @@ div.registration_tab_item {
   background-color: transparent;
   padding: 10px 0;
 }
-.mpwpb-static-template   .mpwpb_popup   .service-items .mpwpb_date_carousel header h3 {
+.mpwpb-static-template   .mpwpb_popup   .service-items .mpwpb_date_carousel h3.mpwpb_date_staff_select {
   font-size: 16px;
   color: var(--mpwpb_color_theme);
   font-weight: 700;
@@ -1905,7 +1905,7 @@ button.mpwpb_service_button.mActive:hover{
 .mpwpb_time_display{
   display: flex;
   gap: 10px;
-  padding: 20px 5px 5px 5px;
+  padding: 5px 5px 5px 0px;
   flex-wrap: wrap;
 }
 .mpwpb_time_btn{
