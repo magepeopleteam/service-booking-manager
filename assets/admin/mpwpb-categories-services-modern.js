@@ -654,18 +654,39 @@
 			$ov.find('[data-csm-pick-list]').html(categoryPickHtml(pickedId));
 		});
 
-		function validate() {
+		function fieldValidity() {
 			var name = $ov.find('[data-csm-svc-name]').val().trim();
 			var price = $ov.find('[data-csm-svc-price]').val();
-			return name && price !== '' && Number(price) >= 0;
+			var duration = $ov.find('[data-csm-svc-duration]').val().trim();
+			return {
+				name: !!name,
+				price: price !== '' && Number(price) >= 0,
+				duration: !!duration
+			};
 		}
-		$ov.on('input', '[data-csm-svc-name],[data-csm-svc-price]', function () {
-			$ov.find('[data-csm-svc-save]').prop('disabled', !validate());
+		// Required-field highlighting: rather than silently disabling Save
+		// (which gives no clue WHICH field is the problem), Save stays
+		// clickable and, on click, invalid fields get a red border + focus
+		// goes to the first one -- clears again as soon as that field is
+		// fixed.
+		function highlightInvalid() {
+			var v = fieldValidity();
+			$ov.find('[data-csm-svc-name]').toggleClass('mpwpb-csm__field-invalid', !v.name);
+			$ov.find('[data-csm-svc-price]').toggleClass('mpwpb-csm__field-invalid', !v.price);
+			$ov.find('[data-csm-svc-duration]').toggleClass('mpwpb-csm__field-invalid', !v.duration);
+			return v;
+		}
+		$ov.on('input', '[data-csm-svc-name],[data-csm-svc-price],[data-csm-svc-duration]', function () {
+			$(this).removeClass('mpwpb-csm__field-invalid');
 		});
-		$ov.find('[data-csm-svc-save]').prop('disabled', !validate());
 
 		$ov.find('[data-csm-svc-save]').on('click', function () {
-			if (!validate()) { return; }
+			var v = highlightInvalid();
+			if (!v.name || !v.price || !v.duration) {
+				$ov.find('[data-csm-svc-error]').text('Please fill in the required fields.').show();
+				$ov.find('.mpwpb-csm__field-invalid').first().trigger('focus');
+				return;
+			}
 			var $btn = $(this).prop('disabled', true);
 			var name = $ov.find('[data-csm-svc-name]').val().trim();
 			var desc = $ov.find('[data-csm-svc-desc]').val();

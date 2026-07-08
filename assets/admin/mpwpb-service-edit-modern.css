@@ -89,6 +89,19 @@ body.mpwpb-sme-active #mpwpb_sme_meta_box_panel > .inside{margin:0;padding:0;}
 }
 .mpwpb-sme.mpwpb_style .mpwpb-sme__topbar input.mpwpb-sme__ttl-input:hover{background:var(--band);}
 .mpwpb-sme.mpwpb_style .mpwpb-sme__topbar input.mpwpb-sme__ttl-input:focus{outline:none;background:#fff;border-color:var(--line);box-shadow:0 0 0 3px var(--brand-ring);text-transform:none;letter-spacing:normal;}
+
+/* Required-field guard (submitForm()'s validateRequiredFields()) -- applied
+   to the topbar/inline title inputs and the Featured Image rail card. */
+input.mpwpb-sme__field-invalid,
+textarea.mpwpb-sme__field-invalid{
+	border-color:#dc2626 !important;
+	background:#fef2f2 !important;
+	box-shadow:0 0 0 3px rgba(220,38,38,.12) !important;
+}
+.mpwpb-sme__rail-card.mpwpb-sme__field-invalid{
+	border-color:#dc2626 !important;
+	box-shadow:0 0 0 3px rgba(220,38,38,.12) !important;
+}
 .mpwpb-sme__acts{justify-self:end;display:flex;align-items:center;gap:10px;}
 
 .mpwpb-sme__status-pill{display:inline-flex;align-items:center;line-height:1.2;font-size:12.5px;font-weight:700;padding:9px 14px;border-radius:999px;box-sizing:border-box;}

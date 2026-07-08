@@ -224,6 +224,8 @@ button.mpwpb-csm__chip {
 .mpwpb-csm__field textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:9px 11px;font-size:13px;color:var(--ink);background:#fff;font-family:inherit;}
 .mpwpb-csm__field input:focus,
 .mpwpb-csm__field textarea:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-ring);}
+.mpwpb-csm__field input.mpwpb-csm__field-invalid,
+.mpwpb-csm__field textarea.mpwpb-csm__field-invalid{border-color:#dc2626;box-shadow:0 0 0 3px rgba(220,38,38,.12);}
 .mpwpb-csm__field textarea{resize:none;}
 /* Hide the native up/down spinner so the Price box matches the clean,
    spinner-free look of the other fields instead of looking mismatched. */

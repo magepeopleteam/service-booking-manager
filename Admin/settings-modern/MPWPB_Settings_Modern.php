@@ -211,7 +211,7 @@
 				$total = count($steps);
 				$service_title = get_the_title($post_id);
 				$service_title = $service_title !== '' ? $service_title : MPWPB_Function::get_name();
-				$list_url = admin_url('edit.php?post_type=' . MPWPB_Function::get_cpt());
+				$list_url = admin_url('edit.php?post_type=' . MPWPB_Function::get_cpt() . '&page=mpwpb_service_list');
 
 				// Shared plumbing — MUST match the classic save handler.
 				wp_nonce_field('mpwpb_nonce', 'mpwpb_nonce');
@@ -726,7 +726,7 @@
 					array(
 						'ajax' => admin_url('admin-ajax.php'),
 						'nonce' => wp_create_nonce('mpwpb_sme_ui'),
-						'listUrl' => admin_url('edit.php?post_type=' . MPWPB_Function::get_cpt()),
+						'listUrl' => admin_url('edit.php?post_type=' . MPWPB_Function::get_cpt() . '&page=mpwpb_service_list'),
 						'savedTxt' => esc_html__('Saved', 'service-booking-manager'),
 						'savingTxt' => esc_html__('Saving…', 'service-booking-manager'),
 						'nextTxt' => esc_html__('Next Step', 'service-booking-manager'),

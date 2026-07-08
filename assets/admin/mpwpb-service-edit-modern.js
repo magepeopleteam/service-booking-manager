@@ -116,10 +116,55 @@
 	});
 
 	/* ---------------------------------------------------------------- *
+	 *  Required-field guard, run before the real Publish/Update proxy
+	 *  below. mpwpb_shortcode_title has no visible field in this editor
+	 *  (see relocateServiceTitleFields() further down — it's discarded in
+	 *  favour of the WP post title, which mpwpb_shortcode_title no longer
+	 *  tracks), so the real WP title (#title, mirrored by the topbar
+	 *  "Service name" input) stands in for it here instead. Featured Image
+	 *  lives in the sticky rail and is checked directly.
+	 * ---------------------------------------------------------------- */
+	function goStepForPanel($panel) {
+		if (!$panel.length) { return; }
+		var stepName = $panel.data('sme-panel');
+		var idx = order.indexOf(stepName);
+		if (idx > -1 && idx !== cur) { goStep(idx); }
+	}
+	function focusInvalidField($field) {
+		goStepForPanel($field.closest('.mpwpb-sme__panel[data-sme-panel]'));
+		setTimeout(function () {
+			var top = ($field.offset() ? $field.offset().top : 0) - 100;
+			$('html, body').animate({ scrollTop: top }, 200);
+			if ($field.is('input,textarea,select')) { $field.trigger('focus'); }
+		}, 60);
+	}
+	function validateRequiredFields() {
+		var $firstInvalid = null;
+		var $titleField = ($svcNameInline && $svcNameInline.length) ? $svcNameInline : $svcName;
+		var titleOk = !!$.trim($title.length ? ($title.val() || '') : '');
+		if ($titleField && $titleField.length) {
+			$titleField.toggleClass('mpwpb-sme__field-invalid', !titleOk);
+			if (!titleOk && !$firstInvalid) { $firstInvalid = $titleField; }
+		}
+		var $thumbCard = $root.find('.mpwpb-sme__feat-card');
+		var thumbOk = !!$('#mpwpb-sme-thumbnail').val();
+		$thumbCard.toggleClass('mpwpb-sme__field-invalid', !thumbOk);
+		if (!thumbOk && !$firstInvalid) { $firstInvalid = $thumbCard; }
+
+		if ($firstInvalid) {
+			toast(cfg.requiredTxt || 'Please fill in the required fields.');
+			focusInvalidField($firstInvalid);
+			return false;
+		}
+		return true;
+	}
+
+	/* ---------------------------------------------------------------- *
 	 *  Save — reuse WordPress' own Update/Publish button so post_status
 	 *  and all hidden fields stay correct.
 	 * ---------------------------------------------------------------- */
 	function submitForm() {
+		if (!validateRequiredFields()) { return; }
 		try { sessionStorage.setItem('mpwpbSmeSaved', '1'); } catch (e) {}
 		toast(cfg.savingTxt || 'Saving…');
 		var $publish = $('#publish');
@@ -233,6 +278,7 @@
 			$title.val(val);
 			$svcName.add($svcNameInline).not(this).val(val);
 			$('#title-prompt-text').addClass('screen-reader-text');
+			$svcName.add($svcNameInline).toggleClass('mpwpb-sme__field-invalid', !$.trim(val));
 		});
 	}
 
@@ -511,6 +557,9 @@
 		var $img = $('#mpwpb-sme-hero-img');
 		var $ph = $root.find('.mpwpb-sme__rail-hero-ph');
 		$('#mpwpb-sme-thumbnail').val(id || '');
+		if (id) {
+			$root.find('.mpwpb-sme__feat-card').removeClass('mpwpb-sme__field-invalid');
+		}
 		if (url) {
 			$img.attr('src', url).show();
 			$ph.hide();
