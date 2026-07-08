@@ -583,6 +583,63 @@
 		}, 500);
 	})();
 
+	/* ---------------------------------------------------------------- *
+	 *  Payment Method modal -- reuses the real Settings > Payment Method
+	 *  panel (rendered server-side into #mpwpb-sme-payment-modal-body).
+	 *  Its own toggle/accordion/gateway-save JS is part of that reused
+	 *  markup and needs no wiring here. The one thing it can't do on its
+	 *  own is save: its "Save Changes" button is a plain submit_button()
+	 *  expecting a real <form action="options.php"> ancestor (which it
+	 *  has on the actual Settings page) -- here it would otherwise submit
+	 *  this screen's #post form instead, so that click is intercepted and
+	 *  redirected to a dedicated AJAX action.
+	 * ---------------------------------------------------------------- */
+	var $paymentModal = $('#mpwpb-sme-payment-modal');
+	if ($paymentModal.length) {
+		$(document).on('click', '[data-sme-payment-modal-open]', function (e) {
+			e.preventDefault();
+			$paymentModal.css('display', 'flex');
+		});
+		$(document).on('click', '[data-sme-payment-modal-close]', function () {
+			$paymentModal.hide();
+		});
+		$paymentModal.on('click', function (e) {
+			if (e.target === this) { $paymentModal.hide(); }
+		});
+		$(document).on('keydown', function (e) {
+			if ((e.key === 'Escape' || e.keyCode === 27) && $paymentModal.is(':visible')) {
+				$paymentModal.hide();
+			}
+		});
+		$(document).on('click', '#mpwpb-sme-payment-modal-body #submit', function (e) {
+			e.preventDefault();
+			if (!cfg.ajax) { return; }
+			var $btn = $(this);
+			var $status = $btn.next('.mpwpb-sme-payment-save-status');
+			if (!$status.length) {
+				$status = $('<span class="mpwpb-sme-payment-save-status" style="margin-left:10px;"></span>');
+				$btn.after($status);
+			}
+			var data = $('#mpwpb-sme-payment-modal-body').find(':input[name^="mpwpb_payment_method_settings"]').serializeArray();
+			data.push({ name: 'action', value: 'mpwpb_save_payment_method_settings' });
+			data.push({ name: 'nonce', value: cfg.paymentNonce });
+			$btn.prop('disabled', true);
+			$status.css('color', '').text(cfg.savingTxt || 'Saving…');
+			$.post(cfg.ajax, data).done(function (resp) {
+				if (resp && resp.success) {
+					$status.css('color', '#1c9a5b').text((resp.data && resp.data.message) || cfg.paymentSaved || 'Saved.');
+					setTimeout(function () { window.location.reload(); }, 700);
+				} else {
+					$status.css('color', '#b32d2e').text((resp && resp.data && resp.data.message) || cfg.paymentError || 'Something went wrong.');
+				}
+			}).fail(function () {
+				$status.css('color', '#b32d2e').text(cfg.paymentError || 'Something went wrong.');
+			}).always(function () {
+				$btn.prop('disabled', false);
+			});
+		});
+	}
+
 	// Initialise -- resume the last-viewed step for this post, if any.
 	var smeStartIndex = 0;
 	try {

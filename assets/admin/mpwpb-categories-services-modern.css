@@ -83,7 +83,7 @@ p.mpwpb-csm__hint {
 .mpwpb-csm__tree-btn.mpwpb-csm__tree-btn{display:flex;min-width:0;flex:1;align-items:center;gap:6px;padding:8px 0;border:0;background:transparent;text-align:left;cursor:pointer;color:inherit;line-height:1;}
 .mpwpb-csm__tree-btn .dashicons{display:flex;align-items:center;justify-content:center;font-size:14px;width:14px;height:14px;line-height:1;color:var(--muted);flex:0 0 auto;}
 .mpwpb-csm__tree-row.is-active .mpwpb-csm__tree-btn .dashicons{color:rgba(255,255,255,.8);}
-.mpwpb-csm__tree-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;line-height:1;font-weight:700;}
+.mpwpb-csm__tree-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:15px;line-height:1;font-weight:700;}
 .mpwpb-csm__tree-name.is-sub{font-weight:500;font-size:12.5px;}
 .mpwpb-csm__tree-acts.mpwpb-csm__tree-acts{display:none;align-items:center;gap:2px;line-height:1;}
 .mpwpb-csm__tree-row:hover .mpwpb-csm__tree-acts,

@@ -478,7 +478,15 @@
 			}
 			public static function has_functional_payment_method(): bool {
 				if (self::is_wc_payment_mode()) {
-					return true;
+					if (!function_exists('WC') || !WC()->payment_gateways()) {
+						return false;
+					}
+					foreach (WC()->payment_gateways()->payment_gateways() as $gateway) {
+						if ($gateway->enabled === 'yes') {
+							return true;
+						}
+					}
+					return false;
 				}
 				if (self::is_custom_payment_mode()) {
 					return self::get_payment_setting('offline_enabled') === 'on'

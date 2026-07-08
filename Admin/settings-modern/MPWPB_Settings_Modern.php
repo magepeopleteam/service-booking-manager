@@ -276,6 +276,40 @@
 						<?php endforeach; ?>
 					</div>
 
+					<?php if (!MPWPB_Global_Function::has_functional_payment_method()) : ?>
+						<div class="mpwpb-sme__payment-notice">
+							<?php esc_html_e('No payment method is currently configured.', 'service-booking-manager'); ?>
+							<a href="#" class="mpwpb-sme__payment-notice-link" data-sme-payment-modal-open>
+								<?php esc_html_e('Please configure a payment method to accept bookings.', 'service-booking-manager'); ?>
+							</a>
+						</div>
+					<?php endif; ?>
+
+					<div class="mpwpb-sme__payment-modal" id="mpwpb-sme-payment-modal" data-sme-payment-modal style="display:none;">
+						<div class="mpwpb-sme__payment-modal-box">
+							<div class="mpwpb-sme__payment-modal-head">
+								<h2><?php esc_html_e('Payment Method', 'service-booking-manager'); ?></h2>
+								<button type="button" class="mpwpb-sme__payment-modal-close" data-sme-payment-modal-close aria-label="<?php esc_attr_e('Close', 'service-booking-manager'); ?>">&times;</button>
+							</div>
+							<div class="mpwpb-sme__payment-modal-body" id="mpwpb-sme-payment-modal-body">
+								<?php
+								/**
+								 * Reuses the real Payment Method settings panel verbatim (same
+								 * markup/JS/AJAX as Settings > Payment Method) via Reflection,
+								 * matching the pattern already used elsewhere in this file for
+								 * classic settings render methods — its constructor only wires
+								 * admin hooks, no state the render method depends on.
+								 */
+								if (class_exists('MPWPB_Native_Checkout_Settings')) {
+									(new ReflectionClass('MPWPB_Native_Checkout_Settings'))
+										->newInstanceWithoutConstructor()
+										->render_payment_method_panel();
+								}
+								?>
+							</div>
+						</div>
+					</div>
+
 					<div class="mpwpb-sme__wrap">
 						<div class="mpwpb-sme__body">
 							<div class="mpwpb-sme__main">
@@ -370,6 +404,48 @@
 						</div>
 						<div class="mpwpb-sme__gallery-body <?php echo esc_attr($gallery_active_class); ?>" data-collapse="#mpwpb_display_slider">
 							<?php do_action('mpwpb_add_multi_image', 'mpwpb_slider_images', $gallery_image_ids); ?>
+						</div>
+					</div>
+
+					<?php
+					$mpwpb_pm_active = MPWPB_Global_Function::has_functional_payment_method();
+					$mpwpb_pm_type = MPWPB_Global_Function::get_payment_method_type();
+					$mpwpb_pm_type_label = $mpwpb_pm_type === 'woocommerce'
+						? __('WooCommerce', 'service-booking-manager')
+						: ($mpwpb_pm_type === 'custom' ? __('Custom Payment', 'service-booking-manager') : __('Not set', 'service-booking-manager'));
+					$mpwpb_pm_gateway_names = [];
+					if ($mpwpb_pm_type === 'woocommerce' && function_exists('WC') && WC()->payment_gateways()) {
+						foreach (WC()->payment_gateways()->payment_gateways() as $mpwpb_pm_gw) {
+							if ($mpwpb_pm_gw->enabled === 'yes') {
+								$mpwpb_pm_gateway_names[] = $mpwpb_pm_gw->get_method_title();
+							}
+						}
+					} elseif ($mpwpb_pm_type === 'custom' && class_exists('MPWPB_Native_Checkout')) {
+						$mpwpb_pm_gateway_names = array_values(MPWPB_Native_Checkout::get_enabled_gateways());
+					}
+					?>
+					<div class="mpwpb-sme__rail-card mpwpb-sme__rail-card--loading">
+						<?php $this->render_rail_card_skeleton('info'); ?>
+						<div class="mpwpb-sme__feat-head"><?php esc_html_e('Payment Method', 'service-booking-manager'); ?></div>
+						<div class="mpwpb-sme__rail-info-list">
+							<div class="mpwpb-sme__rail-info-row">
+								<span><?php esc_html_e('Active Method', 'service-booking-manager'); ?></span>
+								<strong><?php echo esc_html($mpwpb_pm_type_label); ?></strong>
+							</div>
+							<div class="mpwpb-sme__rail-info-row">
+								<span><?php esc_html_e('Active Gateway', 'service-booking-manager'); ?></span>
+								<strong><?php echo esc_html($mpwpb_pm_gateway_names ? implode(', ', $mpwpb_pm_gateway_names) : __('None', 'service-booking-manager')); ?></strong>
+							</div>
+							<?php if ($mpwpb_pm_gateway_names) : ?>
+								<p class="mpwpb-sme__rail-payment-link">
+									<a href="#" data-sme-payment-modal-open><?php esc_html_e('Payment Settings', 'service-booking-manager'); ?></a>
+								</p>
+							<?php endif; ?>
+							<?php if (!$mpwpb_pm_active) : ?>
+								<p class="mpwpb-sme__rail-payment-warning">
+									<a href="#" data-sme-payment-modal-open><?php esc_html_e('Configure payment method', 'service-booking-manager'); ?></a>
+								</p>
+							<?php endif; ?>
 						</div>
 					</div>
 
@@ -659,6 +735,9 @@
 						'featBtn' => esc_html__('Use image', 'service-booking-manager'),
 						'featSet' => esc_html__('Featured image set', 'service-booking-manager'),
 						'featRemoved' => esc_html__('Featured image removed', 'service-booking-manager'),
+						'paymentNonce' => wp_create_nonce('mpwpb_save_payment_method_settings'),
+						'paymentSaved' => esc_html__('Payment settings saved.', 'service-booking-manager'),
+						'paymentError' => esc_html__('Something went wrong.', 'service-booking-manager'),
 					)
 				);
 

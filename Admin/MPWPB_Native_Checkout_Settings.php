@@ -18,6 +18,33 @@
 				add_action('wp_ajax_mpwpb_install_activate_woocommerce', [$this, 'install_activate_woocommerce']);
 				add_action('wp_ajax_mpwpb_toggle_wc_gateway', [$this, 'toggle_wc_gateway']);
 				add_action('wp_ajax_mpwpb_save_wc_gateway_settings', [$this, 'save_wc_gateway_settings']);
+				add_action('wp_ajax_mpwpb_save_payment_method_settings', [$this, 'save_payment_method_settings']);
+			}
+			/**
+			 * Saves the mpwpb_payment_method_settings option when the
+			 * Payment Method panel is submitted from outside the real
+			 * Settings page (e.g. the modal on the service Add/Edit
+			 * screen) -- the panel's fields aren't wrapped in a real
+			 * <form action="options.php"> there, so this mirrors what
+			 * MPWPB_Setting_API::sanitize_options() does for this same
+			 * option on the real Settings page.
+			 */
+			public function save_payment_method_settings(): void {
+				if (!current_user_can('manage_options')) {
+					wp_send_json_error(['message' => esc_html__('You do not have permission to do this.', 'service-booking-manager')]);
+				}
+				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_save_payment_method_settings')) {
+					wp_send_json_error(['message' => esc_html__('Security check failed.', 'service-booking-manager')]);
+				}
+				$posted = isset($_POST['mpwpb_payment_method_settings']) && is_array($_POST['mpwpb_payment_method_settings'])
+					? wp_unslash($_POST['mpwpb_payment_method_settings'])
+					: [];
+				$sanitized = [];
+				foreach ($posted as $key => $value) {
+					$sanitized[sanitize_key($key)] = is_array($value) ? array_map('sanitize_text_field', $value) : sanitize_text_field($value);
+				}
+				update_option('mpwpb_payment_method_settings', $sanitized);
+				wp_send_json_success(['message' => esc_html__('Payment settings saved.', 'service-booking-manager')]);
 			}
 			/**
 			 * Enables/disables a real WooCommerce payment gateway from our
@@ -891,7 +918,7 @@
 						echo wp_kses_post(
 							sprintf(
 								/* translators: %s: settings page URL */
-								__('<strong>Service Booking Manager:</strong> You must enable a payment method (WooCommerce, or Stripe / PayPal / Offline) to accept bookings. <a href="%s">Configure a payment method</a>.', 'service-booking-manager'),
+								__('<strong>Service Booking Manager:</strong> No payment method is currently configured. <a href="%s">Configure a payment method</a> to accept bookings.', 'service-booking-manager'),
 								esc_url($url)
 							)
 						);

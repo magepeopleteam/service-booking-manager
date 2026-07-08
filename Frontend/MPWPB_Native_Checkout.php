@@ -217,7 +217,7 @@
 				$gateways = self::get_enabled_gateways();
 				if (empty($gateways)) {
 					?>
-					<p class="mpwpb-checkout-empty"><?php esc_html_e('No payment method is currently available. Please contact the site administrator.', 'service-booking-manager'); ?></p>
+					<p class="mpwpb-checkout-empty"><?php esc_html_e('No payment method is currently configured. Please configure a payment method to accept bookings.', 'service-booking-manager'); ?></p>
 					<?php
 					return;
 				}
@@ -444,7 +444,7 @@
 				$gateways = self::get_enabled_gateways();
 				if (empty($gateways)) {
 					?>
-					<p><?php esc_html_e('No payment method is currently available. Please contact the site administrator.', 'service-booking-manager'); ?></p>
+					<p><?php esc_html_e('No payment method is currently configured. Please configure a payment method to accept bookings.', 'service-booking-manager'); ?></p>
 					<?php
 					return;
 				}

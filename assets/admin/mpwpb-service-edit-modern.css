@@ -130,6 +130,22 @@ button.mpwpb-sme__btn.mpwpb-sme__btn--primary.mpwpb-sme__split-caret{border-radi
 /* Wrap + stepper */
 .mpwpb-sme__wrap{max-width:1440px;margin:0 auto;padding:26px;}
 .mpwpb-sme__stepper{display:flex;align-items:flex-start;justify-content:center;background:#FEFEFF;border-bottom:1px solid var(--line);padding:14px 26px;margin:0;position:sticky;top:57px;z-index:29;box-shadow:0 4px 20px -2px rgba(0,0,0,0.03);}
+.mpwpb-sme__payment-notice{text-align:center;background:#fef3c7;color:#b45309;font-size:13px;font-weight:600;padding:10px 26px;}
+.mpwpb-sme__payment-notice-link{color:#b45309;text-decoration:underline;}
+.mpwpb-sme__payment-notice-link:hover{color:#92400e;}
+.mpwpb-sme__rail-payment-warning{margin:12px 0 0;padding:5px 20px !important;border-radius:10px;border:1px solid #ddd;background:#fef3c7;color:#b45309;font-size:12px;font-weight:600;line-height:1.5;text-align:right;width:100%;}
+.mpwpb-sme__rail-payment-warning a{color:#b45309;text-decoration:underline;font-weight:700;}
+.mpwpb-sme__rail-payment-warning a:hover{color:#92400e;}
+.mpwpb-sme__rail-payment-link{display:block !important;margin:12px 0 0 auto !important;padding:5px 20px !important;border-radius:10px;border:1px solid #ddd;background:#f6f7f7;font-size:12px;font-weight:600;line-height:1.5;text-align:right !important;width:70% !important;}
+.mpwpb-sme__rail-payment-link a{color:var(--brand,#2451e0);text-decoration:underline;font-weight:700;}
+.mpwpb-sme__rail-payment-link a:hover{color:#1a3aa8;}
+.mpwpb-sme__payment-modal{position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:100001;align-items:center;justify-content:center;padding:20px;}
+.mpwpb-sme__payment-modal-box{background:#fff;border-radius:12px;max-width:760px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:0 24px 60px rgba(15,23,42,.35);}
+.mpwpb-sme__payment-modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;z-index:1;}
+.mpwpb-sme__payment-modal-head h2{margin:0;font-size:17px;font-weight:700;color:var(--ink);}
+.mpwpb-sme__payment-modal-close{border:none;background:transparent;font-size:22px;line-height:1;cursor:pointer;color:var(--ink-2);padding:4px 8px;}
+.mpwpb-sme__payment-modal-close:hover{color:var(--ink);}
+.mpwpb-sme__payment-modal-body{padding:24px;}
 .mpwpb-sme__step{display:flex;flex-direction:column;align-items:center;gap:6px;flex:0 0 auto;text-align:center;cursor:pointer;}
 .mpwpb-sme__num{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:14px;background:#d1d5db;border:none;color:#fff;transition:.2s;}
 .mpwpb-sme__lab{font-size:12px;font-weight:500;color:#9ca3af;margin-top:2px;}
