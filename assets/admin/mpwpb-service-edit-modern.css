@@ -83,7 +83,7 @@ body.mpwpb-sme-active #mpwpb_sme_meta_box_panel > .inside{margin:0;padding:0;}
 .mpwpb-sme__back:hover{background:var(--band);color:var(--ink);}
 .mpwpb-sme__back .dashicons{font-size:17px;width:17px;height:17px;}
 .mpwpb-sme.mpwpb_style .mpwpb-sme__topbar input.mpwpb-sme__ttl-input{
-	justify-self:center;width:auto;min-width:160px;max-width:460px;text-align:center;
+	justify-self:center;width:460px;min-width:160px;text-align:center;
 	font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:15px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--ink);
 	background:transparent;border:1px solid transparent;border-radius:8px;padding:6px 12px;transition:.15s;box-shadow:none;min-height:0;height:auto;
 }

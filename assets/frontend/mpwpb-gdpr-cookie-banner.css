@@ -1,0 +1,13 @@
+.mpwpb-gdpr-banner{position:fixed;left:0;right:0;bottom:0;z-index:99999;background:#1e293b;color:#fff;box-shadow:0 -4px 20px rgba(0,0,0,.25);}
+.mpwpb-gdpr-banner-inner{max-width:1100px;margin:0 auto;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;box-sizing:border-box;}
+.mpwpb-gdpr-banner-msg{margin:0;font-size:13.5px;line-height:1.5;flex:1 1 320px;}
+.mpwpb-gdpr-banner-actions{display:flex;gap:10px;flex:0 0 auto;}
+.mpwpb-gdpr-banner-btn{border:none;border-radius:6px;padding:9px 20px;font-size:13px;font-weight:700;cursor:pointer;transition:.15s;}
+.mpwpb-gdpr-banner-accept{background:#2451e0;color:#fff;}
+.mpwpb-gdpr-banner-accept:hover{background:#1d3fb8;}
+.mpwpb-gdpr-banner-reject{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4);}
+.mpwpb-gdpr-banner-reject:hover{background:rgba(255,255,255,.1);}
+@media(max-width:480px){
+	.mpwpb-gdpr-banner-inner{flex-direction:column;align-items:stretch;}
+	.mpwpb-gdpr-banner-actions{justify-content:flex-end;}
+}

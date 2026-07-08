@@ -25,6 +25,7 @@
 .woocommerce.woocommerce-checkout form #order_review, .woocommerce.woocommerce-checkout form #order_review_heading, .woocommerce-page.woocommerce-checkout form #order_review, .woocommerce-page.woocommerce-checkout form #order_review_heading{
 	width: 100% !important;
 }
+.mpwpb-active h1.wp-block-post-title{ max-width: 1200px !important; }
 .woocommerce-page table.shop_table {
 	width: 100% !important;
 }

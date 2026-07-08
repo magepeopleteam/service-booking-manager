@@ -223,6 +223,12 @@
 			public static function get_licence_settings($key, $default = '') {
 				return self::get_settings('mpwpb_license_settings', $key, $default);
 			}
+			public static function get_gdpr_setting($key, $default = '') {
+				return self::get_settings('mpwpb_gdpr_settings', $key, $default);
+			}
+			public static function is_gdpr_enabled(): bool {
+				return self::get_gdpr_setting('enable_gdpr') === 'on';
+			}
 			//***********************************//
 			public static function price_convert_raw($price) {
 				if (!self::is_wc_payment_mode()) {

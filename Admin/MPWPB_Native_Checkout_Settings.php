@@ -868,8 +868,18 @@
 				}
 				wp_send_json_success(['message' => esc_html__('WooCommerce installed and activated.', 'service-booking-manager')]);
 			}
+			/**
+			 * Shown only on this plugin's own admin screens (the service
+			 * CPT list/edit screens and every edit.php?post_type=mpwpb_item
+			 * submenu page -- Settings, Status, GDPR Tools, etc. -- all of
+			 * which share that same post_type on their current screen), not
+			 * site-wide on every wp-admin page.
+			 */
 			public function maybe_show_payment_notice(): void {
 				if (!current_user_can('manage_options') || MPWPB_Global_Function::has_functional_payment_method()) {
+					return;
+				}
+				if (!$this->is_our_admin_screen()) {
 					return;
 				}
 				$cpt = MPWPB_Function::get_cpt();
@@ -881,7 +891,7 @@
 						echo wp_kses_post(
 							sprintf(
 								/* translators: %s: settings page URL */
-								__('<strong>Service Booking Manager:</strong> no payment method is configured yet. <a href="%s">Configure a payment method</a> (WooCommerce, or Stripe / PayPal / Offline) so customers can complete bookings.', 'service-booking-manager'),
+								__('<strong>Service Booking Manager:</strong> You must enable a payment method (WooCommerce, or Stripe / PayPal / Offline) to accept bookings. <a href="%s">Configure a payment method</a>.', 'service-booking-manager'),
 								esc_url($url)
 							)
 						);
@@ -889,6 +899,25 @@
 					</p>
 				</div>
 				<?php
+			}
+			/**
+			 * True on the service CPT list/edit screens and every
+			 * edit.php?post_type=mpwpb_item submenu page (Settings, Status,
+			 * GDPR Tools, etc). Checked multiple ways -- $screen->post_type
+			 * isn't reliably populated by WordPress core for every one of
+			 * our custom submenu pages (only the real list/edit screens),
+			 * so this also falls back to the screen id and the raw
+			 * post_type query var, either of which is present on all of
+			 * them regardless of what WP_Screen itself infers.
+			 */
+			private function is_our_admin_screen(): bool {
+				$cpt = MPWPB_Function::get_cpt();
+				$screen = function_exists('get_current_screen') ? get_current_screen() : null;
+				if ($screen && ($screen->post_type === $cpt || strpos((string) $screen->id, $cpt) !== false)) {
+					return true;
+				}
+				$requested_post_type = isset($_GET['post_type']) ? sanitize_key(wp_unslash($_GET['post_type'])) : '';
+				return $requested_post_type === $cpt;
 			}
 		}
 		new MPWPB_Native_Checkout_Settings();

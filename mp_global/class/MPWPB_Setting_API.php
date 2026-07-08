@@ -298,7 +298,7 @@
 					'name' => $args['section'] . '[' . $args['id'] . ']',
 					'id' => $args['section'] . '[' . $args['id'] . ']',
 				);
-				wp_dropdown_pages(esc_attr($dropdown_args));
+				wp_dropdown_pages($dropdown_args);
 			}
 			// function sanitize_options($options) {
 			// 	if (!$options) {

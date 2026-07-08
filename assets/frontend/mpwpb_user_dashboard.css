@@ -227,15 +227,39 @@
     max-width: 800px;
 }
 
+/* Grid (not flex) so a label that wraps to 2 lines in one column (e.g.
+   "New Password (leave blank to keep current)") only grows the shared
+   label row itself -- both inputs still start on the next grid row, at
+   the same Y position, instead of one sitting lower than the other.
+   .mpwpb-form-group becomes `display:contents` (its label/input become
+   direct grid items of the row), so nth-child picks each column's pair
+   and pins them to that column's grid-column explicitly. */
 .mpwpb-form-row {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0 -10px 15px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 20px;
+    row-gap: 6px;
+    margin-bottom: 22px;
 }
 
+.mpwpb-form-row .mpwpb-form-group {
+    display: contents;
+}
+
+.mpwpb-form-row .mpwpb-form-group:nth-child(1) label { grid-column: 1; grid-row: 1; }
+.mpwpb-form-row .mpwpb-form-group:nth-child(1) input,
+.mpwpb-form-row .mpwpb-form-group:nth-child(1) select { grid-column: 1; grid-row: 2; }
+.mpwpb-form-row .mpwpb-form-group:nth-child(2) label { grid-column: 2; grid-row: 1; }
+.mpwpb-form-row .mpwpb-form-group:nth-child(2) input,
+.mpwpb-form-row .mpwpb-form-group:nth-child(2) select { grid-column: 2; grid-row: 2; }
+
 .mpwpb-form-group {
-    flex: 1;
-    min-width: 250px;
+    /* Only takes effect for standalone groups (e.g. Service Preferences,
+       the GDPR request form) -- inside a .mpwpb-form-row this element is
+       display:contents (see above), which drops its own box entirely, so
+       this padding/margin is a no-op there and column-gap handles spacing
+       instead. */
+    min-width: 0;
     padding: 0 10px;
     margin-bottom: 15px;
 }
@@ -245,6 +269,24 @@
     margin-bottom: 5px;
     font-weight: 500;
     color: #333;
+}
+
+@media (max-width: 600px) {
+    .mpwpb-form-row {
+        grid-template-columns: 1fr;
+    }
+    /* Cancel the desktop rule's fixed column/row pinning so items fall back
+       to plain DOM order (label1, input1, label2, input2) stacked in a
+       single column instead of two columns' worth overlapping each other. */
+    .mpwpb-form-row .mpwpb-form-group:nth-child(1) label,
+    .mpwpb-form-row .mpwpb-form-group:nth-child(1) input,
+    .mpwpb-form-row .mpwpb-form-group:nth-child(1) select,
+    .mpwpb-form-row .mpwpb-form-group:nth-child(2) label,
+    .mpwpb-form-row .mpwpb-form-group:nth-child(2) input,
+    .mpwpb-form-row .mpwpb-form-group:nth-child(2) select {
+        grid-column: 1;
+        grid-row: auto;
+    }
 }
 
 .mpwpb-form-group input,
@@ -266,10 +308,213 @@
     box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
 }
 
+/* Radio/checkbox choice rows (e.g. the GDPR data-request form) -- the
+   width:100% rule above is meant for text/email/tel/password/textarea
+   fields and otherwise stretches a checkbox/radio to fill the whole row,
+   which is what pushed the visible box away from its own label text. */
+.mpwpb-form-group label.mpwpb-inline-choice {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.mpwpb-form-group input[type="checkbox"],
+.mpwpb-form-group input[type="radio"] {
+    width: auto;
+    flex: 0 0 auto;
+    padding: 0;
+    border: 0;
+    background: none;
+}
+
 .mpwpb-form-group .description {
     font-size: 12px;
     color: #777;
     margin-top: 5px;
+}
+
+/* ---------------------------------------------------------------------- *
+ *  My Profile -- card-based layout (Personal Information / Address
+ *  Details / Security / Service Preferences) with a summary sidebar.
+ * ---------------------------------------------------------------------- */
+.mpwpb-profile-header {
+    margin-bottom: 20px;
+}
+
+.mpwpb-profile-header h3 {
+    margin: 0 0 4px;
+}
+
+.mpwpb-profile-subtitle {
+    margin: 0;
+    color: #777;
+    font-size: 13.5px;
+}
+
+.mpwpb-profile-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(240px, 1fr);
+    gap: 24px;
+    align-items: start;
+}
+
+.mpwpb-profile-v2 .mpwpb-profile-form {
+    max-width: none;
+}
+
+.mpwpb-profile-card {
+    background: #fff;
+    border: 1px solid #e5e9f0;
+    border-top: 3px solid #2196f3;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.mpwpb-profile-card-security {
+    border-top-color: #f44336;
+}
+
+.mpwpb-profile-card-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    border-bottom: 1px solid #eef1f6;
+}
+
+.mpwpb-profile-card-head .fas {
+    color: #2196f3;
+    font-size: 15px;
+}
+
+.mpwpb-profile-card-security .mpwpb-profile-card-head .fas {
+    color: #f44336;
+}
+
+.mpwpb-profile-card-head h4 {
+    margin: 0;
+    font-size: 15px;
+}
+
+.mpwpb-profile-card-body {
+    padding: 18px;
+}
+
+.mpwpb-profile-card-body .mpwpb-form-row:last-child,
+.mpwpb-profile-card-body .mpwpb-form-group:last-child {
+    margin-bottom: 0;
+}
+
+.mpwpb-profile-card-body .mpwpb-form-group input{width: 95% !important; }
+
+.mpwpb-form-group-full {
+    padding: 0 10px;
+    margin-bottom: 15px;
+}
+
+.mpwpb-field-hint {
+    margin: 6px 0 0;
+    font-size: 12px;
+    color: #888;
+}
+
+.mpwpb-profile-submit-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+/* Sidebar */
+.mpwpb-profile-sidebar .mpwpb-profile-card {
+    padding: 0;
+}
+
+.mpwpb-profile-summary-card {
+    text-align: center;
+    padding: 24px 18px;
+    border-top-color: #2196f3;
+}
+
+.mpwpb-profile-avatar {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 12px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2196f3, #6dc0ff);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.mpwpb-profile-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #222;
+}
+
+.mpwpb-profile-role {
+    font-size: 12.5px;
+    color: #888;
+    margin: 2px 0 10px;
+}
+
+.mpwpb-profile-badge {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 999px;
+    background: #eafaf0;
+    color: #1c9a5b;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+}
+
+.mpwpb-profile-summary-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.mpwpb-profile-summary-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #666;
+}
+
+.mpwpb-profile-summary-row strong {
+    color: #222;
+}
+
+.mpwpb-btn-outline {
+    background: transparent;
+    border: 1px solid #2196f3;
+    color: #2196f3;
+}
+
+.mpwpb-btn-outline:hover {
+    background: #eaf4fe;
+}
+
+.mpwpb-profile-sidebar-link {
+    display: block;
+    margin: 0 18px 18px;
+    text-align: center;
+    width: calc(100% - 36px);
+}
+
+@media (max-width: 782px) {
+    .mpwpb-profile-layout {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* Modal */
@@ -328,6 +573,13 @@
     background-color: #f2dede;
     color: #a94442;
     border: 1px solid #ebccd1;
+    display: block;
+}
+
+.mpwpb-message.info {
+    background-color: #d9edf7;
+    color: #31708f;
+    border: 1px solid #bce8f1;
     display: block;
 }
 
@@ -482,14 +734,6 @@
     .mpwpb-bookings-table {
         display: block;
         overflow-x: auto;
-    }
-    
-    .mpwpb-form-row {
-        flex-direction: column;
-    }
-    
-    .mpwpb-form-group {
-        min-width: 100%;
     }
 }
 

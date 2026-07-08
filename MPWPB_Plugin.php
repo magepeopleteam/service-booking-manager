@@ -55,6 +55,15 @@
 			}
 			public static function plugin_activate() {
 				set_transient('mpwpb_plugin_activated', true, 30);
+				// Auto-create the Custom Payment "My Account" page, same
+				// convention WooCommerce uses for its own "My Account" page
+				// on activation -- MPWPB_Custom_Payment_My_Account is
+				// already required/instantiated by this point (loaded via
+				// inc/MPWPB_Dependencies.php, above, before WordPress fires
+				// this activation callback).
+				if (class_exists('MPWPB_Custom_Payment_My_Account')) {
+					MPWPB_Custom_Payment_My_Account::maybe_create_page();
+				}
 				flush_rewrite_rules();
 			}
 		}

@@ -730,6 +730,61 @@ function mpwpb_price_calculation($this) {
             mpwpb_alert($(this));
         }
     });
+    // GDPR "remember my info" cookie (Frontend/MPWPB_Gdpr_Cookie_Banner.php) --
+    // only ever read/written when the visitor has explicitly accepted the
+    // cookie banner (window.mpwpbGdprConsentAccepted(), exposed by
+    // mpwpb-gdpr-cookie-banner.js -- only enqueued at all when the GDPR
+    // feature is on, hence the typeof guard everywhere it's used below).
+    function mpwpb_gdpr_get_cookie(name) {
+        var match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+        return match ? decodeURIComponent(match[1]) : null;
+    }
+    function mpwpb_gdpr_set_cookie(name, value, days) {
+        var expires = new Date();
+        expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+        document.cookie = name + '=' + encodeURIComponent(value) + ';expires=' + expires.toUTCString() + ';path=/;SameSite=Lax';
+    }
+    function mpwpb_gdpr_prefill_billing($scope) {
+        if (typeof window.mpwpbGdprConsentAccepted !== 'function' || !window.mpwpbGdprConsentAccepted()) {
+            return;
+        }
+        var raw = mpwpb_gdpr_get_cookie('mpwpb_customer_info');
+        if (!raw) {
+            return;
+        }
+        var info;
+        try {
+            info = JSON.parse(raw);
+        } catch (e) {
+            return;
+        }
+        var fieldMap = {
+            first_name: 'mpwpb_billing_first_name',
+            last_name: 'mpwpb_billing_last_name',
+            email: 'mpwpb_billing_email',
+            phone: 'mpwpb_billing_phone',
+            address_1: 'mpwpb_billing_address_1'
+        };
+        $.each(fieldMap, function (infoKey, fieldName) {
+            var $field = $scope.find('[name="' + fieldName + '"]');
+            if ($field.length && !$field.val() && info[infoKey]) {
+                $field.val(info[infoKey]);
+            }
+        });
+    }
+    function mpwpb_gdpr_save_billing_cookie($form) {
+        if (typeof window.mpwpbGdprConsentAccepted !== 'function' || !window.mpwpbGdprConsentAccepted()) {
+            return;
+        }
+        var info = {
+            first_name: $form.find('[name="mpwpb_billing_first_name"]').val() || '',
+            last_name: $form.find('[name="mpwpb_billing_last_name"]').val() || '',
+            email: $form.find('[name="mpwpb_billing_email"]').val() || '',
+            phone: $form.find('[name="mpwpb_billing_phone"]').val() || '',
+            address_1: $form.find('[name="mpwpb_billing_address_1"]').val() || ''
+        };
+        mpwpb_gdpr_set_cookie('mpwpb_customer_info', JSON.stringify(info), 30);
+    }
     function mpwpb_load_native_checkout_form(parent) {
         var $target = parent.find('.mpwpb_order_proceed_area');
         $.ajax({
@@ -744,6 +799,7 @@ function mpwpb_price_calculation($this) {
                 $target.css('min-height', '');
                 if (response && response.success) {
                     $target.html(response.data.html);
+                    mpwpb_gdpr_prefill_billing($target);
                     load_order_proceed_tab(parent);
                 } else {
                     $target.html('<p class="mpwpb-checkout-error">' + ((response && response.data && response.data.message) ? response.data.message : 'Something went wrong.') + '</p>');
@@ -768,6 +824,7 @@ function mpwpb_price_calculation($this) {
         $btn.prop('disabled', true);
         $.post(mpwpb_ajax.ajax_url, $form.serialize()).done(function (response) {
             if (response && response.success && response.data && response.data.redirect) {
+                mpwpb_gdpr_save_billing_cookie($form);
                 window.location.href = response.data.redirect;
             } else {
                 $btn.prop('disabled', false);

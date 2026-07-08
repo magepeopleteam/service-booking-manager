@@ -62,6 +62,9 @@
 				//****************Native (non-WooCommerce) Checkout*********************** */
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Native_Order.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Native_Checkout_Settings.php';
+				//****************GDPR*********************** */
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Gdpr_Settings.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Gdpr_Requests.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Analytics_Dashboard.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Analytics_Ajax.php';
 			}
