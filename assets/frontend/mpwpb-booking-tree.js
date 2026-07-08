@@ -156,7 +156,7 @@
 		var price = $item.find('._textTheme_min_100').first().html() || '';
 		return '<div class="mpwpb-selected-summary-row">' +
 			'<span class="mpwpb-selected-summary-name">' + escapeForSummary(name) +
-			(qty > 1 ? ' <em>&times;' + qty + '</em>' : '') + '</span>' +
+			' <em>x ' + qty + '</em>' + '</span>' +
 			'<span class="mpwpb-selected-summary-price">' + price + '</span>' +
 			'</div>';
 	}

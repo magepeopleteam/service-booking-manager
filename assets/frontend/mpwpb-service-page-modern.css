@@ -835,11 +835,11 @@ label.mpwpb-checkout-field{display:inline-block;}
    already shows what's selected there, this would be pure duplication). */
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary{
 	display:none;flex:0 0 auto;margin:0 0 10px;border:1px solid #e5e9f0;border-radius:10px;
-	background:#f8fafc;overflow:hidden;
+	background:#E5EEFF;overflow:hidden;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-row{
 	display:flex;align-items:center;justify-content:space-between;gap:10px;
-	padding:9px 14px;font-size:12.5px;color:#334155;
+	padding:5px 14px;font-size:12.5px;color:#334155;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-row + .mpwpb-selected-summary-row{
 	border-top:1px solid #e5e9f0;
@@ -1170,12 +1170,14 @@ button._mpBtn_btLight_2_min_150.mpwpb_price_calculation.mpwpb_ex_service_button 
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item .service-details{display:none !important;}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item .mpwpb-tree-view-details{font-size:11px;}
 
-/* "Details" toggle on each service item card -- line it up under the
-   service name (which sits past the icon + its mR_xs gap) instead of
-   flush with the card's left edge, and keep it small/secondary. */
+/* "Details" toggle on each service item card -- keep it small/secondary.
+   No longer offset with padding-left: the service icon it used to align
+   past (mR_xs gap) was removed from service_selection.php/
+   category_selection.php, so the name now starts flush with the card's
+   left edge and this toggle should too. */
 .mpwpb_service_item .mpwpb_service_details_toggle{
 	font-size:10px;
-	padding-left:24px;
+	padding-left:0;
 }
 .mpwpb_service_item .mpwpb_service_details_toggle span[data-text]{
 	font-size:10px;

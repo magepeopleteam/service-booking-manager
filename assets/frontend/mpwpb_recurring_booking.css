@@ -16,6 +16,15 @@
     border-bottom: 1px solid #eee;
 }
 
+/* Match h3.mpwpb_date_staff_select ("Choose Date") in mpwpb_registration.css
+   -- same font-size/color/weight, kept as its own rule here since this h3
+   isn't inside .mpwpb_date_carousel so that selector wouldn't match it. */
+.mpwpb_recurring_booking h3 {
+    font-size: 16px !important;
+    color: var(--mpwpb_color_theme) !important;
+    font-weight: 700;
+}
+
 .mpwpb_recurring_toggle {
     display: flex;
     align-items: center;

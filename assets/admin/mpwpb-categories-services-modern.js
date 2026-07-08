@@ -15,6 +15,34 @@
 	}
 	var t = cfg.i18n || {};
 
+	// Purely decorative colour/icon rotation (no stored field — the
+	// per-service icon picker was deliberately dropped from the Add/Edit
+	// modal as unused). Assigned deterministically by position so the same
+	// category/service always gets the same swatch across re-renders.
+	var CAT_PALETTE = [
+		{ bg: '#e8f1ff', fg: '#2563eb' },
+		{ bg: '#e8f9ef', fg: '#16a34a' },
+		{ bg: '#fff4e0', fg: '#d97706' },
+		{ bg: '#fdeaf3', fg: '#db2777' },
+		{ bg: '#f1ecff', fg: '#7c3aed' }
+	];
+	var SVC_ICONS = [
+		{ icon: 'dashicons-store', bg: '#e8f1ff', fg: '#2563eb' },
+		{ icon: 'dashicons-art', bg: '#f1ecff', fg: '#7c3aed' },
+		{ icon: 'dashicons-star-filled', bg: '#fff4e0', fg: '#d97706' },
+		{ icon: 'dashicons-shield-alt', bg: '#e8f9ef', fg: '#16a34a' },
+		{ icon: 'dashicons-flag', bg: '#e8f9ef', fg: '#0d9488' },
+		{ icon: 'dashicons-heart', bg: '#fdeaf3', fg: '#db2777' },
+		{ icon: 'dashicons-admin-tools', bg: '#fff4e0', fg: '#c2410c' },
+		{ icon: 'dashicons-camera', bg: '#f1ecff', fg: '#6d28d9' }
+	];
+	function catSwatch(i) {
+		return CAT_PALETTE[i % CAT_PALETTE.length];
+	}
+	function svcSwatch(i) {
+		return SVC_ICONS[i % SVC_ICONS.length];
+	}
+
 	var state = {
 		categories: (cfg.categories || []).slice(),
 		subCategories: (cfg.subCategories || []).slice(),
@@ -146,13 +174,14 @@
 	/* ---------------------------------------------------------------- *
 	 *  Sidebar
 	 * ---------------------------------------------------------------- */
-	function treeNodeHtml(cat, depth) {
+	function treeNodeHtml(cat, depth, catIndex) {
 		var isTop = depth === 0;
 		var key = isTop ? catKey(cat.id) : subKey(cat.id);
 		var kids = childrenOf(cat.id);
 		var isOpen = !!state.expanded[cat.id];
 		var active = state.selected === key;
 		var count = countFor(key);
+		var sw = catSwatch(catIndex);
 		var html = '<div class="mpwpb-csm__tree-row' + (active ? ' is-active' : '') + (isTop ? '' : ' is-sub-row') + '" style="padding-left:' + (depth * 18) + 'px" data-csm-select="' + esc(key) + '">';
 		if (isTop) {
 			// Always expandable, even with zero subcategories yet — expanding
@@ -163,7 +192,7 @@
 			html += '<span class="mpwpb-csm__tree-corner" aria-hidden="true"></span>';
 		}
 		html += '<span class="mpwpb-csm__tree-btn">'
-			+ (isTop ? '<span class="dashicons dashicons-category"></span>' : '')
+			+ (isTop ? '<span class="mpwpb-csm__tree-icon-badge" style="background:' + sw.bg + ';color:' + sw.fg + '"><span class="dashicons dashicons-category"></span></span>' : '')
 			+ '<span class="mpwpb-csm__tree-name' + (isTop ? '' : ' is-sub') + '">' + esc(cat.name) + '</span>'
 			+ '</span>';
 		html += '<span class="mpwpb-csm__tree-acts">';
@@ -177,8 +206,8 @@
 		html += '</div>';
 		if (isTop && isOpen) {
 			html += '<div class="mpwpb-csm__tree-guide">';
-			kids.forEach(function (k) { html += treeNodeHtml(k, depth + 1); });
-			html += '<button type="button" class="mpwpb-csm__add-sub-btn" style="margin-left:' + ((depth + 1) * 18) + 'px" data-csm-add-sub="' + esc(cat.id) + '">'
+			kids.forEach(function (k) { html += treeNodeHtml(k, depth + 1, catIndex); });
+			html += '<button type="button" class="mpwpb-csm__add-sub-btn" style="margin-left:' + ((depth + 1) * 18) + 'px;border-color:' + sw.fg + ';color:' + sw.fg + '" data-csm-add-sub="' + esc(cat.id) + '">'
 				+ '<span class="dashicons dashicons-plus-alt2"></span>' + esc(t.addSubcategory) + '</button>';
 			html += '</div>';
 		}
@@ -195,14 +224,14 @@
 			+ '<span class="dashicons dashicons-archive"></span><span class="mpwpb-csm__side-label">' + esc(t.uncategorized) + '</span>'
 			+ '<span class="mpwpb-csm__side-count">' + uc + '</span></button>';
 
-		html += '<div class="mpwpb-csm__side-head"><span class="mpwpb-csm__side-head-label">Categories</span>'
-			+ '<button type="button" class="mpwpb-csm__side-add" data-csm-add-cat><span class="dashicons dashicons-plus-alt2"></span>' + esc(t.newCategory) + '</button></div>';
+		html += '<div class="mpwpb-csm__side-head"><span class="mpwpb-csm__side-head-label">Categories</span></div>';
+		html += '<button type="button" class="mpwpb-csm__side-add" data-csm-add-cat><span class="dashicons dashicons-plus-alt2"></span>' + esc(t.newCategory) + '</button>';
 
 		var topCats = state.categories;
 		if (!topCats.length) {
 			html += '<p class="mpwpb-csm__side-empty">' + esc(t.noCategoriesYet) + '</p>';
 		} else {
-			topCats.forEach(function (c) { html += treeNodeHtml(c, 0); });
+			topCats.forEach(function (c, i) { html += treeNodeHtml(c, 0, i); });
 		}
 		html += '</div>';
 		html += '<p class="mpwpb-csm__hint">' + t.countsHint + '</p>';
@@ -250,7 +279,12 @@
 		} else {
 			chips = '<button type="button" class="mpwpb-csm__chip mpwpb-csm__chip--none" data-csm-select="none">' + esc(t.noCategory) + '</button>';
 		}
+		// Keyed by the service's own (stable, never-reused) array-index id
+		// rather than its position in the current (possibly filtered/
+		// searched) list, so a given service always keeps the same swatch.
+		var sw = svcSwatch(parseInt(svc.id, 10) || 0);
 		return '<div class="mpwpb-csm__row" data-csm-row="' + esc(svc.id) + '">'
+			+ '<span class="mpwpb-csm__row-icon" style="background:' + sw.bg + ';color:' + sw.fg + '"><span class="dashicons ' + sw.icon + '"></span></span>'
 			+ '<div class="mpwpb-csm__row-main">'
 			+ '<div class="mpwpb-csm__row-top"><span class="mpwpb-csm__row-name">' + esc(svc.name) + '</span>' + chips + '</div>'
 			+ (svc.desc ? '<p class="mpwpb-csm__row-desc">' + esc(svc.desc) + '</p>' : '')

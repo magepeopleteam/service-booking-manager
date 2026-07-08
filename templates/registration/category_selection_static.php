@@ -57,12 +57,10 @@
 			$price = array_key_exists('price', $service_item) ? $service_item['price'] : 0;
 			$wc_price = MPWPB_Global_Function::wc_price($post_id, $price);
 			$duration = array_key_exists('duration', $service_item) ? $service_item['duration'] : '';
-			$service_icon = array_key_exists('icon', $service_item) ? $service_item['icon'] : '';
 			?>
 	        <div class="mpwpb_item_box mpwpb-tree-service" data-target-popup="#mpwpb_static_popup" data-category="<?php echo esc_attr($cat_attr); ?>" data-sub-category="<?php echo esc_attr($sub_attr); ?>" data-service="<?php echo esc_attr($svc_key + 1); ?>">
 	            <span class="mpwpb-tree-checkbox" data-tree-checkbox></span>
 	            <span class="mpwpb-tree-service-main">
-					<?php if ($service_icon) { ?><span class="<?php echo esc_attr($service_icon); ?> mpwpb-tree-service-icon"></span><?php } ?>
 	                <span class="mpwpb-tree-service-name"><?php echo esc_html($service_name); ?></span>
 					<?php if ($duration) { ?><span class="mpwpb-tree-duration"><i class="fas fa-clock"></i> <?php echo wp_kses_post($duration); ?></span><?php } ?>
 	            </span>

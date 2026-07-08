@@ -135,7 +135,35 @@ function load_sortable_datepicker(parent, item) {
 		target_popup.find('.mpwpb_popup_close').click(function () {
 			target_popup.find('[data-icon-menu="all_item"]').trigger('click');
 			target_popup.find('.iconItem').removeClass('active');
+			target_popup.find('input.mpwpb_name_validation').val('').trigger('input');
 		});
+	});
+	//=================search icon (previously a dead input -- typing did nothing)=========================//
+	// Bound once, delegated, rather than inside the .mpwpb_icon_add handler
+	// above (which re-binds its own handlers every time the popup opens) --
+	// an input handler doesn't need that per-open re-binding.
+	$(document).on('input', '.mpwpb_add_icon_popup input.mpwpb_name_validation', function () {
+		let $popup = $(this).closest('.mpwpb_add_icon_popup');
+		let query = $(this).val().trim().toLowerCase();
+		let activeMenu = $popup.find('[data-icon-menu].active').data('icon-menu');
+		let anyMatch = false;
+		$popup.find('[data-icon-list]').each(function () {
+			let $tab = $(this);
+			let inActiveTab = !query && (activeMenu === 'all_item' || $tab.data('icon-list') === activeMenu);
+			let tabHasMatch = false;
+			$tab.find('.iconItem').each(function () {
+				let haystack = (($(this).data('icon-name') || '') + ' ' + ($(this).data('icon-class') || '')).toLowerCase();
+				let isMatch = !query || haystack.indexOf(query) > -1;
+				$(this).toggle(isMatch);
+				if (isMatch) { tabHasMatch = true; }
+			});
+			// While searching, matches can come from any category regardless
+			// of the currently selected tab; once cleared, fall back to
+			// whichever tab/category was active before.
+			$tab.toggle(query ? tabHasMatch : inActiveTab);
+			if (tabHasMatch) { anyMatch = true; }
+		});
+		$popup.find('.mpwpb_icon_search_empty').toggle(!!query && !anyMatch);
 	});
 	$(document).on('click', '.mpwpb_add_icon_image_area .mpwpb_icon_remove', function () {
 		let parent = $(this).closest('.mpwpb_add_icon_image_area');

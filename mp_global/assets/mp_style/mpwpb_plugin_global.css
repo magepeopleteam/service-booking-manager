@@ -307,7 +307,7 @@
 	.mpwpb_style .dNone, .mpwpb_style [class*="_dNone"] { display: none; }
 	.mpwpb_style .dBlock, .mpwpb_style [class*="_dBlock"] { display: block; }
 	.mpwpb_style .dInlineBlock, .mpwpb_style [class*="_dInlineBlock"],
-	.mpwpb_style small, .mpwpb_style span, .mpwpb_style strong { display: inline; }
+	.mpwpb_style small, .mpwpb_style span, .mpwpb_style strong { display: flex; }
 	/**************/
 	.mpwpb_style .fLeft, .mpwpb_style [class*="_fLeft"] { float: left; }
 	.mpwpb_style .fRight, .mpwpb_style [class*="_fRight"] { float: right; }

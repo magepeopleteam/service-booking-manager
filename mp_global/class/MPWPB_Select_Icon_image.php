@@ -38,11 +38,12 @@
 					$GLOBALS['mpwpb_icon_popup_exit'] = true;
 					?>
                     <div class="mpwpb_add_icon_popup mpwpb_popup mpwpb_style" data-popup="#mpwpb_add_icon_popup">
-                        <div class="mpwpb_popup_main_area fullWidth">
+                        <div class="mpwpb_popup_main_area">
                             <div class="mpwpb_popup_header allCenter">
                                 <h2 class="_mR"><?php esc_html_e('Select Icon', 'service-booking-manager'); ?></h2>
-                                <label class="min_300">
-                                    <input type="text" class="formControl mpwpb_name_validation" name="mpwpb_select_icon_name" placeholder="<?php esc_attr_e('Icon/class name....', 'service-booking-manager'); ?>"/>
+                                <label class="min_300 mpwpb_icon_search_field">
+                                    <span class="fas fa-search"></span>
+                                    <input type="text" class="formControl mpwpb_name_validation" name="mpwpb_select_icon_name" placeholder="<?php esc_attr_e('Search icon by name....', 'service-booking-manager'); ?>"/>
                                 </label>
                                 <span class="fas fa-times mpwpb_popup_close"></span>
                             </div>
@@ -82,6 +83,7 @@
                                                         </div>
                                                     </div>
 												<?php } ?>
+                                                <p class="mpwpb_icon_search_empty" style="display:none;"><?php esc_html_e('No icons match your search.', 'service-booking-manager'); ?></p>
                                             </div>
                                         </div>
 									<?php } ?>
