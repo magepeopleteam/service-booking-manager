@@ -863,8 +863,8 @@
 			return '<button type="button" class="mpwpb-csm__tpl-cat-btn" data-tpl-cat="' + esc(name) + '">'
 				+ '<span class="mpwpb-csm__tpl-cat-icon"><span class="dashicons ' + esc(def.icon || 'dashicons-portfolio') + '"></span></span>'
 				+ '<span class="mpwpb-csm__tpl-cat-name">' + esc(name) + '</span>'
-				+ '<span class="mpwpb-csm__tpl-cat-count">' + def.items.length + ' services</span>'
-				+ (def.category ? '<span class="mpwpb-csm__tpl-cat-badge"><span class="dashicons dashicons-category"></span>' + esc(def.category) + '</span>' : '')
+				+ '<span class="mpwpb-csm__tpl-cat-count">' + def.items.length + ' Services Included</span>'
+				+ '<span class="mpwpb-csm__tpl-cat-select"><span class="dashicons dashicons-plus-alt2"></span>Select Template</span>'
 				+ '</button>';
 		}).join('') + '</div>';
 	}
