@@ -890,7 +890,7 @@
 
 .mpwpb-staff-schedule .mpPanelBody > table th,
 .mpwpb-staff-schedule .mpPanelBody > table td {
-    padding: 14px 10px;
+    padding: 5px 2px;
     text-align: left;
     border-bottom: 1px solid #f0f0f0;
     font-size: 13px;
@@ -984,8 +984,8 @@
 
 .mpwpb-staff-schedule select.formControl {
     width: 100%;
-    min-width: 108px;
-    padding: 8px 10px;
+    min-width: 80px;
+    padding: 8px 4px;
     border: 1px solid #e1e5ea;
     border-radius: 6px;
     background: #fff;
@@ -1049,7 +1049,7 @@
 .mpwpb-staff-schedule .mp_settings_area {
     display: flex;
     flex-direction: column;
-    flex: 1 1 260px;
+    flex: 1 1 130px;
 }
 
 /* "Add New Off date" is rendered before the hidden row-template in the
@@ -1156,7 +1156,7 @@
    days/dates sit alongside in a sidebar column -- collapses to one
    column on narrower screens (see media query below). */
 .mpwpb-staff-schedule .mpwpb-schedule-grid {
-    display: grid;
+    display: inline;
     grid-template-columns: minmax(0, 1.65fr) minmax(260px, 1fr);
     gap: 20px;
     align-items: start;
@@ -1168,10 +1168,10 @@
 
 /* Re-enables the panel-header icon specifically for the schedule table
    (overridden further above for panels in general, since nothing wires
-   its collapse behaviour on the front-end) as a plain colour chip -- the
-   underlying glyph is whatever fa-plus resolves to, so its own color is
-   hidden rather than shown, avoiding an icon that doesn't match the
-   rest of the badge's intent. */
+   its collapse behaviour on the front-end) as a colour badge. The
+   underlying element only ever carries fa-plus (the collapse toggle
+   glyph, meaningless here), so the glyph itself is swapped for a clock
+   via a higher-specificity ::before rather than shown as-is. */
 .mpwpb-staff-schedule .mpwpb-schedule-main .mpPanelHeader [data-icon] {
     display: inline-flex;
     align-items: center;
@@ -1183,6 +1183,14 @@
     color: transparent;
     margin: 0 10px 0 0;
     flex: 0 0 auto;
+}
+
+.mpwpb-staff-schedule .mpwpb-schedule-main .mpPanelHeader [data-icon]::before {
+    content: "\f017";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    color: #0073aa;
+    font-size: 14px;
 }
 
 .mpwpb-staff-schedule .mpwpb_staff_status_badge.is-off {
@@ -1236,25 +1244,36 @@
 .mpwpb-staff-schedule .mpwpb_off_day_card > ._fs_label_w_200 {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     min-width: 0;
     font-size: 14px;
-    font-weight: 600;
-    color: #333;
+    font-weight: 700;
+    color: #1f2937;
     padding-top: 0;
 }
 
+/* Matches the Time Schedule Settings panel's icon-badge treatment --
+   calendar glyph in a colour chip instead of the plain dot this used to
+   be, with the same red/blue split calling out the first card. */
 .mpwpb-staff-schedule .mpwpb_off_day_card > ._fs_label_w_200::before {
-    content: "";
-    width: 10px;
-    height: 10px;
-    border-radius: 3px;
-    background: #0073aa;
+    content: "\f073";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: #e3f2fd;
+    color: #0073aa;
+    font-size: 14px;
     flex: 0 0 auto;
 }
 
 .mpwpb-staff-schedule .mpwpb_off_day_card:first-child > ._fs_label_w_200::before {
-    background: #e53935;
+    background: #fde8e8;
+    color: #e53935;
 }
 
 @media (max-width: 782px) {
