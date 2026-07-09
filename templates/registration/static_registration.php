@@ -61,7 +61,6 @@
             <input type="hidden" name="mpwpb_sticky_on_scrolling" id="mpwpb_sticky_on_scrolling" value="<?php echo esc_attr( $is_sticky_on_scrolling )?>">
             <?php if( $shortcode === 'yes' ){ ?>
             <div class="mpwpb_static " id="mpwpb_make_static_booking">
-				<?php include(MPWPB_Function::template_path('layout/title_details_page.php')); ?>
                 <div class="mpwpb_static_cateogry">
 					<?php include(MPWPB_Function::template_path('registration/category_selection_static.php')); ?>
                 </div>

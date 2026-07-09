@@ -8,6 +8,8 @@ div.mpwpb_order_filter_area label {margin: 0 var(--mpwpb_dmp_xs) 0 0;}
 #mpwpb_order_list_result table td {font-size: 15px !important; vertical-align: top;}
 #mpwpb_order_list_result table tr:nth-of-type(even) {background-color: #fafafa;}
 #mpwpb_order_list_result table tr:nth-of-type(even) td {vertical-align: top;}
+.mpwpb-order-list span{display: inline !important; }
+.mpwpb-order-list .mpwpb-header span{display: flex !important; }
 div.attendee_filter_list h5 {margin: 0 20px 0 0;}
 .pagination_input {width: 150px !important;display: inline-block !important;}
 

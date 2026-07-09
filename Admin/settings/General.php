@@ -14,7 +14,7 @@
 			public function general_settings($post_id) {
 				$title = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_shortcode_title');
 				$sub_title = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_shortcode_sub_title');
-				$mpwpb_template = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_template', 'default.php');
+				$mpwpb_template = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_template', 'static.php');
 				// echo $mpwpb_template;
 				?>
                 <div class="tabsItem" data-tabs="#mpwpb_general_info">

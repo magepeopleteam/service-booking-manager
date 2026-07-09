@@ -126,6 +126,10 @@
 .mpwpb-static-template section#service-reviews .mpwpb-reviews-head > h2{
 	font-size:19px !important;font-weight:800;color:var(--mpwpb_color_theme) !important;border-bottom:0 !important;margin-bottom:10px !important;
 }
+section#service-overview ol{
+	padding-left:0px !important;
+	margin:10px 0 0 0 !important;
+}
 
 /* Title + "Write a Review" trigger, same row, button pinned top-right. */
 .mpwpb-reviews-head{

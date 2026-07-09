@@ -1,0 +1,237 @@
+/* =====================================================================
+ * "One-Click Business Templates" picker -- Service List admin page.
+ * This page has no .mpwpb-sme shell (unlike the per-post editor), so the
+ * design tokens used elsewhere in the plugin's modern admin UI are
+ * redeclared locally, scoped to this feature's own root elements.
+ * ===================================================================== */
+
+#mpwpb-bt-root,
+.mpwpb-bt__overlay {
+	--brand: #2451e0;
+	--brand-600: #1d3fb8;
+	--brand-soft: #eaf0ff;
+	--ink: #0f172a;
+	--muted: #94a3b8;
+	--line: #e4e9f0;
+	--radius: 14px;
+}
+
+/* Trigger button -- reuses .mpwpb_add_new_Service's layout/sizing but with
+   its own accent color so it reads as a distinct, secondary action next to
+   "Add New Service". */
+.mpwpb-bt__trigger-btn.mpwpb-bt__trigger-btn {
+	background-color: #488BF4;
+	margin-left: 10px;
+}
+.mpwpb-bt__trigger-btn.mpwpb-bt__trigger-btn:hover {
+	background-color: #3858E9;
+	opacity: 0.8;
+}
+
+.mpwpb-bt__overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 100000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(15, 23, 42, 0.55);
+	padding: 24px;
+	box-sizing: border-box;
+}
+.mpwpb-bt__overlay *,
+.mpwpb-bt__overlay *::before,
+.mpwpb-bt__overlay *::after {
+	box-sizing: border-box;
+}
+
+.mpwpb-bt__modal {
+	width: 100%;
+	max-width: 960px;
+	max-height: 86vh;
+	background: #fff;
+	border-radius: 18px;
+	box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28);
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.mpwpb-bt__head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 18px 22px;
+	border-bottom: 1px solid var(--line);
+	flex: 0 0 auto;
+}
+.mpwpb-bt__title {
+	font-size: 16px;
+	font-weight: 700;
+	color: var(--ink);
+}
+.mpwpb-bt__close {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 30px;
+	height: 30px;
+	border: 0;
+	background: transparent;
+	border-radius: 8px;
+	color: var(--muted);
+	cursor: pointer;
+}
+.mpwpb-bt__close:hover {
+	background: #f1f5f9;
+	color: var(--ink);
+}
+
+.mpwpb-bt__body {
+	padding: 20px 22px 24px;
+	overflow-y: auto;
+}
+.mpwpb-bt__intro {
+	margin-bottom: 10px !important;
+	font-size: 12.5px;
+	color: var(--muted);
+	line-height: 1.5;
+}
+.mpwpb-bt__error {
+	margin: 14px 0 0;
+	font-size: 12.5px;
+	font-weight: 600;
+	color: #b32d2e;
+}
+
+.mpwpb-bt__grid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 14px;
+}
+@media (max-width: 900px) {
+	.mpwpb-bt__grid {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+@media (max-width: 640px) {
+	.mpwpb-bt__grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+@media (max-width: 420px) {
+	.mpwpb-bt__grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+.mpwpb-bt__tpl-card.mpwpb-bt__tpl-card {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	height: 100%;
+	border: 1px solid var(--line);
+	border-radius: 16px;
+	background: #fff;
+	padding: 20px 18px 18px;
+	cursor: pointer;
+	text-align: center;
+	transition: 0.15s;
+	box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+}
+.mpwpb-bt__tpl-card:hover {
+	border-color: var(--brand);
+	box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+	transform: translateY(-2px);
+}
+.mpwpb-bt__tpl-card:disabled {
+	cursor: default;
+	transform: none;
+}
+.mpwpb-bt__tpl-card.is-busy {
+	opacity: 0.7;
+}
+
+.mpwpb-bt__tpl-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 46px;
+	height: 46px;
+	border-radius: 12px;
+	margin-bottom: 14px;
+	flex: 0 0 auto;
+}
+.mpwpb-bt__tpl-icon .dashicons {
+	font-size: 21px;
+	width: 21px;
+	height: 21px;
+}
+
+.mpwpb-bt__tpl-name.mpwpb-bt__tpl-name {
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	min-height: 38px;
+	width: 100%;
+	font-size: 14px;
+	font-weight: 700;
+	color: var(--ink);
+	line-height: 1.35;
+}
+.mpwpb-bt__tpl-count {
+	font-size: 12px;
+	color: var(--muted);
+	margin-top: 5px;
+	margin-bottom: 16px;
+}
+
+.mpwpb-bt__tpl-select.mpwpb-bt__tpl-select {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	width: 100%;
+	border-radius: 999px;
+	background: var(--brand-soft);
+	color: var(--brand-600);
+	font-size: 12.5px;
+	font-weight: 700;
+	padding: 9px 12px;
+	margin-top: auto;
+	transition: 0.15s;
+}
+.mpwpb-bt__tpl-select .dashicons {
+	font-size: 13px;
+	width: 13px;
+	height: 13px;
+}
+.mpwpb-bt__tpl-card:hover .mpwpb-bt__tpl-select {
+	background: var(--brand);
+	color: #fff;
+}
+
+/* mpwpb_plugin_global.css's `.mpwpb_style button:hover span{color:#FFF}`
+   (0,2,2) doesn't apply on this page (no .mpwpb_style ancestor here), but
+   keep hover text colors explicit for robustness against future markup
+   changes -- same defensive pattern used in mpwpb-categories-services-modern.css. */
+.mpwpb-bt__tpl-card:hover .mpwpb-bt__tpl-icon,
+.mpwpb-bt__tpl-card:hover .mpwpb-bt__tpl-icon .dashicons {
+	color: inherit;
+}
+.mpwpb-bt__tpl-card:hover .mpwpb-bt__tpl-name {
+	color: var(--ink);
+}
+.mpwpb-bt__tpl-card:hover .mpwpb-bt__tpl-count {
+	color: var(--muted);
+}
+
+.mpwpb-bt__spin {
+	animation: mpwpb-bt-spin 1s linear infinite;
+}
+@keyframes mpwpb-bt-spin {
+	from { transform: rotate(0deg); }
+	to { transform: rotate(360deg); }
+}

@@ -83,7 +83,7 @@
 				if (get_post_type($post_id) == MPWPB_Function::get_cpt()) {
 					$title = isset($_POST['mpwpb_shortcode_title']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_shortcode_title'])) : '';
 					$sub_title = isset($_POST['mpwpb_shortcode_sub_title']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_shortcode_sub_title'])) : '';
-					$mpwpb_template = isset($_POST['mpwpb_template']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_template'])) : 'default.php';
+					$mpwpb_template = isset($_POST['mpwpb_template']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_template'])) : 'static.php';
 					$mpwpb_template = MPWPB_Function::sanitize_details_template_name($mpwpb_template);
 					
 					update_post_meta($post_id, 'mpwpb_shortcode_title', $title);

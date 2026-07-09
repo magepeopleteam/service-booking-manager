@@ -21,6 +21,8 @@
 			}
 			private function load_file(): void {
                 require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Service_List.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/data/MPWPB_Business_Templates_Data.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Business_Templates_Import.php';
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Function.php';
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Query.php';
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Layout.php';

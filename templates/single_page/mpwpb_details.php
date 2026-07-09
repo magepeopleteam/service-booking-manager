@@ -50,7 +50,7 @@ if ( wp_is_block_theme() ) {  ?>
 		$service_text = $service_text ?? MPWPB_Function::get_service_text($post_id);
 		$extra_services = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', array());
 		$short_date_format = MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'date_format_short', 'M , Y');
-		$template_name = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_template', 'default.php');
+		$template_name = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_template', 'static.php');
 
 		include_once(MPWPB_Function::details_template_path($post_id));
 	}

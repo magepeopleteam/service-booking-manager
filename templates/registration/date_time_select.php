@@ -12,7 +12,7 @@
 	// grid (see mpwpb-service-page-modern.css), so it opts out of the
 	// sliding owl-carousel entirely -- other templates (e.g. default.php)
 	// keep the carousel unchanged.
-	$mpwpb_is_static_template = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_template', 'default.php') === 'static.php';
+	$mpwpb_is_static_template = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_template', 'static.php') === 'static.php';
 
 	$enable_waiting_list = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_enable_waiting_list', 'no');
 	$enable_recurring = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_enable_recurring', 'no');

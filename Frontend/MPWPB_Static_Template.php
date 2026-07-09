@@ -520,7 +520,10 @@
                         $image_url  = esc_url( wp_get_attachment_url( $image_id ) );
 
                         if ( empty( $image_url ) ) {
-                            $image_url = 'https://via.placeholder.com/80'; // fallback image
+                            // Same fallback MPWPB_Staff_Members::get_custom_user_profile_image()
+                            // already uses elsewhere -- WordPress's own default avatar, no
+                            // dependency on an external placeholder service.
+                            $image_url = esc_url( get_avatar_url( $staff_id, [ 'size' => 80 ] ) );
                         }
                         ?>
                         <div class="mpwpb_staff_card">

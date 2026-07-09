@@ -292,6 +292,8 @@ $total_user = get_total_customer();
                 </div>
                 <div class="mpwpv_service_list_actions-inline">
                     <a href="<?php echo esc_url( $add_new_link )?>"><div class="mpwpb_add_new_Service"><span class="fas fa-plus _mR_xs"></span><?php echo esc_html__('Add New Service', 'tour-booking-manager')?></div></a>
+                    <button type="button" id="mpwpb-open-business-templates" class="mpwpb_add_new_Service mpwpb-bt__trigger-btn"><span class="dashicons dashicons-superhero-alt _mR_xs"></span><?php echo esc_html__('One-Click Business Templates', 'service-booking-manager')?></button>
+                    <div id="mpwpb-bt-root"></div>
                     <div class="mpwpv_service_list_search-container">
                         <span class="mpwpv_service_list_search-icon"><i class="fas fa-magnifying-glass"></i></span>
                         <input type="text" class="mpwpv_service_list_search-input" id="mpwpv_service_list_search_input" placeholder="<?php esc_attr_e( 'Search services...', 'service-booking-manager')?>">
