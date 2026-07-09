@@ -869,36 +869,156 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
          * dashboard (Frontend/MPWPB_Custom_Payment_My_Account.php).
          */
         public static function render_my_service_tab($user_id): void {
-            $services = self::get_staff_services($user_id);
+            $all_services = self::get_staff_services($user_id);
+
+            $total_count = count($all_services);
+            $published_count = 0;
+            $draft_count = 0;
+            $service_ids = array();
+            foreach ($all_services as $service) {
+                if ($service->post_status === 'publish') {
+                    $published_count++;
+                } elseif ($service->post_status === 'draft') {
+                    $draft_count++;
+                }
+                $service_ids[] = $service->ID;
+            }
+            // "Service Reach" -- real count of bookings ever made for any of
+            // this staff member's assigned services (not just the ones
+            // assigned to *this* staff member specifically, since a service
+            // can have several staff and the point here is how much this
+            // person's services get booked overall), rather than a made-up
+            // number.
+            $reach_count = 0;
+            if (!empty($service_ids)) {
+                $reach_count = count(get_posts(array(
+                    'post_type' => 'mpwpb_booking',
+                    'posts_per_page' => -1,
+                    'fields' => 'ids',
+                    'meta_query' => array(
+                        array('key' => 'mpwpb_id', 'value' => $service_ids, 'compare' => 'IN'),
+                    ),
+                )));
+            }
+
+            // Pagination -- same PHP-side approach as render_my_appointment_tab(),
+            // own page param so the two tabs' pagination never collides.
+            $per_page = 10;
+            $total_pages = max(1, (int) ceil($total_count / $per_page));
+            $current_page = isset($_GET['mpwpb_service_page']) ? absint($_GET['mpwpb_service_page']) : 1;
+            $current_page = min(max(1, $current_page), $total_pages);
+            $services = array_slice($all_services, ($current_page - 1) * $per_page, $per_page);
+
+            // Staff (role mpwpb_staff) can't publish/create services --
+            // only show "New Service" to whoever's actually allowed to
+            // (an admin previewing this page, or a staff account with
+            // elevated capabilities), rather than a button that would just
+            // hit a WP permissions wall for the common case.
+            $can_create_service = current_user_can('publish_posts');
             ?>
             <div class="mpwpb-staff-services">
-                <h3><?php esc_html_e('My Service', 'service-booking-manager'); ?></h3>
-                <?php if (empty($services)) : ?>
+                <div class="mpwpb-service-toolbar">
+                    <div>
+                        <h3><?php esc_html_e('My Service', 'service-booking-manager'); ?></h3>
+                        <p class="mpwpb-service-subtitle"><?php esc_html_e('View and manage your service offerings and status.', 'service-booking-manager'); ?></p>
+                    </div>
+                    <?php if ($can_create_service) : ?>
+                        <a class="mpwpb-service-new-btn" href="<?php echo esc_url(admin_url('post-new.php?post_type=' . MPWPB_Function::get_cpt())); ?>">
+                            <i class="fas fa-circle-plus"></i> <?php esc_html_e('New Service', 'service-booking-manager'); ?>
+                        </a>
+                    <?php endif; ?>
+                </div>
+
+                <div class="mpwpb-service-stats">
+                    <div class="mpwpb-service-stat-card">
+                        <span class="mpwpb-service-stat-label"><?php esc_html_e('Total Services', 'service-booking-manager'); ?></span>
+                        <strong class="mpwpb-service-stat-value"><?php echo esc_html($total_count); ?></strong>
+                    </div>
+                    <div class="mpwpb-service-stat-card">
+                        <span class="mpwpb-service-stat-label"><?php esc_html_e('Published', 'service-booking-manager'); ?></span>
+                        <strong class="mpwpb-service-stat-value mpwpb-service-stat-value-green"><?php echo esc_html($published_count); ?></strong>
+                    </div>
+                    <div class="mpwpb-service-stat-card">
+                        <span class="mpwpb-service-stat-label"><?php esc_html_e('Drafts', 'service-booking-manager'); ?></span>
+                        <strong class="mpwpb-service-stat-value mpwpb-service-stat-value-muted"><?php echo esc_html($draft_count); ?></strong>
+                    </div>
+                    <div class="mpwpb-service-stat-card">
+                        <span class="mpwpb-service-stat-label"><?php esc_html_e('Service Reach', 'service-booking-manager'); ?></span>
+                        <strong class="mpwpb-service-stat-value"><?php echo esc_html($reach_count); ?></strong>
+                    </div>
+                </div>
+
+                <?php if (empty($all_services)) : ?>
                     <div class="mpwpb-no-bookings"><?php esc_html_e("You haven't been assigned to any services yet.", 'service-booking-manager'); ?></div>
                 <?php else : ?>
-                    <table class="mpwpb-bookings-table">
-                        <thead>
-                            <tr>
-                                <th><?php esc_html_e('Service', 'service-booking-manager'); ?></th>
-                                <th><?php esc_html_e('Category', 'service-booking-manager'); ?></th>
-                                <th><?php esc_html_e('Status', 'service-booking-manager'); ?></th>
-                                <th><?php esc_html_e('Actions', 'service-booking-manager'); ?></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($services as $service) :
-                                $terms = get_the_terms($service->ID, 'mpwpb_category');
-                                $category = ($terms && !is_wp_error($terms)) ? implode(', ', wp_list_pluck($terms, 'name')) : '—';
+                    <div class="mpwpb-service-card">
+                        <div class="mpwpb-service-table-scroll">
+                            <table class="mpwpb-bookings-table mpwpb-service-table">
+                                <thead>
+                                    <tr>
+                                        <th><?php esc_html_e('Service Name', 'service-booking-manager'); ?></th>
+                                        <th><?php esc_html_e('Category', 'service-booking-manager'); ?></th>
+                                        <th><?php esc_html_e('Status', 'service-booking-manager'); ?></th>
+                                        <th><?php esc_html_e('Actions', 'service-booking-manager'); ?></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($services as $service) :
+                                        $terms = get_the_terms($service->ID, 'mpwpb_category');
+                                        $category = ($terms && !is_wp_error($terms)) ? implode(', ', wp_list_pluck($terms, 'name')) : '';
+                                        ?>
+                                        <tr>
+                                            <td>
+                                                <div class="mpwpb-service-name-cell">
+                                                    <span class="mpwpb-service-icon"><i class="fas fa-wrench"></i></span>
+                                                    <div>
+                                                        <div class="mpwpb-service-name"><?php echo esc_html(get_the_title($service)); ?></div>
+                                                        <div class="mpwpb-service-id">
+                                                            <?php
+                                                            /* translators: %d: service post ID */
+                                                            printf(esc_html__('ID: #%d', 'service-booking-manager'), (int) $service->ID);
+                                                            ?>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <?php if ($category !== '') : ?>
+                                                    <span class="mpwpb-service-category-pill"><?php echo esc_html($category); ?></span>
+                                                <?php else : ?>
+                                                    <span class="mpwpb-service-category-empty">&mdash;</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td><span class="mpwpb-status mpwpb-status-<?php echo esc_attr($service->post_status); ?>"><?php echo esc_html(ucfirst($service->post_status)); ?></span></td>
+                                            <td><a class="mpwpb-btn mpwpb-view-btn" href="<?php echo esc_url(get_permalink($service)); ?>"><?php esc_html_e('View Service', 'service-booking-manager'); ?></a></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mpwpb-appt-pagination">
+                            <span class="mpwpb-appt-pagination-summary">
+                                <?php
+                                printf(
+                                    /* translators: 1: first row number shown, 2: last row number shown, 3: total matching services */
+                                    esc_html__('Showing %1$d to %2$d of %3$d entries', 'service-booking-manager'),
+                                    $total_count === 0 ? 0 : (($current_page - 1) * $per_page) + 1,
+                                    min($current_page * $per_page, $total_count),
+                                    $total_count
+                                );
                                 ?>
-                                <tr>
-                                    <td><?php echo esc_html(get_the_title($service)); ?></td>
-                                    <td><?php echo esc_html($category); ?></td>
-                                    <td><span class="mpwpb-status mpwpb-status-<?php echo esc_attr($service->post_status); ?>"><?php echo esc_html(ucfirst($service->post_status)); ?></span></td>
-                                    <td><a class="mpwpb-btn mpwpb-view-btn" href="<?php echo esc_url(get_permalink($service)); ?>"><?php esc_html_e('View Service', 'service-booking-manager'); ?></a></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                            </span>
+                            <?php if ($total_pages > 1) : ?>
+                                <div class="mpwpb-appt-pagination-pages">
+                                    <a class="mpwpb-appt-page-btn<?php echo $current_page <= 1 ? ' is-disabled' : ''; ?>" href="<?php echo esc_url(add_query_arg('mpwpb_service_page', max(1, $current_page - 1))); ?>">&lsaquo;</a>
+                                    <?php for ($p = 1; $p <= $total_pages; $p++) : ?>
+                                        <a class="mpwpb-appt-page-btn<?php echo $p === $current_page ? ' is-active' : ''; ?>" href="<?php echo esc_url(add_query_arg('mpwpb_service_page', $p)); ?>"><?php echo esc_html($p); ?></a>
+                                    <?php endfor; ?>
+                                    <a class="mpwpb-appt-page-btn<?php echo $current_page >= $total_pages ? ' is-disabled' : ''; ?>" href="<?php echo esc_url(add_query_arg('mpwpb_service_page', min($total_pages, $current_page + 1))); ?>">&rsaquo;</a>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
                 <?php endif; ?>
             </div>
             <?php
@@ -923,61 +1043,176 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
             }
             $start_date = isset($_GET['mpwpb_appt_from']) ? sanitize_text_field(wp_unslash($_GET['mpwpb_appt_from'])) : '';
             $end_date = isset($_GET['mpwpb_appt_to']) ? sanitize_text_field(wp_unslash($_GET['mpwpb_appt_to'])) : '';
-            $bookings = self::get_staff_appointments($user_id, $start_date, $end_date);
+            $filtered_bookings = self::get_staff_appointments($user_id, $start_date, $end_date);
+
+            // Pagination -- purely in PHP over the already-fetched (and
+            // possibly date-filtered) list, consistent with how the rest of
+            // get_staff_appointments() already does its filtering in PHP
+            // rather than at the DB query level.
+            $per_page = 10;
+            $total_count = count($filtered_bookings);
+            $total_pages = max(1, (int) ceil($total_count / $per_page));
+            $current_page = isset($_GET['mpwpb_appt_page']) ? absint($_GET['mpwpb_appt_page']) : 1;
+            $current_page = min(max(1, $current_page), $total_pages);
+            $bookings = array_slice($filtered_bookings, ($current_page - 1) * $per_page, $per_page);
+
+            // Stat cards below the table intentionally ignore the From/To
+            // filter above -- "Today's Visits"/"Pending Processing" are meant
+            // to always reflect this staff member's overall standing, not
+            // whatever date range happens to be selected in the table.
+            $all_bookings = $start_date || $end_date ? self::get_staff_appointments($user_id) : $filtered_bookings;
+            $today = current_time('Y-m-d');
+            $today_count = 0;
+            $pending_count = 0;
+            foreach ($all_bookings as $b) {
+                if (substr((string) $b->mpwpb_date, 0, 10) === $today) {
+                    $today_count++;
+                }
+                if (in_array(strtolower((string) $b->mpwpb_order_status), array('pending', 'processing'), true)) {
+                    $pending_count++;
+                }
+            }
             ?>
             <div class="mpwpb-staff-appointments">
-                <h3><?php esc_html_e('My Appointment', 'service-booking-manager'); ?></h3>
-                <form method="get" class="mpwpb-appt-filter">
-                    <?php foreach ($_GET as $key => $value) :
-                        if (in_array($key, array('mpwpb_appt_from', 'mpwpb_appt_to'), true) || is_array($value)) {
-                            continue;
-                        }
-                        ?>
-                        <input type="hidden" name="<?php echo esc_attr($key); ?>" value="<?php echo esc_attr(wp_unslash($value)); ?>"/>
-                    <?php endforeach; ?>
-                    <label>
-                        <span class="mpwpb-appt-field-label"><?php esc_html_e('From', 'service-booking-manager'); ?></span>
-                        <input type="date" name="mpwpb_appt_from" value="<?php echo esc_attr($start_date); ?>"/>
-                    </label>
-                    <label>
-                        <span class="mpwpb-appt-field-label"><?php esc_html_e('To', 'service-booking-manager'); ?></span>
-                        <input type="date" name="mpwpb_appt_to" value="<?php echo esc_attr($end_date); ?>"/>
-                    </label>
-                    <button type="submit" class="mpwpb-btn mpwpb-submit-btn"><i class="fas fa-filter"></i> <?php esc_html_e('Filter', 'service-booking-manager'); ?></button>
-                    <?php if ($start_date || $end_date) : ?>
-                        <a class="mpwpb-appt-clear-link" href="<?php echo esc_url(remove_query_arg(array('mpwpb_appt_from', 'mpwpb_appt_to'))); ?>"><?php esc_html_e('Clear', 'service-booking-manager'); ?></a>
+                <div class="mpwpb-appt-toolbar">
+                    <div>
+                        <h3><?php esc_html_e('My Appointment', 'service-booking-manager'); ?></h3>
+                        <p class="mpwpb-appt-subtitle"><?php esc_html_e('Review and manage your upcoming service schedule.', 'service-booking-manager'); ?></p>
+                    </div>
+                    <form method="get" class="mpwpb-appt-filter">
+                        <?php foreach ($_GET as $key => $value) :
+                            if (in_array($key, array('mpwpb_appt_from', 'mpwpb_appt_to', 'mpwpb_appt_page'), true) || is_array($value)) {
+                                continue;
+                            }
+                            ?>
+                            <input type="hidden" name="<?php echo esc_attr($key); ?>" value="<?php echo esc_attr(wp_unslash($value)); ?>"/>
+                        <?php endforeach; ?>
+                        <label>
+                            <span class="mpwpb-appt-field-label"><?php esc_html_e('From', 'service-booking-manager'); ?></span>
+                            <input type="date" name="mpwpb_appt_from" value="<?php echo esc_attr($start_date); ?>"/>
+                        </label>
+                        <label>
+                            <span class="mpwpb-appt-field-label"><?php esc_html_e('To', 'service-booking-manager'); ?></span>
+                            <input type="date" name="mpwpb_appt_to" value="<?php echo esc_attr($end_date); ?>"/>
+                        </label>
+                        <button type="submit" class="mpwpb-btn mpwpb-submit-btn"><i class="fas fa-filter"></i> <?php esc_html_e('Filter', 'service-booking-manager'); ?></button>
+                        <?php if ($start_date || $end_date) : ?>
+                            <a class="mpwpb-appt-clear-link" href="<?php echo esc_url(remove_query_arg(array('mpwpb_appt_from', 'mpwpb_appt_to', 'mpwpb_appt_page'))); ?>"><?php esc_html_e('Clear', 'service-booking-manager'); ?></a>
+                        <?php endif; ?>
+                    </form>
+                </div>
+
+                <div class="mpwpb-appt-card">
+                    <?php if (empty($bookings)) : ?>
+                        <div class="mpwpb-no-bookings"><?php esc_html_e('No appointments found for the selected range.', 'service-booking-manager'); ?></div>
+                    <?php else : ?>
+                        <div class="mpwpb-appt-table-scroll">
+                            <table class="mpwpb-bookings-table mpwpb-appt-table">
+                                <thead>
+                                    <tr>
+                                        <th><?php esc_html_e('Booking ID', 'service-booking-manager'); ?></th>
+                                        <th><?php esc_html_e('Service', 'service-booking-manager'); ?></th>
+                                        <th><?php esc_html_e('Customer', 'service-booking-manager'); ?></th>
+                                        <th><?php esc_html_e('Date', 'service-booking-manager'); ?></th>
+                                        <th><?php esc_html_e('Time', 'service-booking-manager'); ?></th>
+                                        <th><?php esc_html_e('Status', 'service-booking-manager'); ?></th>
+                                        <th><?php esc_html_e('Actions', 'service-booking-manager'); ?></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($bookings as $booking) :
+                                        $customer_name = $booking->mpwpb_billing_name ?: '';
+                                        $initials = '?';
+                                        if ($customer_name !== '') {
+                                            $words = preg_split('/\s+/', trim($customer_name));
+                                            $initials = mb_strtoupper(mb_substr($words[0], 0, 1) . mb_substr($words[count($words) > 1 ? 1 : 0], 0, 1));
+                                            if (count($words) === 1) {
+                                                $initials = mb_strtoupper(mb_substr($words[0], 0, 2));
+                                            }
+                                        }
+                                        ?>
+                                        <tr>
+                                            <td class="mpwpb-appt-id">#<?php echo esc_html($booking->ID); ?></td>
+                                            <td><?php echo esc_html(get_the_title($booking->mpwpb_id)); ?></td>
+                                            <td>
+                                                <div class="mpwpb-appt-customer">
+                                                    <span class="mpwpb-appt-avatar"><?php echo esc_html($initials); ?></span>
+                                                    <span><?php echo esc_html($customer_name ?: '—'); ?></span>
+                                                </div>
+                                            </td>
+                                            <td><?php echo esc_html(MPWPB_Global_Function::date_format($booking->mpwpb_date)); ?></td>
+                                            <td><?php echo esc_html(MPWPB_Global_Function::date_format($booking->mpwpb_date, 'time')); ?></td>
+                                            <td><span class="mpwpb-status mpwpb-status-<?php echo esc_attr(strtolower($booking->mpwpb_order_status)); ?>"><?php echo esc_html(ucfirst($booking->mpwpb_order_status)); ?></span></td>
+                                            <td><a class="mpwpb-appt-view-btn" href="<?php echo esc_url(add_query_arg('mpwpb_appt_id', $booking->ID)); ?>"><?php esc_html_e('View', 'service-booking-manager'); ?></a></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mpwpb-appt-pagination">
+                            <span class="mpwpb-appt-pagination-summary">
+                                <?php
+                                printf(
+                                    /* translators: 1: number of rows shown on this page, 2: total matching appointments */
+                                    esc_html__('Showing %1$d of %2$d appointments', 'service-booking-manager'),
+                                    count($bookings),
+                                    $total_count
+                                );
+                                ?>
+                            </span>
+                            <?php if ($total_pages > 1) : ?>
+                                <div class="mpwpb-appt-pagination-pages">
+                                    <a class="mpwpb-appt-page-btn<?php echo $current_page <= 1 ? ' is-disabled' : ''; ?>" href="<?php echo esc_url(add_query_arg('mpwpb_appt_page', max(1, $current_page - 1))); ?>">&lsaquo;</a>
+                                    <?php for ($p = 1; $p <= $total_pages; $p++) : ?>
+                                        <a class="mpwpb-appt-page-btn<?php echo $p === $current_page ? ' is-active' : ''; ?>" href="<?php echo esc_url(add_query_arg('mpwpb_appt_page', $p)); ?>"><?php echo esc_html($p); ?></a>
+                                    <?php endfor; ?>
+                                    <a class="mpwpb-appt-page-btn<?php echo $current_page >= $total_pages ? ' is-disabled' : ''; ?>" href="<?php echo esc_url(add_query_arg('mpwpb_appt_page', min($total_pages, $current_page + 1))); ?>">&rsaquo;</a>
+                                </div>
+                            <?php endif; ?>
+                        </div>
                     <?php endif; ?>
-                </form>
-                <?php if (empty($bookings)) : ?>
-                    <div class="mpwpb-no-bookings"><?php esc_html_e('No appointments found for the selected range.', 'service-booking-manager'); ?></div>
-                <?php else : ?>
-                    <table class="mpwpb-bookings-table">
-                        <thead>
-                            <tr>
-                                <th><?php esc_html_e('Booking ID', 'service-booking-manager'); ?></th>
-                                <th><?php esc_html_e('Service', 'service-booking-manager'); ?></th>
-                                <th><?php esc_html_e('Customer', 'service-booking-manager'); ?></th>
-                                <th><?php esc_html_e('Date', 'service-booking-manager'); ?></th>
-                                <th><?php esc_html_e('Time', 'service-booking-manager'); ?></th>
-                                <th><?php esc_html_e('Status', 'service-booking-manager'); ?></th>
-                                <th><?php esc_html_e('Actions', 'service-booking-manager'); ?></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($bookings as $booking) : ?>
-                                <tr>
-                                    <td>#<?php echo esc_html($booking->ID); ?></td>
-                                    <td><?php echo esc_html(get_the_title($booking->mpwpb_id)); ?></td>
-                                    <td><?php echo esc_html($booking->mpwpb_billing_name ?: '—'); ?></td>
-                                    <td><?php echo esc_html(MPWPB_Global_Function::date_format($booking->mpwpb_date)); ?></td>
-                                    <td><?php echo esc_html(MPWPB_Global_Function::date_format($booking->mpwpb_date, 'time')); ?></td>
-                                    <td><span class="mpwpb-status mpwpb-status-<?php echo esc_attr(strtolower($booking->mpwpb_order_status)); ?>"><?php echo esc_html(ucfirst($booking->mpwpb_order_status)); ?></span></td>
-                                    <td><a class="mpwpb-btn mpwpb-view-btn" href="<?php echo esc_url(add_query_arg('mpwpb_appt_id', $booking->ID)); ?>"><?php esc_html_e('View', 'service-booking-manager'); ?></a></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                <?php endif; ?>
+                </div>
+
+                <div class="mpwpb-appt-stats">
+                    <div class="mpwpb-appt-stat-card">
+                        <span class="mpwpb-appt-stat-icon mpwpb-appt-stat-icon-blue"><i class="fas fa-calendar-day"></i></span>
+                        <div>
+                            <span class="mpwpb-appt-stat-label"><?php esc_html_e("Today's Visits", 'service-booking-manager'); ?></span>
+                            <strong class="mpwpb-appt-stat-value">
+                                <?php
+                                printf(
+                                    /* translators: %d: number of appointments today */
+                                    esc_html(_n('%d Appointment', '%d Appointments', $today_count, 'service-booking-manager')),
+                                    $today_count
+                                );
+                                ?>
+                            </strong>
+                        </div>
+                    </div>
+                    <div class="mpwpb-appt-stat-card">
+                        <span class="mpwpb-appt-stat-icon mpwpb-appt-stat-icon-amber"><i class="fas fa-clipboard-list"></i></span>
+                        <div>
+                            <span class="mpwpb-appt-stat-label"><?php esc_html_e('Pending Processing', 'service-booking-manager'); ?></span>
+                            <strong class="mpwpb-appt-stat-value">
+                                <?php
+                                printf(
+                                    /* translators: %d: number of pending/processing appointments */
+                                    esc_html(_n('%d Unit', '%d Units', $pending_count, 'service-booking-manager')),
+                                    $pending_count
+                                );
+                                ?>
+                            </strong>
+                        </div>
+                    </div>
+                    <a class="mpwpb-appt-quick-action" href="<?php echo esc_url(home_url('/')); ?>">
+                        <span class="mpwpb-appt-quick-action-icon"><i class="fas fa-plus-circle"></i></span>
+                        <div>
+                            <span class="mpwpb-appt-quick-action-label"><?php esc_html_e('Quick Action', 'service-booking-manager'); ?></span>
+                            <strong><?php esc_html_e('New Booking', 'service-booking-manager'); ?></strong>
+                        </div>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
             </div>
             <?php
         }
