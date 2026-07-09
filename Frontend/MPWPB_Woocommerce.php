@@ -363,43 +363,66 @@
 						continue;
 					}
 					$ex_service_infos = $line_item['extra_service_info'] ?: [];
-					$data = [];
-					$data['mpwpb_id'] = $post_id;
-					$data['mpwpb_date'] = $line_item['date'] ?? '';
-					if (!empty($line_item['category'])) {
-						$data['mpwpb_category'] = $line_item['category'];
-						if (!empty($line_item['sub_category'])) {
-							$data['mpwpb_sub_category'] = $line_item['sub_category'];
-						}
+
+					// A comma-joined date string means a recurring booking with more
+					// than one occurrence (see mpwpb_registration.js dateTimeString) --
+					// create one mpwpb_booking per date instead of squashing every
+					// occurrence into a single booking's mpwpb_date meta. Previously
+					// only one booking was ever created per line item regardless of
+					// how many dates were selected, so recurring bookings past the
+					// first date never showed up as real, individually-manageable
+					// bookings (staff schedules, admin lists, cancel/reschedule, etc.).
+					$raw_date = $line_item['date'] ?? '';
+					$occurrence_dates = is_string($raw_date) ? array_values(array_filter(array_map('trim', explode(',', $raw_date)))) : [];
+					if (empty($occurrence_dates)) {
+						$occurrence_dates = [''];
 					}
-					$data['mpwpb_service'] = $line_item['service'] ?? [];
-					$data['mpwpb_staff_term_id'] = $line_item['staff_term_id'] ?? '';
-					$data['mpwpb_tp'] = $line_item['total_price'] ?? '';
-					$data['mpwpb_service_info'] = $ex_service_infos;
-					$data['mpwpb_order_id'] = $order_id;
-					$data['mpwpb_order_status'] = $order_status;
-					$data['mpwpb_payment_method'] = $payment_method;
-					$data['mpwpb_user_id'] = $user_id ?: '';
-					$data['mpwpb_extra_service_info'] = $ex_service_infos;
-					$data['mpwpb_billing_name'] = trim(($billing['first_name'] ?? '') . ' ' . ($billing['last_name'] ?? ''));
-					$data['mpwpb_billing_email'] = $billing['email'] ?? '';
-					$data['mpwpb_billing_phone'] = $billing['phone'] ?? '';
-					$data['mpwpb_billing_address'] = trim(($billing['address_1'] ?? '') . ' ' . ($billing['address_2'] ?? ''));
-					$booking_data = apply_filters('add_mpwpb_booking_data', $data, $post_id);
-					self::add_cpt_data('mpwpb_booking', $booking_data['mpwpb_billing_name'], $booking_data);
-					if (is_array($ex_service_infos) && sizeof($ex_service_infos) > 0) {
-						foreach ($ex_service_infos as $ex_service_info) {
-							$ex_data = [];
-							$ex_data['mpwpb_id'] = $post_id;
-							$ex_data['mpwpb_date'] = $line_item['date'] ?? '';
-							$ex_data['mpwpb_order_id'] = $order_id;
-							$ex_data['mpwpb_order_status'] = $order_status;
-							$ex_data['mpwpb_ex_name'] = $ex_service_info['ex_name'];
-							$ex_data['mpwpb_ex_price'] = $ex_service_info['ex_price'];
-							$ex_data['mpwpb_ex_qty'] = $ex_service_info['ex_qty'];
-							$ex_data['mpwpb_payment_method'] = $payment_method;
-							$ex_data['mpwpb_user_id'] = $user_id ?: '';
-							self::add_cpt_data('mpwpb_extra_service_booking', '#' . $order_id . $ex_data['mpwpb_ex_name'], $ex_data);
+					$occurrence_count = count($occurrence_dates);
+
+					foreach ($occurrence_dates as $occurrence_index => $occurrence_date) {
+						$data = [];
+						$data['mpwpb_id'] = $post_id;
+						$data['mpwpb_date'] = $occurrence_date;
+						if ($occurrence_count > 1) {
+							$data['mpwpb_recurring_index'] = $occurrence_index + 1;
+							$data['mpwpb_recurring_total'] = $occurrence_count;
+						}
+						if (!empty($line_item['category'])) {
+							$data['mpwpb_category'] = $line_item['category'];
+							if (!empty($line_item['sub_category'])) {
+								$data['mpwpb_sub_category'] = $line_item['sub_category'];
+							}
+						}
+						$data['mpwpb_service'] = $line_item['service'] ?? [];
+						$data['mpwpb_staff_term_id'] = $line_item['staff_term_id'] ?? '';
+						$data['mpwpb_tp'] = $line_item['total_price'] ?? '';
+						$data['mpwpb_service_info'] = $ex_service_infos;
+						$data['mpwpb_order_id'] = $order_id;
+						$data['mpwpb_order_status'] = $order_status;
+						$data['mpwpb_payment_method'] = $payment_method;
+						$data['mpwpb_user_id'] = $user_id ?: '';
+						$data['mpwpb_extra_service_info'] = $ex_service_infos;
+						$data['mpwpb_billing_name'] = trim(($billing['first_name'] ?? '') . ' ' . ($billing['last_name'] ?? ''));
+						$data['mpwpb_billing_email'] = $billing['email'] ?? '';
+						$data['mpwpb_billing_phone'] = $billing['phone'] ?? '';
+						$data['mpwpb_billing_address'] = trim(($billing['address_1'] ?? '') . ' ' . ($billing['address_2'] ?? ''));
+						$booking_data = apply_filters('add_mpwpb_booking_data', $data, $post_id);
+						self::add_cpt_data('mpwpb_booking', $booking_data['mpwpb_billing_name'], $booking_data);
+						if (is_array($ex_service_infos) && sizeof($ex_service_infos) > 0) {
+							foreach ($ex_service_infos as $ex_service_info) {
+								$ex_data = [];
+								$ex_data['mpwpb_id'] = $post_id;
+								$ex_data['mpwpb_date'] = $occurrence_date;
+								$ex_data['mpwpb_order_id'] = $order_id;
+								$ex_data['mpwpb_order_status'] = $order_status;
+								$ex_data['mpwpb_ex_name'] = $ex_service_info['ex_name'];
+								$ex_data['mpwpb_ex_price'] = $ex_service_info['ex_price'];
+								$ex_data['mpwpb_ex_qty'] = $ex_service_info['ex_qty'];
+								$ex_data['mpwpb_payment_method'] = $payment_method;
+								$ex_data['mpwpb_user_id'] = $user_id ?: '';
+								$ex_title = '#' . $order_id . $ex_data['mpwpb_ex_name'] . ($occurrence_count > 1 ? '-' . ($occurrence_index + 1) : '');
+								self::add_cpt_data('mpwpb_extra_service_booking', $ex_title, $ex_data);
+							}
 						}
 					}
 				}

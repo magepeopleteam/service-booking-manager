@@ -126,15 +126,23 @@
 			public static function render_booking_recap(array $item, $post_id, bool $show_change_button): void {
 				$total = $item['mpwpb_tp'] ?? 0;
 
-				// First segment only -- a comma-joined value here means a recurring
-				// booking (see mpwpb_registration.js dateTimeString), and this slot
-				// card is just a "what/when am I booking" recap, not a full itinerary.
+				// A comma-joined value here means a recurring booking with more
+				// than one occurrence (see mpwpb_registration.js dateTimeString) --
+				// show every occurrence, not just the first, so the recap actually
+				// reflects the full itinerary the customer is being charged for.
 				$date_raw = is_string($item['mpwpb_date'] ?? '') ? $item['mpwpb_date'] : '';
-				$date_ts = $date_raw ? strtotime(explode(',', $date_raw)[0]) : false;
+				$date_segments = $date_raw !== '' ? array_filter(array_map('trim', explode(',', $date_raw))) : [];
 				$use_24hour = MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'time_format_24hour', 'no');
 				$time_format = $use_24hour === 'yes' ? 'H:i' : 'g:i A';
 				/* translators: %s: formatted time, e.g. "10:30 AM" */
-				$slot_display = $date_ts ? date_i18n(sprintf(__('l, M j \@ %s', 'service-booking-manager'), $time_format), $date_ts) : '';
+				$slot_format = sprintf(__('l, M j \@ %s', 'service-booking-manager'), $time_format);
+				$slot_displays = [];
+				foreach ($date_segments as $segment) {
+					$segment_ts = strtotime($segment);
+					if ($segment_ts) {
+						$slot_displays[] = date_i18n($slot_format, $segment_ts);
+					}
+				}
 
 				$slot_location = trim(
 					implode(
@@ -149,11 +157,21 @@
 					$slot_location = get_bloginfo('name');
 				}
 				?>
-				<?php if ($slot_display) : ?>
+				<?php if (!empty($slot_displays)) : ?>
 					<div class="mpwpb-checkout-slot">
 						<div class="mpwpb-checkout-slot-main">
-							<span class="mpwpb-checkout-slot-eyebrow"><?php esc_html_e('Appointment Slot', 'service-booking-manager'); ?></span>
-							<div class="mpwpb-checkout-slot-date"><?php echo esc_html($slot_display); ?></div>
+							<span class="mpwpb-checkout-slot-eyebrow">
+								<?php echo esc_html(count($slot_displays) > 1 ? __('Appointment Slots', 'service-booking-manager') : __('Appointment Slot', 'service-booking-manager')); ?>
+							</span>
+							<?php if (count($slot_displays) > 1) : ?>
+								<ol class="mpwpb-checkout-slot-dates">
+									<?php foreach ($slot_displays as $slot_display) : ?>
+										<li><?php echo esc_html($slot_display); ?></li>
+									<?php endforeach; ?>
+								</ol>
+							<?php else : ?>
+								<div class="mpwpb-checkout-slot-date"><?php echo esc_html($slot_displays[0]); ?></div>
+							<?php endif; ?>
 							<div class="mpwpb-checkout-slot-location"><?php echo esc_html($slot_location); ?></div>
 						</div>
 						<?php if ($show_change_button) : ?>
@@ -164,6 +182,15 @@
 						<div class="mpwpb-checkout-slot-icon"><i class="fas fa-calendar-alt"></i></div>
 					</div>
 				<?php endif; ?>
+				<?php
+				// Tracks the per-visit rate (services + extras for ONE
+				// occurrence) while the loops below render each line, so a
+				// recurring booking's total can be broken down as
+				// "rate × occurrences − discount = payable" afterward,
+				// instead of only showing the final payable figure with no
+				// indication of how it was derived.
+				$per_occurrence_rate = 0;
+				?>
 				<div class="mpwpb-checkout-summary">
 					<div class="mpwpb-checkout-summary-label"><?php esc_html_e('Booking Summary', 'service-booking-manager'); ?></div>
 					<?php if (!empty($item['mpwpb_service']) && is_array($item['mpwpb_service'])) : ?>
@@ -173,6 +200,7 @@
 								$qty = max(1, (int) ($service['qty'] ?? 1));
 								$unit_price = (float) ($service['price'] ?? 0);
 								$line_total = $unit_price * $qty;
+								$per_occurrence_rate += $line_total;
 								?>
 								<li>
 									<span class="fas fa-check-circle"></span>
@@ -190,6 +218,7 @@
 								$ex_qty = max(1, (int) ($extra['ex_qty'] ?? 1));
 								$ex_unit_price = (float) ($extra['ex_price'] ?? 0);
 								$ex_line_total = $ex_unit_price * $ex_qty;
+								$per_occurrence_rate += $ex_line_total;
 								?>
 								<li>
 									<span class="fas fa-plus-circle"></span>
@@ -199,6 +228,41 @@
 								</li>
 							<?php endforeach; ?>
 						</ul>
+					<?php endif; ?>
+					<?php
+					// $total (mpwpb_tp) is already the final, recurring-discounted
+					// payable amount (see MPWPB_Woocommerce::calculate_discounted_total()) --
+					// the per-visit rate × occurrence count reconstructs the
+					// pre-discount subtotal, and the discount is just the
+					// difference between that and the payable total, so no
+					// discount percentage needs to be re-fetched here.
+					$occurrence_count = max(1, count($date_segments));
+					$subtotal = round($per_occurrence_rate * $occurrence_count, 2);
+					$discount_amount = ($occurrence_count > 1) ? max(0, round($subtotal - $total, 2)) : 0;
+					?>
+					<?php if ($occurrence_count > 1 && $per_occurrence_rate > 0) : ?>
+						<div class="mpwpb-checkout-recurring-breakdown">
+							<div class="mpwpb-checkout-recurring-row">
+								<span><?php esc_html_e('Rate per visit', 'service-booking-manager'); ?></span>
+								<span><?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, $per_occurrence_rate)); ?></span>
+							</div>
+							<div class="mpwpb-checkout-recurring-row">
+								<span>
+									<?php
+									/* translators: %d: number of recurring occurrences */
+									printf(esc_html(_n('%d visit', '%d visits', $occurrence_count, 'service-booking-manager')), (int) $occurrence_count);
+									?>
+									&times; <?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, $per_occurrence_rate)); ?>
+								</span>
+								<span><?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, $subtotal)); ?></span>
+							</div>
+							<?php if ($discount_amount > 0) : ?>
+								<div class="mpwpb-checkout-recurring-row mpwpb-checkout-recurring-discount">
+									<span><?php esc_html_e('Recurring Discount', 'service-booking-manager'); ?></span>
+									<span>&minus;<?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, $discount_amount)); ?></span>
+								</div>
+							<?php endif; ?>
+						</div>
 					<?php endif; ?>
 					<div class="mpwpb-checkout-total">
 						<span><?php esc_html_e('Total', 'service-booking-manager'); ?></span>

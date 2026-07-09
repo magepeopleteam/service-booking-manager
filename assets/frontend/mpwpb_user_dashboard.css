@@ -916,7 +916,25 @@
 }
 
 .mpwpb-staff-schedule .mp_settings_area {
+    display: flex;
+    flex-direction: column;
     flex: 1 1 260px;
+}
+
+/* "Add New Off date" is rendered before the hidden row-template in the
+   shared markup (also used by the wp-admin Staff Members screen, so not
+   reordered there) -- flex order moves it after the template here without
+   touching that shared PHP. */
+.mpwpb-staff-schedule .mp_settings_area > .mp_item_insert {
+    order: 1;
+}
+
+.mpwpb-staff-schedule .mp_settings_area > .mpwpb_hidden_content {
+    order: 2;
+}
+
+.mpwpb-staff-schedule .mp_settings_area > ._themeButton_xs_mT_xs {
+    order: 3;
 }
 
 .mpwpb-staff-schedule .mp_remove_area {
@@ -971,8 +989,141 @@
     margin-top: 8px;
 }
 
+/* Toolbar: intro copy left, Save action right -- matches the reference
+   layout (title/description + primary action on one row) instead of the
+   save button trailing at the very bottom of the page. */
+.mpwpb-staff-schedule .mpwpb-schedule-toolbar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.mpwpb-staff-schedule .mpwpb-schedule-toolbar h3 {
+    margin: 0 0 6px;
+}
+
+.mpwpb-staff-schedule .mpwpb-schedule-toolbar .mpwpb-schedule-intro {
+    margin: 0;
+    max-width: 60ch;
+}
+
 .mpwpb-staff-schedule #saveScheduleBtn {
-    margin-top: 6px;
+    flex: 0 0 auto;
+    margin-top: 0;
+    background: #0f172a;
+    color: #fff;
+}
+
+.mpwpb-staff-schedule #saveScheduleBtn:hover {
+    background: #1e293b;
+}
+
+/* Two-column layout: weekly hours table takes the majority width, off
+   days/dates sit alongside in a sidebar column -- collapses to one
+   column on narrower screens (see media query below). */
+.mpwpb-staff-schedule .mpwpb-schedule-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.65fr) minmax(260px, 1fr);
+    gap: 20px;
+    align-items: start;
+}
+
+.mpwpb-staff-schedule .mpwpb-schedule-main .mpPanel {
+    margin-bottom: 0;
+}
+
+/* Re-enables the panel-header icon specifically for the schedule table
+   (overridden further above for panels in general, since nothing wires
+   its collapse behaviour on the front-end) as a plain colour chip -- the
+   underlying glyph is whatever fa-plus resolves to, so its own color is
+   hidden rather than shown, avoiding an icon that doesn't match the
+   rest of the badge's intent. */
+.mpwpb-staff-schedule .mpwpb-schedule-main .mpPanelHeader [data-icon] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: #e3f2fd;
+    color: transparent;
+    margin: 0 10px 0 0;
+    flex: 0 0 auto;
+}
+
+.mpwpb-staff-schedule .mpwpb_staff_status_badge.is-off {
+    background: #f2dede;
+    color: #a94442;
+}
+
+/* The first table row is always the "Default" fallback schedule every
+   other day inherits from when left blank -- call it out visually. */
+.mpwpb-staff-schedule .mpwpb-schedule-main .mpPanelBody > table tbody tr:first-child th {
+    color: #0073aa;
+    font-weight: 700;
+}
+
+/* Sidebar: strip the outer panel's own chrome (it would otherwise wrap
+   the two cards below in a third, redundant card) and let
+   mpwpb_off_day_card (Weekly Off Days / Exception Dates) be the visible
+   cards instead. */
+.mpwpb-staff-schedule .mpwpb-schedule-sidebar .mpPanel {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    margin-bottom: 0;
+}
+
+.mpwpb-staff-schedule .mpwpb-schedule-sidebar .mpPanelHeader {
+    display: none;
+}
+
+.mpwpb-staff-schedule .mpwpb-schedule-sidebar .mpPanelBody {
+    padding: 0;
+}
+
+.mpwpb-staff-schedule .mpwpb_off_day_cards {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.mpwpb-staff-schedule .mpwpb_off_day_card.dFlex {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 16px 18px;
+}
+
+.mpwpb-staff-schedule .mpwpb_off_day_card > ._fs_label_w_200 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    padding-top: 0;
+}
+
+.mpwpb-staff-schedule .mpwpb_off_day_card > ._fs_label_w_200::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    background: #0073aa;
+    flex: 0 0 auto;
+}
+
+.mpwpb-staff-schedule .mpwpb_off_day_card:first-child > ._fs_label_w_200::before {
+    background: #e53935;
 }
 
 @media (max-width: 782px) {
@@ -980,6 +1131,95 @@
         display: block;
         overflow-x: auto;
         white-space: nowrap;
+    }
+
+    .mpwpb-staff-schedule .mpwpb-schedule-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ------------------------------------------------------------------ *
+ *  "My Appointment" date-range filter
+ *  (Admin/MPWPB_Staff_DashBoard.php::render_my_appointment_tab())
+ * ------------------------------------------------------------------ */
+.mpwpb-staff-appointments .mpwpb-appt-filter {
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    flex-wrap: wrap;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 18px;
+    margin: 0 0 20px;
+}
+
+.mpwpb-staff-appointments .mpwpb-appt-filter label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1 1 200px;
+    max-width: 260px;
+}
+
+.mpwpb-staff-appointments .mpwpb-appt-field-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #333;
+}
+
+.mpwpb-staff-appointments .mpwpb-appt-filter input[type="date"] {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 14px;
+    color: #333;
+    font-family: inherit;
+}
+
+.mpwpb-staff-appointments .mpwpb-appt-filter input[type="date"]:focus {
+    outline: none;
+    border-color: #2196f3;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+.mpwpb-staff-appointments .mpwpb-appt-filter button[type="submit"] {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 11px 22px;
+    background: #1d3fb8;
+    color: #fff;
+    font-size: 14px;
+}
+
+.mpwpb-staff-appointments .mpwpb-appt-filter button[type="submit"]:hover {
+    background: #17348f;
+}
+
+.mpwpb-staff-appointments .mpwpb-appt-clear-link {
+    flex: 0 0 auto;
+    align-self: center;
+    font-size: 13px;
+    color: #666;
+    text-decoration: underline;
+}
+
+.mpwpb-staff-appointments .mpwpb-appt-clear-link:hover {
+    color: #333;
+}
+
+@media (max-width: 600px) {
+    .mpwpb-staff-appointments .mpwpb-appt-filter {
+        align-items: stretch;
+    }
+
+    .mpwpb-staff-appointments .mpwpb-appt-filter label {
+        max-width: none;
     }
 }
 

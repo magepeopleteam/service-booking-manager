@@ -36,6 +36,17 @@
 
     $(document).on('click', 'div.mpwpb_registration .mpwpb_date_time_area .to-book', function() {
 
+        // Was this slot already the selected one? The Staff step has a "Back"
+        // button that returns here, and re-clicking the same (already
+        // active) slot used to unconditionally wipe the recurring dates list
+        // below -- so configuring 6 recurring dates, going to Staff, then
+        // back and re-clicking the same date, silently lost all of them.
+        // mpwpb_registration.js's add-to-cart handler then found
+        // #mpwpb_recurring_dates_list empty and fell back to sending just
+        // the single base date, which is why the resulting order only ever
+        // had one date no matter how many were configured.
+        let alreadySelected = $(this).hasClass('mpwpb_active_time');
+
         $("#mpwpb_recurring_booking_area").fadeIn();
 
         $('div.mpwpb_registration .mpwpb_date_time_area .to-book').removeClass('mpwpb_active_time');
@@ -45,8 +56,9 @@
 
         let parent = $(this).closest('div.mpwpb_registration');
         let recurringArea = parent.find('.mpwpb_recurring_booking_area');
-        if (recurringArea.length > 0) {
-            // Reset recurring options
+        if (recurringArea.length > 0 && !alreadySelected) {
+            // Reset recurring options -- only when the customer actually
+            // picked a *different* date/time slot than before.
             parent.find('#mpwpb_enable_recurring_booking').prop('checked', false);
             parent.find('.mpwpb_recurring_settings').hide();
             parent.find('#mpwpb_recurring_type').val('');
@@ -121,8 +133,15 @@
         let parent = $(this).closest('div.mpwpb_registration');
         let recurringArea = parent.find('.mpwpb_recurring_booking_area');
         let selectedDate = $(this).val();
+        // Same base-date value as last time this fired -- e.g. the "change"
+        // event re-firing because something re-set [name="mpwpb_date"] to the
+        // slot the customer already had selected (the Staff step's "Back"
+        // button round-trip is the real-world trigger). Only reset the
+        // already-configured recurring dates when the date genuinely changed.
+        let previousDate = parent.data('mpwpbLastDateValue');
+        parent.data('mpwpbLastDateValue', selectedDate);
 
-        if (recurringArea.length > 0 && selectedDate) {
+        if (recurringArea.length > 0 && selectedDate && selectedDate !== previousDate) {
             parent.find('#mpwpb_enable_recurring_booking').prop('checked', false);
             parent.find('.mpwpb_recurring_settings').hide();
             parent.find('#mpwpb_recurring_type').val('');
@@ -271,7 +290,7 @@
     function displayRecurringDates(parent, dates, html, selected_html, recurring_discount_price ) {
         let datesList = parent.find('#mpwpb_recurring_dates_list');
         datesList.empty();
-        
+
         if (dates && dates.length > 0) {
             parent.find('#mpwpd_selected_date').empty();
             datesList.append( html );
@@ -283,8 +302,33 @@
             parent.find('#mpwpb_recurring_number').text( total_recurring );
 
             recuring_price_with_discount( total_recurring, recurring_discount_price );
+            syncStaffStepSummaryDate( parent );
         } else {
             parent.find('.mpwpb_recurring_dates').hide();
+        }
+    }
+
+    // The "Select Staff" step's compact recap (#mpwpb_staff_selected_datetime,
+    // templates/registration/date_time_select.php) only ever showed the single
+    // date picked before recurring was configured, and nothing kept it in sync
+    // afterward -- re-derive it from #mpwpd_selected_date's current rows (the
+    // same list the main summary shows) every time the recurring dates change
+    // (generated, or a row deleted). "Already Booked" rows are wrapped in an
+    // inner .mpwpb_seleted_date_text span (see Admin/settings/Recurring_Booking.php
+    // ::save_recurring_booking()) -- skip those, an unavailable date isn't a
+    // real service date.
+    function syncStaffStepSummaryDate( parent ) {
+        let availableDates = [];
+        parent.find('#mpwpd_selected_date > li.mpwpd_service_date').each(function () {
+            if ($(this).find('.mpwpb_seleted_date_text').length === 0) {
+                let text = $(this).text().trim();
+                if (text) {
+                    availableDates.push(text);
+                }
+            }
+        });
+        if (availableDates.length > 0) {
+            parent.find('#mpwpb_staff_selected_datetime').text(availableDates.join(', '));
         }
     }
 
@@ -297,6 +341,7 @@
             return;
         }
         const dateTime = $(this).closest('li').attr('data-date-time');
+        const registrationParent = $(this).closest('div.mpwpb_registration');
         $(this).closest('li').remove();
         $('#mpwpd_selected_date')
             .find(`li[data-cart-date-time="${dateTime}"]`)
@@ -312,6 +357,7 @@
             recurring_discount_price = parseInt( recurring_discount.find('p' ).attr('data-discount').trim() );
         }
         recuring_price_with_discount( total_recurring, recurring_discount_price );
+        syncStaffStepSummaryDate( registrationParent.length ? registrationParent : $(document) );
     });
     // Edit handler
 

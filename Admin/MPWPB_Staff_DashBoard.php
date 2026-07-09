@@ -903,6 +903,15 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
          * render_my_service_tab() above.
          */
         public static function render_my_appointment_tab($user_id): void {
+            $appt_id = isset($_GET['mpwpb_appt_id']) ? absint($_GET['mpwpb_appt_id']) : 0;
+            if ($appt_id) {
+                $owner_id = (int) get_post_meta($appt_id, 'mpwpb_staff_term_id', true);
+                if (get_post_type($appt_id) === 'mpwpb_booking' && $owner_id === (int) $user_id) {
+                    self::render_appointment_details($appt_id);
+                    return;
+                }
+                echo '<div class="mpwpb-message error">' . esc_html__('That appointment could not be found.', 'service-booking-manager') . '</div>';
+            }
             $start_date = isset($_GET['mpwpb_appt_from']) ? sanitize_text_field(wp_unslash($_GET['mpwpb_appt_from'])) : '';
             $end_date = isset($_GET['mpwpb_appt_to']) ? sanitize_text_field(wp_unslash($_GET['mpwpb_appt_to'])) : '';
             $bookings = self::get_staff_appointments($user_id, $start_date, $end_date);
@@ -918,16 +927,16 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
                         <input type="hidden" name="<?php echo esc_attr($key); ?>" value="<?php echo esc_attr(wp_unslash($value)); ?>"/>
                     <?php endforeach; ?>
                     <label>
-                        <?php esc_html_e('From', 'service-booking-manager'); ?>
+                        <span class="mpwpb-appt-field-label"><?php esc_html_e('From', 'service-booking-manager'); ?></span>
                         <input type="date" name="mpwpb_appt_from" value="<?php echo esc_attr($start_date); ?>"/>
                     </label>
                     <label>
-                        <?php esc_html_e('To', 'service-booking-manager'); ?>
+                        <span class="mpwpb-appt-field-label"><?php esc_html_e('To', 'service-booking-manager'); ?></span>
                         <input type="date" name="mpwpb_appt_to" value="<?php echo esc_attr($end_date); ?>"/>
                     </label>
-                    <button type="submit" class="mpwpb-btn mpwpb-submit-btn"><?php esc_html_e('Filter', 'service-booking-manager'); ?></button>
+                    <button type="submit" class="mpwpb-btn mpwpb-submit-btn"><i class="fas fa-filter"></i> <?php esc_html_e('Filter', 'service-booking-manager'); ?></button>
                     <?php if ($start_date || $end_date) : ?>
-                        <a class="mpwpb-btn" href="<?php echo esc_url(remove_query_arg(array('mpwpb_appt_from', 'mpwpb_appt_to'))); ?>"><?php esc_html_e('Clear', 'service-booking-manager'); ?></a>
+                        <a class="mpwpb-appt-clear-link" href="<?php echo esc_url(remove_query_arg(array('mpwpb_appt_from', 'mpwpb_appt_to'))); ?>"><?php esc_html_e('Clear', 'service-booking-manager'); ?></a>
                     <?php endif; ?>
                 </form>
                 <?php if (empty($bookings)) : ?>
@@ -942,6 +951,7 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
                                 <th><?php esc_html_e('Date', 'service-booking-manager'); ?></th>
                                 <th><?php esc_html_e('Time', 'service-booking-manager'); ?></th>
                                 <th><?php esc_html_e('Status', 'service-booking-manager'); ?></th>
+                                <th><?php esc_html_e('Actions', 'service-booking-manager'); ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -953,11 +963,95 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
                                     <td><?php echo esc_html(MPWPB_Global_Function::date_format($booking->mpwpb_date)); ?></td>
                                     <td><?php echo esc_html(MPWPB_Global_Function::date_format($booking->mpwpb_date, 'time')); ?></td>
                                     <td><span class="mpwpb-status mpwpb-status-<?php echo esc_attr(strtolower($booking->mpwpb_order_status)); ?>"><?php echo esc_html(ucfirst($booking->mpwpb_order_status)); ?></span></td>
+                                    <td><a class="mpwpb-btn mpwpb-view-btn" href="<?php echo esc_url(add_query_arg('mpwpb_appt_id', $booking->ID)); ?>"><?php esc_html_e('View', 'service-booking-manager'); ?></a></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
                     </table>
                 <?php endif; ?>
+            </div>
+            <?php
+        }
+
+        /**
+         * Single-appointment detail view for "My Appointment" -- reached via
+         * ?mpwpb_appt_id={booking_id} (ownership already checked by the
+         * caller, render_my_appointment_tab() above). Reuses
+         * MPWPB_Native_Checkout::render_booking_recap()/render_customer_info_card()
+         * for the service/price recap and customer info card, same visual
+         * language as the customer-facing order details view
+         * (Frontend/MPWPB_Custom_Payment_My_Account.php::render_order_details()) --
+         * built directly from the booking's own meta rather than an order,
+         * since a booking's billing fields (mpwpb_billing_name/_email/_phone/
+         * _address) are a flat single-string shape, not the order-level
+         * first_name/last_name/address_1/address_2 fields those two methods
+         * read, and a staff member isn't the order's owner so can't reuse
+         * the customer-only order view anyway.
+         */
+        private static function render_appointment_details($booking_id): void {
+            $meta = get_post_meta($booking_id);
+            $status = $meta['mpwpb_order_status'][0] ?? '';
+            $post_id = (int) ($meta['mpwpb_id'][0] ?? 0);
+            $item = array(
+                'mpwpb_id' => $post_id,
+                'mpwpb_date' => $meta['mpwpb_date'][0] ?? '',
+                'mpwpb_service' => isset($meta['mpwpb_service'][0]) ? maybe_unserialize($meta['mpwpb_service'][0]) : array(),
+                'mpwpb_tp' => $meta['mpwpb_tp'][0] ?? 0,
+                'mpwpb_category' => $meta['mpwpb_category'][0] ?? '',
+                'mpwpb_sub_category' => $meta['mpwpb_sub_category'][0] ?? '',
+                'mpwpb_extra_service_info' => isset($meta['mpwpb_extra_service_info'][0]) ? maybe_unserialize($meta['mpwpb_extra_service_info'][0]) : array(),
+            );
+            ?>
+            <div class="mpwpb-staff-appointments">
+                <p><a href="<?php echo esc_url(remove_query_arg('mpwpb_appt_id')); ?>">&laquo; <?php esc_html_e('Back to My Appointment', 'service-booking-manager'); ?></a></p>
+                <h3>
+                    <?php
+                    printf(
+                        /* translators: %d: booking ID */
+                        esc_html__('Appointment #%d', 'service-booking-manager'),
+                        $booking_id
+                    );
+                    ?>
+                </h3>
+                <table class="mpwpb-bookings-table">
+                    <tbody>
+                        <tr>
+                            <td><?php esc_html_e('Status', 'service-booking-manager'); ?></td>
+                            <td><span class="mpwpb-status mpwpb-status-<?php echo esc_attr(strtolower($status)); ?>"><?php echo esc_html($status ? ucfirst($status) : '—'); ?></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <?php if (!empty($item['mpwpb_service']) || $post_id) : ?>
+                    <?php MPWPB_Native_Checkout::render_booking_recap($item, $post_id, false); ?>
+                <?php endif; ?>
+                <div class="mpwpb-checkout-card">
+                    <div class="mpwpb-checkout-card-header">
+                        <span class="mpwpb-checkout-card-icon"><i class="fas fa-user"></i></span>
+                        <h3 class="mpwpb-checkout-card-title"><?php esc_html_e('Customer Information', 'service-booking-manager'); ?></h3>
+                    </div>
+                    <div class="mpwpb-checkout-card-body">
+                        <div class="mpwpb-checkout-row">
+                            <div class="mpwpb-checkout-info">
+                                <span><?php esc_html_e('Full Name', 'service-booking-manager'); ?></span>
+                                <strong><?php echo esc_html($meta['mpwpb_billing_name'][0] ?? '') ?: '—'; ?></strong>
+                            </div>
+                            <div class="mpwpb-checkout-info">
+                                <span><?php esc_html_e('Email Address', 'service-booking-manager'); ?></span>
+                                <strong><?php echo esc_html($meta['mpwpb_billing_email'][0] ?? '') ?: '—'; ?></strong>
+                            </div>
+                        </div>
+                        <div class="mpwpb-checkout-row">
+                            <div class="mpwpb-checkout-info">
+                                <span><?php esc_html_e('Phone Number', 'service-booking-manager'); ?></span>
+                                <strong><?php echo esc_html($meta['mpwpb_billing_phone'][0] ?? '') ?: '—'; ?></strong>
+                            </div>
+                            <div class="mpwpb-checkout-info">
+                                <span><?php esc_html_e('Address', 'service-booking-manager'); ?></span>
+                                <strong><?php echo esc_html($meta['mpwpb_billing_address'][0] ?? '') ?: '—'; ?></strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <?php
         }
@@ -992,18 +1086,32 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
                 echo '<div class="mpwpb-message info">' . esc_html__("Your schedule can only be changed by an administrator. Please contact them if you'd like to update your availability.", 'service-booking-manager') . '</div>';
                 return;
             }
+            // MPWPB_Staff_Members (not the older MPWPB_Staff_DashBoard::staff_off_on_day_settings()
+            // above, which duplicates the dead MPWPB_Staffs class's flatter layout) for both
+            // pieces -- it's the one actively maintained for the wp-admin Staff Members screen,
+            // and its off_on_day_settings() already separates "Weekly Off Days" from "Exception
+            // Dates" into their own sub-cards, which the CSS below turns into two visually
+            // distinct cards instead of one row each.
+            $mpwpb_staff_members = new MPWPB_Staff_Members();
             ?>
             <div class="mpwpb-staff-schedule">
-                <h3><?php esc_html_e('My Schedule', 'service-booking-manager'); ?></h3>
-                <p class="mpwpb-schedule-intro"><?php esc_html_e('Set your weekly working hours, break times, and the days/dates you are unavailable. Saving here updates the same availability used to calculate your bookable time slots.', 'service-booking-manager'); ?></p>
-                <?php
-                $mpwpb_staff_members = new MPWPB_Staff_Members();
-                $mpwpb_staff_members->schedule_settings($user_id);
-                echo self::staff_off_on_day_settings($user_id);
-                ?>
-                <button type="button" id="saveScheduleBtn" class="mpwpb-btn mpwpb-submit-btn">
-                    <i class="fas fa-save"></i> <?php esc_html_e('Save Schedule', 'service-booking-manager'); ?>
-                </button>
+                <div class="mpwpb-schedule-toolbar">
+                    <div>
+                        <h3><?php esc_html_e('My Schedule', 'service-booking-manager'); ?></h3>
+                        <p class="mpwpb-schedule-intro"><?php esc_html_e('Set your weekly working hours, break times, and the days/dates you are unavailable. Saving here updates the same availability used to calculate your bookable time slots.', 'service-booking-manager'); ?></p>
+                    </div>
+                    <button type="button" id="saveScheduleBtn" class="mpwpb-btn mpwpb-submit-btn">
+                        <i class="fas fa-save"></i> <?php esc_html_e('Save Schedule', 'service-booking-manager'); ?>
+                    </button>
+                </div>
+                <div class="mpwpb-schedule-grid">
+                    <div class="mpwpb-schedule-main">
+                        <?php $mpwpb_staff_members->schedule_settings($user_id); ?>
+                    </div>
+                    <div class="mpwpb-schedule-sidebar">
+                        <?php $mpwpb_staff_members->off_on_day_settings($user_id); ?>
+                    </div>
+                </div>
             </div>
             <?php
         }

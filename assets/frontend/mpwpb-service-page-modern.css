@@ -598,6 +598,9 @@ span.mpwpb-tree-service-name{padding-left:5px;}
 .mpwpb-checkout-slot-change:hover{text-decoration:underline;}
 .mpwpb-checkout-slot-change i{font-size:11px;}
 .mpwpb-checkout-slot-date{font-size:17px;font-weight:800;color:#1e293b;line-height:1.25;}
+.mpwpb-checkout-slot-dates{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px;max-height:180px;overflow-y:auto;}
+.mpwpb-checkout-slot-dates li{font-size:14.5px;font-weight:700;color:#1e293b;line-height:1.3;padding-left:14px;position:relative;}
+.mpwpb-checkout-slot-dates li::before{content:"";position:absolute;left:0;top:.5em;width:6px;height:6px;border-radius:50%;background:var(--mpwpb_color_theme);}
 .mpwpb-checkout-slot-location{margin-top:2px;font-size:13px;color:#64748b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .mpwpb-checkout-slot-icon{
 	flex:0 0 auto;width:52px;height:52px;display:inline-flex;align-items:center;justify-content:center;
@@ -622,6 +625,12 @@ span.mpwpb-tree-service-name{padding-left:5px;}
 .mpwpb-checkout-summary-name{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .mpwpb-checkout-summary-qty{flex:0 0 auto;font-size:12px;font-weight:600;color:#94a3b8;}
 .mpwpb-checkout-summary-price{flex:0 0 auto;font-weight:700;color:#1e293b;}
+.mpwpb-checkout-recurring-breakdown{
+	margin-top:6px;padding-top:10px;border-top:1px dashed #e5e9f0;display:flex;flex-direction:column;gap:6px;
+}
+.mpwpb-checkout-recurring-row{display:flex;align-items:center;justify-content:space-between;font-size:12.5px;color:#64748b;}
+.mpwpb-checkout-recurring-row span:last-child{font-variant-numeric:tabular-nums;}
+.mpwpb-checkout-recurring-discount{color:#0d9488;}
 .mpwpb-checkout-total{
 	display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid #e5e9f0;
 	font-size:14px;font-weight:700;color:#1e293b;

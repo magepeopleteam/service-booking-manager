@@ -616,10 +616,18 @@ function mpwpb_price_calculation($this) {
     $(document).on('change', 'div.mpwpb_registration [name="mpwpb_date"]', function () {
         let parent = $(this).closest('div.mpwpb_registration');
         let date = parent.find('[name="mpwpb_date"]').val();
+        // mpwpb_recurring_booking.js's displayRecurringDates() also writes into
+        // this same #mpwpd_selected_date <h6> (it lists every occurrence, not
+        // just one) -- when recurring has generated more than one date, leave
+        // its content alone instead of clobbering it back down to a single date.
+        let recurringDatesCount = parent.find('#mpwpb_recurring_dates_list li[data-date-time!=""]').length;
         if (date) {
-            let current_date = parent.find('.mpwpb_date_time_area [data-radio-check="' + date + '"]').data('date');
-            parent.find('.mpwpb_summary_item[data-date]').slideDown('fast').find('h6').html(current_date);
-            parent.find('#mpwpb_staff_selected_datetime').text(current_date);
+            parent.find('.mpwpb_summary_item[data-date]').slideDown('fast');
+            if (recurringDatesCount <= 1) {
+                let current_date = parent.find('.mpwpb_date_time_area [data-radio-check="' + date + '"]').data('date');
+                parent.find('.mpwpb_summary_item[data-date]').find('h6').html(current_date);
+                parent.find('#mpwpb_staff_selected_datetime').text(current_date);
+            }
         } else {
             parent.find('.mpwpb_summary_item[data-date]').slideUp('fast');
             parent.find('#mpwpb_staff_selected_datetime').text('—');
