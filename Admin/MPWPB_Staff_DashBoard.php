@@ -10,7 +10,16 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
     class MPWPB_Staff_DashBoard{
         public function __construct(){
 
-            add_action( 'woocommerce_account_dashboard', [ $this, 'mpwpb_my_dashboard_content'] );
+            // The old embedded staff dashboard (Users Bookings / Upcoming
+            // Appointments / My Reviews / Manage Holidays, rendered inline on
+            // WooCommerce's own "Dashboard" tab via user_dashboard() below)
+            // is intentionally no longer hooked in -- superseded by the
+            // dedicated "My Service" / "My Appointment" / "My Schedule" My
+            // Account menu items (Frontend/MPWPB_Wc_Staff_Account.php) and
+            // their Custom Payment dashboard equivalents
+            // (Frontend/MPWPB_Custom_Payment_My_Account.php), both built on
+            // this class's render_my_service_tab()/render_my_appointment_tab()/
+            // render_my_schedule_tab().
 
             // Deliberately distinct from Frontend/MPWPB_User_Dashboard.php's
             // wp_ajax_mpwpb_cancel_booking/reschedule_booking -- both classes
