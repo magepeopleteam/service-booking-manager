@@ -107,7 +107,7 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
         }
 
 
-        public function staff_off_on_day_settings($user_id = '') {
+        public static function staff_off_on_day_settings($user_id = '') {
             $date_type = $user_id ? get_user_meta($user_id, 'date_type') : [];
             $date_type = sizeof($date_type) > 0 ? current($date_type) : 'repeated';
             $off_days = $user_id ? get_user_meta($user_id, 'mpwpb_off_days') : [];
@@ -221,9 +221,14 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
                                             break;
                                         case 'holiday':
                                             if( $approve_holiday_modify === 'yes' ){
-                                                $MPWPB_Staffs = new MPWPB_Staffs();
-                                                wp_kses_post( $MPWPB_Staffs->schedule_settings( $user_id ) );
-                                                echo $this->staff_off_on_day_settings( $user_id );
+                                                // MPWPB_Staffs (Admin/MPWPB_Staffs.php) is dead code, superseded
+                                                // by MPWPB_Staff_Members (Admin/MPWPB_Staff_Members.php, the one
+                                                // actually require_once'd from Admin/MPWPB_Admin.php) -- the old
+                                                // class name here was never valid and this tab fataled whenever
+                                                // an approved staff member actually reached it.
+                                                $mpwpb_staff_members = new MPWPB_Staff_Members();
+                                                wp_kses_post( $mpwpb_staff_members->schedule_settings( $user_id ) );
+                                                echo self::staff_off_on_day_settings( $user_id );
                                             ?>
                                             <button type="button" id="saveScheduleBtn" class="mpmw_staff_button_primary">
                                                 <i class="fas fa-save"></i> Save Schedule
@@ -756,6 +761,251 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
             wp_send_json_success(array(
                 'message' => esc_html__('Profile updated successfully', 'service-booking-manager')
             ));
+        }
+
+        /**
+         * Whether the given (or current) user has the staff role -- shared
+         * gate for the "My Service"/"My Appointment" WooCommerce My Account
+         * menu items (Frontend/MPWPB_Wc_Staff_Account.php) and their Custom
+         * Payment dashboard tab counterparts (Frontend/MPWPB_Custom_Payment_My_Account.php).
+         */
+        public static function is_staff($user_id = null): bool {
+            $user_id = $user_id ?: get_current_user_id();
+            $user = get_userdata($user_id);
+            return $user && in_array('mpwpb_staff', (array) $user->roles, true);
+        }
+
+        /**
+         * @return WP_Post[] Services (mpwpb_item) this staff member is
+         * assigned to, via mpwpb_selected_staff_ids (an array of ints saved
+         * by Admin/settings/Staff_Member.php::save_selected_staff_meta() --
+         * array_map('intval', ...), so it's serialized as e.g.
+         * a:2:{i:0;i:12;i:1;i:20;} -- matching "i:12;" (not a quoted "12",
+         * that pattern is for serialized strings) is what actually finds it.
+         */
+        public static function get_staff_services($user_id): array {
+            return get_posts(array(
+                'post_type' => MPWPB_Function::get_cpt(),
+                'post_status' => 'publish',
+                'posts_per_page' => -1,
+                'meta_query' => array(
+                    array(
+                        'key' => 'mpwpb_selected_staff_ids',
+                        'value' => 'i:' . (int) $user_id . ';',
+                        'compare' => 'LIKE',
+                    ),
+                ),
+            ));
+        }
+
+        /**
+         * Bookings assigned to this staff member (mpwpb_staff_term_id --
+         * despite the name this is a WP user ID, see get_user_bookings()
+         * above), optionally restricted to a date range. Comparison uses
+         * only the first date segment, same "first slot only" rule
+         * Frontend/MPWPB_Native_Checkout.php::render_booking_recap() uses
+         * for recurring/multi-date bookings.
+         *
+         * @param string $start_date 'Y-m-d', or '' for no lower bound.
+         * @param string $end_date   'Y-m-d', or '' for no upper bound.
+         * @return object[]
+         */
+        public static function get_staff_appointments($user_id, string $start_date = '', string $end_date = ''): array {
+            $query = new WP_Query(array(
+                'post_type' => 'mpwpb_booking',
+                'posts_per_page' => -1,
+                'orderby' => 'date',
+                'order' => 'DESC',
+                'meta_query' => array(
+                    'relation' => 'AND',
+                    array('key' => 'mpwpb_staff_term_id', 'value' => $user_id, 'compare' => '='),
+                    array('key' => 'mpwpb_backend_order', 'value' => 'yes', 'compare' => '!='),
+                ),
+            ));
+
+            $start_ts = $start_date ? strtotime($start_date) : false;
+            $end_ts = $end_date ? strtotime($end_date . ' 23:59:59') : false;
+
+            $bookings = array();
+            foreach ($query->posts as $post) {
+                $meta = get_post_meta($post->ID);
+                $date_raw = $meta['mpwpb_date'][0] ?? '';
+                $first_segment = is_string($date_raw) ? trim(explode(',', $date_raw)[0]) : '';
+                $booking_time = $first_segment ? strtotime($first_segment) : false;
+
+                if ($start_ts && (!$booking_time || $booking_time < $start_ts)) {
+                    continue;
+                }
+                if ($end_ts && (!$booking_time || $booking_time > $end_ts)) {
+                    continue;
+                }
+
+                $booking_data = new stdClass();
+                $booking_data->ID = $post->ID;
+                $booking_data->mpwpb_id = $meta['mpwpb_id'][0] ?? '';
+                $booking_data->mpwpb_date = $date_raw;
+                $booking_data->mpwpb_order_status = $meta['mpwpb_order_status'][0] ?? '';
+                $booking_data->mpwpb_billing_name = $meta['mpwpb_billing_name'][0] ?? '';
+                $bookings[] = $booking_data;
+            }
+            wp_reset_postdata();
+
+            return $bookings;
+        }
+
+        /**
+         * "My Service" tab content -- services this staff member is
+         * assigned to. Shared by the WooCommerce My Account endpoint
+         * (Frontend/MPWPB_Wc_Staff_Account.php) and the Custom Payment
+         * dashboard (Frontend/MPWPB_Custom_Payment_My_Account.php).
+         */
+        public static function render_my_service_tab($user_id): void {
+            $services = self::get_staff_services($user_id);
+            ?>
+            <div class="mpwpb-staff-services">
+                <h3><?php esc_html_e('My Service', 'service-booking-manager'); ?></h3>
+                <?php if (empty($services)) : ?>
+                    <div class="mpwpb-no-bookings"><?php esc_html_e("You haven't been assigned to any services yet.", 'service-booking-manager'); ?></div>
+                <?php else : ?>
+                    <table class="mpwpb-bookings-table">
+                        <thead>
+                            <tr>
+                                <th><?php esc_html_e('Service', 'service-booking-manager'); ?></th>
+                                <th><?php esc_html_e('Category', 'service-booking-manager'); ?></th>
+                                <th><?php esc_html_e('Status', 'service-booking-manager'); ?></th>
+                                <th><?php esc_html_e('Actions', 'service-booking-manager'); ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($services as $service) :
+                                $terms = get_the_terms($service->ID, 'mpwpb_category');
+                                $category = ($terms && !is_wp_error($terms)) ? implode(', ', wp_list_pluck($terms, 'name')) : '—';
+                                ?>
+                                <tr>
+                                    <td><?php echo esc_html(get_the_title($service)); ?></td>
+                                    <td><?php echo esc_html($category); ?></td>
+                                    <td><span class="mpwpb-status mpwpb-status-<?php echo esc_attr($service->post_status); ?>"><?php echo esc_html(ucfirst($service->post_status)); ?></span></td>
+                                    <td><a class="mpwpb-btn mpwpb-view-btn" href="<?php echo esc_url(get_permalink($service)); ?>"><?php esc_html_e('View Service', 'service-booking-manager'); ?></a></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                <?php endif; ?>
+            </div>
+            <?php
+        }
+
+        /**
+         * "My Appointment" tab content -- this staff member's bookings,
+         * with a From/To date-range filter (GET params so the URL stays
+         * shareable/bookmarkable, matching the rest of the plugin's
+         * account-area conventions). Shared the same way as
+         * render_my_service_tab() above.
+         */
+        public static function render_my_appointment_tab($user_id): void {
+            $start_date = isset($_GET['mpwpb_appt_from']) ? sanitize_text_field(wp_unslash($_GET['mpwpb_appt_from'])) : '';
+            $end_date = isset($_GET['mpwpb_appt_to']) ? sanitize_text_field(wp_unslash($_GET['mpwpb_appt_to'])) : '';
+            $bookings = self::get_staff_appointments($user_id, $start_date, $end_date);
+            ?>
+            <div class="mpwpb-staff-appointments">
+                <h3><?php esc_html_e('My Appointment', 'service-booking-manager'); ?></h3>
+                <form method="get" class="mpwpb-appt-filter">
+                    <?php foreach ($_GET as $key => $value) :
+                        if (in_array($key, array('mpwpb_appt_from', 'mpwpb_appt_to'), true) || is_array($value)) {
+                            continue;
+                        }
+                        ?>
+                        <input type="hidden" name="<?php echo esc_attr($key); ?>" value="<?php echo esc_attr(wp_unslash($value)); ?>"/>
+                    <?php endforeach; ?>
+                    <label>
+                        <?php esc_html_e('From', 'service-booking-manager'); ?>
+                        <input type="date" name="mpwpb_appt_from" value="<?php echo esc_attr($start_date); ?>"/>
+                    </label>
+                    <label>
+                        <?php esc_html_e('To', 'service-booking-manager'); ?>
+                        <input type="date" name="mpwpb_appt_to" value="<?php echo esc_attr($end_date); ?>"/>
+                    </label>
+                    <button type="submit" class="mpwpb-btn mpwpb-submit-btn"><?php esc_html_e('Filter', 'service-booking-manager'); ?></button>
+                    <?php if ($start_date || $end_date) : ?>
+                        <a class="mpwpb-btn" href="<?php echo esc_url(remove_query_arg(array('mpwpb_appt_from', 'mpwpb_appt_to'))); ?>"><?php esc_html_e('Clear', 'service-booking-manager'); ?></a>
+                    <?php endif; ?>
+                </form>
+                <?php if (empty($bookings)) : ?>
+                    <div class="mpwpb-no-bookings"><?php esc_html_e('No appointments found for the selected range.', 'service-booking-manager'); ?></div>
+                <?php else : ?>
+                    <table class="mpwpb-bookings-table">
+                        <thead>
+                            <tr>
+                                <th><?php esc_html_e('Booking ID', 'service-booking-manager'); ?></th>
+                                <th><?php esc_html_e('Service', 'service-booking-manager'); ?></th>
+                                <th><?php esc_html_e('Customer', 'service-booking-manager'); ?></th>
+                                <th><?php esc_html_e('Date', 'service-booking-manager'); ?></th>
+                                <th><?php esc_html_e('Time', 'service-booking-manager'); ?></th>
+                                <th><?php esc_html_e('Status', 'service-booking-manager'); ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($bookings as $booking) : ?>
+                                <tr>
+                                    <td>#<?php echo esc_html($booking->ID); ?></td>
+                                    <td><?php echo esc_html(get_the_title($booking->mpwpb_id)); ?></td>
+                                    <td><?php echo esc_html($booking->mpwpb_billing_name ?: '—'); ?></td>
+                                    <td><?php echo esc_html(MPWPB_Global_Function::date_format($booking->mpwpb_date)); ?></td>
+                                    <td><?php echo esc_html(MPWPB_Global_Function::date_format($booking->mpwpb_date, 'time')); ?></td>
+                                    <td><span class="mpwpb-status mpwpb-status-<?php echo esc_attr(strtolower($booking->mpwpb_order_status)); ?>"><?php echo esc_html(ucfirst($booking->mpwpb_order_status)); ?></span></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                <?php endif; ?>
+            </div>
+            <?php
+        }
+
+        /**
+         * Whether this staff member is allowed to change their own
+         * schedule/availability -- the same admin-controlled per-staff flag
+         * (set on the Staff Members admin screen, Admin/MPWPB_Staffs.php)
+         * that already gates the older embedded "Manage Holidays" tab
+         * (user_dashboard()'s 'holiday' case above). "My Schedule" respects
+         * the same flag rather than introducing a second, conflicting
+         * permission model.
+         */
+        public static function can_modify_own_schedule($user_id): bool {
+            return get_user_meta($user_id, 'mpwpb_staff_modify_holiday', true) === 'yes';
+        }
+
+        /**
+         * "My Schedule" tab content -- lets a staff member view/edit their
+         * own weekly hours, break times, and off days/dates. Reuses the
+         * exact same rendering, JS (#saveScheduleBtn handler in
+         * mpwpb_user_dashboard.js), and AJAX action
+         * (wp_ajax_mpwpb_save_specific_schedule, handled by
+         * mpwpb_save_specific_schedule() above, which already authorizes
+         * staff themselves, not just admins) as the older "Manage Holidays"
+         * tab -- same data, same save path, just a more prominent/dedicated
+         * entry point. Shared the same way as render_my_service_tab()/
+         * render_my_appointment_tab() above.
+         */
+        public static function render_my_schedule_tab($user_id): void {
+            if (!self::can_modify_own_schedule($user_id)) {
+                echo '<div class="mpwpb-message info">' . esc_html__("Your schedule can only be changed by an administrator. Please contact them if you'd like to update your availability.", 'service-booking-manager') . '</div>';
+                return;
+            }
+            ?>
+            <div class="mpwpb-staff-schedule">
+                <h3><?php esc_html_e('My Schedule', 'service-booking-manager'); ?></h3>
+                <p class="mpwpb-schedule-intro"><?php esc_html_e('Set your weekly working hours, break times, and the days/dates you are unavailable. Saving here updates the same availability used to calculate your bookable time slots.', 'service-booking-manager'); ?></p>
+                <?php
+                $mpwpb_staff_members = new MPWPB_Staff_Members();
+                $mpwpb_staff_members->schedule_settings($user_id);
+                echo self::staff_off_on_day_settings($user_id);
+                ?>
+                <button type="button" id="saveScheduleBtn" class="mpwpb-btn mpwpb-submit-btn">
+                    <i class="fas fa-save"></i> <?php esc_html_e('Save Schedule', 'service-booking-manager'); ?>
+                </button>
+            </div>
+            <?php
         }
 
     }

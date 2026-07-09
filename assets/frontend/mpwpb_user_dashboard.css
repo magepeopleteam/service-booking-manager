@@ -718,7 +718,270 @@
     background-color: #004f78;
 }
 
+/* ------------------------------------------------------------------ *
+ *  "My Schedule" (Admin/MPWPB_Staff_DashBoard.php::render_my_schedule_tab())
+ *  Reuses Admin/MPWPB_Staff_Members.php's own panel/table markup (built
+ *  for the wp-admin Staff Members screen, styled there by admin-only CSS
+ *  that isn't loaded here) -- these rules restyle that same markup for
+ *  the front-end account pages, scoped to .mpwpb-staff-schedule so the
+ *  admin screen's own styling is never touched.
+ * ------------------------------------------------------------------ */
+.mpwpb-staff-schedule .mpwpb-schedule-intro {
+    color: #666;
+    font-size: 13.5px;
+    line-height: 1.5;
+    margin: 0 0 20px;
+}
 
+.mpwpb-staff-schedule .mpPanel {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.mpwpb-staff-schedule .mpPanelHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 14px 18px;
+    background: #f9f9f9;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.mpwpb-staff-schedule .mpPanelHeader h6 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    text-transform: none;
+}
+
+/* No JS wires the collapse toggle on the front-end (that's admin-only
+   behaviour) -- hide the +/- icon rather than show a control that does
+   nothing when clicked. */
+.mpwpb-staff-schedule .mpPanelHeader [data-icon] {
+    display: none;
+}
+
+.mpwpb-staff-schedule .mpPanelBody {
+    padding: 18px;
+}
+
+.mpwpb-staff-schedule .mpwpb_staff_schedule_header_actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mpwpb-staff-schedule .mpwpb_copy_monday_btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid #e5e5e5;
+    background: #fff;
+    color: #333;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color .15s ease;
+}
+
+.mpwpb-staff-schedule .mpwpb_copy_monday_btn:hover {
+    background: #f5f5f5;
+}
+
+.mpwpb-staff-schedule .mpwpb_staff_format_badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: #f5f5f5;
+    color: #777;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.mpwpb-staff-schedule .mpwpb_staff_format_badge.is-on {
+    background: #d9edf7;
+    color: #31708f;
+}
+
+.mpwpb-staff-schedule .mpPanelBody > table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.mpwpb-staff-schedule .mpPanelBody > table th,
+.mpwpb-staff-schedule .mpPanelBody > table td {
+    padding: 10px 8px;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 13px;
+}
+
+.mpwpb-staff-schedule .mpPanelBody > table thead th {
+    background: #f5f5f5;
+    font-size: 12px;
+    font-weight: 600;
+    color: #333;
+}
+
+.mpwpb-staff-schedule .mpPanelBody > table tbody tr:hover {
+    background: #fafafa;
+}
+
+.mpwpb-staff-schedule .mpwpb_staff_status_badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    background: #f5f5f5;
+    color: #777;
+}
+
+.mpwpb-staff-schedule .mpwpb_staff_status_badge.is-active {
+    background: #dff0d8;
+    color: #3c763d;
+}
+
+.mpwpb-staff-schedule select.formControl {
+    width: 100%;
+    min-width: 100px;
+    padding: 6px 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+    font-size: 13px;
+    color: #333;
+}
+
+/* Overrides the inline style="background-color:#e3d3d3" the shared
+   render function hardcodes on break-time cells -- can't remove an
+   inline style from CSS, only outrank it. */
+.mpwpb-staff-schedule .mpwpb_start_break_time,
+.mpwpb-staff-schedule .mpwpb_end_break_time {
+    background-color: #f7f9fb !important;
+}
+
+.mpwpb-staff-schedule .dFlex {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.mpwpb-staff-schedule ._fs_label_w_200 {
+    flex: 0 0 auto;
+    min-width: 90px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+    padding-top: 6px;
+}
+
+.mpwpb-staff-schedule .groupCheckBox {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.mpwpb-staff-schedule .customCheckboxLabel {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid #e5e5e5;
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 12.5px;
+    color: #333;
+    cursor: pointer;
+}
+
+.mpwpb-staff-schedule .customCheckboxLabel input[type="checkbox"] {
+    margin: 0;
+}
+
+.mpwpb-staff-schedule .divider {
+    height: 1px;
+    background: #f0f0f0;
+    margin: 16px 0;
+}
+
+.mpwpb-staff-schedule .mp_settings_area {
+    flex: 1 1 260px;
+}
+
+.mpwpb-staff-schedule .mp_remove_area {
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin-bottom: 8px;
+}
+
+.mpwpb-staff-schedule .mp_remove_area .formControl {
+    padding: 6px 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.mpwpb-staff-schedule .justifyBetween {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.mpwpb-staff-schedule .allCenter,
+.mpwpb-staff-schedule .buttonGroup {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.mpwpb-staff-schedule ._themeButton_xs,
+.mpwpb-staff-schedule ._themeButton_xs_mT_xs {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid #e5e5e5;
+    background: #fff;
+    color: #333;
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.mpwpb-staff-schedule ._themeButton_xs:hover,
+.mpwpb-staff-schedule ._themeButton_xs_mT_xs:hover {
+    background: #f5f5f5;
+}
+
+.mpwpb-staff-schedule ._themeButton_xs_mT_xs {
+    margin-top: 8px;
+}
+
+.mpwpb-staff-schedule #saveScheduleBtn {
+    margin-top: 6px;
+}
+
+@media (max-width: 782px) {
+    .mpwpb-staff-schedule .mpPanelBody > table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {

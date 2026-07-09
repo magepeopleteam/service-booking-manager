@@ -26,28 +26,11 @@
 				add_action('woocommerce_order_details_after_order_table', array($this, 'render_booking_actions'));
 			}
 
-			/**
-			 * This plugin's checkout model is one booking per WC order (single
-			 * hidden product per service, single-item cart at checkout) -- if
-			 * more than one is ever found for an order, no-op defensively
-			 * rather than guess which booking to act on.
-			 */
-			private static function get_booking_for_order($order_id) {
-				$ids = get_posts(array(
-					'post_type' => 'mpwpb_booking',
-					'posts_per_page' => 2,
-					'fields' => 'ids',
-					'meta_key' => 'mpwpb_order_id',
-					'meta_value' => $order_id,
-				));
-				return count($ids) === 1 ? (int) $ids[0] : 0;
-			}
-
 			public function add_order_actions($actions, $order) {
 				if (!MPWPB_Global_Function::is_wc_payment_mode()) {
 					return $actions;
 				}
-				$booking_id = self::get_booking_for_order($order->get_id());
+				$booking_id = MPWPB_User_Dashboard::get_booking_for_order($order->get_id());
 				if (!$booking_id) {
 					return $actions;
 				}
@@ -90,7 +73,7 @@
 				if ((int) $order->get_customer_id() !== get_current_user_id()) {
 					return;
 				}
-				$booking_id = self::get_booking_for_order($order->get_id());
+				$booking_id = MPWPB_User_Dashboard::get_booking_for_order($order->get_id());
 				if (!$booking_id) {
 					return;
 				}

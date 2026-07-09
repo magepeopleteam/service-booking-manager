@@ -122,7 +122,8 @@
 			 * shape either way (MPWPB_Native_Cart::get_item() before payment,
 			 * the order's stored 'mpwpb_line_items' snapshot after).
 			 */
-			private function render_booking_recap(array $item, $post_id, bool $show_change_button): void {
+			/** Public/static so other order-detail views (e.g. Frontend/MPWPB_Custom_Payment_My_Account.php's dashboard order view) can reuse it instead of reimplementing the services/total recap. */
+			public static function render_booking_recap(array $item, $post_id, bool $show_change_button): void {
 				$total = $item['mpwpb_tp'] ?? 0;
 
 				// First segment only -- a comma-joined value here means a recurring
@@ -224,7 +225,7 @@
 				$post_id = $item['mpwpb_id'];
 				?>
 				<div class="mpwpb-checkout-embed">
-					<?php $this->render_booking_recap($item, $post_id, true); ?>
+					<?php self::render_booking_recap($item, $post_id, true); ?>
 					<p class="mpwpb-checkout-error" style="display:none;"></p>
 					<form class="mpwpb-checkout-form" method="post" action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>">
 						<input type="hidden" name="action" value="mpwpb_native_checkout_submit"/>
@@ -371,11 +372,6 @@
 				if (!isset($item['mpwpb_tp'])) {
 					$item['mpwpb_tp'] = MPWPB_Native_Order::get_total($order_id);
 				}
-				$first_name = get_post_meta($order_id, 'mpwpb_billing_first_name', true);
-				$last_name = get_post_meta($order_id, 'mpwpb_billing_last_name', true);
-				$email = get_post_meta($order_id, 'mpwpb_billing_email', true);
-				$phone = get_post_meta($order_id, 'mpwpb_billing_phone', true);
-				$address = get_post_meta($order_id, 'mpwpb_billing_address_1', true);
 				?>
 				<div class="mpwpb-confirmation-wrap">
 					<div class="mpwpb-checkout-embed">
@@ -395,37 +391,54 @@
 							</p>
 						</div>
 						<?php if (!empty($item)) : ?>
-							<?php $this->render_booking_recap($item, $post_id, false); ?>
+							<?php self::render_booking_recap($item, $post_id, false); ?>
 						<?php endif; ?>
-						<?php if ($first_name || $last_name || $email || $phone || $address) : ?>
-							<div class="mpwpb-checkout-card">
-								<div class="mpwpb-checkout-card-header">
-									<span class="mpwpb-checkout-card-icon"><i class="fas fa-user"></i></span>
-									<h3 class="mpwpb-checkout-card-title"><?php esc_html_e('Customer Information', 'service-booking-manager'); ?></h3>
+						<?php self::render_customer_info_card($order_id); ?>
+					</div>
+				</div>
+				<?php
+			}
+			/**
+			 * "Customer Information" card (name/email/phone/address) shared by
+			 * the post-checkout thank-you view above and the dashboard order
+			 * details view (Frontend/MPWPB_Custom_Payment_My_Account.php) so
+			 * both read the same billing meta the same way.
+			 */
+			public static function render_customer_info_card($order_id): void {
+				$first_name = get_post_meta($order_id, 'mpwpb_billing_first_name', true);
+				$last_name = get_post_meta($order_id, 'mpwpb_billing_last_name', true);
+				$email = get_post_meta($order_id, 'mpwpb_billing_email', true);
+				$phone = get_post_meta($order_id, 'mpwpb_billing_phone', true);
+				$address = get_post_meta($order_id, 'mpwpb_billing_address_1', true);
+				if (!$first_name && !$last_name && !$email && !$phone && !$address) {
+					return;
+				}
+				?>
+				<div class="mpwpb-checkout-card">
+					<div class="mpwpb-checkout-card-header">
+						<span class="mpwpb-checkout-card-icon"><i class="fas fa-user"></i></span>
+						<h3 class="mpwpb-checkout-card-title"><?php esc_html_e('Customer Information', 'service-booking-manager'); ?></h3>
+					</div>
+					<div class="mpwpb-checkout-card-body">
+						<div class="mpwpb-checkout-row">
+							<div class="mpwpb-checkout-info">
+								<span><?php esc_html_e('Full Name', 'service-booking-manager'); ?></span>
+								<strong><?php echo esc_html(trim($first_name . ' ' . $last_name)); ?></strong>
+							</div>
+							<div class="mpwpb-checkout-info">
+								<span><?php esc_html_e('Email Address', 'service-booking-manager'); ?></span>
+								<strong><?php echo esc_html($email); ?></strong>
+							</div>
+						</div>
+						<?php if ($phone || $address) : ?>
+							<div class="mpwpb-checkout-row">
+								<div class="mpwpb-checkout-info">
+									<span><?php esc_html_e('Phone Number', 'service-booking-manager'); ?></span>
+									<strong><?php echo esc_html($phone ?: '—'); ?></strong>
 								</div>
-								<div class="mpwpb-checkout-card-body">
-									<div class="mpwpb-checkout-row">
-										<div class="mpwpb-checkout-info">
-											<span><?php esc_html_e('Full Name', 'service-booking-manager'); ?></span>
-											<strong><?php echo esc_html(trim($first_name . ' ' . $last_name)); ?></strong>
-										</div>
-										<div class="mpwpb-checkout-info">
-											<span><?php esc_html_e('Email Address', 'service-booking-manager'); ?></span>
-											<strong><?php echo esc_html($email); ?></strong>
-										</div>
-									</div>
-									<?php if ($phone || $address) : ?>
-										<div class="mpwpb-checkout-row">
-											<div class="mpwpb-checkout-info">
-												<span><?php esc_html_e('Phone Number', 'service-booking-manager'); ?></span>
-												<strong><?php echo esc_html($phone ?: '—'); ?></strong>
-											</div>
-											<div class="mpwpb-checkout-info">
-												<span><?php esc_html_e('Address', 'service-booking-manager'); ?></span>
-												<strong><?php echo esc_html($address ?: '—'); ?></strong>
-											</div>
-										</div>
-									<?php endif; ?>
+								<div class="mpwpb-checkout-info">
+									<span><?php esc_html_e('Address', 'service-booking-manager'); ?></span>
+									<strong><?php echo esc_html($address ?: '—'); ?></strong>
 								</div>
 							</div>
 						<?php endif; ?>

@@ -178,7 +178,7 @@
 	width: 100%;
 	font-size: 14px;
 	font-weight: 700;
-	color: var(--ink);
+	color: #646464;
 	line-height: 1.35;
 }
 .mpwpb-bt__tpl-count {
@@ -196,7 +196,7 @@
 	width: 100%;
 	border-radius: 999px;
 	background: var(--brand-soft);
-	color: var(--brand-600);
+	color: #5e5e60;
 	font-size: 12.5px;
 	font-weight: 700;
 	padding: 9px 12px;

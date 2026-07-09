@@ -267,6 +267,27 @@ if (MPWPB_Global_Function::is_gdpr_enabled()) {
             return add_query_arg('mpwpb_reorder', $booking_id, get_permalink($service_id));
         }
 
+        /**
+         * Finds the single booking created for an order (WC or native --
+         * both write mpwpb_order_id via MPWPB_Woocommerce::create_bookings_from_data()).
+         * This plugin's checkout model is one booking per order (single hidden
+         * product / single-item cart at checkout) -- if more than one is ever
+         * found, no-op defensively rather than guess which booking to act on.
+         * Shared by Frontend/MPWPB_Wc_Account_Order_Actions.php (WooCommerce
+         * My Account) and Frontend/MPWPB_Custom_Payment_My_Account.php
+         * (Custom Payment dashboard) so both stay in sync.
+         */
+        public static function get_booking_for_order($order_id) {
+            $ids = get_posts(array(
+                'post_type' => 'mpwpb_booking',
+                'posts_per_page' => 2,
+                'fields' => 'ids',
+                'meta_key' => 'mpwpb_order_id',
+                'meta_value' => $order_id,
+            ));
+            return count($ids) === 1 ? (int) $ids[0] : 0;
+        }
+
         public static function render_booking_actions($booking_id, $service_id, $render_modal = false) {
             $booking = (object) array(
                 'mpwpb_date' => get_post_meta($booking_id, 'mpwpb_date', true),

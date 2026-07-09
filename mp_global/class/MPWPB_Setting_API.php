@@ -91,7 +91,7 @@
 			}
 			public function get_field_description($args) {
 				if (!empty($args['desc'])) {
-					$desc = sprintf('<br/><i class="info_text"><span class="fas fa-info-circle"></span>%s</i>', $args['desc']);
+					$desc = sprintf('<br/><i class="info_text">%s</i>', $args['desc']);
 				} else {
 					$desc = '';
 				}
