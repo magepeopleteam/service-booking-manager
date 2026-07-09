@@ -318,6 +318,43 @@ function mpwpb_price_calculation($this) {
             });
         }
     });
+    // "Reorder" from a past booking (Frontend/MPWPB_User_Dashboard.php's
+    // Reorder link -> ?mpwpb_reorder={booking_id} -> MPWPB_Static_Template::
+    // get_reorder_prefill() -> templates/registration/static_registration.php
+    // inline-scripts mpwpbReorderPrefill). Reuses the exact click handler
+    // above -- .mpwpb-tree-service[data-service] is a subset of .mpwpb_item_box,
+    // so firing a synthetic click on it drives the real selection exactly like
+    // a real tap would, no separate checkbox/state-seeding logic needed. Date
+    // and extra services are intentionally left for the customer to pick fresh.
+    //
+    // This file is enqueued without in_footer (loads in <head>), so the
+    // service tree markup this needs to find doesn't exist yet at the point
+    // this script tag executes -- wrapped in its own ready handler (safe to
+    // nest regardless of whether the surrounding code above is already
+    // inside one) rather than assumed to run after the DOM is built.
+    $(function () {
+        if (typeof mpwpbReorderPrefill === 'undefined' || !mpwpbReorderPrefill) {
+            return;
+        }
+        // A booking can contain more than one selected service (the wizard's
+        // service step is multi-select) -- re-select every one that was in
+        // the original order, not just the first.
+        if ($.isArray(mpwpbReorderPrefill.service_keys)) {
+            $.each(mpwpbReorderPrefill.service_keys, function (i, key) {
+                var $mpwpbReorderNode = $('.mpwpb-tree-service[data-service="' + key + '"]');
+                if ($mpwpbReorderNode.length) {
+                    $mpwpbReorderNode.trigger('click');
+                }
+            });
+        }
+        if (mpwpbReorderPrefill.staff_id) {
+            // The staff <select> already exists in the DOM from page load --
+            // only its wrapping #mpwpb_staff_member_booking_area is
+            // visually hidden/fadeIn'd as the wizard steps through, so this
+            // doesn't need to wait for that step to become visible.
+            $('[name="mpwpb_staff_member_booking"]').val(mpwpbReorderPrefill.staff_id);
+        }
+    });
     //=========sub category=============//
     $(document).on('click', 'div.mpwpb_registration .mpwpb_sub_category_item', function () {
 

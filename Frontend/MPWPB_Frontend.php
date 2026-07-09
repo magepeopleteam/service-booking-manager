@@ -24,6 +24,7 @@
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Native_Checkout.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Static_Template.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_User_Dashboard.php';
+				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Wc_Account_Order_Actions.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Waiting_List.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Recurring_Booking.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Staff_Booking.php';

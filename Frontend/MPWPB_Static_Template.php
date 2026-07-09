@@ -562,6 +562,77 @@
 
                 }
 			}
+
+			/**
+			 * "Reorder" support: reads the ?mpwpb_reorder={booking_id} query arg
+			 * (set by Frontend/MPWPB_User_Dashboard.php's Reorder link) and
+			 * resolves it into the data the booking wizard's JS needs to
+			 * re-open with the same selection -- the LIVE mpwpb_service array
+			 * key for EVERY service that was in the original booking (a
+			 * booking can contain more than one -- the wizard's own service
+			 * step supports multi-select), plus the staff id.
+			 *
+			 * Category/sub-category don't need resolving here: the tree in
+			 * category_selection_static.php positions each service node under
+			 * whichever category it's CURRENTLY assigned to (via the service's
+			 * own live parent_cat/sub_cat), so matching purely on each
+			 * service's data-service attribute already lands the click on the
+			 * right node regardless of category. Date/time is intentionally
+			 * never prefilled -- the old date has passed, the customer must
+			 * pick a fresh one.
+			 *
+			 * @return array{service_keys:int[], staff_id:string}|null Null
+			 *         when there's no reorder request, or it doesn't belong to
+			 *         the current user / this service (never surfaces someone
+			 *         else's booking data).
+			 */
+			public static function get_reorder_prefill($post_id) {
+				if (!is_user_logged_in() || empty($_GET['mpwpb_reorder'])) {
+					return null;
+				}
+				$booking_id = absint($_GET['mpwpb_reorder']);
+				if (get_post_type($booking_id) !== 'mpwpb_booking'
+					|| (int) get_post_meta($booking_id, 'mpwpb_user_id', true) !== get_current_user_id()
+					|| (int) get_post_meta($booking_id, 'mpwpb_id', true) !== (int) $post_id) {
+					return null;
+				}
+
+				$old_services = get_post_meta($booking_id, 'mpwpb_service', true);
+				$live_services = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
+				$service_keys = array();
+				if (is_array($old_services)) {
+					foreach ($old_services as $old_service) {
+						$key = self::find_key_by_name($live_services, is_array($old_service) ? ($old_service['name'] ?? '') : '');
+						if ($key !== null) {
+							$service_keys[] = $key + 1;
+						}
+					}
+				}
+
+				return array(
+					'service_keys' => $service_keys,
+					'staff_id' => get_post_meta($booking_id, 'mpwpb_staff_term_id', true),
+				);
+			}
+
+			/**
+			 * mpwpb_service/mpwpb_category_service/mpwpb_sub_category_service
+			 * entries only carry their resolved name at booking-creation time
+			 * (see Frontend/MPWPB_Woocommerce.php::build_booking_item_from_request()),
+			 * not the original array key -- so recovering "which live entry is
+			 * this" has to go back through the name.
+			 */
+			private static function find_key_by_name($list, $name) {
+				if (!is_array($list) || $name === '' || $name === null) {
+					return null;
+				}
+				foreach ($list as $key => $entry) {
+					if (is_array($entry) && ($entry['name'] ?? '') === $name) {
+						return $key;
+					}
+				}
+				return null;
+			}
 		}
 		new MPWPB_Static_Template();
 	}

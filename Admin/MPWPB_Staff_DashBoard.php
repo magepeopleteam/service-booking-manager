@@ -12,8 +12,12 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
 
             add_action( 'woocommerce_account_dashboard', [ $this, 'mpwpb_my_dashboard_content'] );
 
-            add_action('wp_ajax_mpwpb_cancel_booking', array($this, 'cancel_booking'));
-            add_action('wp_ajax_mpwpb_reschedule_booking', array($this, 'reschedule_booking'));
+            // Deliberately distinct from Frontend/MPWPB_User_Dashboard.php's
+            // wp_ajax_mpwpb_cancel_booking/reschedule_booking -- both classes
+            // used to register the exact same action names, so whichever hook
+            // ran first silently ate the other's request.
+            add_action('wp_ajax_mpwpb_staff_cancel_booking', array($this, 'cancel_booking'));
+            add_action('wp_ajax_mpwpb_staff_reschedule_booking', array($this, 'reschedule_booking'));
             add_action('wp_ajax_mpwpb_update_user_profile', array($this, 'update_user_profile'));
 
             add_action('wp_ajax_mpwpb_save_specific_schedule', array($this, 'mpwpb_save_specific_schedule'));
@@ -624,24 +628,16 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
          * Check if a booking can be cancelled
          */
         private function can_cancel_booking($booking) {
-            // Check if booking is in the future and not already cancelled
-            $booking_time = strtotime($booking->mpwpb_date);
-            $current_time = current_time('timestamp');
-            $cancellation_period = 24 * 60 * 60; // 24 hours in seconds
-
-            return ($booking_time > ($current_time + $cancellation_period)) && $booking->mpwpb_order_status != 'cancelled';
+            return $booking->mpwpb_order_status != 'cancelled'
+                && MPWPB_Booking_History::is_within_lead_time($booking->mpwpb_date, 'cancel');
         }
 
         /**
          * Check if a booking can be rescheduled
          */
         private function can_reschedule_booking($booking) {
-            // Check if booking is in the future and not cancelled
-            $booking_time = strtotime($booking->mpwpb_date);
-            $current_time = current_time('timestamp');
-            $reschedule_period = 48 * 60 * 60; // 48 hours in seconds
-
-            return ($booking_time > ($current_time + $reschedule_period)) && $booking->mpwpb_order_status != 'cancelled';
+            return $booking->mpwpb_order_status != 'cancelled'
+                && MPWPB_Booking_History::is_within_lead_time($booking->mpwpb_date, 'reschedule');
         }
 
         /**
@@ -659,25 +655,17 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
                 wp_send_json_error(array('message' => esc_html__('Invalid booking ID', 'service-booking-manager')));
             }
 
-            // Check if user owns this booking
+            // Check if this staff member owns this booking
             $user_id = get_current_user_id();
-//            $booking_user_id = get_post_meta($booking_id, 'mpwpb_user_id', true);
-            $booking_user_id = get_post_meta($booking_id, 'mpwpb_staff_term_id', true);
+            $booking_staff_id = get_post_meta($booking_id, 'mpwpb_staff_term_id', true);
 
-            if ($user_id != $booking_user_id) {
+            if ($user_id != $booking_staff_id) {
                 wp_send_json_error(array('message' => esc_html__('You do not have permission to cancel this booking', 'service-booking-manager')));
             }
 
-            // Update booking status
-            update_post_meta($booking_id, 'mpwpb_order_status', 'cancelled');
-
-            // Get order ID and update WooCommerce order if applicable
-            $order_id = get_post_meta($booking_id, 'mpwpb_order_id', true);
-            if ($order_id) {
-                $order = MPWPB_Global_Function::get_order($order_id);
-                if ($order) {
-                    $order->update_status('cancelled', esc_html__('Booking cancelled by customer', 'service-booking-manager'));
-                }
+            $result = MPWPB_Booking_History::cancel($booking_id, __('Booking cancelled by staff.', 'service-booking-manager'));
+            if (is_wp_error($result)) {
+                wp_send_json_error(array('message' => $result->get_error_message()));
             }
 
             wp_send_json_success(array(
@@ -702,32 +690,26 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
                 wp_send_json_error(array('message' => esc_html__('Missing required fields', 'service-booking-manager')));
             }
 
-            // Check if user owns this booking
+            // Check if this staff member owns this booking -- matches
+            // cancel_booking() above (previously checked mpwpb_user_id here,
+            // which meant a staff member's own reschedule was always rejected).
             $user_id = get_current_user_id();
-            $booking_user_id = get_post_meta($booking_id, 'mpwpb_user_id', true);
+            $booking_staff_id = get_post_meta($booking_id, 'mpwpb_staff_term_id', true);
 
-            if ($user_id != $booking_user_id) {
+            if ($user_id != $booking_staff_id) {
                 wp_send_json_error(array('message' => esc_html__('You do not have permission to reschedule this booking', 'service-booking-manager')));
             }
 
-            // Format new date and time
             $new_datetime = $new_date . ' ' . $new_time;
+            $note = sprintf(
+                /* translators: %s: new booking date/time */
+                __('Booking rescheduled by staff. New date/time: %s', 'service-booking-manager'),
+                MPWPB_Global_Function::date_format($new_datetime) . ' ' . MPWPB_Global_Function::date_format($new_datetime, 'time')
+            );
 
-            // Update booking date
-            update_post_meta($booking_id, 'mpwpb_date', $new_datetime);
-
-            // Add note to order if applicable
-            $order_id = get_post_meta($booking_id, 'mpwpb_order_id', true);
-            if ($order_id) {
-                $order = MPWPB_Global_Function::get_order($order_id);
-                if ($order) {
-                    $order->add_order_note(
-                        sprintf(
-                            esc_html__('Booking rescheduled by customer. New date/time: %s', 'service-booking-manager'),
-                            MPWPB_Global_Function::date_format($new_datetime) . ' ' . MPWPB_Global_Function::date_format($new_datetime, 'time')
-                        )
-                    );
-                }
+            $result = MPWPB_Booking_History::reschedule($booking_id, $new_datetime, $note);
+            if (is_wp_error($result)) {
+                wp_send_json_error(array('message' => $result->get_error_message()));
             }
 
             wp_send_json_success(array(

@@ -65,6 +65,17 @@
 			public static function set_status($order_id, $status): void {
 				update_post_meta($order_id, 'mpwpb_order_status', $status);
 			}
+			/**
+			 * Native counterpart to WC_Order::add_order_note() -- there's no
+			 * order-notes UI for native orders yet, this is forward-compatible
+			 * storage for MPWPB_Booking_History's cancel/reschedule notes.
+			 */
+			public static function add_note($order_id, $note): void {
+				$notes = get_post_meta($order_id, 'mpwpb_order_notes', true);
+				$notes = is_array($notes) ? $notes : [];
+				$notes[] = ['note' => (string) $note, 'date' => current_time('mysql')];
+				update_post_meta($order_id, 'mpwpb_order_notes', $notes);
+			}
 			public static function mark_paid($order_id, $payment_method, $txn_id): void {
 				update_post_meta($order_id, 'mpwpb_order_status', 'processing');
 				update_post_meta($order_id, 'mpwpb_payment_method', $payment_method);

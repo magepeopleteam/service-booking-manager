@@ -19,6 +19,13 @@
 	$title = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_shortcode_title');
 	$sub_title = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_shortcode_sub_title');
 
+	// "Reorder" from a past booking (Frontend/MPWPB_User_Dashboard.php's
+	// Reorder link) -- lands here via ?mpwpb_reorder={booking_id} on this
+	// same service's normal booking page/shortcode. Both the shortcode and
+	// single-page rendering paths funnel through this one file, so this is
+	// the single shared place to seed it once.
+	$mpwpb_reorder_prefill = MPWPB_Static_Template::get_reorder_prefill($post_id);
+
     $is_multiselect = get_post_meta( $post_id, 'mpwpb_service_multiple_category_check', true );
     $enable_recurring = MPWPB_Global_Function::get_post_info( $post_id, 'mpwpb_enable_recurring', 'no');
 
@@ -54,6 +61,20 @@
 			</div>
 			<?php
 		}
+	}
+	if ($mpwpb_reorder_prefill) {
+		// Echoed directly here (not wp_add_inline_script('mpwpb_registration', ...))
+		// because that script is enqueued without in_footer -- WordPress prints
+		// it during wp_head(), which runs BEFORE this template (part of the
+		// main content loop) ever executes. By the time this code ran,
+		// mpwpb_registration's <script> tag was already on the page and
+		// wp_add_inline_script() silently had nothing left to attach to, so
+		// mpwpbReorderPrefill never existed at all. A plain inline <script>
+		// tag printed right here in the body always runs at the right time,
+		// regardless of where any enqueued file was placed.
+		?>
+		<script>var mpwpbReorderPrefill = <?php echo wp_json_encode($mpwpb_reorder_prefill, JSON_HEX_TAG | JSON_HEX_AMP); ?>;</script>
+		<?php
 	}
 ?>
     <div class="mpwpb_static_theme">

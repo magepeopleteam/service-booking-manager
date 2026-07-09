@@ -1,18 +1,25 @@
 jQuery(document).ready(function($) {
     'use strict';
-    
+
+    // Admin/MPWPB_Staff_DashBoard.php registers its own mpwpb_staff_* action
+    // names -- previously identical to the customer ones below, which meant
+    // whichever PHP class's hook ran first silently ate the other's request.
+    function isStaffContext() {
+        return typeof mpwpb_dashboard !== 'undefined' && mpwpb_dashboard.context === 'staff';
+    }
+
     // Cancel booking
     $('.mpwpb-cancel-btn').on('click', function(e) {
         e.preventDefault();
-        
+
         const bookingId = $(this).data('id');
-        
+
         if (confirm(mpwpb_dashboard.cancel_confirm)) {
             $.ajax({
                 type: 'POST',
                 url: mpwpb_dashboard.ajaxurl,
                 data: {
-                    action: 'mpwpb_cancel_booking',
+                    action: isStaffContext() ? 'mpwpb_staff_cancel_booking' : 'mpwpb_cancel_booking',
                     booking_id: bookingId,
                     nonce: mpwpb_dashboard.nonce
                 },
@@ -60,7 +67,7 @@ jQuery(document).ready(function($) {
             type: 'POST',
             url: mpwpb_dashboard.ajaxurl,
             data: {
-                action: 'mpwpb_get_available_dates',
+                action: 'mpwpb_dashboard_get_available_dates',
                 service_id: serviceId,
                 nonce: mpwpb_dashboard.nonce
             },
@@ -113,7 +120,7 @@ jQuery(document).ready(function($) {
             type: 'POST',
             url: mpwpb_dashboard.ajaxurl,
             data: {
-                action: 'mpwpb_get_available_times',
+                action: 'mpwpb_dashboard_get_available_times',
                 service_id: serviceId,
                 date: date,
                 nonce: mpwpb_dashboard.nonce
@@ -157,7 +164,7 @@ jQuery(document).ready(function($) {
             type: 'POST',
             url: mpwpb_dashboard.ajaxurl,
             data: {
-                action: 'mpwpb_reschedule_booking',
+                action: isStaffContext() ? 'mpwpb_staff_reschedule_booking' : 'mpwpb_reschedule_booking',
                 booking_id: bookingId,
                 new_date: newDate,
                 new_time: newTime,

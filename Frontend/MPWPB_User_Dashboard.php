@@ -13,6 +13,12 @@ if (!class_exists('MPWPB_User_Dashboard')) {
             add_shortcode('mpwpb-user-dashboard', array($this, 'user_dashboard'));
             add_action('wp_ajax_mpwpb_cancel_booking', array($this, 'cancel_booking'));
             add_action('wp_ajax_mpwpb_reschedule_booking', array($this, 'reschedule_booking'));
+            // Names deliberately avoid mpwpb_get_available_dates/times -- the
+            // Pro add-on's Admin/MPWPB_Backend_Order_Management.php already
+            // registers wp_ajax_mpwpb_get_available_times for its own backend
+            // order-creation screen; reusing that name here would collide.
+            add_action('wp_ajax_mpwpb_dashboard_get_available_dates', array($this, 'ajax_get_available_dates'));
+            add_action('wp_ajax_mpwpb_dashboard_get_available_times', array($this, 'ajax_get_available_times'));
             add_action('wp_ajax_mpwpb_update_user_profile', array($this, 'update_user_profile'));
             add_action('wp_ajax_mpwpb_submit_gdpr_request', array($this, 'submit_gdpr_request'));
             add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
@@ -24,11 +30,16 @@ if (!class_exists('MPWPB_User_Dashboard')) {
         public function enqueue_scripts() {
             wp_enqueue_style('mpwpb-user-dashboard', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_user_dashboard.css', array(), time());
             wp_enqueue_script('mpwpb-user-dashboard', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_user_dashboard.js', array('jquery'), time(), true);
+            // 'staff' picks the mpwpb_staff_* AJAX action names (Admin/MPWPB_Staff_DashBoard.php)
+            // instead of the customer ones below -- both used to register the
+            // same action names and silently collided.
+            $is_staff = is_user_logged_in() && in_array('mpwpb_staff', (array) wp_get_current_user()->roles, true);
             wp_localize_script('mpwpb-user-dashboard', 'mpwpb_dashboard', array(
                 'ajaxurl' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('mpwpb_dashboard_nonce'),
-                'cancel_confirm' => esc_html__('Are you sure you want to cancel this booking?', 'service-booking-manager'),
-                'reschedule_confirm' => esc_html__('Are you sure you want to reschedule this booking?', 'service-booking-manager')
+                'context' => $is_staff ? 'staff' : 'customer',
+                'cancel_confirm' => __('Are you sure you want to cancel this booking?', 'service-booking-manager'),
+                'reschedule_confirm' => __('Are you sure you want to reschedule this booking?', 'service-booking-manager')
             ));
         }
 
@@ -156,18 +167,18 @@ if (MPWPB_Global_Function::is_gdpr_enabled()) {
                                     </span>
                                 </td>
                                 <td class="mpwpb-actions">
-                                    <?php if ($this->can_cancel_booking($booking)) : ?>
-                                        <button class="mpwpb-btn mpwpb-cancel-btn" data-id="<?php echo esc_attr($booking->ID); ?>">
-                                            <?php esc_html_e('Cancel', 'service-booking-manager'); ?>
-                                        </button>
-                                    <?php endif; ?>
-                                    
-                                    <?php if ($this->can_reschedule_booking($booking)) : ?>
-                                        <button class="mpwpb-btn mpwpb-reschedule-btn" data-id="<?php echo esc_attr($booking->ID); ?>" data-service="<?php echo esc_attr($booking->mpwpb_id); ?>">
-                                            <?php esc_html_e('Reschedule', 'service-booking-manager'); ?>
-                                        </button>
-                                    <?php endif; ?>
-                                    
+                                    <?php self::render_booking_actions($booking->ID, $booking->mpwpb_id, false); ?>
+
+                                    <?php
+                                    // Creates an unrelated NEW booking (pre-filled from this one, editable
+                                    // before payment) rather than modifying this one, so unlike Cancel/
+                                    // Reschedule it's available regardless of status or the lead-time cutoff.
+                                    $reorder_url = self::get_reorder_url($booking->ID, $booking->mpwpb_id);
+                                    ?>
+                                    <a href="<?php echo esc_url($reorder_url); ?>" class="mpwpb-btn mpwpb-reorder-btn">
+                                        <?php esc_html_e('Reorder', 'service-booking-manager'); ?>
+                                    </a>
+
                                     <a href="<?php echo esc_url(get_permalink($booking->mpwpb_id)); ?>" class="mpwpb-btn mpwpb-view-btn">
                                         <?php esc_html_e('View Service', 'service-booking-manager'); ?>
                                     </a>
@@ -177,40 +188,8 @@ if (MPWPB_Global_Function::is_gdpr_enabled()) {
                     </tbody>
                 </table>
             </div>
-            
-            <!-- Reschedule Modal -->
-            <div id="mpwpb-reschedule-modal" class="mpwpb-modal">
-                <div class="mpwpb-modal-content">
-                    <span class="mpwpb-close">&times;</span>
-                    <h3><?php esc_html_e('Reschedule Booking', 'service-booking-manager'); ?></h3>
-                    <form id="mpwpb-reschedule-form">
-                        <input type="hidden" id="booking_id" name="booking_id">
-                        <input type="hidden" id="service_id" name="service_id">
-                        
-                        <div class="mpwpb-form-group">
-                            <label for="new_date"><?php esc_html_e('Select New Date', 'service-booking-manager'); ?></label>
-                            <select id="new_date" name="new_date" required>
-                                <option value=""><?php esc_html_e('Select Date', 'service-booking-manager'); ?></option>
-                                <!-- Options will be populated via AJAX -->
-                            </select>
-                        </div>
-                        
-                        <div class="mpwpb-form-group">
-                            <label for="new_time"><?php esc_html_e('Select New Time', 'service-booking-manager'); ?></label>
-                            <select id="new_time" name="new_time" required>
-                                <option value=""><?php esc_html_e('Select Time', 'service-booking-manager'); ?></option>
-                                <!-- Options will be populated via AJAX -->
-                            </select>
-                        </div>
-                        
-                        <div class="mpwpb-form-group">
-                            <button type="submit" class="mpwpb-btn mpwpb-submit-btn">
-                                <?php esc_html_e('Confirm Reschedule', 'service-booking-manager'); ?>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+
+            <?php self::render_reschedule_modal(); ?>
             <?php
         }
 
@@ -250,21 +229,96 @@ if (MPWPB_Global_Function::is_gdpr_enabled()) {
                                     </span>
                                 </p>
                                 <div class="mpwpb-appointment-actions">
-                                    <?php if ($this->can_cancel_booking($booking)) : ?>
-                                        <button class="mpwpb-btn mpwpb-cancel-btn" data-id="<?php echo esc_attr($booking->ID); ?>">
-                                            <?php esc_html_e('Cancel', 'service-booking-manager'); ?>
-                                        </button>
-                                    <?php endif; ?>
-                                    
-                                    <?php if ($this->can_reschedule_booking($booking)) : ?>
-                                        <button class="mpwpb-btn mpwpb-reschedule-btn" data-id="<?php echo esc_attr($booking->ID); ?>" data-service="<?php echo esc_attr($booking->mpwpb_id); ?>">
-                                            <?php esc_html_e('Reschedule', 'service-booking-manager'); ?>
-                                        </button>
-                                    <?php endif; ?>
+                                    <?php self::render_booking_actions($booking->ID, $booking->mpwpb_id, false); ?>
                                 </div>
                             </div>
                         </div>
                     <?php endforeach; ?>
+                </div>
+            </div>
+
+            <?php self::render_reschedule_modal(); ?>
+            <?php
+        }
+
+        /**
+         * Cancel/Reschedule button pair for one booking -- shared by
+         * booking_history(), upcoming_appointments(), and
+         * Frontend/MPWPB_Wc_Account_Order_Actions.php's WooCommerce View
+         * Order integration, so all three stay in sync instead of drifting
+         * (duplicated inline markup is exactly what caused this dashboard's
+         * cancel/reschedule AJAX bug in the first place).
+         *
+         * @param bool $render_modal Pass true when this is the only booking on
+         *             the page (e.g. a single WC order's View Order page).
+         *             Table/grid callers render N buttons but only ONE modal
+         *             (fixed element IDs), so they pass false here and call
+         *             render_reschedule_modal() once after their loop instead.
+         */
+        /**
+         * URL for "Reorder" -- lands on the booking's service page with
+         * ?mpwpb_reorder={booking_id}, resolved server-side by
+         * MPWPB_Static_Template::get_reorder_prefill(). Shared by the
+         * dashboard's own booking_history() and
+         * Frontend/MPWPB_Wc_Account_Order_Actions.php's WooCommerce My
+         * Account integration so both stay in sync.
+         */
+        public static function get_reorder_url($booking_id, $service_id) {
+            return add_query_arg('mpwpb_reorder', $booking_id, get_permalink($service_id));
+        }
+
+        public static function render_booking_actions($booking_id, $service_id, $render_modal = false) {
+            $booking = (object) array(
+                'mpwpb_date' => get_post_meta($booking_id, 'mpwpb_date', true),
+                'mpwpb_order_status' => get_post_meta($booking_id, 'mpwpb_order_status', true),
+            );
+            if (self::can_cancel_booking($booking)) : ?>
+                <button class="mpwpb-btn mpwpb-cancel-btn" data-id="<?php echo esc_attr($booking_id); ?>">
+                    <?php esc_html_e('Cancel', 'service-booking-manager'); ?>
+                </button>
+            <?php endif;
+            if (self::can_reschedule_booking($booking)) : ?>
+                <button class="mpwpb-btn mpwpb-reschedule-btn" data-id="<?php echo esc_attr($booking_id); ?>" data-service="<?php echo esc_attr($service_id); ?>">
+                    <?php esc_html_e('Reschedule', 'service-booking-manager'); ?>
+                </button>
+            <?php endif;
+            if ($render_modal) {
+                self::render_reschedule_modal();
+            }
+        }
+
+        public static function render_reschedule_modal() { ?>
+            <!-- Reschedule Modal -->
+            <div id="mpwpb-reschedule-modal" class="mpwpb-modal">
+                <div class="mpwpb-modal-content">
+                    <span class="mpwpb-close">&times;</span>
+                    <h3><?php esc_html_e('Reschedule Booking', 'service-booking-manager'); ?></h3>
+                    <form id="mpwpb-reschedule-form">
+                        <input type="hidden" id="booking_id" name="booking_id">
+                        <input type="hidden" id="service_id" name="service_id">
+
+                        <div class="mpwpb-form-group">
+                            <label for="new_date"><?php esc_html_e('Select New Date', 'service-booking-manager'); ?></label>
+                            <select id="new_date" name="new_date" required>
+                                <option value=""><?php esc_html_e('Select Date', 'service-booking-manager'); ?></option>
+                                <!-- Options will be populated via AJAX -->
+                            </select>
+                        </div>
+
+                        <div class="mpwpb-form-group">
+                            <label for="new_time"><?php esc_html_e('Select New Time', 'service-booking-manager'); ?></label>
+                            <select id="new_time" name="new_time" required>
+                                <option value=""><?php esc_html_e('Select Time', 'service-booking-manager'); ?></option>
+                                <!-- Options will be populated via AJAX -->
+                            </select>
+                        </div>
+
+                        <div class="mpwpb-form-group">
+                            <button type="submit" class="mpwpb-btn mpwpb-submit-btn">
+                                <?php esc_html_e('Confirm Reschedule', 'service-booking-manager'); ?>
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
             <?php
@@ -608,25 +662,17 @@ if (MPWPB_Global_Function::is_gdpr_enabled()) {
         /**
          * Check if a booking can be cancelled
          */
-        private function can_cancel_booking($booking) {
-            // Check if booking is in the future and not already cancelled
-            $booking_time = strtotime($booking->mpwpb_date);
-            $current_time = current_time('timestamp');
-            $cancellation_period = 24 * 60 * 60; // 24 hours in seconds
-            
-            return ($booking_time > ($current_time + $cancellation_period)) && $booking->mpwpb_order_status != 'cancelled';
+        private static function can_cancel_booking($booking) {
+            return $booking->mpwpb_order_status != 'cancelled'
+                && MPWPB_Booking_History::is_within_lead_time($booking->mpwpb_date, 'cancel');
         }
 
         /**
          * Check if a booking can be rescheduled
          */
-        private function can_reschedule_booking($booking) {
-            // Check if booking is in the future and not cancelled
-            $booking_time = strtotime($booking->mpwpb_date);
-            $current_time = current_time('timestamp');
-            $reschedule_period = 48 * 60 * 60; // 48 hours in seconds
-            
-            return ($booking_time > ($current_time + $reschedule_period)) && $booking->mpwpb_order_status != 'cancelled';
+        private static function can_reschedule_booking($booking) {
+            return $booking->mpwpb_order_status != 'cancelled'
+                && MPWPB_Booking_History::is_within_lead_time($booking->mpwpb_date, 'reschedule');
         }
 
         /**
@@ -637,33 +683,26 @@ if (MPWPB_Global_Function::is_gdpr_enabled()) {
             if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'mpwpb_dashboard_nonce')) {
                 wp_send_json_error(array('message' => esc_html__('Security check failed', 'service-booking-manager')));
             }
-            
+
             $booking_id = isset($_POST['booking_id']) ? intval($_POST['booking_id']) : 0;
-            
+
             if (!$booking_id) {
                 wp_send_json_error(array('message' => esc_html__('Invalid booking ID', 'service-booking-manager')));
             }
-            
+
             // Check if user owns this booking
             $user_id = get_current_user_id();
             $booking_user_id = get_post_meta($booking_id, 'mpwpb_user_id', true);
-            
+
             if ($user_id != $booking_user_id) {
                 wp_send_json_error(array('message' => esc_html__('You do not have permission to cancel this booking', 'service-booking-manager')));
             }
-            
-            // Update booking status
-            update_post_meta($booking_id, 'mpwpb_order_status', 'cancelled');
-            
-            // Get order ID and update WooCommerce order if applicable
-            $order_id = get_post_meta($booking_id, 'mpwpb_order_id', true);
-            if ($order_id) {
-                $order = MPWPB_Global_Function::get_order($order_id);
-                if ($order) {
-                    $order->update_status('cancelled', esc_html__('Booking cancelled by customer', 'service-booking-manager'));
-                }
+
+            $result = MPWPB_Booking_History::cancel($booking_id, __('Booking cancelled by customer.', 'service-booking-manager'));
+            if (is_wp_error($result)) {
+                wp_send_json_error(array('message' => $result->get_error_message()));
             }
-            
+
             wp_send_json_success(array(
                 'message' => esc_html__('Booking cancelled successfully', 'service-booking-manager')
             ));
@@ -677,46 +716,84 @@ if (MPWPB_Global_Function::is_gdpr_enabled()) {
             if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'mpwpb_dashboard_nonce')) {
                 wp_send_json_error(array('message' => esc_html__('Security check failed', 'service-booking-manager')));
             }
-            
+
             $booking_id = isset($_POST['booking_id']) ? intval($_POST['booking_id']) : 0;
             $new_date = isset($_POST['new_date']) ? sanitize_text_field($_POST['new_date']) : '';
             $new_time = isset($_POST['new_time']) ? sanitize_text_field($_POST['new_time']) : '';
-            
+
             if (!$booking_id || !$new_date || !$new_time) {
                 wp_send_json_error(array('message' => esc_html__('Missing required fields', 'service-booking-manager')));
             }
-            
+
             // Check if user owns this booking
             $user_id = get_current_user_id();
             $booking_user_id = get_post_meta($booking_id, 'mpwpb_user_id', true);
-            
+
             if ($user_id != $booking_user_id) {
                 wp_send_json_error(array('message' => esc_html__('You do not have permission to reschedule this booking', 'service-booking-manager')));
             }
-            
-            // Format new date and time
+
             $new_datetime = $new_date . ' ' . $new_time;
-            
-            // Update booking date
-            update_post_meta($booking_id, 'mpwpb_date', $new_datetime);
-            
-            // Add note to order if applicable
-            $order_id = get_post_meta($booking_id, 'mpwpb_order_id', true);
-            if ($order_id) {
-                $order = MPWPB_Global_Function::get_order($order_id);
-                if ($order) {
-                    $order->add_order_note(
-                        sprintf(
-                            esc_html__('Booking rescheduled by customer. New date/time: %s', 'service-booking-manager'),
-                            MPWPB_Global_Function::date_format($new_datetime) . ' ' . MPWPB_Global_Function::date_format($new_datetime, 'time')
-                        )
-                    );
-                }
+            $note = sprintf(
+                /* translators: %s: new booking date/time */
+                __('Booking rescheduled by customer. New date/time: %s', 'service-booking-manager'),
+                MPWPB_Global_Function::date_format($new_datetime) . ' ' . MPWPB_Global_Function::date_format($new_datetime, 'time')
+            );
+
+            $result = MPWPB_Booking_History::reschedule($booking_id, $new_datetime, $note);
+            if (is_wp_error($result)) {
+                wp_send_json_error(array('message' => $result->get_error_message()));
             }
-            
+
             wp_send_json_success(array(
                 'message' => esc_html__('Booking rescheduled successfully', 'service-booking-manager')
             ));
+        }
+
+        /**
+         * AJAX: populate the reschedule modal's "Select New Date" dropdown.
+         * Response shape matches what mpwpb_user_dashboard.js already expects.
+         */
+        public function ajax_get_available_dates() {
+            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'mpwpb_dashboard_nonce')) {
+                wp_send_json_error(array('message' => esc_html__('Security check failed', 'service-booking-manager')));
+            }
+            $service_id = isset($_POST['service_id']) ? intval($_POST['service_id']) : 0;
+            if (!$service_id || get_post_type($service_id) !== MPWPB_Function::get_cpt()) {
+                wp_send_json_error(array('message' => esc_html__('Invalid service.', 'service-booking-manager')));
+            }
+
+            $dates = MPWPB_Function::get_date($service_id);
+            $out = array();
+            foreach ($dates as $date) {
+                $out[] = array('value' => $date, 'label' => MPWPB_Global_Function::date_format($date));
+            }
+            wp_send_json_success(array('dates' => $out));
+        }
+
+        /**
+         * AJAX: populate the reschedule modal's "Select New Time" dropdown for
+         * a chosen date, skipping slots already at full capacity.
+         */
+        public function ajax_get_available_times() {
+            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'mpwpb_dashboard_nonce')) {
+                wp_send_json_error(array('message' => esc_html__('Security check failed', 'service-booking-manager')));
+            }
+            $service_id = isset($_POST['service_id']) ? intval($_POST['service_id']) : 0;
+            $date = isset($_POST['date']) ? sanitize_text_field(wp_unslash($_POST['date'])) : '';
+            if (!$service_id || get_post_type($service_id) !== MPWPB_Function::get_cpt() || !$date) {
+                wp_send_json_error(array('message' => esc_html__('Invalid request.', 'service-booking-manager')));
+            }
+
+            $slots = MPWPB_Function::get_time_slot($service_id, $date);
+            $out = array();
+            foreach ($slots as $slot) {
+                if (MPWPB_Function::get_total_available($service_id, $slot) > 0) {
+                    $time = date('H:i', strtotime($slot));
+                    $out[] = array('value' => $time, 'label' => MPWPB_Function::format_time($time));
+                }
+            }
+            wp_send_json_success(array('times' => $out));
         }
 
         /**

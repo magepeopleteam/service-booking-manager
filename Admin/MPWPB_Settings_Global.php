@@ -207,6 +207,22 @@
 							'default' => 0,
 							'placeholder' => esc_html__('Ex:50', 'service-booking-manager'),
 						),
+						array(
+							'name' => 'cancellation_lead_time',
+							'label' => esc_html__('Cancellation Lead Time (hours)', 'service-booking-manager'),
+							'desc' => esc_html__('Customers and staff can only cancel a booking online if it starts at least this many hours from now. Default is 24.', 'service-booking-manager'),
+							'type' => 'number',
+							'default' => 24,
+							'placeholder' => esc_html__('Ex:24', 'service-booking-manager'),
+						),
+						array(
+							'name' => 'reschedule_lead_time',
+							'label' => esc_html__('Reschedule Lead Time (hours)', 'service-booking-manager'),
+							'desc' => esc_html__('Customers and staff can only reschedule a booking online if it starts at least this many hours from now. Default is 48.', 'service-booking-manager'),
+							'type' => 'number',
+							'default' => 48,
+							'placeholder' => esc_html__('Ex:48', 'service-booking-manager'),
+						),
                         array(
                             'name' => 'booking_widget_sticky_on_scrolling',
                             'label' => esc_html__('Booking widget sticky on scrolling', 'service-booking-manager'),
