@@ -52,6 +52,9 @@
 				update_post_meta($order_id, 'mpwpb_gateway_txn_id', $args['txn_id'] ?? '');
 				update_post_meta($order_id, 'mpwpb_currency', $args['currency'] ?? '');
 				update_post_meta($order_id, 'mpwpb_total', $args['total'] ?? 0);
+				update_post_meta($order_id, 'mpwpb_payment_choice', $args['payment_choice'] ?? 'full');
+				update_post_meta($order_id, 'mpwpb_amount_paid', $args['amount_paid'] ?? ($args['total'] ?? 0));
+				update_post_meta($order_id, 'mpwpb_amount_due', $args['amount_due'] ?? 0);
 				update_post_meta($order_id, 'mpwpb_user_id', get_current_user_id());
 				update_post_meta($order_id, 'mpwpb_billing_first_name', $billing['first_name'] ?? '');
 				update_post_meta($order_id, 'mpwpb_billing_last_name', $billing['last_name'] ?? '');
@@ -76,10 +79,19 @@
 				$notes[] = ['note' => (string) $note, 'date' => current_time('mysql')];
 				update_post_meta($order_id, 'mpwpb_order_notes', $notes);
 			}
-			public static function mark_paid($order_id, $payment_method, $txn_id): void {
+			public static function mark_paid($order_id, $payment_method, $txn_id, $amount_paid = null): void {
 				update_post_meta($order_id, 'mpwpb_order_status', 'processing');
 				update_post_meta($order_id, 'mpwpb_payment_method', $payment_method);
 				update_post_meta($order_id, 'mpwpb_gateway_txn_id', $txn_id);
+				// $amount_paid omitted means "the full order total was charged" --
+				// preserves old behavior for every call site that doesn't know
+				// about partial payment. When given (a deposit was charged
+				// instead), amount_due reflects the remainder still owed.
+				if ($amount_paid !== null) {
+					$total = (float) get_post_meta($order_id, 'mpwpb_total', true);
+					update_post_meta($order_id, 'mpwpb_amount_paid', (float) $amount_paid);
+					update_post_meta($order_id, 'mpwpb_amount_due', max(0.0, round($total - (float) $amount_paid, 2)));
+				}
 			}
 			/**
 			 * Turns a paid native order into real mpwpb_booking post(s).
@@ -91,6 +103,20 @@
 				if (!$order_id || get_post_type($order_id) != self::CPT) {
 					return false;
 				}
+				$cart_item = get_post_meta($order_id, 'mpwpb_line_items', true);
+				$cart_item = is_array($cart_item) ? $cart_item : [];
+
+				// A "Pay Balance" order (MPWPB_Partial_Payment::create_balance_order())
+				// never creates its own mpwpb_booking -- it just settles the due
+				// amount on the ORIGINAL booking. Routing it through the normal
+				// booking-creation flow below would create a duplicate booking.
+				if (!empty($cart_item['mpwpb_is_balance_payment'])) {
+					if (class_exists('MPWPB_Partial_Payment')) {
+						MPWPB_Partial_Payment::apply_balance_payment($order_id, false);
+					}
+					return true;
+				}
+
 				if (get_post_meta($order_id, 'mpwpb_booking_created', true) === 'yes') {
 					return true;
 				}
@@ -101,8 +127,6 @@
 				set_transient($lock_key, 1, 30);
 				update_post_meta($order_id, 'mpwpb_booking_created', 'yes');
 
-				$cart_item = get_post_meta($order_id, 'mpwpb_line_items', true);
-				$cart_item = is_array($cart_item) ? $cart_item : [];
 				$line_items = [];
 				if (!empty($cart_item)) {
 					$line_items[] = [
@@ -116,6 +140,12 @@
 						'extra_service_info' => $cart_item['mpwpb_extra_service_info'] ?? [],
 						'coupon_code' => $cart_item['mpwpb_coupon_code'] ?? '',
 						'discount_amount' => $cart_item['mpwpb_discount_amount'] ?? 0,
+						// Read off the ORDER's own meta (set by MPWPB_Native_Checkout::
+						// handle_checkout_submit() at creation time), not the cart
+						// snapshot itself -- the deposit/due split is computed there,
+						// after the cart item was already built.
+						'payment_choice' => get_post_meta($order_id, 'mpwpb_payment_choice', true) ?: 'full',
+						'amount_due' => (float) get_post_meta($order_id, 'mpwpb_amount_due', true),
 					];
 				}
 				$order_status = get_post_meta($order_id, 'mpwpb_order_status', true) ?: 'processing';

@@ -293,6 +293,12 @@ if (MPWPB_Global_Function::is_gdpr_enabled()) {
                 'mpwpb_date' => get_post_meta($booking_id, 'mpwpb_date', true),
                 'mpwpb_order_status' => get_post_meta($booking_id, 'mpwpb_order_status', true),
             );
+            // Shared by both My Account surfaces (WooCommerce's own Orders page
+            // via Frontend/MPWPB_Wc_Account_Order_Actions.php, and the Custom
+            // Payment dashboard via Frontend/MPWPB_Custom_Payment_My_Account.php)
+            // so paid/due visibility and the Pay Balance button only need to
+            // exist in one place.
+            self::render_payment_status($booking_id);
             if (self::can_cancel_booking($booking)) : ?>
                 <button class="mpwpb-btn mpwpb-cancel-btn" data-id="<?php echo esc_attr($booking_id); ?>">
                     <?php esc_html_e('Cancel', 'service-booking-manager'); ?>
@@ -306,6 +312,40 @@ if (MPWPB_Global_Function::is_gdpr_enabled()) {
             if ($render_modal) {
                 self::render_reschedule_modal();
             }
+        }
+
+        /**
+         * Paid/due amounts + "Pay Balance" link for a booking with an
+         * outstanding balance (mpwpb_order_status === 'partially-paid', see
+         * MPWPB_Partial_Payment::compute_display_status()) -- a no-op for any
+         * booking that was paid in full, so this is safe to call
+         * unconditionally from render_booking_actions() above.
+         */
+        public static function render_payment_status($booking_id): void {
+            if (!class_exists('MPWPB_Partial_Payment')) {
+                return;
+            }
+            $amount_due = MPWPB_Partial_Payment::get_amount_due($booking_id);
+            $real_status = get_post_meta($booking_id, 'mpwpb_real_order_status', true);
+            if ($amount_due <= 0 || in_array($real_status, MPWPB_Partial_Payment::TERMINAL_NON_PAYABLE_STATUSES, true)) {
+                return;
+            }
+            $amount_paid = MPWPB_Partial_Payment::get_amount_paid($booking_id);
+            ?>
+            <div class="mpwpb-payment-status">
+                <span class="mpwpb-payment-status-row">
+                    <?php esc_html_e('Paid:', 'service-booking-manager'); ?>
+                    <strong><?php echo wp_kses_post(MPWPB_Global_Function::wc_price(0, $amount_paid)); ?></strong>
+                </span>
+                <span class="mpwpb-payment-status-row mpwpb-payment-status-due">
+                    <?php esc_html_e('Balance Due:', 'service-booking-manager'); ?>
+                    <strong><?php echo wp_kses_post(MPWPB_Global_Function::wc_price(0, $amount_due)); ?></strong>
+                </span>
+                <a class="mpwpb-btn mpwpb-pay-balance-btn" href="<?php echo esc_url(add_query_arg('mpwpb_pay_balance', $booking_id, home_url('/'))); ?>">
+                    <?php esc_html_e('Pay Balance', 'service-booking-manager'); ?>
+                </a>
+            </div>
+            <?php
         }
 
         public static function render_reschedule_modal() { ?>

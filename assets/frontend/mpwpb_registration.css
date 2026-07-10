@@ -545,6 +545,24 @@ div.registration_tab_item {
     padding: 20px 0;
   }
 }
+.mpwpb-payment-choice-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  width: 100%;
+  padding: 10px 0 0;
+  font-size: 14px;
+}
+.mpwpb-payment-choice-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+.mpwpb-payment-choice-due {
+  font-weight: 600;
+}
 .mpwpb-default-template .main {
   width: 100%;
 }

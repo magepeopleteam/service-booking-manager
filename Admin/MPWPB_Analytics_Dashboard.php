@@ -483,12 +483,15 @@ if (!class_exists('MPWPB_Analytics_Dashboard')) {
         }
         /**
          * Same amount rule Order List uses: a partially-paid booking's
-         * amount comes from the order's _order_total meta, everything else
-         * from the booking's own mpwpb_tp meta.
+         * "revenue" is the amount actually collected so far (mpwpb_amount_paid,
+         * booking-level and source-agnostic -- see MPWPB_Partial_Payment), not
+         * its full contracted price, since the rest is still outstanding.
+         * '_order_total' (the old rule here) is a WooCommerce-only order meta
+         * key that never exists on a native (Custom Payment) order.
          */
         private function get_booking_amount($booking_id, $order_id, $order_status) {
             if ($order_status === 'partially-paid' && $order_id) {
-                return (float) MPWPB_Global_Function::get_post_info($order_id, '_order_total');
+                return (float) MPWPB_Global_Function::get_post_info($booking_id, 'mpwpb_amount_paid');
             }
             return (float) MPWPB_Global_Function::get_post_info($booking_id, 'mpwpb_tp');
         }

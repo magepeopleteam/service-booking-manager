@@ -61,15 +61,17 @@
 			 * @param int    $order_id      MPWPB_Native_Order post ID (already created, status pending).
 			 * @param array  $item          Same shape as MPWPB_Native_Cart::get_item().
 			 * @param string $currency_code ISO currency code, e.g. 'USD'.
+			 * @param float|null $charge_amount When given (a deposit, not the full
+			 *        booking total), PayPal charges exactly this amount instead.
 			 * @return array{ok:bool,approve_url?:string,paypal_order_id?:string,error?:string}
 			 */
-			public static function create_order($order_id, array $item, string $currency_code, string $return_url, string $cancel_url): array {
+			public static function create_order($order_id, array $item, string $currency_code, string $return_url, string $cancel_url, ?float $charge_amount = null): array {
 				$auth = self::get_access_token();
 				if (!$auth['ok']) {
 					return $auth;
 				}
 				$decimals = (int) MPWPB_Global_Function::native_currency_setting('decimals', 2);
-				$total = (float) ($item['mpwpb_tp'] ?? 0);
+				$total = $charge_amount ?? (float) ($item['mpwpb_tp'] ?? 0);
 				$body = [
 					'intent' => 'CAPTURE',
 					'purchase_units' => [

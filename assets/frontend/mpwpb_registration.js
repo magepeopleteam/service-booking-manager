@@ -29,6 +29,12 @@ function mpwpb_price_calculation($this) {
     }*/
 
     parent.find('.mpwpb_total_bill').html(mpwpb_price_format(price));
+    // Raw numeric total (not the formatted/currency-symbol'd HTML above) so
+    // the Full/Partial payment-choice preview below can compute a deposit
+    // figure without having to re-parse a localized currency string back
+    // into a number.
+    parent.find('.mpwpb_total_bill').attr('data-raw-price', price);
+    mpwpb_update_payment_choice_preview(parent);
 
     // Static template's "what you've picked" summary (#mpwpb_selected_summary,
     // static_registration.php) -- defined in mpwpb-booking-tree.js, which
@@ -37,6 +43,32 @@ function mpwpb_price_calculation($this) {
     if (typeof updateSelectedSummary === 'function') {
         updateSelectedSummary(parent);
     }
+}
+/**
+ * Live "Due Now" preview shown next to the Full/Partial radios -- cosmetic
+ * only, purely client-side estimate from the raw price mpwpb_price_calculation()
+ * just computed. The actual amount charged is always recomputed and enforced
+ * server-side (MPWPB_Partial_Payment::split_total()) at checkout time, so a
+ * preview that's briefly stale after a discount/recurring adjustment (applied
+ * by other scripts after this one runs) never affects what's really charged.
+ */
+function mpwpb_update_payment_choice_preview(parent) {
+    var $wrap = parent.find('#mpwpb_payment_choice_wrap');
+    if (!$wrap.length || typeof mpwpb_ajax === 'undefined' || !mpwpb_ajax.partial_payment || !mpwpb_ajax.partial_payment.enabled) {
+        return;
+    }
+    var $due = $wrap.find('#mpwpb_payment_choice_due');
+    var choice = parent.find('[name="mpwpb_payment_choice"]:checked').val();
+    if (choice !== 'partial') {
+        $due.hide();
+        return;
+    }
+    var total = parseFloat(parent.find('.mpwpb_total_bill').first().attr('data-raw-price')) || 0;
+    var settings = mpwpb_ajax.partial_payment;
+    var deposit = settings.type === 'fixed' ? parseFloat(settings.fixed_amount) || 0 : total * ((parseFloat(settings.percentage) || 0) / 100);
+    deposit = Math.max(0, Math.min(deposit, total));
+    $due.find('#mpwpb_payment_choice_due_amount').html(mpwpb_price_format(deposit));
+    $due.show();
 }
 //Registration
 (function ($) {
@@ -633,6 +665,9 @@ function mpwpb_price_calculation($this) {
             parent.find('#mpwpb_staff_selected_datetime').text('—');
         }
     });
+    $(document).on('change', 'div.mpwpb_registration [name="mpwpb_payment_choice"]', function () {
+        mpwpb_update_payment_choice_preview($(this).closest('div.mpwpb_registration'));
+    });
     $(document).on('click', 'div.mpwpb_registration .mpwpb_date_time_next', function () {
         let parent = $(this).closest('div.mpwpb_registration');
         let date = parent.find('[name="mpwpb_date"]').val();
@@ -721,6 +756,7 @@ function mpwpb_price_calculation($this) {
                     "mpwpb_extra_service_type": mpwpb_extra_service_type,
                     "mpwpb_extra_service_qty": mpwpb_extra_service_qty,
                     "mpwpb_staff_member": staff_member,
+                    "mpwpb_payment_choice": parent.find('[name="mpwpb_payment_choice"]:checked').val() || 'full',
                     nonce: mpwpb_ajax.nonce
                 },
                 beforeSend: function () {

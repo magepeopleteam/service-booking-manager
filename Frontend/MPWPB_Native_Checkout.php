@@ -300,6 +300,21 @@
 						<span><?php esc_html_e('Total', 'service-booking-manager'); ?></span>
 						<strong><?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, $net_total)); ?></strong>
 					</div>
+					<?php
+					$payment_choice = $item['mpwpb_payment_choice'] ?? 'full';
+					$split = class_exists('MPWPB_Partial_Payment') ? MPWPB_Partial_Payment::split_total($net_total, $payment_choice) : ['deposit' => $net_total, 'due' => 0];
+					if ($split['due'] > 0) : ?>
+						<div class="mpwpb-checkout-due-split">
+							<div class="mpwpb-checkout-due-row">
+								<span><?php esc_html_e('Due Now', 'service-booking-manager'); ?></span>
+								<strong><?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, $split['deposit'])); ?></strong>
+							</div>
+							<div class="mpwpb-checkout-due-row mpwpb-checkout-due-later">
+								<span><?php esc_html_e('Due Later', 'service-booking-manager'); ?></span>
+								<strong><?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, $split['due'])); ?></strong>
+							</div>
+						</div>
+					<?php endif; ?>
 				</div>
 				<?php
 			}
@@ -675,11 +690,20 @@
 				];
 				$currency_code = MPWPB_Global_Function::native_currency_setting('currency_code', 'USD');
 				$net_total = max(0, ($item['mpwpb_tp'] ?? 0) - ($item['mpwpb_discount_amount'] ?? 0));
+				// A "Pay Balance" item (MPWPB_Partial_Payment::create_balance_order())
+				// always carries payment_choice='full' -- split_total() correctly
+				// yields due=0 for it, same as any other full payment.
+				$payment_choice = $item['mpwpb_payment_choice'] ?? 'full';
+				$split = class_exists('MPWPB_Partial_Payment') ? MPWPB_Partial_Payment::split_total($net_total, $payment_choice) : ['deposit' => $net_total, 'due' => 0];
+				$charge_amount = $split['deposit'];
 				$order_id = MPWPB_Native_Order::create([
 					'billing' => $billing,
 					'line_items' => $item,
 					'total' => $net_total,
 					'currency' => $currency_code,
+					'payment_choice' => $payment_choice,
+					'amount_paid' => $charge_amount,
+					'amount_due' => $split['due'],
 				]);
 				if (!$order_id) {
 					if ($is_ajax_submit) {
@@ -695,6 +719,14 @@
 					update_post_meta($order_id, 'mpwpb_privacy_policy_consent', isset($_POST['mpwpb_privacy_consent']) ? 'yes' : 'no');
 					update_post_meta($order_id, 'mpwpb_data_processing_consent', isset($_POST['mpwpb_data_consent']) ? 'yes' : 'no');
 				}
+				// Stored as their own top-level meta (not just nested inside the
+				// mpwpb_line_items snapshot) so MPWPB_Partial_Payment::apply_balance_payment()
+				// can read them directly off the order without depending on the
+				// cart-item array's shape.
+				if (!empty($item['mpwpb_is_balance_payment'])) {
+					update_post_meta($order_id, 'mpwpb_balance_of_order_id', (int) ($item['mpwpb_balance_of_order_id'] ?? 0));
+					update_post_meta($order_id, 'mpwpb_balance_of_booking_id', (int) ($item['mpwpb_balance_of_booking_id'] ?? 0));
+				}
 				// Offline still confirms immediately (there's nothing to charge
 				// through a gateway). Stripe/PayPal instead send the customer to
 				// a hosted payment page and defer mark_paid()/process_order() to
@@ -702,11 +734,11 @@
 				// status once they return (plus a Stripe webhook as a backstop) --
 				// never trust the return purely because the browser came back.
 				if ($gateway === 'stripe') {
-					$redirect = $this->start_stripe_payment($order_id, $item, $currency_code);
+					$redirect = $this->start_stripe_payment($order_id, $item, $currency_code, $charge_amount);
 				} elseif ($gateway === 'paypal') {
-					$redirect = $this->start_paypal_payment($order_id, $item, $currency_code);
+					$redirect = $this->start_paypal_payment($order_id, $item, $currency_code, $charge_amount);
 				} else {
-					MPWPB_Native_Order::mark_paid($order_id, $gateway, '');
+					MPWPB_Native_Order::mark_paid($order_id, $gateway, '', $charge_amount);
 					MPWPB_Native_Order::process_order($order_id);
 					MPWPB_Native_Cart::clear();
 					$redirect = ['ok' => true, 'url' => self::get_confirmation_url($order_id)];
@@ -727,13 +759,13 @@
 			/**
 			 * @return array{ok:bool,url?:string,error?:string}
 			 */
-			private function start_stripe_payment($order_id, array $item, string $currency_code): array {
+			private function start_stripe_payment($order_id, array $item, string $currency_code, ?float $charge_amount = null): array {
 				$success_url = add_query_arg('mpwpb_gateway_return', 'stripe', self::get_confirmation_url($order_id));
 				// {CHECKOUT_SESSION_ID} is a literal Stripe template placeholder --
 				// appended after add_query_arg() so it's never URL-encoded.
 				$success_url .= '&session_id={CHECKOUT_SESSION_ID}';
 				$cancel_url = self::get_checkout_url();
-				$result = MPWPB_Stripe_Gateway::create_checkout_session($order_id, $item, $currency_code, $success_url, $cancel_url);
+				$result = MPWPB_Stripe_Gateway::create_checkout_session($order_id, $item, $currency_code, $success_url, $cancel_url, $charge_amount);
 				if (!$result['ok']) {
 					return ['ok' => false, 'error' => $result['error']];
 				}
@@ -743,10 +775,10 @@
 			/**
 			 * @return array{ok:bool,url?:string,error?:string}
 			 */
-			private function start_paypal_payment($order_id, array $item, string $currency_code): array {
+			private function start_paypal_payment($order_id, array $item, string $currency_code, ?float $charge_amount = null): array {
 				$return_url = add_query_arg('mpwpb_gateway_return', 'paypal', self::get_confirmation_url($order_id));
 				$cancel_url = self::get_checkout_url();
-				$result = MPWPB_Paypal_Gateway::create_order($order_id, $item, $currency_code, $return_url, $cancel_url);
+				$result = MPWPB_Paypal_Gateway::create_order($order_id, $item, $currency_code, $return_url, $cancel_url, $charge_amount);
 				if (!$result['ok']) {
 					return ['ok' => false, 'error' => $result['error']];
 				}

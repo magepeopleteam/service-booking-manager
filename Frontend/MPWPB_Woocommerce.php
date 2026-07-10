@@ -147,6 +147,16 @@
 						$cart_item_data['mpwpb_tp'] = $total_price;
 						$cart_item_data['line_total'] = $total_price;
 						$cart_item_data['line_subtotal'] = $total_price;
+						// Full/Partial choice made once on the wizard's "Proceed to
+						// Checkout" step (see templates/registration/next_date_time.php) --
+						// only trusted as 'partial' when the feature is actually
+						// enabled, so a stale/tampered request can't discount a
+						// checkout that shouldn't have this option at all.
+						$payment_choice = isset($_POST['mpwpb_payment_choice']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_payment_choice'])) : 'full';
+						if ($payment_choice !== 'partial' || !class_exists('MPWPB_Partial_Payment') || !MPWPB_Partial_Payment::is_enabled()) {
+							$payment_choice = 'full';
+						}
+						$cart_item_data['mpwpb_payment_choice'] = $payment_choice;
 						$cart_item_data = apply_filters('mpwpb_add_cart_item', $cart_item_data, $product_id);
 					}
 					$cart_item_data['mpwpb_id'] = $product_id;
@@ -163,6 +173,14 @@
 					if (get_post_type($post_id) == MPWPB_Function::get_cpt() && isset($value['mpwpb_tp'])) {
 						$discount = isset($value['mpwpb_discount_amount']) ? (float) $value['mpwpb_discount_amount'] : 0;
 						$total_price = max(0, $value['mpwpb_tp'] - $discount);
+						// Only the DEPOSIT is actually charged through WooCommerce's own
+						// checkout when Partial was chosen -- the remaining balance is
+						// collected later via a separate linked order (see
+						// MPWPB_Partial_Payment::create_balance_order()), not by
+						// reopening this one.
+						if (class_exists('MPWPB_Partial_Payment') && ($value['mpwpb_payment_choice'] ?? 'full') === 'partial') {
+							$total_price = MPWPB_Partial_Payment::get_deposit_amount($total_price);
+						}
 						$value['data']->set_price($total_price);
 						$value['data']->set_regular_price($total_price);
 						$value['data']->set_sale_price($total_price);
@@ -275,6 +293,14 @@
 					$item->add_meta_data('_mpwpb_extra_service_info', $extra_service);
 					$item->add_meta_data('_mpwpb_coupon_code', $coupon_code);
 					$item->add_meta_data('_mpwpb_discount_amount', $discount_amount);
+
+					$payment_choice = $values['mpwpb_payment_choice'] ?? 'full';
+					$net_total = max(0, ((float) $total_price) - $discount_amount);
+					$split = class_exists('MPWPB_Partial_Payment') ? MPWPB_Partial_Payment::split_total($net_total, $payment_choice) : ['deposit' => $net_total, 'due' => 0];
+					$item->add_meta_data('_mpwpb_payment_choice', $payment_choice);
+					$item->add_meta_data('_mpwpb_deposit_amount', $split['deposit']);
+					$item->add_meta_data('_mpwpb_amount_due', $split['due']);
+
 					do_action('mpwpb_checkout_create_order_line_item', $item, $values);
 				}
 			}
@@ -313,6 +339,8 @@
 						'extra_service_info' => wc_get_order_item_meta($item_id, '_mpwpb_extra_service_info') ?: [],
 						'coupon_code' => wc_get_order_item_meta($item_id, '_mpwpb_coupon_code') ?: '',
 						'discount_amount' => (float) wc_get_order_item_meta($item_id, '_mpwpb_discount_amount'),
+						'payment_choice' => wc_get_order_item_meta($item_id, '_mpwpb_payment_choice') ?: 'full',
+						'amount_due' => (float) wc_get_order_item_meta($item_id, '_mpwpb_amount_due'),
 					];
 				}
 				$billing = [
@@ -434,8 +462,21 @@
 						$data['mpwpb_discount_amount'] = $discount_amount;
 						$data['mpwpb_service_info'] = $ex_service_infos;
 						$data['mpwpb_order_id'] = $order_id;
-						$data['mpwpb_order_status'] = $order_status;
 						$data['mpwpb_payment_method'] = $payment_method;
+						// mpwpb_order_status stays a DERIVED display value once partial
+						// payment is involved -- mpwpb_real_order_status is the ground
+						// truth updated by wc_order_status_change()/native status syncs,
+						// recomputed through compute_display_status() every time either
+						// it or the amount due changes, so a later status transition
+						// can't silently clobber 'partially-paid' back to the raw status
+						// while a balance is still owed.
+						$amount_due = (float) ($line_item['amount_due'] ?? 0);
+						$total_price_num = (float) ($line_item['total_price'] ?? 0);
+						$data['mpwpb_payment_choice'] = $line_item['payment_choice'] ?? 'full';
+						$data['mpwpb_amount_due'] = $amount_due;
+						$data['mpwpb_amount_paid'] = $amount_due > 0 ? max(0, round($total_price_num - $amount_due, 2)) : $total_price_num;
+						$data['mpwpb_real_order_status'] = $order_status;
+						$data['mpwpb_order_status'] = class_exists('MPWPB_Partial_Payment') ? MPWPB_Partial_Payment::compute_display_status($order_status, $amount_due) : $order_status;
 						$data['mpwpb_user_id'] = $user_id ?: '';
 						$data['mpwpb_extra_service_info'] = $ex_service_infos;
 						$data['mpwpb_billing_name'] = trim(($billing['first_name'] ?? '') . ' ' . ($billing['last_name'] ?? ''));
@@ -443,7 +484,20 @@
 						$data['mpwpb_billing_phone'] = $billing['phone'] ?? '';
 						$data['mpwpb_billing_address'] = trim(($billing['address_1'] ?? '') . ' ' . ($billing['address_2'] ?? ''));
 						$booking_data = apply_filters('add_mpwpb_booking_data', $data, $post_id);
-						self::add_cpt_data('mpwpb_booking', $booking_data['mpwpb_billing_name'], $booking_data);
+						$new_booking_id = self::add_cpt_data('mpwpb_booking', $booking_data['mpwpb_billing_name'], $booking_data);
+						if ($new_booking_id && $amount_due > 0 && class_exists('MPWPB_Booking_History') && class_exists('MPWPB_Partial_Payment')) {
+							MPWPB_Booking_History::log(
+								$new_booking_id,
+								MPWPB_Booking_History::ACTION_DEPOSIT_RECEIVED,
+								MPWPB_Partial_Payment::format_price_plain($total_price_num),
+								MPWPB_Partial_Payment::format_price_plain($amount_due),
+								sprintf(
+									/* translators: %s: amount charged as a deposit */
+									esc_html__('Deposit of %s paid at checkout.', 'service-booking-manager'),
+									MPWPB_Partial_Payment::format_price_plain($data['mpwpb_amount_paid'])
+								)
+							);
+						}
 						if (is_array($ex_service_infos) && sizeof($ex_service_infos) > 0) {
 							foreach ($ex_service_infos as $ex_service_info) {
 								$ex_data = [];
@@ -594,7 +648,11 @@
 				foreach ($loop->posts as $user) {
 					$user_id = $user->ID;
 					//echo '<pre>';print_r($user_id);echo '</pre>';
-					update_post_meta($user_id, 'mpwpb_order_status', $order_status);
+					if (class_exists('MPWPB_Partial_Payment')) {
+						MPWPB_Partial_Payment::sync_display_status($user_id, $order_status);
+					} else {
+						update_post_meta($user_id, 'mpwpb_order_status', $order_status);
+					}
 				}
 				$args = array(
 					'post_type' => 'mpwpb_extra_service_booking',
@@ -683,6 +741,7 @@
 					update_post_meta($post_id, 'mpwpb_backend_order', 'no');
 				}
 				wp_reset_postdata();
+				return $post_id;
 			}
 			/****************************/
 			public function mpwpb_add_to_cart() {

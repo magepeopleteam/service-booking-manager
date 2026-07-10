@@ -22,6 +22,9 @@
 			const ACTION_STAFF_CHANGED = 'staff_changed';
 			const ACTION_SERVICE_STATUS_CHANGED = 'service_status_changed';
 			const ACTION_REVIEW_REQUEST_SENT = 'review_request_sent';
+			const ACTION_DEPOSIT_RECEIVED = 'deposit_received';
+			const ACTION_BALANCE_PAID = 'balance_paid';
+			const ACTION_PAYMENT_MARKED_RECEIVED = 'payment_marked_received';
 
 			// Bump this whenever the CREATE TABLE below changes shape, so
 			// maybe_create_table() re-runs dbDelta() against an *existing*

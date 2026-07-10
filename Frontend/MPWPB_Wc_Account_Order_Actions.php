@@ -48,6 +48,15 @@
 				if ($status === 'cancelled') {
 					return $actions;
 				}
+				// Only for a booking that's actually still payable (not cancelled --
+				// checked above), so a deposit taken before a later cancellation
+				// doesn't leave a stale "Pay Balance" button behind.
+				if (class_exists('MPWPB_Partial_Payment') && MPWPB_Partial_Payment::get_amount_due($booking_id) > 0) {
+					$actions['mpwpb_pay_balance'] = array(
+						'url' => add_query_arg('mpwpb_pay_balance', $booking_id, home_url('/')),
+						'name' => __('Pay Balance', 'service-booking-manager'),
+					);
+				}
 				$date = get_post_meta($booking_id, 'mpwpb_date', true);
 				$view_url = $order->get_view_order_url();
 

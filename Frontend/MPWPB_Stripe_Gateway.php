@@ -30,9 +30,15 @@
 			 * @param string $currency_code ISO currency code, e.g. 'USD'.
 			 * @param string $success_url
 			 * @param string $cancel_url
+			 * @param float|null $charge_amount When given (a deposit, not the full
+			 *        booking), Stripe charges exactly this instead of itemizing
+			 *        real per-service prices -- those would sum to the FULL
+			 *        price regardless of what's actually owed right now, so
+			 *        itemizing doesn't make sense once only part of the total
+			 *        is being collected.
 			 * @return array{ok:bool,url?:string,session_id?:string,error?:string}
 			 */
-			public static function create_checkout_session($order_id, array $item, string $currency_code, string $success_url, string $cancel_url): array {
+			public static function create_checkout_session($order_id, array $item, string $currency_code, string $success_url, string $cancel_url, ?float $charge_amount = null): array {
 				if (!self::is_configured()) {
 					return ['ok' => false, 'error' => esc_html__('Stripe is not configured. Please contact the site administrator.', 'service-booking-manager')];
 				}
@@ -47,6 +53,23 @@
 					'client_reference_id' => (string) $order_id,
 					'metadata' => ['mpwpb_order_id' => (string) $order_id],
 				];
+
+				if ($charge_amount !== null) {
+					$body['line_items'][0]['quantity'] = 1;
+					$body['line_items'][0]['price_data']['currency'] = $currency;
+					$body['line_items'][0]['price_data']['unit_amount'] = (int) round($charge_amount * $multiplier);
+					$body['line_items'][0]['price_data']['product_data']['name'] = esc_html__('Deposit Payment for Booking', 'service-booking-manager');
+
+					$response = self::request('POST', '/checkout/sessions', $body);
+					if (!$response['ok']) {
+						return $response;
+					}
+					$session = $response['data'];
+					if (empty($session['url']) || empty($session['id'])) {
+						return ['ok' => false, 'error' => esc_html__('Stripe did not return a checkout URL.', 'service-booking-manager')];
+					}
+					return ['ok' => true, 'url' => $session['url'], 'session_id' => $session['id']];
+				}
 
 				$line_index = 0;
 				foreach ((array) ($item['mpwpb_service'] ?? []) as $service) {
