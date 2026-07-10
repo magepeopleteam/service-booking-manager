@@ -11,39 +11,121 @@
 			public function __construct() {
 				add_action('add_meta_boxes', [$this, 'settings_meta']);
 				add_action('save_post', [$this, 'save_settings'], 99, 1);
+				add_filter('admin_body_class', [$this, 'body_class']);
+				add_action('admin_enqueue_scripts', [$this, 'enqueue']);
 			}
 			public function settings_meta() {
 				add_meta_box('mpwpb_coupon_meta_box_panel', esc_html__('Coupon Settings', 'service-booking-manager'), [$this, 'settings'], 'mpwpb_coupon', 'normal', 'high');
 			}
-			public function settings() {
-				$post_id = get_the_ID();
+
+			/** True only on the add/edit screen of the coupon CPT -- gates the shell CSS/JS and the chrome-hiding body class. */
+			private function is_coupon_edit_screen() {
+				if (!function_exists('get_current_screen')) {
+					return false;
+				}
+				$screen = get_current_screen();
+				return $screen && $screen->base === 'post' && $screen->post_type === 'mpwpb_coupon';
+			}
+
+			public function body_class($classes) {
+				if ($this->is_coupon_edit_screen()) {
+					$classes .= ' mpwpb-cem-active';
+				}
+				return $classes;
+			}
+
+			/** Cache-bust on file change so edits show without a manual hard-refresh. */
+			private function asset_ver($rel_path) {
+				$file = MPWPB_PLUGIN_DIR . $rel_path;
+				return file_exists($file) ? (string) filemtime($file) : '1.0.0';
+			}
+
+			public function enqueue() {
+				if (!$this->is_coupon_edit_screen()) {
+					return;
+				}
+				wp_enqueue_style('mpwpb-coupon-edit-modern', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb-coupon-edit-modern.css', [], $this->asset_ver('/assets/admin/mpwpb-coupon-edit-modern.css'));
+				wp_enqueue_script('mpwpb-coupon-edit-modern', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb-coupon-edit-modern.js', ['jquery'], $this->asset_ver('/assets/admin/mpwpb-coupon-edit-modern.js'), true);
+			}
+
+			/**
+			 * Modern SaaS-style shell: sticky topbar (name field mirroring the
+			 * real #title, status pill, Publish/Update + Save Draft/Trash) and
+			 * a left nav rail + single content card in place of the old
+			 * horizontal tab strip. WordPress's own Publish box / Screen
+			 * Options bar are hidden via CSS (see mpwpb-coupon-edit-modern.css)
+			 * -- their real controls stay in the DOM and are proxy-clicked by
+			 * mpwpb-coupon-edit-modern.js, so save/publish/draft/trash all keep
+			 * working exactly as before. The tab strip below keeps the exact
+			 * same .mpwpb_style/.mpwpb_tabs/.tabLists/[data-tabs-target]/
+			 * .tabsContent/[data-tabs] structure the shared tab-switching JS
+			 * (mp_global/assets/mp_style/mpwpb_plugin_global.js) already
+			 * delegates on, so no JS changes were needed for tab switching.
+			 */
+			public function settings($post) {
+				$post_id = (int) $post->ID;
 				wp_nonce_field('mpwpb_coupon_nonce', 'mpwpb_coupon_nonce');
+
+				$coupon_name = get_the_title($post_id);
+				$list_url = admin_url('edit.php?post_type=' . MPWPB_Function::get_cpt() . '&page=mpwpb_coupon_list');
+				$status = get_post_status($post_id);
+				$is_published = in_array($status, ['publish', 'private', 'future'], true);
+				$is_real_post = $status && $status !== 'auto-draft';
+				$primary_label = $is_published ? __('Update', 'service-booking-manager') : __('Publish', 'service-booking-manager');
+				$secondary_label = $is_published ? __('Switch to Draft', 'service-booking-manager') : __('Save Draft', 'service-booking-manager');
+				$status_label = $is_published ? __('Active', 'service-booking-manager') : __('Draft', 'service-booking-manager');
 				?>
-				<div class="mpwpb_style">
-					<div class="mpwpb_tabs metabox">
-						<div class="tabLists">
-							<ul>
+				<div class="mpwpb-cem mpwpb_style" id="mpwpb-cem">
+					<header class="mpwpb-cem__topbar">
+						<a class="mpwpb-cem__back" href="<?php echo esc_url($list_url); ?>">
+							<span class="dashicons dashicons-arrow-left-alt2"></span>
+							<?php esc_html_e('Back to Coupons', 'service-booking-manager'); ?>
+						</a>
+						<input type="text" class="mpwpb-cem__ttl-input" id="mpwpb-cem-title" value="<?php echo esc_attr($coupon_name); ?>" placeholder="<?php esc_attr_e('Coupon name', 'service-booking-manager'); ?>" aria-label="<?php esc_attr_e('Coupon name', 'service-booking-manager'); ?>"/>
+						<div class="mpwpb-cem__acts">
+							<span class="mpwpb-cem__status-pill<?php echo $is_published ? ' is-active' : ' is-draft'; ?>"><?php echo esc_html($status_label); ?></span>
+							<div class="mpwpb-cem__split" data-cem-split>
+								<button type="button" class="mpwpb-cem__btn mpwpb-cem__btn--primary" data-cem-save><?php echo esc_html($primary_label); ?></button>
+								<button type="button" class="mpwpb-cem__btn mpwpb-cem__btn--primary mpwpb-cem__split-caret" data-cem-split-toggle aria-haspopup="true" aria-expanded="false">
+									<span class="dashicons dashicons-arrow-down-alt2" aria-hidden="true"></span>
+									<span class="screen-reader-text"><?php esc_html_e('More save options', 'service-booking-manager'); ?></span>
+								</button>
+								<div class="mpwpb-cem__split-menu" data-cem-split-menu hidden>
+									<button type="button" class="mpwpb-cem__split-menu-item" data-cem-save-as="draft"><?php echo esc_html($secondary_label); ?></button>
+									<?php if ($is_real_post && current_user_can('delete_post', $post_id)) : ?>
+										<a class="mpwpb-cem__split-menu-item mpwpb-cem__split-menu-item--danger" href="<?php echo esc_url(get_delete_post_link($post_id)); ?>">
+											<?php esc_html_e('Move to Trash', 'service-booking-manager'); ?>
+										</a>
+									<?php endif; ?>
+								</div>
+							</div>
+						</div>
+					</header>
+
+					<div class="mpwpb-cem__body mpwpb_tabs">
+						<nav class="mpwpb-cem__rail">
+							<ul class="tabLists">
 								<li data-tabs-target="#mpwpb_coupon_general">
-									<i class="mi mi-settings"></i><?php esc_html_e('General', 'service-booking-manager'); ?>
+									<span class="dashicons dashicons-admin-generic"></span><?php esc_html_e('General', 'service-booking-manager'); ?>
 								</li>
 								<li data-tabs-target="#mpwpb_coupon_discount">
-									<i class="mi mi-coins"></i><?php esc_html_e('Discount', 'service-booking-manager'); ?>
+									<span class="dashicons dashicons-tag"></span><?php esc_html_e('Discount', 'service-booking-manager'); ?>
 								</li>
 								<li data-tabs-target="#mpwpb_coupon_services">
-									<i class="mi mi-rectangle-list"></i><?php esc_html_e('Services', 'service-booking-manager'); ?>
+									<span class="dashicons dashicons-list-view"></span><?php esc_html_e('Services', 'service-booking-manager'); ?>
 								</li>
 								<li data-tabs-target="#mpwpb_coupon_restrictions">
-									<i class="mi mi-workflow-setting-alt"></i><?php esc_html_e('Restrictions', 'service-booking-manager'); ?>
+									<span class="dashicons dashicons-filter"></span><?php esc_html_e('Restrictions', 'service-booking-manager'); ?>
 								</li>
 								<li data-tabs-target="#mpwpb_coupon_scheduling_staff">
-									<i class="mi mi-calendar-clock"></i><?php esc_html_e('Scheduling & Staff', 'service-booking-manager'); ?>
+									<span class="dashicons dashicons-calendar-alt"></span><?php esc_html_e('Scheduling & Staff', 'service-booking-manager'); ?>
 								</li>
 								<li data-tabs-target="#mpwpb_coupon_usage_limits">
-									<i class="mi mi-users-alt"></i><?php esc_html_e('Usage Limits', 'service-booking-manager'); ?>
+									<span class="dashicons dashicons-groups"></span><?php esc_html_e('Usage Limits', 'service-booking-manager'); ?>
 								</li>
 							</ul>
-						</div>
-						<div class="tabsContent">
+						</nav>
+						<div class="mpwpb-cem__card tabsContent">
 							<?php do_action('add_mpwpb_coupon_tab_content', $post_id); ?>
 						</div>
 					</div>
