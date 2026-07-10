@@ -19,6 +19,8 @@
 
 			const ACTION_CANCELLED = 'cancelled';
 			const ACTION_RESCHEDULED = 'rescheduled';
+			const ACTION_SERVICE_STATUS_CHANGED = 'service_status_changed';
+			const ACTION_STAFF_CHANGED = 'staff_changed';
 
 			private static function maybe_create_table(): void {
 				global $wpdb;
