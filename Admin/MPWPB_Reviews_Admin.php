@@ -31,6 +31,12 @@ if (!class_exists('MPWPB_Reviews_Admin')) {
             // handlers (e.g. MPWPB_User_Dashboard).
             add_action('wp_ajax_mpwpb_submit_review', array($this, 'submit_review'));
 
+            // Manual "Review Request" button/modal -- Order List, Service
+            // Queue (wp-admin) and My Appointment (front-end staff
+            // dashboard) all call these same two actions.
+            add_action('wp_ajax_mpwpb_get_review_request_data', array($this, 'ajax_get_review_request_data'));
+            add_action('wp_ajax_mpwpb_send_review_request', array($this, 'ajax_send_review_request'));
+
             // Daily background check for bookings due an automatic review
             // request -- same scheduling idiom as the only other cron job
             // in this codebase (MPWPB_Audit_Logs::cleanup_old_logs()).
@@ -793,6 +799,24 @@ if (!class_exists('MPWPB_Reviews_Admin')) {
                 return false;
             }
 
+            $subject_template = MPWPB_Global_Function::get_settings('mpwpb_review_settings', 'email_subject', $this->default_review_email_subject());
+            $body_template = MPWPB_Global_Function::get_settings('mpwpb_review_settings', 'email_body', $this->default_review_email_body());
+            list($subject, $body) = $this->resolve_review_email_content($booking_id, $subject_template, $body_template);
+
+            return $this->dispatch_review_email($booking_id, $customer_email, $subject, $body);
+        }
+
+        /**
+         * Fills in {customer_name}/{service_name}/{booking_date}/{site_name}/
+         * {review_link} against one booking -- split out of
+         * send_review_request_email() so the manual Review Request modal
+         * (Order List/Service Queue/My Appointment) can show an admin/staff
+         * member the exact resolved text *before* sending, not just the raw
+         * template.
+         *
+         * @return array{0: string, 1: string} [$subject, $body]
+         */
+        private function resolve_review_email_content($booking_id, $subject_template, $body_template) {
             $customer_name = get_post_meta($booking_id, 'mpwpb_billing_name', true);
             $service_id = get_post_meta($booking_id, 'mpwpb_id', true);
             $service_title = get_the_title($service_id);
@@ -804,9 +828,6 @@ if (!class_exists('MPWPB_Reviews_Admin')) {
             $first_date = trim(explode(',', $date_raw)[0]);
             $booking_date_formatted = date_i18n(get_option('date_format'), strtotime($first_date));
 
-            $subject = MPWPB_Global_Function::get_settings('mpwpb_review_settings', 'email_subject', $this->default_review_email_subject());
-            $body = MPWPB_Global_Function::get_settings('mpwpb_review_settings', 'email_body', $this->default_review_email_body());
-
             $placeholders = array('{customer_name}', '{service_name}', '{booking_date}', '{site_name}', '{review_link}');
             $replacements = array(
                 $customer_name !== '' ? $customer_name : __('Customer', 'service-booking-manager'),
@@ -816,17 +837,168 @@ if (!class_exists('MPWPB_Reviews_Admin')) {
                 get_permalink($service_id),
             );
 
-            $subject = str_replace($placeholders, $replacements, $subject);
-            $body = str_replace($placeholders, $replacements, $body);
+            return array(
+                str_replace($placeholders, $replacements, $subject_template),
+                str_replace($placeholders, $replacements, $body_template),
+            );
+        }
 
+        /**
+         * Actually sends a (already-resolved) review-request email and
+         * records it -- both the meta flags the eligibility/cron system
+         * already checks (so a manually-sent request correctly counts as
+         * "sent" and the daily cron won't also email the same customer)
+         * and a MPWPB_Booking_History entry (so "already sent" history
+         * shows up at the top of the manual Review Request modal).
+         */
+        private function dispatch_review_email($booking_id, $customer_email, $subject, $body) {
             $sent = wp_mail($customer_email, $subject, nl2br($body), array('Content-Type: text/html; charset=UTF-8'));
 
             if ($sent) {
                 update_post_meta($booking_id, 'mpwpb_review_request_status', 'sent');
                 update_post_meta($booking_id, 'mpwpb_review_request_date', current_time('mysql'));
+                if (class_exists('MPWPB_Booking_History')) {
+                    MPWPB_Booking_History::log($booking_id, MPWPB_Booking_History::ACTION_REVIEW_REQUEST_SENT, '', $customer_email, $subject);
+                }
             }
 
             return $sent;
+        }
+
+        /**
+         * Same ownership model as MPWPB_Booking_Notes::resolve_role_for_booking()
+         * / MPWPB_Order_List::update_service_status() -- an admin may send a
+         * review request for any booking, a staff member only for one
+         * actually assigned to them, everyone else (including the customer
+         * themselves) gets nothing.
+         */
+        private function current_user_can_send_review_request($booking_id) {
+            if (!$booking_id || get_post_type($booking_id) !== 'mpwpb_booking') {
+                return false;
+            }
+            if (current_user_can('manage_options')) {
+                return true;
+            }
+            $user = wp_get_current_user();
+            if (in_array('mpwpb_staff', (array) $user->roles, true)) {
+                $assigned_staff_id = (int) get_post_meta($booking_id, 'mpwpb_staff_term_id', true);
+                return $assigned_staff_id && $assigned_staff_id === (int) $user->ID;
+            }
+            return false;
+        }
+
+        /**
+         * Accepts either of the two nonce actions already localized for the
+         * two contexts this is reachable from -- wp-admin (Order List/
+         * Service Queue) and the front-end staff dashboard (My Appointment)
+         * -- same pattern as MPWPB_Booking_Notes::verify_nonce_or_die().
+         */
+        private function verify_review_request_nonce_or_die() {
+            $nonce = isset($_REQUEST['nonce']) ? sanitize_text_field(wp_unslash($_REQUEST['nonce'])) : '';
+            if (!wp_verify_nonce($nonce, 'mpwpb_admin_nonce') && !wp_verify_nonce($nonce, 'mpwpb_dashboard_nonce')) {
+                wp_send_json_error(array('message' => esc_html__('Security check failed.', 'service-booking-manager')));
+            }
+        }
+
+        /**
+         * Past review-request sends for one booking, newest first, for the
+         * "already sent" history shown at the top of the Review Request
+         * modal -- filtered out of the booking's full MPWPB_Booking_History
+         * (which also holds staff/status/cancel/reschedule entries).
+         */
+        private function get_review_request_history($booking_id) {
+            if (!class_exists('MPWPB_Booking_History')) {
+                return array();
+            }
+            $history = array();
+            foreach (array_reverse(MPWPB_Booking_History::get_for_booking($booking_id)) as $row) {
+                if ($row->action_type !== MPWPB_Booking_History::ACTION_REVIEW_REQUEST_SENT) {
+                    continue;
+                }
+                $performer = get_userdata($row->performed_by_user_id);
+                $history[] = array(
+                    'sent_to' => $row->new_date,
+                    'subject' => $row->note,
+                    'when'    => MPWPB_Global_Function::date_format($row->date_created) . ' ' . MPWPB_Global_Function::date_format($row->date_created, 'time'),
+                    'by'      => $performer ? $performer->display_name : esc_html__('Unknown', 'service-booking-manager'),
+                );
+            }
+            return $history;
+        }
+
+        /**
+         * AJAX: loads the Review Request modal's content for one booking --
+         * the resolved (placeholder-free) subject/body an admin/staff member
+         * would actually send, whether sending is even possible right now,
+         * and the past-sends history. Doesn't send anything or mark
+         * anything read/sent itself.
+         */
+        public function ajax_get_review_request_data() {
+            $this->verify_review_request_nonce_or_die();
+            $booking_id = isset($_REQUEST['booking_id']) ? absint($_REQUEST['booking_id']) : 0;
+            if (!$this->current_user_can_send_review_request($booking_id)) {
+                wp_send_json_error(array('message' => esc_html__('You do not have permission to do this.', 'service-booking-manager')));
+            }
+
+            $customer_email = get_post_meta($booking_id, 'mpwpb_billing_email', true);
+            $has_account = (bool) get_post_meta($booking_id, 'mpwpb_user_id', true);
+            $reason = '';
+            if (!$has_account) {
+                // Mirrors get_eligible_review_bookings_raw()'s own reasoning:
+                // a guest booking's customer can never actually submit a
+                // review (submit_review() requires login), so requesting one
+                // would be misleading busywork, not just unusual.
+                $reason = esc_html__('This booking has no registered customer account, so they cannot actually submit a review.', 'service-booking-manager');
+            } elseif (!$customer_email || !is_email($customer_email)) {
+                $reason = esc_html__('No valid billing email on file for this booking.', 'service-booking-manager');
+            }
+
+            $subject_template = MPWPB_Global_Function::get_settings('mpwpb_review_settings', 'email_subject', $this->default_review_email_subject());
+            $body_template = MPWPB_Global_Function::get_settings('mpwpb_review_settings', 'email_body', $this->default_review_email_body());
+            list($subject, $body) = $this->resolve_review_email_content($booking_id, $subject_template, $body_template);
+
+            wp_send_json_success(array(
+                'subject'  => $subject,
+                'body'     => $body,
+                'can_send' => $reason === '',
+                'reason'   => $reason,
+                'history'  => $this->get_review_request_history($booking_id),
+            ));
+        }
+
+        /**
+         * AJAX: actually sends the review request, using whatever
+         * subject/body the admin/staff member has in the modal at send time
+         * (already-resolved text, possibly hand-edited -- not re-run through
+         * placeholder substitution).
+         */
+        public function ajax_send_review_request() {
+            $this->verify_review_request_nonce_or_die();
+            $booking_id = isset($_REQUEST['booking_id']) ? absint($_REQUEST['booking_id']) : 0;
+            if (!$this->current_user_can_send_review_request($booking_id)) {
+                wp_send_json_error(array('message' => esc_html__('You do not have permission to do this.', 'service-booking-manager')));
+            }
+
+            $subject = isset($_REQUEST['subject']) ? sanitize_text_field(wp_unslash($_REQUEST['subject'])) : '';
+            $body = isset($_REQUEST['body']) ? sanitize_textarea_field(wp_unslash($_REQUEST['body'])) : '';
+            if ($subject === '' || $body === '') {
+                wp_send_json_error(array('message' => esc_html__('Subject and message cannot be empty.', 'service-booking-manager')));
+            }
+
+            $customer_email = get_post_meta($booking_id, 'mpwpb_billing_email', true);
+            if (!$customer_email || !is_email($customer_email)) {
+                wp_send_json_error(array('message' => esc_html__('No valid billing email on file for this booking.', 'service-booking-manager')));
+            }
+
+            $sent = $this->dispatch_review_email($booking_id, $customer_email, $subject, $body);
+            if (!$sent) {
+                wp_send_json_error(array('message' => esc_html__('The email could not be sent. Please try again.', 'service-booking-manager')));
+            }
+
+            wp_send_json_success(array(
+                'message' => esc_html__('Review request sent.', 'service-booking-manager'),
+                'history' => $this->get_review_request_history($booking_id),
+            ));
         }
 
         /**

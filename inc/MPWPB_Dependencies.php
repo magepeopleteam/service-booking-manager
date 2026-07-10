@@ -128,6 +128,10 @@
 				// service elements (untouched click handlers/hidden inputs)
 				// into a unified checkbox-tree — no new selection logic.
 				wp_enqueue_script('mpwpb_booking_tree', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-booking-tree.js', ['jquery', 'mpwpb_registration', 'mpwpb_service_tree'], time(), true);
+				// WooCommerce My Account > Orders reskin — pure CSS, no
+				// template override or new markup (see the file's own header
+				// comment). Loaded after mpwpb_registration so its overrides win.
+				wp_enqueue_style('mpwpb_account_orders_modern', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-account-orders-modern.css', ['mpwpb_registration'], time());
 				wp_localize_script('mpwpb_registration', 'mpwpb_ajax', array(
 					'ajax_url' => admin_url('admin-ajax.php'),
 					'nonce'    => wp_create_nonce('mpwpb_nonce'),

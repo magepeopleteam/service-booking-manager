@@ -1198,6 +1198,32 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
                 </div>
             </div>
             <?php endif; ?>
+
+            <?php if (class_exists('MPWPB_Reviews_Admin')) : ?>
+            <!-- Send Review Request Modal -- history (past sends) + resolved
+                 subject/body are filled in by JS (mpwpb_get_review_request_data/
+                 mpwpb_send_review_request) when a row's Review Request button
+                 is clicked; this is just the shell, reused for every row. -->
+            <div id="mpwpb-review-request-modal" class="mpwpb-modal">
+                <div class="mpwpb-modal-content">
+                    <span class="mpwpb-close" id="mpwpb-review-request-modal-close">&times;</span>
+                    <h3><?php esc_html_e('Send Review Request', 'service-booking-manager'); ?></h3>
+                    <div id="mpwpb-review-request-history" class="mpwpb-notes-thread mpwpb-review-request-history"></div>
+                    <div class="mpwpb-form-group">
+                        <label for="mpwpb-review-request-subject"><?php esc_html_e('Subject', 'service-booking-manager'); ?></label>
+                        <input type="text" id="mpwpb-review-request-subject"/>
+                    </div>
+                    <div class="mpwpb-form-group">
+                        <label for="mpwpb-review-request-body"><?php esc_html_e('Message', 'service-booking-manager'); ?></label>
+                        <textarea id="mpwpb-review-request-body" rows="6"></textarea>
+                    </div>
+                    <span class="mpwpb-notes-error" id="mpwpb-review-request-error"></span>
+                    <div class="mpwpb-form-group">
+                        <button type="button" class="mpwpb-btn mpwpb-submit-btn" id="mpwpb-review-request-send"><?php esc_html_e('Send Request', 'service-booking-manager'); ?></button>
+                    </div>
+                </div>
+            </div>
+            <?php endif; ?>
             <?php
         }
 
@@ -1336,6 +1362,11 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
                                                     <?php if (!empty($note_unread_counts[$booking->ID])) : ?>
                                                         <span class="mpwpb-appt-notes-badge"><?php echo esc_html($note_unread_counts[$booking->ID]); ?></span>
                                                     <?php endif; ?>
+                                                </button>
+                                                <?php endif; ?>
+                                                <?php if (class_exists('MPWPB_Reviews_Admin')) : ?>
+                                                <button type="button" class="mpwpb-appt-review-request-btn" data-attendee-id="<?php echo esc_attr($booking->ID); ?>" title="<?php esc_attr_e('Send Review Request.', 'service-booking-manager'); ?>">
+                                                    <i class="fas fa-star"></i>
                                                 </button>
                                                 <?php endif; ?>
                                             </div>

@@ -1273,6 +1273,7 @@
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     padding: 16px 18px;
+    margin-top: 15px;
 }
 
 .mpwpb-staff-schedule .mpwpb_off_day_card > ._fs_label_w_200 {
@@ -1716,6 +1717,52 @@
     outline: none;
     border-color: #2196f3;
     box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+/* Send Review Request modal -- same dialog chrome as Internal Notes above,
+   plus a flat (non-bubble) history list since this is a one-way send log,
+   not a two-party conversation. */
+#mpwpb-review-request-modal .mpwpb-review-request-history {
+    max-height: 200px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 14px 0;
+    padding-right: 2px;
+}
+
+#mpwpb-review-request-modal .mpwpb-notes-empty {
+    margin: 0;
+    font-size: 13px;
+    color: #94a3b8;
+    text-align: center;
+    padding: 12px 0;
+}
+
+#mpwpb-review-request-modal .mpwpb-review-request-history-item {
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: #f8fafc;
+    border: 1px solid #eef0f3;
+    font-size: 13px;
+}
+
+#mpwpb-review-request-modal .mpwpb-note-meta {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+    margin-bottom: 2px;
+}
+
+#mpwpb-review-request-modal .mpwpb-note-message {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+#mpwpb-review-request-modal textarea#mpwpb-review-request-body {
+    min-height: 120px;
+    resize: vertical;
 }
 
 .mpwpb-notes-error {

@@ -212,6 +212,110 @@ jQuery(document).ready(function($) {
         });
     }
 
+    // Send Review Request modal (My Appointment tab) -- reuses the same
+    // mpwpb_get_review_request_data / mpwpb_send_review_request AJAX
+    // actions Order List/Service Queue use in wp-admin, so history shows up
+    // identically wherever it's sent from, and the meta flag it sets stops
+    // the daily auto-review-request cron from also emailing the same
+    // customer later.
+    var $reviewRequestModal = $('#mpwpb-review-request-modal');
+    if ($reviewRequestModal.length) {
+        var reviewRequestBookingId = null;
+
+        function mpwpbRenderReviewRequestHistory(history) {
+            var $history = $('#mpwpb-review-request-history');
+            $history.empty();
+            if (!history || !history.length) {
+                $history.append($('<p class="mpwpb-notes-empty"></p>').text('No review request sent yet.'));
+                return;
+            }
+            history.forEach(function (row) {
+                var $item = $('<div class="mpwpb-review-request-history-item"></div>');
+                $item.append($('<div class="mpwpb-note-meta"></div>').text(row.when + ' · ' + row.by + ' · to ' + row.sent_to));
+                $item.append($('<div class="mpwpb-note-message"></div>').text(row.subject));
+                $history.append($item);
+            });
+        }
+
+        $(document).on('click', '.mpwpb-appt-review-request-btn', function (e) {
+            e.preventDefault();
+            var $btn = $(this);
+            reviewRequestBookingId = $btn.data('attendee-id');
+            $('#mpwpb-review-request-subject').val('');
+            $('#mpwpb-review-request-body').val('');
+            $('#mpwpb-review-request-error').text('');
+            $('#mpwpb-review-request-send').prop('disabled', false);
+            $('#mpwpb-review-request-history').html('<p class="mpwpb-notes-empty">Loading...</p>');
+            $reviewRequestModal.css('display', 'block');
+            $.ajax({
+                type: 'POST',
+                url: mpwpb_dashboard.ajaxurl,
+                data: { action: 'mpwpb_get_review_request_data', booking_id: reviewRequestBookingId, nonce: mpwpb_dashboard.nonce },
+                success: function (response) {
+                    if (response && response.success) {
+                        var data = response.data;
+                        mpwpbRenderReviewRequestHistory(data.history);
+                        $('#mpwpb-review-request-subject').val(data.subject);
+                        $('#mpwpb-review-request-body').val(data.body);
+                        if (!data.can_send) {
+                            $('#mpwpb-review-request-send').prop('disabled', true);
+                            $('#mpwpb-review-request-error').text(data.reason || 'Cannot send a review request for this booking.');
+                        }
+                    } else {
+                        $('#mpwpb-review-request-history').empty();
+                        $('#mpwpb-review-request-send').prop('disabled', true);
+                        $('#mpwpb-review-request-error').text((response && response.data && response.data.message) ? response.data.message : 'Could not load review request data.');
+                    }
+                },
+                error: function () {
+                    $('#mpwpb-review-request-error').text('Could not load review request data. Please try again.');
+                }
+            });
+        });
+
+        $('#mpwpb-review-request-modal-close').on('click', function () {
+            $reviewRequestModal.css('display', 'none');
+        });
+        $(window).on('click', function (e) {
+            if ($(e.target).is($reviewRequestModal)) {
+                $reviewRequestModal.css('display', 'none');
+            }
+        });
+
+        $('#mpwpb-review-request-send').on('click', function () {
+            var $btn = $(this);
+            var subject = $('#mpwpb-review-request-subject').val().trim();
+            var body = $('#mpwpb-review-request-body').val().trim();
+            var $error = $('#mpwpb-review-request-error');
+            if (!reviewRequestBookingId) {
+                return;
+            }
+            if (!subject || !body) {
+                $error.text('Subject and message cannot be empty.');
+                return;
+            }
+            $error.text('');
+            $btn.prop('disabled', true).text('Sending...');
+            $.ajax({
+                type: 'POST',
+                url: mpwpb_dashboard.ajaxurl,
+                data: { action: 'mpwpb_send_review_request', booking_id: reviewRequestBookingId, subject: subject, body: body, nonce: mpwpb_dashboard.nonce },
+                success: function (response) {
+                    $btn.prop('disabled', false).text('Send Request');
+                    if (response && response.success) {
+                        mpwpbRenderReviewRequestHistory(response.data.history);
+                    } else {
+                        $error.text((response && response.data && response.data.message) ? response.data.message : 'Something went wrong. Please try again.');
+                    }
+                },
+                error: function () {
+                    $btn.prop('disabled', false).text('Send Request');
+                    $error.text('Something went wrong. Please try again.');
+                }
+            });
+        });
+    }
+
     // Cancel booking
     $('.mpwpb-cancel-btn').on('click', function(e) {
         e.preventDefault();
