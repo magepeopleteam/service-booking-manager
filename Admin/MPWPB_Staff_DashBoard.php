@@ -35,6 +35,33 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
             // initial page load, so filtering never reloads the whole My
             // Account page.
             add_action('wp_ajax_mpwpb_get_my_appointments', array($this, 'ajax_get_my_appointments'));
+            // Late priority so it runs after every menu is actually
+            // registered (core's own admin_menu callbacks, and this
+            // plugin's own CPT/submenu registration, all run at 10).
+            add_action('admin_menu', array($this, 'hide_admin_menus_for_staff'), 999);
+        }
+
+        /**
+         * Hides stock wp-admin menu items that aren't part of a staff
+         * member's job (fulfilling bookings) -- Posts/Comments/Tools are
+         * blog/site-content management, and "Add Service" (creating a new
+         * bookable service) is an admin-level decision, not a day-to-day
+         * staff task. Scoped strictly to the mpwpb_staff role: skipped
+         * entirely for admins (including one who happens to also hold the
+         * staff role), so it can never hide anything from a real site
+         * administrator.
+         */
+        public function hide_admin_menus_for_staff() {
+            if (current_user_can('manage_options')) {
+                return;
+            }
+            if (!in_array('mpwpb_staff', (array) wp_get_current_user()->roles, true)) {
+                return;
+            }
+            remove_menu_page('edit.php');          // Posts
+            remove_menu_page('edit-comments.php'); // Comments
+            remove_menu_page('tools.php');         // Tools
+            remove_submenu_page('edit.php?post_type=mpwpb_item', 'post-new.php?post_type=mpwpb_item'); // Add Service
         }
 
         public function ajax_get_my_appointments() {
