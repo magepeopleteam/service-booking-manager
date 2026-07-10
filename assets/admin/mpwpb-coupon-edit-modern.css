@@ -143,7 +143,7 @@ body.mpwpb-cem-active #wpbody-content{background:var(--bg,#eef1f6);}
 .mpwpb-cem.mpwpb_style section.section h3{flex:0 0 100%;font-size:13px;font-weight:700;color:var(--ink);text-transform:uppercase;letter-spacing:.03em;margin-bottom:4px;}
 .mpwpb-cem.mpwpb_style section.section > span{flex:0 0 100%;font-size:12.5px;color:var(--muted);}
 
-.mpwpb-cem.mpwpb_style label.label{flex:1 1 220px;min-width:0;display:flex;flex-direction:column;gap:6px;margin:0;}
+.mpwpb-cem.mpwpb_style label.label{flex:1 1 220px;min-width:0;display:inline;flex-direction:column;gap:6px;margin:0;}
 .mpwpb-cem.mpwpb_style label.label > p{font-size:13px;font-weight:600;color:var(--ink-2);margin:0;}
 .mpwpb-cem.mpwpb_style label.label input[type="text"],
 .mpwpb-cem.mpwpb_style label.label input[type="number"],
@@ -155,6 +155,7 @@ body.mpwpb-cem-active #wpbody-content{background:var(--bg,#eef1f6);}
 	padding:9px 12px;font-size:13.5px;color:var(--ink);min-height:0;box-shadow:none;
 }
 .mpwpb-cem.mpwpb_style label.label select[multiple]{min-height:150px;background:var(--surface);}
+.mpwpb-cem__card label.label input[type="text"]{margin-top:5px;}
 .mpwpb-cem.mpwpb_style label.label input:focus,
 .mpwpb-cem.mpwpb_style label.label select:focus,
 .mpwpb-cem.mpwpb_style label.label textarea:focus{outline:none;border-color:var(--brand);background:#fff;box-shadow:0 0 0 3px var(--brand-ring);}
