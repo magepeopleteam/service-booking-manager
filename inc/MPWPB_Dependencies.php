@@ -26,6 +26,12 @@
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Function.php';
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Query.php';
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Layout.php';
+				//*************Coupon Engine*****************//
+				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Coupon_Function.php';
+				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Coupon_Validator.php';
+				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Coupon_Usage.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Coupon_List.php';
+				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Coupon_Frontend.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Admin.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Frontend.php';
 
@@ -107,6 +113,10 @@
 				wp_enqueue_script('mpwpb', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb.js', ['jquery'], time(), true);
 				wp_enqueue_style('mpwpb_registration', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_registration.css', [], time());
 				wp_enqueue_script('mpwpb_registration', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_registration.js', ['jquery'], time());
+				wp_enqueue_style('mpwpb_coupon', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-coupon.css', [], time());
+				// Depends on mpwpb_registration (not just jquery) so the
+				// mpwpb_ajax object it localizes is guaranteed to already exist.
+				wp_enqueue_script('mpwpb_coupon', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-coupon.js', ['jquery', 'mpwpb_registration'], time(), true);
 				// Single service page redesign (hero/tabs/Overview/FAQ/Details) —
 				// pure reskin, loaded after mpwpb_registration so its overrides win.
 				wp_enqueue_style('mpwpb_service_page_modern', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-service-page-modern.css', ['mpwpb_registration'], time());

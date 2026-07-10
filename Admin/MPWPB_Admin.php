@@ -25,6 +25,15 @@
 				}
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_CPT.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Status.php';
+				//*************Coupon Engine*****************//
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Coupon_CPT.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Coupon_Settings.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/coupon-settings/General.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/coupon-settings/Discount.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/coupon-settings/Services.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/coupon-settings/Restrictions.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/coupon-settings/Scheduling_Staff.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/coupon-settings/Usage_Limits.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Reviews_Admin.php';
 		        require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Extended_Settings.php';
 
@@ -75,6 +84,9 @@
 			public function disable_gutenberg($current_status, $post_type) {
 				$user_status = MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'disable_block_editor', 'yes');
 				if ($post_type === MPWPB_Function::get_cpt() && $user_status == 'yes') {
+					return false;
+				}
+				if ($post_type === 'mpwpb_coupon') {
 					return false;
 				}
 				return $current_status;

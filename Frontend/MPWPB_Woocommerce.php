@@ -111,6 +111,7 @@
 						$all_service = [];
 						if (is_array($services) && sizeof($services)) {
 							foreach ($services as $key => $service) {
+								$all_service[$key]['service_id'] = $service; // 1-based index, needed for coupon service matching
 								$all_service[$key]['name'] = MPWPB_Function::get_service_name($product_id, $service);
 								$all_service[$key]['price'] = MPWPB_Function::get_price($product_id, $service, $date);
 								$all_service[$key]['qty'] = $services_qty[ $service ];
@@ -160,7 +161,8 @@
 					// through the normal flow; skip the price override entirely if it's
 					// missing rather than guessing a price for this line item.
 					if (get_post_type($post_id) == MPWPB_Function::get_cpt() && isset($value['mpwpb_tp'])) {
-						$total_price = $value['mpwpb_tp'];
+						$discount = isset($value['mpwpb_discount_amount']) ? (float) $value['mpwpb_discount_amount'] : 0;
+						$total_price = max(0, $value['mpwpb_tp'] - $discount);
 						$value['data']->set_price($total_price);
 						$value['data']->set_regular_price($total_price);
 						$value['data']->set_sale_price($total_price);
@@ -225,6 +227,8 @@
                     }
 					$total_price = $values['mpwpb_tp'] ?? '';
 					$extra_service = $values['mpwpb_extra_service_info'] ?: [];
+					$coupon_code = $values['mpwpb_coupon_code'] ?? '';
+					$discount_amount = (float) ($values['mpwpb_discount_amount'] ?? 0);
 					if ($category) {
 						$item->add_meta_data(MPWPB_Function::get_category_text($post_id), $category);
 						if ($sub_category) {
@@ -253,6 +257,10 @@
                     if( $mpwpb_staff_name ){
                         $item->add_meta_data(esc_html__('Staff Name ', 'service-booking-manager'), $mpwpb_staff_name );
                     }
+					if ($coupon_code) {
+						$item->add_meta_data(esc_html__('Coupon Applied ', 'service-booking-manager'), $coupon_code);
+						$item->add_meta_data(esc_html__('Discount ', 'service-booking-manager'), MPWPB_Global_Function::wc_price($post_id, $discount_amount));
+					}
 					$item->add_meta_data('_mpwpb_id', $post_id);
 					$item->add_meta_data('_mpwpb_staff_term_id', $staff_member);
 					$item->add_meta_data('_mpwpb_date', $date);
@@ -265,6 +273,8 @@
 					$item->add_meta_data('_mpwpb_service', $services);
 					$item->add_meta_data('_mpwpb_tp', $total_price);
 					$item->add_meta_data('_mpwpb_extra_service_info', $extra_service);
+					$item->add_meta_data('_mpwpb_coupon_code', $coupon_code);
+					$item->add_meta_data('_mpwpb_discount_amount', $discount_amount);
 					do_action('mpwpb_checkout_create_order_line_item', $item, $values);
 				}
 			}
@@ -301,6 +311,8 @@
 						'service' => wc_get_order_item_meta($item_id, '_mpwpb_service'),
 						'total_price' => $total_price ? sanitize_text_field(wp_unslash($total_price)) : '',
 						'extra_service_info' => wc_get_order_item_meta($item_id, '_mpwpb_extra_service_info') ?: [],
+						'coupon_code' => wc_get_order_item_meta($item_id, '_mpwpb_coupon_code') ?: '',
+						'discount_amount' => (float) wc_get_order_item_meta($item_id, '_mpwpb_discount_amount'),
 					];
 				}
 				$billing = [
@@ -343,6 +355,19 @@
 				if (empty($line_items)) {
 					return;
 				}
+				// There's no real WC_Coupon/coupon line item behind this discount (the
+				// coupon engine is booking-native, see MPWPB_Coupon_Validator) -- an
+				// order note is the one place an admin can see which coupon was used.
+				foreach ($line_items as $line_item) {
+					if (!empty($line_item['coupon_code'])) {
+						$order->add_order_note(sprintf(
+							/* translators: 1: coupon code, 2: formatted discount amount */
+							esc_html__('Coupon "%1$s" applied — %2$s discount.', 'service-booking-manager'),
+							$line_item['coupon_code'],
+							wp_strip_all_tags(MPWPB_Global_Function::format_price($line_item['discount_amount']))
+						));
+					}
+				}
 				self::create_bookings_from_data($order_id, $order_status, $order->get_payment_method(), $order->get_user_id() ?: '', $billing, $line_items);
 			}
 			/**
@@ -379,6 +404,15 @@
 					}
 					$occurrence_count = count($occurrence_dates);
 
+					$coupon_code = $line_item['coupon_code'] ?? '';
+					$discount_amount = (float) ($line_item['discount_amount'] ?? 0);
+					// One usage per completed order, not once per recurring occurrence --
+					// counted here (this function only ever runs once per order, guarded
+					// by its two callers) rather than inside the per-occurrence loop below.
+					if ($coupon_code) {
+						MPWPB_Coupon_Usage::record_usage(MPWPB_Coupon_Function::find_by_code($coupon_code));
+					}
+
 					foreach ($occurrence_dates as $occurrence_index => $occurrence_date) {
 						$data = [];
 						$data['mpwpb_id'] = $post_id;
@@ -396,6 +430,8 @@
 						$data['mpwpb_service'] = $line_item['service'] ?? [];
 						$data['mpwpb_staff_term_id'] = $line_item['staff_term_id'] ?? '';
 						$data['mpwpb_tp'] = $line_item['total_price'] ?? '';
+						$data['mpwpb_coupon_code'] = $coupon_code;
+						$data['mpwpb_discount_amount'] = $discount_amount;
 						$data['mpwpb_service_info'] = $ex_service_infos;
 						$data['mpwpb_order_id'] = $order_id;
 						$data['mpwpb_order_status'] = $order_status;

@@ -123,8 +123,11 @@
 			 * the order's stored 'mpwpb_line_items' snapshot after).
 			 */
 			/** Public/static so other order-detail views (e.g. Frontend/MPWPB_Custom_Payment_My_Account.php's dashboard order view) can reuse it instead of reimplementing the services/total recap. */
-			public static function render_booking_recap(array $item, $post_id, bool $show_change_button): void {
+			public static function render_booking_recap(array $item, $post_id, bool $show_change_button, bool $show_coupon_box = false): void {
 				$total = $item['mpwpb_tp'] ?? 0;
+				$coupon_code = (string) ($item['mpwpb_coupon_code'] ?? '');
+				$coupon_discount_amount = (float) ($item['mpwpb_discount_amount'] ?? 0);
+				$net_total = max(0, $total - $coupon_discount_amount);
 
 				// A comma-joined value here means a recurring booking with more
 				// than one occurrence (see mpwpb_registration.js dateTimeString) --
@@ -264,9 +267,38 @@
 							<?php endif; ?>
 						</div>
 					<?php endif; ?>
+					<?php if ($show_coupon_box) : ?>
+						<div class="mpwpb-coupon-box" data-mpwpb-coupon-box>
+							<?php if ($coupon_code !== '') : ?>
+								<div class="mpwpb-coupon-applied">
+									<span class="mpwpb-coupon-applied-code"><i class="fas fa-tag"></i> <?php echo esc_html($coupon_code); ?></span>
+									<button type="button" class="mpwpb-coupon-remove" data-mpwpb-remove-coupon><?php esc_html_e('Remove', 'service-booking-manager'); ?></button>
+								</div>
+							<?php else : ?>
+								<div class="mpwpb-coupon-form">
+									<input type="text" class="mpwpb-coupon-input" placeholder="<?php esc_attr_e('Coupon code', 'service-booking-manager'); ?>" data-mpwpb-coupon-input/>
+									<button type="button" class="mpwpb-coupon-apply" data-mpwpb-apply-coupon><?php esc_html_e('Apply', 'service-booking-manager'); ?></button>
+								</div>
+							<?php endif; ?>
+							<p class="mpwpb-coupon-message" data-mpwpb-coupon-message style="display:none;"></p>
+						</div>
+					<?php endif; ?>
+					<?php if ($coupon_discount_amount > 0) : ?>
+						<div class="mpwpb-checkout-recurring-row mpwpb-checkout-recurring-discount">
+							<span>
+								<?php
+								echo esc_html($coupon_code !== ''
+									/* translators: %s: applied coupon code */
+									? sprintf(__('Coupon Discount (%s)', 'service-booking-manager'), $coupon_code)
+									: __('Coupon Discount', 'service-booking-manager'));
+								?>
+							</span>
+							<span>&minus;<?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, $coupon_discount_amount)); ?></span>
+						</div>
+					<?php endif; ?>
 					<div class="mpwpb-checkout-total">
 						<span><?php esc_html_e('Total', 'service-booking-manager'); ?></span>
-						<strong><?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, $total)); ?></strong>
+						<strong><?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, $net_total)); ?></strong>
 					</div>
 				</div>
 				<?php
@@ -289,7 +321,9 @@
 				$post_id = $item['mpwpb_id'];
 				?>
 				<div class="mpwpb-checkout-embed">
-					<?php self::render_booking_recap($item, $post_id, true); ?>
+					<div class="mpwpb-checkout-recap-root" data-mpwpb-recap-root>
+						<?php self::render_booking_recap($item, $post_id, true, true); ?>
+					</div>
 					<p class="mpwpb-checkout-error" style="display:none;"></p>
 					<form class="mpwpb-checkout-form" method="post" action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>">
 						<input type="hidden" name="action" value="mpwpb_native_checkout_submit"/>
@@ -618,6 +652,19 @@
 					wp_safe_redirect(add_query_arg('mpwpb_error', '1', self::get_checkout_url()));
 					exit;
 				}
+				// Re-validate any applied coupon right before charging -- it may have
+				// expired, hit its usage limit, or stopped qualifying (e.g. email
+				// typed after applying) since it was first applied to the cart.
+				if (!empty($item['mpwpb_coupon_code'])) {
+					$coupon_context = MPWPB_Coupon_Validator::build_context($item, $email, get_current_user_id());
+					$recheck = MPWPB_Coupon_Validator::validate($item['mpwpb_coupon_code'], $coupon_context);
+					if (!$recheck['valid']) {
+						unset($item['mpwpb_coupon_code'], $item['mpwpb_discount_amount']);
+						MPWPB_Native_Cart::set_item($item);
+					} else {
+						$item['mpwpb_discount_amount'] = MPWPB_Coupon_Validator::calculate_discount($recheck['coupon_id'], $coupon_context);
+					}
+				}
 				$billing = [
 					'first_name' => $first_name,
 					'last_name' => $last_name,
@@ -627,10 +674,11 @@
 					'address_2' => '',
 				];
 				$currency_code = MPWPB_Global_Function::native_currency_setting('currency_code', 'USD');
+				$net_total = max(0, ($item['mpwpb_tp'] ?? 0) - ($item['mpwpb_discount_amount'] ?? 0));
 				$order_id = MPWPB_Native_Order::create([
 					'billing' => $billing,
 					'line_items' => $item,
-					'total' => $item['mpwpb_tp'] ?? 0,
+					'total' => $net_total,
 					'currency' => $currency_code,
 				]);
 				if (!$order_id) {

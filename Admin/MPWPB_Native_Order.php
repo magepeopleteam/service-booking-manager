@@ -114,6 +114,8 @@
 						'service' => $cart_item['mpwpb_service'] ?? [],
 						'total_price' => $cart_item['mpwpb_tp'] ?? '',
 						'extra_service_info' => $cart_item['mpwpb_extra_service_info'] ?? [],
+						'coupon_code' => $cart_item['mpwpb_coupon_code'] ?? '',
+						'discount_amount' => $cart_item['mpwpb_discount_amount'] ?? 0,
 					];
 				}
 				$order_status = get_post_meta($order_id, 'mpwpb_order_status', true) ?: 'processing';
