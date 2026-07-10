@@ -1335,6 +1335,22 @@
     box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
 }
 
+.mpwpb-staff-appointments .mpwpb-appt-filter select {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 14px;
+    color: #333;
+    font-family: inherit;
+}
+
+.mpwpb-staff-appointments .mpwpb-appt-filter select:focus {
+    outline: none;
+    border-color: #2196f3;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
 .mpwpb-staff-appointments .mpwpb-appt-filter button[type="submit"] {
     flex: 0 0 auto;
     display: inline-flex;
@@ -1408,6 +1424,17 @@
     margin-bottom: 20px;
 }
 
+/* Ajax filter/pagination refresh -- fades the list while a request is in
+   flight instead of a jarring instant swap or full page reload. */
+#mpwpb-appt-list-wrap {
+    transition: opacity .15s ease;
+}
+
+#mpwpb-appt-list-wrap.mpwpb-appt-loading {
+    opacity: .5;
+    pointer-events: none;
+}
+
 .mpwpb-appt-table-scroll {
     overflow-x: auto;
 }
@@ -1475,6 +1502,53 @@
     background: currentColor;
 }
 
+/* Service Status inline editor -- lets a staff member update the status
+   directly from the appointments list, no separate page needed. */
+.mpwpb-appt-status-edit {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.mpwpb-appt-status-select {
+    padding: 6px 8px;
+    border: 1px solid #d8dce5;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 12.5px;
+    color: #333;
+    font-family: inherit;
+}
+
+.mpwpb-appt-status-select:focus {
+    outline: none;
+    border-color: #2196f3;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+.mpwpb-appt-status-save {
+    display: inline-block;
+    padding: 6px 12px;
+    border: 1px solid #d8dce5;
+    border-radius: 6px;
+    background: #fff;
+    color: #1d3fb8;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color .15s ease, color .15s ease;
+}
+
+.mpwpb-appt-status-save:hover {
+    border-color: #1d3fb8;
+}
+
+.mpwpb-appt-status-save:disabled {
+    opacity: .6;
+    cursor: default;
+}
+
 .mpwpb-appt-view-btn {
     display: inline-block;
     padding: 6px 14px;
@@ -1491,6 +1565,130 @@
 .mpwpb-appt-view-btn:hover {
     border-color: #1d3fb8;
     color: #1d3fb8;
+}
+
+/* Actions column now holds View + Notes side by side */
+.mpwpb-appt-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.mpwpb-appt-notes-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 1px solid #d8dce5;
+    border-radius: 6px;
+    background: #fff;
+    color: #555;
+    cursor: pointer;
+    transition: border-color .15s ease, color .15s ease;
+}
+
+.mpwpb-appt-notes-btn:hover {
+    border-color: #1d3fb8;
+    color: #1d3fb8;
+}
+
+.mpwpb-appt-notes-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    min-width: 15px;
+    height: 15px;
+    padding: 0 3px;
+    border-radius: 8px;
+    background: #e53e3e;
+    color: #fff;
+    font-size: 9.5px;
+    font-weight: 700;
+    line-height: 15px;
+    text-align: center;
+    box-shadow: 0 0 0 2px #fff;
+}
+
+/* Internal Notes modal thread -- reuses .mpwpb-modal/.mpwpb-modal-content
+   for the dialog chrome, these are just the thread-specific bits. */
+#mpwpb-notes-modal .mpwpb-notes-thread {
+    max-height: 260px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 14px 0;
+    padding-right: 2px;
+}
+
+#mpwpb-notes-modal .mpwpb-notes-empty {
+    margin: 0;
+    font-size: 13px;
+    color: #94a3b8;
+    text-align: center;
+    padding: 12px 0;
+}
+
+#mpwpb-notes-modal .mpwpb-note-bubble {
+    max-width: 85%;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    line-height: 1.4;
+}
+
+#mpwpb-notes-modal .mpwpb-note-own {
+    align-self: flex-end;
+    background: #e3f2fd;
+    color: #1e293b;
+    border-bottom-right-radius: 2px;
+}
+
+#mpwpb-notes-modal .mpwpb-note-other {
+    align-self: flex-start;
+    background: #f1f5f9;
+    color: #1e293b;
+    border-bottom-left-radius: 2px;
+}
+
+#mpwpb-notes-modal .mpwpb-note-meta {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+    margin-bottom: 2px;
+}
+
+#mpwpb-notes-modal .mpwpb-note-message {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+#mpwpb-notes-modal textarea#mpwpb-notes-input {
+    width: 100%;
+    resize: vertical;
+    min-height: 60px;
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 13.5px;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+#mpwpb-notes-modal textarea#mpwpb-notes-input:focus {
+    outline: none;
+    border-color: #2196f3;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+.mpwpb-notes-error {
+    display: block;
+    font-size: 12px;
+    color: #c62828;
+    margin-top: -4px;
 }
 
 .mpwpb-appt-pagination {

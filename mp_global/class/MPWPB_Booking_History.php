@@ -19,20 +19,35 @@
 
 			const ACTION_CANCELLED = 'cancelled';
 			const ACTION_RESCHEDULED = 'rescheduled';
+			const ACTION_STAFF_CHANGED = 'staff_changed';
+			const ACTION_SERVICE_STATUS_CHANGED = 'service_status_changed';
+
+			// Bump this whenever the CREATE TABLE below changes shape, so
+			// maybe_create_table() re-runs dbDelta() against an *existing*
+			// table (dbDelta diffs and ALTERs columns; it's not just for
+			// first-time creation). Without a version check, a table that
+			// already exists is never touched again, no matter what the SQL
+			// says -- which is exactly how 'service_status_changed' (22
+			// chars) and 'Waiting for Customer' (21 chars) silently failed
+			// to insert into the original varchar(20) columns under
+			// STRICT_TRANS_TABLES: the insert just never happened, no error
+			// surfaced anywhere in the UI.
+			const DB_VERSION = '1.1';
 
 			private static function maybe_create_table(): void {
 				global $wpdb;
 				$table_name = $wpdb->prefix . 'mpwpb_booking_history';
+				$installed_version = get_option('mpwpb_booking_history_db_version');
 
-				if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
+				if ($installed_version !== self::DB_VERSION || $wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
 					$charset_collate = $wpdb->get_charset_collate();
 
 					$sql = "CREATE TABLE $table_name (
 						id bigint(20) NOT NULL AUTO_INCREMENT,
 						booking_id bigint(20) NOT NULL,
-						action_type varchar(20) NOT NULL,
-						old_date varchar(20) DEFAULT NULL,
-						new_date varchar(20) DEFAULT NULL,
+						action_type varchar(30) NOT NULL,
+						old_date varchar(100) DEFAULT NULL,
+						new_date varchar(100) DEFAULT NULL,
 						performed_by_user_id bigint(20) NOT NULL,
 						performed_by_role varchar(50) NOT NULL,
 						note text DEFAULT NULL,
@@ -43,6 +58,7 @@
 
 					require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 					dbDelta($sql);
+					update_option('mpwpb_booking_history_db_version', self::DB_VERSION);
 				}
 			}
 
