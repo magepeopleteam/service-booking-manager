@@ -125,6 +125,7 @@
 						'label' => __('Advanced', 'service-booking-manager'),
 						'sections' => array(
 							array('MPWPB_Faq_Settings', 'faq_settings', __('FAQ', 'service-booking-manager'), __('Frequently asked questions shown on the service page.', 'service-booking-manager')),
+							array('Tax_Settings', 'tax_settings', __('Tax Settings', 'service-booking-manager'), __('Charge tax on this service using your WooCommerce tax settings.', 'service-booking-manager')),
 						),
 					),
 				);
@@ -393,7 +394,7 @@
 					$gallery_active_class = $gallery_display == 'off' ? '' : 'mActive';
 					$gallery_image_ids = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_slider_images', array());
 					?>
-					<div class="mpwpb-sme__rail-card mpwpb-sme__gallery-card mpwpb-sme__rail-card--loading">
+					<div class="mpwpb-sme__rail-card mpwpb-sme__gallery-card mpwpb-sme__rail-card--loading" data-sme-step-only="general">
 						<?php $this->render_rail_card_skeleton('featured'); ?>
 						<div class="mpwpb-sme__gallery-head">
 							<div class="mpwpb-sme__gallery-head-text">

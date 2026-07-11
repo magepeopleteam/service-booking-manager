@@ -347,7 +347,8 @@
 		var sectionsWithHeaderToggle = {
 			'MPWPB_Extra_Service_Modern': 'mpwpb_extra_service_active',
 			'MPWPB_Service_Details': 'mpwpb_service_details_status',
-			'MPWPB_Faq_Settings': 'mpwpb_faq_active'
+			'MPWPB_Faq_Settings': 'mpwpb_faq_active',
+			'Tax_Settings': 'mpwpb_tax_enabled'
 		};
 		Object.keys(sectionsWithHeaderToggle).forEach(function (sectionClass) {
 			var $card = $root.find('[data-sme-section="' + sectionClass + '"]');
@@ -401,6 +402,24 @@
 			return;
 		}
 		var $toggleRow = $faqSection.prev();
+		if ($toggleRow.length && !$toggleRow.find('input[type="checkbox"]').length) {
+			$toggleRow.remove();
+		}
+	})();
+
+	/* ---------------------------------------------------------------- *
+	 *  The classic "Enable Tax" row (label text + the toggle just
+	 *  relocated to the Tax Settings card header above) would otherwise be
+	 *  left behind as an empty leftover line. Only removed once confirmed
+	 *  empty (no checkbox left inside), so it's a no-op if the
+	 *  header-toggle relocation didn't run.
+	 * ---------------------------------------------------------------- */
+	(function cleanupTaxToggleRow() {
+		var $taxClassRow = $root.find('[data-sme-section="Tax_Settings"] #mpwpb_tax_class_row');
+		if (!$taxClassRow.length) {
+			return;
+		}
+		var $toggleRow = $taxClassRow.prev();
 		if ($toggleRow.length && !$toggleRow.find('input[type="checkbox"]').length) {
 			$toggleRow.remove();
 		}

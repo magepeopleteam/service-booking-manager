@@ -62,6 +62,12 @@
 				update_post_meta($order_id, 'mpwpb_billing_phone', $billing['phone'] ?? '');
 				update_post_meta($order_id, 'mpwpb_billing_address_1', $billing['address_1'] ?? '');
 				update_post_meta($order_id, 'mpwpb_billing_address_2', $billing['address_2'] ?? '');
+				update_post_meta($order_id, 'mpwpb_billing_country', $billing['country'] ?? '');
+				update_post_meta($order_id, 'mpwpb_billing_state', $billing['state'] ?? '');
+				update_post_meta($order_id, 'mpwpb_billing_postcode', $billing['postcode'] ?? '');
+				// See MPWPB_Tax_Helper -- 0 when the booked service doesn't have
+				// tax enabled, or WooCommerce's own tax calculation is off.
+				update_post_meta($order_id, 'mpwpb_tax_amount', $args['tax_amount'] ?? 0);
 				update_post_meta($order_id, 'mpwpb_line_items', $args['line_items'] ?? []);
 				return (int) $order_id;
 			}

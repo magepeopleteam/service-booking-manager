@@ -273,6 +273,7 @@ body.mpwpb-sme-active #postdivrich{display:none;}
    mpwpb-service-edit-modern.js). data-sme-step-only holds a SPACE-SEPARATED
    list of step ids (e.g. "pricing advanced"), matched with ~= (token match). */
 .mpwpb-sme__rail-card[data-sme-step-only]{display:none;}
+.mpwpb-sme[data-step="general"] .mpwpb-sme__rail-card[data-sme-step-only~="general"],
 .mpwpb-sme[data-step="availability"] .mpwpb-sme__rail-card[data-sme-step-only~="availability"],
 .mpwpb-sme[data-step="pricing"] .mpwpb-sme__rail-card[data-sme-step-only~="pricing"],
 .mpwpb-sme[data-step="advanced"] .mpwpb-sme__rail-card[data-sme-step-only~="advanced"]{display:block;}
@@ -448,6 +449,8 @@ body.mpwpb-sme-active #postdivrich{display:none;}
 .mpwpb-sme__skel-lbl{height:13px;width:28%;flex-shrink:0;}
 .mpwpb-sme__skel-inp{height:32px;flex:1;border-radius:8px;}
 .mpwpb-sme__skel-block{border-radius:10px;}
+
+#mpwpb_tax_class_row select, #mpwpb_tax_class_row input{margin-top:10px !important; margin-bottom: 10px !important; }
 
 /* ==================================================================== *
  *  Responsive

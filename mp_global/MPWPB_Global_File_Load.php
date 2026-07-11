@@ -29,6 +29,7 @@
 				require_once MPWPB_GLOBAL_PLUGIN_DIR . '/class/MPWPB_Booking_History.php';
 				require_once MPWPB_GLOBAL_PLUGIN_DIR . '/class/MPWPB_Booking_Notes.php';
 				require_once MPWPB_GLOBAL_PLUGIN_DIR . '/class/MPWPB_Partial_Payment.php';
+				require_once MPWPB_GLOBAL_PLUGIN_DIR . '/class/MPWPB_Tax_Helper.php';
 				require_once MPWPB_GLOBAL_PLUGIN_DIR . '/class/MPWPB_Global_Style.php';
 				require_once MPWPB_GLOBAL_PLUGIN_DIR . '/class/MPWPB_Custom_Layout.php';
 				require_once MPWPB_GLOBAL_PLUGIN_DIR . '/class/MPWPB_Custom_Slider.php';

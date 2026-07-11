@@ -116,6 +116,38 @@
 				wp_send_json_success(['html' => ob_get_clean()]);
 			}
 			/**
+			 * Country/State/Postcode -- only rendered at all when the booked
+			 * service has tax enabled (Admin/settings/Tax_Settings.php), since
+			 * MPWPB_Tax_Helper::calculate() needs a location to match against
+			 * WooCommerce's tax rates the same way WC's own checkout would.
+			 * Shared between render_embedded_form() and the no-JS fallback
+			 * (render_cart_and_form()) so both stay in sync.
+			 */
+			private static function render_tax_address_fields(string $row_class = 'mpwpb-checkout-row', string $field_class = 'mpwpb-checkout-field'): void {
+				$countries = function_exists('WC') && WC() ? WC()->countries->get_countries() : [];
+				$default_country = function_exists('WC') && WC() ? WC()->countries->get_base_country() : '';
+				?>
+				<div class="<?php echo esc_attr($row_class); ?>">
+					<label class="<?php echo esc_attr($field_class); ?>">
+						<span><?php esc_html_e('Country', 'service-booking-manager'); ?></span>
+						<select name="mpwpb_billing_country">
+							<?php foreach ($countries as $code => $name) : ?>
+								<option value="<?php echo esc_attr($code); ?>" <?php selected($code, $default_country); ?>><?php echo esc_html($name); ?></option>
+							<?php endforeach; ?>
+						</select>
+					</label>
+					<label class="<?php echo esc_attr($field_class); ?>">
+						<span><?php esc_html_e('State', 'service-booking-manager'); ?></span>
+						<input type="text" name="mpwpb_billing_state" placeholder="<?php esc_attr_e('e.g. CA', 'service-booking-manager'); ?>"/>
+					</label>
+				</div>
+				<label class="<?php echo esc_attr($field_class); ?>">
+					<span><?php esc_html_e('Postcode / ZIP', 'service-booking-manager'); ?></span>
+					<input type="text" name="mpwpb_billing_postcode" placeholder="<?php esc_attr_e('12345', 'service-booking-manager'); ?>"/>
+				</label>
+				<?php
+			}
+			/**
 			 * Appointment-slot card + itemized booking summary, shared between
 			 * the pre-payment checkout form (render_embedded_form()) and the
 			 * post-payment thank-you page (render_thank_you()) -- same item
@@ -128,6 +160,14 @@
 				$coupon_code = (string) ($item['mpwpb_coupon_code'] ?? '');
 				$coupon_discount_amount = (float) ($item['mpwpb_discount_amount'] ?? 0);
 				$net_total = max(0, $total - $coupon_discount_amount);
+				// Estimate only -- the customer's real address isn't known yet at
+				// this point (this recap also renders before the billing form is
+				// filled in, e.g. on first load), so this falls back to the shop's
+				// own base location the same way WC_Tax itself would. The real,
+				// final tax is recalculated against the address actually
+				// submitted in MPWPB_Native_Checkout::handle_checkout_submit().
+				$tax_amount = class_exists('MPWPB_Tax_Helper') ? MPWPB_Tax_Helper::calculate($post_id, $net_total) : 0.0;
+				$net_total += $tax_amount;
 
 				// A comma-joined value here means a recurring booking with more
 				// than one occurrence (see mpwpb_registration.js dateTimeString) --
@@ -296,6 +336,12 @@
 							<span>&minus;<?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, $coupon_discount_amount)); ?></span>
 						</div>
 					<?php endif; ?>
+					<?php if ($tax_amount > 0) : ?>
+						<div class="mpwpb-checkout-recurring-row">
+							<span><?php esc_html_e('Estimated Tax', 'service-booking-manager'); ?></span>
+							<span><?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, $tax_amount)); ?></span>
+						</div>
+					<?php endif; ?>
 					<div class="mpwpb-checkout-total">
 						<span><?php esc_html_e('Total', 'service-booking-manager'); ?></span>
 						<strong><?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, $net_total)); ?></strong>
@@ -374,6 +420,9 @@
 									<span><?php esc_html_e('Address', 'service-booking-manager'); ?></span>
 									<input type="text" name="mpwpb_billing_address_1" placeholder="<?php esc_attr_e('123 Main St, City', 'service-booking-manager'); ?>"/>
 								</label>
+								<?php if (class_exists('MPWPB_Tax_Helper') && MPWPB_Tax_Helper::is_enabled_for_service($post_id)) : ?>
+									<?php self::render_tax_address_fields(); ?>
+								<?php endif; ?>
 							</div>
 						</div>
 						<?php if (count($gateways) > 1) : ?>
@@ -662,6 +711,9 @@
 							<span><?php esc_html_e('Address', 'service-booking-manager'); ?></span>
 							<input type="text" name="mpwpb_billing_address_1" placeholder="<?php esc_attr_e('123 Main St, City', 'service-booking-manager'); ?>"/>
 						</label>
+						<?php if (class_exists('MPWPB_Tax_Helper') && MPWPB_Tax_Helper::is_enabled_for_service($post_id)) : ?>
+							<?php self::render_tax_address_fields('mpwpb-checkout-fallback-row', 'mpwpb-checkout-fallback-field'); ?>
+						<?php endif; ?>
 						<?php if (count($gateways) > 1) : ?>
 							<div class="mpwpb-checkout-fallback-gateways">
 								<strong class="mpwpb-checkout-fallback-section-title"><?php esc_html_e('Payment Method', 'service-booking-manager'); ?></strong>
@@ -735,9 +787,22 @@
 					'phone' => isset($_POST['mpwpb_billing_phone']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_billing_phone'])) : '',
 					'address_1' => isset($_POST['mpwpb_billing_address_1']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_billing_address_1'])) : '',
 					'address_2' => '',
+					'country' => isset($_POST['mpwpb_billing_country']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_billing_country'])) : '',
+					'state' => isset($_POST['mpwpb_billing_state']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_billing_state'])) : '',
+					'postcode' => isset($_POST['mpwpb_billing_postcode']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_billing_postcode'])) : '',
 				];
 				$currency_code = MPWPB_Global_Function::native_currency_setting('currency_code', 'USD');
 				$net_total = max(0, ($item['mpwpb_tp'] ?? 0) - ($item['mpwpb_discount_amount'] ?? 0));
+				// Real tax against the address the customer actually submitted
+				// (falls back to the shop's own base location if they weren't
+				// shown/didn't fill in these fields, e.g. tax wasn't enabled for
+				// this service) -- folded into net_total *before* the deposit/full
+				// split below, so a deposit correctly covers its share of tax too
+				// rather than being calculated on a pre-tax amount.
+				$tax_amount = class_exists('MPWPB_Tax_Helper')
+					? MPWPB_Tax_Helper::calculate($item['mpwpb_id'] ?? 0, $net_total, $billing['country'], $billing['state'], $billing['postcode'])
+					: 0.0;
+				$net_total += $tax_amount;
 				// A "Pay Balance" item (MPWPB_Partial_Payment::create_balance_order())
 				// always carries payment_choice='full' -- split_total() correctly
 				// yields due=0 for it, same as any other full payment.
@@ -748,6 +813,7 @@
 					'billing' => $billing,
 					'line_items' => $item,
 					'total' => $net_total,
+					'tax_amount' => $tax_amount,
 					'currency' => $currency_code,
 					'payment_choice' => $payment_choice,
 					'amount_paid' => $charge_amount,
