@@ -615,6 +615,15 @@ div.registration_tab_item {
   font-size: 13px;
   color: inherit;
 }
+/* "Proceed to Checkout" button while add_to_cart (and, in Custom Payment
+   mode, the native checkout form fetch that follows it) is in flight --
+   without this the button looks clickable/idle for the couple of seconds
+   that AJAX round trip takes. */
+.mpwpb-cta-loading {
+  opacity: 0.7 !important;
+  cursor: not-allowed !important;
+  pointer-events: none;
+}
 .mpwpb-default-template .main {
   width: 100%;
 }

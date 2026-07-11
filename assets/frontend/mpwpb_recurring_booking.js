@@ -99,8 +99,23 @@
             beforeSend: function() {
                 parent.find('#mpwpb_recurring_dates_list').html('<li>Loading...</li>');
                 parent.find('.mpwpb_recurring_dates').show();
+                // Which of "Next Staff Member" / "Proceed to Checkout" is
+                // correct depends entirely on this response (response.count),
+                // so both are hidden while it's in flight -- previously
+                // whichever button was left over from the *last* slot's
+                // result stayed clickable during this fetch, and if the
+                // customer clicked through before this (possibly slow)
+                // response arrived, the success handler below would still
+                // fire afterward and yank the wizard back to the staff step,
+                // undoing whatever they'd already done. A loader in the
+                // staff holder itself gives clear "still working" feedback
+                // instead of the buttons just silently vanishing.
+                $("#mpwpb_show_hide_staff_member").hide();
+                $("#mpwpb_date_time_next_btn_id").hide();
+                mpwpb_loader($("#mpwpb_staff_member_holder"));
             },
             success: function(response) {
+                mpwpb_loaderRemove($("#mpwpb_staff_member_holder"));
                 $("#mpwpb_staff_member_holder").html( response.html );
                 if( response.count < 1 ){
                     $("#mpwpb_progress_staff").fadeOut();
@@ -124,6 +139,13 @@
             error: function(xhr, status, error) {
                 console.error('AJAX error:', status, error);
                 parent.find('#mpwpb_recurring_dates_list').html('<li>Error: ' + error + '</li>');
+                mpwpb_loaderRemove($("#mpwpb_staff_member_holder"));
+                // Neither button was left visible going into this request --
+                // fall back to "Proceed to Checkout" on failure so the
+                // customer always has a way to continue rather than being
+                // stuck with no visible next step at all.
+                $("#mpwpb_show_hide_staff_member").hide();
+                $("#mpwpb_date_time_next_btn_id").fadeIn();
             }
         });
 

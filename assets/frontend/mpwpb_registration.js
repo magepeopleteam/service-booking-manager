@@ -634,7 +634,8 @@ function mpwpb_price_calculation($this) {
         }
     });
     $(document).on('click', 'div.mpwpb_registration .mpwpb_date_time_next', function () {
-        let parent = $(this).closest('div.mpwpb_registration');
+        let $nextBtn = $(this);
+        let parent = $nextBtn.closest('div.mpwpb_registration');
         let date = parent.find('[name="mpwpb_date"]').val();
 
         let is_recurring_on = 'off';
@@ -729,6 +730,14 @@ function mpwpb_price_calculation($this) {
                     nonce: mpwpb_ajax.nonce
                 },
                 beforeSend: function () {
+                    // Button-level feedback in addition to the step-loader/full-page
+                    // overlay below -- add_to_cart (plus, in Custom mode, the native
+                    // billing form fetch that follows it) takes a couple of seconds,
+                    // and without this the button just sits there looking clickable/
+                    // unresponsive, which reads as broken rather than "working".
+                    $nextBtn.data('mpwpb-original-html', $nextBtn.html());
+                    $nextBtn.prop('disabled', true).addClass('mpwpb-cta-loading')
+                        .html('<i class="fas fa-spinner fa-spin _mR_xs"></i> ' + (mpwpb_ajax.processing_text || 'Please wait...'));
                     if (isCustomPaymentMode) {
                         // Custom Payment stays in the same popup afterwards (see the
                         // success handler below), so ease straight into the Checkout
@@ -773,6 +782,17 @@ function mpwpb_price_calculation($this) {
                         mpwpb_loaderRemove(parent.find('.mpwpb_order_proceed_area'));
                     } else {
                         mpwpb_loaderRemove();
+                    }
+                },
+                complete: function () {
+                    // Runs after success or error alike -- on WC-mode success the
+                    // page is navigating away anyway so this is moot, but on error
+                    // (either mode) or Custom-mode success (same popup, customer
+                    // could still go back a step) the button must not stay stuck
+                    // disabled/spinning.
+                    $nextBtn.prop('disabled', false).removeClass('mpwpb-cta-loading');
+                    if ($nextBtn.data('mpwpb-original-html') !== undefined) {
+                        $nextBtn.html($nextBtn.data('mpwpb-original-html'));
                     }
                 }
             });
@@ -934,7 +954,18 @@ function mpwpb_price_calculation($this) {
     });
 
     $(document).on('click', '#mpwpb_show_hide_staff_member', function () {
-        $(this).hide();
+        // Purely client-side (no AJAX -- the staff cards are already in the
+        // DOM from page load, see mpwpbReorderPrefill's comment above), but
+        // the fadeIn()/hide() swap plus whatever staff photos are loading for
+        // the first time as this area becomes visible can still take a
+        // moment -- same button-level "something is happening" feedback as
+        // "Proceed to Checkout", just on a short fixed timer since there's no
+        // request/response to hang it off of.
+        let $staffBtn = $(this);
+        $staffBtn.data('mpwpb-original-html', $staffBtn.html());
+        $staffBtn.prop('disabled', true).addClass('mpwpb-cta-loading')
+            .html('<i class="fas fa-spinner fa-spin _mR_xs"></i> ' + (mpwpb_ajax.processing_text || 'Please wait...'));
+
         $("#mpwpb_date_time_next_btn_id").fadeIn();
         $("#mpwpb_progress_staff").addClass('active');
         $("#mpwpb_datetime_holder").hide();
@@ -946,8 +977,15 @@ function mpwpb_price_calculation($this) {
         // Mirror the running total into the staff step's own summary --
         // #mpwpd_all_total_bill is the single element mpwpb_price_calculation()
         // already keeps up to date, this just copies its current text.
-        let parent = $(this).closest('div.mpwpb_registration');
+        let parent = $staffBtn.closest('div.mpwpb_registration');
         parent.find('#mpwpb_staff_selected_total').text(parent.find('#mpwpd_all_total_bill').first().text());
+
+        setTimeout(function () {
+            $staffBtn.hide().prop('disabled', false).removeClass('mpwpb-cta-loading');
+            if ($staffBtn.data('mpwpb-original-html') !== undefined) {
+                $staffBtn.html($staffBtn.data('mpwpb-original-html'));
+            }
+        }, 400);
     });
 
     $(document).on('click', '.mpwpb_get_date', function () {
