@@ -476,6 +476,15 @@
 			public static function get_payment_setting($key, $default = '') {
 				return self::get_settings('mpwpb_payment_method_settings', $key, $default);
 			}
+			/**
+			 * Partial Payment now has its own Settings tab/option
+			 * (mpwpb_partial_payment_settings) -- see MPWPB_Native_Checkout_Settings's
+			 * render_partial_payment_panel() and MPWPB_Partial_Payment::maybe_migrate_settings()
+			 * for the one-time migration off the old mpwpb_payment_method_settings keys.
+			 */
+			public static function get_partial_payment_setting($key, $default = '') {
+				return self::get_settings('mpwpb_partial_payment_settings', $key, $default);
+			}
 			public static function has_functional_payment_method(): bool {
 				if (self::is_wc_payment_mode()) {
 					if (!function_exists('WC') || !WC()->payment_gateways()) {

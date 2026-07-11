@@ -117,6 +117,10 @@
 				// Depends on mpwpb_registration (not just jquery) so the
 				// mpwpb_ajax object it localizes is guaranteed to already exist.
 				wp_enqueue_script('mpwpb_coupon', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-coupon.js', ['jquery', 'mpwpb_registration'], time(), true);
+				// Pay in Full / Pay Deposit Now toggle on the checkout pages
+				// (WC checkout + native checkout) -- same AJAX-then-refresh
+				// pattern as mpwpb_coupon above.
+				wp_enqueue_script('mpwpb_payment_choice', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-payment-choice.js', ['jquery', 'mpwpb_registration'], time(), true);
 				// Single service page redesign (hero/tabs/Overview/FAQ/Details) —
 				// pure reskin, loaded after mpwpb_registration so its overrides win.
 				wp_enqueue_style('mpwpb_service_page_modern', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-service-page-modern.css', ['mpwpb_registration'], time());
@@ -141,16 +145,6 @@
 					// or a signal to load the native billing form inside the same
 					// popup instead of leaving it (Custom Payment, WooCommerce off).
 					'is_custom_payment_mode' => MPWPB_Global_Function::is_custom_payment_mode(),
-					// Lets the wizard show a live "Due Now" preview as soon as the
-					// customer picks Partial, without a round trip -- the real,
-					// authoritative split is still always recomputed server-side
-					// (MPWPB_Partial_Payment::split_total()) at checkout time.
-					'partial_payment' => array(
-						'enabled' => class_exists('MPWPB_Partial_Payment') && MPWPB_Partial_Payment::is_enabled(),
-						'type' => MPWPB_Global_Function::get_payment_setting('partial_payment_type', 'percentage'),
-						'fixed_amount' => (float) MPWPB_Global_Function::get_payment_setting('partial_payment_fixed_amount', 0),
-						'percentage' => (float) MPWPB_Global_Function::get_payment_setting('partial_payment_percentage', 50),
-					),
 				));
 				do_action('add_mpwpb_frontend_script');
 			}

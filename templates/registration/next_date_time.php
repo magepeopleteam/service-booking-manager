@@ -51,20 +51,5 @@
                 <i class="fas fa-long-arrow-alt-right _mL_xs"></i>
             </button>
         </div>
-		<?php if (class_exists('MPWPB_Partial_Payment') && MPWPB_Partial_Payment::is_enabled()) : ?>
-        <div class="mpwpb-payment-choice-row" id="mpwpb_payment_choice_wrap">
-            <label class="mpwpb-payment-choice-option">
-                <input type="radio" name="mpwpb_payment_choice" value="full" checked/>
-                <?php esc_html_e('Pay in Full', 'service-booking-manager'); ?>
-            </label>
-            <label class="mpwpb-payment-choice-option">
-                <input type="radio" name="mpwpb_payment_choice" value="partial"/>
-                <?php esc_html_e('Pay Deposit Now', 'service-booking-manager'); ?>
-            </label>
-            <span class="mpwpb-payment-choice-due" id="mpwpb_payment_choice_due" style="display:none;">
-				<?php esc_html_e('Due Now:', 'service-booking-manager'); ?> <strong id="mpwpb_payment_choice_due_amount"></strong>
-            </span>
-        </div>
-		<?php endif; ?>
     </div>
 <?php

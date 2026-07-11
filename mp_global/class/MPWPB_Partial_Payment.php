@@ -40,6 +40,67 @@
 				// those, so it never sees a balance order reach a paid status.
 				// This is the one place that does.
 				add_action('woocommerce_order_status_changed', [$this, 'maybe_apply_wc_balance_payment'], 20, 4);
+				// Pay in Full / Pay Deposit Now choice: rendered on the real
+				// checkout screens right before the customer places the order
+				// (see render_choice_radio()) instead of earlier in the booking
+				// wizard. Hooked inside the same #order_review fragment WC
+				// rebuilds on 'update_checkout', so re-rendering here always
+				// reflects whatever the AJAX handler below just saved.
+				add_action('woocommerce_review_order_before_submit', [$this, 'render_wc_payment_choice_box']);
+				add_action('wp_ajax_mpwpb_set_payment_choice', [$this, 'ajax_set_payment_choice']);
+				add_action('wp_ajax_nopriv_mpwpb_set_payment_choice', [$this, 'ajax_set_payment_choice']);
+				// This site's WooCommerce checkout page uses the Cart & Checkout
+				// Blocks (React/Store API), which never fires any of the classic
+				// woocommerce_checkout_* template hooks above -- render_wc_payment_choice_box()
+				// silently never runs there. These two hooks are the Blocks-native
+				// equivalent: a Store API cart extension (namespace 'mpwpb') that
+				// the Checkout block's Order Summary can read/write live, wired to
+				// the exact same before_calculate_totals() price logic afterward.
+				add_action('woocommerce_blocks_loaded', [$this, 'register_store_api_extension']);
+				// woocommerce_blocks_enqueue_checkout_block_scripts_after exists
+				// in WC core but never actually fires in this WooCommerce
+				// version's real render path (confirmed live: did_action() stayed
+				// 0 on an actual checkout page load) -- wp_enqueue_scripts is the
+				// same reliable, always-fires hook every other frontend asset in
+				// this plugin already uses (mpwpb_coupon, mpwpb_registration, etc.),
+				// and WP resolves script dependencies lazily at print time, so
+				// declaring wc-blocks-checkout/wc-blocks-components as deps here
+				// still works even though those get registered by a separate class.
+				add_action('wp_enqueue_scripts', [$this, 'enqueue_checkout_block_script']);
+				// 'init' (not admin_init) -- is_enabled()/get_deposit_amount() are
+				// read from front-end checkout code too, so the migration must have
+				// already run before the very first front-end request after this
+				// tab split ships, not just whenever an admin next visits wp-admin.
+				add_action('init', [$this, 'maybe_migrate_settings']);
+			}
+
+			/**
+			 * Partial Payment used to live inside the Payment Method tab's
+			 * settings (mpwpb_payment_method_settings option) -- now it has
+			 * its own Settings tab/option (mpwpb_partial_payment_settings, see
+			 * MPWPB_Native_Checkout_Settings::render_partial_payment_panel()).
+			 * One-time copy of whatever the site already had configured there,
+			 * so switching tabs doesn't silently reset an already-configured
+			 * deposit percentage/amount back to defaults. Safe to run on every
+			 * request: only acts once, the first time the new option has no
+			 * 'partial_payment_enabled' key yet; never touches/deletes the old
+			 * option afterward.
+			 */
+			public function maybe_migrate_settings(): void {
+				$new_settings = get_option('mpwpb_partial_payment_settings');
+				if (is_array($new_settings) && isset($new_settings['partial_payment_enabled'])) {
+					return;
+				}
+				$legacy = get_option('mpwpb_payment_method_settings');
+				if (!is_array($legacy) || !isset($legacy['partial_payment_enabled'])) {
+					return;
+				}
+				update_option('mpwpb_partial_payment_settings', [
+					'partial_payment_enabled' => $legacy['partial_payment_enabled'] ?? 'off',
+					'partial_payment_type' => $legacy['partial_payment_type'] ?? 'percentage',
+					'partial_payment_percentage' => $legacy['partial_payment_percentage'] ?? 50,
+					'partial_payment_fixed_amount' => $legacy['partial_payment_fixed_amount'] ?? 0,
+				]);
 			}
 
 			public function maybe_apply_wc_balance_payment($order_id, $old_status, $new_status, $order): void {
@@ -87,7 +148,249 @@
 			}
 
 			public static function is_enabled(): bool {
-				return MPWPB_Global_Function::get_payment_setting('partial_payment_enabled') === 'on';
+				return MPWPB_Global_Function::get_partial_payment_setting('partial_payment_enabled') === 'on';
+			}
+
+			/**
+			 * Shared Pay in Full / Pay Deposit Now radio markup -- used both on
+			 * the real WooCommerce checkout (render_wc_payment_choice_box()
+			 * below) and the native checkout's embedded form
+			 * (MPWPB_Native_Checkout::render_embedded_form()). A "Pay Balance"
+			 * item (create_balance_order() above) always carries payment_choice
+			 * 'full' and is never offered the choice again.
+			 */
+			public static function render_choice_radio(array $item): void {
+				if (!self::is_enabled() || !empty($item['mpwpb_is_balance_payment'])) {
+					return;
+				}
+				$net_total = max(0, ((float) ($item['mpwpb_tp'] ?? 0)) - ((float) ($item['mpwpb_discount_amount'] ?? 0)));
+				$deposit = self::get_deposit_amount($net_total);
+				$choice = ($item['mpwpb_payment_choice'] ?? 'full') === 'partial' ? 'partial' : 'full';
+				?>
+				<div class="mpwpb-payment-choice-row" data-mpwpb-payment-choice-wrap>
+					<label class="mpwpb-payment-choice-option">
+						<input type="radio" name="mpwpb_payment_choice" value="full" data-mpwpb-payment-choice-radio <?php checked($choice, 'full'); ?>/>
+						<?php esc_html_e('Pay in Full', 'service-booking-manager'); ?>
+					</label>
+					<label class="mpwpb-payment-choice-option">
+						<input type="radio" name="mpwpb_payment_choice" value="partial" data-mpwpb-payment-choice-radio <?php checked($choice, 'partial'); ?>/>
+						<?php esc_html_e('Pay Deposit Now', 'service-booking-manager'); ?>
+						<span class="mpwpb-payment-choice-due">(<?php esc_html_e('Due Now:', 'service-booking-manager'); ?> <?php echo wp_kses_post(MPWPB_Global_Function::wc_price(0, $deposit)); ?>)</span>
+					</label>
+				</div>
+				<?php
+			}
+
+			/**
+			 * Renders the choice on the real WooCommerce checkout, right before
+			 * the Place Order button -- inside the same #order_review markup WC
+			 * regenerates on every 'update_checkout' AJAX call, so it always
+			 * shows the currently-saved cart-item choice.
+			 */
+			public function render_wc_payment_choice_box(): void {
+				if (!self::is_enabled() || !function_exists('WC') || !WC()->cart || !class_exists('MPWPB_Coupon_Frontend')) {
+					return;
+				}
+				$cart_key = MPWPB_Coupon_Frontend::find_wc_booking_cart_key();
+				if (!$cart_key) {
+					return;
+				}
+				self::render_choice_radio(WC()->cart->cart_contents[$cart_key]);
+			}
+
+			/**
+			 * Single AJAX entry point for both checkout systems -- mirrors
+			 * MPWPB_Coupon_Frontend::apply_coupon()'s is_wc_payment_mode()
+			 * branch so the client only ever needs to know one action name.
+			 */
+			public function ajax_set_payment_choice(): void {
+				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_nonce')) {
+					wp_send_json_error(['message' => esc_html__('Security check failed.', 'service-booking-manager')]);
+				}
+				if (!self::is_enabled()) {
+					wp_send_json_error(['message' => esc_html__('Partial payment is not enabled.', 'service-booking-manager')]);
+				}
+				$choice = (isset($_POST['choice']) && sanitize_text_field(wp_unslash($_POST['choice'])) === 'partial') ? 'partial' : 'full';
+				if (MPWPB_Global_Function::is_wc_payment_mode()) {
+					$this->ajax_set_wc_payment_choice($choice);
+				} else {
+					$this->ajax_set_native_payment_choice($choice);
+				}
+			}
+
+			private function ajax_set_wc_payment_choice($choice): void {
+				if (!function_exists('WC') || !WC()->cart || !class_exists('MPWPB_Coupon_Frontend')) {
+					wp_send_json_error(['message' => esc_html__('Cart unavailable.', 'service-booking-manager')]);
+				}
+				$cart_key = MPWPB_Coupon_Frontend::find_wc_booking_cart_key();
+				if (!$cart_key) {
+					wp_send_json_error(['message' => esc_html__('Your cart has no bookable service.', 'service-booking-manager')]);
+				}
+				if (!empty(WC()->cart->cart_contents[$cart_key]['mpwpb_is_balance_payment'])) {
+					wp_send_json_error(['message' => esc_html__('This item does not support a deposit.', 'service-booking-manager')]);
+				}
+				WC()->cart->cart_contents[$cart_key]['mpwpb_payment_choice'] = $choice;
+				WC()->cart->set_session();
+				wp_send_json_success();
+			}
+
+			private function ajax_set_native_payment_choice($choice): void {
+				if (!class_exists('MPWPB_Native_Cart')) {
+					wp_send_json_error(['message' => esc_html__('Cart unavailable.', 'service-booking-manager')]);
+				}
+				$item = MPWPB_Native_Cart::get_item();
+				if (empty($item)) {
+					wp_send_json_error(['message' => esc_html__('Your booking cart is empty.', 'service-booking-manager')]);
+				}
+				if (!empty($item['mpwpb_is_balance_payment'])) {
+					wp_send_json_error(['message' => esc_html__('This item does not support a deposit.', 'service-booking-manager')]);
+				}
+				$item['mpwpb_payment_choice'] = $choice;
+				MPWPB_Native_Cart::set_item($item);
+				$html = '';
+				$post_id = $item['mpwpb_id'] ?? 0;
+				if ($post_id && class_exists('MPWPB_Native_Checkout')) {
+					ob_start();
+					?>
+					<div class="mpwpb-checkout-recap-root" data-mpwpb-recap-root>
+						<?php MPWPB_Native_Checkout::render_booking_recap($item, $post_id, true, true); ?>
+					</div>
+					<?php
+					$html = ob_get_clean();
+				}
+				wp_send_json_success(['html' => $html]);
+			}
+
+			/**
+			 * Registers the 'mpwpb' Store API cart extension -- the Blocks
+			 * Checkout-native equivalent of render_wc_payment_choice_box()/
+			 * ajax_set_payment_choice() above, for sites whose WooCommerce
+			 * checkout page uses the Cart & Checkout Blocks (which never fire
+			 * classic woocommerce_checkout_* hooks). Confirmed against this
+			 * site's actual installed WooCommerce version that
+			 * woocommerce_store_api_register_endpoint_data()/
+			 * _register_update_callback() exist and behave as documented
+			 * before relying on them here.
+			 */
+			public function register_store_api_extension(): void {
+				if (!function_exists('woocommerce_store_api_register_endpoint_data') || !function_exists('woocommerce_store_api_register_update_callback')) {
+					return;
+				}
+				woocommerce_store_api_register_endpoint_data([
+					'endpoint' => 'cart',
+					'namespace' => 'mpwpb',
+					'data_callback' => [$this, 'get_cart_extension_data'],
+					'schema_callback' => [$this, 'get_cart_extension_schema'],
+					'schema_type' => ARRAY_A,
+				]);
+				woocommerce_store_api_register_update_callback([
+					'namespace' => 'mpwpb',
+					'callback' => [$this, 'handle_cart_extension_update'],
+				]);
+			}
+
+			/**
+			 * Data exposed at cart.extensions.mpwpb in every Store API cart/
+			 * checkout response -- read by the Checkout block's JS Fill
+			 * (mpwpb-payment-choice-block.js) to render/reflect the current
+			 * choice without a separate AJAX round trip.
+			 */
+			public function get_cart_extension_data(): array {
+				if (!self::is_enabled() || !function_exists('WC') || !WC()->cart || !class_exists('MPWPB_Coupon_Frontend')) {
+					return ['enabled' => false];
+				}
+				$cart_key = MPWPB_Coupon_Frontend::find_wc_booking_cart_key();
+				if (!$cart_key) {
+					return ['enabled' => false];
+				}
+				$item = WC()->cart->cart_contents[$cart_key];
+				if (!empty($item['mpwpb_is_balance_payment'])) {
+					return ['enabled' => false];
+				}
+				$net_total = max(0, ((float) ($item['mpwpb_tp'] ?? 0)) - ((float) ($item['mpwpb_discount_amount'] ?? 0)));
+				$deposit = self::get_deposit_amount($net_total);
+				$choice = ($item['mpwpb_payment_choice'] ?? 'full') === 'partial' ? 'partial' : 'full';
+				return [
+					'enabled' => true,
+					'choice' => $choice,
+					'full_amount_formatted' => self::format_price_plain($net_total),
+					'deposit_amount_formatted' => self::format_price_plain($deposit),
+					'due_later_amount_formatted' => self::format_price_plain(max(0, round($net_total - $deposit, 2))),
+				];
+			}
+
+			public function get_cart_extension_schema(): array {
+				return [
+					'enabled' => ['description' => 'Whether partial payment is available for the current cart.', 'type' => 'boolean', 'readonly' => true],
+					'choice' => ['description' => 'The currently selected payment choice.', 'type' => 'string', 'readonly' => true],
+					'full_amount_formatted' => ['description' => 'Formatted full payment amount.', 'type' => 'string', 'readonly' => true],
+					'deposit_amount_formatted' => ['description' => 'Formatted deposit amount due now.', 'type' => 'string', 'readonly' => true],
+					'due_later_amount_formatted' => ['description' => 'Formatted remaining balance due later.', 'type' => 'string', 'readonly' => true],
+				];
+			}
+
+			/**
+			 * The write side -- invoked by the Checkout block's
+			 * extensionCartUpdate({ namespace: 'mpwpb', data: {...} }) call to
+			 * POST /wc/store/v1/cart/extensions. The route itself calls
+			 * CartController::calculate_totals() immediately after this
+			 * returns, which fires the existing, unchanged
+			 * MPWPB_Woocommerce::before_calculate_totals() -- same price logic
+			 * as the classic-checkout path, just triggered from a different
+			 * entry point.
+			 *
+			 * @param array $data Posted extension data, e.g. ['choice' => 'partial'].
+			 */
+			public function handle_cart_extension_update($data): void {
+				if (!self::is_enabled() || !function_exists('WC') || !WC()->cart || !class_exists('MPWPB_Coupon_Frontend')) {
+					return;
+				}
+				$cart_key = MPWPB_Coupon_Frontend::find_wc_booking_cart_key();
+				if (!$cart_key || !empty(WC()->cart->cart_contents[$cart_key]['mpwpb_is_balance_payment'])) {
+					return;
+				}
+				$choice = (isset($data['choice']) && $data['choice'] === 'partial') ? 'partial' : 'full';
+				WC()->cart->cart_contents[$cart_key]['mpwpb_payment_choice'] = $choice;
+				WC()->cart->set_session();
+			}
+
+			/**
+			 * Hooked to wp_enqueue_scripts (fires on every frontend request,
+			 * same as this plugin's other frontend assets) rather than a
+			 * Blocks-specific enqueue hook -- WP resolves script dependencies
+			 * lazily at print time, so declaring wc-blocks-checkout/
+			 * wc-blocks-components/wp-element/wp-plugins/wp-data as deps here
+			 * still resolves correctly even though those handles are
+			 * registered by a separate WooCommerce Blocks class. The registerPlugin()
+			 * call inside the script itself only ever renders on the actual
+			 * Checkout block (scope: 'woocommerce-checkout'), so loading this
+			 * unconditionally site-wide is harmless -- same pattern already
+			 * used by mpwpb_coupon/mpwpb_registration in MPWPB_Dependencies.php.
+			 */
+			public function enqueue_checkout_block_script(): void {
+				if (!self::is_enabled()) {
+					return;
+				}
+				wp_enqueue_style(
+					'mpwpb_payment_choice_block',
+					MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-payment-choice-block.css',
+					[],
+					time()
+				);
+				wp_enqueue_script(
+					'mpwpb_payment_choice_block',
+					MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-payment-choice-block.js',
+					['wp-element', 'wp-plugins', 'wp-data', 'wc-blocks-checkout', 'wc-blocks-components'],
+					time(),
+					true
+				);
+				wp_localize_script('mpwpb_payment_choice_block', 'mpwpbPaymentChoiceI18n', [
+					'fullEyebrow' => esc_html__('Standard', 'service-booking-manager'),
+					'fullLabel' => esc_html__('Pay in Full', 'service-booking-manager'),
+					'depositEyebrow' => esc_html__('Flexible', 'service-booking-manager'),
+					'depositLabel' => esc_html__('Pay Deposit', 'service-booking-manager'),
+					'todaySuffix' => esc_html__('today', 'service-booking-manager'),
+				]);
 			}
 
 			/**
@@ -113,11 +416,11 @@
 				if ($net_total <= 0) {
 					return 0.0;
 				}
-				$type = MPWPB_Global_Function::get_payment_setting('partial_payment_type', 'percentage');
+				$type = MPWPB_Global_Function::get_partial_payment_setting('partial_payment_type', 'percentage');
 				if ($type === 'fixed') {
-					$amount = (float) MPWPB_Global_Function::get_payment_setting('partial_payment_fixed_amount', 0);
+					$amount = (float) MPWPB_Global_Function::get_partial_payment_setting('partial_payment_fixed_amount', 0);
 				} else {
-					$percentage = (float) MPWPB_Global_Function::get_payment_setting('partial_payment_percentage', 50);
+					$percentage = (float) MPWPB_Global_Function::get_partial_payment_setting('partial_payment_percentage', 50);
 					$amount = round($net_total * ($percentage / 100), 2);
 				}
 				return max(0.0, min($amount, $net_total));

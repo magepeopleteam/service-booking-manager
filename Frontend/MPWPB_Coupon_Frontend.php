@@ -49,7 +49,7 @@
 				}
 				if (MPWPB_Global_Function::is_wc_payment_mode()) {
 					if (function_exists('WC') && WC()->cart) {
-						$cart_key = $this->find_wc_booking_cart_key();
+						$cart_key = self::find_wc_booking_cart_key();
 						if ($cart_key) {
 							unset(WC()->cart->cart_contents[$cart_key]['mpwpb_coupon_code']);
 							unset(WC()->cart->cart_contents[$cart_key]['mpwpb_discount_amount']);
@@ -94,7 +94,7 @@
 				if (!function_exists('WC') || !WC()->cart) {
 					wp_send_json_error(['message' => esc_html__('Cart unavailable.', 'service-booking-manager')]);
 				}
-				$cart_key = $this->find_wc_booking_cart_key();
+				$cart_key = self::find_wc_booking_cart_key();
 				if (!$cart_key) {
 					wp_send_json_error(['message' => esc_html__('Your cart has no bookable service.', 'service-booking-manager')]);
 				}
@@ -116,7 +116,12 @@
 				]);
 			}
 
-			private function find_wc_booking_cart_key() {
+			/**
+			 * Shared with MPWPB_Partial_Payment's checkout-page payment-choice
+			 * toggle -- both need the same "which cart item is the booking"
+			 * lookup, so it's public/static rather than duplicated.
+			 */
+			public static function find_wc_booking_cart_key() {
 				foreach (WC()->cart->get_cart() as $key => $value) {
 					if (!empty($value['mpwpb_id'])) {
 						return $key;
@@ -150,7 +155,7 @@
 				if (!function_exists('WC') || !WC()->cart) {
 					return;
 				}
-				$cart_key = $this->find_wc_booking_cart_key();
+				$cart_key = self::find_wc_booking_cart_key();
 				if (!$cart_key) {
 					return; // nothing bookable in the cart for a booking coupon to apply to
 				}

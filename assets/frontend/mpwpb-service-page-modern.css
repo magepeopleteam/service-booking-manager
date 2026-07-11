@@ -726,14 +726,15 @@ label.mpwpb-checkout-field{display:inline-block;}
 /* The no-Confirmation-Page-configured fallback (MPWPB_Native_Checkout::
    filter_checkout_content()) renders .mpwpb_native_checkout as ordinary
    page content inside whatever theme/template the site's front page uses
-   -- same self-contained width cap as .mpwpb-confirmation-wrap so it reads
-   as a focused single-column flow rather than stretching full-width. */
+   -- wide enough here to fit render_cart_and_form()'s two-column
+   form+summary grid (960px) without cramping it, unlike
+   .mpwpb-confirmation-wrap's narrower single-column flow. */
 .mpwpb_native_checkout,
 .mpwpb_native_checkout *,
 .mpwpb_native_checkout *::before,
 .mpwpb_native_checkout *::after{box-sizing:border-box;}
 .mpwpb_native_checkout{
-	max-width:640px;margin:40px auto;padding:0 16px;
+	max-width:1000px;margin:40px auto;padding:0 16px;
 	font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
 }
 .mpwpb-confirmation-wrap{

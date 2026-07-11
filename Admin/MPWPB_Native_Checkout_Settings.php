@@ -109,6 +109,12 @@
 						'callback' => [$this, 'render_payment_method_panel'],
 					],
 					[
+						'id' => 'mpwpb_partial_payment_settings',
+						'icon' => 'mi mi-percentage',
+						'title' => esc_html__('Partial Payment', 'service-booking-manager'),
+						'callback' => [$this, 'render_partial_payment_panel'],
+					],
+					[
 						'id' => 'mpwpb_currency_settings',
 						'icon' => 'mi mi-globe',
 						'title' => esc_html__('Currency Settings', 'service-booking-manager'),
@@ -627,54 +633,6 @@
 					</div>
 					</div>
 				</div>
-				<?php
-				$partial_enabled = MPWPB_Global_Function::get_payment_setting('partial_payment_enabled');
-				$partial_type = MPWPB_Global_Function::get_payment_setting('partial_payment_type', 'percentage');
-				?>
-				<!-- Applies regardless of WooCommerce vs Custom Payment -- sits outside
-				     both .mpwpb-pm-panel blocks above, since a deposit/balance split is
-				     the same policy either way (MPWPB_Partial_Payment handles both). -->
-				<div class="mpwpb-accordion" style="margin-top:20px;">
-					<button type="button" class="mpwpb-accordion-header" data-target="mpwpb-acc-partial-payment">
-						<?php esc_html_e('Partial Payment Settings', 'service-booking-manager'); ?>
-						<span class="fas fa-chevron-down"></span>
-					</button>
-					<div class="mpwpb-accordion-body" id="mpwpb-acc-partial-payment" style="display:none;">
-						<div class="mpwpb-toggle-row">
-							<div>
-								<strong><?php esc_html_e('Enable Partial Payment', 'service-booking-manager'); ?></strong>
-								<p class="description"><?php esc_html_e('Let customers pay a deposit at checkout and the remaining balance later from My Account.', 'service-booking-manager'); ?></p>
-							</div>
-							<label class="mpwpb-toggle-switch mpwpb-toggle-switch-lg">
-								<input type="hidden" name="<?php echo esc_attr($option); ?>[partial_payment_enabled]" value="off"/>
-								<input type="checkbox" name="<?php echo esc_attr($option); ?>[partial_payment_enabled]" value="on" <?php checked($partial_enabled, 'on'); ?>/>
-								<span class="mpwpb-toggle-slider"></span>
-							</label>
-						</div>
-						<div class="mpwpb-settings-row">
-							<div>
-								<strong><?php esc_html_e('Deposit Type', 'service-booking-manager'); ?></strong>
-								<p class="description"><?php esc_html_e('Charge a fixed amount, or a percentage of the booking total, as the deposit.', 'service-booking-manager'); ?></p>
-							</div>
-							<select name="<?php echo esc_attr($option); ?>[partial_payment_type]" id="mpwpb_partial_payment_type">
-								<option value="percentage" <?php selected($partial_type, 'percentage'); ?>><?php esc_html_e('Percentage', 'service-booking-manager'); ?></option>
-								<option value="fixed" <?php selected($partial_type, 'fixed'); ?>><?php esc_html_e('Fixed Amount', 'service-booking-manager'); ?></option>
-							</select>
-						</div>
-						<div class="mpwpb-settings-row" id="mpwpb_partial_payment_percentage_row" style="<?php echo $partial_type === 'fixed' ? 'display:none;' : ''; ?>">
-							<div>
-								<strong><?php esc_html_e('Deposit Percentage', 'service-booking-manager'); ?></strong>
-							</div>
-							<input type="number" min="0" max="100" step="0.01" name="<?php echo esc_attr($option); ?>[partial_payment_percentage]" value="<?php echo esc_attr(MPWPB_Global_Function::get_payment_setting('partial_payment_percentage', 50)); ?>"/>
-						</div>
-						<div class="mpwpb-settings-row" id="mpwpb_partial_payment_fixed_row" style="<?php echo $partial_type === 'fixed' ? '' : 'display:none;'; ?>">
-							<div>
-								<strong><?php esc_html_e('Deposit Fixed Amount', 'service-booking-manager'); ?></strong>
-							</div>
-							<input type="number" min="0" step="0.01" name="<?php echo esc_attr($option); ?>[partial_payment_fixed_amount]" value="<?php echo esc_attr(MPWPB_Global_Function::get_payment_setting('partial_payment_fixed_amount', 0)); ?>"/>
-						</div>
-					</div>
-				</div>
 				<div class="justifyBetween _mT">
 					<div></div>
 					<?php submit_button(); ?>
@@ -898,6 +856,69 @@
 									$btn.prop('disabled', false).text(originalText);
 								});
 							});
+						});
+					}(jQuery));
+				</script>
+				<?php
+			}
+			/**
+			 * Its own Settings tab/option (mpwpb_partial_payment_settings) --
+			 * previously an accordion tucked inside the Payment Method tab
+			 * (shared mpwpb_payment_method_settings option); moved out to a
+			 * dedicated tab. Applies regardless of WooCommerce vs Custom
+			 * Payment -- a deposit/balance split is the same policy either way
+			 * (MPWPB_Partial_Payment handles both). Existing values are copied
+			 * over automatically the first time this loads (see
+			 * MPWPB_Partial_Payment::maybe_migrate_settings()).
+			 */
+			public function render_partial_payment_panel(): void {
+				$option = 'mpwpb_partial_payment_settings';
+				$partial_enabled = MPWPB_Global_Function::get_partial_payment_setting('partial_payment_enabled');
+				$partial_type = MPWPB_Global_Function::get_partial_payment_setting('partial_payment_type', 'percentage');
+				?>
+				<div class="mpwpb-settings-panel">
+					<div class="mpwpb-toggle-row">
+						<div>
+							<strong><?php esc_html_e('Enable Partial Payment', 'service-booking-manager'); ?></strong>
+							<p class="description"><?php esc_html_e('Let customers pay a deposit at checkout and the remaining balance later from My Account.', 'service-booking-manager'); ?></p>
+						</div>
+						<label class="mpwpb-toggle-switch mpwpb-toggle-switch-lg">
+							<input type="hidden" name="<?php echo esc_attr($option); ?>[partial_payment_enabled]" value="off"/>
+							<input type="checkbox" name="<?php echo esc_attr($option); ?>[partial_payment_enabled]" value="on" <?php checked($partial_enabled, 'on'); ?>/>
+							<span class="mpwpb-toggle-slider"></span>
+						</label>
+					</div>
+					<div class="mpwpb-settings-row">
+						<div>
+							<strong><?php esc_html_e('Deposit Type', 'service-booking-manager'); ?></strong>
+							<p class="description"><?php esc_html_e('Charge a fixed amount, or a percentage of the booking total, as the deposit.', 'service-booking-manager'); ?></p>
+						</div>
+						<select name="<?php echo esc_attr($option); ?>[partial_payment_type]" id="mpwpb_partial_payment_type">
+							<option value="percentage" <?php selected($partial_type, 'percentage'); ?>><?php esc_html_e('Percentage', 'service-booking-manager'); ?></option>
+							<option value="fixed" <?php selected($partial_type, 'fixed'); ?>><?php esc_html_e('Fixed Amount', 'service-booking-manager'); ?></option>
+						</select>
+					</div>
+					<div class="mpwpb-settings-row" id="mpwpb_partial_payment_percentage_row" style="<?php echo $partial_type === 'fixed' ? 'display:none;' : ''; ?>">
+						<div>
+							<strong><?php esc_html_e('Deposit Percentage', 'service-booking-manager'); ?></strong>
+						</div>
+						<input type="number" min="0" max="100" step="0.01" name="<?php echo esc_attr($option); ?>[partial_payment_percentage]" value="<?php echo esc_attr(MPWPB_Global_Function::get_partial_payment_setting('partial_payment_percentage', 50)); ?>"/>
+					</div>
+					<div class="mpwpb-settings-row" id="mpwpb_partial_payment_fixed_row" style="<?php echo $partial_type === 'fixed' ? '' : 'display:none;'; ?>">
+						<div>
+							<strong><?php esc_html_e('Deposit Fixed Amount', 'service-booking-manager'); ?></strong>
+						</div>
+						<input type="number" min="0" step="0.01" name="<?php echo esc_attr($option); ?>[partial_payment_fixed_amount]" value="<?php echo esc_attr(MPWPB_Global_Function::get_partial_payment_setting('partial_payment_fixed_amount', 0)); ?>"/>
+					</div>
+				</div>
+				<div class="justifyBetween _mT">
+					<div></div>
+					<?php submit_button(); ?>
+				</div>
+				<script>
+					(function ($) {
+						"use strict";
+						$(document).ready(function () {
 							$('#mpwpb_partial_payment_type').on('change', function () {
 								var isFixed = $(this).val() === 'fixed';
 								$('#mpwpb_partial_payment_fixed_row').toggle(isFixed);

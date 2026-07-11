@@ -412,6 +412,9 @@
 								</label>
 							</div>
 						<?php endif; ?>
+						<?php if (class_exists('MPWPB_Partial_Payment')) : ?>
+							<?php MPWPB_Partial_Payment::render_choice_radio($item); ?>
+						<?php endif; ?>
 						<button type="submit" class="mpwpb-checkout-submit"><?php esc_html_e('Confirm Booking', 'service-booking-manager'); ?></button>
 					</form>
 				</div>
@@ -577,67 +580,100 @@
 				$post_id = $item['mpwpb_id'];
 				$total = $item['mpwpb_tp'] ?? 0;
 				?>
-				<h2><?php esc_html_e('Checkout', 'service-booking-manager'); ?></h2>
-				<div class="mpwpb_native_checkout_summary">
-					<?php if (!empty($item['mpwpb_service']) && is_array($item['mpwpb_service'])) : ?>
-						<ul>
-							<?php foreach ($item['mpwpb_service'] as $service) : ?>
-								<li><?php echo esc_html($service['name'] ?? ''); ?></li>
-							<?php endforeach; ?>
-						</ul>
-					<?php endif; ?>
-					<p>
-						<strong><?php esc_html_e('Total:', 'service-booking-manager'); ?></strong>
-						<?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, $total)); ?>
-					</p>
-				</div>
+				<style>
+					.mpwpb-checkout-fallback-grid { display: grid; grid-template-columns: 1fr 320px; gap: 32px; max-width: 960px; margin: 0 auto; align-items: start; }
+					@media (max-width: 720px) { .mpwpb-checkout-fallback-grid { grid-template-columns: 1fr; } }
+					.mpwpb-checkout-fallback-title { font-size: 26px; font-weight: 700; margin-bottom: 15px !important; }
+					.mpwpb-checkout-fallback-row { display: flex; gap: 16px; margin-bottom: 18px; }
+					@media (max-width: 480px) { .mpwpb-checkout-fallback-row { flex-direction: column; gap: 18px; } }
+					.mpwpb-checkout-fallback-field { flex: 1; display: block !important; min-width: 0; margin-bottom: 18px; }
+					.mpwpb-checkout-fallback-row .mpwpb-checkout-fallback-field { margin-bottom: 0; }
+					.mpwpb-checkout-fallback-field span { display: block !important; font-weight: 600; font-size: 13px; margin-bottom: 6px; }
+					.mpwpb-checkout-fallback-field input[type="text"],
+					.mpwpb-checkout-fallback-field input[type="email"] {
+						display: block !important; width: 100% !important; max-width: 100%; box-sizing: border-box !important;
+						padding: 11px 14px; border: 1px solid #d8d8dc; border-radius: 8px; font-size: 14px; margin: 0;
+					}
+					.mpwpb-checkout-fallback-section-title { display: block; font-size: 15px; font-weight: 700; margin: 8px 0 12px; }
+					.mpwpb-checkout-fallback-gateways { margin-bottom: 24px; }
+					.mpwpb-checkout-fallback-gateway-card {
+						display: flex; align-items: center; gap: 12px; border: 1px solid #d8d8dc; border-radius: 8px;
+						padding: 15px !important; margin-bottom: 10px; cursor: pointer;
+					}
+					.mpwpb-checkout-fallback-gateway-card input[type="radio"] { accent-color: #1a1a1a; width: 18px; height: 18px; margin: 0; flex-shrink: 0; }
+					.mpwpb-checkout-fallback-gateway-label { font-weight: 600; font-size: 14px; }
+					.mpwpb-checkout-fallback-summary {
+						background: #f6f6f7; border-radius: 10px; padding: 22px; position: sticky; top: 20px;
+					}
+					.mpwpb-checkout-fallback-summary-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #8a8a8a; margin-bottom: 16px; }
+					.mpwpb-checkout-fallback-summary-row { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid #e2e2e4; }
+					.mpwpb-checkout-fallback-summary-label { font-size: 13px; color: #666; }
+					.mpwpb-checkout-fallback-summary-value { font-size: 20px; font-weight: 700; }
+					.mpwpb-checkout-fallback-summary-terms { font-size: 12px; color: #8a8a8a; line-height: 1.5; margin: 0 0 20px; }
+					.mpwpb-checkout-fallback-submit {
+						display: block; width: 100%; padding: 14px; border: none; border-radius: 8px;
+						background: var(--mpwpb_color_theme, #1a1a1a); color: #fff; font-size: 15px; font-weight: 700; cursor: pointer;
+						margin-top: 15px !important;
+					}
+					.mpwpb-checkout-fallback-ssl { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; color: #8a8a8a; margin-top: 12px; }
+					.mpwpb-checkout-fallback-error { color: #b32d2e; margin-bottom: 18px; }
+				</style>
 				<?php if (isset($_GET['mpwpb_error'])) : ?>
-					<p style="color:#b32d2e;"><?php esc_html_e('Please fill in all required fields.', 'service-booking-manager'); ?></p>
+					<p class="mpwpb-checkout-fallback-error"><?php esc_html_e('Please fill in all required fields.', 'service-booking-manager'); ?></p>
 				<?php endif; ?>
-				<form method="post" action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>">
+				<form method="post" action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>" class="mpwpb-checkout-fallback-grid">
 					<input type="hidden" name="action" value="mpwpb_native_checkout_submit"/>
 					<input type="hidden" name="nonce" value="<?php echo esc_attr(wp_create_nonce('mpwpb_nonce')); ?>"/>
-					<p>
-						<label><?php esc_html_e('First Name', 'service-booking-manager'); ?><br/>
-							<input type="text" name="mpwpb_billing_first_name" required/>
+					<div class="mpwpb-checkout-fallback-main">
+						<h2 class="mpwpb-checkout-fallback-title"><?php esc_html_e('Checkout', 'service-booking-manager'); ?></h2>
+						<div class="mpwpb-checkout-fallback-row">
+							<label class="mpwpb-checkout-fallback-field">
+								<span><?php esc_html_e('First Name', 'service-booking-manager'); ?></span>
+								<input type="text" name="mpwpb_billing_first_name" placeholder="<?php esc_attr_e('John', 'service-booking-manager'); ?>" required/>
+							</label>
+							<label class="mpwpb-checkout-fallback-field">
+								<span><?php esc_html_e('Last Name', 'service-booking-manager'); ?></span>
+								<input type="text" name="mpwpb_billing_last_name" placeholder="<?php esc_attr_e('Doe', 'service-booking-manager'); ?>" required/>
+							</label>
+						</div>
+						<div class="mpwpb-checkout-fallback-row">
+							<label class="mpwpb-checkout-fallback-field">
+								<span><?php esc_html_e('Email', 'service-booking-manager'); ?></span>
+								<input type="email" name="mpwpb_billing_email" placeholder="name@example.com" required/>
+							</label>
+							<label class="mpwpb-checkout-fallback-field">
+								<span><?php esc_html_e('Phone', 'service-booking-manager'); ?></span>
+								<input type="text" name="mpwpb_billing_phone" placeholder="(555) 000-0000"/>
+							</label>
+						</div>
+						<label class="mpwpb-checkout-fallback-field">
+							<span><?php esc_html_e('Address', 'service-booking-manager'); ?></span>
+							<input type="text" name="mpwpb_billing_address_1" placeholder="<?php esc_attr_e('123 Main St, City', 'service-booking-manager'); ?>"/>
 						</label>
-					</p>
-					<p>
-						<label><?php esc_html_e('Last Name', 'service-booking-manager'); ?><br/>
-							<input type="text" name="mpwpb_billing_last_name" required/>
-						</label>
-					</p>
-					<p>
-						<label><?php esc_html_e('Email', 'service-booking-manager'); ?><br/>
-							<input type="email" name="mpwpb_billing_email" required/>
-						</label>
-					</p>
-					<p>
-						<label><?php esc_html_e('Phone', 'service-booking-manager'); ?><br/>
-							<input type="text" name="mpwpb_billing_phone"/>
-						</label>
-					</p>
-					<p>
-						<label><?php esc_html_e('Address', 'service-booking-manager'); ?><br/>
-							<input type="text" name="mpwpb_billing_address_1"/>
-						</label>
-					</p>
-					<?php if (count($gateways) > 1) : ?>
-						<p>
-							<strong><?php esc_html_e('Payment Method', 'service-booking-manager'); ?></strong><br/>
-							<?php foreach ($gateways as $key => $label) : ?>
-								<label style="display:block;">
-									<input type="radio" name="mpwpb_payment_gateway" value="<?php echo esc_attr($key); ?>" <?php checked($key, array_key_first($gateways)); ?> />
-									<?php echo esc_html($label); ?>
-								</label>
-							<?php endforeach; ?>
-						</p>
-					<?php else : ?>
-						<input type="hidden" name="mpwpb_payment_gateway" value="<?php echo esc_attr(array_key_first($gateways)); ?>"/>
-					<?php endif; ?>
-					<p>
-						<button type="submit"><?php esc_html_e('Confirm Booking', 'service-booking-manager'); ?></button>
-					</p>
+						<?php if (count($gateways) > 1) : ?>
+							<div class="mpwpb-checkout-fallback-gateways">
+								<strong class="mpwpb-checkout-fallback-section-title"><?php esc_html_e('Payment Method', 'service-booking-manager'); ?></strong>
+								<?php foreach ($gateways as $key => $label) : ?>
+									<label class="mpwpb-checkout-fallback-gateway-card">
+										<input type="radio" name="mpwpb_payment_gateway" value="<?php echo esc_attr($key); ?>" <?php checked($key, array_key_first($gateways)); ?> />
+										<span class="mpwpb-checkout-fallback-gateway-label"><?php echo esc_html($label); ?></span>
+									</label>
+								<?php endforeach; ?>
+							</div>
+						<?php else : ?>
+							<input type="hidden" name="mpwpb_payment_gateway" value="<?php echo esc_attr(array_key_first($gateways)); ?>"/>
+						<?php endif; ?>
+					</div>
+					<div class="mpwpb-checkout-fallback-summary">
+						<div class="mpwpb-checkout-fallback-summary-eyebrow"><?php esc_html_e('Booking Summary', 'service-booking-manager'); ?></div>
+						<div class="mpwpb-checkout-fallback-summary-row">
+							<span class="mpwpb-checkout-fallback-summary-label"><?php esc_html_e('Total Amount', 'service-booking-manager'); ?></span>
+							<span class="mpwpb-checkout-fallback-summary-value"><?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, $total)); ?></span>
+						</div>
+						<p class="mpwpb-checkout-fallback-summary-terms"><?php esc_html_e('By confirming your booking, you agree to our Terms of Service and Privacy Policy.', 'service-booking-manager'); ?></p>
+						<button type="submit" class="mpwpb-checkout-fallback-submit"><?php esc_html_e('Confirm Booking', 'service-booking-manager'); ?></button>
+						<div class="mpwpb-checkout-fallback-ssl"><i class="fas fa-lock"></i> <?php esc_html_e('Secure SSL Encrypted Payment', 'service-booking-manager'); ?></div>
+					</div>
 				</form>
 				<?php
 			}
