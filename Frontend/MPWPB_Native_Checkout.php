@@ -619,7 +619,19 @@
 					.mpwpb-checkout-fallback-error { color: #b32d2e; margin-bottom: 18px; }
 				</style>
 				<?php if (isset($_GET['mpwpb_error'])) : ?>
-					<p class="mpwpb-checkout-fallback-error"><?php esc_html_e('Please fill in all required fields.', 'service-booking-manager'); ?></p>
+					<p class="mpwpb-checkout-fallback-error">
+						<?php
+						// A gateway initiation failure (Stripe/PayPal rejecting the
+						// request, e.g. bad API credentials) used to show this same
+						// generic "fill in required fields" text as a field-validation
+						// failure -- misleading, since the real reason (surfaced via
+						// mpwpb_error_msg, see handle_checkout_submit()) had nothing to
+						// do with the form fields. Show the real message when present.
+						echo isset($_GET['mpwpb_error_msg'])
+							? esc_html(sanitize_text_field(wp_unslash($_GET['mpwpb_error_msg'])))
+							: esc_html__('Please fill in all required fields.', 'service-booking-manager');
+						?>
+					</p>
 				<?php endif; ?>
 				<form method="post" action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>" class="mpwpb-checkout-fallback-grid">
 					<input type="hidden" name="action" value="mpwpb_native_checkout_submit"/>
@@ -783,7 +795,10 @@
 					if ($is_ajax_submit) {
 						wp_send_json_error(['message' => $redirect['error']]);
 					}
-					wp_safe_redirect(add_query_arg('mpwpb_error', '1', self::get_checkout_url()));
+					wp_safe_redirect(add_query_arg([
+						'mpwpb_error' => '1',
+						'mpwpb_error_msg' => rawurlencode($redirect['error'] ?? ''),
+					], self::get_checkout_url()));
 					exit;
 				}
 				if ($is_ajax_submit) {
