@@ -33,9 +33,19 @@ if (!class_exists('MPWPB_Staff_Booking')) {
         }
 
         public function mpwpb_is_staff_booked_order( $staff_term_id, $datetime ) {
+            // Only existence is ever checked (!empty($bookings)) -- this used
+            // to fetch every matching booking as full WP_Post objects with no
+            // row limit (posts_per_page => -1) and compute found_rows on top,
+            // for EACH staff member on EVERY time-slot click. That full scan
+            // gets slower as real booking volume grows, which is what made
+            // the "Next Staff Member" button feel like it took a while to
+            // appear -- this now stops at the first match and only fetches
+            // an ID, not a full post.
             $args = array(
                 'post_type'      => 'mpwpb_booking',
-                'posts_per_page' => -1,
+                'posts_per_page' => 1,
+                'fields'         => 'ids',
+                'no_found_rows'  => true,
                 'meta_query'     => array(
                     'relation' => 'AND',
                     array(

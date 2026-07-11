@@ -348,7 +348,8 @@
 			'MPWPB_Extra_Service_Modern': 'mpwpb_extra_service_active',
 			'MPWPB_Service_Details': 'mpwpb_service_details_status',
 			'MPWPB_Faq_Settings': 'mpwpb_faq_active',
-			'Tax_Settings': 'mpwpb_tax_enabled'
+			'Tax_Settings': 'mpwpb_tax_enabled',
+			'MPWPB_Happy_Hours_Settings': 'mpwpb_happy_hours_enabled'
 		};
 		Object.keys(sectionsWithHeaderToggle).forEach(function (sectionClass) {
 			var $card = $root.find('[data-sme-section="' + sectionClass + '"]');
@@ -420,6 +421,21 @@
 			return;
 		}
 		var $toggleRow = $taxClassRow.prev();
+		if ($toggleRow.length && !$toggleRow.find('input[type="checkbox"]').length) {
+			$toggleRow.remove();
+		}
+	})();
+
+	/* ---------------------------------------------------------------- *
+	 *  Same cleanup as cleanupTaxToggleRow(), for the "Enable Happy
+	 *  Hours" row after its toggle is relocated to the card header.
+	 * ---------------------------------------------------------------- */
+	(function cleanupHappyHoursToggleRow() {
+		var $row = $root.find('[data-sme-section="MPWPB_Happy_Hours_Settings"] #mpwpb_happy_hours_row');
+		if (!$row.length) {
+			return;
+		}
+		var $toggleRow = $row.prev();
 		if ($toggleRow.length && !$toggleRow.find('input[type="checkbox"]').length) {
 			$toggleRow.remove();
 		}

@@ -1993,6 +1993,26 @@ button.mpwpb_service_button.mActive:hover{
 .mpwpb_time_btn{
   padding: 15px !important;
 }
+.mpwpb_time_btn.mpwpb-happy-hour-slot{
+  position: relative;
+  padding-top: 22px !important;
+  border-color: #f0932b !important;
+}
+.mpwpb_time_btn.mpwpb-happy-hour-slot .mpwpb-happy-hour-badge{
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #f0932b;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  padding: 3px 7px;
+  border-radius: 999px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.25);
+}
 
 .mpwpb_close_text{
   position: absolute;

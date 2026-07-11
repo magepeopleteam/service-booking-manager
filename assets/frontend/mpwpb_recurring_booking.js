@@ -52,6 +52,13 @@
         $('div.mpwpb_registration .mpwpb_date_time_area .to-book').removeClass('mpwpb_active_time');
         $(this).addClass('mpwpb_active_time');
 
+        // Reflect a Happy Hours discount (if this slot has one) in the
+        // running total immediately -- see mpwpb_price_calculation()'s
+        // data-hh-type/data-hh-value handling.
+        if (typeof mpwpb_price_calculation === 'function') {
+            mpwpb_price_calculation($(this));
+        }
+
         let post_id = $(this).parent().parent().attr('id').trim();
 
         let parent = $(this).closest('div.mpwpb_registration');

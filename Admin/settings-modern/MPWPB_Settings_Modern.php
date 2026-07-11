@@ -126,6 +126,7 @@
 						'sections' => array(
 							array('MPWPB_Faq_Settings', 'faq_settings', __('FAQ', 'service-booking-manager'), __('Frequently asked questions shown on the service page.', 'service-booking-manager')),
 							array('Tax_Settings', 'tax_settings', __('Tax Settings', 'service-booking-manager'), __('Charge tax on this service using your WooCommerce tax settings.', 'service-booking-manager')),
+							array('MPWPB_Happy_Hours_Settings', 'happy_hours_settings', __('Happy Hours Pricing', 'service-booking-manager'), __('Discount the price when the booked appointment time falls in a set window.', 'service-booking-manager')),
 						),
 					),
 				);

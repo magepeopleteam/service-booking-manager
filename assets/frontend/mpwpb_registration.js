@@ -9,6 +9,26 @@ function mpwpb_price_calculation($this) {
         current_price = !isNaN(current_price) && current_price > 0 ? current_price : 0;
         price = price + current_price * qty ;
     });
+
+    // Happy Hours: mirrors MPWPB_Happy_Hours_Helper on the server (the real
+    // charge is already discounted there via the selected slot's time) --
+    // this just reflects the same discount here instantly, so the customer
+    // isn't stuck watching an undiscounted total until they reach checkout.
+    // Only the base service price above is discounted, never extra services
+    // added below, matching that same server-side rule exactly.
+    let $selectedSlot = parent.find('.mpwpb_date_time_area .mpwpb_time_btn.mpwpb_active_time');
+    if ($selectedSlot.length) {
+        let hhType = $selectedSlot.attr('data-hh-type');
+        let hhValue = parseFloat($selectedSlot.attr('data-hh-value'));
+        if (hhType && !isNaN(hhValue) && hhValue > 0) {
+            if (hhType === 'fixed') {
+                price = Math.max(0, price - hhValue);
+            } else {
+                price = Math.max(0, price - (price * (hhValue / 100)));
+            }
+        }
+    }
+
     parent.find('.mpwpb_extra_service_item').each(function () {
         let service_name = jQuery(this).find('[name="mpwpb_extra_service_type[]"]').val();
         if (service_name) {
