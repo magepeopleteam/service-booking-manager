@@ -167,15 +167,18 @@
 				$deposit = self::get_deposit_amount($net_total);
 				$choice = ($item['mpwpb_payment_choice'] ?? 'full') === 'partial' ? 'partial' : 'full';
 				?>
-				<div class="mpwpb-payment-choice-row" data-mpwpb-payment-choice-wrap>
-					<label class="mpwpb-payment-choice-option">
-						<input type="radio" name="mpwpb_payment_choice" value="full" data-mpwpb-payment-choice-radio <?php checked($choice, 'full'); ?>/>
-						<?php esc_html_e('Pay in Full', 'service-booking-manager'); ?>
+				<div class="mpwpb-payment-choice-cards" data-mpwpb-payment-choice-wrap>
+					<label class="mpwpb-payment-choice-card">
+						<input type="radio" class="mpwpb-payment-choice-card-input" name="mpwpb_payment_choice" value="full" data-mpwpb-payment-choice-radio <?php checked($choice, 'full'); ?>/>
+						<span class="mpwpb-payment-choice-card-eyebrow"><?php esc_html_e('Standard', 'service-booking-manager'); ?></span>
+						<span class="mpwpb-payment-choice-card-title"><?php esc_html_e('Pay in Full', 'service-booking-manager'); ?></span>
+						<span class="mpwpb-payment-choice-card-price"><?php echo wp_kses_post(MPWPB_Global_Function::wc_price(0, $net_total)); ?></span>
 					</label>
-					<label class="mpwpb-payment-choice-option">
-						<input type="radio" name="mpwpb_payment_choice" value="partial" data-mpwpb-payment-choice-radio <?php checked($choice, 'partial'); ?>/>
-						<?php esc_html_e('Pay Deposit Now', 'service-booking-manager'); ?>
-						<span class="mpwpb-payment-choice-due">(<?php esc_html_e('Due Now:', 'service-booking-manager'); ?> <?php echo wp_kses_post(MPWPB_Global_Function::wc_price(0, $deposit)); ?>)</span>
+					<label class="mpwpb-payment-choice-card">
+						<input type="radio" class="mpwpb-payment-choice-card-input" name="mpwpb_payment_choice" value="partial" data-mpwpb-payment-choice-radio <?php checked($choice, 'partial'); ?>/>
+						<span class="mpwpb-payment-choice-card-eyebrow"><?php esc_html_e('Flexible', 'service-booking-manager'); ?></span>
+						<span class="mpwpb-payment-choice-card-title"><?php esc_html_e('Pay Deposit', 'service-booking-manager'); ?></span>
+						<span class="mpwpb-payment-choice-card-price"><?php echo wp_kses_post(MPWPB_Global_Function::wc_price(0, $deposit)); ?> <span class="mpwpb-payment-choice-card-price-suffix"><?php esc_html_e('today', 'service-booking-manager'); ?></span></span>
 					</label>
 				</div>
 				<?php

@@ -545,23 +545,75 @@ div.registration_tab_item {
     padding: 20px 0;
   }
 }
-.mpwpb-payment-choice-row {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
+.mpwpb-payment-choice-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 90%;
+  margin: 10px 0;
+  padding: 20px !important;
+}
+@media (max-width: 480px) {
+  .mpwpb-payment-choice-cards {
+    grid-template-columns: 1fr;
+  }
+}
+.mpwpb-payment-choice-card {
+  position: relative;
+  display: block !important;
   width: 100%;
-  padding: 10px 0 0;
-  font-size: 14px;
-}
-.mpwpb-payment-choice-option {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 20px !important;
   cursor: pointer;
+  background: #fff;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
-.mpwpb-payment-choice-due {
+.mpwpb-payment-choice-card:hover {
+  border-color: var(--mpwpb_color_theme, #3858e9);
+}
+.mpwpb-payment-choice-card:has(input:checked) {
+  border-color: var(--mpwpb_color_theme, #3858e9);
+  box-shadow: 0 0 0 1px var(--mpwpb_color_theme, #3858e9) inset;
+}
+.mpwpb-payment-choice-card-input {
+  position: absolute !important;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+.mpwpb-payment-choice-card-eyebrow {
+  display: block !important;
+  width: 100%;
+  font-size: 11px;
   font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8a8a8a;
+  margin: 0 0 6px;
+}
+.mpwpb-payment-choice-card-title {
+  display: block !important;
+  width: 100%;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 6px;
+}
+.mpwpb-payment-choice-card-price {
+  display: block !important;
+  width: 100%;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--mpwpb_color_theme, #3858e9);
+  margin: 0;
+}
+.mpwpb-payment-choice-card-price-suffix {
+  font-weight: 400;
+  font-size: 13px;
+  color: inherit;
 }
 .mpwpb-default-template .main {
   width: 100%;
