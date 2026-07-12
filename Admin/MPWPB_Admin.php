@@ -78,6 +78,11 @@
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Gdpr_Requests.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Analytics_Dashboard.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Analytics_Ajax.php';
+				//****************Pro-only menu: locked teaser when Pro is inactive*********************** */
+				// Required last so its no-explicit-position menu item naturally
+				// appends after every other item above (Service List/Coupons/
+				// Status/Reviews/Staff Members/Settings/Analytics), landing last.
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Pro_Locked_Menus.php';
 			}
 			public function flush_rewrite() {
 				flush_rewrite_rules();

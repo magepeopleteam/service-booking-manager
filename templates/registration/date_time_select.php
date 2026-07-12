@@ -108,8 +108,7 @@
                 ?>
                     <h5><?php esc_html_e('Date not available', 'service-booking-manager'); ?></h5> <?php
                 }
-                if ( is_plugin_active('service-booking-manager-pro/MPWPB_Plugin_Pro.php') ) {
-                    if ($enable_recurring === 'yes') { ?>
+                if ($enable_recurring === 'yes') { ?>
                         <div class="_dShadow_7_mB_xs mpwpb_recurring_booking_area" id="mpwpb_recurring_booking_area" style="display: none;">
                             <div class="mpwpb_recurring_booking">
                                 <header class="_dFlex_alignCenter_justifyBetween">
@@ -182,7 +181,6 @@
                             </div>
                         </div>
                     <?php }
-                }
                 ?>
             </div>
         </div>

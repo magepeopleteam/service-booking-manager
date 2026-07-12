@@ -35,7 +35,7 @@
                         <div class="mpwpb_cart_progress_label"><?php esc_html_e('Date & Time', 'service-booking-manager') ?></div>
                     </div>
                     <div class="mpwpb_cart_progress_arrow">→</div>
-                    <?php  if ( is_plugin_active('service-booking-manager-pro/MPWPB_Plugin_Pro.php') && $enable_staff_member === 'on' ) {
+                    <?php  if ( $enable_staff_member === 'on' ) {
                         $number = 4;
                         ?>
                         <div class="mpwpb_cart_progress_step" id="mpwpb_progress_staff">

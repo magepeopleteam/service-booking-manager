@@ -22,7 +22,16 @@
 				add_filter('mpwpb_price_filter', [$this, 'apply_happy_hours'], 10, 4);
 			}
 
+			/**
+			 * Happy Hours is a Pro feature. Gated here (not just in the
+			 * settings-screen UI) so it can never actually apply a discount
+			 * just because 'on' happens to be stored -- e.g. if Pro was
+			 * active when this was enabled but has since been deactivated.
+			 */
 			public static function is_enabled_for_service($service_post_id): bool {
+				if (!MPWPB_Global_Function::is_pro_active()) {
+					return false;
+				}
 				return get_post_meta($service_post_id, 'mpwpb_happy_hours_enabled', true) === 'on';
 			}
 

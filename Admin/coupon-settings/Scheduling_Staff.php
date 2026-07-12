@@ -20,7 +20,7 @@
 				<div class="tabsItem" data-tabs="#mpwpb_coupon_scheduling_staff">
 					<header>
 						<h2><?php esc_html_e('Scheduling & Staff', 'service-booking-manager'); ?></h2>
-						<span><?php esc_html_e('Restrict this coupon to certain booking dates/times, and (Pro) certain staff.', 'service-booking-manager'); ?></span>
+						<span><?php esc_html_e('Restrict this coupon to certain booking dates/times, and certain staff.', 'service-booking-manager'); ?></span>
 					</header>
 					<section class="section">
 						<h3><?php esc_html_e('Day Restriction', 'service-booking-manager'); ?></h3>
@@ -92,15 +92,6 @@
 				<?php
 			}
 			private function render_staff_section($post_id) {
-				if (!MPWPB_Global_Function::is_pro_active()) {
-					?>
-					<section class="section">
-						<h3><?php esc_html_e('Staff Restriction', 'service-booking-manager'); ?></h3>
-						<span><?php esc_html_e('Restricting a coupon to specific staff requires the Pro version.', 'service-booking-manager'); ?></span>
-					</section>
-					<?php
-					return;
-				}
 				$staff_scope = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_coupon_staff_scope', 'all');
 				$staff_ids = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_coupon_staff_ids', []);
 				if (!is_array($staff_ids)) {

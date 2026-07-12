@@ -116,11 +116,9 @@
 					return $customer_check;
 				}
 
-				if (MPWPB_Global_Function::is_pro_active()) {
-					$staff_check = self::check_staff_restriction($coupon_id, $context);
-					if (!$staff_check['valid']) {
-						return $staff_check;
-					}
+				$staff_check = self::check_staff_restriction($coupon_id, $context);
+				if (!$staff_check['valid']) {
+					return $staff_check;
 				}
 
 				$usage_check = self::check_usage_limits($coupon_id, $context);

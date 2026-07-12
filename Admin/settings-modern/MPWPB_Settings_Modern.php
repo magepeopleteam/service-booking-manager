@@ -130,12 +130,11 @@
 						),
 					),
 				);
-				// Same Pro gate the classic tab nav uses (MPWPB_Settings.php / MPWPB_Extended_Settings.php) —
-				// these render methods have no internal Pro guard of their own.
-				if (MPWPB_Global_Function::is_pro_active()) {
-					$steps[3]['sections'][] = array('Staff_Member', 'staff_member_settings', __('Staff Member', 'service-booking-manager'), __('Assign staff members who can be booked for this service.', 'service-booking-manager'));
-					$steps[3]['sections'][] = array('MPWPB_Recurring_Booking_Settings', 'recurring_booking_settings', __('Recurring Booking', 'service-booking-manager'), __('Let customers book this service on a recurring schedule.', 'service-booking-manager'));
-				}
+				// Staff Member and Recurring Booking are both free-tier features (see
+				// MPWPB_Settings.php / MPWPB_Extended_Settings.php's classic tab navs,
+				// which show them unconditionally) -- always included here too.
+				$steps[3]['sections'][] = array('Staff_Member', 'staff_member_settings', __('Staff Member', 'service-booking-manager'), __('Assign staff members who can be booked for this service.', 'service-booking-manager'));
+				$steps[3]['sections'][] = array('MPWPB_Recurring_Booking_Settings', 'recurring_booking_settings', __('Recurring Booking', 'service-booking-manager'), __('Let customers book this service on a recurring schedule.', 'service-booking-manager'));
 				return $steps;
 			}
 
@@ -558,11 +557,27 @@
 				if (!$instance || !method_exists($instance, $method)) {
 					return;
 				}
+				// Happy Hours Pricing is the one section whose own render method
+				// (Admin/settings/Happy_Hours.php) puts a "PRO" badge in ITS OWN
+				// <header><h2> -- but that classic <header> is hidden entirely in
+				// this modern shell (.mpwpb-sme .tabsItem > header{display:none}),
+				// replaced by this card's own title above. Without this, the
+				// modern card's title would show no Pro indicator at all even
+				// though the toggle relocated into the header-actions slot below
+				// is correctly disabled/locked. Reuses the .mpwpb-pro-badge class
+				// already styled by Happy_Hours.php's own inline <style> output
+				// (CSS classes apply document-wide regardless of source order).
+				$pro_locked = ($class === 'MPWPB_Happy_Hours_Settings' && !MPWPB_Global_Function::is_pro_active());
 				?>
 				<div class="mpwpb-sme__postfields" data-sme-section="<?php echo esc_attr($class); ?>">
 					<div class="mpwpb-sme__postfields-header">
 						<div class="mpwpb-sme__postfields-header-text">
-							<div class="mpwpb-sme__postfields-header-title"><?php echo esc_html($title); ?></div>
+							<div class="mpwpb-sme__postfields-header-title">
+								<?php echo esc_html($title); ?>
+								<?php if ($pro_locked) : ?>
+									<span class="mpwpb-pro-badge"><?php esc_html_e('PRO', 'service-booking-manager'); ?></span>
+								<?php endif; ?>
+							</div>
 							<?php if ($subtitle) : ?>
 								<div class="mpwpb-sme__postfields-header-sub"><?php echo esc_html($subtitle); ?></div>
 							<?php endif; ?>

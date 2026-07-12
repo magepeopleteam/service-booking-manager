@@ -452,6 +452,12 @@ body.mpwpb-sme-active #postdivrich{display:none;}
 
 #mpwpb_tax_class_row select, #mpwpb_tax_class_row input{margin-top:10px !important; margin-bottom: 10px !important; }
 
+/* Happy Hours Pricing card: mpwpb_plugin_global.css's `.mpwpb_style span{
+   display:flex}` (this shell carries .mpwpb_style too) forces every span in
+   the card -- the PRO badge, label sub-text, etc. -- into a flex box,
+   breaking their normal inline text flow. */
+.mpwpb-sme__postfields[data-sme-section="MPWPB_Happy_Hours_Settings"] span { display: inline !important; }
+
 /* ==================================================================== *
  *  Responsive
  * ==================================================================== */
