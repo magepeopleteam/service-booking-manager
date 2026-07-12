@@ -88,6 +88,16 @@ if (!class_exists('MPWPB_Pro_Locked_Menus')) {
 					'label' => esc_html__('Custom Payment (PayPal & Stripe)', 'service-booking-manager'),
 					'desc' => esc_html__('Take bookings without WooCommerce -- a built-in checkout that accepts payment directly via PayPal and Stripe.', 'service-booking-manager'),
 				),
+				array(
+					'icon' => 'dashicons-media-document',
+					'label' => esc_html__('PDF Ticketing', 'service-booking-manager'),
+					'desc' => esc_html__('Generate a downloadable PDF ticket for every booking, with a one-click Download Ticket button on the confirmation page.', 'service-booking-manager'),
+				),
+				array(
+					'icon' => 'dashicons-email-alt',
+					'label' => esc_html__('Automated Email Confirmation', 'service-booking-manager'),
+					'desc' => esc_html__('Automatically email the customer a booking confirmation, with their PDF ticket attached, the moment their order completes.', 'service-booking-manager'),
+				),
 			);
 			?>
 			<div class="wrap">
@@ -108,13 +118,15 @@ if (!class_exists('MPWPB_Pro_Locked_Menus')) {
 				</div>
 			</div>
 			<style>
-				.mpwpb-pro-lock-wrap { max-width: 960px; margin: 30px auto 0; }
+				.mpwpb-pro-lock-wrap { max-width: 1280px; margin: 30px auto 0; }
 				.mpwpb-pro-lock-header { text-align: center; margin-bottom: 28px; }
 				.mpwpb-pro-lock-header h1 { font-size: 22px; margin-bottom: 8px; }
 				.mpwpb-pro-lock-header p { color: #787c82; font-size: 13px; }
-				.mpwpb-pro-lock-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-				@media (max-width: 782px) { .mpwpb-pro-lock-grid { grid-template-columns: 1fr; } }
-				.mpwpb-pro-lock-box { background: #fff; border: 1px solid #dcdcde; border-radius: 10px; padding: 26px; text-align: center; }
+				.mpwpb-pro-lock-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+				@media (max-width: 1200px) { .mpwpb-pro-lock-grid { grid-template-columns: repeat(3, 1fr); } }
+				@media (max-width: 900px) { .mpwpb-pro-lock-grid { grid-template-columns: repeat(2, 1fr); } }
+				@media (max-width: 600px) { .mpwpb-pro-lock-grid { grid-template-columns: 1fr; } }
+				.mpwpb-pro-lock-box { background: #fff; border: 1px solid #dcdcde; border-radius: 10px; padding: 22px; text-align: center; }
 				.mpwpb-pro-lock-icon { width: 52px; height: 52px; margin: 0 auto 14px; border-radius: 50%; background: #f0f0f1; display: flex; align-items: center; justify-content: center; }
 				.mpwpb-pro-lock-icon .dashicons { font-size: 24px; width: 24px; height: 24px; color: #787c82; }
 				.mpwpb-pro-lock-box h2 { font-size: 16px; margin: 0 0 10px; }
