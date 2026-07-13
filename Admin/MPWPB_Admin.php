@@ -18,6 +18,7 @@
 				add_filter('wp_mail_content_type', array($this, 'email_content_type'));
 			}
 			private function load_file(): void {
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Help_Guide.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Taxonomy.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Dummy_Import.php';
 				if (MPWPB_Global_Function::is_wc_payment_mode()) {
