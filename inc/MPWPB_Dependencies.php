@@ -21,9 +21,17 @@
 			}
 			private function load_file(): void {
                 require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Service_List.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/data/MPWPB_Business_Templates_Data.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Business_Templates_Import.php';
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Function.php';
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Query.php';
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Layout.php';
+				//*************Coupon Engine*****************//
+				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Coupon_Function.php';
+				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Coupon_Validator.php';
+				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Coupon_Usage.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Coupon_List.php';
+				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Coupon_Frontend.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Admin.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Frontend.php';
 
@@ -82,6 +90,13 @@
                 wp_enqueue_style('mpwpb_staff_member', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_staff_member.css', [], time());
                 wp_enqueue_style('mpwpb_analytics_dashboard', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_analytics_dashboard.css', [], time());
 				wp_enqueue_script('mpwpb_admin', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_admin.js', ['jquery'], time(), true);
+				// Staff Management page reskin — live off-day/schedule-row sync only;
+				// no-ops (returns early) on any other admin screen.
+				wp_enqueue_script('mpwpb_staff_management_modern', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb-staff-management-modern.js', ['jquery'], time(), true);
+				wp_localize_script('mpwpb_staff_management_modern', 'mpwpbStaffScheduleI18n', array(
+					'active' => __('ACTIVE', 'service-booking-manager'),
+					'off'    => __('OFF', 'service-booking-manager'),
+				));
 				wp_enqueue_script('chartjs', 'https://cdn.jsdelivr.net/npm/chart.js', [], '3.9.1', true);
 				wp_localize_script('mpwpb_admin', 'mpwpb_admin_ajax', array(
 					'ajax_url' => admin_url('admin-ajax.php'),
@@ -98,10 +113,38 @@
 				wp_enqueue_script('mpwpb', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb.js', ['jquery'], time(), true);
 				wp_enqueue_style('mpwpb_registration', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_registration.css', [], time());
 				wp_enqueue_script('mpwpb_registration', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_registration.js', ['jquery'], time());
+				wp_enqueue_style('mpwpb_coupon', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-coupon.css', [], time());
+				// Depends on mpwpb_registration (not just jquery) so the
+				// mpwpb_ajax object it localizes is guaranteed to already exist.
+				wp_enqueue_script('mpwpb_coupon', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-coupon.js', ['jquery', 'mpwpb_registration'], time(), true);
+				// Pay in Full / Pay Deposit Now toggle on the checkout pages
+				// (WC checkout + native checkout) -- same AJAX-then-refresh
+				// pattern as mpwpb_coupon above.
+				wp_enqueue_script('mpwpb_payment_choice', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-payment-choice.js', ['jquery', 'mpwpb_registration'], time(), true);
+				// Single service page redesign (hero/tabs/Overview/FAQ/Details) —
+				// pure reskin, loaded after mpwpb_registration so its overrides win.
+				wp_enqueue_style('mpwpb_service_page_modern', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-service-page-modern.css', ['mpwpb_registration'], time());
+				wp_enqueue_script('mpwpb_service_page_modern', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-service-page-modern.js', ['jquery', 'mpwpb_registration'], time(), true);
+				// "Our services" sidebar tree expand/collapse only — selecting a
+				// service still goes through mpwpb_registration.js unchanged.
+				wp_enqueue_script('mpwpb_service_tree', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-service-tree.js', ['jquery', 'mpwpb_registration'], time(), true);
+				// Booking popup's inner picker: relocates the real category/
+				// service elements (untouched click handlers/hidden inputs)
+				// into a unified checkbox-tree — no new selection logic.
+				wp_enqueue_script('mpwpb_booking_tree', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-booking-tree.js', ['jquery', 'mpwpb_registration', 'mpwpb_service_tree'], time(), true);
+				// WooCommerce My Account > Orders reskin — pure CSS, no
+				// template override or new markup (see the file's own header
+				// comment). Loaded after mpwpb_registration so its overrides win.
+				wp_enqueue_style('mpwpb_account_orders_modern', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-account-orders-modern.css', ['mpwpb_registration'], time());
 				wp_localize_script('mpwpb_registration', 'mpwpb_ajax', array(
 					'ajax_url' => admin_url('admin-ajax.php'),
 					'nonce'    => wp_create_nonce('mpwpb_nonce'),
-					'use_24hour' => MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'time_format_24hour', 'no')
+					'use_24hour' => MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'time_format_24hour', 'no'),
+					// Lets the "Proceed to Checkout" handler decide whether the
+					// mpwpb_add_to_cart response is a URL to navigate to (WooCommerce)
+					// or a signal to load the native billing form inside the same
+					// popup instead of leaving it (Custom Payment, WooCommerce off).
+					'is_custom_payment_mode' => MPWPB_Global_Function::is_custom_payment_mode(),
 				));
 				do_action('add_mpwpb_frontend_script');
 			}

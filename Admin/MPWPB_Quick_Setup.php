@@ -12,86 +12,10 @@
 				add_action('admin_menu', array($this, 'quick_setup_menu'));
 			}
 			public function quick_setup_menu() {
-				$status = MPWPB_Global_Function::check_woocommerce();
-				if ($status == 1) {
-					add_submenu_page('edit.php?post_type=mpwpb_item', __('Quick Setup', 'service-booking-manager'), '<span style="color:#10dd10">' . esc_html__('Quick Setup', 'service-booking-manager') . '</span>', 'manage_options', 'mpwpb_quick_setup', array($this, 'quick_setup'));
-					add_submenu_page('mpwpb_item', esc_html__('Quick Setup', 'service-booking-manager'), '<span style="color:#10dd10">' . esc_html__('Quick Setup', 'service-booking-manager') . '</span>', 'manage_options', 'mpwpb_quick_setup', array($this, 'quick_setup'));
-				} else {
-					add_menu_page(esc_html__('Service Booking', 'service-booking-manager'), esc_html__('Service Booking', 'service-booking-manager'), 'manage_options', 'mpwpb_item', array($this, 'quick_setup'), 'dashicons-admin-site-alt2', 6);
-					add_submenu_page('mpwpb_item', esc_html__('Quick Setup', 'service-booking-manager'), '<span style="color:#10dd17">' . esc_html__('Quick Setup', 'service-booking-manager') . '</span>', 'manage_options', 'mpwpb_quick_setup', array($this, 'quick_setup'));
-				}
+				add_submenu_page('edit.php?post_type=mpwpb_item', __('Quick Setup', 'service-booking-manager'), '<span style="color:#10dd10">' . esc_html__('Quick Setup', 'service-booking-manager') . '</span>', 'manage_options', 'mpwpb_quick_setup', array($this, 'quick_setup'));
 			}
 			public function quick_setup() {
-				$status = MPWPB_Global_Function::check_woocommerce();
 				if (isset($_POST['mpwpb_quick_setup_nonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['mpwpb_quick_setup_nonce'])), 'mpwpb_quick_setup_nonce')) {
-					if (isset($_POST['active_woo_btn'])) {
-						?>
-                        <script>
-                            mpwpb_loaderBody();
-                        </script>
-						<?php
-						activate_plugin('woocommerce/woocommerce.php');
-						?>
-                        <script>
-                            (function ($) {
-                                "use strict";
-                                $(document).ready(function () {
-                                    let mpwpb_admin_location = window.location.href;
-                                    mpwpb_admin_location = mpwpb_admin_location.replace('admin.php?post_type=mpwpb_item&page=mpwpb_quick_setup', 'edit.php?post_type=mpwpb_item&page=mpwpb_quick_setup');
-                                    mpwpb_admin_location = mpwpb_admin_location.replace('admin.php?page=mpwpb_item', 'edit.php?post_type=mpwpb_item&page=mpwpb_quick_setup');
-                                    mpwpb_admin_location = mpwpb_admin_location.replace('admin.php?page=mpwpb_quick_setup', 'edit.php?post_type=mpwpb_item&page=mpwpb_quick_setup');
-                                    window.location.href = mpwpb_admin_location;
-                                });
-                            }(jQuery));
-                        </script>
-						<?php
-					}
-					if (isset($_POST['install_and_active_woo_btn'])) {
-						echo '<div style="display:none">';
-						include_once(ABSPATH . 'wp-admin/includes/plugin-install.php');
-						include_once(ABSPATH . 'wp-admin/includes/file.php');
-						include_once(ABSPATH . 'wp-admin/includes/misc.php');
-						include_once(ABSPATH . 'wp-admin/includes/class-wp-upgrader.php');
-						$plugin = 'woocommerce';
-						$api = plugins_api('plugin_information', array(
-							'slug' => $plugin,
-							'fields' => array(
-								'short_description' => false,
-								'sections' => false,
-								'requires' => false,
-								'rating' => false,
-								'ratings' => false,
-								'downloaded' => false,
-								'last_updated' => false,
-								'added' => false,
-								'tags' => false,
-								'compatibility' => false,
-								'homepage' => false,
-								'donate_link' => false,
-							),
-						));
-						$title = 'title';
-						$url = 'url';
-						$nonce = 'nonce';
-						$woocommerce_plugin = new Plugin_Upgrader(new Plugin_Installer_Skin(compact('title', 'url', 'nonce', 'plugin', 'api')));
-						$woocommerce_plugin->install($api->download_link);
-						activate_plugin('woocommerce/woocommerce.php');
-						echo '</div>';
-						?>
-                        <script>
-                            (function ($) {
-                                "use strict";
-                                $(document).ready(function () {
-                                    let mpwpb_admin_location = window.location.href;
-                                    mpwpb_admin_location = mpwpb_admin_location.replace('admin.php?post_type=mpwpb_item&page=mpwpb_quick_setup', 'edit.php?post_type=mpwpb_item&page=mpwpb_quick_setup');
-                                    mpwpb_admin_location = mpwpb_admin_location.replace('admin.php?page=mpwpb_item', 'edit.php?post_type=mpwpb_item&page=mpwpb_quick_setup');
-                                    mpwpb_admin_location = mpwpb_admin_location.replace('admin.php?page=mpwpb_quick_setup', 'edit.php?post_type=mpwpb_item&page=mpwpb_quick_setup');
-                                    window.location.href = mpwpb_admin_location;
-                                });
-                            }(jQuery));
-                        </script>
-						<?php
-					}
 					if (isset($_POST['finish_quick_setup'])) {
 						$label = isset($_POST['mpwpb_label']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_label'])) : 'service-booking-manager';
 						$slug = isset($_POST['mpwpb_slug']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_slug'])) : 'service-booking-manager';
@@ -102,6 +26,13 @@
 						];
 						$new_general_settings_data = is_array($general_settings_data) ? array_replace($general_settings_data, $update_general_settings_arr) : $update_general_settings_arr;
 						update_option('mpwpb_general_settings', $new_general_settings_data);
+						$payment_type = isset($_POST['mpwpb_payment_method_type']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_payment_method_type'])) : '';
+						if (in_array($payment_type, ['woocommerce', 'custom'], true)) {
+							$payment_settings = get_option('mpwpb_payment_method_settings');
+							$payment_settings = is_array($payment_settings) ? $payment_settings : [];
+							$payment_settings['payment_method_type'] = $payment_type;
+							update_option('mpwpb_payment_method_settings', $payment_settings);
+						}
 						flush_rewrite_rules();
 						wp_redirect(admin_url('edit.php?post_type=mpwpb_item&page=mpwpb_service_list'));
 					}
@@ -142,17 +73,15 @@
 										$this->setup_content_done();
 									?>
                                 </div>
-								<?php if ($status == 1) { ?>
-                                    <div class="justifyBetween">
-                                        <button type="button" class="mpBtn nextTab_prev">
-                                            <span>&longleftarrow;<?php esc_html_e('Previous', 'service-booking-manager'); ?></span>
-                                        </button>
-                                        <div></div>
-                                        <button type="button" class="themeButton nextTab_next">
-                                            <span><?php esc_html_e('Next', 'service-booking-manager'); ?>&longrightarrow;</span>
-                                        </button>
-                                    </div>
-								<?php } ?>
+								<div class="justifyBetween">
+                                    <button type="button" class="mpBtn nextTab_prev">
+                                        <span>&longleftarrow;<?php esc_html_e('Previous', 'service-booking-manager'); ?></span>
+                                    </button>
+                                    <div></div>
+                                    <button type="button" class="themeButton nextTab_next">
+                                        <span><?php esc_html_e('Next', 'service-booking-manager'); ?>&longrightarrow;</span>
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -160,28 +89,27 @@
 				<?php
 			}
 			public function setup_welcome_content() {
-				$status = MPWPB_Global_Function::check_woocommerce();
+				$payment_type = MPWPB_Global_Function::get_payment_method_type();
+				$wc_available = MPWPB_Global_Function::check_woocommerce() == 1;
 				?>
                 <div data-tabs-next="#mpwpb_qs_welcome">
-                    <h2><?php esc_html_e('Service Booking Manager For Woocommerce Plugin', 'service-booking-manager'); ?></h2>
-                    <p class="mTB_xs"><?php esc_html_e('Service Booking Manager Plugin for WooCommerce for your site, Please go step by step and choose some options to get started.', 'service-booking-manager'); ?></p>
-                    <div class="_dLayout_mT_alignCenter justifyBetween">
-                        <h5>
-							<?php if ($status == 1) {
-								esc_html_e('Woocommerce already installed and activated', 'service-booking-manager');
-							} elseif ($status == 0) {
-								esc_html_e('Woocommerce need to install and active', 'service-booking-manager');
-							} else {
-								esc_html_e('Woocommerce already install , please activate it', 'service-booking-manager');
-							} ?>
-                        </h5>
-						<?php if ($status == 1) { ?>
-                            <h5><span class="fas fa-check-circle textSuccess"></span></h5>
-						<?php } elseif ($status == 0) { ?>
-                            <button class="warningButton" type="submit" name="install_and_active_woo_btn"><?php esc_html_e('Install & Active Now', 'service-booking-manager'); ?></button>
-						<?php } else { ?>
-                            <button class="themeButton" type="submit" name="active_woo_btn"><?php esc_html_e('Active Now', 'service-booking-manager'); ?></button>
+                    <h2><?php esc_html_e('Service Booking Manager', 'service-booking-manager'); ?></h2>
+                    <p class="mTB_xs"><?php esc_html_e('Welcome! Choose how you want to accept payments for bookings, then continue.', 'service-booking-manager'); ?></p>
+                    <div class="_mT">
+						<?php if ($wc_available) { ?>
+                            <label class="_fullWidth">
+                                <input type="radio" name="mpwpb_payment_method_type" value="woocommerce" <?php checked($payment_type, 'woocommerce'); ?> />
+								<?php esc_html_e('WooCommerce', 'service-booking-manager'); ?>
+                            </label>
 						<?php } ?>
+                        <label class="_fullWidth">
+                            <input type="radio" name="mpwpb_payment_method_type" value="custom" <?php checked($payment_type, 'custom'); ?> />
+							<?php esc_html_e('Custom Payment Method (Stripe / PayPal / Offline)', 'service-booking-manager'); ?>
+                        </label>
+                        <i class="info_text">
+                            <span class="fas fa-info-circle"></span>
+							<?php esc_html_e('You can configure Stripe, PayPal, and Offline payment, and change this at any time from Settings > Payment Method.', 'service-booking-manager'); ?>
+                        </i>
                     </div>
                 </div>
 				<?php

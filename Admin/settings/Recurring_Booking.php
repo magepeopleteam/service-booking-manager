@@ -124,8 +124,6 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
 				}
 
                 $all_future_order = MPWPB_Recurring_Booking::get_all_future_booking_order_date_times( $post_id );
-				$recurring_dates = $this->generate_recurring_dates($recurring_type, $recurring_count, $dates[0], $selectedRecurringDays );
-
                 $off_days_recurring = MPWPB_Global_Function::get_post_info( $post_id, 'mpwpb_off_days' );
                 $all_off_dates_recurring = MPWPB_Global_Function::get_post_info( $post_id, 'mpwpb_off_dates', array() );
                 $off_dates_recurring = [];
@@ -134,67 +132,60 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
                 }
                 $off_days_array = array_map('strtolower', explode(',', $off_days_recurring));
 
-                $valid_recurring_dates = [];
-                $invalid_dates = [];
-
-                foreach ($recurring_dates as $dateTime) {
-                    $date = date('Y-m-d', strtotime($dateTime));
-                    $day = strtolower(date('l', strtotime($dateTime))); // e.g., 'monday'
-
-                    if (in_array( $day, $off_days_array ) || in_array( $date, $off_dates_recurring ) ) {
-                        $valid_recurring_dates[] = array(
-                              'date' => $dateTime,
-                              'valid' => '0',
-                        ); ;
-                    } else {
-                        if( !in_array( $dateTime, $all_future_order ) ){
-                            $valid_recurring_dates[] = array(
-                                'date' => $dateTime,
-                                'valid' => '1',
-                            );
-                        }else{
-                            $valid_recurring_dates[] = array(
-                                'date' => $dateTime,
-                                'valid' => '0',
-                            );
-                        }
-                    }
-                }
+                // Keeps generating candidate dates past any that land on an
+                // off-day/off-date/already-booked slot instead of stopping once
+                // $recurring_count raw candidates have been produced -- previously
+                // an unavailable date in the middle of the sequence just ate one of
+                // the requested occurrences instead of being backfilled by another
+                // candidate, so asking for 6 occurrences with 2 unavailable produced
+                // only 4 real bookable dates. Unavailable candidates are still
+                // recorded (and shown as "Already Booked") for transparency, they
+                // just don't count toward the requested occurrence total.
+                $valid_recurring_dates = $this->generate_recurring_dates_with_availability(
+                    $recurring_type, $recurring_count, $dates[0], $selectedRecurringDays,
+                    $off_days_array, $off_dates_recurring, $all_future_order
+                );
 
                 $html = '';
                 $selected_html_right = '';
 
                 if( !empty( $valid_recurring_dates )){
                     foreach ( $valid_recurring_dates as $index => $dates ){
-                        if ( $index == 0) {
-                            $count_li = '<strong>' . ($index + 1) . '</strong>';
-                        } else {
-                            $count_li = $index + 1;
-                        }
+                        $count_li = $index + 1;
                         $date = $dates['date'];
                         $valid = $dates['valid'];
 
                         $formattedDate = date('F j, Y \a\t g:i A', strtotime($date));
+                        $dateOnly = date('F j, Y', strtotime($date));
+                        $dayTime = date('l \a\t g:i A', strtotime($date));
 
                         if( $valid == 1 ){
-                            $html .= '<li data-date-time="'.$date.'" class="mpwpb_recurring_days">
-                                <div><strong>'.$count_li.'</strong>'.$formattedDate.'</div>
+                            $html .= '<li data-date-time="'.esc_attr($date).'" class="mpwpb_recurring_days">
+                                <span class="mpwpb_recurring_number">'.esc_html($count_li).'</span>
+                                <div class="mpwpb_recurring_date_text">
+                                    <strong>'.esc_html($dateOnly).'</strong>
+                                    <span class="mpwpb_recurring_daytime">'.esc_html($dayTime).'</span>
+                                </div>
                                 <div class="mpwpb_recurring_actions">
-                                    <span class="mpwpb_recurring_edit_icon">✏️</span>
-                                    <span class="mpwpb_recurring_delete_icon">✖</span>
+                                    <span class="mpwpb_recurring_edit_icon"><i class="fas fa-pen"></i></span>
+                                    <span class="mpwpb_recurring_delete_icon"><i class="fas fa-times"></i></span>
                                 </div>
                             </li>';
 
-                            $selected_html_right .= '<li class="mpwpd_service_date" data-cart-date-time="'.$date.'">'.$formattedDate.'</li>';
+                            $selected_html_right .= '<li class="mpwpd_service_date" data-cart-date-time="'.esc_attr($date).'">'.esc_html($formattedDate).'</li>';
                         }else{
                             $html .= '<li data-date-time="" class="mpwpb_invalid_recurring_days">
-                                <div class="mpwpb_invalid_recurrin"><strong>'.$count_li.'</strong>'.$formattedDate. '(Already Booked)</div>
+                                <span class="mpwpb_recurring_number">'.esc_html($count_li).'</span>
+                                <div class="mpwpb_recurring_date_text">
+                                    <strong>'.esc_html($dateOnly).'</strong>
+                                    <span class="mpwpb_recurring_daytime">'.esc_html($dayTime).' &middot; '.esc_html__('Already Booked', 'service-booking-manager').'</span>
+                                </div>
                                 <div class="mpwpb_recurring_actions">
-                                    <span class="mpwpb_recurring_delete_icon">✖</span>
+                                    <span class="mpwpb_recurring_delete_icon"><i class="fas fa-times"></i></span>
                                 </div>
                             </li>';
 
-                            $selected_html_right .= '<li class="mpwpd_service_date" data-cart-date-time="'.$date.'"><div class="mpwpb_seleted_date_text">'.$formattedDate.'</div></li>';
+                            $selected_html_right .= '<li class="mpwpd_service_date" data-cart-date-time="'.esc_attr($date).'"><div class="mpwpb_seleted_date_text">'.esc_html($formattedDate).'</div></li>';
                         }
                     }
                 }
@@ -236,79 +227,122 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
 		update_post_meta($post_id, 'mpwpb_recurring_discount', $recurring_discount);
 	    }
 
-        private function generate_recurring_dates( $recurring_type, $recurring_count, $start_date, $selected_days = [] ) {
-//            $selected_days = [ 'mon', 'fri' ]
-            $dates = [];
-            $start_timestamp = strtotime($start_date);
-            $base_time = date('H:i:s', $start_timestamp); // keep time part
+        /**
+         * Generates recurring occurrence candidates and checks each one's
+         * availability (off-day/off-date/already-booked) as it goes,
+         * continuing to generate further candidates whenever one is
+         * unavailable so that exactly $recurring_count *available* dates are
+         * always produced (up to a safety cap) -- unavailable candidates are
+         * still included in the returned list (marked valid => '0') so the
+         * picker can show them as "Already Booked", they just don't count
+         * toward the requested occurrence total.
+         *
+         * @return array[] Each item: ['date' => 'Y-m-d H:i:s', 'valid' => '1'|'0'], sorted chronologically.
+         */
+        private function generate_recurring_dates_with_availability($recurring_type, $recurring_count, $start_date, $selected_days, $off_days_array, $off_dates_recurring, $all_future_order) {
             $selected_days = array_map('strtolower', $selected_days);
+            $start_timestamp = strtotime($start_date);
+            $base_time = date('H:i:s', $start_timestamp);
 
-            if (in_array($recurring_type, ['weekly', 'bi-weekly', 'monthly']) && !empty($selected_days)) {
-                for ($i = 0; $i < $recurring_count; $i++) {
-                    $interval = 0;
+            $results = [];
+            $valid_count = 0;
+            $index = 0;
+            // Safety cap so a service with (almost) every day blocked can't
+            // loop indefinitely -- generous enough for any realistic
+            // occurrence count (mpwpb_max_recurring_count tops out at 52)
+            // plus plenty of gaps.
+            $max_candidates = max((int) $recurring_count * 10, 60);
 
-                    // Set number of weeks/months to jump per iteration
-                    switch ($recurring_type) {
-                        case 'weekly':
-                            $interval = $i; // each week
-                            break;
-                        case 'bi-weekly':
-                            $interval = $i * 2; // every 2 weeks
-                            break;
-                        case 'monthly':
-                            $interval = $i; // we’ll handle month-based below
-                            break;
-                    }
-
-                    foreach ($selected_days as $day) {
-                        if ($recurring_type === 'monthly') {
-                            $month_base = strtotime("+{$interval} month", $start_timestamp);
-                            $month_year = date('Y-m', $month_base);
-
-                            $day_date = strtotime("first $day of $month_year");
-                            $day_time = strtotime($base_time, $day_date);
-                        } else {
-                            $week_base = strtotime("+{$interval} week", $start_timestamp);
-                            $day_date = strtotime("next $day", $week_base);
-
-                            if (date('D', $start_timestamp) === ucfirst($day) && $i === 0) {
-                                $day_date = $start_timestamp;
-                            }
-
-                            $day_time = strtotime($base_time, $day_date);
-                        }
-
-                        if ($day_time >= $start_timestamp) {
-                            $dates[] = date('Y-m-d H:i:s', $day_time);
-                        }
-                    }
+            while ($valid_count < $recurring_count && count($results) < $max_candidates) {
+                $dateTime = $this->generate_candidate_date($recurring_type, $index, $start_timestamp, $base_time, $selected_days);
+                $index++;
+                if ($dateTime === null) {
+                    break;
                 }
-            } else {
-                $dates[] = date('Y-m-d H:i:s', $start_timestamp); // Add start date
-                $current_date = $start_timestamp;
 
-                for ($i = 1; $i < $recurring_count; $i++) {
-                    switch ($recurring_type) {
-                        case 'daily':
-                            $current_date = strtotime('+1 day', $current_date);
-                            break;
-                        case 'weekly':
-                            $current_date = strtotime('+1 week', $current_date);
-                            break;
-                        case 'bi-weekly':
-                            $current_date = strtotime('+2 weeks', $current_date);
-                            break;
-                        case 'monthly':
-                            $current_date = strtotime('+1 month', $current_date);
-                            break;
-                    }
-                    $dates[] = date('Y-m-d H:i:s', $current_date);
+                $date_only = date('Y-m-d', strtotime($dateTime));
+                $day_name = strtolower(date('l', strtotime($dateTime)));
+                $is_unavailable = in_array($day_name, $off_days_array, true)
+                    || in_array($date_only, $off_dates_recurring, true)
+                    || in_array($dateTime, $all_future_order, true);
+
+                $results[] = array(
+                    'date' => $dateTime,
+                    'valid' => $is_unavailable ? '0' : '1',
+                );
+                if (!$is_unavailable) {
+                    $valid_count++;
                 }
             }
 
-            // Sort and return
-            sort($dates);
-            return $dates;
+            usort($results, function ($a, $b) {
+                return strtotime($a['date']) <=> strtotime($b['date']);
+            });
+
+            return $results;
+        }
+
+        /**
+         * Returns the Nth (0-based) candidate date in a recurring sequence --
+         * same per-type advancement rules the old bulk generator used, just
+         * computed one at a time so the caller above can keep asking for
+         * "one more" past an unavailable candidate instead of being stuck
+         * with a fixed-size batch.
+         */
+        private function generate_candidate_date($recurring_type, $index, $start_timestamp, $base_time, $selected_days) {
+            if (in_array($recurring_type, ['weekly', 'bi-weekly', 'monthly'], true) && !empty($selected_days)) {
+                $days_per_cycle = count($selected_days);
+                $cycle = intdiv($index, $days_per_cycle);
+                $day = $selected_days[$index % $days_per_cycle];
+
+                $interval = $recurring_type === 'bi-weekly' ? $cycle * 2 : $cycle;
+
+                if ($recurring_type === 'monthly') {
+                    $month_base = strtotime("+{$interval} month", $start_timestamp);
+                    $month_year = date('Y-m', $month_base);
+                    $day_date = strtotime("first $day of $month_year");
+                } else {
+                    $week_base = strtotime("+{$interval} week", $start_timestamp);
+                    $day_date = strtotime("next $day", $week_base);
+                    if ($cycle === 0 && date('D', $start_timestamp) === ucfirst($day)) {
+                        $day_date = $start_timestamp;
+                    }
+                }
+                $day_time = strtotime($base_time, $day_date);
+
+                if ($day_time < $start_timestamp) {
+                    // Shouldn't normally happen given the "next $day"/first-of-
+                    // month logic above, but never emit a date before the
+                    // requested start -- ask for the next candidate instead.
+                    return $this->generate_candidate_date($recurring_type, $index + 1, $start_timestamp, $base_time, $selected_days);
+                }
+
+                return date('Y-m-d H:i:s', $day_time);
+            }
+
+            // Simple sequential types (daily, or weekly/bi-weekly/monthly
+            // without specific selected days) -- advance from the start date
+            // $index times.
+            $current_date = $start_timestamp;
+            for ($step = 0; $step < $index; $step++) {
+                switch ($recurring_type) {
+                    case 'daily':
+                        $current_date = strtotime('+1 day', $current_date);
+                        break;
+                    case 'weekly':
+                        $current_date = strtotime('+1 week', $current_date);
+                        break;
+                    case 'bi-weekly':
+                        $current_date = strtotime('+2 weeks', $current_date);
+                        break;
+                    case 'monthly':
+                        $current_date = strtotime('+1 month', $current_date);
+                        break;
+                    default:
+                        return null;
+                }
+            }
+            return date('Y-m-d H:i:s', $current_date);
         }
 
 

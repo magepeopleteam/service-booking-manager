@@ -33,9 +33,19 @@ if (!class_exists('MPWPB_Staff_Booking')) {
         }
 
         public function mpwpb_is_staff_booked_order( $staff_term_id, $datetime ) {
+            // Only existence is ever checked (!empty($bookings)) -- this used
+            // to fetch every matching booking as full WP_Post objects with no
+            // row limit (posts_per_page => -1) and compute found_rows on top,
+            // for EACH staff member on EVERY time-slot click. That full scan
+            // gets slower as real booking volume grows, which is what made
+            // the "Next Staff Member" button feel like it took a while to
+            // appear -- this now stops at the first match and only fetches
+            // an ID, not a full post.
             $args = array(
                 'post_type'      => 'mpwpb_booking',
-                'posts_per_page' => -1,
+                'posts_per_page' => 1,
+                'fields'         => 'ids',
+                'no_found_rows'  => true,
                 'meta_query'     => array(
                     'relation' => 'AND',
                     array(
@@ -284,70 +294,68 @@ if (!class_exists('MPWPB_Staff_Booking')) {
                 'html' => '',
                 'count' => 0
             ];
-            if ( is_plugin_active('service-booking-manager-pro/MPWPB_Plugin_Pro.php') ) {
-                if ($service_id) {
-                    $available_staff = [];
+            if ($service_id) {
+                $available_staff = [];
 
-                    $enable_staff_member = get_post_meta($service_id, 'mpwpb_staff_member_add', true);
-                    if ($enable_staff_member === 'on') {
-                        $get_selected_staff = get_post_meta($service_id, 'mpwpb_selected_staff_ids', array());
+                $enable_staff_member = get_post_meta($service_id, 'mpwpb_staff_member_add', true);
+                if ($enable_staff_member === 'on') {
+                    $get_selected_staff = get_post_meta($service_id, 'mpwpb_selected_staff_ids', array());
 
-                        $flat_selected_staff_ids = is_array($get_selected_staff) ? call_user_func_array('array_merge', $get_selected_staff) : [];
-                        if (!empty($flat_selected_staff_ids)) {
-                            $all_staffs = get_users([
-                                'include' => $flat_selected_staff_ids,
-                                'role' => 'mpwpb_staff'
-                            ]);
+                    $flat_selected_staff_ids = is_array($get_selected_staff) ? call_user_func_array('array_merge', $get_selected_staff) : [];
+                    if (!empty($flat_selected_staff_ids)) {
+                        $all_staffs = get_users([
+                            'include' => $flat_selected_staff_ids,
+                            'role' => 'mpwpb_staff'
+                        ]);
 
-                            foreach ($all_staffs as $staff_data) {
-                                $staff_id = $staff_data->ID;
-                                if ($this->mpwpb_is_staff_booked($staff_id, $date, $time)) {
-                                    if (!$this->mpwpb_is_staff_booked_order($staff_id, $date_time)) {
-                                        if (self::mpwpb_is_staff_available_time($staff_id, $time, $date_time)) {
-                                            $available_staff[] = $staff_data;
-                                        }
+                        foreach ($all_staffs as $staff_data) {
+                            $staff_id = $staff_data->ID;
+                            if ($this->mpwpb_is_staff_booked($staff_id, $date, $time)) {
+                                if (!$this->mpwpb_is_staff_booked_order($staff_id, $date_time)) {
+                                    if (self::mpwpb_is_staff_available_time($staff_id, $time, $date_time)) {
+                                        $available_staff[] = $staff_data;
                                     }
                                 }
                             }
                         }
-                        if ( !empty( $available_staff ) ) {
-                            $html = '<div class="mpwp_select_staff_grid">
+                    }
+                    if ( !empty( $available_staff ) ) {
+                        $html = '<div class="mpwp_select_staff_grid">
+                            <div class="mpwp_select_staff_card">
+                                <input type="hidden" class="mpwpb_selected_staff" name="mpwpb_selected_staff_id[]" value="">
+                                <div class="mpwp_select_staff_avatar">👥</div>
+                                <div class="mpwp_select_staff_name">Any Staff</div>
+                            </div>
+                        ';
+                        foreach ($available_staff as $staff) {
+                            $image_id = get_user_meta($staff->ID, 'mpwpb_custom_profile_image', true);
+
+                            $image_url = esc_url(wp_get_attachment_url($image_id));
+                            if( empty( $image_url ) ){
+                                $image_url = MPWPB_PLUGIN_URL.'/mp_global/assets/images/staff_fallback.webp';
+                            }
+                            $html .=
+                                '<div class="mpwp_select_staff_card">
+                                <input type="hidden" class="mpwpb_selected_staff" name="mpwpb_selected_staff_id[]" value="' . $staff->ID . '">
+                                <img class="mpwp_select_staff_avatar" src="' . $image_url . '" alt="' . $staff->user_nicename . '">
+                                <div class="mpwp_select_staff_name">' . esc_html($staff->display_name) . '</div>
+                            </div>';
+
+                        }
+                        $html .= '</div>';
+
+                        $response['html'] = $html;
+                        $response['count'] = count($available_staff);
+                    } else {
+                        $html = '<div class="mpwp_select_staff_grid">
                                 <div class="mpwp_select_staff_card">
                                     <input type="hidden" class="mpwpb_selected_staff" name="mpwpb_selected_staff_id[]" value="">
-                                    <div class="mpwp_select_staff_icon">👥</div>
+                                    <div class="mpwp_select_staff_avatar">👥</div>
                                     <div class="mpwp_select_staff_name">Any Staff</div>
                                 </div>
-                            ';
-                            foreach ($available_staff as $staff) {
-                                $image_id = get_user_meta($staff->ID, 'mpwpb_custom_profile_image', true);
-
-                                $image_url = esc_url(wp_get_attachment_url($image_id));
-                                if( empty( $image_url ) ){
-                                    $image_url = MPWPB_PLUGIN_URL.'/mp_global/assets/images/staff_fallback.webp';
-                                }
-                                $html .=
-                                    '<div class="mpwp_select_staff_card">
-                                    <input type="hidden" class="mpwpb_selected_staff" name="mpwpb_selected_staff_id[]" value="' . $staff->ID . '">
-                                    <img class="mpwpb_select_staff_image" src="' . $image_url . '" alt="' . $staff->user_nicename . '" class="mpwp_select_staff_img">
-                                    <div class="mpwp_select_staff_name">' . esc_html($staff->display_name) . '</div>
-                                    <div class="mpwp_select_staff_email">' . esc_html($staff->user_email) . '</div>
-                                </div>';
-
-                            }
-                            $html .= '</div> </div>';
-
-                            $response['html'] = $html;
-                            $response['count'] = count($available_staff);
-                        } else {
-                            $html = '<div class="mpwp_select_staff_grid">
-                                    <div class="mpwp_select_staff_card">
-                                        <input type="hidden" class="mpwpb_selected_staff" name="mpwpb_selected_staff_id[]" value="">
-                                        <div class="mpwp_select_staff_icon">👥</div>
-                                        <div class="mpwp_select_staff_name">Any Staff</div>
-                                    </div>';
-                            $response['html'] = $html;
-                            $response['count'] = 1;
-                        }
+                            </div>';
+                        $response['html'] = $html;
+                        $response['count'] = 1;
                     }
                 }
             }

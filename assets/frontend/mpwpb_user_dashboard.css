@@ -1,3 +1,18 @@
+/* Theme/WooCommerce block-theme content wrapper on My Account, Cart, and
+   Checkout -- enforced here (not just left to the theme's own stylesheet)
+   since this file already loads on all three of those pages for staff
+   members (MPWPB_Dependencies::staff_dashboard_enqueue_scripts(), called
+   from global_enqueue() on every front-end request) and needs to win
+   reliably regardless of theme load order. */
+.woocommerce-account .wp-block-post-title,
+.woocommerce-account main .woocommerce,
+.woocommerce-cart .wp-block-post-title,
+.woocommerce-cart main .woocommerce,
+.woocommerce-checkout .wp-block-post-title,
+.woocommerce-checkout main .woocommerce {
+    max-width: 1320px !important;
+}
+
 /* User Dashboard Styles */
 .mpwpb-user-dashboard {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
@@ -8,6 +23,106 @@
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
+
+/* WooCommerce My Account page layout -- top bar nav + full-width content
+   below it (was: classic two-column float split, nav at 22%/content at 75%,
+   which left the booking list/filter cramped into three-quarters width). */
+.woocommerce-account .woocommerce-MyAccount-navigation {
+    float: none !important;
+    width: 100% !important;
+    margin: 0 0 20px;
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation li {
+    list-style: none;
+    padding: 1px 0;
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation ul {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.woocommerce-account .woocommerce-MyAccount-content {
+    float: none !important;
+    width: 100% !important;
+    clear: both;
+}
+
+/* WooCommerce My Account navigation -- icon + pill-active top bar.
+   Icon codepoints below are read directly from the Font Awesome 6.7.2 Free
+   build this plugin actually loads site-wide (mp_global/assets/admin/all.min.css,
+   enqueued unconditionally on every front-end page by
+   MPWPB_Global_File_Load::frontend_enqueue()) -- not guessed, so they're
+   guaranteed to match what's really available rather than risking a
+   version-mismatched icon. */
+.woocommerce-MyAccount-navigation {
+    background: #eef1fb;
+    border-radius: 12px;
+    padding: 10px;
+}
+
+.woocommerce-MyAccount-navigation ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.woocommerce-MyAccount-navigation-link a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    color: #1e3a8a;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: background-color .15s ease, color .15s ease;
+}
+
+@media (max-width: 782px) {
+    .woocommerce-MyAccount-navigation ul {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+.woocommerce-MyAccount-navigation-link a:hover {
+    background: rgba(29, 63, 184, .08);
+}
+
+.woocommerce-MyAccount-navigation-link a::before {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 15px;
+    width: 18px;
+    flex: 0 0 auto;
+    text-align: center;
+}
+
+.woocommerce-MyAccount-navigation-link.is-active a {
+    background: #1d3fb8;
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(29, 63, 184, .25);
+}
+
+.woocommerce-MyAccount-navigation-link--dashboard a::before { content: "\f00a"; }
+.woocommerce-MyAccount-navigation-link--orders a::before { content: "\f07a"; }
+.woocommerce-MyAccount-navigation-link--downloads a::before { content: "\f019"; }
+.woocommerce-MyAccount-navigation-link--edit-address a::before { content: "\f2bb"; }
+.woocommerce-MyAccount-navigation-link--edit-account a::before { content: "\f007"; }
+.woocommerce-MyAccount-navigation-link--mpwpb-gdpr a::before { content: "\f3ed"; }
+.woocommerce-MyAccount-navigation-link--mpwpb-my-service a::before { content: "\f0ad"; }
+.woocommerce-MyAccount-navigation-link--mpwpb-my-appointment a::before { content: "\f133"; }
+.woocommerce-MyAccount-navigation-link--mpwpb-my-schedule a::before { content: "\f017"; }
+.woocommerce-MyAccount-navigation-link--customer-logout a::before { content: "\f2f5"; }
 
 /* Tabs Navigation */
 .mpwpb-dashboard-tabs {
@@ -153,6 +268,33 @@
     background-color: #1976d2;
 }
 
+.mpwpb-payment-status {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    width: 100%;
+    margin: 0 0 10px;
+    padding: 10px 12px;
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+.mpwpb-payment-status-due strong {
+    color: #b35c00;
+}
+
+.mpwpb-pay-balance-btn {
+    background-color: #4caf50;
+    color: white;
+}
+
+.mpwpb-pay-balance-btn:hover {
+    background-color: #388e3c;
+}
+
 .mpwpb-submit-btn {
     background-color: #4caf50;
     color: white;
@@ -227,15 +369,39 @@
     max-width: 800px;
 }
 
+/* Grid (not flex) so a label that wraps to 2 lines in one column (e.g.
+   "New Password (leave blank to keep current)") only grows the shared
+   label row itself -- both inputs still start on the next grid row, at
+   the same Y position, instead of one sitting lower than the other.
+   .mpwpb-form-group becomes `display:contents` (its label/input become
+   direct grid items of the row), so nth-child picks each column's pair
+   and pins them to that column's grid-column explicitly. */
 .mpwpb-form-row {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0 -10px 15px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 20px;
+    row-gap: 6px;
+    margin-bottom: 22px;
 }
 
+.mpwpb-form-row .mpwpb-form-group {
+    display: contents;
+}
+
+.mpwpb-form-row .mpwpb-form-group:nth-child(1) label { grid-column: 1; grid-row: 1; }
+.mpwpb-form-row .mpwpb-form-group:nth-child(1) input,
+.mpwpb-form-row .mpwpb-form-group:nth-child(1) select { grid-column: 1; grid-row: 2; }
+.mpwpb-form-row .mpwpb-form-group:nth-child(2) label { grid-column: 2; grid-row: 1; }
+.mpwpb-form-row .mpwpb-form-group:nth-child(2) input,
+.mpwpb-form-row .mpwpb-form-group:nth-child(2) select { grid-column: 2; grid-row: 2; }
+
 .mpwpb-form-group {
-    flex: 1;
-    min-width: 250px;
+    /* Only takes effect for standalone groups (e.g. Service Preferences,
+       the GDPR request form) -- inside a .mpwpb-form-row this element is
+       display:contents (see above), which drops its own box entirely, so
+       this padding/margin is a no-op there and column-gap handles spacing
+       instead. */
+    min-width: 0;
     padding: 0 10px;
     margin-bottom: 15px;
 }
@@ -245,6 +411,24 @@
     margin-bottom: 5px;
     font-weight: 500;
     color: #333;
+}
+
+@media (max-width: 600px) {
+    .mpwpb-form-row {
+        grid-template-columns: 1fr;
+    }
+    /* Cancel the desktop rule's fixed column/row pinning so items fall back
+       to plain DOM order (label1, input1, label2, input2) stacked in a
+       single column instead of two columns' worth overlapping each other. */
+    .mpwpb-form-row .mpwpb-form-group:nth-child(1) label,
+    .mpwpb-form-row .mpwpb-form-group:nth-child(1) input,
+    .mpwpb-form-row .mpwpb-form-group:nth-child(1) select,
+    .mpwpb-form-row .mpwpb-form-group:nth-child(2) label,
+    .mpwpb-form-row .mpwpb-form-group:nth-child(2) input,
+    .mpwpb-form-row .mpwpb-form-group:nth-child(2) select {
+        grid-column: 1;
+        grid-row: auto;
+    }
 }
 
 .mpwpb-form-group input,
@@ -266,10 +450,213 @@
     box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
 }
 
+/* Radio/checkbox choice rows (e.g. the GDPR data-request form) -- the
+   width:100% rule above is meant for text/email/tel/password/textarea
+   fields and otherwise stretches a checkbox/radio to fill the whole row,
+   which is what pushed the visible box away from its own label text. */
+.mpwpb-form-group label.mpwpb-inline-choice {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.mpwpb-form-group input[type="checkbox"],
+.mpwpb-form-group input[type="radio"] {
+    width: auto;
+    flex: 0 0 auto;
+    padding: 0;
+    border: 0;
+    background: none;
+}
+
 .mpwpb-form-group .description {
     font-size: 12px;
     color: #777;
     margin-top: 5px;
+}
+
+/* ---------------------------------------------------------------------- *
+ *  My Profile -- card-based layout (Personal Information / Address
+ *  Details / Security / Service Preferences) with a summary sidebar.
+ * ---------------------------------------------------------------------- */
+.mpwpb-profile-header {
+    margin-bottom: 20px;
+}
+
+.mpwpb-profile-header h3 {
+    margin: 0 0 4px;
+}
+
+.mpwpb-profile-subtitle {
+    margin: 0;
+    color: #777;
+    font-size: 13.5px;
+}
+
+.mpwpb-profile-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(240px, 1fr);
+    gap: 24px;
+    align-items: start;
+}
+
+.mpwpb-profile-v2 .mpwpb-profile-form {
+    max-width: none;
+}
+
+.mpwpb-profile-card {
+    background: #fff;
+    border: 1px solid #e5e9f0;
+    border-top: 3px solid #2196f3;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.mpwpb-profile-card-security {
+    border-top-color: #f44336;
+}
+
+.mpwpb-profile-card-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    border-bottom: 1px solid #eef1f6;
+}
+
+.mpwpb-profile-card-head .fas {
+    color: #2196f3;
+    font-size: 15px;
+}
+
+.mpwpb-profile-card-security .mpwpb-profile-card-head .fas {
+    color: #f44336;
+}
+
+.mpwpb-profile-card-head h4 {
+    margin: 0;
+    font-size: 15px;
+}
+
+.mpwpb-profile-card-body {
+    padding: 18px;
+}
+
+.mpwpb-profile-card-body .mpwpb-form-row:last-child,
+.mpwpb-profile-card-body .mpwpb-form-group:last-child {
+    margin-bottom: 0;
+}
+
+.mpwpb-profile-card-body .mpwpb-form-group input{width: 95% !important; }
+
+.mpwpb-form-group-full {
+    padding: 0 10px;
+    margin-bottom: 15px;
+}
+
+.mpwpb-field-hint {
+    margin: 6px 0 0;
+    font-size: 12px;
+    color: #888;
+}
+
+.mpwpb-profile-submit-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+/* Sidebar */
+.mpwpb-profile-sidebar .mpwpb-profile-card {
+    padding: 0;
+}
+
+.mpwpb-profile-summary-card {
+    text-align: center;
+    padding: 24px 18px;
+    border-top-color: #2196f3;
+}
+
+.mpwpb-profile-avatar {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 12px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2196f3, #6dc0ff);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.mpwpb-profile-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #222;
+}
+
+.mpwpb-profile-role {
+    font-size: 12.5px;
+    color: #888;
+    margin: 2px 0 10px;
+}
+
+.mpwpb-profile-badge {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 999px;
+    background: #eafaf0;
+    color: #1c9a5b;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+}
+
+.mpwpb-profile-summary-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.mpwpb-profile-summary-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #666;
+}
+
+.mpwpb-profile-summary-row strong {
+    color: #222;
+}
+
+.mpwpb-btn-outline {
+    background: transparent;
+    border: 1px solid #2196f3;
+    color: #2196f3;
+}
+
+.mpwpb-btn-outline:hover {
+    background: #eaf4fe;
+}
+
+.mpwpb-profile-sidebar-link {
+    display: block;
+    margin: 0 18px 18px;
+    text-align: center;
+    width: calc(100% - 36px);
+}
+
+@media (max-width: 782px) {
+    .mpwpb-profile-layout {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* Modal */
@@ -328,6 +715,13 @@
     background-color: #f2dede;
     color: #a94442;
     border: 1px solid #ebccd1;
+    display: block;
+}
+
+.mpwpb-message.info {
+    background-color: #d9edf7;
+    color: #31708f;
+    border: 1px solid #bce8f1;
     display: block;
 }
 
@@ -466,7 +860,1301 @@
     background-color: #004f78;
 }
 
+/* ------------------------------------------------------------------ *
+ *  "My Schedule" (Admin/MPWPB_Staff_DashBoard.php::render_my_schedule_tab())
+ *  Reuses Admin/MPWPB_Staff_Members.php's own panel/table markup (built
+ *  for the wp-admin Staff Members screen, styled there by admin-only CSS
+ *  that isn't loaded here) -- these rules restyle that same markup for
+ *  the front-end account pages, scoped to .mpwpb-staff-schedule so the
+ *  admin screen's own styling is never touched.
+ * ------------------------------------------------------------------ */
+.mpwpb-staff-schedule .mpwpb-schedule-intro {
+    color: #666;
+    font-size: 13.5px;
+    line-height: 1.5;
+    margin: 0 0 20px;
+}
 
+.mpwpb-staff-schedule .mpPanel {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.mpwpb-staff-schedule .mpPanelHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 14px 18px;
+    background: #f9f9f9;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.mpwpb-staff-schedule .mpPanelHeader h6 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    text-transform: none;
+}
+
+/* No JS wires the collapse toggle on the front-end (that's admin-only
+   behaviour) -- hide the +/- icon rather than show a control that does
+   nothing when clicked. */
+.mpwpb-staff-schedule .mpPanelHeader [data-icon] {
+    display: none;
+}
+
+.mpwpb-staff-schedule .mpPanelBody {
+    padding: 18px;
+}
+
+.mpwpb-staff-schedule .mpwpb_staff_schedule_header_actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Hidden on this front-end page only -- the button itself is rendered by
+   the shared Admin/MPWPB_Staff_Members.php::schedule_settings(), also used
+   by the real wp-admin Staff Members screen where it's still wanted, so
+   it's hidden here via CSS rather than removed from that shared PHP. */
+.mpwpb-staff-schedule .mpwpb_copy_monday_btn {
+    display: none;
+}
+
+.mpwpb-staff-schedule .mpwpb_staff_format_badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: #f5f5f5;
+    color: #777;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.mpwpb-staff-schedule .mpwpb_staff_format_badge.is-on {
+    background: #d9edf7;
+    color: #31708f;
+}
+
+.mpwpb-staff-schedule .mpPanelBody > table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.mpwpb-staff-schedule .mpPanelBody > table th,
+.mpwpb-staff-schedule .mpPanelBody > table td {
+    padding: 5px 2px;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 13px;
+    vertical-align: middle;
+}
+
+.mpwpb-staff-schedule .mpPanelBody > table thead th {
+    background: #f8fafc;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #55606e;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.mpwpb-staff-schedule .mpPanelBody > table tbody tr:hover {
+    background: #f8fafc;
+}
+
+/* Day + Status are short, fixed-content columns -- give them just enough
+   room and let the actual Start/End/Break Time selects take the rest,
+   instead of all seven columns splitting the width evenly. */
+.mpwpb-staff-schedule .mpPanelBody > table tbody th {
+    width: 88px;
+    white-space: nowrap;
+    font-weight: 600;
+    color: #333;
+}
+
+.mpwpb-staff-schedule .mpPanelBody > table td.mpwpb_staff_row_status {
+    width: 84px;
+}
+
+/* Start/End Time are the primary columns -- give them more of the
+   remaining width than the (usually unset) Break Time pair, instead of
+   letting table-layout:fixed split the leftover space evenly. */
+.mpwpb-staff-schedule .mpPanelBody > table td.mpwpb_start_time,
+.mpwpb-staff-schedule .mpPanelBody > table td.mpwpb_end_time {
+    width: 23%;
+}
+
+.mpwpb-staff-schedule .mpPanelBody > table td.mpwpb_start_break_time,
+.mpwpb-staff-schedule .mpPanelBody > table td.mpwpb_end_break_time {
+    width: 16%;
+}
+
+/* The "To" cells are just a connector word between two selects, not real
+   data -- shrinking them gives the selects noticeably more breathing room
+   instead of seven visually-equal columns. */
+.mpwpb-staff-schedule .mpPanelBody > table td.textCenter {
+    width: 26px;
+    padding: 14px 2px;
+    text-align: center;
+}
+
+.mpwpb-staff-schedule .mpPanelBody > table td.textCenter strong {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    color: #98a2ae;
+}
+
+.mpwpb-staff-schedule .mpwpb_staff_status_badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+    background: #f5f5f5;
+    color: #777;
+}
+
+.mpwpb-staff-schedule .mpwpb_staff_status_badge::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    flex: 0 0 auto;
+}
+
+.mpwpb-staff-schedule .mpwpb_staff_status_badge.is-active {
+    background: #e6f4ea;
+    color: #1e8e3e;
+}
+
+.mpwpb-staff-schedule select.formControl {
+    width: 100%;
+    min-width: 80px;
+    padding: 8px 4px;
+    border: 1px solid #e1e5ea;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 13px;
+    color: #333;
+}
+
+/* Overrides the inline style="background-color:#e3d3d3" the shared
+   render function hardcodes on break-time cells -- the redesigned table
+   keeps every cell on the same flat white ground, so this cancels the
+   inline style out rather than swapping it for a different tint. */
+.mpwpb-staff-schedule .mpwpb_start_break_time,
+.mpwpb-staff-schedule .mpwpb_end_break_time {
+    background-color: #fff !important;
+}
+
+.mpwpb-staff-schedule .dFlex {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.mpwpb-staff-schedule ._fs_label_w_200 {
+    flex: 0 0 auto;
+    min-width: 90px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+    padding-top: 6px;
+}
+
+.mpwpb-staff-schedule .groupCheckBox {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.mpwpb-staff-schedule .customCheckboxLabel {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid #e5e5e5;
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 12.5px;
+    color: #333;
+    cursor: pointer;
+}
+
+.mpwpb-staff-schedule .customCheckboxLabel input[type="checkbox"] {
+    margin: 0;
+}
+
+.mpwpb-staff-schedule .divider {
+    height: 1px;
+    background: #f0f0f0;
+    margin: 16px 0;
+}
+
+.mpwpb-staff-schedule .mp_settings_area {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 130px;
+}
+
+/* "Add New Off date" is rendered before the hidden row-template in the
+   shared markup (also used by the wp-admin Staff Members screen, so not
+   reordered there) -- flex order moves it after the template here without
+   touching that shared PHP. */
+.mpwpb-staff-schedule .mp_settings_area > .mp_item_insert {
+    order: 1;
+}
+
+.mpwpb-staff-schedule .mp_settings_area > .mpwpb_hidden_content {
+    order: 2;
+}
+
+.mpwpb-staff-schedule .mp_settings_area > ._themeButton_xs_mT_xs {
+    order: 3;
+}
+
+.mpwpb-staff-schedule .mp_remove_area {
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin-bottom: 8px;
+}
+
+.mpwpb-staff-schedule .mp_remove_area .formControl {
+    padding: 6px 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.mpwpb-staff-schedule .justifyBetween {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.mpwpb-staff-schedule .allCenter,
+.mpwpb-staff-schedule .buttonGroup {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.mpwpb-staff-schedule ._themeButton_xs,
+.mpwpb-staff-schedule ._themeButton_xs_mT_xs {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid #e5e5e5;
+    background: #fff;
+    color: #333;
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.mpwpb-staff-schedule ._themeButton_xs:hover,
+.mpwpb-staff-schedule ._themeButton_xs_mT_xs:hover {
+    background: #f5f5f5;
+}
+
+.mpwpb-staff-schedule ._themeButton_xs_mT_xs {
+    margin-top: 8px;
+}
+
+/* Toolbar: intro copy left, Save action right -- matches the reference
+   layout (title/description + primary action on one row) instead of the
+   save button trailing at the very bottom of the page. */
+.mpwpb-staff-schedule .mpwpb-schedule-toolbar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.mpwpb-staff-schedule .mpwpb-schedule-toolbar h3 {
+    margin: 0 0 6px;
+}
+
+.mpwpb-staff-schedule .mpwpb-schedule-toolbar .mpwpb-schedule-intro {
+    margin: 0;
+    max-width: 60ch;
+}
+
+.mpwpb-staff-schedule #saveScheduleBtn {
+    flex: 0 0 auto;
+    margin-top: 0;
+    background: #0f172a;
+    color: #fff;
+}
+
+.mpwpb-staff-schedule #saveScheduleBtn:hover {
+    background: #1e293b;
+}
+
+/* Two-column layout: weekly hours table takes the majority width, off
+   days/dates sit alongside in a sidebar column -- collapses to one
+   column on narrower screens (see media query below). */
+.mpwpb-staff-schedule .mpwpb-schedule-grid {
+    display: inline;
+    grid-template-columns: minmax(0, 1.65fr) minmax(260px, 1fr);
+    gap: 20px;
+    align-items: start;
+}
+
+.mpwpb-staff-schedule .mpwpb-schedule-main .mpPanel {
+    margin-bottom: 0;
+}
+
+/* Re-enables the panel-header icon specifically for the schedule table
+   (overridden further above for panels in general, since nothing wires
+   its collapse behaviour on the front-end) as a colour badge. The
+   underlying element only ever carries fa-plus (the collapse toggle
+   glyph, meaningless here), so the glyph itself is swapped for a clock
+   via a higher-specificity ::before rather than shown as-is. */
+.mpwpb-staff-schedule .mpwpb-schedule-main .mpPanelHeader [data-icon] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: #e3f2fd;
+    color: transparent;
+    margin: 0 10px 0 0;
+    flex: 0 0 auto;
+}
+
+.mpwpb-staff-schedule .mpwpb-schedule-main .mpPanelHeader [data-icon]::before {
+    content: "\f017";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    color: #0073aa;
+    font-size: 14px;
+}
+
+.mpwpb-staff-schedule .mpwpb_staff_status_badge.is-off {
+    background: #f2dede;
+    color: #a94442;
+}
+
+/* The first table row is always the "Default" fallback schedule every
+   other day inherits from when left blank -- call it out visually. */
+.mpwpb-staff-schedule .mpwpb-schedule-main .mpPanelBody > table tbody tr:first-child th {
+    color: #0073aa;
+    font-weight: 700;
+}
+
+/* Sidebar: strip the outer panel's own chrome (it would otherwise wrap
+   the two cards below in a third, redundant card) and let
+   mpwpb_off_day_card (Weekly Off Days / Exception Dates) be the visible
+   cards instead. */
+.mpwpb-staff-schedule .mpwpb-schedule-sidebar .mpPanel {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    margin-bottom: 0;
+}
+
+.mpwpb-staff-schedule .mpwpb-schedule-sidebar .mpPanelHeader {
+    display: none;
+}
+
+.mpwpb-staff-schedule .mpwpb-schedule-sidebar .mpPanelBody {
+    padding: 0;
+}
+
+.mpwpb-staff-schedule .mpwpb_off_day_cards {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.mpwpb-staff-schedule .mpwpb_off_day_card.dFlex {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 16px 18px;
+    margin-top: 15px;
+}
+
+.mpwpb-staff-schedule .mpwpb_off_day_card > ._fs_label_w_200 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: #1f2937;
+    padding-top: 0;
+}
+
+/* Matches the Time Schedule Settings panel's icon-badge treatment --
+   calendar glyph in a colour chip instead of the plain dot this used to
+   be, with the same red/blue split calling out the first card. */
+.mpwpb-staff-schedule .mpwpb_off_day_card > ._fs_label_w_200::before {
+    content: "\f073";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: #e3f2fd;
+    color: #0073aa;
+    font-size: 14px;
+    flex: 0 0 auto;
+}
+
+.mpwpb-staff-schedule .mpwpb_off_day_card:first-child > ._fs_label_w_200::before {
+    background: #fde8e8;
+    color: #e53935;
+}
+
+@media (max-width: 782px) {
+    .mpwpb-staff-schedule .mpPanelBody > table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .mpwpb-staff-schedule .mpwpb-schedule-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ------------------------------------------------------------------ *
+ *  "My Appointment" date-range filter
+ *  (Admin/MPWPB_Staff_DashBoard.php::render_my_appointment_tab())
+ * ------------------------------------------------------------------ */
+.mpwpb-staff-appointments .mpwpb-appt-filter {
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    flex-wrap: wrap;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 18px;
+    margin: 0 0 20px;
+}
+
+.mpwpb-staff-appointments .mpwpb-appt-filter label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1 1 200px;
+    max-width: 260px;
+}
+
+.mpwpb-staff-appointments .mpwpb-appt-field-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #333;
+}
+
+.mpwpb-staff-appointments .mpwpb-appt-filter input[type="date"] {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 14px;
+    color: #333;
+    font-family: inherit;
+}
+
+.mpwpb-staff-appointments .mpwpb-appt-filter input[type="date"]:focus {
+    outline: none;
+    border-color: #2196f3;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+.mpwpb-staff-appointments .mpwpb-appt-filter select {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 14px;
+    color: #333;
+    font-family: inherit;
+}
+
+.mpwpb-staff-appointments .mpwpb-appt-filter select:focus {
+    outline: none;
+    border-color: #2196f3;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+.mpwpb-staff-appointments .mpwpb-appt-filter button[type="submit"] {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 11px 22px;
+    background: #1d3fb8;
+    color: #fff;
+    font-size: 14px;
+}
+
+.mpwpb-staff-appointments .mpwpb-appt-filter button[type="submit"]:hover {
+    background: #17348f;
+}
+
+.mpwpb-staff-appointments .mpwpb-appt-clear-link {
+    flex: 0 0 auto;
+    align-self: center;
+    font-size: 13px;
+    color: #666;
+    text-decoration: underline;
+}
+
+.mpwpb-staff-appointments .mpwpb-appt-clear-link:hover {
+    color: #333;
+}
+
+@media (max-width: 600px) {
+    .mpwpb-staff-appointments .mpwpb-appt-filter {
+        align-items: stretch;
+    }
+
+    .mpwpb-staff-appointments .mpwpb-appt-filter label {
+        max-width: none;
+    }
+}
+
+/* ------------------------------------------------------------------ *
+ *  "My Appointment" -- toolbar / card table / pagination / stat row
+ * ------------------------------------------------------------------ */
+.mpwpb-appt-toolbar {
+    display: inline;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.mpwpb-appt-toolbar h3 {
+    margin: 0 0 4px;
+}
+
+.mpwpb-appt-subtitle {
+    margin: 0;
+    color: #777;
+    font-size: 13px;
+}
+
+.mpwpb-appt-toolbar .mpwpb-appt-filter {
+    margin: 20px 0px;
+}
+
+.mpwpb-appt-card {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 18px;
+    margin-bottom: 20px;
+}
+
+/* Ajax filter/pagination refresh -- fades the list while a request is in
+   flight instead of a jarring instant swap or full page reload. */
+#mpwpb-appt-list-wrap {
+    transition: opacity .15s ease;
+}
+
+#mpwpb-appt-list-wrap.mpwpb-appt-loading {
+    opacity: .5;
+    pointer-events: none;
+}
+
+.mpwpb-appt-table-scroll {
+    overflow-x: auto;
+}
+
+.mpwpb-appt-table {
+    margin-top: 0;
+    min-width: 720px;
+}
+
+.mpwpb-appt-table th {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #94a3b8;
+    background: transparent;
+    border-bottom: 1px solid #eef1f6;
+}
+
+.mpwpb-appt-table td {
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 13.5px;
+    color: #334155;
+}
+
+.mpwpb-appt-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.mpwpb-appt-id {
+    font-weight: 700;
+    color: #1d3fb8;
+}
+
+.mpwpb-appt-customer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mpwpb-appt-avatar {
+    flex: 0 0 auto;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #e8ecfb;
+    color: #1d3fb8;
+    font-size: 10.5px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mpwpb-appt-table .mpwpb-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.mpwpb-appt-table .mpwpb-status::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+/* Service Status inline editor -- lets a staff member update the status
+   directly from the appointments list, no separate page needed. */
+.mpwpb-appt-status-edit {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.mpwpb-appt-status-select {
+    padding: 6px 8px;
+    border: 1px solid #d8dce5;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 12.5px;
+    color: #333;
+    font-family: inherit;
+}
+
+.mpwpb-appt-status-select:focus {
+    outline: none;
+    border-color: #2196f3;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+.mpwpb-appt-status-save {
+    display: inline-block;
+    padding: 6px 12px;
+    border: 1px solid #d8dce5;
+    border-radius: 6px;
+    background: #fff;
+    color: #1d3fb8;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color .15s ease, color .15s ease;
+}
+
+.mpwpb-appt-status-save:hover {
+    border-color: #1d3fb8;
+}
+
+.mpwpb-appt-status-save:disabled {
+    opacity: .6;
+    cursor: default;
+}
+
+.mpwpb-appt-view-btn {
+    display: inline-block;
+    padding: 6px 14px;
+    border: 1px solid #d8dce5;
+    border-radius: 6px;
+    background: #fff;
+    color: #334155;
+    font-size: 12.5px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: border-color .15s ease, color .15s ease;
+}
+
+.mpwpb-appt-view-btn:hover {
+    border-color: #1d3fb8;
+    color: #1d3fb8;
+}
+
+/* Actions column now holds View + Notes side by side */
+.mpwpb-appt-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.mpwpb-appt-notes-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 1px solid #d8dce5;
+    border-radius: 6px;
+    background: #fff;
+    color: #555;
+    cursor: pointer;
+    transition: border-color .15s ease, color .15s ease;
+}
+
+.mpwpb-appt-notes-btn:hover {
+    border-color: #1d3fb8;
+    color: #1d3fb8;
+}
+
+.mpwpb-appt-notes-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    min-width: 15px;
+    height: 15px;
+    padding: 0 3px;
+    border-radius: 8px;
+    background: #e53e3e;
+    color: #fff;
+    font-size: 9.5px;
+    font-weight: 700;
+    line-height: 15px;
+    text-align: center;
+    box-shadow: 0 0 0 2px #fff;
+}
+
+/* Internal Notes modal thread -- reuses .mpwpb-modal/.mpwpb-modal-content
+   for the dialog chrome, these are just the thread-specific bits. */
+#mpwpb-notes-modal .mpwpb-notes-thread {
+    max-height: 260px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 14px 0;
+    padding-right: 2px;
+}
+
+#mpwpb-notes-modal .mpwpb-notes-empty {
+    margin: 0;
+    font-size: 13px;
+    color: #94a3b8;
+    text-align: center;
+    padding: 12px 0;
+}
+
+#mpwpb-notes-modal .mpwpb-note-bubble {
+    max-width: 85%;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    line-height: 1.4;
+}
+
+#mpwpb-notes-modal .mpwpb-note-own {
+    align-self: flex-end;
+    background: #e3f2fd;
+    color: #1e293b;
+    border-bottom-right-radius: 2px;
+}
+
+#mpwpb-notes-modal .mpwpb-note-other {
+    align-self: flex-start;
+    background: #f1f5f9;
+    color: #1e293b;
+    border-bottom-left-radius: 2px;
+}
+
+#mpwpb-notes-modal .mpwpb-note-meta {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+    margin-bottom: 2px;
+}
+
+#mpwpb-notes-modal .mpwpb-note-message {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+#mpwpb-notes-modal textarea#mpwpb-notes-input {
+    width: 100%;
+    resize: vertical;
+    min-height: 60px;
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 13.5px;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+#mpwpb-notes-modal textarea#mpwpb-notes-input:focus {
+    outline: none;
+    border-color: #2196f3;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+/* Send Review Request modal -- same dialog chrome as Internal Notes above,
+   plus a flat (non-bubble) history list since this is a one-way send log,
+   not a two-party conversation. */
+#mpwpb-review-request-modal .mpwpb-review-request-history {
+    max-height: 200px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 14px 0;
+    padding-right: 2px;
+}
+
+#mpwpb-review-request-modal .mpwpb-notes-empty {
+    margin: 0;
+    font-size: 13px;
+    color: #94a3b8;
+    text-align: center;
+    padding: 12px 0;
+}
+
+#mpwpb-review-request-modal .mpwpb-review-request-history-item {
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: #f8fafc;
+    border: 1px solid #eef0f3;
+    font-size: 13px;
+}
+
+#mpwpb-review-request-modal .mpwpb-note-meta {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+    margin-bottom: 2px;
+}
+
+#mpwpb-review-request-modal .mpwpb-note-message {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+#mpwpb-review-request-modal textarea#mpwpb-review-request-body {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.mpwpb-notes-error {
+    display: block;
+    font-size: 12px;
+    color: #c62828;
+    margin-top: -4px;
+}
+
+.mpwpb-appt-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid #f1f5f9;
+}
+
+.mpwpb-appt-pagination-summary {
+    font-size: 12.5px;
+    color: #94a3b8;
+}
+
+.mpwpb-appt-pagination-pages {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.mpwpb-appt-page-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 28px;
+    padding: 0 6px;
+    border-radius: 6px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #64748b;
+    text-decoration: none;
+}
+
+.mpwpb-appt-page-btn:hover {
+    background: #f1f5f9;
+}
+
+.mpwpb-appt-page-btn.is-active {
+    background: #1d3fb8;
+    color: #fff;
+}
+
+.mpwpb-appt-page-btn.is-disabled {
+    opacity: .4;
+    pointer-events: none;
+}
+
+.mpwpb-appt-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.mpwpb-appt-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    padding: 16px 18px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.mpwpb-appt-stat-icon {
+    flex: 0 0 auto;
+    width: 38px;
+    height: 38px;
+    border-radius: 9px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+}
+
+.mpwpb-appt-stat-icon-blue {
+    background: #e8ecfb;
+    color: #1d3fb8;
+}
+
+.mpwpb-appt-stat-icon-amber {
+    background: #fef3e2;
+    color: #b8720a;
+}
+
+.mpwpb-appt-stat-label {
+    display: block;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #94a3b8;
+    margin-bottom: 3px;
+}
+
+.mpwpb-appt-stat-value {
+    font-size: 15px;
+    color: #1e293b;
+}
+
+.mpwpb-appt-quick-action {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #0f172a;
+    border-radius: 10px;
+    padding: 16px 18px;
+    text-decoration: none;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    transition: background-color .15s ease;
+}
+
+.mpwpb-appt-quick-action:hover {
+    background: #1e293b;
+}
+
+.mpwpb-appt-quick-action-icon {
+    flex: 0 0 auto;
+    width: 38px;
+    height: 38px;
+    border-radius: 9px;
+    background: rgba(255, 255, 255, .12);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+}
+
+.mpwpb-appt-quick-action-label {
+    display: block;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: rgba(255, 255, 255, .6);
+    margin-bottom: 3px;
+}
+
+.mpwpb-appt-quick-action strong {
+    color: #fff;
+    font-size: 14px;
+}
+
+.mpwpb-appt-quick-action > .fa-chevron-right {
+    margin-left: auto;
+    color: rgba(255, 255, 255, .5);
+    font-size: 12px;
+}
+
+@media (max-width: 900px) {
+    .mpwpb-appt-stats {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .mpwpb-appt-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+/* Post-status colors these general .mpwpb-status pills didn't have yet --
+   the existing set (completed/processing/pending/cancelled/on-hold) covers
+   booking order statuses, not WP post statuses like "My Service" needs. */
+.mpwpb-status-publish {
+    background-color: #dff0d8;
+    color: #3c763d;
+}
+
+.mpwpb-status-draft {
+    background-color: #f5f5f5;
+    color: #777;
+}
+
+/* ------------------------------------------------------------------ *
+ *  "My Service" -- toolbar / stat row / card table / pagination
+ * ------------------------------------------------------------------ */
+.mpwpb-service-toolbar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.mpwpb-service-toolbar h3 {
+    margin: 0 0 4px;
+}
+
+.mpwpb-service-subtitle {
+    margin: 0;
+    color: #777;
+    font-size: 13px;
+}
+
+.mpwpb-service-new-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 auto;
+    background: #1d3fb8;
+    color: #fff;
+    font-size: 13.5px;
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color .15s ease;
+}
+
+.mpwpb-service-new-btn:hover {
+    background: #17348f;
+}
+
+.mpwpb-service-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.mpwpb-service-stat-card {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    padding: 14px 16px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.mpwpb-service-stat-label {
+    display: block;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #94a3b8;
+    margin-bottom: 6px;
+}
+
+.mpwpb-service-stat-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.mpwpb-service-stat-value-green {
+    color: #3c763d;
+}
+
+.mpwpb-service-stat-value-muted {
+    color: #94a3b8;
+}
+
+.mpwpb-service-card {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 18px;
+}
+
+.mpwpb-service-table-scroll {
+    overflow-x: auto;
+}
+
+.mpwpb-service-table {
+    margin-top: 0;
+    min-width: 620px;
+}
+
+.mpwpb-service-table th {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #94a3b8;
+    background: transparent;
+    border-bottom: 1px solid #eef1f6;
+}
+
+.mpwpb-service-table td {
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 13.5px;
+    color: #334155;
+}
+
+.mpwpb-service-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.mpwpb-service-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.mpwpb-service-icon {
+    flex: 0 0 auto;
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    background: #1d3fb8;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.mpwpb-service-name {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.mpwpb-service-id {
+    font-size: 11.5px;
+    color: #94a3b8;
+    margin-top: 1px;
+}
+
+.mpwpb-service-category-pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: #e8ecfb;
+    color: #1d3fb8;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.mpwpb-service-category-empty {
+    color: #cbd5e1;
+}
+
+@media (max-width: 900px) {
+    .mpwpb-service-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .mpwpb-service-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .mpwpb-service-stats {
+        grid-template-columns: 1fr;
+    }
+}
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
@@ -482,14 +2170,6 @@
     .mpwpb-bookings-table {
         display: block;
         overflow-x: auto;
-    }
-    
-    .mpwpb-form-row {
-        flex-direction: column;
-    }
-    
-    .mpwpb-form-group {
-        min-width: 100%;
     }
 }
 

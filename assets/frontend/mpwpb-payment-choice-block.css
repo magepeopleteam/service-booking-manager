@@ -1,0 +1,59 @@
+.mpwpb-payment-choice-cards {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 12px;
+	margin: 15px;
+}
+@media (max-width: 480px) {
+	.mpwpb-payment-choice-cards {
+		grid-template-columns: 1fr;
+	}
+}
+.mpwpb-payment-choice-cards.is-updating {
+	opacity: 0.6;
+	pointer-events: none;
+}
+.mpwpb-payment-choice-card {
+	border: 1px solid #e0e0e0;
+	border-radius: 10px;
+	padding: 14px 16px;
+	cursor: pointer;
+	background: #fff;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.mpwpb-payment-choice-card:hover {
+	border-color: var(--mpwpb_color_theme, #3858e9);
+}
+.mpwpb-payment-choice-card:focus-visible {
+	outline: 2px solid var(--mpwpb_color_theme, #3858e9);
+	outline-offset: 2px;
+}
+.mpwpb-payment-choice-card.is-selected {
+	border-color: var(--mpwpb_color_theme, #3858e9);
+	box-shadow: 0 0 0 1px var(--mpwpb_color_theme, #3858e9) inset;
+}
+.mpwpb-payment-choice-eyebrow {
+	display: block;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: #8a8a8a;
+	margin-bottom: 6px;
+}
+.mpwpb-payment-choice-title {
+	font-size: 15px;
+	font-weight: 700;
+	color: #1a1a1a;
+	margin-bottom: 6px;
+}
+.mpwpb-payment-choice-price {
+	font-size: 14px;
+	font-weight: 700;
+	color: var(--mpwpb_color_theme, #3858e9);
+}
+.mpwpb-payment-choice-price-suffix {
+	font-weight: 400;
+	font-size: 13px;
+	color: inherit;
+}

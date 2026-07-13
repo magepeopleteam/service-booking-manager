@@ -9,6 +9,26 @@ function mpwpb_price_calculation($this) {
         current_price = !isNaN(current_price) && current_price > 0 ? current_price : 0;
         price = price + current_price * qty ;
     });
+
+    // Happy Hours: mirrors MPWPB_Happy_Hours_Helper on the server (the real
+    // charge is already discounted there via the selected slot's time) --
+    // this just reflects the same discount here instantly, so the customer
+    // isn't stuck watching an undiscounted total until they reach checkout.
+    // Only the base service price above is discounted, never extra services
+    // added below, matching that same server-side rule exactly.
+    let $selectedSlot = parent.find('.mpwpb_date_time_area .mpwpb_time_btn.mpwpb_active_time');
+    if ($selectedSlot.length) {
+        let hhType = $selectedSlot.attr('data-hh-type');
+        let hhValue = parseFloat($selectedSlot.attr('data-hh-value'));
+        if (hhType && !isNaN(hhValue) && hhValue > 0) {
+            if (hhType === 'fixed') {
+                price = Math.max(0, price - hhValue);
+            } else {
+                price = Math.max(0, price - (price * (hhValue / 100)));
+            }
+        }
+    }
+
     parent.find('.mpwpb_extra_service_item').each(function () {
         let service_name = jQuery(this).find('[name="mpwpb_extra_service_type[]"]').val();
         if (service_name) {
@@ -30,6 +50,13 @@ function mpwpb_price_calculation($this) {
 
     parent.find('.mpwpb_total_bill').html(mpwpb_price_format(price));
 
+    // Static template's "what you've picked" summary (#mpwpb_selected_summary,
+    // static_registration.php) -- defined in mpwpb-booking-tree.js, which
+    // loads after this file; guarded since this function also runs on
+    // templates/pages that don't have that summary container at all.
+    if (typeof updateSelectedSummary === 'function') {
+        updateSelectedSummary(parent);
+    }
 }
 //Registration
 (function ($) {
@@ -291,20 +318,61 @@ function mpwpb_price_calculation($this) {
         let current = $(this);
         let parent = current.closest('div.mpwpb_registration');
         let category = parseInt(current.data('category'));
+        let service = parseInt(current.data('service'));
         load_service_tab(parent);
-        if (category && category > 0) {
-            parent.find('.mpwpb_category_item').each(function () {
-                if (parseInt($(this).data('category')) === category) {
-                    $(this).trigger('click');
-                }
-            });
-        } else {
-            let service = parseInt(current.data('service'));
+        // A leaf service box (data-service set) should pre-select that exact
+        // service directly -- checked before the category-only branch, since
+        // every real service leaf also carries its parent data-category and
+        // would otherwise only reveal the category without selecting anything.
+        if (service && service > 0) {
             parent.find('.mpwpb_service_item').each(function () {
                 if (parseInt($(this).data('service')) === service) {
                     $(this).find('.mpwpb_service_button').trigger('click');
                 }
             });
+        } else if (category && category > 0) {
+            parent.find('.mpwpb_category_item').each(function () {
+                if (parseInt($(this).data('category')) === category) {
+                    $(this).trigger('click');
+                }
+            });
+        }
+    });
+    // "Reorder" from a past booking (Frontend/MPWPB_User_Dashboard.php's
+    // Reorder link -> ?mpwpb_reorder={booking_id} -> MPWPB_Static_Template::
+    // get_reorder_prefill() -> templates/registration/static_registration.php
+    // inline-scripts mpwpbReorderPrefill). Reuses the exact click handler
+    // above -- .mpwpb-tree-service[data-service] is a subset of .mpwpb_item_box,
+    // so firing a synthetic click on it drives the real selection exactly like
+    // a real tap would, no separate checkbox/state-seeding logic needed. Date
+    // and extra services are intentionally left for the customer to pick fresh.
+    //
+    // This file is enqueued without in_footer (loads in <head>), so the
+    // service tree markup this needs to find doesn't exist yet at the point
+    // this script tag executes -- wrapped in its own ready handler (safe to
+    // nest regardless of whether the surrounding code above is already
+    // inside one) rather than assumed to run after the DOM is built.
+    $(function () {
+        if (typeof mpwpbReorderPrefill === 'undefined' || !mpwpbReorderPrefill) {
+            return;
+        }
+        // A booking can contain more than one selected service (the wizard's
+        // service step is multi-select) -- re-select every one that was in
+        // the original order, not just the first.
+        if ($.isArray(mpwpbReorderPrefill.service_keys)) {
+            $.each(mpwpbReorderPrefill.service_keys, function (i, key) {
+                var $mpwpbReorderNode = $('.mpwpb-tree-service[data-service="' + key + '"]');
+                if ($mpwpbReorderNode.length) {
+                    $mpwpbReorderNode.trigger('click');
+                }
+            });
+        }
+        if (mpwpbReorderPrefill.staff_id) {
+            // The staff <select> already exists in the DOM from page load --
+            // only its wrapping #mpwpb_staff_member_booking_area is
+            // visually hidden/fadeIn'd as the wizard steps through, so this
+            // doesn't need to wait for that step to become visible.
+            $('[name="mpwpb_staff_member_booking"]').val(mpwpbReorderPrefill.staff_id);
         }
     });
     //=========sub category=============//
@@ -522,41 +590,72 @@ function mpwpb_price_calculation($this) {
         $(".mpwpb_ex_service_button_remove").css({ 'display': 'none' });
 
         $("#mpwpb_staff_member_booking_area").hide();
-        if ($('#mpwpb_staff_member_holder').find('.mpwp_select_staff_grid').length > 0) {
+        // #mpwpb_staff_member_booking_area is only ever rendered server-side
+        // (date_time_select.php) when this service has staff selection
+        // enabled -- checking for it directly, instead of for staff CARDS
+        // already being loaded into #mpwpb_staff_member_holder (which can't
+        // happen yet: that AJAX only fires after a date/time is picked,
+        // i.e. strictly later than this handler), is what actually reflects
+        // "does this service need a staff step" at this point in the flow.
+        if ($('#mpwpb_staff_member_booking_area').length > 0) {
             $("#mpwpb_date_time_next_btn_id").hide();
             $("#mpwpb_show_hide_staff_member").fadeIn();
+        } else {
+            $("#mpwpb_date_time_next_btn_id").fadeIn();
         }
 
 
     });
+    // Tracked on the registration wrapper so updateSelectedSummary()
+    // (mpwpb-booking-tree.js) knows which step is active without needing
+    // its own copy of this show/hide logic -- the summary is deliberately
+    // hidden on the Service step (the tree above it already shows what's
+    // selected) and only shown from Date & Time onward.
     function load_date_time_tab(parent) {
         parent.find('.mpwpb_date_time_area,.next_date_area').slideDown(350);
         parent.find('.all_service_area,.mpwpb_order_proceed_area,.next_service_area').slideUp(300)
         mpwpb_load_bg_image();
+        parent.data('mpwpbStep', 'date_time');
+        if (typeof updateSelectedSummary === 'function') { updateSelectedSummary(parent); }
     }
     function load_service_tab(parent) {
         parent.find('.all_service_area,.next_service_area').slideDown(350);
         parent.find('.mpwpb_date_time_area,.mpwpb_order_proceed_area,.next_date_area').slideUp(300);
         mpwpb_load_bg_image();
+        parent.data('mpwpbStep', 'service');
+        if (typeof updateSelectedSummary === 'function') { updateSelectedSummary(parent); }
     }
     function load_order_proceed_tab(parent) {
         parent.find('.mpwpb_order_proceed_area').slideDown(350);
         parent.find('.all_service_area,.mpwpb_date_time_area,.next_date_area,.next_service_area').slideUp(300)
         mpwpb_load_bg_image();
+        parent.data('mpwpbStep', 'checkout');
+        if (typeof updateSelectedSummary === 'function') { updateSelectedSummary(parent); }
     }
     //==========date============//
     $(document).on('change', 'div.mpwpb_registration [name="mpwpb_date"]', function () {
         let parent = $(this).closest('div.mpwpb_registration');
         let date = parent.find('[name="mpwpb_date"]').val();
+        // mpwpb_recurring_booking.js's displayRecurringDates() also writes into
+        // this same #mpwpd_selected_date <h6> (it lists every occurrence, not
+        // just one) -- when recurring has generated more than one date, leave
+        // its content alone instead of clobbering it back down to a single date.
+        let recurringDatesCount = parent.find('#mpwpb_recurring_dates_list li[data-date-time!=""]').length;
         if (date) {
-            let current_date = parent.find('.mpwpb_date_time_area [data-radio-check="' + date + '"]').data('date');
-            parent.find('.mpwpb_summary_item[data-date]').slideDown('fast').find('h6').html(current_date);
+            parent.find('.mpwpb_summary_item[data-date]').slideDown('fast');
+            if (recurringDatesCount <= 1) {
+                let current_date = parent.find('.mpwpb_date_time_area [data-radio-check="' + date + '"]').data('date');
+                parent.find('.mpwpb_summary_item[data-date]').find('h6').html(current_date);
+                parent.find('#mpwpb_staff_selected_datetime').text(current_date);
+            }
         } else {
             parent.find('.mpwpb_summary_item[data-date]').slideUp('fast');
+            parent.find('#mpwpb_staff_selected_datetime').text('—');
         }
     });
     $(document).on('click', 'div.mpwpb_registration .mpwpb_date_time_next', function () {
-        let parent = $(this).closest('div.mpwpb_registration');
+        let $nextBtn = $(this);
+        let parent = $nextBtn.closest('div.mpwpb_registration');
         let date = parent.find('[name="mpwpb_date"]').val();
 
         let is_recurring_on = 'off';
@@ -624,6 +723,7 @@ function mpwpb_price_calculation($this) {
                     count++;
                 }
             });
+            var isCustomPaymentMode = !!mpwpb_ajax.is_custom_payment_mode;
             $.ajax({
                 type: 'POST',
                 url: mpwpb_ajax.ajax_url,
@@ -642,20 +742,193 @@ function mpwpb_price_calculation($this) {
                     "mpwpb_extra_service_type": mpwpb_extra_service_type,
                     "mpwpb_extra_service_qty": mpwpb_extra_service_qty,
                     "mpwpb_staff_member": staff_member,
+                    // Full/Partial is now chosen on the checkout page itself (see
+                    // MPWPB_Partial_Payment::render_choice_radio()), not here --
+                    // always add to cart as Full; the checkout-page toggle updates
+                    // the cart/native-cart item's mpwpb_payment_choice afterwards.
+                    "mpwpb_payment_choice": 'full',
                     nonce: mpwpb_ajax.nonce
                 },
                 beforeSend: function () {
-                    mpwpb_loader(parent);
+                    // Button-level feedback in addition to the step-loader/full-page
+                    // overlay below -- add_to_cart (plus, in Custom mode, the native
+                    // billing form fetch that follows it) takes a couple of seconds,
+                    // and without this the button just sits there looking clickable/
+                    // unresponsive, which reads as broken rather than "working".
+                    $nextBtn.data('mpwpb-original-html', $nextBtn.html());
+                    $nextBtn.prop('disabled', true).addClass('mpwpb-cta-loading')
+                        .html('<i class="fas fa-spinner fa-spin _mR_xs"></i> ' + (mpwpb_ajax.processing_text || 'Please wait...'));
+                    if (isCustomPaymentMode) {
+                        // Custom Payment stays in the same popup afterwards (see the
+                        // success handler below), so ease straight into the Checkout
+                        // step now -- the same smooth slide every other step change
+                        // uses -- instead of freezing the whole screen behind the
+                        // full-page loader while mpwpb_add_to_cart (and the native
+                        // billing form fetch that follows it) run in the background.
+                        // A small local spinner in that step's own area is enough.
+                        // It's still empty at this point though (the fetched form
+                        // hasn't arrived yet), so without a floor height the spinner
+                        // has almost nothing to center inside and ends up pinned to
+                        // the top instead of looking centered on the page -- the
+                        // temporary min-height is cleared again once real content
+                        // replaces it (mpwpb_load_native_checkout_form() below).
+                        load_order_proceed_tab(parent);
+                        parent.find('.mpwpb_order_proceed_area').css('min-height', '260px');
+                        mpwpb_loader(parent.find('.mpwpb_order_proceed_area'));
+                    } else {
+                        // WooCommerce mode navigates away entirely on success, so
+                        // there's no "next step" to ease into -- the full-page
+                        // overlay (mpwpb_loaderBody, position:fixed on <body>) is
+                        // appropriate here.
+                        mpwpb_loaderBody();
+                    }
                 },
                 success: function (data) {
-                    window.location.href = data;
+                    // Custom Payment (WooCommerce off): stay in the same popup and
+                    // load the native billing form into the "Checkout" step instead
+                    // of navigating away -- mpwpb_add_to_cart still returns a URL
+                    // string here (unchanged contract), it's just not used in this
+                    // mode; the cart item it already stored server-side is what the
+                    // fetched form reads.
+                    if (isCustomPaymentMode) {
+                        mpwpb_load_native_checkout_form(parent);
+                    } else {
+                        window.location.href = data;
+                    }
                 },
-                error: function (response) {
+                error: function () {
+                    if (isCustomPaymentMode) {
+                        parent.find('.mpwpb_order_proceed_area').css('min-height', '');
+                        mpwpb_loaderRemove(parent.find('.mpwpb_order_proceed_area'));
+                    } else {
+                        mpwpb_loaderRemove();
+                    }
+                },
+                complete: function () {
+                    // Runs after success or error alike -- on WC-mode success the
+                    // page is navigating away anyway so this is moot, but on error
+                    // (either mode) or Custom-mode success (same popup, customer
+                    // could still go back a step) the button must not stay stuck
+                    // disabled/spinning.
+                    $nextBtn.prop('disabled', false).removeClass('mpwpb-cta-loading');
+                    if ($nextBtn.data('mpwpb-original-html') !== undefined) {
+                        $nextBtn.html($nextBtn.data('mpwpb-original-html'));
+                    }
                 }
             });
         } else {
             mpwpb_alert($(this));
         }
+    });
+    // GDPR "remember my info" cookie (Frontend/MPWPB_Gdpr_Cookie_Banner.php) --
+    // only ever read/written when the visitor has explicitly accepted the
+    // cookie banner (window.mpwpbGdprConsentAccepted(), exposed by
+    // mpwpb-gdpr-cookie-banner.js -- only enqueued at all when the GDPR
+    // feature is on, hence the typeof guard everywhere it's used below).
+    function mpwpb_gdpr_get_cookie(name) {
+        var match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+        return match ? decodeURIComponent(match[1]) : null;
+    }
+    function mpwpb_gdpr_set_cookie(name, value, days) {
+        var expires = new Date();
+        expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+        document.cookie = name + '=' + encodeURIComponent(value) + ';expires=' + expires.toUTCString() + ';path=/;SameSite=Lax';
+    }
+    function mpwpb_gdpr_prefill_billing($scope) {
+        if (typeof window.mpwpbGdprConsentAccepted !== 'function' || !window.mpwpbGdprConsentAccepted()) {
+            return;
+        }
+        var raw = mpwpb_gdpr_get_cookie('mpwpb_customer_info');
+        if (!raw) {
+            return;
+        }
+        var info;
+        try {
+            info = JSON.parse(raw);
+        } catch (e) {
+            return;
+        }
+        var fieldMap = {
+            first_name: 'mpwpb_billing_first_name',
+            last_name: 'mpwpb_billing_last_name',
+            email: 'mpwpb_billing_email',
+            phone: 'mpwpb_billing_phone',
+            address_1: 'mpwpb_billing_address_1'
+        };
+        $.each(fieldMap, function (infoKey, fieldName) {
+            var $field = $scope.find('[name="' + fieldName + '"]');
+            if ($field.length && !$field.val() && info[infoKey]) {
+                $field.val(info[infoKey]);
+            }
+        });
+    }
+    function mpwpb_gdpr_save_billing_cookie($form) {
+        if (typeof window.mpwpbGdprConsentAccepted !== 'function' || !window.mpwpbGdprConsentAccepted()) {
+            return;
+        }
+        var info = {
+            first_name: $form.find('[name="mpwpb_billing_first_name"]').val() || '',
+            last_name: $form.find('[name="mpwpb_billing_last_name"]').val() || '',
+            email: $form.find('[name="mpwpb_billing_email"]').val() || '',
+            phone: $form.find('[name="mpwpb_billing_phone"]').val() || '',
+            address_1: $form.find('[name="mpwpb_billing_address_1"]').val() || ''
+        };
+        mpwpb_gdpr_set_cookie('mpwpb_customer_info', JSON.stringify(info), 30);
+    }
+    function mpwpb_load_native_checkout_form(parent) {
+        var $target = parent.find('.mpwpb_order_proceed_area');
+        $.ajax({
+            type: 'POST',
+            url: mpwpb_ajax.ajax_url,
+            data: {
+                action: 'mpwpb_native_checkout_form',
+                nonce: mpwpb_ajax.nonce
+            },
+            success: function (response) {
+                mpwpb_loaderRemove();
+                $target.css('min-height', '');
+                if (response && response.success) {
+                    $target.html(response.data.html);
+                    mpwpb_gdpr_prefill_billing($target);
+                    load_order_proceed_tab(parent);
+                } else {
+                    $target.html('<p class="mpwpb-checkout-error">' + ((response && response.data && response.data.message) ? response.data.message : 'Something went wrong.') + '</p>');
+                    load_order_proceed_tab(parent);
+                }
+            },
+            error: function () {
+                mpwpb_loaderRemove();
+                $target.css('min-height', '');
+                $target.html('<p class="mpwpb-checkout-error">Request failed. Please try again.</p>');
+                load_order_proceed_tab(parent);
+            }
+        });
+    }
+    $(document).on('submit', 'div.mpwpb_registration .mpwpb-checkout-form', function (e) {
+        e.preventDefault();
+        var $form = $(this);
+        var parent = $form.closest('div.mpwpb_registration');
+        var $btn = $form.find('.mpwpb-checkout-submit');
+        var $error = $form.siblings('.mpwpb-checkout-error');
+        $error.hide().text('');
+        $btn.prop('disabled', true);
+        $.post(mpwpb_ajax.ajax_url, $form.serialize()).done(function (response) {
+            if (response && response.success && response.data && response.data.redirect) {
+                mpwpb_gdpr_save_billing_cookie($form);
+                window.location.href = response.data.redirect;
+            } else {
+                $btn.prop('disabled', false);
+                $error.text((response && response.data && response.data.message) ? response.data.message : 'Something went wrong.').show();
+            }
+        }).fail(function () {
+            $btn.prop('disabled', false);
+            $error.text('Request failed. Please try again.').show();
+        });
+    });
+    $(document).on('click', 'div.mpwpb_registration [data-checkout-back-to-date]', function () {
+        let parent = $(this).closest('div.mpwpb_registration');
+        $("#mpwpb_progress_checkout").removeClass('active');
+        load_date_time_tab(parent);
     });
     $(document).on('click', 'div.mpwpb_registration .mpwpb_date_time_prev', function () {
         let parent = $(this).closest('div.mpwpb_registration');
@@ -701,7 +974,18 @@ function mpwpb_price_calculation($this) {
     });
 
     $(document).on('click', '#mpwpb_show_hide_staff_member', function () {
-        $(this).hide();
+        // Purely client-side (no AJAX -- the staff cards are already in the
+        // DOM from page load, see mpwpbReorderPrefill's comment above), but
+        // the fadeIn()/hide() swap plus whatever staff photos are loading for
+        // the first time as this area becomes visible can still take a
+        // moment -- same button-level "something is happening" feedback as
+        // "Proceed to Checkout", just on a short fixed timer since there's no
+        // request/response to hang it off of.
+        let $staffBtn = $(this);
+        $staffBtn.data('mpwpb-original-html', $staffBtn.html());
+        $staffBtn.prop('disabled', true).addClass('mpwpb-cta-loading')
+            .html('<i class="fas fa-spinner fa-spin _mR_xs"></i> ' + (mpwpb_ajax.processing_text || 'Please wait...'));
+
         $("#mpwpb_date_time_next_btn_id").fadeIn();
         $("#mpwpb_progress_staff").addClass('active');
         $("#mpwpb_datetime_holder").hide();
@@ -709,6 +993,19 @@ function mpwpb_price_calculation($this) {
 
         $("#mpwpb_display_service_btn").hide();
         $("#mpwpb_display_date_time").fadeIn();
+
+        // Mirror the running total into the staff step's own summary --
+        // #mpwpd_all_total_bill is the single element mpwpb_price_calculation()
+        // already keeps up to date, this just copies its current text.
+        let parent = $staffBtn.closest('div.mpwpb_registration');
+        parent.find('#mpwpb_staff_selected_total').text(parent.find('#mpwpd_all_total_bill').first().text());
+
+        setTimeout(function () {
+            $staffBtn.hide().prop('disabled', false).removeClass('mpwpb-cta-loading');
+            if ($staffBtn.data('mpwpb-original-html') !== undefined) {
+                $staffBtn.html($staffBtn.data('mpwpb-original-html'));
+            }
+        }, 400);
     });
 
     $(document).on('click', '.mpwpb_get_date', function () {
@@ -733,7 +1030,12 @@ function mpwpb_price_calculation($this) {
 
         $("#mpwpb_staff_member_booking").val( staffId );
 
-        // $("#mpwpb_progress_staff").addClass('active');
+        // Only one progress circle should read as "active" at a time --
+        // #mpwpb_progress_staff was turned on when this step was entered
+        // (#mpwpb_show_hide_staff_member click handler) and never turned
+        // back off, so picking a staff member used to leave both Staff and
+        // Checkout marked active simultaneously.
+        $("#mpwpb_progress_staff").removeClass('active');
         $("#mpwpb_progress_checkout").addClass('active');
     });
 

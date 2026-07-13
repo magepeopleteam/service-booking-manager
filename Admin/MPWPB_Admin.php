@@ -20,9 +20,20 @@
 			private function load_file(): void {
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Taxonomy.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Dummy_Import.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Hidden_Product.php';
+				if (MPWPB_Global_Function::is_wc_payment_mode()) {
+					require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Hidden_Product.php';
+				}
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_CPT.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Status.php';
+				//*************Coupon Engine*****************//
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Coupon_CPT.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Coupon_Settings.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/coupon-settings/General.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/coupon-settings/Discount.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/coupon-settings/Services.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/coupon-settings/Restrictions.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/coupon-settings/Scheduling_Staff.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/coupon-settings/Usage_Limits.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Reviews_Admin.php';
 		        require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Extended_Settings.php';
 
@@ -43,15 +54,35 @@
 
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Service_Settings.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Staff_Member.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Tax_Settings.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Happy_Hours.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings-modern/MPWPB_Categories_Services_Modern.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings-modern/MPWPB_Extra_Service_Modern.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings-modern/MPWPB_Date_Time_Modern.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings-modern/MPWPB_Service_Features_Modern.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings-modern/MPWPB_Settings_Modern.php';
 
 				//****************Woocommerce Checkout*********************** */
-				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Settings.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Fields.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Billing.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Shipping.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Order.php';
+				if (MPWPB_Global_Function::is_wc_payment_mode()) {
+					require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Settings.php';
+					require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Fields.php';
+					require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Billing.php';
+					require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Shipping.php';
+					require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Order.php';
+				}
+				//****************Native (non-WooCommerce) Checkout*********************** */
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Native_Order.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Native_Checkout_Settings.php';
+				//****************GDPR*********************** */
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Gdpr_Settings.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Gdpr_Requests.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Analytics_Dashboard.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Analytics_Ajax.php';
+				//****************Pro-only menu: locked teaser when Pro is inactive*********************** */
+				// Required last so its no-explicit-position menu item naturally
+				// appends after every other item above (Service List/Coupons/
+				// Status/Reviews/Staff Members/Settings/Analytics), landing last.
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Pro_Locked_Menus.php';
 			}
 			public function flush_rewrite() {
 				flush_rewrite_rules();
@@ -60,6 +91,9 @@
 			public function disable_gutenberg($current_status, $post_type) {
 				$user_status = MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'disable_block_editor', 'yes');
 				if ($post_type === MPWPB_Function::get_cpt() && $user_status == 'yes') {
+					return false;
+				}
+				if ($post_type === 'mpwpb_coupon') {
 					return false;
 				}
 				return $current_status;

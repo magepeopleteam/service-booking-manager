@@ -115,8 +115,8 @@ if (!class_exists('MPWPB_Analytics_Ajax')) {
             
             return array(
                 'total_bookings' => $total_bookings,
-                            'total_revenue' => wp_kses_post(wc_price($total_revenue)),
-            'avg_booking_value' => wp_kses_post(wc_price($avg_booking_value)),
+                            'total_revenue' => wp_kses_post(MPWPB_Global_Function::format_price($total_revenue)),
+            'avg_booking_value' => wp_kses_post(MPWPB_Global_Function::format_price($avg_booking_value)),
                 'conversion_rate' => round($conversion_rate, 2) . '%'
             );
         }
@@ -196,7 +196,7 @@ if (!class_exists('MPWPB_Analytics_Ajax')) {
                         $query->the_post();
                         $order_id = get_post_meta(get_the_ID(), 'mpwpb_order_id', true);
                         if ($order_id) {
-                            $order = wc_get_order($order_id);
+                            $order = MPWPB_Global_Function::get_order($order_id);
                                                     if ($order && $order->get_id() && $order->get_status() !== 'trash') {
                             $valid_bookings++;
                         }
@@ -288,7 +288,7 @@ if (!class_exists('MPWPB_Analytics_Ajax')) {
                     $query->the_post();
                     $order_id = get_post_meta(get_the_ID(), 'mpwpb_order_id', true);
                     if ($order_id) {
-                        $order = wc_get_order($order_id);
+                        $order = MPWPB_Global_Function::get_order($order_id);
                         if ($order && $order->get_id() && $order->get_status() !== 'trash') {
                             $service_id = get_post_meta(get_the_ID(), 'mpwpb_id', true);
                             if ($service_id) {
@@ -405,7 +405,7 @@ if (!class_exists('MPWPB_Analytics_Ajax')) {
                     $booking_date = get_post_meta($booking_id, 'mpwpb_date', true);
                     $order_id = get_post_meta($booking_id, 'mpwpb_order_id', true);
                     $order_status = get_post_meta($booking_id, 'mpwpb_order_status', true);
-                    $order = $order_id ? wc_get_order($order_id) : null;
+                    $order = $order_id ? MPWPB_Global_Function::get_order($order_id) : null;
                     // Only include bookings with valid, non-trashed orders
                     if ($order && $order->get_id() && $order->get_status() !== 'trash') {
                         $customer_name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
@@ -507,7 +507,7 @@ if (!class_exists('MPWPB_Analytics_Ajax')) {
                     
                     // Only include bookings with valid, non-trashed orders
                     if ($order_id) {
-                        $order = wc_get_order($order_id);
+                        $order = MPWPB_Global_Function::get_order($order_id);
                         if ($order && $order->get_id() && $order->get_status() !== 'trash') {
                             $service_id = get_post_meta($booking_id, 'mpwpb_id', true);
                             $service_name = get_the_title($service_id);
@@ -571,7 +571,7 @@ if (!class_exists('MPWPB_Analytics_Ajax')) {
                     $query->the_post();
                     $order_id = get_post_meta(get_the_ID(), 'mpwpb_order_id', true);
                     if ($order_id) {
-                        $order = wc_get_order($order_id);
+                        $order = MPWPB_Global_Function::get_order($order_id);
                         if ($order && $order->get_id() && $order->get_status() !== 'trash') {
                             $valid_bookings++;
                         }
@@ -628,7 +628,7 @@ if (!class_exists('MPWPB_Analytics_Ajax')) {
                     $query->the_post();
                     $order_id = get_post_meta(get_the_ID(), 'mpwpb_order_id', true);
                     if ($order_id) {
-                        $order = wc_get_order($order_id);
+                        $order = MPWPB_Global_Function::get_order($order_id);
                         if ($order && $order->get_status() !== 'trash' && ($order->get_status() === 'completed' || $order->get_status() === 'processing')) {
                             $total_revenue += $order->get_total();
                         }

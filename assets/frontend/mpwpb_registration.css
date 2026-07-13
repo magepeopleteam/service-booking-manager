@@ -545,6 +545,85 @@ div.registration_tab_item {
     padding: 20px 0;
   }
 }
+.mpwpb-payment-choice-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 90%;
+  margin: 10px 0;
+  padding: 20px !important;
+}
+@media (max-width: 480px) {
+  .mpwpb-payment-choice-cards {
+    grid-template-columns: 1fr;
+  }
+}
+.mpwpb-payment-choice-card {
+  position: relative;
+  display: block !important;
+  width: 100%;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 20px !important;
+  cursor: pointer;
+  background: #fff;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.mpwpb-payment-choice-card:hover {
+  border-color: var(--mpwpb_color_theme, #3858e9);
+}
+.mpwpb-payment-choice-card:has(input:checked) {
+  border-color: var(--mpwpb_color_theme, #3858e9);
+  box-shadow: 0 0 0 1px var(--mpwpb_color_theme, #3858e9) inset;
+}
+.mpwpb-payment-choice-card-input {
+  position: absolute !important;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+.mpwpb-payment-choice-card-eyebrow {
+  display: block !important;
+  width: 100%;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8a8a8a;
+  margin: 0 0 6px;
+}
+.mpwpb-payment-choice-card-title {
+  display: block !important;
+  width: 100%;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 6px;
+}
+.mpwpb-payment-choice-card-price {
+  display: block !important;
+  width: 100%;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--mpwpb_color_theme, #3858e9);
+  margin: 0;
+}
+.mpwpb-payment-choice-card-price-suffix {
+  font-weight: 400;
+  font-size: 13px;
+  color: inherit;
+}
+/* "Proceed to Checkout" button while add_to_cart (and, in Custom Payment
+   mode, the native checkout form fetch that follows it) is in flight --
+   without this the button looks clickable/idle for the couple of seconds
+   that AJAX round trip takes. */
+.mpwpb-cta-loading {
+  opacity: 0.7 !important;
+  cursor: not-allowed !important;
+  pointer-events: none;
+}
 .mpwpb-default-template .main {
   width: 100%;
 }
@@ -711,7 +790,7 @@ div.registration_tab_item {
   background-color: transparent;
   padding: 10px 0;
 }
-.mpwpb-default-template   .mpwpb_date_carousel header h3 {
+.mpwpb-default-template   .mpwpb_date_carousel h3.mpwpb_date_staff_select {
   font-size: 16px;
   color: var(--mpwpb_color_theme);
   font-weight: 700;
@@ -847,9 +926,9 @@ div.registration_tab_item {
 }
 .mpwpb_registration > header .template-header {
   width: 100%;
-  max-width: 1160px;
+  max-width: 1440px;
   margin: auto;
-  padding: 20vh 10px;
+  padding: 10vh 10px;
 }
 .mpwpb_registration > header .template-header .header-content {
   z-index: 1;
@@ -864,7 +943,7 @@ div.registration_tab_item {
 }
 .mpwpb_registration > header .view_more{
   color: #fff;
-  margin-top: 20px;
+  margin-top: 0px;
 }
 .mpwpb_registration > header  h2, .mpwpb_registration > header  p {
   color: #fff;
@@ -882,14 +961,31 @@ div.registration_tab_item {
 .mpwpb_registration > header  ul.features li i {
   margin-right: 10px;
 }
-.mpwpb_registration > header  .popup-features .mpwpb_popup_main_area {
+/* Not scoped under "header" (or .mpwpb_registration at all) anymore --
+   assets/frontend/mpwpb-service-page-modern.js relocates
+   #mpwpb_view_more_popup (.popup-features) to a direct child of <body> on
+   load, to escape header's overflow:hidden trapping its position:fixed
+   under the sidebar/menu. Class selectors alone are enough to keep matching
+   regardless of where in the DOM it now lives -- including its own internal
+   ul.features list, which used to inherit its list-style/spacing reset
+   purely from the header-scoped rule above (".mpwpb_registration > header
+   ul.features"), now out of reach once relocated outside both ancestors. */
+.popup-features ul.features {
+  margin: 20px 0 0;
+  padding: 0;
+  list-style-type: none;
+}
+.popup-features ul.features li i {
+  margin-right: 10px;
+}
+.popup-features .mpwpb_popup_main_area {
   background-color: #FFF;
   border: 2px solid #fff;
 }
-.mpwpb_registration > header  .popup-features  .mpwpb_popup_header {
+.popup-features  .mpwpb_popup_header {
   border-bottom: 1px solid var(--mpwpb_color_border);
 }
-.mpwpb_registration > header  .popup-features  .mpwpb_popup_header .mpwpb_popup_close {
+.popup-features  .mpwpb_popup_header .mpwpb_popup_close {
   position: absolute;
   top: 0;
   right: 0;
@@ -1005,7 +1101,7 @@ div.registration_tab_item {
   padding: 10px 40px;
 }
 .mpwpb_registration main {
-  max-width: 1160px;
+  max-width: 1440px !important;
   width: 100%;
   margin: auto;
   padding: 10px;
@@ -1025,16 +1121,17 @@ div.registration_tab_item {
 }
 @media (min-width: 1024px) {
   .mpwpb-static-template .main {
-    width: 60%;
+    width: 70%;
   }
 }
 .mpwpb-static-template .sidebar {
   width: 100%;
   padding-bottom: 300px;
 }
-@media (min-width: 1024px) {
+@media only screen and (min-width: 768px) {
   .mpwpb-static-template .sidebar {
-    width: 40%;
+    width: 30%;
+    padding-bottom: 10px;
   }
 }
 .mpwpb-static-template .sidebar [class*=_mpBtn] {
@@ -1238,7 +1335,7 @@ div.registration_tab_item {
   background-color: transparent;
   padding: 10px 0;
 }
-.mpwpb-static-template   .mpwpb_popup   .service-items .mpwpb_date_carousel header h3 {
+.mpwpb-static-template   .mpwpb_popup   .service-items .mpwpb_date_carousel h3.mpwpb_date_staff_select {
   font-size: 16px;
   color: var(--mpwpb_color_theme);
   font-weight: 700;
@@ -1386,6 +1483,24 @@ div.registration_tab_item {
   top:50px;
   z-index: 10;
 }
+/* "Booking widget sticky on scrolling" (General Settings). position:sticky
+   releases on its own once .sidebar's containing block runs out -- .sidebar
+   is a flex item of .mpwpb_registration main (display:flex, default
+   align-items:stretch), so it's already stretched to match the much taller
+   .main content column's height, giving the sticky widget plenty of room to
+   follow scroll without any scroll-listener/left-offset JS. Scoped to
+   min-width:768px, the actual breakpoint where .sidebar becomes a real side
+   column (see the later, higher-priority .mpwpb-static-template .sidebar
+   rule below that wins over the dead 1024px one above it) -- on mobile the
+   widget is already collapsed behind the #mpwpb_mobile_booking_mobile
+   toggle instead. */
+@media (min-width: 768px) {
+  .mpwpb-static-template .sidebar .mpwpb_static_area.mpwpb-sticky-enabled {
+    position: sticky;
+    top: 50px;
+    z-index: 10;
+  }
+}
 
 
 .mpwpb-static-template  .mpwpb_static_area .mpwpb_static {
@@ -1393,7 +1508,8 @@ div.registration_tab_item {
   background-color:#fff;
   padding: 15px;
   border-radius: 10px;
-  box-shadow: 0 0 5px #333;
+  border: 1px solid #ddd;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 12px 28px rgba(15, 23, 42, 0.09);
   margin: 10px;
 }
 
@@ -1446,9 +1562,26 @@ div.registration_tab_item {
     margin: 0;
   }
 }
-.mpwpb-static-template  .mpwpb_static_area .mpwpb_static .mpwpb_static_cateogry {
-  max-height: 80vh;
+/* Only the actual category/service list scrolls -- the "Our services"
+   header above it and the "Select a service" CTA footer below it (rendered
+   as siblings outside .mpwpb_static_cateogry in static_registration.php)
+   stay put outside the scrollable area instead of scrolling away with it. */
+.mpwpb-static-template  .mpwpb_static_area .mpwpb_static .mpwpb_static_cateogry .mpwpb-service-tree {
+  max-height: 85vh;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--mpwpb_color_theme) #f1f5f9;
+}
+.mpwpb-static-template  .mpwpb_static_area .mpwpb_static .mpwpb_static_cateogry .mpwpb-service-tree::-webkit-scrollbar {
+  width: 6px;
+}
+.mpwpb-static-template  .mpwpb_static_area .mpwpb_static .mpwpb_static_cateogry .mpwpb-service-tree::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 999px;
+}
+.mpwpb-static-template  .mpwpb_static_area .mpwpb_static .mpwpb_static_cateogry .mpwpb-service-tree::-webkit-scrollbar-thumb {
+  background: var(--mpwpb_color_theme);
+  border-radius: 999px;
 }
 .mpwpb-static-template  .mpwpb_static_area .mpwpb_static .mp_title {
   margin-bottom: 20px;
@@ -1471,12 +1604,13 @@ div.registration_tab_item {
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  padding:20px;
-  margin-bottom: 10px;
+  padding: 10px 5px;
+  margin-bottom: 5px;
   position: relative;
   color: var(--d_color);
-  border-radius: 5px;
-  background-color: #fff;
+  border-radius: 10px;
+  border: 1px solid #ebe5e5;
+  background-color: #F8F9FF;
 }
 .mpwpb-static-template  .mpwpb_static_area .mpwpb_static .mpwpb_item_box:last-child {
   margin-bottom: 0;
@@ -1652,49 +1786,99 @@ button.mpwpb_service_button.mActive:hover{
   cursor: pointer;
 }
 
+.mpwpb_staff_step_summary {
+  background: #f8fafc;
+  border: 1px solid #e5e9f0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin: 12px 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mpwpb_staff_step_summary_row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #475569;
+}
+
+.mpwpb_staff_step_summary_row i {
+  width: 16px;
+  text-align: center;
+  color: #8892a4;
+}
+
+.mpwpb_staff_step_summary_row strong {
+  margin-left: auto;
+  color: #1e293b;
+  font-weight: 700;
+}
+
 .mpwp_select_staff_wrapper {
   padding: 20px;
   font-family: 'Segoe UI', sans-serif;
 }
 
+/* Horizontal scroll strip of plain avatar+name picks -- no card/box chrome,
+   just a clean row that scrolls instead of wrapping when there are more
+   staff than fit on one line. */
 .mpwp_select_staff_grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 10px;
+  display: flex;
+  gap: 18px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 6px 4px 14px;
+  scrollbar-width: thin;
 }
 
 .mpwp_select_staff_card {
-  background: #fff;
-  border: 2px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 15px;
+  flex: 0 0 auto;
+  width: 84px;
   text-align: center;
   cursor: pointer;
-  transition: 0.3s ease;
+  padding: 6px 4px;
+  border-radius: 10px;
+  transition: background 0.15s ease;
+}
+
+.mpwp_select_staff_card:hover {
+  background: #f5f7fa;
 }
 
 .mpwp_select_staff_card.selected {
-  border-color: #4CAF50;
-  box-shadow: 0 0 10px rgba(76, 175, 80, 0.15);
+  background: #eef2ff;
 }
 
-.mpwp_select_staff_img {
-  width: 70px;
-  height: 70px;
-  border-radius: 10px;
+/* Shared by both the real <img> avatars and the emoji "Any Staff" icon, so
+   both render as the same size/shape circle. */
+.mpwp_select_staff_avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
   object-fit: cover;
-  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 8px;
+  font-size: 26px;
+  background: #f0f0f0;
+  border: 2px solid transparent;
+}
+
+.mpwp_select_staff_card.selected .mpwp_select_staff_avatar {
+  border-color: #4CAF50;
 }
 
 .mpwp_select_staff_name {
+  font-size: 12.5px;
   font-weight: 600;
-  font-size: 16px;
-  margin-bottom: 4px;
-}
-
-.mpwp_select_staff_email {
-  font-size: 12px;
-  color: #666;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .mpwpb_cart_progress_wrapper {
@@ -1746,7 +1930,7 @@ button.mpwpb_service_button.mActive:hover{
 }
 
 .mpwpb_get_date_selected{
-  background-color: #ff6b9d !important;
+  background-color: var(--mpwpb_color_theme) !important;
   color: aliceblue !important;
 }
 
@@ -1772,14 +1956,62 @@ button.mpwpb_service_button.mActive:hover{
   border-radius: 10px;
 }
 
+.mpwpb_get_date_passed{
+  background-color: #f8fafc !important;
+  cursor: not-allowed;
+  padding: 15px !important;
+  min-height: 80px !important;
+  border-radius: 10px;
+  opacity: .6;
+  text-align: center;
+}
+
+.mpwpb_get_date_passed .mptrs_day_with_date,
+.mpwpb_get_date_passed .mpwpb-date-number{
+  color: #94a3b8 !important;
+}
+
+.mpwpb_date_passed_label{
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  margin-top: 2px;
+}
+
 .mpwpb_time_display{
   display: flex;
   gap: 10px;
-  padding: 20px 5px 5px 5px;
+  padding: 5px 5px 5px 0px;
   flex-wrap: wrap;
+}
+.mpwpb_time_display button{
+  text-transform: none !important;
 }
 .mpwpb_time_btn{
   padding: 15px !important;
+}
+.mpwpb_time_btn.mpwpb-happy-hour-slot{
+  position: relative;
+  padding-top: 22px !important;
+  border-color: #f0932b !important;
+}
+.mpwpb_time_btn.mpwpb-happy-hour-slot .mpwpb-happy-hour-badge{
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #f0932b;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  padding: 3px 7px;
+  border-radius: 999px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.25);
 }
 
 .mpwpb_close_text{
@@ -1814,7 +2046,7 @@ button.mpwpb_service_button.mActive:hover{
 }
 
 .mpwpb_active_time{
-  background-color: #ff6b9d !important;
+  background-color: var(--mpwpb_color_theme) !important;
   color: #fff !important;
 }
 .mpwpb_without_cat_service_area .mpwpb_service_item{
@@ -1834,7 +2066,7 @@ button.mpwpb_service_button.mActive:hover{
 @media only screen and (min-width: 768px) {
   .mpwpb-static-template .sidebar
   {
-      width: 40%;
+      width: 30%;
       padding-bottom: 10px;
   }
 }

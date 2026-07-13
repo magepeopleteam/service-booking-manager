@@ -91,7 +91,7 @@
 			}
 			public function get_field_description($args) {
 				if (!empty($args['desc'])) {
-					$desc = sprintf('<br/><i class="info_text"><span class="fas fa-info-circle"></span>%s</i>', $args['desc']);
+					$desc = sprintf('<br/><i class="info_text">%s</i>', $args['desc']);
 				} else {
 					$desc = '';
 				}
@@ -298,7 +298,7 @@
 					'name' => $args['section'] . '[' . $args['id'] . ']',
 					'id' => $args['section'] . '[' . $args['id'] . ']',
 				);
-				wp_dropdown_pages(esc_attr($dropdown_args));
+				wp_dropdown_pages($dropdown_args);
 			}
 			// function sanitize_options($options) {
 			// 	if (!$options) {

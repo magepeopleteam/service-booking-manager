@@ -36,17 +36,36 @@
 
     $(document).on('click', 'div.mpwpb_registration .mpwpb_date_time_area .to-book', function() {
 
+        // Was this slot already the selected one? The Staff step has a "Back"
+        // button that returns here, and re-clicking the same (already
+        // active) slot used to unconditionally wipe the recurring dates list
+        // below -- so configuring 6 recurring dates, going to Staff, then
+        // back and re-clicking the same date, silently lost all of them.
+        // mpwpb_registration.js's add-to-cart handler then found
+        // #mpwpb_recurring_dates_list empty and fell back to sending just
+        // the single base date, which is why the resulting order only ever
+        // had one date no matter how many were configured.
+        let alreadySelected = $(this).hasClass('mpwpb_active_time');
+
         $("#mpwpb_recurring_booking_area").fadeIn();
 
         $('div.mpwpb_registration .mpwpb_date_time_area .to-book').removeClass('mpwpb_active_time');
         $(this).addClass('mpwpb_active_time');
 
+        // Reflect a Happy Hours discount (if this slot has one) in the
+        // running total immediately -- see mpwpb_price_calculation()'s
+        // data-hh-type/data-hh-value handling.
+        if (typeof mpwpb_price_calculation === 'function') {
+            mpwpb_price_calculation($(this));
+        }
+
         let post_id = $(this).parent().parent().attr('id').trim();
 
         let parent = $(this).closest('div.mpwpb_registration');
         let recurringArea = parent.find('.mpwpb_recurring_booking_area');
-        if (recurringArea.length > 0) {
-            // Reset recurring options
+        if (recurringArea.length > 0 && !alreadySelected) {
+            // Reset recurring options -- only when the customer actually
+            // picked a *different* date/time slot than before.
             parent.find('#mpwpb_enable_recurring_booking').prop('checked', false);
             parent.find('.mpwpb_recurring_settings').hide();
             parent.find('#mpwpb_recurring_type').val('');
@@ -87,8 +106,23 @@
             beforeSend: function() {
                 parent.find('#mpwpb_recurring_dates_list').html('<li>Loading...</li>');
                 parent.find('.mpwpb_recurring_dates').show();
+                // Which of "Next Staff Member" / "Proceed to Checkout" is
+                // correct depends entirely on this response (response.count),
+                // so both are hidden while it's in flight -- previously
+                // whichever button was left over from the *last* slot's
+                // result stayed clickable during this fetch, and if the
+                // customer clicked through before this (possibly slow)
+                // response arrived, the success handler below would still
+                // fire afterward and yank the wizard back to the staff step,
+                // undoing whatever they'd already done. A loader in the
+                // staff holder itself gives clear "still working" feedback
+                // instead of the buttons just silently vanishing.
+                $("#mpwpb_show_hide_staff_member").hide();
+                $("#mpwpb_date_time_next_btn_id").hide();
+                mpwpb_loader($("#mpwpb_staff_member_holder"));
             },
             success: function(response) {
+                mpwpb_loaderRemove($("#mpwpb_staff_member_holder"));
                 $("#mpwpb_staff_member_holder").html( response.html );
                 if( response.count < 1 ){
                     $("#mpwpb_progress_staff").fadeOut();
@@ -112,6 +146,13 @@
             error: function(xhr, status, error) {
                 console.error('AJAX error:', status, error);
                 parent.find('#mpwpb_recurring_dates_list').html('<li>Error: ' + error + '</li>');
+                mpwpb_loaderRemove($("#mpwpb_staff_member_holder"));
+                // Neither button was left visible going into this request --
+                // fall back to "Proceed to Checkout" on failure so the
+                // customer always has a way to continue rather than being
+                // stuck with no visible next step at all.
+                $("#mpwpb_show_hide_staff_member").hide();
+                $("#mpwpb_date_time_next_btn_id").fadeIn();
             }
         });
 
@@ -121,8 +162,15 @@
         let parent = $(this).closest('div.mpwpb_registration');
         let recurringArea = parent.find('.mpwpb_recurring_booking_area');
         let selectedDate = $(this).val();
+        // Same base-date value as last time this fired -- e.g. the "change"
+        // event re-firing because something re-set [name="mpwpb_date"] to the
+        // slot the customer already had selected (the Staff step's "Back"
+        // button round-trip is the real-world trigger). Only reset the
+        // already-configured recurring dates when the date genuinely changed.
+        let previousDate = parent.data('mpwpbLastDateValue');
+        parent.data('mpwpbLastDateValue', selectedDate);
 
-        if (recurringArea.length > 0 && selectedDate) {
+        if (recurringArea.length > 0 && selectedDate && selectedDate !== previousDate) {
             parent.find('#mpwpb_enable_recurring_booking').prop('checked', false);
             parent.find('.mpwpb_recurring_settings').hide();
             parent.find('#mpwpb_recurring_type').val('');
@@ -271,7 +319,7 @@
     function displayRecurringDates(parent, dates, html, selected_html, recurring_discount_price ) {
         let datesList = parent.find('#mpwpb_recurring_dates_list');
         datesList.empty();
-        
+
         if (dates && dates.length > 0) {
             parent.find('#mpwpd_selected_date').empty();
             datesList.append( html );
@@ -283,8 +331,33 @@
             parent.find('#mpwpb_recurring_number').text( total_recurring );
 
             recuring_price_with_discount( total_recurring, recurring_discount_price );
+            syncStaffStepSummaryDate( parent );
         } else {
             parent.find('.mpwpb_recurring_dates').hide();
+        }
+    }
+
+    // The "Select Staff" step's compact recap (#mpwpb_staff_selected_datetime,
+    // templates/registration/date_time_select.php) only ever showed the single
+    // date picked before recurring was configured, and nothing kept it in sync
+    // afterward -- re-derive it from #mpwpd_selected_date's current rows (the
+    // same list the main summary shows) every time the recurring dates change
+    // (generated, or a row deleted). "Already Booked" rows are wrapped in an
+    // inner .mpwpb_seleted_date_text span (see Admin/settings/Recurring_Booking.php
+    // ::save_recurring_booking()) -- skip those, an unavailable date isn't a
+    // real service date.
+    function syncStaffStepSummaryDate( parent ) {
+        let availableDates = [];
+        parent.find('#mpwpd_selected_date > li.mpwpd_service_date').each(function () {
+            if ($(this).find('.mpwpb_seleted_date_text').length === 0) {
+                let text = $(this).text().trim();
+                if (text) {
+                    availableDates.push(text);
+                }
+            }
+        });
+        if (availableDates.length > 0) {
+            parent.find('#mpwpb_staff_selected_datetime').text(availableDates.join(', '));
         }
     }
 
@@ -297,6 +370,7 @@
             return;
         }
         const dateTime = $(this).closest('li').attr('data-date-time');
+        const registrationParent = $(this).closest('div.mpwpb_registration');
         $(this).closest('li').remove();
         $('#mpwpd_selected_date')
             .find(`li[data-cart-date-time="${dateTime}"]`)
@@ -312,6 +386,7 @@
             recurring_discount_price = parseInt( recurring_discount.find('p' ).attr('data-discount').trim() );
         }
         recuring_price_with_discount( total_recurring, recurring_discount_price );
+        syncStaffStepSummaryDate( registrationParent.length ? registrationParent : $(document) );
     });
     // Edit handler
 
@@ -461,11 +536,18 @@
         if (li && li.length) {
             li.attr('data-date-time', dateTime);
             li.addClass('mpwpb_recurring_days');
+            let dObj = new Date(dateTime.replace(' ', 'T'));
+            let dateOnly = dObj.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+            let dayTime = dObj.toLocaleDateString(undefined, { weekday: 'long' }) + ' at ' + dObj.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
             li.html(`
-            <div>${li.index() + 1} ${formattedDate}</div>
+            <span class="mpwpb_recurring_number">${li.index() + 1}</span>
+            <div class="mpwpb_recurring_date_text">
+                <strong>${dateOnly}</strong>
+                <span class="mpwpb_recurring_daytime">${dayTime}</span>
+            </div>
             <div class="mpwpb_recurring_actions">
-                <span class="mpwpb_recurring_edit_icon">✏️</span>
-                <span class="mpwpb_recurring_delete_icon">✖</span>
+                <span class="mpwpb_recurring_edit_icon"><i class="fas fa-pen"></i></span>
+                <span class="mpwpb_recurring_delete_icon"><i class="fas fa-times"></i></span>
             </div>
         `);
         }

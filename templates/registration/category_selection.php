@@ -96,7 +96,6 @@
                     $sub_category_name = array_key_exists('sub_cat', $service_item)&& ($service_item['sub_cat']|| $service_item['sub_cat']==0)  ?(int) $service_item['sub_cat']+1 : '';
                     $service_name = array_key_exists('name', $service_item) ? $service_item['name'] : '';
                     $service_image = array_key_exists('image', $service_item) ? $service_item['image'] : '';
-                    $service_icon = array_key_exists('icon', $service_item) ? $service_item['icon'] : '';
                     $service_price = array_key_exists('price', $service_item) ? $service_item['price'] : 0;
                     $service_wc_price = MPWPB_Global_Function::wc_price($post_id, $service_price);
                     $service_price = MPWPB_Global_Function::price_convert_raw($service_wc_price);
@@ -119,9 +118,6 @@
                                 <div class="_dFlex_justifyBetween_fullWidth">
                                     <div class="_fdColumn_fullWidth">
                                         <div class="alignCenter">
-                                            <?php if ($service_icon) { ?>
-                                                <span class="<?php echo esc_attr($service_icon); ?> mR_xs"></span>
-                                            <?php } ?>
                                             <h6><?php echo esc_html($service_name); ?></h6>
                                         </div>
                                         <div class="_equalChild">
@@ -201,7 +197,7 @@
                 if( !empty( $parent_min_max ) ){
                     if( isset( $parent_min_max[ $cat_key ] ) ){
                         $max_min_price = $parent_min_max[ $cat_key ];
-                        $min_price = wc_price( $max_min_price['min'] );
+                        $min_price = MPWPB_Global_Function::format_price( $max_min_price['min'] );
                     }else{
                         $min_price = '';
                     }
@@ -250,7 +246,7 @@
                                 if( !empty( $sub_min_max ) ) {
                                     if( isset( $sub_min_max[$sub_key] ) ){
                                         $sub_max_min_price = $sub_min_max[$sub_key];
-                                        $sub_min_price = wc_price($sub_max_min_price['min']);
+                                        $sub_min_price = MPWPB_Global_Function::format_price($sub_max_min_price['min']);
                                     }else{
                                         $sub_max_min_price = '';
                                     }

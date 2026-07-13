@@ -313,7 +313,13 @@ function mpwpb_alert($this, attr = 'alert') {
             mpwpb_load_date_picker_edit_curring_date( off_days, off_dates );
         }
         
-        $('.mpwpb_select2').select2({});
+        // Guard against double-initialization: select2 appends its own
+        // rendered widget as a sibling of the <select> on every call, so if
+        // this ever runs twice on the same element (e.g. this script loaded
+        // under two different enqueue handles), the widget shows up twice
+        // side-by-side. select2 marks an already-initialized <select> with
+        // "select2-hidden-accessible", so skip those.
+        $('.mpwpb_select2').not('.select2-hidden-accessible').select2({});
     });
 }(jQuery));
 //====================================================================Load Bg Image=================//
@@ -642,16 +648,50 @@ function mpwpb_sticky_management() {
         let targetTab = target.children('[data-tabs-target-next]:nth-child(' + num_of_tab + ')').data('tabs-target-next');
         active_next_tab(parent, targetTab);
     });
+    // Remembers which tab was last opened in each .mpwpb_tabs group, so a
+    // plain page refresh (or the block editor's async meta box remount,
+    // handled below) reopens that same tab instead of always falling back
+    // to the first one. Keyed per URL (post/page query args already tell
+    // different posts/settings screens apart) plus the group's position on
+    // the page, so multiple tab groups never clobber each other's memory.
+    // sessionStorage (not localStorage) so it only survives reloads of this
+    // browsing session, not indefinitely.
+    function mpwpbTabsStorageKey(parent) {
+        let groupIndex = $('.mpwpb_style .mpwpb_tabs').index(parent);
+        return 'mpwpb_tabs_active::' + location.pathname + location.search + '::' + groupIndex;
+    }
+    function mpwpbRememberTab(parent, target) {
+        try {
+            sessionStorage.setItem(mpwpbTabsStorageKey(parent), target);
+        } catch (e) {
+            // Storage unavailable (e.g. private browsing) -- silently skip
+            // remembering; mpwpb_activate_default_tabs() falls back to the
+            // first tab either way.
+        }
+    }
+    function mpwpbRecallTab(parent) {
+        try {
+            return sessionStorage.getItem(mpwpbTabsStorageKey(parent));
+        } catch (e) {
+            return null;
+        }
+    }
     function mpwpb_activate_default_tabs() {
         $('.mpwpb_style .mpwpb_tabs').each(function () {
-            let tabLists = $(this).find('.tabLists:first');
+            let parent = $(this);
+            let tabLists = parent.find('.tabLists:first');
             // let tabLists = $(this).find('.mpwpb_add_update_tab:first');
             // Skip groups that already have an active tab so this is safe to call
             // repeatedly and never disturbs the user's current selection.
             if (tabLists.find('[data-tabs-target].active').length > 0) {
                 return;
             }
-            tabLists.find('[data-tabs-target]').first().trigger('click');
+            let remembered = mpwpbRecallTab(parent);
+            let $target = remembered ? tabLists.find('[data-tabs-target="' + remembered + '"]') : $();
+            if (!$target.length) {
+                $target = tabLists.find('[data-tabs-target]').first();
+            }
+            $target.trigger('click');
         });
     }
     $(document).ready(function () {
@@ -687,6 +727,7 @@ function mpwpb_sticky_management() {
         if (!$(this).hasClass('active')) {
             let tabsTarget = $(this).data('tabs-target');
             let parent = $(this).closest('.mpwpb_tabs');
+            mpwpbRememberTab(parent, tabsTarget);
             parent.height(parent.height());
             let tabLists = $(this).closest('.tabLists');
             // let tabLists = $(this).closest('.mpwpb_add_update_tab');

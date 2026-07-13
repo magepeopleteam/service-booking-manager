@@ -23,20 +23,35 @@
 			public function global_settings_menu() {
 				$label = MPWPB_Function::get_name();
 				$cpt = MPWPB_Function::get_cpt();
-				add_submenu_page('edit.php?post_type=' . $cpt, $label . esc_html__(' Settings', 'service-booking-manager'), $label . esc_html__(' Settings', 'service-booking-manager'), 'manage_options', 'mpwpb_settings_page', array($this, 'settings_page'));
+				add_submenu_page('edit.php?post_type=' . $cpt, $label . esc_html__(' Settings', 'service-booking-manager'), esc_html__('Settings', 'service-booking-manager'), 'manage_options', 'mpwpb_settings_page', array($this, 'settings_page'));
 			}
 			public function settings_page() {
 				$label = MPWPB_Function::get_name();
 				?>
 				<div class="mpwpb_style mpwpb_global_settings">
-					<div class="mpPanel">
-						<div class="mpPanelHeader"><?php echo esc_html($label . esc_html__(' Global Settings', 'service-booking-manager')); ?></div>
-						<div class="mpPanelBody mp_zero">
-							<div class="mpwpb_tabs leftTabs">
-								<?php $this->settings_api->show_navigation(); ?>
-								<div class="tabsContent">
-									<?php $this->settings_api->show_forms(); ?>
+					<!--
+						.mpwpb_tabs (required ancestor of both .tabLists and .tabsContent
+						for the shared, generic [data-tabs-target] click handler in
+						mp_global/assets/mp_style/mpwpb_plugin_global.js) now wraps the
+						whole sidebar+main shell rather than sitting directly around a
+						flat tabList/content pair -- the handler only does
+						.closest('.mpwpb_tabs') / .find('.tabsContent'), so it still
+						works unchanged regardless of the extra wrapper divs in between.
+					-->
+					<div class="mpwpb_tabs leftTabs mpwpb-settings-shell">
+						<div class="mpwpb-settings-sidebar">
+							<div class="mpwpb-settings-sidebar-header">
+								<div class="mpwpb-settings-eyebrow"><?php echo esc_html($label); ?></div>
+								<div class="mpwpb-settings-title">
+									<span class="mpwpb-settings-dot"></span>
+									<?php esc_html_e('Global Settings', 'service-booking-manager'); ?>
 								</div>
+							</div>
+							<?php $this->settings_api->show_navigation(); ?>
+						</div>
+						<div class="mpwpb-settings-main">
+							<div class="tabsContent">
+								<?php $this->settings_api->show_forms(); ?>
 							</div>
 						</div>
 					</div>
@@ -191,6 +206,22 @@
 							'type' => 'number',
 							'default' => 0,
 							'placeholder' => esc_html__('Ex:50', 'service-booking-manager'),
+						),
+						array(
+							'name' => 'cancellation_lead_time',
+							'label' => esc_html__('Cancellation Lead Time (hours)', 'service-booking-manager'),
+							'desc' => esc_html__('Customers and staff can only cancel a booking online if it starts at least this many hours from now. Default is 24.', 'service-booking-manager'),
+							'type' => 'number',
+							'default' => 24,
+							'placeholder' => esc_html__('Ex:24', 'service-booking-manager'),
+						),
+						array(
+							'name' => 'reschedule_lead_time',
+							'label' => esc_html__('Reschedule Lead Time (hours)', 'service-booking-manager'),
+							'desc' => esc_html__('Customers and staff can only reschedule a booking online if it starts at least this many hours from now. Default is 48.', 'service-booking-manager'),
+							'type' => 'number',
+							'default' => 48,
+							'placeholder' => esc_html__('Ex:48', 'service-booking-manager'),
 						),
                         array(
                             'name' => 'booking_widget_sticky_on_scrolling',

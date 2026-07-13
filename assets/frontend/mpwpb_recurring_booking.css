@@ -2,7 +2,8 @@
 .mpwpb_recurring_booking_area {
     margin-top: 10px;
     padding: 0px 15px;
-    background-color: var(--mpwpb_color_light);
+    border: 1px solid #ddd;
+    background-color: #ffffff;
     border-radius: 5px;
     clear: both;
     width: 100%;
@@ -13,6 +14,15 @@
     margin-bottom: 5px;
     padding-bottom: 10px;
     border-bottom: 1px solid #eee;
+}
+
+/* Match h3.mpwpb_date_staff_select ("Choose Date") in mpwpb_registration.css
+   -- same font-size/color/weight, kept as its own rule here since this h3
+   isn't inside .mpwpb_date_carousel so that selector wouldn't match it. */
+.mpwpb_recurring_booking h3 {
+    font-size: 16px !important;
+    color: var(--mpwpb_color_theme) !important;
+    font-weight: 700;
 }
 
 .mpwpb_recurring_toggle {
@@ -131,6 +141,8 @@ input:checked + .slider:before {
 
 .mpwpb_recurring_dates h4 {
     margin-bottom: 10px;
+    font-size: 16px !important;
+    color: var(--mpwpb_color_theme) !important;
 }
 
 #mpwpb_recurring_dates_list {
@@ -139,19 +151,8 @@ input:checked + .slider:before {
     margin: 0;
 }
 
-#mpwpb_recurring_dates_list li {
-    padding: 8px;
-    margin-bottom: 5px;
-    background-color: #f0f8ff;
-    border-radius: 4px;
-    border-left: 3px solid #2196F3;
-}
 
-#mpwpb_recurring_dates_list li:first-child {
-    background-color: #e6f7ff;
-    border-left: 3px solid #0078d7;
-    font-weight: bold;
-}
+#mpwpb_recurring_dates_list div strong strong{padding-right:10px;}
 
 .mpwpb_staff_member_booking_area{
     /*margin-top: 20px;*/
@@ -258,51 +259,112 @@ input:checked + .slider:before {
 /* Main list item */
 .mpwpb_recurring_days {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 10px 12px;
-    margin: 6px 0;
-    background-color: #f9f9f9;
-    border-left: 4px solid #0073aa; /* optional highlight */
-    border-radius: 6px;
+    gap: 12px;
+    /* !important on padding/margin: mp_global/assets/mp_style/mpwpb_plugin_global.css
+       has ".mpwpb_style ul li { margin:0; padding:0; }" -- higher specificity
+       (class+tag+tag) than this single class selector, so without !important
+       it silently wins and collapses these back into one seamless block with
+       no gap/inner spacing between cards. */
+    padding: 12px 14px !important;
+    margin: 0 0 8px !important;
+    background-color: #fff;
+    border: 1px solid #e5e9f0;
+    border-radius: 10px;
     font-size: 15px;
     font-family: Arial, sans-serif;
     transition: background 0.2s ease;
+}
+.mpwpb_recurring_days:last-child {
+    margin-bottom: 0 !important;
 }
 .mpwpb_invalid_recurring_days {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 10px 12px;
-    margin: 6px 0;
-    background-color: #efcec4 !important;
-    border-left: 4px solid #FF5722 !important; /* optional highlight */
-    border-radius: 6px;
+    gap: 12px;
+    padding: 12px 14px !important;
+    margin: 0 0 8px !important;
+    background-color: #fdf1ee !important;
+    border: 1px solid #f3ddd6 !important;
+    border-radius: 10px;
     font-size: 15px;
     font-family: Arial, sans-serif;
     transition: background 0.2s ease;
+    opacity: .75;
+}
+.mpwpb_invalid_recurring_days .mpwpb_recurring_date_text strong {
     text-decoration: line-through;
 }
 .mpwpb_recurring_days:hover {
-    background-color: #eef6fa;
+    border-color: #cbd5e1;
+}
+/* Numbered circle badge -- teal tint, matches the plugin's accent used
+   elsewhere for small badges/icons (e.g. .mpwpb-tree-folder-icon). */
+.mpwpb_recurring_number {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background-color: #F0FDFA;
+    color: var(--mpwpb_color_theme, #00685f);
+    font-size: 12px;
+    font-weight: 700;
+}
+/* Date block -- bold headline date, lighter day/time subtext below. */
+.mpwpb_recurring_date_text {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+.mpwpb_recurring_date_text strong {
+    font-size: 15px;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.3;
+}
+.mpwpb_recurring_daytime {
+    font-size: 12.5px;
+    color: #64748b;
+    margin-top: 2px;
 }
 .mpwpb_recurring_actions {
+    flex: 0 0 auto;
     display: flex;
-    gap: 10px;
+    gap: 8px;
 }
 .mpwpb_recurring_edit_icon,
 .mpwpb_recurring_delete_icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
     cursor: pointer;
-    font-size: 16px;
-    transition: transform 0.2s ease;
+    font-size: 12px;
+    transition: background 0.15s ease, transform 0.15s ease;
+}
+.mpwpb_recurring_edit_icon {
+    background-color: #F0FDFA;
+    color: var(--mpwpb_color_theme, #00685f);
+}
+.mpwpb_recurring_delete_icon {
+    background-color: #fdecea;
+    color: #e05252;
 }
 .mpwpb_recurring_edit_icon:hover {
-    color: #0073aa;
-    transform: scale(1.2);
+    background-color: var(--mpwpb_color_theme, #00685f);
+    color: #fff;
+    transform: scale(1.08);
 }
 .mpwpb_recurring_delete_icon:hover {
-    color: #d63638;
-    transform: scale(1.2);
+    background-color: #e05252;
+    color: #fff;
+    transform: scale(1.08);
 }
 
 

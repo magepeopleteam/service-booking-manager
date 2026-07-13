@@ -541,8 +541,10 @@
 				$services = $this->get_services($post_id);
 				if (!empty($services)) {
 					if (isset($_POST['itemId'])) {
+						// Not array_values()-reindexed on purpose: nothing else references a
+						// service's array position, but keeping keys stable is consistent with
+						// the same fix applied to categories/subcategories (see Category.php).
 						unset($services[sanitize_text_field(wp_unslash($_POST['itemId']))]);
-						$services = array_values($services);
 					}
 				}
 				$result = update_post_meta($post_id, 'mpwpb_service', $services);
