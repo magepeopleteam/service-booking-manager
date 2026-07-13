@@ -150,7 +150,7 @@ button.mpwpb-csm__add-sub-btn {
 .mpwpb-csm__add-btn.mpwpb-csm__add-btn--outline .dashicons{color:var(--brand);}
 
 /* "Use Template" picker */
-.mpwpb-csm__modal.mpwpb-csm__modal--wide{max-width:760px;}
+.mpwpb-csm__modal.mpwpb-csm__modal--wide{max-width:960px;}
 .mpwpb-csm__tpl-body{max-height:64vh;overflow-y:auto;}
 .mpwpb-csm__tpl-intro{margin:0 0 10px;font-size:12.5px;color:var(--muted);line-height:1.5;}
 .mpwpb-csm__tpl-empty{font-size:12.5px;color:var(--muted);}
@@ -245,7 +245,7 @@ button.mpwpb-csm__chip {
  *  Modals (Add/Edit Service, Add Category, Confirm Delete)
  * ---------------------------------------------------------------- */
 .mpwpb-csm__overlay{position:fixed;inset:0;z-index:100010;display:flex;align-items:center;justify-content:center;background:rgba(15,23,42,.45);padding:16px;}
-.mpwpb-csm__modal{width:100%;max-width:440px;background:#fff;border-radius:14px;box-shadow:0 20px 60px rgba(15,23,42,.25);overflow:hidden;font-family:'Inter',system-ui,sans-serif;}
+.mpwpb-csm__modal{width:100%;max-width:960px;background:#fff;border-radius:14px;box-shadow:0 20px 60px rgba(15,23,42,.25);overflow:hidden;font-family:'Inter',system-ui,sans-serif;}
 .mpwpb-csm__modal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line);}
 .mpwpb-csm__modal-title{font-size:14.5px;font-weight:700;color:var(--ink);}
 .mpwpb-csm__modal-close{border:0;background:transparent;color:var(--muted);cursor:pointer;padding:3px;border-radius:6px;display:flex;}

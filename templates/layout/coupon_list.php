@@ -17,12 +17,11 @@ $count_coupon = wp_count_posts('mpwpb_coupon');
 $publish = isset($count_coupon->publish) ? (int) $count_coupon->publish : 0;
 $draft = isset($count_coupon->draft) ? (int) $count_coupon->draft : 0;
 $trash = isset($count_coupon->trash) ? (int) $count_coupon->trash : 0;
-$total = $publish + $draft + $trash;
+$total = $publish + $draft;
 $trash_link = add_query_arg([
 	'post_status' => 'trash',
 	'post_type' => 'mpwpb_coupon',
 ], admin_url('edit.php'));
-$add_new_link = admin_url('post-new.php?post_type=mpwpb_coupon');
 
 function mpwpb_coupon_discount_summary($post_id): string {
 	$type = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_coupon_discount_type', 'fixed');
@@ -59,13 +58,6 @@ function mpwpb_display_coupon_list($query) {
 			$expiry = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_coupon_expiry_date', '');
 			$is_expired = $expiry && $expiry < $today;
 
-			$edit_link = get_edit_post_link($post_id);
-			$delete_link = get_delete_post_link($post_id);
-			$duplicate_link = wp_nonce_url(
-				admin_url('admin.php?action=mpwpb_coupon_duplicate&post_id=' . $post_id),
-				'mpwpb_coupon_duplicate_' . $post_id
-			);
-
 			if ($is_expired) {
 				$status_class = 'mpwpb_trash';
 				$status_text = esc_html__('Expired', 'service-booking-manager');
@@ -94,13 +86,9 @@ function mpwpb_display_coupon_list($query) {
 				</td>
 				<td>
 					<div class="mpwpb_service_list_actions">
-						<a href="<?php echo esc_url($edit_link); ?>"><button class="mpwpb_service_list_action-btn"><i class="mi mi-edit"></i></button></a>
-						<a title="<?php esc_attr_e('Duplicate Coupon', 'service-booking-manager'); ?>" href="<?php echo esc_url($duplicate_link); ?>">
-							<button class="mpwpb_service_list_action-btn"><i class="mi mi-clone"></i></button>
-						</a>
-						<a class="delete" href="<?php echo esc_url($delete_link); ?>" onclick="return confirm('<?php esc_attr_e('Are you sure you want to move this to trash?', 'service-booking-manager'); ?>');" title="<?php esc_attr_e('Trash', 'service-booking-manager'); ?>">
-							<button class="mpwpb_service_list_action-btn"><i class="mi mi-trash"></i></button>
-						</a>
+					<button type="button" class="mpwpb_service_list_action-btn" data-coupon-modal-open data-post-id="<?php echo esc_attr($post_id); ?>" title="<?php esc_attr_e('Edit Coupon', 'service-booking-manager'); ?>"><i class="mi mi-edit"></i></button>
+					<button type="button" class="mpwpb_service_list_action-btn" data-coupon-duplicate data-post-id="<?php echo esc_attr($post_id); ?>" title="<?php esc_attr_e('Duplicate Coupon', 'service-booking-manager'); ?>"><i class="mi mi-clone"></i></button>
+					<button type="button" class="mpwpb_service_list_action-btn" data-coupon-trash data-post-id="<?php echo esc_attr($post_id); ?>" title="<?php esc_attr_e('Trash', 'service-booking-manager'); ?>"><i class="mi mi-trash"></i></button>
 					</div>
 				</td>
 			</tr>
@@ -165,7 +153,8 @@ foreach ($query->posts as $coupon_post) {
 					</a>
 				</div>
 				<div class="mpwpv_service_list_actions-inline">
-					<a href="<?php echo esc_url($add_new_link); ?>"><div class="mpwpb_add_new_Service"><span class="fas fa-plus _mR_xs"></span><?php esc_html_e('Add New Coupon', 'service-booking-manager'); ?></div></a>
+					<label class="mpwpb-coupon-list-search"><span class="dashicons dashicons-search"></span><input type="search" data-coupon-search placeholder="<?php esc_attr_e('Search coupons…', 'service-booking-manager'); ?>"/></label>
+					<button type="button" class="mpwpb_add_new_Service" data-coupon-modal-open data-post-id="0"><span class="fas fa-plus _mR_xs"></span><?php esc_html_e('Add New Coupon', 'service-booking-manager'); ?></button>
 				</div>
 			</div>
 		</div>

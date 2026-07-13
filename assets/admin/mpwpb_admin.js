@@ -1746,7 +1746,12 @@
         $('.'+class_name).each(function() {
             let by_filter = $(this).data( service_status ).toLowerCase();
             if( searchText === 'all' ){
-                $(this).fadeIn();
+                // "All" shows active items only; trashed rows stay hidden until the Trash tab is clicked.
+                if ( by_filter === 'trash' ) {
+                    $(this).fadeOut();
+                } else {
+                    $(this).fadeIn();
+                }
             }else{
                 if ( by_filter.includes( searchText ) ) {
                     $(this).fadeIn();

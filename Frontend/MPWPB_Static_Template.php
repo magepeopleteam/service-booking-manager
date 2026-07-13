@@ -186,12 +186,14 @@
 					?>
                     <section id="service-overview">
                         <h2><?php esc_html_e('Service Overview', 'service-booking-manager'); ?></h2>
-						<?php
-							// Content is sanitized on save according to the author's capability
-							// (see MPWPB_Settings::sanitize_rich_content), mirroring core post_content.
-							// Re-running wp_kses_post() here would strip admin-authored <style>/CSS.
-							echo do_shortcode($service_overview_content); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-						?>
+                        <div class="mpwpb-overview-content">
+							<?php
+								// Content is sanitized on save according to the author's capability
+								// (see MPWPB_Settings::sanitize_rich_content), mirroring core post_content.
+								// Re-running wp_kses_post() here would strip admin-authored <style>/CSS.
+								echo do_shortcode($service_overview_content); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							?>
+                        </div>
 						<?php $this->show_overview_stats($post_id); ?>
 						<?php $this->show_hours($post_id); ?>
                     </section>

@@ -25,6 +25,7 @@
 				add_action('admin_enqueue_scripts', array($this, 'enqueue'), 90);
 				add_filter('admin_body_class', array($this, 'body_class'));
 				add_action('wp_ajax_mpwpb_set_service_edit_ui', array($this, 'ajax_set_ui'));
+				add_action('wp_ajax_mpwpb_save_service_editor', array($this, 'ajax_save_service'));
 				add_action('save_post', array($this, 'save_feature_image'), 20);
 			}
 
@@ -246,6 +247,10 @@
 							$sme_secondary_label = $sme_is_published ? __('Switch to Draft', 'service-booking-manager') : __('Save Draft', 'service-booking-manager');
 							$sme_status_label = $sme_is_published ? __('Published', 'service-booking-manager') : __('Draft', 'service-booking-manager');
 							?>
+							<span class="mpwpb-sme__local-save is-ready" data-sme-local-save role="status" aria-live="polite">
+								<span class="mpwpb-sme__local-save-dot" aria-hidden="true"></span>
+								<span data-sme-local-save-text><?php esc_html_e('Local autosave ready', 'service-booking-manager'); ?></span>
+							</span>
 							<span class="mpwpb-sme__status-pill<?php echo $sme_is_published ? ' is-published' : ' is-draft'; ?>"><?php echo esc_html($sme_status_label); ?></span>
 							<a href="<?php echo esc_url(get_preview_post_link($post_id)); ?>" target="wp-preview-<?php echo esc_attr($post_id); ?>" class="mpwpb-sme__btn" data-sme-preview>
 								<span class="dashicons dashicons-visibility" aria-hidden="true"></span>
@@ -714,6 +719,67 @@
 				wp_send_json_success(array('ui' => $ui));
 			}
 
+			/**
+			 * Save the native post form without reloading the modern editor.
+			 *
+			 * edit_post() is the same WordPress core path used by post.php, so all
+			 * existing save_post callbacks continue to receive the complete form.
+			 */
+			public function ajax_save_service() {
+				$post_id = isset($_POST['post_ID']) ? absint($_POST['post_ID']) : 0;
+				$post = $post_id ? get_post($post_id) : null;
+
+				if (!$post || $post->post_type !== MPWPB_Function::get_cpt()) {
+					wp_send_json_error(array('message' => esc_html__('Invalid service.', 'service-booking-manager')), 400);
+				}
+				if (!current_user_can('edit_post', $post_id)) {
+					wp_send_json_error(array('message' => esc_html__('You are not allowed to edit this service.', 'service-booking-manager')), 403);
+				}
+
+				check_ajax_referer('update-post_' . $post_id, '_wpnonce');
+				if (!isset($_POST['mpwpb_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['mpwpb_nonce'])), 'mpwpb_nonce')) {
+					wp_send_json_error(array('message' => esc_html__('The service form expired. Please refresh the page and try again.', 'service-booking-manager')), 403);
+				}
+
+				$save_mode = isset($_POST['save_mode']) ? sanitize_key(wp_unslash($_POST['save_mode'])) : 'primary';
+				if ($save_mode === 'draft') {
+					$_POST['saveasdraft'] = '1';
+					unset($_POST['publish']);
+				} else {
+					unset($_POST['saveasdraft']);
+					if (in_array($post->post_status, array('publish', 'private', 'future'), true)) {
+						unset($_POST['publish']);
+					} else {
+						$_POST['publish'] = '1';
+					}
+				}
+				$post_data = $_POST;
+				unset($post_data['action'], $post_data['save_mode']);
+
+				require_once ABSPATH . 'wp-admin/includes/post.php';
+				$saved_id = edit_post($post_data);
+				$saved_post = get_post($saved_id);
+				if (!$saved_post) {
+					wp_send_json_error(array('message' => esc_html__('The service could not be saved.', 'service-booking-manager')), 500);
+				}
+
+				$is_published = in_array($saved_post->post_status, array('publish', 'private', 'future'), true);
+				wp_send_json_success(array(
+					'message' => esc_html__('Saved', 'service-booking-manager'),
+					'postId' => (int) $saved_id,
+					'postStatus' => sanitize_key($saved_post->post_status),
+					'isPublished' => $is_published,
+					'statusLabel' => $is_published ? esc_html__('Published', 'service-booking-manager') : esc_html__('Draft', 'service-booking-manager'),
+					'primaryLabel' => $is_published ? esc_html__('Update', 'service-booking-manager') : esc_html__('Publish', 'service-booking-manager'),
+					'draftLabel' => $is_published ? esc_html__('Switch to Draft', 'service-booking-manager') : esc_html__('Save Draft', 'service-booking-manager'),
+					'editUrl' => get_edit_post_link($saved_id, 'raw'),
+					'postNonce' => wp_create_nonce('update-post_' . $saved_id),
+					'formNonce' => wp_create_nonce('mpwpb_nonce'),
+					'editLock' => (string) get_post_meta($saved_id, '_edit_lock', true),
+					'postRevision' => (string) $saved_post->post_modified_gmt,
+				));
+			}
+
 			/* ------------------------------------------------------------------ *
 			 *  Assets & body class
 			 * ------------------------------------------------------------------ */
@@ -735,6 +801,10 @@
 				if (!$this->is_service_edit_screen()) {
 					return;
 				}
+				$editor_post_id = isset($_GET['post']) ? absint(wp_unslash($_GET['post'])) : 0;
+				if (!$editor_post_id && isset($GLOBALS['post']->ID)) {
+					$editor_post_id = absint($GLOBALS['post']->ID);
+				}
 				// The switcher button (classic mode) needs the tiny AJAX handler too.
 				wp_enqueue_script('mpwpb-service-edit-modern', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb-service-edit-modern.js', array('jquery'), $this->asset_ver('/assets/admin/mpwpb-service-edit-modern.js'), true);
 				wp_localize_script(
@@ -744,10 +814,41 @@
 						'ajax' => admin_url('admin-ajax.php'),
 						'nonce' => wp_create_nonce('mpwpb_sme_ui'),
 						'listUrl' => admin_url('edit.php?post_type=' . MPWPB_Function::get_cpt() . '&page=mpwpb_service_list'),
+						'postId' => $editor_post_id,
+						'userId' => get_current_user_id(),
+						'postRevision' => $editor_post_id ? (string) get_post_field('post_modified_gmt', $editor_post_id) : '',
 						'savedTxt' => esc_html__('Saved', 'service-booking-manager'),
 						'savingTxt' => esc_html__('Saving…', 'service-booking-manager'),
+						'saveErrorTxt' => esc_html__('The service could not be saved. Please try again.', 'service-booking-manager'),
+						'localReadyTxt' => esc_html__('Local autosave ready', 'service-booking-manager'),
+						'localSavingTxt' => esc_html__('Saving locally…', 'service-booking-manager'),
+						'localSavedTxt' => esc_html__('Draft saved locally', 'service-booking-manager'),
+						'localRestoredTxt' => esc_html__('Local draft restored', 'service-booking-manager'),
+						'localUnavailableTxt' => esc_html__('Local autosave unavailable', 'service-booking-manager'),
 						'nextTxt' => esc_html__('Next Step', 'service-booking-manager'),
 						'updateTxt' => esc_html__('Update', 'service-booking-manager'),
+						'hhWindowTitle' => esc_html__('Time Window', 'service-booking-manager'),
+						'hhWindowSub' => esc_html__('Choose when the special price applies.', 'service-booking-manager'),
+						'hhOfferTitle' => esc_html__('Discount Offer', 'service-booking-manager'),
+						'hhOfferSub' => esc_html__('Set the discount customers receive.', 'service-booking-manager'),
+						'hhRuleLabel' => esc_html__('Active pricing rule', 'service-booking-manager'),
+						'hhDiscountTxt' => esc_html__('discount', 'service-booking-manager'),
+						'hhAutomaticTxt' => esc_html__('Automatic', 'service-booking-manager'),
+						'hhCurrencySymbol' => function_exists('get_woocommerce_currency_symbol') ? get_woocommerce_currency_symbol() : '',
+						'recurPatternTitle' => esc_html__('Repeat Pattern', 'service-booking-manager'),
+						'recurPatternSub' => esc_html__('Choose the recurrence options customers can use.', 'service-booking-manager'),
+						'recurLimitsTitle' => esc_html__('Limits & Incentive', 'service-booking-manager'),
+						'recurLimitsSub' => esc_html__('Control the maximum series length and optional discount.', 'service-booking-manager'),
+						'recurRuleLabel' => esc_html__('Booking series', 'service-booking-manager'),
+						'recurOccurrencesTxt' => esc_html__('occurrences maximum', 'service-booking-manager'),
+						'recurDiscountTxt' => esc_html__('recurring discount', 'service-booking-manager'),
+						'recurNoneTxt' => esc_html__('Select a repeat pattern', 'service-booking-manager'),
+						'taxRuleLabel' => esc_html__('Applied tax rule', 'service-booking-manager'),
+						'taxAutomaticTxt' => esc_html__('Automatic', 'service-booking-manager'),
+						'staffSelectTitle' => esc_html__('Select Staff', 'service-booking-manager'),
+						'staffSelectSub' => esc_html__('Choose the team members customers can book.', 'service-booking-manager'),
+						'staffSelectedTxt' => esc_html__('staff selected', 'service-booking-manager'),
+						'staffNoneTxt' => esc_html__('No staff members available.', 'service-booking-manager'),
 						'featTitle' => esc_html__('Select featured image', 'service-booking-manager'),
 						'featBtn' => esc_html__('Use image', 'service-booking-manager'),
 						'featSet' => esc_html__('Featured image set', 'service-booking-manager'),

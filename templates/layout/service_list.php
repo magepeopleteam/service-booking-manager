@@ -1,6 +1,6 @@
 <?php
 
-$statuses = ['publish', 'draft'];
+$statuses = ['publish', 'draft', 'trash'];
 $args = [
     'post_type'      => 'mpwpb_item',
     'post_status'    => $statuses,
@@ -14,10 +14,8 @@ $publish = isset($count_service->publish) ? $count_service->publish : 0;
 $draft   = isset($count_service->draft) ? $count_service->draft : 0;
 $trash   = isset($count_service->trash) ? $count_service->trash : 0;
 $total   = $publish + $draft + $trash;
-$trash_link = add_query_arg([
-    'post_status' => 'trash',
-    'post_type'   => 'mpwpb_item',
-], admin_url('edit.php'));
+// "All Services" excludes trashed items (matches native WP list-table semantics).
+$active_total = $publish + $draft;
 $add_new_link = admin_url('post-new.php?post_type=mpwpb_item');
 
 
@@ -59,7 +57,7 @@ function mpwpb_display_service_list( $query ){ ?>
             $shortcode = '[service-booking post_id="'.$post_id.'"]';
 
             ?>
-            <tr class="mpwpv_service_list_table-container" data-service-status="<?php echo esc_attr( $status );?>" data-service-title="<?php echo esc_attr( $service_name )?>">
+            <tr class="mpwpv_service_list_table-container" data-service-status="<?php echo esc_attr( $status );?>" data-service-title="<?php echo esc_attr( $service_name )?>"<?php echo ( $status === 'trash' ) ? ' style="display:none;"' : ''; ?>>
                 <td>
                     <div class="mpwpb_service_list_service-name">
                         <?php if ( has_post_thumbnail( $post_id ) ) : ?>
@@ -107,20 +105,30 @@ function mpwpb_display_service_list( $query ){ ?>
                 </td>
                 <td>
                     <div class="mpwpb_service_list_actions">
-                        <a href="<?php echo esc_url( $view_link );?>"><button class="mpwpb_service_list_action-btn"><i class="mi mi-eye"></i></button></a>
-                        <a href="<?php echo  esc_url( $edit_link );?>"><button class="mpwpb_service_list_action-btn"><i class="mi mi-edit"></i></button></a>
-                        <a title="<?php echo esc_attr__('Duplicate Post ', 'service-booking-manager') . ' : ' . get_the_title($post_id); ?>" class="mpwpb_duplicate_post" href="<?php echo wp_nonce_url(
-                            admin_url('admin.php?action=mpwpb_duplicate_post&post_id=' . $post_id),
-                            'mpwpb_duplicate_post_' . $post_id
-                        ); ?>">
-                        <button class="mpwpb_service_list_action-btn">
-                            <i class="mi mi-clone"></i>
-                        </button>
-                        </a>
-                        <a class=" delete"
-                           href="<?php echo esc_url($delete_link); ?>"
-                           onclick="return confirm('Are you sure you want to move this to trash?');"
-                           title="Trash"><button class="mpwpb_service_list_action-btn"><i class="mi mi-trash"></i></button></a>
+                        <?php if ( $status === 'trash' ) :
+                            $restore_link      = wp_nonce_url( admin_url( 'post.php?action=untrash&post=' . $post_id ), 'untrash-post_' . $post_id );
+                            $force_delete_link = get_delete_post_link( $post_id, '', true );
+                            ?>
+                            <a class="mpwpb_restore_post" href="<?php echo esc_url( $restore_link ); ?>" title="<?php esc_attr_e( 'Restore', 'service-booking-manager' ); ?>"><button class="mpwpb_service_list_action-btn"><i class="mi mi-undo"></i></button></a>
+                            <a class="mpwpb_delete_permanently" href="<?php echo esc_url( $force_delete_link ); ?>"
+                               onclick="return confirm('<?php echo esc_js( __( 'Permanently delete this service? This cannot be undone.', 'service-booking-manager' ) ); ?>');"
+                               title="<?php esc_attr_e( 'Delete Permanently', 'service-booking-manager' ); ?>"><button class="mpwpb_service_list_action-btn"><i class="mi mi-trash"></i></button></a>
+                        <?php else : ?>
+                            <a href="<?php echo esc_url( $view_link );?>"><button class="mpwpb_service_list_action-btn"><i class="mi mi-eye"></i></button></a>
+                            <a href="<?php echo  esc_url( $edit_link );?>"><button class="mpwpb_service_list_action-btn"><i class="mi mi-edit"></i></button></a>
+                            <a title="<?php echo esc_attr__('Duplicate Post ', 'service-booking-manager') . ' : ' . get_the_title($post_id); ?>" class="mpwpb_duplicate_post" href="<?php echo wp_nonce_url(
+                                admin_url('admin.php?action=mpwpb_duplicate_post&post_id=' . $post_id),
+                                'mpwpb_duplicate_post_' . $post_id
+                            ); ?>">
+                            <button class="mpwpb_service_list_action-btn">
+                                <i class="mi mi-clone"></i>
+                            </button>
+                            </a>
+                            <a class=" delete"
+                               href="<?php echo esc_url($delete_link); ?>"
+                               onclick="return confirm('Are you sure you want to move this to trash?');"
+                               title="Trash"><button class="mpwpb_service_list_action-btn"><i class="mi mi-trash"></i></button></a>
+                        <?php endif; ?>
                     </div>
                 </td>
             </tr>
@@ -281,14 +289,10 @@ $total_user = get_total_customer();
 
             <div class="mpwpv_service_list_filter-row">
                 <div class="mpwpv_service_list_filter-buttons">
-                    <button class="mpwpv_service_list_filter-btn ttbm_filter_btn_active_bg_color" data-filter-item="all"><?php esc_html_e( 'All Services', 'service-booking-manager')?> <span class="mpwpb_service_list_filter-count"><?php echo esc_html( $total )?></span></button>
+                    <button class="mpwpv_service_list_filter-btn ttbm_filter_btn_active_bg_color" data-filter-item="all"><?php esc_html_e( 'All Services', 'service-booking-manager')?> <span class="mpwpb_service_list_filter-count"><?php echo esc_html( $active_total )?></span></button>
                     <button class="mpwpv_service_list_filter-btn ttbm_filter_btn_bg_color" data-filter-item="publish"><?php esc_html_e( 'Published', 'service-booking-manager')?> <span class="mpwpb_service_list_filter-count"><?php echo esc_html( $publish )?></span></button>
                     <button class="mpwpv_service_list_filter-btn ttbm_filter_btn_bg_color" data-filter-item="draft"><?php esc_html_e( 'Draft', 'service-booking-manager')?> <span class="mpwpb_service_list_filter-count"><?php echo esc_html( $draft )?></span></button>
-
-                    <a class="ttbm_trash_link" href="<?php echo esc_url( $trash_link )?>" target="_blank">
-                        <button class="mpwpv_service_list_filter-btn ttbm_filter_btn_bg_color" data-filter-item="trash"><?php esc_html_e( 'Trash', 'service-booking-manager')?> <span class="mpwpb_service_list_filter-count"><?php echo esc_html( $trash )?></span></button>
-                    </a>
-
+                    <button class="mpwpv_service_list_filter-btn ttbm_filter_btn_bg_color" data-filter-item="trash"><?php esc_html_e( 'Trash', 'service-booking-manager')?> <span class="mpwpb_service_list_filter-count"><?php echo esc_html( $trash )?></span></button>
                 </div>
                 <div class="mpwpv_service_list_actions-inline">
                     <a href="<?php echo esc_url( $add_new_link )?>"><div class="mpwpb_add_new_Service"><span class="fas fa-plus _mR_xs"></span><?php echo esc_html__('Add New Service', 'tour-booking-manager')?></div></a>

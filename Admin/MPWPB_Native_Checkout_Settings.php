@@ -231,45 +231,47 @@
 						'gradient' => 'linear-gradient(135deg,#0f5f52,#1f9c82)',
 					],
 				];
-				// Two-paragraph copy for the "switch payment method" confirm modal,
-				// one set per direction. Built server-side (not just a plain string)
-				// so the method names can render as <strong> without re-escaping HTML
-				// that isn't there — every piece going into sprintf() is already run
-				// through esc_html__() first.
-				$wc_name = '<strong>' . esc_html__('WooCommerce', 'service-booking-manager') . '</strong>';
-				$custom_name = '<strong>' . esc_html__('Custom Payment', 'service-booking-manager') . '</strong>';
+				// Plain-text copy and explicit from/to labels let the modal render a
+				// predictable visual transition without inherited admin typography
+				// splitting an inline sentence into an unreadable order.
+				$wc_name = esc_html__('WooCommerce', 'service-booking-manager');
+				$custom_name = esc_html__('Custom Payment', 'service-booking-manager');
 				$pm_confirm_copy = [
 					'woocommerce' => [
-						'intro' => sprintf(
-							/* translators: %s: the payment method currently active */
-							esc_html__('You currently have %s active. Adding another provider is not supported in your current configuration.', 'service-booking-manager'),
-							$custom_name
-						),
-						'question' => sprintf(
-							/* translators: 1: method to disable, 2: method to activate */
-							esc_html__('Do you want to disable %1$s and activate %2$s instead?', 'service-booking-manager'),
+						'intro' => esc_html__('Only one checkout payment method can be active at a time.', 'service-booking-manager'),
+						'from' => $custom_name,
+						'to' => $wc_name,
+						'detail' => sprintf(
+							/* translators: 1: current payment method, 2: new payment method */
+							esc_html__('%1$s will be turned off, and %2$s will become active.', 'service-booking-manager'),
 							$custom_name,
 							$wc_name
 						),
 					],
 					'custom' => [
-						'intro' => sprintf(
-							esc_html__('You currently have %s active. Adding another provider is not supported in your current configuration.', 'service-booking-manager'),
-							$wc_name
-						),
-						'question' => sprintf(
-							esc_html__('Do you want to disable %1$s and activate %2$s instead?', 'service-booking-manager'),
+						'intro' => esc_html__('Only one checkout payment method can be active at a time.', 'service-booking-manager'),
+						'from' => $wc_name,
+						'to' => $custom_name,
+						'detail' => sprintf(
+							/* translators: 1: current payment method, 2: new payment method */
+							esc_html__('%1$s will be turned off, and %2$s will become active.', 'service-booking-manager'),
 							$wc_name,
 							$custom_name
 						),
 					],
 				];
+				$pm_confirm_labels = [
+					'change' => esc_html__('Payment method change', 'service-booking-manager'),
+					'current' => esc_html__('Current method', 'service-booking-manager'),
+					'next' => esc_html__('New method', 'service-booking-manager'),
+				];
 				?>
 				<style>
-					.mpwpb-pm-toggle { display: inline-flex; border: 1px solid #dcdcde; border-radius: 6px; overflow: hidden; margin-bottom: 20px; }
-					.mpwpb-pm-toggle-btn { border: none; background: #fff; padding: 10px 22px; font-weight: 600; cursor: pointer; color: #1d2327; }
-					.mpwpb-pm-toggle-btn.is-active { background: #6366f1; color: #fff; }
-					.mpwpb-pm-panel { border: 1px solid #dcdcde; border-radius: 8px; padding: 20px; background: #fff; }
+					.mpwpb-pm-toggle { display: inline-flex; gap: 4px; margin: 0 0 20px; padding: 4px; overflow: hidden; border: 1px solid #dce3ee; border-radius: 12px; background: #eef2f7; box-shadow: inset 0 1px 2px rgba(15,23,42,.04); }
+					.mpwpb-pm-toggle-btn { min-height: 38px; border: none; border-radius: 9px; background: transparent; padding: 9px 18px; font-size: 13px; font-weight: 700; cursor: pointer; color: #536177; transition: background .15s ease, color .15s ease, box-shadow .15s ease; }
+					.mpwpb-pm-toggle-btn:hover { background: rgba(255,255,255,.72); color: #172033; }
+					.mpwpb-pm-toggle-btn.is-active { background: linear-gradient(135deg,#4565e8,#6967ed); color: #fff; box-shadow: 0 6px 14px rgba(69,101,232,.22); }
+					.mpwpb-pm-panel { border: 1px solid #dce3ee; border-radius: 16px; padding: 20px; background: #f8fafc; box-shadow: 0 8px 24px rgba(15,23,42,.05); }
 					.mpwpb-custom-dependent.mpwpb-locked { opacity: .5; pointer-events: none; user-select: none; }
 					.mpwpb-pro-badge { display: inline-block; background: linear-gradient(135deg,#f7b733,#fc4a1a); color: #fff; font-size: 10px; font-weight: 700; letter-spacing: .5px; border-radius: 999px; padding: 2px 8px; margin-left: 6px; vertical-align: middle; }
 					.mpwpb-toggle-switch input:disabled + .mpwpb-toggle-slider { cursor: not-allowed; opacity: .5; }
@@ -279,70 +281,131 @@
 					.mpwpb-pm-notice p { margin: 6px 0 12px; }
 					.mpwpb-pm-btn-primary { background: #6366f1; color: #fff; border: none; border-radius: 5px; padding: 9px 18px; font-weight: 600; cursor: pointer; }
 					.mpwpb-pm-btn-primary:disabled { opacity: .6; cursor: default; }
-					.mpwpb-gateway-card { border-radius: 8px; margin-bottom: 14px; color: #fff; background: #444; }
-					.mpwpb-gateway-row { display: flex; align-items: center; gap: 12px; padding: 16px 18px; }
-					.mpwpb-gateway-icon { font-size: 20px; width: 26px; text-align: center; }
-					.mpwpb-gateway-name { font-weight: 600; flex: 1; }
-					.mpwpb-gateway-status { border-radius: 999px; padding: 3px 12px; font-size: 12px; font-weight: 600; background: rgba(255,255,255,.25); }
+					.mpwpb-gateway-card { position: relative; z-index: 1; overflow: hidden; border: 1px solid rgba(255,255,255,.18); border-radius: 14px; margin-bottom: 14px; color: #fff; background: #444; box-shadow: 0 8px 18px rgba(15,23,42,.11); transition: transform .15s ease, box-shadow .15s ease; }
+					.mpwpb-gateway-card::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(110deg,rgba(255,255,255,.08),transparent 45%); }
+					.mpwpb-gateway-card.is-config-open { border-radius: 14px 14px 0 0; margin-bottom: 0; }
+					.mpwpb-gateway-row { position: relative; z-index: 1; display: flex; align-items: center; gap: 13px; min-height: 62px; padding: 12px 17px; box-sizing: border-box; }
+					div.mpwpb_style .mpwpb-gateway-icon { display: inline-flex !important; align-items: center !important; justify-content: center !important; width: 36px; height: 36px; flex: 0 0 36px; margin: 0 !important; padding: 0 !important; border-radius: 10px; background: rgba(255,255,255,.15); font-size: 18px; line-height: 1; text-align: center; box-sizing: border-box; }
+					div.mpwpb_style .mpwpb-gateway-icon > i { display: inline-flex !important; align-items: center !important; justify-content: center !important; width: 20px; height: 20px; flex: 0 0 20px; margin: 0 !important; padding: 0 !important; font-size: 18px; line-height: 20px !important; text-align: center; vertical-align: middle; }
+					div.mpwpb_style .mpwpb-gateway-icon > i::before { display: block; width: 20px; line-height: 20px; text-align: center; }
+					.mpwpb-gateway-name { font-size: 13px; font-weight: 750; flex: 1; }
+					.mpwpb-gateway-status { border: 1px solid rgba(255,255,255,.16); border-radius: 999px; padding: 4px 10px; font-size: 10px; font-weight: 750; background: rgba(255,255,255,.2); }
 					.mpwpb-gateway-status.is-enabled { background: #1c9a5b; }
-					.mpwpb-gateway-configure { border: 1px solid rgba(255,255,255,.7); background: rgba(255,255,255,.1); color: #fff; border-radius: 5px; padding: 6px 14px; cursor: pointer; }
-					.mpwpb-gw-panel { border: 1px solid #dcdcde; border-top: none; border-radius: 0 0 8px 8px; padding: 16px 18px; margin: -14px 0 14px; background: #fafafa; }
-					.mpwpb-gw-panel label { display: block; margin-bottom: 12px; font-weight: 600; }
-					.mpwpb-gw-panel input[type=text], .mpwpb-gw-panel input[type=password], .mpwpb-gw-panel select, .mpwpb-gw-panel textarea { width: 100%; max-width: 420px; margin-top: 4px; font-weight: normal; }
-					.mpwpb-gw-panel label.mpwpb-gw-field { display: flex; align-items: flex-start; gap: 14px; padding-top: 6px; }
-					.mpwpb-gw-panel .mpwpb-gw-field-label { flex: 0 0 160px; }
-					.mpwpb-gw-panel .mpwpb-gw-field-control { flex: 1 1 auto; }
-					.mpwpb-gw-panel .mpwpb-gw-field-control input[type=text], .mpwpb-gw-panel .mpwpb-gw-field-control input[type=password], .mpwpb-gw-panel .mpwpb-gw-field-control select, .mpwpb-gw-panel .mpwpb-gw-field-control textarea { margin-top: 0; }
+					.mpwpb-gateway-configure { display: inline-flex; align-items: center; gap: 7px; min-height: 34px; border: 1px solid rgba(255,255,255,.42); background: rgba(255,255,255,.14); color: #fff; border-radius: 9px; padding: 7px 12px; font-size: 11.5px; font-weight: 700; cursor: pointer; transition: background .15s ease, transform .15s ease; }
+					.mpwpb-gateway-configure::after { content: "\f347"; font-family: dashicons; font-size: 14px; transition: transform .15s ease; }
+					.mpwpb-gateway-configure[aria-expanded="true"]::after { transform: rotate(180deg); }
+					.mpwpb-gateway-configure:hover { background: rgba(255,255,255,.24); transform: translateY(-1px); }
+					.mpwpb-gw-panel { position: relative; border: 1px solid #dce3ee; border-top: none; border-radius: 0 0 14px 14px; padding: 20px; margin: 0 0 16px; background: #fff; box-shadow: 0 12px 24px rgba(15,23,42,.08); }
+					.mpwpb-gw-panel .mpwpb-gw-enable-row { display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 14px !important; margin: 0 0 6px !important; padding: 0 0 16px !important; border-bottom: 1px solid #e8edf4; color: #26334a; font-size: 12.5px; font-weight: 750 !important; }
+					.mpwpb-gw-panel .mpwpb-gw-enable-label { flex: 1; min-width: 0; }
+					.mpwpb-gw-panel label.mpwpb-gw-field { display: grid !important; grid-template-columns: 150px minmax(0,1fr); align-items: center !important; gap: 16px !important; margin: 0 !important; padding: 14px 0 !important; border-bottom: 1px solid #edf1f6; }
+					.mpwpb-gw-panel label.mpwpb-gw-field:last-of-type { border-bottom: none; }
+					.mpwpb-gw-panel .mpwpb-gw-field-label { min-width: 0; color: #354258; font-size: 12px; font-weight: 700; line-height: 1.4; }
+					.mpwpb-gw-panel .mpwpb-gw-field-control { display: block !important; min-width: 0; }
+					.mpwpb-gw-panel input[type=text], .mpwpb-gw-panel input[type=password], .mpwpb-gw-panel select, .mpwpb-gw-panel textarea { width: 100% !important; max-width: none !important; min-height: 42px !important; margin: 0 !important; padding: 9px 12px !important; border: 1px solid #d7dfeb !important; border-radius: 10px !important; background: #f9fbfd !important; color: #172033 !important; font-size: 12.5px !important; font-weight: 500 !important; box-shadow: none !important; box-sizing: border-box !important; transition: border-color .15s ease, box-shadow .15s ease, background .15s ease; }
+					.mpwpb-gw-panel textarea { min-height: 92px !important; resize: vertical; }
+					.mpwpb-gw-panel input:focus, .mpwpb-gw-panel select:focus, .mpwpb-gw-panel textarea:focus { outline: none !important; border-color: #6276e8 !important; background: #fff !important; box-shadow: 0 0 0 3px rgba(83,104,221,.13) !important; }
+					.mpwpb-gw-panel .mpwpb-gw-help { position: relative; margin: 16px 0 0 !important; padding: 13px 14px 13px 42px !important; border: 1px solid #dbe5ff; border-radius: 11px; background: #f6f8ff; color: #59677c !important; font-size: 11.5px !important; line-height: 1.55 !important; }
+					.mpwpb-gw-panel .mpwpb-gw-help::before { content: "\f348"; position: absolute; top: 14px; left: 14px; display: grid; place-items: center; width: 18px; height: 18px; color: #5368dd; font-family: dashicons; font-size: 18px; }
+					.mpwpb-gw-panel .mpwpb-gw-help code { display: inline-block; max-width: 100%; padding: 1px 4px; border-radius: 4px; background: #e9edff; color: #3449bd; font-size: 10.5px; overflow-wrap: anywhere; }
 					.mpwpb-toggle-switch { position: relative; display: inline-block; width: 40px; height: 22px; vertical-align: middle; }
 					.mpwpb-toggle-switch input { opacity: 0; width: 0; height: 0; }
 					.mpwpb-toggle-slider { position: absolute; inset: 0; background: rgba(255,255,255,.35); border-radius: 999px; transition: .15s; cursor: pointer; }
 					.mpwpb-toggle-slider:before { content: ""; position: absolute; height: 16px; width: 16px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: .15s; }
 					.mpwpb-toggle-switch input:checked + .mpwpb-toggle-slider { background: #1c9a5b; }
 					.mpwpb-toggle-switch input:checked + .mpwpb-toggle-slider:before { transform: translateX(18px); }
-					.mpwpb-confirmation-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-top: 18px; padding-top: 18px; border-top: 1px solid #dcdcde; }
+					.mpwpb-confirmation-row { display: grid; grid-template-columns: minmax(0,1fr) minmax(180px,240px); align-items: center; gap: 20px; margin-top: 18px; padding: 18px; border: 1px solid #dce3ee; border-radius: 13px; background: #fff; }
 					.mpwpb-confirmation-row .description { color: #646970; margin: 4px 0 0; }
-					.mpwpb-toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid #dcdcde; }
+					.mpwpb-confirmation-row select { width: 100%; min-height: 42px; border: 1px solid #d7dfeb; border-radius: 10px; background-color: #f9fbfd; }
+					.mpwpb-toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 16px 17px; margin-bottom: 18px; border: 1px solid #dce3ee; border-radius: 13px; background: #fff; }
+					.mpwpb-toggle-row strong { display: inline-flex !important; align-items: center; color: #26334a; font-size: 13px; font-weight: 750; }
 					.mpwpb-toggle-row .description { color: #646970; }
 					.mpwpb-toggle-switch-lg .mpwpb-toggle-slider { background: rgba(0,0,0,.15); }
 					.mpwpb-toggle-switch-lg input:checked + .mpwpb-toggle-slider { background: #6366f1; }
-					.mpwpb-accordion { border: 1px solid #dcdcde; border-radius: 6px; margin-bottom: 14px; overflow: hidden; }
-					.mpwpb-accordion-header { display: flex; align-items: center; justify-content: space-between; width: 100%; text-align: left; background: #f6f7f7; border: none; padding: 12px 16px; font-weight: 600; cursor: pointer; }
-					.mpwpb-accordion-header.is-open { background: #eaf1ff; color: #6366f1; }
-					button.mpwpb-accordion-header { justify-content: left; }
+					.mpwpb-accordion { border: 1px solid #dce3ee; border-radius: 13px; margin-bottom: 14px; overflow: hidden; background: #fff; }
+					.mpwpb-accordion-header { display: flex; align-items: center; justify-content: space-between !important; gap: 12px; width: 100%; text-align: left; background: #fff; border: none; padding: 14px 16px; color: #354258; font-size: 12.5px; font-weight: 750; cursor: pointer; transition: background .15s ease, color .15s ease; }
+					.mpwpb-accordion-header:hover { background: #f8faff; }
+					.mpwpb-accordion-header.is-open { background: #eef2ff; color: #4056ce; }
+					.mpwpb-accordion-header .fa-chevron-down { margin-left: auto !important; transition: transform .15s ease; }
+					.mpwpb-accordion-header.is-open .fa-chevron-down { transform: rotate(180deg); }
 					.mpwpb-accordion mpwpb span.fas.fa-chevron-down { margin-left: 20px; }
 					span.fas.fa-chevron-down { margin-left: 10px; }
-					.mpwpb-accordion-body { padding: 16px; border-top: 1px solid #dcdcde; }
+					.mpwpb-accordion-body { padding: 16px; border-top: 1px solid #e7ecf3; background: #f8fafc; }
 					.mpwpb-accordion-body p { margin-bottom: 5px !important; }
 					.mpwpb-pm-btn-outline { display: inline-block; border: 1px solid #6366f1; color: #6366f1; background: #fff; border-radius: 5px; padding: 6px 14px; text-decoration: none; font-size: 13px; font-weight: 600; }
-					.mpwpb-wc-gateway-card { border: 1px solid #dcdcde; border-radius: 6px; padding: 14px 16px; margin-bottom: 10px; display: grid; grid-template-columns: auto auto 1fr auto; align-items: center; gap: 14px; }
-					.mpwpb-wc-gateway-name { font-weight: 600; }
+					.mpwpb-wc-gateway-card { border: 1px solid #dce3ee; border-radius: 12px; padding: 14px 15px; margin-bottom: 10px; display: grid; grid-template-columns: auto minmax(120px,auto) 1fr auto; align-items: center; gap: 13px; background: #fff; box-shadow: 0 4px 12px rgba(15,23,42,.04); }
+					.mpwpb-wc-gateway-card.is-config-open { border-radius: 12px 12px 0 0; margin-bottom: 0; }
+					.mpwpb-wc-gateway-name { color: #26334a; font-size: 12.5px; font-weight: 750; }
 					.mpwpb-wc-gateway-status { border-radius: 999px; padding: 2px 10px; font-size: 11px; font-weight: 700; background: #fdecea; color: #b32d2e; justify-self: end; }
 					.mpwpb-wc-gateway-status.is-enabled { background: #eaf7ee; color: #1c9a5b; }
-					.mpwpb-wc-gateway-desc { grid-column: 1 / -1; color: #646970; font-size: 13px; }
-					.mpwpb-wc-gw-panel { border: 1px solid #dcdcde; border-top: none; border-radius: 0 0 8px 8px; padding: 16px 18px; margin: -10px 0 10px; background: #fafafa; }
-					.mpwpb-wc-gw-panel .form-table th { width: 220px; }
-					.mpwpb-wc-gw-panel .form-table input[type=text], .mpwpb-wc-gw-panel .form-table input[type=password], .mpwpb-wc-gw-panel .form-table select, .mpwpb-wc-gw-panel .form-table textarea { width: 100%; max-width: 420px; }
-					.mpwpb-settings-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 14px 0; border-top: 1px solid #eee; }
+					.mpwpb-wc-gateway-desc { grid-column: 1 / -1; padding-top: 10px; border-top: 1px solid #edf1f6; color: #69768a; font-size: 11.5px; line-height: 1.5; }
+					.mpwpb-wc-gateway-card .mpwpb-gateway-configure { display: inline-flex; align-items: center; justify-content: center; gap: 7px; border-color: #cfd7ff; background: #eef2ff; color: #455bd4; border-radius: 9px; }
+					.mpwpb-wc-gateway-card .mpwpb-gateway-configure:hover { border-color: #aebaff; background: #e4e9ff; color: #3449bd; }
+					.mpwpb-wc-gw-panel { border: 1px solid #dce3ee; border-top: 3px solid #6276e8; border-radius: 0 0 12px 12px; padding: 18px; margin: 0 0 12px; background: #fff; box-shadow: 0 10px 22px rgba(15,23,42,.07); }
+					.mpwpb-wc-gw-panel .form-table { width: 100%; margin: 0; border-collapse: separate; border-spacing: 0; }
+					.mpwpb-wc-gw-panel .form-table tr + tr th, .mpwpb-wc-gw-panel .form-table tr + tr td { border-top: 1px solid #edf1f6; }
+					.mpwpb-wc-gw-panel .form-table th { width: 190px; padding: 14px 14px 14px 0; color: #354258; font-size: 12px; font-weight: 700; vertical-align: middle; }
+					.mpwpb-wc-gw-panel .form-table td { padding: 14px 0; vertical-align: middle; }
+					.mpwpb-wc-gw-panel .form-table input[type=text], .mpwpb-wc-gw-panel .form-table input[type=password], .mpwpb-wc-gw-panel .form-table input[type=email], .mpwpb-wc-gw-panel .form-table input[type=number], .mpwpb-wc-gw-panel .form-table select, .mpwpb-wc-gw-panel .form-table textarea { width: 100% !important; max-width: none !important; min-height: 42px; margin: 0; padding: 9px 12px; border: 1px solid #d7dfeb; border-radius: 10px; background: #f9fbfd; box-shadow: none; box-sizing: border-box; }
+					.mpwpb-wc-gw-panel .form-table input:focus, .mpwpb-wc-gw-panel .form-table select:focus, .mpwpb-wc-gw-panel .form-table textarea:focus { outline: none; border-color: #6276e8; background: #fff; box-shadow: 0 0 0 3px rgba(83,104,221,.13); }
+					.mpwpb-wc-gw-panel .description { color: #7a879a; font-size: 10.5px; line-height: 1.5; }
+					.mpwpb-wc-gw-save-row { display: flex; align-items: center; gap: 10px; margin: 16px 0 0 !important; padding-top: 16px; border-top: 1px solid #edf1f6; }
+					.mpwpb-settings-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin: 0; padding: 15px 0; border-top: 1px solid #e7ecf3; }
 					.mpwpb-settings-row:first-child { border-top: none; padding-top: 0; }
-					.mpwpb-settings-row .description { color: #646970; margin: 4px 0 0; }
+					.mpwpb-settings-row > div:first-child strong { display: block !important; color: #354258; font-size: 12.5px; font-weight: 750; }
+					.mpwpb-settings-row .description { color: #758196; margin: 4px 0 0; font-size: 11px; line-height: 1.5; }
+					.mpwpb-settings-row select { min-width: 190px; min-height: 40px; border: 1px solid #d7dfeb; border-radius: 9px; background-color: #fff; }
 					.mpwpb-settings-row.mpwpb-settings-row-top { align-items: flex-start; }
 					.mpwpb-settings-row.mpwpb-settings-row-top > div:first-child { padding-top: 2px; }
 					.mpwpb-settings-row label { display: flex; align-items: center; gap: 6px; font-weight: 400; }
-					.mpwpb-pm-confirm-overlay { position: fixed; inset: 0; background: rgba(15,23,42,.55); z-index: 100000; display: none; align-items: center; justify-content: center; padding: 20px; }
-					.mpwpb-pm-confirm-box { position: relative; background: #fff; border-radius: 12px; padding: 26px 26px 22px; max-width: 440px; width: 100%; box-shadow: 0 24px 60px rgba(15,23,42,.35); overflow: hidden; }
-					.mpwpb-pm-confirm-box::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg,#6366f1,#8b8ff5); }
-					.mpwpb-pm-confirm-head { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
-					.mpwpb-pm-confirm-icon { flex: 0 0 auto !important; width: 38px !important; height: 38px !important; border-radius: 50% !important; background: #fff6dd !important; display: flex !important; align-items: center !important; justify-content: center !important; color: #dba617 !important; font-size: 16px !important; }
-					.mpwpb-pm-confirm-title { margin: 0 !important; padding-top: 6px !important; font-size: 18px !important; font-weight: 700 !important; color: #1d2327 !important; line-height: 1.35 !important; }
-					.mpwpb-pm-confirm-body p { margin: 0 0 10px; font-size: 13.5px; color: #50575e; line-height: 1.6; }
-					.mpwpb-pm-confirm-body p:last-child { margin-bottom: 0; }
-					.mpwpb-pm-confirm-body strong { color: #1d2327; font-weight: 700; }
-					.mpwpb-pm-confirm-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; }
-					.mpwpb-pm-confirm-actions button { border-radius: 7px; padding: 9px 20px; font-size: 13.5px; font-weight: 600; cursor: pointer; border: none; }
-					.mpwpb-pm-confirm-actions .mpwpb-pm-btn-outline { background: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; }
-					.mpwpb-pm-confirm-actions .mpwpb-pm-btn-outline:hover { background: #e2e8f0; }
-					.mpwpb-pm-confirm-actions .mpwpb-pm-btn-primary { background: #6366f1; color: #fff; }
-					.mpwpb-pm-confirm-actions .mpwpb-pm-btn-primary:hover { background: #4f46e5; }
+					.mpwpb-pm-panel .mpwpb-pm-btn-primary, .mpwpb-pm-panel input[type=submit].button-primary { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; margin: 0; padding: 9px 17px; border: 1px solid transparent; border-radius: 10px; background: linear-gradient(135deg,#4565e8,#6967ed); color: #fff; font-size: 12.5px; font-weight: 700; line-height: 1.2; text-shadow: none; box-shadow: 0 7px 16px rgba(69,101,232,.22); cursor: pointer; }
+					.mpwpb-pm-panel .mpwpb-pm-btn-primary:hover, .mpwpb-pm-panel input[type=submit].button-primary:hover { background: linear-gradient(135deg,#3656d6,#5758db); color: #fff; }
+					.mpwpb-payment-save-footer { display: flex !important; justify-content: flex-end !important; align-items: center !important; margin-top: 18px !important; padding-top: 18px; border-top: 1px solid #e4e9f1; }
+					.mpwpb-payment-save-footer .submit { margin: 0 !important; padding: 0 !important; }
+					.mpwpb-payment-save-footer input#submit { min-height: 42px; margin: 0; padding: 9px 22px; border: 0; border-radius: 10px; background: linear-gradient(135deg,#4565e8,#6967ed); color: #fff; font-size: 12.5px; font-weight: 700; line-height: 1.2; text-shadow: none; box-shadow: 0 7px 16px rgba(69,101,232,.22); }
+					.mpwpb-payment-save-footer input#submit:hover { background: linear-gradient(135deg,#3656d6,#5758db); color: #fff; }
+					@media (max-width: 720px) { .mpwpb-gateway-row { flex-wrap: wrap; } .mpwpb-gateway-name { min-width: 120px; } .mpwpb-gw-panel label.mpwpb-gw-field { grid-template-columns: 1fr; gap: 7px !important; } .mpwpb-confirmation-row { grid-template-columns: 1fr; } .mpwpb-wc-gateway-card { grid-template-columns: auto 1fr auto; } .mpwpb-wc-gateway-card .mpwpb-gateway-configure { grid-column: 1 / -1; justify-content: center; } .mpwpb-wc-gw-panel .form-table, .mpwpb-wc-gw-panel .form-table tbody, .mpwpb-wc-gw-panel .form-table tr, .mpwpb-wc-gw-panel .form-table th, .mpwpb-wc-gw-panel .form-table td { display: block; width: 100%; } .mpwpb-wc-gw-panel .form-table th { padding: 13px 0 5px; border-top: 1px solid #edf1f6; } .mpwpb-wc-gw-panel .form-table td { padding: 0 0 13px; } .mpwpb-settings-row { align-items: stretch; flex-direction: column; gap: 9px; } .mpwpb-settings-row select { width: 100%; } }
+					body.mpwpb-pm-confirm-open { overflow: hidden; }
+					#mpwpb-pm-confirm-modal.mpwpb-pm-confirm-overlay { position: fixed !important; inset: 0 !important; z-index: 100020 !important; display: none; align-items: center !important; justify-content: center !important; padding: 24px !important; box-sizing: border-box !important; background: rgba(15,23,42,.68) !important; -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px); opacity: 0; transition: opacity .18s ease; }
+					#mpwpb-pm-confirm-modal.mpwpb-pm-confirm-overlay.is-open { opacity: 1; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-box { position: relative !important; width: min(100%, 520px) !important; max-width: 520px !important; margin: 0 !important; padding: 0 !important; overflow: hidden !important; border: 1px solid rgba(255,255,255,.72) !important; border-radius: 20px !important; background: #fff !important; color: #172033 !important; box-shadow: 0 30px 80px rgba(15,23,42,.32), 0 8px 24px rgba(15,23,42,.16) !important; transform: translateY(14px) scale(.975); transition: transform .22s cubic-bezier(.2,.8,.2,1); }
+					#mpwpb-pm-confirm-modal.is-open .mpwpb-pm-confirm-box { transform: translateY(0) scale(1); }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-box::before { content: ""; position: absolute; inset: 0 0 auto; height: 5px; background: linear-gradient(90deg,#315bdc 0%,#6366f1 52%,#8b5cf6 100%); }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-close { position: absolute; top: 16px; right: 16px; z-index: 2; display: grid; place-items: center; width: 34px; height: 34px; min-height: 0; margin: 0; padding: 0; border: 1px solid #e2e8f0; border-radius: 10px; background: #fff; color: #64748b; cursor: pointer; transition: background .15s ease, color .15s ease, border-color .15s ease, transform .15s ease; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-close:hover { border-color: #cbd5e1; background: #f8fafc; color: #172033; transform: rotate(4deg); }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-close .dashicons { width: 18px; height: 18px; font-size: 18px; line-height: 18px; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-head { display: grid !important; grid-template-columns: 56px minmax(0,1fr); align-items: center !important; gap: 16px !important; margin: 0 !important; padding: 30px 60px 22px 28px !important; background: linear-gradient(145deg,#f8faff 0%,#fff 68%) !important; border-bottom: 1px solid #eef2f7 !important; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-icon { display: grid !important; place-items: center !important; width: 54px !important; height: 54px !important; min-width: 54px !important; margin: 0 !important; padding: 0 !important; border: 1px solid #fde2a6 !important; border-radius: 16px !important; background: linear-gradient(145deg,#fffaf0,#fff2cf) !important; color: #c77908 !important; box-shadow: 0 8px 20px rgba(199,121,8,.13) !important; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-icon .dashicons { width: 25px !important; height: 25px !important; font-size: 25px !important; line-height: 25px !important; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-heading { min-width: 0; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-eyebrow { display: block !important; margin: 0 0 5px !important; color: #5368dd !important; font-size: 10.5px !important; font-weight: 800 !important; line-height: 1.2 !important; letter-spacing: .1em !important; text-transform: uppercase !important; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-title { margin: 0 !important; padding: 0 !important; color: #172033 !important; font-size: 19px !important; font-weight: 750 !important; line-height: 1.35 !important; letter-spacing: -.015em !important; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-body { padding: 22px 28px 24px !important; background: #fff !important; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-intro { margin: 0 0 14px !important; color: #58667b !important; font-size: 13.5px !important; line-height: 1.65 !important; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-change { margin: 0 !important; padding: 14px 15px !important; border: 1px solid #dce4ff !important; border-radius: 13px !important; background: #f6f8ff !important; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-change-label { display: block !important; margin: 0 0 10px !important; color: #5368dd !important; font-size: 10px !important; font-weight: 800 !important; line-height: 1.2 !important; letter-spacing: .08em !important; text-transform: uppercase !important; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-route { display: grid !important; grid-template-columns: minmax(0,1fr) 30px minmax(0,1fr) !important; align-items: center !important; gap: 9px !important; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-method { display: flex !important; flex-direction: column !important; gap: 3px !important; min-width: 0 !important; padding: 9px 10px !important; border: 1px solid #e1e7f0 !important; border-radius: 10px !important; background: #fff !important; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-method small { display: block !important; margin: 0 !important; color: #8a96a8 !important; font-size: 8.5px !important; font-weight: 800 !important; line-height: 1.2 !important; letter-spacing: .07em !important; text-transform: uppercase !important; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-method strong { display: block !important; min-width: 0 !important; margin: 0 !important; color: #26334a !important; font-size: 12px !important; font-weight: 750 !important; line-height: 1.3 !important; overflow-wrap: anywhere !important; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-method.is-next { border-color: #bdcaff !important; background: #eef2ff !important; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-method.is-next strong { color: #354fc7 !important; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-route-arrow { display: grid !important; place-items: center !important; width: 30px !important; height: 30px !important; border-radius: 50% !important; background: #5368dd !important; color: #fff !important; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-route-arrow .dashicons { width: 16px !important; height: 16px !important; font-size: 16px !important; line-height: 16px !important; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-detail { margin: 11px 0 0 !important; color: #536177 !important; font-size: 12px !important; font-weight: 550 !important; line-height: 1.5 !important; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-footer { display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 16px !important; padding: 17px 28px !important; border-top: 1px solid #e8edf4 !important; background: #f8fafc !important; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-hint { display: inline-flex; align-items: center; gap: 6px; max-width: 138px; color: #7a879a; font-size: 10px; font-weight: 600; line-height: 1.35; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-hint .dashicons { flex: 0 0 15px; width: 15px; height: 15px; color: #22a06b; font-size: 15px; line-height: 15px; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-actions { display: flex !important; flex-wrap: nowrap !important; align-items: center !important; justify-content: flex-end !important; gap: 9px !important; margin: 0 !important; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-actions button { display: inline-flex !important; flex: 0 0 auto !important; align-items: center !important; justify-content: center !important; gap: 7px !important; min-width: 104px !important; min-height: 40px !important; margin: 0 !important; padding: 9px 13px !important; border-radius: 10px !important; font-family: inherit !important; font-size: 12px !important; font-weight: 700 !important; line-height: 1.2 !important; white-space: nowrap !important; cursor: pointer !important; transition: transform .15s ease, box-shadow .15s ease, background .15s ease !important; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-actions .mpwpb-pm-btn-primary { min-width: 126px !important; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-actions .mpwpb-pm-btn-outline { border: 1px solid #d9e0ea !important; background: #fff !important; color: #475569 !important; box-shadow: none !important; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-actions .mpwpb-pm-btn-outline:hover { border-color: #c4cedb !important; background: #f3f6fa !important; color: #172033 !important; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-actions .mpwpb-pm-btn-primary { border: 1px solid transparent !important; background: linear-gradient(135deg,#315bdc,#5f63e8) !important; color: #fff !important; box-shadow: 0 7px 16px rgba(49,91,220,.24) !important; }
+					#mpwpb-pm-confirm-modal .mpwpb-pm-confirm-actions .mpwpb-pm-btn-primary:hover { background: linear-gradient(135deg,#244bc4,#5054d6) !important; box-shadow: 0 9px 20px rgba(49,91,220,.3) !important; transform: translateY(-1px); }
+					#mpwpb-pm-confirm-modal button:focus-visible { outline: 3px solid rgba(49,91,220,.22) !important; outline-offset: 2px !important; }
+					@media (max-width: 560px) { #mpwpb-pm-confirm-modal.mpwpb-pm-confirm-overlay { padding: 14px !important; } #mpwpb-pm-confirm-modal .mpwpb-pm-confirm-head { grid-template-columns: 46px minmax(0,1fr); padding: 26px 48px 18px 20px !important; } #mpwpb-pm-confirm-modal .mpwpb-pm-confirm-icon { width: 44px !important; height: 44px !important; min-width: 44px !important; border-radius: 13px !important; } #mpwpb-pm-confirm-modal .mpwpb-pm-confirm-title { font-size: 17px !important; } #mpwpb-pm-confirm-modal .mpwpb-pm-confirm-body { padding: 18px 20px 20px !important; } #mpwpb-pm-confirm-modal .mpwpb-pm-confirm-route { grid-template-columns: 1fr !important; } #mpwpb-pm-confirm-modal .mpwpb-pm-confirm-route-arrow { transform: rotate(90deg); justify-self: center; } #mpwpb-pm-confirm-modal .mpwpb-pm-confirm-footer { align-items: stretch !important; flex-direction: column !important; padding: 15px 20px 20px !important; } #mpwpb-pm-confirm-modal .mpwpb-pm-confirm-hint { max-width: none; } #mpwpb-pm-confirm-modal .mpwpb-pm-confirm-actions { width: 100%; } #mpwpb-pm-confirm-modal .mpwpb-pm-confirm-actions button { flex: 1 1 0 !important; min-width: 0 !important; } }
+					@media (prefers-reduced-motion: reduce) { #mpwpb-pm-confirm-modal.mpwpb-pm-confirm-overlay, #mpwpb-pm-confirm-modal .mpwpb-pm-confirm-box { transition: none !important; } }
 					.mpwpb-settings-row label[style*="display:block"] { display: flex !important; margin-bottom: 8px; }
 					.mpwpb-settings-row label[style*="display:block"]:last-child { margin-bottom: 0; }
 				</style>
@@ -352,21 +415,28 @@
 				</div>
 				<input type="hidden" name="<?php echo esc_attr($option); ?>[payment_method_type]" id="mpwpb_payment_method_type_input" value="<?php echo esc_attr($payment_type ?: 'custom'); ?>"/>
 
-				<div id="mpwpb-pm-confirm-modal" class="mpwpb-pm-confirm-overlay">
-					<div class="mpwpb-pm-confirm-box" role="alertdialog" aria-modal="true" aria-labelledby="mpwpb-pm-confirm-title">
+				<div id="mpwpb-pm-confirm-modal" class="mpwpb-pm-confirm-overlay" aria-hidden="true">
+					<div class="mpwpb-pm-confirm-box" role="alertdialog" aria-modal="true" aria-labelledby="mpwpb-pm-confirm-title" aria-describedby="mpwpb-pm-confirm-text" tabindex="-1">
+						<button type="button" class="mpwpb-pm-confirm-close" data-mpwpb-confirm-close aria-label="<?php esc_attr_e('Close dialog', 'service-booking-manager'); ?>"><span class="dashicons dashicons-no-alt" aria-hidden="true"></span></button>
 						<div class="mpwpb-pm-confirm-head">
-							<span class="mpwpb-pm-confirm-icon"><span class="fas fa-triangle-exclamation"></span></span>
-							<h3 class="mpwpb-pm-confirm-title" id="mpwpb-pm-confirm-title"><?php esc_html_e('Only One Payment Method Allowed', 'service-booking-manager'); ?></h3>
+							<span class="mpwpb-pm-confirm-icon"><span class="dashicons dashicons-shield-alt" aria-hidden="true"></span></span>
+							<div class="mpwpb-pm-confirm-heading">
+								<span class="mpwpb-pm-confirm-eyebrow"><?php esc_html_e('Payment configuration', 'service-booking-manager'); ?></span>
+								<h3 class="mpwpb-pm-confirm-title" id="mpwpb-pm-confirm-title"><?php esc_html_e('Only One Payment Method Allowed', 'service-booking-manager'); ?></h3>
+							</div>
 						</div>
 						<div class="mpwpb-pm-confirm-body" id="mpwpb-pm-confirm-text"></div>
-						<div class="mpwpb-pm-confirm-actions">
-							<button type="button" class="mpwpb-pm-btn-outline" data-mpwpb-confirm-cancel><?php esc_html_e('Cancel', 'service-booking-manager'); ?></button>
-							<button type="button" class="mpwpb-pm-btn-primary" data-mpwpb-confirm-ok><?php esc_html_e('Yes, Switch', 'service-booking-manager'); ?></button>
+						<div class="mpwpb-pm-confirm-footer">
+							<span class="mpwpb-pm-confirm-hint"><span class="dashicons dashicons-lock" aria-hidden="true"></span><?php esc_html_e('Your gateway settings remain saved.', 'service-booking-manager'); ?></span>
+							<div class="mpwpb-pm-confirm-actions">
+								<button type="button" class="mpwpb-pm-btn-outline" data-mpwpb-confirm-cancel><?php esc_html_e('Keep Current', 'service-booking-manager'); ?></button>
+								<button type="button" class="mpwpb-pm-btn-primary" data-mpwpb-confirm-ok><span class="dashicons dashicons-update" aria-hidden="true"></span><?php esc_html_e('Switch Method', 'service-booking-manager'); ?></button>
+							</div>
 						</div>
 					</div>
 				</div>
 
-				<div class="mpwpb-pm-panel" data-panel="woocommerce" style="<?php echo $payment_type === 'custom' ? 'display:none;' : ''; ?>">
+				<div class="mpwpb-pm-panel mpwpb-pm-panel--woocommerce" data-panel="woocommerce" style="<?php echo $payment_type === 'custom' ? 'display:none;' : ''; ?>">
 					<?php if (!$wc_active) : ?>
 						<div class="mpwpb-pm-notice mpwpb-pm-notice-warning">
 							<strong><span class="fas fa-triangle-exclamation"></span> <?php esc_html_e('Notice: WooCommerce is Not Activated', 'service-booking-manager'); ?></strong>
@@ -416,14 +486,14 @@
 										<span class="mpwpb-wc-gateway-status <?php echo $wc_gateway->enabled === 'yes' ? 'is-enabled' : ''; ?>" data-status-for="<?php echo esc_attr($wc_gateway->id); ?>">
 											<?php echo $wc_gateway->enabled === 'yes' ? esc_html__('ENABLED', 'service-booking-manager') : esc_html__('DISABLED', 'service-booking-manager'); ?>
 										</span>
-										<button type="button" class="mpwpb-pm-btn-outline mpwpb-gateway-configure" data-target="<?php echo esc_attr($config_panel_id); ?>"><?php esc_html_e('Configure', 'service-booking-manager'); ?></button>
+										<button type="button" class="mpwpb-pm-btn-outline mpwpb-gateway-configure" data-target="<?php echo esc_attr($config_panel_id); ?>" aria-expanded="false"><?php esc_html_e('Configure', 'service-booking-manager'); ?></button>
 										<div class="mpwpb-wc-gateway-desc"><?php echo wp_kses_post($wc_gateway->get_method_description()); ?></div>
 									</div>
-									<div class="mpwpb-wc-gw-panel" id="<?php echo esc_attr($config_panel_id); ?>" style="display:none;">
+									<div class="mpwpb-wc-gw-panel" id="<?php echo esc_attr($config_panel_id); ?>" style="display:none;" aria-hidden="true">
 										<table class="form-table">
 											<?php echo $wc_gateway->generate_settings_html($config_fields, false); ?>
 										</table>
-										<p>
+										<p class="mpwpb-wc-gw-save-row">
 											<button type="button" class="mpwpb-pm-btn-primary mpwpb-wc-gw-save" data-gateway="<?php echo esc_attr($wc_gateway->id); ?>" data-nonce="<?php echo esc_attr(wp_create_nonce('mpwpb_save_wc_gateway_' . $wc_gateway->id)); ?>"><?php esc_html_e('Save Changes', 'service-booking-manager'); ?></button>
 											<span class="mpwpb-wc-gw-save-status" style="margin-left:10px;"></span>
 										</p>
@@ -497,7 +567,7 @@
 					<?php endif; ?>
 				</div>
 
-				<div class="mpwpb-pm-panel" data-panel="custom" style="<?php echo $payment_type === 'custom' ? '' : 'display:none;'; ?>">
+				<div class="mpwpb-pm-panel mpwpb-pm-panel--custom" data-panel="custom" style="<?php echo $payment_type === 'custom' ? '' : 'display:none;'; ?>">
 					<div class="mpwpb-toggle-row">
 						<div>
 							<strong>
@@ -531,17 +601,17 @@
 								<span class="mpwpb-gateway-status <?php echo $enabled ? 'is-enabled' : ''; ?>" data-status-for="<?php echo esc_attr($key); ?>">
 									<?php echo $enabled ? esc_html__('Enabled', 'service-booking-manager') : esc_html__('Disabled', 'service-booking-manager'); ?>
 								</span>
-								<button type="button" class="mpwpb-gateway-configure" data-target="mpwpb-gw-panel-<?php echo esc_attr($key); ?>"><?php esc_html_e('Configure', 'service-booking-manager'); ?></button>
+								<button type="button" class="mpwpb-gateway-configure" data-target="mpwpb-gw-panel-<?php echo esc_attr($key); ?>" aria-expanded="false"><?php esc_html_e('Configure', 'service-booking-manager'); ?></button>
 							</div>
 						</div>
-						<div class="mpwpb-gw-panel" id="mpwpb-gw-panel-<?php echo esc_attr($key); ?>" style="display:none;">
-							<label>
+						<div class="mpwpb-gw-panel" id="mpwpb-gw-panel-<?php echo esc_attr($key); ?>" style="display:none;" aria-hidden="true" data-gateway="<?php echo esc_attr($key); ?>">
+							<label class="mpwpb-gw-enable-row">
 								<input type="hidden" name="<?php echo esc_attr($option); ?>[<?php echo esc_attr($key); ?>_enabled]" value="off"/>
+								<span class="mpwpb-gw-enable-label"><?php esc_html_e('Enable this payment method', 'service-booking-manager'); ?></span>
 								<span class="mpwpb-toggle-switch mpwpb-toggle-switch-lg">
 									<input type="checkbox" class="mpwpb-gw-enable-toggle" data-status-for="<?php echo esc_attr($key); ?>" name="<?php echo esc_attr($option); ?>[<?php echo esc_attr($key); ?>_enabled]" value="on" <?php checked($enabled); ?>/>
 									<span class="mpwpb-toggle-slider"></span>
 								</span>
-								&nbsp;<?php esc_html_e('Enable this payment method', 'service-booking-manager'); ?>
 							</label>
 							<?php if ($key === 'offline') : ?>
 								<label class="mpwpb-gw-field">
@@ -550,6 +620,7 @@
 										<textarea rows="3" name="<?php echo esc_attr($option); ?>[offline_instructions]"><?php echo esc_textarea(MPWPB_Global_Function::get_payment_setting('offline_instructions', esc_html__('Please pay via bank transfer. We will confirm your booking once payment is received.', 'service-booking-manager'))); ?></textarea>
 									</span>
 								</label>
+								<p class="description mpwpb-gw-help"><?php esc_html_e('These instructions are shown during checkout and included with the booking payment details.', 'service-booking-manager'); ?></p>
 							<?php elseif ($key === 'stripe') : ?>
 								<label class="mpwpb-gw-field">
 									<span class="mpwpb-gw-field-label"><?php esc_html_e('Mode', 'service-booking-manager'); ?></span>
@@ -578,7 +649,7 @@
 										<input type="password" name="<?php echo esc_attr($option); ?>[stripe_webhook_secret]" value="<?php echo esc_attr(MPWPB_Global_Function::get_payment_setting('stripe_webhook_secret')); ?>"/>
 									</span>
 								</label>
-								<p class="description">
+								<p class="description mpwpb-gw-help">
 									<?php
 									echo wp_kses_post(
 										sprintf(
@@ -611,7 +682,7 @@
 										<input type="password" name="<?php echo esc_attr($option); ?>[paypal_client_secret]" value="<?php echo esc_attr(MPWPB_Global_Function::get_payment_setting('paypal_client_secret')); ?>"/>
 									</span>
 								</label>
-								<p class="description"><?php esc_html_e('Customers approve payment on a PayPal-hosted page and are redirected back once done. Use your PayPal app\'s Client ID/Secret for the mode selected above (sandbox app credentials while testing, live app credentials when ready to accept real payments).', 'service-booking-manager'); ?></p>
+								<p class="description mpwpb-gw-help"><?php esc_html_e('Customers approve payment on a PayPal-hosted page and are redirected back once done. Use your PayPal app\'s Client ID/Secret for the mode selected above (sandbox app credentials while testing, live app credentials when ready to accept real payments).', 'service-booking-manager'); ?></p>
 							<?php endif; ?>
 						</div>
 					<?php endforeach; ?>
@@ -633,8 +704,7 @@
 					</div>
 					</div>
 				</div>
-				<div class="justifyBetween _mT">
-					<div></div>
+				<div class="justifyBetween _mT mpwpb-payment-save-footer">
 					<?php submit_button(); ?>
 				</div>
 				<script>
@@ -675,15 +745,39 @@
 							// jarring "this site says" popup) so switching isn't accidental, since
 							// it silently disables whichever gateway was previously active.
 							var mpwpbSwitchConfirmCopy = <?php echo wp_json_encode($pm_confirm_copy); ?>;
+							var mpwpbSwitchConfirmLabels = <?php echo wp_json_encode($pm_confirm_labels); ?>;
 							var $mpwpbConfirmModal = $('#mpwpb-pm-confirm-modal');
+							var mpwpbConfirmCloseTimer = null;
+							var mpwpbConfirmPreviousFocus = null;
 							function mpwpbOpenConfirmModal(copy, onConfirm) {
-								// copy.intro/copy.question are built server-side from esc_html__()
-								// pieces only (see render_payment_method_panel()'s $pm_confirm_copy) --
-								// safe to inject as HTML so the method names can render as <strong>.
-								$mpwpbConfirmModal.find('#mpwpb-pm-confirm-text').html(
-									'<p>' + copy.intro + '</p><p>' + copy.question + '</p>'
+								// Build the explanation as DOM text rather than one long HTML
+								// sentence, so global admin typography cannot reorder its meaning.
+								var $change = $('<div class="mpwpb-pm-confirm-change"></div>');
+								var $route = $('<div class="mpwpb-pm-confirm-route"></div>');
+								var $current = $('<div class="mpwpb-pm-confirm-method is-current"><small></small><strong></strong></div>');
+								var $next = $('<div class="mpwpb-pm-confirm-method is-next"><small></small><strong></strong></div>');
+								$current.find('small').text(mpwpbSwitchConfirmLabels.current);
+								$current.find('strong').text(copy.from);
+								$next.find('small').text(mpwpbSwitchConfirmLabels.next);
+								$next.find('strong').text(copy.to);
+								$route.append($current, '<span class="mpwpb-pm-confirm-route-arrow" aria-hidden="true"><span class="dashicons dashicons-arrow-right-alt"></span></span>', $next);
+								$change.append(
+									$('<span class="mpwpb-pm-confirm-change-label"></span>').text(mpwpbSwitchConfirmLabels.change),
+									$route,
+									$('<p class="mpwpb-pm-confirm-detail"></p>').text(copy.detail)
 								);
-								$mpwpbConfirmModal.css('display', 'flex');
+								$mpwpbConfirmModal.find('#mpwpb-pm-confirm-text').empty().append(
+									$('<p class="mpwpb-pm-confirm-intro"></p>').text(copy.intro),
+									$change
+								);
+								clearTimeout(mpwpbConfirmCloseTimer);
+								mpwpbConfirmPreviousFocus = document.activeElement;
+								$('body').addClass('mpwpb-pm-confirm-open');
+								$mpwpbConfirmModal.css('display', 'flex').attr('aria-hidden', 'false');
+								(window.requestAnimationFrame || function (callback) { setTimeout(callback, 0); })(function () {
+									$mpwpbConfirmModal.addClass('is-open');
+									$mpwpbConfirmModal.find('[data-mpwpb-confirm-cancel]').trigger('focus');
+								});
 								// Rebound on every open (not delegated once at ready) so each call's
 								// onConfirm closure is the only one wired up -- avoids stacking
 								// duplicate handlers from earlier opens.
@@ -691,19 +785,40 @@
 									mpwpbCloseConfirmModal();
 									onConfirm();
 								});
-								$mpwpbConfirmModal.find('[data-mpwpb-confirm-cancel]').off('click').on('click', mpwpbCloseConfirmModal);
+								$mpwpbConfirmModal.find('[data-mpwpb-confirm-cancel], [data-mpwpb-confirm-close]').off('click').on('click', mpwpbCloseConfirmModal);
 							}
 							function mpwpbCloseConfirmModal() {
-								$mpwpbConfirmModal.hide();
+								if (mpwpbConfirmPreviousFocus && document.contains(mpwpbConfirmPreviousFocus)) {
+									mpwpbConfirmPreviousFocus.focus();
+								}
+								$mpwpbConfirmModal.removeClass('is-open').attr('aria-hidden', 'true');
+								$('body').removeClass('mpwpb-pm-confirm-open');
+								clearTimeout(mpwpbConfirmCloseTimer);
+								mpwpbConfirmCloseTimer = setTimeout(function () {
+									$mpwpbConfirmModal.hide();
+								}, 180);
 							}
 							$mpwpbConfirmModal.on('click', function (e) {
 								if (e.target === this) {
 									mpwpbCloseConfirmModal();
 								}
 							});
-							$(document).on('keydown', function (e) {
+							$(document).off('keydown.mpwpbPmConfirm').on('keydown.mpwpbPmConfirm', function (e) {
 								if (e.key === 'Escape' && $mpwpbConfirmModal.is(':visible')) {
+									e.preventDefault();
 									mpwpbCloseConfirmModal();
+								}
+								if (e.key === 'Tab' && $mpwpbConfirmModal.hasClass('is-open')) {
+									var $focusable = $mpwpbConfirmModal.find('button:visible');
+									var first = $focusable.get(0);
+									var last = $focusable.get($focusable.length - 1);
+									if (e.shiftKey && document.activeElement === first) {
+										e.preventDefault();
+										last.focus();
+									} else if (!e.shiftKey && document.activeElement === last) {
+										e.preventDefault();
+										first.focus();
+									}
 								}
 							});
 							/**
@@ -792,7 +907,17 @@
 								});
 							});
 							$('.mpwpb-gateway-configure').on('click', function () {
-								$('#' + $(this).data('target')).slideToggle(150);
+								var $button = $(this);
+								var $panel = $('#' + $button.data('target'));
+								var willOpen = !$panel.is(':visible');
+								$button.attr('aria-expanded', willOpen).toggleClass('is-open', willOpen);
+								$panel.attr('aria-hidden', !willOpen).stop(true, true).slideToggle(150);
+								if ($panel.hasClass('mpwpb-gw-panel')) {
+									$panel.prev('.mpwpb-gateway-card').toggleClass('is-config-open', willOpen);
+								}
+								if ($panel.hasClass('mpwpb-wc-gw-panel')) {
+									$panel.prev('.mpwpb-wc-gateway-card').toggleClass('is-config-open', willOpen);
+								}
 							});
 							$('.mpwpb-wc-gw-save').on('click', function () {
 								var $btn = $(this);

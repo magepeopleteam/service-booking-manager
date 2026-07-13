@@ -160,23 +160,413 @@
 	}
 
 	/* ---------------------------------------------------------------- *
-	 *  Save — reuse WordPress' own Update/Publish button so post_status
-	 *  and all hidden fields stay correct.
+	 *  Save the complete native WordPress post form over AJAX. The server
+	 *  passes it through core edit_post(), preserving every save_post hook
+	 *  without navigating away from the current wizard step.
 	 * ---------------------------------------------------------------- */
-	function submitForm() {
-		if (!validateRequiredFields()) { return; }
-		try { sessionStorage.setItem('mpwpbSmeSaved', '1'); } catch (e) {}
-		toast(cfg.savingTxt || 'Saving…');
-		var $publish = $('#publish');
-		if (!$publish.length) { $publish = $('#save-post'); }
-		if ($publish.length) {
-			$publish.removeClass('disabled').prop('disabled', false).trigger('click');
-		} else {
-			var form = document.getElementById('post');
-			if (form) {
-				if (form.requestSubmit) { form.requestSubmit(); } else { form.submit(); }
-			}
+	var isSaving = false;
+	var formDirty = false;
+	var localDraftTimer = null;
+	var localDraftPersisted = false;
+	var localDraftRestoring = false;
+	var localDraftReady = false;
+	var localDraftMaxAge = 30 * 24 * 60 * 60 * 1000;
+	var localDraftStorageKey = '';
+	var changedDuringServerSave = false;
+	var localDraftLastSignature = '';
+
+	function eachEditor(callback) {
+		if (!window.tinymce) { return; }
+		var editors = window.tinymce.editors || (window.tinymce.EditorManager && window.tinymce.EditorManager.editors) || [];
+		$.each(editors, function (key, editor) {
+			if (editor) { callback(editor); }
+		});
+	}
+
+	function editorsAreDirty() {
+		var dirty = false;
+		eachEditor(function (editor) {
+			if (editor.isDirty && editor.isDirty()) { dirty = true; }
+		});
+		return dirty;
+	}
+
+	function markSaved() {
+		formDirty = false;
+		eachEditor(function (editor) {
+			if (editor.setDirty) { editor.setDirty(false); }
+		});
+		clearLocalDraft();
+	}
+
+	function setSaveButtonsDisabled(disabled) {
+		$root.find('[data-sme-save], [data-sme-next], [data-sme-save-as]')
+			.prop('disabled', disabled)
+			.toggleClass('disabled', disabled);
+	}
+
+	function applySavedState(data) {
+		if (!data) { return; }
+		if (data.postRevision) { cfg.postRevision = data.postRevision; }
+		$('#post_status, #original_post_status').val(data.postStatus || '');
+		if (data.postNonce) { $('#_wpnonce').val(data.postNonce); }
+		if (data.formNonce) { $('input[name="mpwpb_nonce"]').val(data.formNonce); }
+		if (data.editLock) { $('#active_post_lock').val(data.editLock); }
+		$('#auto_draft').val('');
+
+		$root.find('.mpwpb-sme__status-pill')
+			.text(data.statusLabel || '')
+			.toggleClass('is-published', !!data.isPublished)
+			.toggleClass('is-draft', !data.isPublished);
+		$root.find('[data-sme-save]').text(data.primaryLabel || (cfg.updateTxt || 'Update'));
+		$root.find('[data-sme-save-as="draft"]').text(data.draftLabel || 'Save Draft');
+		if (cur === order.length - 1) {
+			$root.find('[data-sme-next]').text(data.primaryLabel || (cfg.updateTxt || 'Update'));
 		}
+
+		if (data.editUrl && window.history && window.history.replaceState) {
+			window.history.replaceState({}, document.title, data.editUrl);
+			document.body.classList.remove('post-new-php');
+			document.body.classList.add('post-php');
+		}
+	}
+
+	/* ---------------------------------------------------------------- *
+	 *  Browser-only draft autosave
+	 *
+	 *  Persists the complete modern-editor form in localStorage. Nothing
+	 *  in this path calls admin-ajax.php: WordPress' server autosave stays
+	 *  suspended, while Publish/Update remains the explicit server write.
+	 * ---------------------------------------------------------------- */
+	function localDraftKey() {
+		if (localDraftStorageKey) { return localDraftStorageKey; }
+		var postId = cfg.postId || $('#post_ID').val() || $('input[name="mpwpb_sme_post_id"]').val() || 0;
+		var identity = 'post-' + postId;
+		if (document.body.classList.contains('post-new-php')) {
+			var state = (window.history && window.history.state) || {};
+			var token = state.mpwpbSmeDraftToken;
+			if (!token) {
+				token = Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+				if (window.history && window.history.replaceState) {
+					var nextState = $.extend({}, state, { mpwpbSmeDraftToken: token });
+					window.history.replaceState(nextState, document.title, window.location.href);
+				}
+			}
+			identity = 'new-' + token;
+		}
+		var sitePath = location.pathname.split('/wp-admin/')[0] || '/';
+		localDraftStorageKey = 'mpwpb_sme_local_draft_v1::' + location.host + sitePath + '::' + (cfg.userId || 0) + '::' + identity;
+		return localDraftStorageKey;
+	}
+
+	function setLocalDraftStatus(state, text) {
+		var $status = $root.find('[data-sme-local-save]');
+		if (!$status.length) { return; }
+		$status.removeClass('is-ready is-saving is-saved is-error').addClass('is-' + state);
+		$status.find('[data-sme-local-save-text]').text(text || '');
+	}
+
+	function localDraftFieldExcluded(field) {
+		var type = (field.type || '').toLowerCase();
+		var name = field.name || '';
+		return !name ||
+			type === 'button' || type === 'submit' || type === 'reset' ||
+			type === 'file' || type === 'password' ||
+			name === '_wpnonce' || name === '_wp_http_referer' || name === 'mpwpb_nonce' ||
+			name === 'action' || name.indexOf('mpwpb_payment_method_settings') === 0;
+	}
+
+	function collectLocalDraftFields() {
+		var occurrences = Object.create(null);
+		var fields = [];
+		$root.find(':input[name]').each(function () {
+			if (localDraftFieldExcluded(this)) { return; }
+			var name = this.name;
+			var type = (this.type || this.tagName || '').toLowerCase();
+			var index = occurrences[name] || 0;
+			occurrences[name] = index + 1;
+			var item = { name: name, index: index, type: type };
+			if (type === 'checkbox' || type === 'radio') {
+				item.checked = !!this.checked;
+				item.value = $(this).val();
+			} else if (this.tagName === 'SELECT' && this.multiple) {
+				item.value = $(this).val() || [];
+			} else {
+				item.value = $(this).val();
+			}
+			fields.push(item);
+		});
+		return fields;
+	}
+
+	function collectLocalDraftEditors() {
+		var editors = {};
+		eachEditor(function (editor) {
+			var element = editor.getElement ? editor.getElement() : null;
+			if (element && $.contains($root[0], element) && editor.getContent) {
+				editors[editor.id] = editor.getContent();
+			}
+		});
+		return editors;
+	}
+
+	function collectLocalDraftRepeaters() {
+		return $root.find('.mp_item_insert.mp_sortable_area').map(function (index) {
+			return {
+				index: index,
+				count: $(this).children('.mp_remove_area').length
+			};
+		}).get();
+	}
+
+	function currentLocalDraftSignature() {
+		return JSON.stringify({
+			fields: collectLocalDraftFields(),
+			editors: collectLocalDraftEditors(),
+			repeaters: collectLocalDraftRepeaters(),
+			heroUrl: $('#mpwpb-sme-hero-img').attr('src') || ''
+		});
+	}
+
+	function writeLocalDraft() {
+		if (!localDraftReady || localDraftRestoring || isSaving) { return; }
+		var draft = {
+			version: 1,
+			timestamp: Date.now(),
+			revision: cfg.postRevision || '',
+			isNew: document.body.classList.contains('post-new-php'),
+			fields: collectLocalDraftFields(),
+			editors: collectLocalDraftEditors(),
+			repeaters: collectLocalDraftRepeaters(),
+			heroUrl: $('#mpwpb-sme-hero-img').attr('src') || ''
+		};
+		try {
+			localStorage.setItem(localDraftKey(), JSON.stringify(draft));
+			localDraftLastSignature = JSON.stringify({
+				fields: draft.fields,
+				editors: draft.editors,
+				repeaters: draft.repeaters,
+				heroUrl: draft.heroUrl
+			});
+			localDraftPersisted = true;
+			setLocalDraftStatus('saved', cfg.localSavedTxt || 'Draft saved locally');
+		} catch (error) {
+			localDraftPersisted = false;
+			setLocalDraftStatus('error', cfg.localUnavailableTxt || 'Local autosave unavailable');
+		}
+	}
+
+	function scheduleLocalDraft() {
+		if (!localDraftReady || localDraftRestoring || isSaving) { return; }
+		localDraftPersisted = false;
+		setLocalDraftStatus('saving', cfg.localSavingTxt || 'Saving locally…');
+		clearTimeout(localDraftTimer);
+		localDraftTimer = setTimeout(writeLocalDraft, 650);
+	}
+
+	function clearLocalDraft() {
+		clearTimeout(localDraftTimer);
+		localDraftPersisted = false;
+		try { localStorage.removeItem(localDraftKey()); } catch (error) {}
+		localDraftLastSignature = currentLocalDraftSignature();
+		setLocalDraftStatus('ready', cfg.localReadyTxt || 'Local autosave ready');
+	}
+
+	function restoreLocalDraftRepeaters(repeaters) {
+		if (!$.isArray(repeaters)) { return; }
+		var $containers = $root.find('.mp_item_insert.mp_sortable_area');
+		$.each(repeaters, function (_, repeater) {
+			var $container = $containers.eq(parseInt(repeater.index, 10));
+			var wanted = Math.max(0, parseInt(repeater.count, 10) || 0);
+			if (!$container.length) { return; }
+			var current = $container.children('.mp_remove_area').length;
+			if (wanted < current) {
+				$container.children('.mp_remove_area').slice(wanted).remove();
+				return;
+			}
+			var $add = $container.closest('.mp_settings_area').find('.mp_add_item').first();
+			while ($add.length && current < wanted) {
+				var previous = current;
+				$add.trigger('click');
+				current = $container.children('.mp_remove_area').length;
+				// A malformed/missing repeater template must never create a loop.
+				if (current >= wanted || current <= previous) { break; }
+			}
+		});
+	}
+
+	function restoreLocalDraftFields(fields) {
+		if (!$.isArray(fields)) { return; }
+		$.each(fields, function (_, item) {
+			var $field = $root.find(':input[name]').filter(function () {
+				return this.name === item.name;
+			}).eq(parseInt(item.index, 10) || 0);
+			if (!$field.length || localDraftFieldExcluded($field[0])) { return; }
+			if (item.type === 'checkbox' || item.type === 'radio') {
+				$field.prop('checked', !!item.checked);
+			} else {
+				$field.val(item.value);
+			}
+		});
+	}
+
+	function restoreLocalDraftEditors(editors, attempt) {
+		if (!editors || typeof editors !== 'object') { return; }
+		if (!window.tinymce) {
+			if (attempt < 12) {
+				setTimeout(function () { restoreLocalDraftEditors(editors, attempt + 1); }, 250);
+			}
+			return;
+		}
+		var pending = false;
+		$.each(editors, function (id, content) {
+			var editor = tinymce.get(id);
+			if (editor && editor.setContent) {
+				editor.setContent(content || '');
+				if (editor.setDirty) { editor.setDirty(true); }
+			} else {
+				pending = true;
+			}
+		});
+		if (pending && attempt < 12) {
+			setTimeout(function () { restoreLocalDraftEditors(editors, attempt + 1); }, 250);
+		}
+	}
+
+	function syncRestoredLocalDraftUi(draft) {
+		var restoredTitle = $('#mpwpb-sme-title').val() || $('#mpwpb-sme-title-inline').val() || '';
+		$('#title, #mpwpb-sme-title, #mpwpb-sme-title-inline').val(restoredTitle);
+
+		$root.find('input[type="checkbox"][data-collapse-target]').each(function () {
+			var $field = $(this);
+			var $target = $root.find('[data-collapse="' + $field.data('collapse-target') + '"]');
+			$target.toggleClass('mActive', this.checked).toggle(this.checked);
+		});
+		$root.find('select[data-collapse-target]').each(function () {
+			$(this).find('option[data-option-target], option[data-option-target-multi]').each(function () {
+				var option = this;
+				var targets = $(option).attr('data-option-target-multi') || $(option).attr('data-option-target') || '';
+				$.each(targets.toString().split(/\s+/), function (_, target) {
+					if (!target) { return; }
+					$root.find('[data-collapse="' + target + '"]')
+						.toggleClass('mActive', option.selected).toggle(option.selected);
+				});
+			});
+		});
+		$root.find('select.select2-hidden-accessible').trigger('change.select2');
+		$root.find('.mpwpb-staff-tile input[type="checkbox"]').each(function () {
+			$(this).closest('.mpwpb-staff-tile').toggleClass('is-selected', this.checked);
+		});
+
+		var thumbnailId = $('#mpwpb-sme-thumbnail').val();
+		if (thumbnailId || draft.heroUrl) {
+			setHero(thumbnailId, draft.heroUrl || $('#mpwpb-sme-hero-img').attr('src') || '');
+		} else {
+			setHero('', '');
+		}
+	}
+
+	function restoreLocalDraft() {
+		var raw;
+		try { raw = localStorage.getItem(localDraftKey()); } catch (error) {
+			setLocalDraftStatus('error', cfg.localUnavailableTxt || 'Local autosave unavailable');
+			return false;
+		}
+		if (!raw) { return false; }
+		try {
+			var draft = JSON.parse(raw);
+			if (!draft || draft.version !== 1 || !draft.timestamp || Date.now() - draft.timestamp > localDraftMaxAge) {
+				clearLocalDraft();
+				return false;
+			}
+			if (!draft.isNew && draft.revision && cfg.postRevision && draft.revision !== cfg.postRevision) {
+				clearLocalDraft();
+				return false;
+			}
+			localDraftRestoring = true;
+			restoreLocalDraftRepeaters(draft.repeaters);
+			restoreLocalDraftFields(draft.fields);
+			restoreLocalDraftEditors(draft.editors, 0);
+			syncRestoredLocalDraftUi(draft);
+			localDraftRestoring = false;
+			localDraftPersisted = true;
+			formDirty = true;
+			setLocalDraftStatus('saved', cfg.localRestoredTxt || 'Local draft restored');
+			toast(cfg.localRestoredTxt || 'Local draft restored');
+			return true;
+		} catch (error) {
+			localDraftRestoring = false;
+			clearLocalDraft();
+			return false;
+		}
+	}
+
+	function suspendServerAutosave(attempt) {
+		attempt = attempt || 0;
+		if (window.wp && wp.autosave && wp.autosave.server && wp.autosave.server.suspend) {
+			wp.autosave.server.suspend();
+			return;
+		}
+		if (attempt < 20) {
+			setTimeout(function () { suspendServerAutosave(attempt + 1); }, 250);
+		}
+	}
+
+	function saveForm(mode) {
+		if (isSaving || !cfg.ajax) { return; }
+		if (mode !== 'draft' && !validateRequiredFields()) { return; }
+
+		var form = document.getElementById('post');
+		if (!form || !window.FormData) { return; }
+		if (window.tinyMCE) { window.tinyMCE.triggerSave(); }
+
+		var data = new FormData(form);
+		data.set('action', 'mpwpb_save_service_editor');
+		data.set('save_mode', mode === 'draft' ? 'draft' : 'primary');
+		isSaving = true;
+		changedDuringServerSave = false;
+		setSaveButtonsDisabled(true);
+		toast(cfg.savingTxt || 'Saving…');
+		if (window.wp && wp.autosave && wp.autosave.server) {
+			wp.autosave.server.suspend();
+		}
+
+		$.ajax({
+			url: cfg.ajax,
+			type: 'POST',
+			data: data,
+			processData: false,
+			contentType: false,
+			dataType: 'json'
+		}).done(function (resp) {
+			if (resp && resp.success) {
+				applySavedState(resp.data);
+				markSaved();
+				if (resp.data && resp.data.postId) {
+					cfg.postId = resp.data.postId;
+					localDraftStorageKey = '';
+				}
+				toast((resp.data && resp.data.message) || cfg.savedTxt || 'Saved');
+				$root.trigger('mpwpb:sme-saved', [resp.data]);
+			} else {
+				toast((resp && resp.data && resp.data.message) || cfg.saveErrorTxt || 'The service could not be saved.');
+			}
+		}).fail(function (xhr) {
+			var message = xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message;
+			toast(message || cfg.saveErrorTxt || 'The service could not be saved.');
+		}).always(function () {
+			isSaving = false;
+			setSaveButtonsDisabled(false);
+			suspendServerAutosave();
+			if (changedDuringServerSave) {
+				formDirty = true;
+				scheduleLocalDraft();
+			}
+		});
+	}
+
+	function submitForm() {
+		saveForm('primary');
 	}
 	$root.on('click', '[data-sme-save]', function (e) {
 		e.preventDefault();
@@ -186,11 +576,9 @@
 	/* ---------------------------------------------------------------- *
 	 *  Split-button dropdown — one extra option, always the opposite of
 	 *  whatever the primary button already does ("Update"/"Publish"),
-	 *  plus "Classic editor". "Save as Draft"/"Switch to Draft" submits
-	 *  the real #post form directly with WordPress' own core
-	 *  'saveasdraft' flag set — the exact same flag its native Save Draft
-	 *  button uses, so post_status ends up 'draft' regardless of the
-	 *  primary action.
+	 *  plus "Classic editor". "Save as Draft"/"Switch to Draft" sends
+	 *  WordPress' core 'saveasdraft' intent through the same AJAX save, so
+	 *  post_status ends up 'draft' regardless of the primary action.
 	 * ---------------------------------------------------------------- */
 	var $split = $root.find('[data-sme-split]');
 	var $splitToggle = $split.find('[data-sme-split-toggle]');
@@ -220,21 +608,7 @@
 	});
 
 	function submitFormAs(status) {
-		try { sessionStorage.setItem('mpwpbSmeSaved', '1'); } catch (e) {}
-		toast(cfg.savingTxt || 'Saving…');
-		var form = document.getElementById('post');
-		if (!form) { return; }
-		if (status === 'draft') {
-			var draftField = form.querySelector('input[name="saveasdraft"]');
-			if (!draftField) {
-				draftField = document.createElement('input');
-				draftField.type = 'hidden';
-				draftField.name = 'saveasdraft';
-				form.appendChild(draftField);
-			}
-			draftField.value = '1';
-		}
-		if (form.requestSubmit) { form.requestSubmit(); } else { form.submit(); }
+		saveForm(status === 'draft' ? 'draft' : 'primary');
 	}
 	$splitMenu.on('click', '[data-sme-save-as]', function (e) {
 		e.preventDefault();
@@ -246,17 +620,11 @@
 	});
 
 	/* ---------------------------------------------------------------- *
-	 *  Preview — proxy to WordPress' own hidden #post-preview link, whose
-	 *  core click handler (wp-admin/js/post.js) saves an autosave first and
-	 *  opens the preview in a reused tab, so unsaved changes show up too.
+	 *  Preview intentionally has no JavaScript click proxy. The visible
+	 *  anchor already contains WordPress' canonical preview URL and target;
+	 *  allowing the browser's trusted navigation keeps left-, middle- and
+	 *  keyboard activation consistent and avoids popup blocking.
 	 * ---------------------------------------------------------------- */
-	$root.on('click', '[data-sme-preview]', function (e) {
-		var $native = $('#post-preview');
-		if ($native.length) {
-			e.preventDefault();
-			$native.trigger('click');
-		}
-	});
 
 	/* ---------------------------------------------------------------- *
 	 *  Service name <-> hidden WP #title sync (title box is CSS-hidden).
@@ -442,6 +810,70 @@
 	})();
 
 	/* ---------------------------------------------------------------- *
+	 *  Happy Hours rule builder. Move the four original classic labels into
+	 *  two modern groups, keeping every real input/name intact. The summary
+	 *  below updates immediately as the rule changes.
+	 * ---------------------------------------------------------------- */
+	(function modernizeHappyHours() {
+		var $card = $root.find('[data-sme-section="MPWPB_Happy_Hours_Settings"]');
+		var $row = $card.find('#mpwpb_happy_hours_row');
+		var $fields = $row.children('label.label');
+		if (!$row.length || $fields.length < 4 || $row.data('sme-modernized')) {
+			return;
+		}
+		$row.data('sme-modernized', true).addClass('mpwpb-hh');
+
+		function group(icon, title, subtitle, modifier) {
+			return $('<div class="mpwpb-hh__group ' + modifier + '">' +
+				'<div class="mpwpb-hh__group-head">' +
+					'<span class="dashicons ' + icon + ' mpwpb-hh__group-icon" aria-hidden="true"></span>' +
+					'<div><h4></h4><p></p></div>' +
+				'</div>' +
+				'<div class="mpwpb-hh__fields"></div>' +
+			'</div>')
+				.find('h4').text(title).end()
+				.find('.mpwpb-hh__group-head p').text(subtitle).end();
+		}
+
+		var $layout = $('<div class="mpwpb-hh__layout"></div>');
+		var $windowGroup = group('dashicons-clock', cfg.hhWindowTitle || 'Time Window', cfg.hhWindowSub || 'Choose when the special price applies.', 'mpwpb-hh__group--window');
+		var $offerGroup = group('dashicons-tickets-alt', cfg.hhOfferTitle || 'Discount Offer', cfg.hhOfferSub || 'Set the discount customers receive.', 'mpwpb-hh__group--offer');
+
+		$fields.eq(0).addClass('mpwpb-hh__field mpwpb-hh__field--start').appendTo($windowGroup.find('.mpwpb-hh__fields'));
+		$fields.eq(1).addClass('mpwpb-hh__field mpwpb-hh__field--end').appendTo($windowGroup.find('.mpwpb-hh__fields'));
+		$fields.eq(2).addClass('mpwpb-hh__field mpwpb-hh__field--type').appendTo($offerGroup.find('.mpwpb-hh__fields'));
+		$fields.eq(3).addClass('mpwpb-hh__field mpwpb-hh__field--value').appendTo($offerGroup.find('.mpwpb-hh__fields'));
+
+		var $valueControl = $offerGroup.find('.mpwpb-hh__field--value > div').last().addClass('mpwpb-hh__value-control');
+		var $suffix = $('<span class="mpwpb-hh__value-suffix" aria-hidden="true"></span>').appendTo($valueControl);
+		var $preview = $('<div class="mpwpb-hh__preview">' +
+			'<span class="dashicons dashicons-megaphone mpwpb-hh__preview-icon" aria-hidden="true"></span>' +
+			'<div class="mpwpb-hh__preview-copy"><span class="mpwpb-hh__preview-label"></span><strong><span data-hh-preview-value></span> <span class="mpwpb-hh__preview-discount"></span> &middot; <span data-hh-preview-time></span></strong></div>' +
+			'<span class="mpwpb-hh__preview-badge"></span>' +
+		'</div>');
+		$preview.find('.mpwpb-hh__preview-label').text(cfg.hhRuleLabel || 'Active pricing rule');
+		$preview.find('.mpwpb-hh__preview-discount').text(cfg.hhDiscountTxt || 'discount');
+		$preview.find('.mpwpb-hh__preview-badge').text(cfg.hhAutomaticTxt || 'Automatic');
+		$layout.append($windowGroup, $offerGroup);
+		$row.append($layout, $preview);
+
+		function updateRulePreview() {
+			var start = $row.find('[name="mpwpb_happy_hours_start_time"]').val() || '--:--';
+			var end = $row.find('[name="mpwpb_happy_hours_end_time"]').val() || '--:--';
+			var type = $row.find('[name="mpwpb_happy_hours_discount_type"]').val();
+			var value = $row.find('[name="mpwpb_happy_hours_discount_value"]').val() || '0';
+			var suffix = type === 'percent' ? '%' : (cfg.hhCurrencySymbol || '');
+			$valueControl.toggleClass('is-prefix', type === 'fixed' && !!cfg.hhCurrencySymbol);
+			$suffix.text(suffix).toggle(!!suffix);
+			$preview.find('[data-hh-preview-value]').text(type === 'fixed' && cfg.hhCurrencySymbol ? cfg.hhCurrencySymbol + value : value + (type === 'percent' ? '%' : ''));
+			$preview.find('[data-hh-preview-time]').text(start + ' – ' + end);
+		}
+
+		$row.on('input change', 'input, select', updateRulePreview);
+		updateRulePreview();
+	})();
+
+	/* ---------------------------------------------------------------- *
 	 *  Relocate the "Enable Recurring Bookings" / "Enable Staff Member Add"
 	 *  toggles (Pro-only cards, rendered normally by the reused classic
 	 *  methods) up into their own card headers, next to the title — same
@@ -471,6 +903,114 @@
 	}
 	relocateToggleToCardHeader('MPWPB_Recurring_Booking_Settings', 'mpwpb_enable_recurring');
 	relocateToggleToCardHeader('Staff_Member', 'mpwpb_staff_member_add');
+
+	/* ---------------------------------------------------------------- *
+	 *  Recurring Booking — convert the remaining classic rows into a repeat
+	 *  pattern picker plus a limits/discount panel. Original controls move;
+	 *  names and values are never duplicated.
+	 * ---------------------------------------------------------------- */
+	(function modernizeRecurringBooking() {
+		var $card = $root.find('[data-sme-section="MPWPB_Recurring_Booking_Settings"]');
+		var $tab = $card.find('.tabsItem').first();
+		var $sections = $tab.children('section').not('.section');
+		if (!$tab.length || $sections.length < 3 || $tab.data('sme-modernized')) { return; }
+		$tab.data('sme-modernized', true).addClass('mpwpb-recur');
+
+		var $pattern = $('<div class="mpwpb-recur__group mpwpb-recur__group--pattern"><div class="mpwpb-recur__head"><span class="dashicons dashicons-update" aria-hidden="true"></span><div><h4></h4><p></p></div></div><div class="mpwpb-recur__pattern-body"></div></div>');
+		var $limits = $('<div class="mpwpb-recur__group mpwpb-recur__group--limits"><div class="mpwpb-recur__head"><span class="dashicons dashicons-chart-bar" aria-hidden="true"></span><div><h4></h4><p></p></div></div><div class="mpwpb-recur__limit-fields"></div></div>');
+		$pattern.find('h4').text(cfg.recurPatternTitle || 'Repeat Pattern');
+		$pattern.find('.mpwpb-recur__head p').text(cfg.recurPatternSub || 'Choose the recurrence options customers can use.');
+		$limits.find('h4').text(cfg.recurLimitsTitle || 'Limits & Incentive');
+		$limits.find('.mpwpb-recur__head p').text(cfg.recurLimitsSub || 'Control the maximum series length and optional discount.');
+
+		$sections.eq(0).addClass('mpwpb-recur__patterns').appendTo($pattern.find('.mpwpb-recur__pattern-body'));
+		$sections.eq(1).addClass('mpwpb-recur__field mpwpb-recur__field--count').appendTo($limits.find('.mpwpb-recur__limit-fields'));
+		$sections.eq(2).addClass('mpwpb-recur__field mpwpb-recur__field--discount').appendTo($limits.find('.mpwpb-recur__limit-fields'));
+		$limits.find('[name="mpwpb_recurring_discount"]').wrap('<div class="mpwpb-recur__discount-control"></div>').after('<span aria-hidden="true">%</span>');
+
+		var $layout = $('<div class="mpwpb-recur__layout"></div>').append($pattern, $limits);
+		var $summary = $('<div class="mpwpb-recur__summary"><span class="dashicons dashicons-calendar-alt" aria-hidden="true"></span><div><small></small><strong><span data-recur-pattern></span> &middot; <span data-recur-count></span> &middot; <span data-recur-discount></span></strong></div></div>');
+		$summary.find('small').text(cfg.recurRuleLabel || 'Booking series');
+		var $toggle = $card.find('[name="mpwpb_enable_recurring"]');
+		var isEnabled = $toggle.is(':checked');
+		var $body = $('<div class="mpwpb-recur__body" data-collapse="#mpwpb_enable_recurring"></div>')
+			.toggleClass('mActive', isEnabled)
+			.css('display', isEnabled ? 'block' : 'none')
+			.attr('aria-hidden', isEnabled ? 'false' : 'true')
+			.append($layout, $summary);
+		$tab.append($body);
+		$toggle.on('change.mpwpb-sme-recurring', function () {
+			var enabled = $(this).is(':checked');
+			$body.attr('aria-hidden', enabled ? 'false' : 'true');
+		});
+
+		function updateRecurringSummary() {
+			var patterns = [];
+			$tab.find('[name="mpwpb_recurring_types[]"]:checked').each(function () {
+				patterns.push($(this).next('.customCheckbox').text());
+			});
+			var count = $tab.find('[name="mpwpb_max_recurring_count"]').val() || '0';
+			var discount = $tab.find('[name="mpwpb_recurring_discount"]').val() || '0';
+			$summary.find('[data-recur-pattern]').text(patterns.join(', ') || cfg.recurNoneTxt || 'Select a repeat pattern');
+			$summary.find('[data-recur-count]').text(count + ' ' + (cfg.recurOccurrencesTxt || 'occurrences maximum'));
+			$summary.find('[data-recur-discount]').text(discount + '% ' + (cfg.recurDiscountTxt || 'recurring discount'));
+		}
+		$tab.on('input change', 'input', updateRecurringSummary);
+		updateRecurringSummary();
+	})();
+
+	/* ---------------------------------------------------------------- *
+	 *  Tax Settings — modern two-field configuration with a live class/rate
+	 *  summary, using the original select and number input.
+	 * ---------------------------------------------------------------- */
+	(function modernizeTaxSettings() {
+		var $card = $root.find('[data-sme-section="Tax_Settings"]');
+		var $row = $card.find('#mpwpb_tax_class_row');
+		var $fields = $row.children('label.label');
+		if (!$row.length || $fields.length < 2 || $row.data('sme-modernized')) { return; }
+		$row.data('sme-modernized', true).addClass('mpwpb-tax-modern');
+		$fields.addClass('mpwpb-tax-modern__field').wrapAll('<div class="mpwpb-tax-modern__fields"></div>');
+		var $rateControl = $row.find('#mpwpb_tax_rate_row > div').last().addClass('mpwpb-tax-modern__rate-control');
+		$rateControl.append('<span aria-hidden="true">%</span>');
+		var $summary = $('<div class="mpwpb-tax-modern__summary"><span class="dashicons dashicons-shield" aria-hidden="true"></span><div><small></small><strong><span data-tax-class></span> &middot; <span data-tax-rate></span></strong></div><span class="mpwpb-tax-modern__badge"></span></div>');
+		$summary.find('small').text(cfg.taxRuleLabel || 'Applied tax rule');
+		$summary.find('.mpwpb-tax-modern__badge').text(cfg.taxAutomaticTxt || 'Automatic');
+		$row.append($summary);
+		function updateTaxSummary() {
+			var className = $row.find('[name="mpwpb_tax_class"] option:selected').text();
+			var rate = $row.find('[name="mpwpb_tax_rate"]').val() || '0';
+			$summary.find('[data-tax-class]').text(className);
+			$summary.find('[data-tax-rate]').text(rate + '%');
+		}
+		$row.on('input change', 'input, select', updateTaxSummary);
+		updateTaxSummary();
+	})();
+
+	/* ---------------------------------------------------------------- *
+	 *  Staff Member — retain the existing avatar tile selector and AJAX save,
+	 *  adding modern card integration plus live selection feedback.
+	 * ---------------------------------------------------------------- */
+	(function modernizeStaffSelection() {
+		var $card = $root.find('[data-sme-section="Staff_Member"]');
+		var $container = $card.find('#mpwpb_add_staff_container');
+		var $grid = $container.find('.mpwpb-staff-grid');
+		if (!$container.length || $container.data('sme-modernized')) { return; }
+		$container.data('sme-modernized', true).addClass('mpwpb-staff-modern');
+		var $head = $('<div class="mpwpb-staff-modern__head"><div><span class="dashicons dashicons-groups" aria-hidden="true"></span><div><h4></h4><p></p></div></div><strong data-staff-count></strong></div>');
+		$head.find('h4').text(cfg.staffSelectTitle || 'Select Staff');
+		$head.find('p').text(cfg.staffSelectSub || 'Choose the team members customers can book.');
+		$grid.attr('data-empty', cfg.staffNoneTxt || 'No staff members available.');
+		$container.find('.mpwpb_add_staff_container > label').hide();
+		$container.find('.mpwpb_add_staff_container').prepend($head);
+		function updateStaffCount() {
+			var count = $grid.find('.mpwpb-staff-tile.is-selected').length;
+			$head.find('[data-staff-count]').text(count + ' ' + (cfg.staffSelectedTxt || 'staff selected'));
+		}
+		$card.find('#mpwpb_staff_selector').on('change.mpwpb-sme-staff', function () {
+			setTimeout(updateStaffCount, 0);
+		});
+		updateStaffCount();
+	})();
 
 	/* ---------------------------------------------------------------- *
 	 *  Relocate the real "Service Features" repeater (rendered normally,
@@ -577,14 +1117,6 @@
 		toastTimer = setTimeout(function () { $t.removeClass('show'); }, 2200);
 	}
 
-	// Confirm a successful save ONCE after WordPress reloads the editor.
-	var justSaved = false;
-	try { justSaved = sessionStorage.getItem('mpwpbSmeSaved') === '1'; } catch (e) {}
-	if (justSaved) {
-		try { sessionStorage.removeItem('mpwpbSmeSaved'); } catch (e) {}
-		toast(cfg.savedTxt || 'Saved');
-	}
-
 	/* ---------------------------------------------------------------- *
 	 *  Featured image (WP post thumbnail) uploader in the preview rail
 	 * ---------------------------------------------------------------- */
@@ -605,6 +1137,7 @@
 			$root.find('[data-sme-feat-remove]').hide();
 		}
 		$root.find('[data-sme-feat-set]').text(url ? 'Change image' : 'Set image');
+		scheduleLocalDraft();
 	}
 	var featFrame;
 	$root.on('click', '[data-sme-feat-set]', function (e) {
@@ -724,12 +1257,85 @@
 		});
 	}
 
-	// Initialise -- resume the last-viewed step for this post, if any.
+	// Initialise client-only draft recovery before interaction tracking starts.
+	suspendServerAutosave();
+	restoreLocalDraft();
+	localDraftReady = true;
+	localDraftLastSignature = currentLocalDraftSignature();
+	if (!localDraftPersisted) {
+		setLocalDraftStatus('ready', cfg.localReadyTxt || 'Local autosave ready');
+	}
+
+	// TinyMCE edits happen inside an iframe and do not bubble through #post,
+	// so attach their change stream separately once each editor is ready.
+	(function bindEditorDraftEvents(attempt) {
+		var found = false;
+		eachEditor(function (editor) {
+			var element = editor.getElement ? editor.getElement() : null;
+			if (!element || !$.contains($root[0], element) || editor._mpwpbLocalDraftBound) { return; }
+			editor._mpwpbLocalDraftBound = true;
+			editor.on('input change undo redo', function () {
+				formDirty = true;
+				if (isSaving) { changedDuringServerSave = true; }
+				scheduleLocalDraft();
+			});
+			found = true;
+		});
+		if ((!found || attempt < 4) && attempt < 20) {
+			setTimeout(function () { bindEditorDraftEvents(attempt + 1); }, 300);
+		}
+	})(0);
+
+	// Repeater add/remove operations mutate the DOM rather than changing an
+	// input immediately. A child-list observer captures those structural edits.
+	if (window.MutationObserver) {
+		(new MutationObserver(function (mutations) {
+			var changed = mutations.some(function (mutation) {
+				return (mutation.addedNodes.length || mutation.removedNodes.length) &&
+					$(mutation.target).closest('.mp_item_insert.mp_sortable_area').length;
+			});
+			if (changed) {
+				formDirty = true;
+				if (isSaving) { changedDuringServerSave = true; }
+				scheduleLocalDraft();
+			}
+		})).observe($root[0], { childList: true, subtree: true });
+	}
+
+	// Some legacy media/icon widgets update hidden inputs with .val() and do
+	// not emit an input/change event. This lightweight fallback detects those
+	// programmatic changes without making any network request.
+	setInterval(function () {
+		if (!localDraftReady || localDraftRestoring || isSaving) { return; }
+		var signature = currentLocalDraftSignature();
+		if (signature !== localDraftLastSignature) {
+			localDraftLastSignature = signature;
+			formDirty = true;
+			scheduleLocalDraft();
+		}
+	}, 2000);
+
+	// Resume the last-viewed step for this post, if any.
 	var smeStartIndex = 0;
 	try {
 		var smeRememberedIndex = order.indexOf(sessionStorage.getItem(smeStepStorageKey()));
 		if (smeRememberedIndex > -1) { smeStartIndex = smeRememberedIndex; }
 	} catch (e) {}
 	goStep(smeStartIndex);
+
+	// WordPress' classic-editor warning compares against values captured at
+	// page load, which remain stale after an AJAX save. Replace it with a
+	// baseline that is reset after each successful in-place save.
+	$('#post').on('input.mpwpb-sme-dirty change.mpwpb-sme-dirty', ':input', function () {
+		formDirty = true;
+		if (isSaving) { changedDuringServerSave = true; }
+		scheduleLocalDraft();
+	});
+	$(window).off('beforeunload.edit-post').on('beforeunload.mpwpb-sme', function (event) {
+		if ((formDirty || editorsAreDirty()) && !localDraftPersisted) {
+			event.preventDefault();
+			return 'The changes you made will be lost if you navigate away from this page.';
+		}
+	});
 
 })(jQuery);

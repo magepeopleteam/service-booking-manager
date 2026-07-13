@@ -173,7 +173,8 @@
 				// than one occurrence (see mpwpb_registration.js dateTimeString) --
 				// show every occurrence, not just the first, so the recap actually
 				// reflects the full itinerary the customer is being charged for.
-				$date_raw = is_string($item['mpwpb_date'] ?? '') ? $item['mpwpb_date'] : '';
+				$date_value = $item['mpwpb_date'] ?? '';
+				$date_raw = is_string($date_value) ? $date_value : '';
 				$date_segments = $date_raw !== '' ? array_filter(array_map('trim', explode(',', $date_raw))) : [];
 				$use_24hour = MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'time_format_24hour', 'no');
 				$time_format = $use_24hour === 'yes' ? 'H:i' : 'g:i A';

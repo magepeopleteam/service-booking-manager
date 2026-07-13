@@ -1,0 +1,12 @@
+.mpwpb-coupon-block{margin:0;padding:16px;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;}
+.mpwpb-coupon-block h3{margin:0 0 10px;color:#0f172a;font-size:15px;font-weight:700;}
+.mpwpb-coupon-block__form{display:flex;gap:8px;}
+.mpwpb-coupon-block__form input{min-width:0;flex:1;height:42px;padding:0 12px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;}
+.mpwpb-coupon-block button{min-height:42px;padding:0 15px;border:0;border-radius:8px;background:#2451e0;color:#fff;font-weight:700;cursor:pointer;}
+.mpwpb-coupon-block button:disabled{cursor:not-allowed;opacity:.6;}
+.mpwpb-coupon-block__applied{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.mpwpb-coupon-block__applied>div{display:flex;align-items:center;gap:8px;}
+.mpwpb-coupon-block__applied strong{padding:5px 9px;border-radius:6px;background:#eaf0ff;color:#1d3fb8;letter-spacing:.04em;}
+.mpwpb-coupon-block__applied span{color:#16a34a;font-weight:700;}
+.mpwpb-coupon-block__applied button{min-height:auto;padding:6px 0;background:transparent;color:#dc2626;}
+.mpwpb-coupon-block__error{margin:9px 0 0;color:#b91c1c;font-size:13px;}
