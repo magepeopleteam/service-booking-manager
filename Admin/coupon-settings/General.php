@@ -20,8 +20,8 @@
 					</header>
 					<section class="section">
 						<label class="label">
-							<p><?php esc_html_e('Coupon Code', 'service-booking-manager'); ?></p>
-							<input type="text" name="mpwpb_coupon_code" value="<?php echo esc_attr($code); ?>" placeholder="<?php esc_attr_e('e.g. SUMMER25', 'service-booking-manager'); ?>" style="text-transform:uppercase;"/>
+							<p><?php esc_html_e('Coupon Code', 'service-booking-manager'); ?> <b class="mpwpb-coupon-required">*</b></p>
+							<input type="text" name="mpwpb_coupon_code" value="<?php echo esc_attr($code); ?>" placeholder="<?php esc_attr_e('e.g. SUMMER25', 'service-booking-manager'); ?>" maxlength="64" pattern="[A-Za-z0-9][A-Za-z0-9_-]*" style="text-transform:uppercase;" required/>
 						</label>
 					</section>
 					<section class="section">

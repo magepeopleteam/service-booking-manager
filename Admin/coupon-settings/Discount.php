@@ -39,6 +39,7 @@
 									esc_html_e('Amount Off', 'service-booking-manager');
 								}
 								?>
+								<b class="mpwpb-coupon-required">*</b>
 							</p>
 							<input type="number" step="0.01" min="0" name="mpwpb_coupon_discount_value" value="<?php echo esc_attr($value); ?>"/>
 						</label>

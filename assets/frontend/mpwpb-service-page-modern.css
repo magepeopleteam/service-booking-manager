@@ -126,9 +126,31 @@
 .mpwpb-static-template section#service-reviews .mpwpb-reviews-head > h2{
 	font-size:19px !important;font-weight:800;color:var(--mpwpb_color_theme) !important;border-bottom:0 !important;margin-bottom:10px !important;
 }
-section#service-overview ol{
-	padding-left:0px !important;
+/* User-authored (WYSIWYG) overview content.
+ * The shared `.mpwpb_style small/span/strong{display:flex}` utility
+ * (mpwpb_plugin_global.css) is meant for the plugin's button/menu chrome
+ * but leaks into this rich text, forcing bold labels and list items onto
+ * their own lines. Keep authored inline formatting inline, and restore
+ * normal list rendering. Scoped to .mpwpb-overview-content so the flex
+ * utility still applies to the stats/hours markup below it. */
+.mpwpb-static-template #service-overview .mpwpb-overview-content small,
+.mpwpb-static-template #service-overview .mpwpb-overview-content span,
+.mpwpb-static-template #service-overview .mpwpb-overview-content strong,
+.mpwpb-static-template #service-overview .mpwpb-overview-content b,
+.mpwpb-static-template #service-overview .mpwpb-overview-content em,
+.mpwpb-static-template #service-overview .mpwpb-overview-content i{
+	display:inline !important;
+}
+.mpwpb-static-template #service-overview .mpwpb-overview-content ol,
+.mpwpb-static-template #service-overview .mpwpb-overview-content ul{
 	margin:10px 0 0 0 !important;
+	padding-left:22px !important;
+}
+.mpwpb-static-template #service-overview .mpwpb-overview-content ol{list-style:decimal outside !important;}
+.mpwpb-static-template #service-overview .mpwpb-overview-content ul{list-style:disc outside !important;}
+.mpwpb-static-template #service-overview .mpwpb-overview-content li{
+	display:list-item !important;
+	margin:0 0 6px !important;
 }
 #service-staff h2{font-size:16px !important;}
 

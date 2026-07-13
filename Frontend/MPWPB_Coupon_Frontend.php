@@ -25,6 +25,8 @@
 				// order is actually placed (mirrors the equivalent re-check added
 				// to MPWPB_Native_Checkout::handle_checkout_submit()).
 				add_action('mpwpb_validate_cart_item', [$this, 'revalidate_at_wc_checkout'], 10, 2);
+				add_action('woocommerce_blocks_loaded', [$this, 'register_store_api_extension']);
+				add_action('wp_enqueue_scripts', [$this, 'enqueue_checkout_block_assets']);
 			}
 
 			public function apply_coupon(): void {
@@ -116,6 +118,108 @@
 				]);
 			}
 
+			/** WooCommerce Checkout Blocks cart extension. */
+			public function register_store_api_extension(): void {
+				if (!function_exists('woocommerce_store_api_register_endpoint_data') || !function_exists('woocommerce_store_api_register_update_callback')) {
+					return;
+				}
+				woocommerce_store_api_register_endpoint_data([
+					'endpoint' => 'cart',
+					'namespace' => 'mpwpb_coupon',
+					'data_callback' => [$this, 'get_store_api_data'],
+					'schema_callback' => [$this, 'get_store_api_schema'],
+					'schema_type' => ARRAY_A,
+				]);
+				woocommerce_store_api_register_update_callback([
+					'namespace' => 'mpwpb_coupon',
+					'callback' => [$this, 'handle_store_api_update'],
+				]);
+			}
+
+			public function get_store_api_data(): array {
+				if (!function_exists('WC') || !WC()->cart) {
+					return ['enabled' => false, 'code' => '', 'discount' => ''];
+				}
+				$cart_key = self::find_wc_booking_cart_key();
+				if (!$cart_key) {
+					return ['enabled' => false, 'code' => '', 'discount' => ''];
+				}
+				$item = WC()->cart->cart_contents[$cart_key];
+				$discount = (float) ($item['mpwpb_discount_amount'] ?? 0);
+				return [
+					'enabled' => true,
+					'code' => (string) ($item['mpwpb_coupon_code'] ?? ''),
+					'discount' => $discount > 0 ? html_entity_decode(wp_strip_all_tags(MPWPB_Global_Function::wc_price(0, $discount)), ENT_QUOTES, 'UTF-8') : '',
+				];
+			}
+
+			public function get_store_api_schema(): array {
+				return [
+					'enabled' => ['description' => 'Whether booking coupons are available.', 'type' => 'boolean', 'readonly' => true],
+					'code' => ['description' => 'Applied booking coupon code.', 'type' => 'string', 'readonly' => true],
+					'discount' => ['description' => 'Formatted booking discount.', 'type' => 'string', 'readonly' => true],
+				];
+			}
+
+			public function handle_store_api_update($data): void {
+				if (!function_exists('WC') || !WC()->cart) {
+					throw new WC_REST_Exception('mpwpb_coupon_cart_unavailable', esc_html__('Cart unavailable.', 'service-booking-manager'), 400);
+				}
+				$cart_key = self::find_wc_booking_cart_key();
+				if (!$cart_key) {
+					throw new WC_REST_Exception('mpwpb_coupon_no_booking', esc_html__('Your cart has no bookable service.', 'service-booking-manager'), 400);
+				}
+				$action = isset($data['action']) ? sanitize_key($data['action']) : 'apply';
+				if ($action === 'remove') {
+					unset(WC()->cart->cart_contents[$cart_key]['mpwpb_coupon_code'], WC()->cart->cart_contents[$cart_key]['mpwpb_discount_amount']);
+					WC()->cart->set_session();
+					return;
+				}
+				$code = isset($data['code']) ? sanitize_text_field($data['code']) : '';
+				if ($code === '') {
+					throw new WC_REST_Exception('mpwpb_coupon_empty', esc_html__('Please enter a coupon code.', 'service-booking-manager'), 400);
+				}
+				$item = WC()->cart->cart_contents[$cart_key];
+				$email = $this->get_wc_customer_email();
+				$context = MPWPB_Coupon_Validator::build_context($item, $email, get_current_user_id());
+				$result = MPWPB_Coupon_Validator::validate($code, $context);
+				if (!$result['valid']) {
+					throw new WC_REST_Exception('mpwpb_coupon_invalid', wp_strip_all_tags($result['message']), 400);
+				}
+				WC()->cart->cart_contents[$cart_key]['mpwpb_coupon_code'] = MPWPB_Coupon_Function::normalize_code($code);
+				WC()->cart->cart_contents[$cart_key]['mpwpb_discount_amount'] = MPWPB_Coupon_Validator::calculate_discount($result['coupon_id'], $context);
+				WC()->cart->set_session();
+			}
+
+			private function get_wc_customer_email(): string {
+				if (function_exists('WC') && WC()->customer) {
+					$email = sanitize_email(WC()->customer->get_billing_email());
+					if ($email) {
+						return $email;
+					}
+				}
+				return is_user_logged_in() ? sanitize_email(wp_get_current_user()->user_email) : '';
+			}
+
+			public function enqueue_checkout_block_assets(): void {
+				if (!class_exists('WooCommerce') || (function_exists('is_checkout') && !is_checkout())) {
+					return;
+				}
+				$js = '/assets/frontend/mpwpb-coupon-block.js';
+				$css = '/assets/frontend/mpwpb-coupon-block.css';
+				wp_enqueue_style('mpwpb_coupon_block', MPWPB_PLUGIN_URL . $css, [], file_exists(MPWPB_PLUGIN_DIR . $css) ? filemtime(MPWPB_PLUGIN_DIR . $css) : '1.0.0');
+				wp_enqueue_script('mpwpb_coupon_block', MPWPB_PLUGIN_URL . $js, ['wp-element', 'wp-plugins', 'wp-data', 'wc-blocks-checkout', 'wc-blocks-components'], file_exists(MPWPB_PLUGIN_DIR . $js) ? filemtime(MPWPB_PLUGIN_DIR . $js) : '1.0.0', true);
+				wp_localize_script('mpwpb_coupon_block', 'mpwpbCouponBlockI18n', [
+					'title' => esc_html__('Booking coupon', 'service-booking-manager'),
+					'placeholder' => esc_html__('Coupon code', 'service-booking-manager'),
+					'apply' => esc_html__('Apply', 'service-booking-manager'),
+					'applying' => esc_html__('Applying…', 'service-booking-manager'),
+					'applied' => esc_html__('Applied', 'service-booking-manager'),
+					'remove' => esc_html__('Remove', 'service-booking-manager'),
+					'error' => esc_html__('Unable to update the coupon. Please try again.', 'service-booking-manager'),
+				]);
+			}
+
 			/**
 			 * Shared with MPWPB_Partial_Payment's checkout-page payment-choice
 			 * toggle -- both need the same "which cart item is the booking"
@@ -189,10 +293,7 @@
 				if (!$coupon_code) {
 					return;
 				}
-				$email = isset($_POST['billing_email']) ? sanitize_email(wp_unslash($_POST['billing_email'])) : '';
-				if (!$email && is_user_logged_in()) {
-					$email = wp_get_current_user()->user_email;
-				}
+				$email = isset($_POST['billing_email']) ? sanitize_email(wp_unslash($_POST['billing_email'])) : $this->get_wc_customer_email();
 				$context = MPWPB_Coupon_Validator::build_context($values, $email, get_current_user_id());
 				$result = MPWPB_Coupon_Validator::validate($coupon_code, $context);
 				if (!$result['valid']) {

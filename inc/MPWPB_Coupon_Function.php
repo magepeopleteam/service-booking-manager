@@ -15,13 +15,22 @@
 			 * Looks up a published coupon by its code. Returns 0 if not found.
 			 */
 			public static function find_by_code($code): int {
+				return self::find_code_with_status($code, 'publish');
+			}
+
+			/** Find a code in active or draft coupons for admin uniqueness checks. */
+			public static function find_any_by_code($code): int {
+				return self::find_code_with_status($code, ['publish', 'draft', 'pending', 'future', 'private']);
+			}
+
+			private static function find_code_with_status($code, $status): int {
 				$code = self::normalize_code($code);
 				if (!$code) {
 					return 0;
 				}
 				$query = new WP_Query([
 					'post_type' => 'mpwpb_coupon',
-					'post_status' => 'publish',
+					'post_status' => $status,
 					'posts_per_page' => 1,
 					'no_found_rows' => true,
 					'meta_query' => [

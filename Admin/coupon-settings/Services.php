@@ -29,9 +29,9 @@
 							</select>
 						</label>
 					</section>
-					<section class="section" id="mpwpb_coupon_services_wrap" style="display: <?php echo esc_attr($scope === 'specific' ? 'block' : 'none'); ?>;">
+					<section class="section" id="mpwpb_coupon_services_wrap"<?php echo $scope === 'specific' ? '' : ' hidden'; ?>>
 						<label class="label">
-							<p><?php esc_html_e('Select Service(s)', 'service-booking-manager'); ?></p>
+							<p><?php esc_html_e('Select Service(s)', 'service-booking-manager'); ?> <b class="mpwpb-coupon-required">*</b></p>
 							<select name="mpwpb_coupon_services[]" multiple size="8" style="min-width:320px;">
 								<?php foreach ($all_services as $option): ?>
 									<option value="<?php echo esc_attr($option['value']); ?>" <?php selected(in_array($option['value'], $selected, true), true); ?>><?php echo esc_html($option['label']); ?></option>
@@ -42,9 +42,12 @@
 				</div>
 				<script>
 					jQuery(function ($) {
-						$('#mpwpb_coupon_service_scope').on('change', function () {
-							$('#mpwpb_coupon_services_wrap').toggle($(this).val() === 'specific');
-						});
+						var $scope = $('#mpwpb_coupon_service_scope');
+						var syncServiceVisibility = function () {
+							$('#mpwpb_coupon_services_wrap').prop('hidden', $scope.val() !== 'specific');
+						};
+						$scope.on('change', syncServiceVisibility);
+						syncServiceVisibility();
 					});
 				</script>
 				<?php

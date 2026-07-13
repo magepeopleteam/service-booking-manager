@@ -11,6 +11,7 @@
 			public function __construct() {
 				add_filter('woocommerce_add_cart_item_data', array($this, 'add_cart_item_data'), 90, 3);
 				add_action('woocommerce_before_calculate_totals', array($this, 'before_calculate_totals'), 90, 1);
+				add_action('woocommerce_cart_calculate_fees', array($this, 'add_booking_coupon_discount'), 90, 1);
 				add_filter('woocommerce_cart_item_thumbnail', array($this, 'cart_item_thumbnail'), 90, 3);
 				add_filter('woocommerce_get_item_data', array($this, 'get_item_data'), 90, 2);
 				//************//
@@ -171,13 +172,13 @@
 					// through the normal flow; skip the price override entirely if it's
 					// missing rather than guessing a price for this line item.
 					if (get_post_type($post_id) == MPWPB_Function::get_cpt() && isset($value['mpwpb_tp'])) {
-						$discount = isset($value['mpwpb_discount_amount']) ? (float) $value['mpwpb_discount_amount'] : 0;
-						$total_price = max(0, $value['mpwpb_tp'] - $discount);
+						$total_price = max(0, (float) $value['mpwpb_tp']);
 						// Only the DEPOSIT is actually charged through WooCommerce's own
 						// checkout when Partial was chosen -- the remaining balance is
 						// collected later via a separate linked order (see
-						// MPWPB_Partial_Payment::create_balance_order()), not by
-						// reopening this one.
+						// MPWPB_Partial_Payment::create_balance_order()). The coupon is
+						// added separately as a negative fee so Checkout can show the
+						// original subtotal, discount and final total as distinct values.
 						if (class_exists('MPWPB_Partial_Payment') && ($value['mpwpb_payment_choice'] ?? 'full') === 'partial') {
 							$total_price = MPWPB_Partial_Payment::get_deposit_amount($total_price);
 						}
@@ -188,6 +189,50 @@
 						$value['data']->get_price();
 					}
 				}
+			}
+
+			/**
+			 * Adds the booking-native coupon to WooCommerce's totals as a real
+			 * negative adjustment. Previously the product price was silently reduced
+			 * and the coupon UI displayed the same amount again, making Checkout
+			 * Blocks appear to ignore the coupon.
+			 */
+			public function add_booking_coupon_discount($cart_object): void {
+				if (!$cart_object || (is_admin() && !wp_doing_ajax())) {
+					return;
+				}
+				$adjustment = 0.0;
+				$coupon_codes = [];
+				foreach ($cart_object->get_cart() as $value) {
+					$post_id = $value['mpwpb_id'] ?? 0;
+					$discount = max(0, (float) ($value['mpwpb_discount_amount'] ?? 0));
+					if (get_post_type($post_id) !== MPWPB_Function::get_cpt() || !isset($value['mpwpb_tp']) || $discount <= 0) {
+						continue;
+					}
+					$gross_total = max(0, (float) $value['mpwpb_tp']);
+					$net_total = max(0, $gross_total - $discount);
+					if (class_exists('MPWPB_Partial_Payment') && ($value['mpwpb_payment_choice'] ?? 'full') === 'partial') {
+						$gross_total = MPWPB_Partial_Payment::get_deposit_amount($gross_total);
+						$net_total = MPWPB_Partial_Payment::get_deposit_amount($net_total);
+					}
+					$adjustment += max(0, $gross_total - $net_total);
+					if (!empty($value['mpwpb_coupon_code'])) {
+						$coupon_codes[] = sanitize_text_field($value['mpwpb_coupon_code']);
+					}
+				}
+				$adjustment = round($adjustment, wc_get_price_decimals());
+				if ($adjustment <= 0) {
+					return;
+				}
+				$coupon_codes = array_values(array_unique(array_filter($coupon_codes)));
+				$label = !empty($coupon_codes)
+					? sprintf(
+						/* translators: %s: booking coupon code. */
+						esc_html__('Booking coupon (%s)', 'service-booking-manager'),
+						implode(', ', $coupon_codes)
+					)
+					: esc_html__('Booking coupon', 'service-booking-manager');
+				$cart_object->add_fee($label, -$adjustment, false);
 			}
 			public function cart_item_thumbnail($thumbnail, $cart_item) {
 				$post_id = array_key_exists('mpwpb_id', $cart_item) ? $cart_item['mpwpb_id'] : 0;
@@ -472,9 +517,10 @@
 						// while a balance is still owed.
 						$amount_due = (float) ($line_item['amount_due'] ?? 0);
 						$total_price_num = (float) ($line_item['total_price'] ?? 0);
+						$net_total_num = max(0, $total_price_num - $discount_amount);
 						$data['mpwpb_payment_choice'] = $line_item['payment_choice'] ?? 'full';
 						$data['mpwpb_amount_due'] = $amount_due;
-						$data['mpwpb_amount_paid'] = $amount_due > 0 ? max(0, round($total_price_num - $amount_due, 2)) : $total_price_num;
+						$data['mpwpb_amount_paid'] = max(0, round($net_total_num - $amount_due, 2));
 						$data['mpwpb_real_order_status'] = $order_status;
 						$data['mpwpb_order_status'] = class_exists('MPWPB_Partial_Payment') ? MPWPB_Partial_Payment::compute_display_status($order_status, $amount_due) : $order_status;
 						$data['mpwpb_user_id'] = $user_id ?: '';
