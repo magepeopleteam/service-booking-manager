@@ -185,7 +185,8 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
                                 </div>
                             </li>';
 
-                            $selected_html_right .= '<li class="mpwpd_service_date" data-cart-date-time="'.esc_attr($date).'"><div class="mpwpb_seleted_date_text">'.esc_html($formattedDate).'</div></li>';
+							// Unavailable candidates are informational only and must not be
+							// copied into the cart's selected-date collection.
                         }
                     }
                 }

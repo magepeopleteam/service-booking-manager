@@ -620,7 +620,10 @@
 					// Create proper upload overrides
 					$upload_overrides = array(
 						'test_form' => false,
-						'mimes' => $this->allowed_mime_types
+						'mimes' => $this->allowed_mime_types,
+						'unique_filename_callback' => static function($dir, $name, $ext) {
+							return 'mpwpb-' . wp_generate_password(32, false, false) . $ext;
+						},
 					);
 
 					// Use WordPress's built-in file handling

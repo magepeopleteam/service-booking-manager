@@ -13,10 +13,6 @@ if (!class_exists('MPWPB_Recurring_Booking')) {
             // Enqueue scripts and styles
             add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
             
-            // AJAX handlers
-            add_action('wp_ajax_mpwpb_save_recurring_booking', array($this, 'generate_recurring_dates'));
-            add_action('wp_ajax_nopriv_mpwpb_save_recurring_booking', array($this, 'generate_recurring_dates'));
-            
             // Filter cart item data to include recurring booking information
             add_filter('mpwpb_add_cart_item', array($this, 'add_recurring_data_to_cart'), 10, 2);
             
@@ -35,7 +31,12 @@ if (!class_exists('MPWPB_Recurring_Booking')) {
          */
         public function enqueue_scripts() {
 //            if (is_singular(MPWPB_Function::get_cpt()) || (is_a(get_post(), 'WP_Post') && has_shortcode(get_post()->post_content, 'mpwpb-registration'))) {
-                global $post;
+				global $post;
+				$is_service = is_singular(MPWPB_Function::get_cpt());
+				$has_registration = is_a($post, 'WP_Post') && has_shortcode($post->post_content, 'mpwpb-registration');
+				if (!$is_service && !$has_registration) {
+					return;
+				}
 
                 wp_enqueue_script('mpwpb-recurring-booking', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_recurring_booking.js', array('jquery'),  true);
                 wp_enqueue_style('mpwpb-recurring-booking', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_recurring_booking.css', array(), true);
