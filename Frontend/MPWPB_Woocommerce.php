@@ -444,6 +444,28 @@
 				self::create_bookings_from_data($order_id, $order_status, $order->get_payment_method(), $order->get_user_id() ?: '', $billing, $line_items);
 			}
 			/**
+			 * One occurrence's share of a whole-line monetary total (price / discount /
+			 * amount due) for a recurring, multi-date booking. Each of the N occurrence
+			 * bookings created from a single line item must carry its own 1/N share,
+			 * otherwise every occurrence repeats the full run total and revenue/paid
+			 * amounts get multiplied by the occurrence count in Analytics, the Order
+			 * List, etc. The recurring discount is applied uniformly per occurrence
+			 * (calculate_discounted_total() = base * count * (1 - disc%)), so an equal
+			 * split is exact; any rounding remainder is put on the first occurrence so
+			 * the shares still sum back to exactly the line total.
+			 */
+			private static function occurrence_share($whole, $occurrence_count, $occurrence_index) {
+				$whole = (float) $whole;
+				if ($occurrence_count <= 1) {
+					return $whole;
+				}
+				$base = round($whole / $occurrence_count, 2);
+				if ($occurrence_index === 0) {
+					return round($whole - $base * ($occurrence_count - 1), 2);
+				}
+				return $base;
+			}
+			/**
 			 * Creates the mpwpb_booking / mpwpb_extra_service_booking posts for a completed order.
 			 * Source-agnostic: fed from a WC order (checkout_order_processed above) or from a
 			 * native (non-WooCommerce) order (see MPWPB_Native_Order::process_order()).
@@ -502,9 +524,19 @@
 						}
 						$data['mpwpb_service'] = $line_item['service'] ?? [];
 						$data['mpwpb_staff_term_id'] = $line_item['staff_term_id'] ?? '';
-						$data['mpwpb_tp'] = $line_item['total_price'] ?? '';
+						// A recurring booking's line item carries the whole-run total in
+						// total_price (base price * occurrence count); give each occurrence
+						// its own equal share so per-booking amounts sum back to the order
+						// total instead of every occurrence repeating the full run total.
+						// Single-date (non-recurring) bookings keep the value unchanged.
+						$occ_total_price = $occurrence_count > 1
+							? self::occurrence_share($line_item['total_price'] ?? 0, $occurrence_count, $occurrence_index)
+							: ($line_item['total_price'] ?? '');
+						$occ_discount = self::occurrence_share($discount_amount, $occurrence_count, $occurrence_index);
+						$occ_amount_due = self::occurrence_share($line_item['amount_due'] ?? 0, $occurrence_count, $occurrence_index);
+						$data['mpwpb_tp'] = $occ_total_price;
 						$data['mpwpb_coupon_code'] = $coupon_code;
-						$data['mpwpb_discount_amount'] = $discount_amount;
+						$data['mpwpb_discount_amount'] = $occ_discount;
 						$data['mpwpb_service_info'] = $ex_service_infos;
 						$data['mpwpb_order_id'] = $order_id;
 						$data['mpwpb_payment_method'] = $payment_method;
@@ -515,9 +547,9 @@
 						// it or the amount due changes, so a later status transition
 						// can't silently clobber 'partially-paid' back to the raw status
 						// while a balance is still owed.
-						$amount_due = (float) ($line_item['amount_due'] ?? 0);
-						$total_price_num = (float) ($line_item['total_price'] ?? 0);
-						$net_total_num = max(0, $total_price_num - $discount_amount);
+						$amount_due = (float) $occ_amount_due;
+						$total_price_num = (float) $occ_total_price;
+						$net_total_num = max(0, $total_price_num - (float) $occ_discount);
 						$data['mpwpb_payment_choice'] = $line_item['payment_choice'] ?? 'full';
 						$data['mpwpb_amount_due'] = $amount_due;
 						$data['mpwpb_amount_paid'] = max(0, round($net_total_num - $amount_due, 2));
