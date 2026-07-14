@@ -87,6 +87,8 @@ if (!class_exists('MPWPB_Reviews_Admin')) {
                     </a>
                 </div>
 
+                <?php $this->render_review_notice(); ?>
+
                 <div class="mpwpb_style">
                     <div class="mpwpb_tabs mpwpb-reviews-tabs">
                         <div class="tabLists">
@@ -491,60 +493,87 @@ if (!class_exists('MPWPB_Reviews_Admin')) {
          * MPWPB_Global_Function::get_settings() helper.
          */
         private function render_review_settings_tab() {
-            $settings_saved = isset($_GET['review_settings_saved']);
-
             $auto_send_enabled = MPWPB_Global_Function::get_settings('mpwpb_review_settings', 'auto_send_enabled', 'no');
             $send_after_days = MPWPB_Global_Function::get_settings('mpwpb_review_settings', 'send_after_days', 3);
             $email_subject = MPWPB_Global_Function::get_settings('mpwpb_review_settings', 'email_subject', $this->default_review_email_subject());
             $email_body = MPWPB_Global_Function::get_settings('mpwpb_review_settings', 'email_body', $this->default_review_email_body());
+            $is_auto = ($auto_send_enabled === 'yes');
+            $placeholders = array('{customer_name}', '{service_name}', '{booking_date}', '{site_name}', '{review_link}');
             ?>
-            <div class="mpwpb-reviews-table-card mpwpb-review-settings-card">
-                <?php if ($settings_saved) : ?>
-                    <div class="mpwpb-reviews-settings-notice"><?php esc_html_e('Review settings saved.', 'service-booking-manager'); ?></div>
-                <?php endif; ?>
+            <form method="post" class="mpwpb-review-settings">
+                <?php wp_nonce_field('mpwpb_save_review_settings', 'mpwpb_review_settings_nonce'); ?>
+                <input type="hidden" name="mpwpb_save_review_settings" value="1">
 
-                <form method="post">
-                    <?php wp_nonce_field('mpwpb_save_review_settings', 'mpwpb_review_settings_nonce'); ?>
-                    <input type="hidden" name="mpwpb_save_review_settings" value="1">
-
-                    <div class="mpwpb-review-settings-row">
-                        <label><?php esc_html_e('Automatically send review requests', 'service-booking-manager'); ?></label>
-                        <select name="auto_send_enabled">
-                            <option value="no" <?php selected($auto_send_enabled, 'no'); ?>><?php esc_html_e('No', 'service-booking-manager'); ?></option>
-                            <option value="yes" <?php selected($auto_send_enabled, 'yes'); ?>><?php esc_html_e('Yes', 'service-booking-manager'); ?></option>
-                        </select>
-                        <p class="mpwpb-review-settings-desc"><?php esc_html_e('When enabled, a daily background task emails eligible customers automatically. Manually sending from the Review Requested tab always works regardless of this setting.', 'service-booking-manager'); ?></p>
+                <div class="mpwpb-settings-card">
+                    <div class="mpwpb-settings-card-head">
+                        <span class="mpwpb-settings-card-icon"><span class="dashicons dashicons-clock"></span></span>
+                        <div>
+                            <h3><?php esc_html_e('Automation', 'service-booking-manager'); ?></h3>
+                            <p><?php esc_html_e('Let the plugin email past customers a review request on your behalf.', 'service-booking-manager'); ?></p>
+                        </div>
                     </div>
 
-                    <div class="mpwpb-review-settings-row">
-                        <label><?php esc_html_e('Send after (days)', 'service-booking-manager'); ?></label>
-                        <input type="number" min="0" step="1" name="send_after_days" value="<?php echo esc_attr($send_after_days); ?>" class="mpwpb-review-settings-number">
-                        <p class="mpwpb-review-settings-desc"><?php esc_html_e('Number of days after the service date before the automatic request is sent.', 'service-booking-manager'); ?></p>
+                    <div class="mpwpb-settings-field">
+                        <div class="mpwpb-settings-field-label">
+                            <label for="mpwpb-auto-send"><?php esc_html_e('Automatically send review requests', 'service-booking-manager'); ?></label>
+                            <p class="mpwpb-settings-hint"><?php esc_html_e('When enabled, a daily background task emails eligible customers automatically. Manually sending from the Review Requested tab always works regardless of this setting.', 'service-booking-manager'); ?></p>
+                        </div>
+                        <label class="mpwpb-switch">
+                            <input type="checkbox" id="mpwpb-auto-send" name="auto_send_enabled" value="yes" <?php checked($is_auto); ?>>
+                            <span class="mpwpb-switch-track"><span class="mpwpb-switch-thumb"></span></span>
+                        </label>
                     </div>
 
-                    <div class="mpwpb-review-settings-row">
-                        <label><?php esc_html_e('Email Subject', 'service-booking-manager'); ?></label>
-                        <input type="text" name="email_subject" value="<?php echo esc_attr($email_subject); ?>" class="mpwpb-review-settings-text">
+                    <div class="mpwpb-settings-field mpwpb-settings-field--delay"<?php echo $is_auto ? '' : ' style="display:none;"'; ?>>
+                        <div class="mpwpb-settings-field-label">
+                            <label for="mpwpb-send-after"><?php esc_html_e('Send after', 'service-booking-manager'); ?></label>
+                            <p class="mpwpb-settings-hint"><?php esc_html_e('Number of days after the service date before the automatic request is sent.', 'service-booking-manager'); ?></p>
+                        </div>
+                        <div class="mpwpb-input-suffix">
+                            <input type="number" min="0" step="1" id="mpwpb-send-after" name="send_after_days" value="<?php echo esc_attr($send_after_days); ?>">
+                            <span><?php esc_html_e('days', 'service-booking-manager'); ?></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mpwpb-settings-card">
+                    <div class="mpwpb-settings-card-head">
+                        <span class="mpwpb-settings-card-icon mpwpb-settings-card-icon--email"><span class="dashicons dashicons-email"></span></span>
+                        <div>
+                            <h3><?php esc_html_e('Request Email', 'service-booking-manager'); ?></h3>
+                            <p><?php esc_html_e('The message customers receive when you ask them for a review.', 'service-booking-manager'); ?></p>
+                        </div>
                     </div>
 
-                    <div class="mpwpb-review-settings-row">
+                    <div class="mpwpb-settings-block">
+                        <label for="mpwpb-email-subject"><?php esc_html_e('Email Subject', 'service-booking-manager'); ?></label>
+                        <input type="text" id="mpwpb-email-subject" name="email_subject" value="<?php echo esc_attr($email_subject); ?>" class="mpwpb-settings-input">
+                    </div>
+
+                    <div class="mpwpb-settings-block">
                         <label><?php esc_html_e('Email Body', 'service-booking-manager'); ?></label>
-                        <?php
-                        wp_editor($email_body, 'mpwpb_review_email_body', array(
-                            'textarea_name' => 'email_body',
-                            'textarea_rows' => 10,
-                            'media_buttons' => false,
-                        ));
-                        ?>
-                        <p class="mpwpb-review-settings-desc">
-                            <?php esc_html_e('Available placeholders:', 'service-booking-manager'); ?>
-                            <code>{customer_name}</code> <code>{service_name}</code> <code>{booking_date}</code> <code>{site_name}</code> <code>{review_link}</code>
-                        </p>
+                        <div class="mpwpb-editor-wrap">
+                            <?php
+                            wp_editor($email_body, 'mpwpb_review_email_body', array(
+                                'textarea_name' => 'email_body',
+                                'textarea_rows' => 10,
+                                'media_buttons' => false,
+                            ));
+                            ?>
+                        </div>
+                        <div class="mpwpb-placeholders">
+                            <span class="mpwpb-placeholders-label"><?php esc_html_e('Insert placeholder:', 'service-booking-manager'); ?></span>
+                            <?php foreach ($placeholders as $ph) : ?>
+                                <button type="button" class="mpwpb-chip" data-placeholder="<?php echo esc_attr($ph); ?>"><?php echo esc_html($ph); ?></button>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
+                </div>
 
-                    <button type="submit" class="mpwpb-reviews-filter-btn"><?php esc_html_e('Save Settings', 'service-booking-manager'); ?></button>
-                </form>
-            </div>
+                <div class="mpwpb-settings-actions">
+                    <button type="submit" class="mpwpb-reviews-filter-btn"><span class="dashicons dashicons-saved"></span><?php esc_html_e('Save Settings', 'service-booking-manager'); ?></button>
+                </div>
+            </form>
             <?php
         }
 
@@ -607,8 +636,12 @@ if (!class_exists('MPWPB_Reviews_Admin')) {
                 if (!isset($_GET['booking_id'])) {
                     return;
                 }
+                if (!current_user_can('manage_options')) {
+                    return;
+                }
                 check_admin_referer('mpwpb_send_review_request');
-                $this->send_review_request_email(intval($_GET['booking_id']));
+                $sent = $this->send_review_request_email(intval($_GET['booking_id']));
+                $this->set_review_notice($sent ? 'request_sent' : 'request_failed');
                 wp_redirect(admin_url('admin.php?page=mpwpb-reviews'));
                 exit;
             }
@@ -1050,8 +1083,54 @@ if (!class_exists('MPWPB_Reviews_Admin')) {
 
             update_option('mpwpb_review_settings', $settings);
 
-            wp_redirect(add_query_arg('review_settings_saved', '1', admin_url('admin.php?page=mpwpb-reviews')));
+            $this->set_review_notice('settings_saved');
+            wp_redirect(admin_url('admin.php?page=mpwpb-reviews'));
             exit;
+        }
+
+        /**
+         * Queues a one-shot admin notice for the current user, shown once at
+         * the top of the Reviews page after the next redirect. Kept in a
+         * short-lived per-user transient (not a URL query arg) so the redirect
+         * target URL stays identical -- that's what lets the tab component's
+         * sessionStorage recall land the user back on the same tab they acted
+         * from, instead of resetting to the first tab.
+         */
+        private function set_review_notice($code) {
+            set_transient('mpwpb_review_notice_' . get_current_user_id(), $code, MINUTE_IN_SECONDS);
+        }
+
+        /**
+         * Renders (and clears) the one-shot notice queued by
+         * set_review_notice(), if any -- success/failure feedback for a manual
+         * "Send Request" and the "settings saved" confirmation. Rendered once
+         * at the top of the page so it stays visible on whichever tab the
+         * sessionStorage recall reopens.
+         */
+        private function render_review_notice() {
+            $key = 'mpwpb_review_notice_' . get_current_user_id();
+            $code = get_transient($key);
+            if (!$code) {
+                return;
+            }
+            delete_transient($key);
+
+            $map = array(
+                'request_sent'   => array('success', 'yes-alt', __('Review request sent to the customer.', 'service-booking-manager')),
+                'request_failed' => array('error', 'warning', __('The review request could not be sent. Please check that the booking has a valid customer email and that your site is able to send email.', 'service-booking-manager')),
+                'settings_saved' => array('success', 'yes-alt', __('Review settings saved.', 'service-booking-manager')),
+            );
+            if (!isset($map[$code])) {
+                return;
+            }
+            list($variant, $icon, $message) = $map[$code];
+            ?>
+            <div class="mpwpb-reviews-banner mpwpb-reviews-banner--<?php echo esc_attr($variant); ?> mpwpb-reviews-banner--top">
+                <span class="dashicons dashicons-<?php echo esc_attr($icon); ?>"></span>
+                <span><?php echo esc_html($message); ?></span>
+                <button type="button" class="mpwpb-reviews-banner-close" aria-label="<?php esc_attr_e('Dismiss', 'service-booking-manager'); ?>">&times;</button>
+            </div>
+            <?php
         }
 
         /**
@@ -1464,15 +1543,60 @@ if (!class_exists('MPWPB_Reviews_Admin')) {
                 .mpwpb-reviews-pagination .page-numbers .dashicons{font-size:14px;width:14px;height:14px;line-height:14px;}
                 .mpwpb-reviews-pagination .page-numbers.dots{border-color:transparent;background:transparent;}
 
-                .mpwpb-review-settings-card{padding:24px;}
-                .mpwpb-reviews-settings-notice{background:#dcfce7;color:#16a34a;border-radius:8px;padding:10px 16px;margin-bottom:16px;font-size:13px;font-weight:600;}
-                .mpwpb-review-settings-row{margin-bottom:20px;max-width:640px;}
-                .mpwpb-review-settings-row label{display:block;font-size:13px;font-weight:600;color:#0f172a;margin-bottom:8px;}
-                .mpwpb-review-settings-row select{border:1px solid #d8dee7;border-radius:8px;padding:8px 10px;font-size:13px;color:#0f172a;background:#fff;min-height:36px;}
-                .mpwpb-review-settings-desc{margin:8px 0 0;color:#64748b;font-size:12.5px;}
-                .mpwpb-review-settings-desc code{background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:11.5px;}
-                .mpwpb-review-settings-number{width:120px;border:1px solid #d8dee7;border-radius:8px;padding:8px 10px;font-size:13px;}
-                .mpwpb-review-settings-text{width:100%;border:1px solid #d8dee7;border-radius:8px;padding:8px 10px;font-size:13px;}
+                /* Notice banners -- manual Send Request result + settings saved */
+                .mpwpb-reviews-banner{display:flex;align-items:center;gap:10px;border-radius:10px;padding:12px 16px;font-size:13.5px;font-weight:500;}
+                .mpwpb-reviews-banner .dashicons{flex:0 0 auto;font-size:18px;width:18px;height:18px;line-height:18px;}
+                .mpwpb-reviews-banner--top{margin:0 20px 20px;}
+                .mpwpb-reviews-banner--success{background:#dcfce7;color:#15803d;border:1px solid #bbf7d0;}
+                .mpwpb-reviews-banner--error{background:#fee2e2;color:#b91c1c;border:1px solid #fecaca;}
+                .mpwpb-reviews-banner-close{margin-left:auto;background:transparent;border:none;font-size:20px;line-height:1;cursor:pointer;color:inherit;opacity:.55;padding:0 2px;}
+                .mpwpb-reviews-banner-close:hover{opacity:1;}
+
+                /* Review Settings tab */
+                .mpwpb-review-settings{max-width:820px;}
+                .mpwpb-settings-card{background:#fff;border:1px solid #eef1f5;border-radius:12px;box-shadow:0 1px 3px rgba(15,23,42,.05);padding:0 24px;margin-bottom:20px;}
+                .mpwpb-settings-card-head{display:flex;align-items:flex-start;gap:14px;padding:18px 0 16px;border-bottom:1px solid #f1f5f9;}
+                .mpwpb-settings-card-icon{flex:0 0 auto;width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:#eff6ff;color:#2563eb;}
+                .mpwpb-settings-card-icon--email{background:#f0fdf4;color:#16a34a;}
+                .mpwpb-settings-card-icon .dashicons{font-size:20px;width:20px;height:20px;line-height:20px;}
+                .mpwpb-settings-card-head h3{margin:2px 0 3px;font-size:15px;font-weight:700;color:#0f172a;padding:0;}
+                .mpwpb-settings-card-head p{margin:0;font-size:12.5px;color:#64748b;}
+
+                .mpwpb-settings-field{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;padding:18px 0;border-bottom:1px solid #f1f5f9;}
+                .mpwpb-settings-field:last-child{border-bottom:none;}
+                .mpwpb-settings-field-label label{display:block;font-size:13.5px;font-weight:600;color:#0f172a;margin-bottom:4px;}
+                .mpwpb-settings-hint{margin:0;font-size:12.5px;color:#64748b;line-height:1.5;max-width:460px;}
+
+                .mpwpb-switch{position:relative;flex:0 0 auto;display:inline-block;cursor:pointer;margin-top:2px;}
+                .mpwpb-switch input{position:absolute;opacity:0;width:0;height:0;}
+                .mpwpb-switch-track{display:block;width:46px;height:26px;border-radius:999px;background:#cbd5e1;transition:background .2s ease;}
+                .mpwpb-switch-thumb{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(15,23,42,.25);transition:transform .2s ease;}
+                .mpwpb-switch input:checked + .mpwpb-switch-track{background:#16a34a;}
+                .mpwpb-switch input:checked + .mpwpb-switch-track .mpwpb-switch-thumb{transform:translateX(20px);}
+                .mpwpb-switch input:focus-visible + .mpwpb-switch-track{box-shadow:0 0 0 3px rgba(22,163,74,.25);}
+
+                .mpwpb-input-suffix{flex:0 0 auto;display:inline-flex;align-items:center;border:1px solid #d8dee7;border-radius:8px;overflow:hidden;background:#fff;}
+                .mpwpb-input-suffix input{width:70px;border:none;padding:8px 10px;font-size:13px;color:#0f172a;text-align:center;-moz-appearance:textfield;}
+                .mpwpb-input-suffix input:focus{outline:none;}
+                .mpwpb-input-suffix span{padding:8px 12px;font-size:12.5px;color:#64748b;background:#f8fafc;border-left:1px solid #e2e8f0;}
+
+                .mpwpb-settings-block{padding:18px 0;border-bottom:1px solid #f1f5f9;}
+                .mpwpb-settings-block:last-child{border-bottom:none;}
+                .mpwpb-settings-block > label{display:block;font-size:13.5px;font-weight:600;color:#0f172a;margin-bottom:8px;}
+                .mpwpb-settings-input{width:100%;border:1px solid #d8dee7;border-radius:8px;padding:10px 12px;font-size:13px;color:#0f172a;}
+                .mpwpb-settings-input:focus{border-color:#2563eb;outline:none;box-shadow:0 0 0 3px rgba(37,99,235,.12);}
+
+                .mpwpb-placeholders{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:12px;}
+                .mpwpb-placeholders-label{font-size:12px;font-weight:600;color:#64748b;}
+                .mpwpb-chip{display:inline-flex;align-items:center;font-family:Menlo,Consolas,monospace;font-size:11.5px;color:#2563eb;background:#eff6ff;border:1px solid #dbeafe;border-radius:999px;padding:4px 11px;cursor:pointer;transition:background .15s ease,border-color .15s ease;}
+                .mpwpb-chip:hover{background:#dbeafe;border-color:#bfdbfe;}
+
+                .mpwpb-settings-actions{display:flex;justify-content:flex-end;}
+                .mpwpb-settings-actions .dashicons{font-size:15px;width:15px;height:15px;line-height:15px;margin-right:2px;}
+
+                @media (max-width:600px){
+                    .mpwpb-settings-field{flex-direction:column;gap:12px;}
+                }
 
                 /* Modal Styles */
                 .mpwpb-modal {
@@ -1540,6 +1664,40 @@ if (!class_exists('MPWPB_Reviews_Admin')) {
                     if ($(event.target).is('#mpwpb-review-modal')) {
                         $('#mpwpb-review-modal').hide();
                     }
+                });
+
+                // Dismiss the one-shot result/settings banner.
+                $(document).on('click', '.mpwpb-reviews-banner-close', function() {
+                    $(this).closest('.mpwpb-reviews-banner').slideUp(150, function() {
+                        $(this).remove();
+                    });
+                });
+
+                // Review Settings: the "Send after (days)" row is only
+                // relevant when auto-send is on, so mirror the toggle.
+                $('#mpwpb-auto-send').on('change', function() {
+                    $('.mpwpb-settings-field--delay').toggle(this.checked);
+                });
+
+                // Review Settings: insert a placeholder into the email body at
+                // the cursor -- TinyMCE when in Visual mode, plain textarea
+                // otherwise (Text mode or TinyMCE unavailable).
+                $('.mpwpb-chip').on('click', function() {
+                    var ph = $(this).data('placeholder');
+                    var editor = (typeof tinymce !== 'undefined') ? tinymce.get('mpwpb_review_email_body') : null;
+                    if (editor && !editor.isHidden()) {
+                        editor.execCommand('mceInsertContent', false, ph);
+                        return;
+                    }
+                    var ta = document.getElementById('mpwpb_review_email_body');
+                    if (!ta) {
+                        return;
+                    }
+                    var start = ta.selectionStart, end = ta.selectionEnd, val = ta.value;
+                    ta.value = val.slice(0, start) + ph + val.slice(end);
+                    ta.focus();
+                    var caret = start + ph.length;
+                    ta.setSelectionRange(caret, caret);
                 });
             });
             </script>

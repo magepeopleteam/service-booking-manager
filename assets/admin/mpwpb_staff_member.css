@@ -152,7 +152,12 @@
 	width:120px;height:120px;border-radius:50%;border:1.5px dashed var(--line);background:var(--inset);
 	display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:16px;
 }
-.mpwpb_staff_page .mpwpb_profile_image_circle img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+/* mpwpb_plugin_global.css's shared `.mpwpb_style img:not(.mp_wp_editor img){width:100%;height:auto}`
+   has specificity (0,2,2) and beats a plain `.circle img` (0,2,1) selector, forcing height:auto —
+   which collapses the photo to its natural ratio and, with border-radius:50%, renders it as a wide
+   oval inside the round frame instead of a cover-cropped circle. Doubling the container class
+   (0,3,1) reliably wins, the same idiom already used for .formControl above. */
+.mpwpb_staff_page .mpwpb_profile_image_circle.mpwpb_profile_image_circle img{width:100%;height:100%;max-width:100%;object-fit:cover;border-radius:50%;display:block;}
 .mpwpb_staff_page .upload-buttons{display:flex;gap:10px;}
 .mpwpb_staff_page .btn{
 	padding:9px 18px;border:1px solid var(--line);border-radius:999px;font-size:12.5px;font-weight:600;background:#fff;color:var(--ink-2);cursor:pointer;
@@ -364,8 +369,14 @@
 }
 .mpwpb_staff_page .mpwpb_staff_list ._mpBtn_xs_textGray:hover{border-color:var(--brand);color:var(--brand);}
 .mpwpb_staff_page .mpwpb_staff_list ._mpBtn_xs_textDanger:hover{background:#fee2e2;border-color:#fecaca;color:#dc2626;}
-.mpwpb_staff_page .mpwpb_staff_image_holder{width:44px;height:44px;border-radius:50%;overflow:hidden;}
-.mpwpb_staff_page .mpwpb_staff_image_holder img{width:100%;height:100%;object-fit:cover;display:block;}
+.mpwpb_staff_page .mpwpb_staff_image_holder{width:44px;}
+/* The holder is a <td>, and border-radius/overflow:hidden don't reliably clip a table
+   cell (which also auto-widens to fit the column header), so a "fill the holder" img rule
+   renders as a rectangle. Size and clip the image itself into a fixed circle instead. The
+   doubled holder class (0,3,1) beats the shared `.mpwpb_style img{width:100%;height:auto}`
+   rule (0,2,2); explicit min/max-width also overrides the width/height HTML attributes that
+   wp_get_attachment_image() emits. Covers both the uploaded image and get_avatar fallback. */
+.mpwpb_staff_page .mpwpb_staff_image_holder.mpwpb_staff_image_holder img{width:44px;height:44px;min-width:44px;max-width:44px;object-fit:cover;border-radius:50%;display:block;}
 
 @media(max-width:900px){
 	.mpwpb_staff_page .mpRow{flex-direction:column;}
