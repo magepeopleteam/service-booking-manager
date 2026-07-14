@@ -18,8 +18,13 @@
 		class MPWPB_Booking_History {
 
 			const ACTION_CANCELLED = 'cancelled';
+			const ACTION_CANCELLATION_REQUESTED = 'cancellation_requested';
+			const ACTION_CANCELLATION_APPROVED = 'cancellation_approved';
+			const ACTION_CANCELLATION_REJECTED = 'cancellation_rejected';
 			const ACTION_RESCHEDULED = 'rescheduled';
 			const ACTION_STAFF_CHANGED = 'staff_changed';
+			const ACTION_SERVICES_UPDATED = 'services_updated';
+			const ACTION_RECURRING_ADDED = 'recurring_added';
 			const ACTION_SERVICE_STATUS_CHANGED = 'service_status_changed';
 			const ACTION_REVIEW_REQUEST_SENT = 'review_request_sent';
 			const ACTION_DEPOSIT_RECEIVED = 'deposit_received';
@@ -123,21 +128,24 @@
 			 *
 			 * @return true|WP_Error
 			 */
-			public static function cancel($booking_id, $note = '') {
+			public static function cancel($booking_id, $note = '', $enforce_lead_time = true, $sync_order = true) {
 				$current_status = get_post_meta($booking_id, 'mpwpb_order_status', true);
 				if ($current_status === 'cancelled') {
 					return new WP_Error('mpwpb_already_cancelled', __('This booking is already cancelled.', 'service-booking-manager'));
 				}
 
 				$current_date = get_post_meta($booking_id, 'mpwpb_date', true);
-				if (!self::is_within_lead_time($current_date, 'cancel')) {
+				if ($enforce_lead_time && !self::is_within_lead_time($current_date, 'cancel')) {
 					return new WP_Error('mpwpb_lead_time_passed', __('This booking can no longer be cancelled online -- the cancellation window has passed.', 'service-booking-manager'));
 				}
 
 				update_post_meta($booking_id, 'mpwpb_order_status', 'cancelled');
+				if (metadata_exists('post', $booking_id, 'mpwpb_real_order_status')) {
+					update_post_meta($booking_id, 'mpwpb_real_order_status', 'cancelled');
+				}
 
 				$order_id = get_post_meta($booking_id, 'mpwpb_order_id', true);
-				if ($order_id) {
+				if ($order_id && $sync_order) {
 					self::sync_order_status($order_id, 'cancelled', $note);
 				}
 

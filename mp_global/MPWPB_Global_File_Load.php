@@ -27,6 +27,7 @@
 			public function load_global_file() {
 				require_once MPWPB_GLOBAL_PLUGIN_DIR . '/class/MPWPB_Global_Function.php';
 				require_once MPWPB_GLOBAL_PLUGIN_DIR . '/class/MPWPB_Booking_History.php';
+				require_once MPWPB_GLOBAL_PLUGIN_DIR . '/class/MPWPB_Cancellation.php';
 				require_once MPWPB_GLOBAL_PLUGIN_DIR . '/class/MPWPB_Booking_Notes.php';
 				require_once MPWPB_GLOBAL_PLUGIN_DIR . '/class/MPWPB_Partial_Payment.php';
 				require_once MPWPB_GLOBAL_PLUGIN_DIR . '/class/MPWPB_Tax_Helper.php';
@@ -74,6 +75,9 @@
 				do_action('add_mpwpb_admin_enqueue');
 			}
 			public function frontend_enqueue() {
+				if (!MPWPB_Global_Function::is_booking_frontend_context()) {
+					return;
+				}
 				$this->global_enqueue();
 				do_action('add_mpwpb_frontend_enqueue');
 			}
@@ -81,6 +85,9 @@
 				$this->js_constant();
 			}
 			public function add_frontend_head() {
+				if (!MPWPB_Global_Function::is_booking_frontend_context()) {
+					return;
+				}
 				$this->js_constant();
 				$this->custom_css();
 			}

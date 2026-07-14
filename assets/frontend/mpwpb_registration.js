@@ -341,11 +341,13 @@ function mpwpb_price_calculation($this) {
     // "Reorder" from a past booking (Frontend/MPWPB_User_Dashboard.php's
     // Reorder link -> ?mpwpb_reorder={booking_id} -> MPWPB_Static_Template::
     // get_reorder_prefill() -> templates/registration/static_registration.php
-    // inline-scripts mpwpbReorderPrefill). Reuses the exact click handler
-    // above -- .mpwpb-tree-service[data-service] is a subset of .mpwpb_item_box,
-    // so firing a synthetic click on it drives the real selection exactly like
-    // a real tap would, no separate checkbox/state-seeding logic needed. Date
-    // and extra services are intentionally left for the customer to pick fresh.
+    // inline-scripts mpwpbReorderPrefill). The old implementation clicked the
+    // sidebar leaf nodes during DOM ready. That was fragile because the popup's
+    // booking tree is initialized by a later footer script and, for old/backend
+    // orders, the booking CPT may only contain extra-service data. Apply the
+    // saved state to the real popup inputs/buttons after every ready callback
+    // has finished, explicitly open the modal, and then move valid reorders to
+    // the fresh Date & Time step.
     //
     // This file is enqueued without in_footer (loads in <head>), so the
     // service tree markup this needs to find doesn't exist yet at the point
@@ -356,24 +358,80 @@ function mpwpb_price_calculation($this) {
         if (typeof mpwpbReorderPrefill === 'undefined' || !mpwpbReorderPrefill) {
             return;
         }
-        // A booking can contain more than one selected service (the wizard's
-        // service step is multi-select) -- re-select every one that was in
-        // the original order, not just the first.
-        if ($.isArray(mpwpbReorderPrefill.service_keys)) {
-            $.each(mpwpbReorderPrefill.service_keys, function (i, key) {
-                var $mpwpbReorderNode = $('.mpwpb-tree-service[data-service="' + key + '"]');
-                if ($mpwpbReorderNode.length) {
-                    $mpwpbReorderNode.trigger('click');
-                }
-            });
-        }
-        if (mpwpbReorderPrefill.staff_id) {
-            // The staff <select> already exists in the DOM from page load --
-            // only its wrapping #mpwpb_staff_member_booking_area is
-            // visually hidden/fadeIn'd as the wizard steps through, so this
-            // doesn't need to wait for that step to become visible.
-            $('[name="mpwpb_staff_member_booking"]').val(mpwpbReorderPrefill.staff_id);
-        }
+
+        window.setTimeout(function () {
+            var $registration = $('div.mpwpb_registration').filter(function () {
+                return $(this).find('.mpwpb_static, [data-popup="#mpwpb_static_popup"]').length > 0;
+            }).first();
+            if (!$registration.length || $registration.data('mpwpbReorderApplied')) {
+                return;
+            }
+            $registration.data('mpwpbReorderApplied', true);
+
+            // Open even when the historical base service is unavailable. A
+            // reorder must always enter the booking flow, never appear to be a
+            // link that merely reloads the service page.
+            var $openButton = $registration.find('.mpwpb-tree-cta-btn').first();
+            if ($openButton.length) {
+                $openButton.trigger('click');
+            } else {
+                $('body').addClass('noScroll');
+                $registration.find('[data-popup="#mpwpb_static_popup"]').addClass('in');
+            }
+
+            var $noticeHost = $registration.find('[data-popup="#mpwpb_static_popup"] .mpwpb_popup_header').first();
+            if ($noticeHost.length && mpwpbReorderPrefill.notice) {
+                var $reorderNotice = $(
+                    '<div class="mpwpb-reorder-notice" role="status" aria-live="polite">' +
+                        '<span class="mpwpb-reorder-notice-icon" aria-hidden="true"><i class="fas fa-exclamation"></i></span>' +
+                        '<span class="mpwpb-reorder-notice-content">' +
+                            '<strong></strong><span class="mpwpb-reorder-notice-message"></span>' +
+                        '</span>' +
+                    '</div>'
+                );
+                $reorderNotice.find('strong').text(mpwpbReorderPrefill.notice_title || 'Reorder booking');
+                $reorderNotice.find('.mpwpb-reorder-notice-message').text(mpwpbReorderPrefill.notice);
+                $reorderNotice.insertAfter($noticeHost);
+            }
+
+            // A booking can contain more than one service. Select every live
+            // match and restore its quantity before price calculation runs.
+            if ($.isArray(mpwpbReorderPrefill.service_keys)) {
+                $.each(mpwpbReorderPrefill.service_keys, function (i, key) {
+                    var $item = $registration.find('.mpwpb_service_item[data-service="' + key + '"]').first();
+                    if (!$item.length || $item.hasClass('mpActive')) {
+                        return;
+                    }
+                    var qty = parseInt(mpwpbReorderPrefill.service_quantities && mpwpbReorderPrefill.service_quantities[key], 10) || 1;
+                    $item.attr('data-service-qty', qty).find('[name="mpwpb_service_qtt[]"]').val(qty);
+                    $item.find('.mpwpb_service_button').first().trigger('click');
+                });
+            }
+
+            if ($.isArray(mpwpbReorderPrefill.extra_services)) {
+                $.each(mpwpbReorderPrefill.extra_services, function (i, extra) {
+                    $registration.find('.mpwpb_extra_service_item').each(function () {
+                        var $item = $(this);
+                        var $type = $item.find('[name="mpwpb_extra_service_type[]"]');
+                        if ($type.data('value') !== extra.name || $type.val()) {
+                            return;
+                        }
+                        $item.find('[name="mpwpb_extra_service_qty[]"]').val(parseInt(extra.qty, 10) || 1);
+                        $item.find('.mpwpb_ex_service_button').first().trigger('click');
+                    });
+                });
+            }
+
+            if (mpwpbReorderPrefill.staff_id) {
+                $registration.find('[name="mpwpb_staff_member_booking"]').val(mpwpbReorderPrefill.staff_id);
+            }
+
+            if (mpwpbReorderPrefill.advance_to_schedule && $registration.find('[name="mpwpb_service[]"]').filter(function () {
+                return !!$(this).val();
+            }).length) {
+                $registration.find('.mpwpb_service_next').first().trigger('click');
+            }
+        }, 0);
     });
     //=========sub category=============//
     $(document).on('click', 'div.mpwpb_registration .mpwpb_sub_category_item', function () {
@@ -796,7 +854,12 @@ function mpwpb_price_calculation($this) {
                         window.location.href = data;
                     }
                 },
-                error: function () {
+                error: function (xhr) {
+                    let message = mpwpb_ajax.booking_error || 'The booking could not be completed. Please review your selection and try again.';
+                    if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
+                        message = xhr.responseJSON.data.message;
+                    }
+                    alert(message);
                     if (isCustomPaymentMode) {
                         parent.find('.mpwpb_order_proceed_area').css('min-height', '');
                         mpwpb_loaderRemove(parent.find('.mpwpb_order_proceed_area'));
@@ -1065,4 +1128,3 @@ function mpwpb_price_calculation($this) {
     });
 
 }(jQuery));
-

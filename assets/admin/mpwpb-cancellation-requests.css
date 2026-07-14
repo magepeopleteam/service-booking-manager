@@ -1,0 +1,28 @@
+.mpwpb-cancel-admin { max-width: 1180px; }
+.mpwpb-cancel-admin__header { display:flex; align-items:center; justify-content:space-between; gap:24px; margin:22px 0; padding:24px 28px; border-radius:16px; background:linear-gradient(135deg,#172554,#1d4ed8); color:#fff; box-shadow:0 14px 30px rgba(30,64,175,.18); }
+.mpwpb-cancel-admin__header h1 { margin:0 0 5px; color:#fff; }
+.mpwpb-cancel-admin__header p { margin:0; color:#dbeafe; }
+.mpwpb-cancel-admin__pending { padding:8px 13px; border:1px solid rgba(255,255,255,.28); border-radius:999px; background:rgba(255,255,255,.12); font-weight:700; white-space:nowrap; }
+.mpwpb-cancel-admin .nav-tab-wrapper { margin-bottom:18px; }
+.mpwpb-cancel-admin__list { display:grid; gap:16px; }
+.mpwpb-cancel-request { overflow:hidden; border:1px solid #dfe5ee; border-radius:14px; background:#fff; box-shadow:0 5px 18px rgba(15,23,42,.05); }
+.mpwpb-cancel-request > header { display:flex; align-items:center; justify-content:space-between; gap:18px; padding:18px 22px; border-bottom:1px solid #edf0f5; }
+.mpwpb-cancel-request h2 { margin:3px 0 0; font-size:18px; }
+.mpwpb-cancel-request__eyebrow,.mpwpb-cancel-request small { color:#64748b; font-size:11px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; }
+.mpwpb-cancel-request__status { padding:5px 11px; border-radius:999px; background:#fff7ed; color:#c2410c; font-size:12px; font-weight:700; }
+.mpwpb-cancel-request--approved .mpwpb-cancel-request__status { background:#ecfdf5; color:#047857; }
+.mpwpb-cancel-request--rejected .mpwpb-cancel-request__status { background:#fef2f2; color:#b91c1c; }
+.mpwpb-cancel-request__details { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:18px; padding:18px 22px; }
+.mpwpb-cancel-request__details > div { display:flex; flex-direction:column; align-items:flex-start; gap:4px; min-width:0; }
+.mpwpb-cancel-request__details strong,.mpwpb-cancel-request__details a:not(.button) { overflow:hidden; max-width:100%; text-overflow:ellipsis; }
+.mpwpb-cancel-request__reason,.mpwpb-cancel-request__review-note { margin:0 22px 18px; padding:14px 16px; border-radius:10px; background:#f8fafc; }
+.mpwpb-cancel-request__reason p,.mpwpb-cancel-request__review-note p { margin:6px 0 0; font-size:14px; }
+.mpwpb-cancel-request__review { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:end; gap:16px; padding:18px 22px; border-top:1px solid #edf0f5; background:#fbfcfe; }
+.mpwpb-cancel-request__review label span { display:block; margin-bottom:6px; font-weight:600; }
+.mpwpb-cancel-request__review textarea { width:100%; }
+.mpwpb-cancel-request__review > div { display:flex; gap:8px; padding-bottom:1px; }
+.mpwpb-cancel-request__review .mpwpb-reject-button { border-color:#f0a4a4; color:#b91c1c; }
+.mpwpb-cancel-admin__empty { padding:70px 30px; border:1px dashed #cbd5e1; border-radius:14px; background:#fff; text-align:center; }
+.mpwpb-cancel-admin__empty .dashicons { width:44px; height:44px; color:#16a34a; font-size:44px; }
+@media (max-width:900px) { .mpwpb-cancel-request__details { grid-template-columns:1fr 1fr; } .mpwpb-cancel-request__review { grid-template-columns:1fr; } }
+@media (max-width:600px) { .mpwpb-cancel-admin__header { align-items:flex-start; flex-direction:column; } .mpwpb-cancel-request__details { grid-template-columns:1fr; } .mpwpb-cancel-request__review > div { align-items:stretch; flex-direction:column; } }

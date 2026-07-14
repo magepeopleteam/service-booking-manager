@@ -8,6 +8,185 @@ jQuery(document).ready(function($) {
         return typeof mpwpb_dashboard !== 'undefined' && mpwpb_dashboard.context === 'staff';
     }
 
+    // WooCommerce View Order > recurring-series manager. The editor is a
+    // strict Date -> Time -> Services flow: later stages remain unavailable
+    // until the preceding live availability choice succeeds.
+    var $recurringEditor = $('#mpwpb-recurring-editor');
+    if ($recurringEditor.length) {
+        var $recurringForm = $('#mpwpb-recurring-editor-form');
+        var recurringSelection = {};
+
+        function recurringMessage(type, text) {
+            $recurringEditor.find('.mpwpb-recurring-editor__message')
+                .removeClass('is-error is-success')
+                .addClass(type ? 'is-' + type : '')
+                .text(text || '')
+                .toggle(!!text);
+        }
+
+        function recurringStage(stage) {
+            $recurringEditor.find('[data-recurring-stage]').attr('hidden', true).removeClass('is-active');
+            $recurringEditor.find('[data-recurring-stage="' + stage + '"]').removeAttr('hidden').addClass('is-active');
+            var order = ['date', 'time', 'services'];
+            var activeIndex = order.indexOf(stage);
+            $recurringEditor.find('[data-recurring-step-indicator]').each(function() {
+                var index = order.indexOf($(this).data('recurring-step-indicator'));
+                $(this).toggleClass('is-active', index === activeIndex).toggleClass('is-complete', index < activeIndex);
+            });
+            $recurringForm.find('button[type="submit"]').prop('disabled', stage !== 'services');
+        }
+
+        function recurringFormatPrice(value) {
+            if (typeof mpwpb_price_format === 'function') {
+                return mpwpb_price_format(value);
+            }
+            return parseFloat(value || 0).toFixed(2);
+        }
+
+        function recurringUpdatePrice() {
+            var total = 0;
+            $recurringEditor.find('.mpwpb-recurring-editor__service').each(function() {
+                var $row = $(this);
+                if ($row.find('input[type="checkbox"]').is(':checked')) {
+                    total += (parseFloat($row.data('service-price')) || 0) * (parseInt($row.find('.mpwpb-recurring-editor__qty').val(), 10) || 1);
+                }
+            });
+            $recurringEditor.find('[data-recurring-price]').html(recurringFormatPrice(total));
+        }
+
+        function recurringApplySelection(selection) {
+            recurringSelection = selection || {};
+            $recurringEditor.find('.mpwpb-recurring-editor__service').each(function() {
+                var $row = $(this);
+                var id = String($row.find('input[type="checkbox"]').val());
+                var qty = parseInt(recurringSelection[id], 10) || 1;
+                $row.toggleClass('is-selected', Object.prototype.hasOwnProperty.call(recurringSelection, id));
+                $row.find('input[type="checkbox"]').prop('checked', Object.prototype.hasOwnProperty.call(recurringSelection, id));
+                $row.find('.mpwpb-recurring-editor__qty').val(qty);
+            });
+            recurringUpdatePrice();
+        }
+
+        function openRecurringEditor($trigger, mode) {
+            var selection = $trigger.data('selection') || {};
+            if (typeof selection === 'string') {
+                try { selection = JSON.parse(selection); } catch (error) { selection = {}; }
+            }
+            $recurringForm[0].reset();
+            $('#mpwpb_recurring_editor_booking_id').val($trigger.data('booking-id'));
+            $('#mpwpb_recurring_editor_mode').val(mode);
+            $('#mpwpb_recurring_editor_date, #mpwpb_recurring_editor_time').val('');
+            var currentDate = mode === 'edit' ? String($trigger.data('current-date') || '') : '';
+            $recurringEditor.find('[data-recurring-date]').each(function() {
+                var $date = $(this);
+                $date.removeClass('is-selected').toggle($date.data('standard-date') === 1 || $date.data('standard-date') === '1' || $date.data('recurring-date') === currentDate);
+            });
+            $recurringEditor.find('.mpwpb-recurring-editor__time-grid').empty();
+            $recurringEditor.find('#mpwpb-recurring-editor-title').text(mode === 'add' ? mpwpb_dashboard.recurring_add_title : mpwpb_dashboard.recurring_edit_title);
+            $recurringForm.find('button[type="submit"]').text(mode === 'add' ? mpwpb_dashboard.recurring_add : mpwpb_dashboard.recurring_update);
+            recurringApplySelection(selection);
+            recurringMessage('', '');
+            recurringStage('date');
+            $recurringEditor.addClass('is-open').attr('aria-hidden', 'false');
+            $('body').addClass('noScroll');
+            window.setTimeout(function() { $recurringEditor.find('[data-recurring-date]').first().trigger('focus'); }, 50);
+        }
+
+        function closeRecurringEditor() {
+            $recurringEditor.removeClass('is-open').attr('aria-hidden', 'true');
+            $('body').removeClass('noScroll');
+        }
+
+        $(document).on('click', '.mpwpb-recurring-edit', function() { openRecurringEditor($(this), 'edit'); });
+        $(document).on('click', '.mpwpb-recurring-add', function() { openRecurringEditor($(this), 'add'); });
+        $(document).on('click', '.mpwpb-recurring-editor__close', closeRecurringEditor);
+        $recurringEditor.on('click', function(event) { if ($(event.target).is($recurringEditor)) { closeRecurringEditor(); } });
+
+        $(document).on('click', '[data-recurring-date]', function() {
+            var $button = $(this);
+            var date = $button.data('recurring-date');
+            $('#mpwpb_recurring_editor_date').val(date);
+            $('#mpwpb_recurring_editor_time').val('');
+            $recurringEditor.find('[data-recurring-date]').removeClass('is-selected');
+            $button.addClass('is-selected');
+            recurringStage('time');
+            recurringMessage('', '');
+            var $grid = $recurringEditor.find('.mpwpb-recurring-editor__time-grid').text(mpwpb_dashboard.recurring_loading_times);
+            $.post(mpwpb_dashboard.ajaxurl, {
+                action: 'mpwpb_recurring_account_times',
+                nonce: mpwpb_dashboard.nonce,
+                booking_id: $('#mpwpb_recurring_editor_booking_id').val(),
+                date: date
+            }).done(function(response) {
+                $grid.empty();
+                if (!response || !response.success) {
+                    recurringMessage('error', response && response.data && response.data.message ? response.data.message : mpwpb_dashboard.recurring_error);
+                    return;
+                }
+                if (!response.data.times.length) {
+                    $grid.append($('<p class="mpwpb-recurring-editor__empty"></p>').text(mpwpb_dashboard.recurring_no_times));
+                    return;
+                }
+                $.each(response.data.times, function(index, time) {
+                    $('<button type="button" data-recurring-time></button>').attr('data-value', time.value).text(time.label).appendTo($grid);
+                });
+            }).fail(function(xhr) {
+                recurringMessage('error', xhr.responseJSON && xhr.responseJSON.data ? xhr.responseJSON.data.message : mpwpb_dashboard.recurring_error);
+                $grid.empty();
+            });
+        });
+
+        $(document).on('click', '[data-recurring-time]', function() {
+            var $button = $(this);
+            $recurringEditor.find('[data-recurring-time]').removeClass('is-selected');
+            $button.addClass('is-selected');
+            $('#mpwpb_recurring_editor_time').val($button.data('value'));
+            recurringStage('services');
+            recurringUpdatePrice();
+        });
+
+        $(document).on('click', '[data-recurring-back]', function() { recurringStage($(this).data('recurring-back')); });
+        $(document).on('change', '.mpwpb-recurring-editor__service input[type="checkbox"]', function() {
+            $(this).closest('.mpwpb-recurring-editor__service').toggleClass('is-selected', this.checked);
+            recurringUpdatePrice();
+        });
+        $(document).on('change input', '.mpwpb-recurring-editor__qty', function() {
+            var $row = $(this).closest('.mpwpb-recurring-editor__service');
+            $row.find('input[type="checkbox"]').prop('checked', true);
+            $row.addClass('is-selected');
+            recurringUpdatePrice();
+        });
+
+        $recurringForm.on('submit', function(event) {
+            event.preventDefault();
+            var $submit = $recurringForm.find('button[type="submit"]');
+            if (!$recurringForm.find('input[name="services[]"]:checked').length) {
+                recurringMessage('error', 'Select at least one service.');
+                return;
+            }
+            var original = $submit.text();
+            $submit.prop('disabled', true).text(mpwpb_dashboard.recurring_saving);
+            recurringMessage('', '');
+            $.post(mpwpb_dashboard.ajaxurl, $recurringForm.serialize()).done(function(response) {
+                if (response && response.success) {
+                    recurringMessage('success', response.data.message);
+                    window.setTimeout(function() { window.location.reload(); }, 1200);
+                    return;
+                }
+                recurringMessage('error', response && response.data && response.data.message ? response.data.message : mpwpb_dashboard.recurring_error);
+                $submit.prop('disabled', false).text(original);
+            }).fail(function(xhr) {
+                recurringMessage('error', xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message ? xhr.responseJSON.data.message : mpwpb_dashboard.recurring_error);
+                $submit.prop('disabled', false).text(original);
+            });
+        });
+
+        $(document).on('keydown', function(event) { if (event.key === 'Escape' && $recurringEditor.hasClass('is-open')) { closeRecurringEditor(); } });
+        if (window.location.hash === '#mpwpb-recurring-bookings') {
+            $('#mpwpb-recurring-bookings').addClass('is-targeted');
+        }
+    }
+
     // My Appointment filter/pagination -- ajax, no full My Account page
     // reload. #mpwpb-appt-list-wrap holds everything that depends on the
     // filter (table + pagination + stats); the filter form itself is never
@@ -316,43 +495,179 @@ jQuery(document).ready(function($) {
         });
     }
 
-    // Cancel booking
-    $('.mpwpb-cancel-btn').on('click', function(e) {
-        e.preventDefault();
-
-        const bookingId = $(this).data('id');
-
-        if (confirm(mpwpb_dashboard.cancel_confirm)) {
-            $.ajax({
-                type: 'POST',
-                url: mpwpb_dashboard.ajaxurl,
-                data: {
-                    action: isStaffContext() ? 'mpwpb_staff_cancel_booking' : 'mpwpb_cancel_booking',
-                    booking_id: bookingId,
-                    nonce: mpwpb_dashboard.nonce
-                },
-                beforeSend: function() {
-                    // Show loading state
-                    $(e.target).prop('disabled', true).text('Processing...');
-                },
-                success: function(response) {
-                    if (response.success) {
-                        // Show success message and reload page
-                        alert(response.data.message);
-                        window.location.reload();
-                    } else {
-                        // Show error message
-                        alert(response.data.message);
-                        $(e.target).prop('disabled', false).text('Cancel');
-                    }
-                },
-                error: function() {
-                    // Show error message
-                    alert('An error occurred. Please try again.');
-                    $(e.target).prop('disabled', false).text('Cancel');
-                }
-            });
+    function cancellationBookingId($trigger) {
+        var directId = parseInt($trigger.data('id'), 10);
+        if (directId) {
+            return directId;
         }
+        var href = $trigger.attr('href');
+        if (!href || typeof URL === 'undefined') {
+            return 0;
+        }
+        try {
+            return parseInt(new URL(href, window.location.href).searchParams.get('mpwpb_cancel_booking'), 10) || 0;
+        } catch (error) {
+            return 0;
+        }
+    }
+
+    function closeCancellationModal() {
+        $('#mpwpb-cancel-modal').hide().attr('aria-hidden', 'true');
+        $('#mpwpb-cancel-form').attr('hidden', true)[0].reset();
+        $('.mpwpb-cancel-modal__message').removeClass('success error').empty().hide();
+    }
+
+    function cancellationMessage(type, message) {
+        $('.mpwpb-cancel-modal__message').removeClass('success error').addClass(type).text(message).show();
+    }
+
+    function openCancellationModal(bookingId) {
+        var $modal = $('#mpwpb-cancel-modal');
+        var $form = $('#mpwpb-cancel-form');
+        if (!$modal.length || !bookingId) {
+            return;
+        }
+
+        $form.attr('hidden', true)[0].reset();
+        $form.data('is-recurring', false);
+        $('#mpwpb_cancel_booking_id').val(bookingId);
+        $('#mpwpb-cancel-modal-title').text(mpwpb_dashboard.cancel_title);
+        $form.find('.mpwpb-submit-cancellation').text(mpwpb_dashboard.cancel_submit);
+        $('.mpwpb-cancel-modal__message').removeClass('success error').empty().hide();
+        $('.mpwpb-cancel-modal__loading').text(mpwpb_dashboard.cancel_loading).show();
+        $modal.show().attr('aria-hidden', 'false');
+
+        $.ajax({
+            type: 'POST',
+            url: mpwpb_dashboard.ajaxurl,
+            data: {
+                action: 'mpwpb_get_cancellation_details',
+                booking_id: bookingId,
+                nonce: mpwpb_dashboard.nonce
+            },
+            success: function(response) {
+                $('.mpwpb-cancel-modal__loading').hide();
+                if (!response || !response.success) {
+                    cancellationMessage('error', response && response.data && response.data.message ? response.data.message : mpwpb_dashboard.cancel_error);
+                    return;
+                }
+                ['booking', 'order', 'service', 'appointment', 'policy'].forEach(function(key) {
+                    $('[data-cancel-detail="' + key + '"]').text(response.data[key] || '—');
+                });
+                $form.data('is-recurring', !!response.data.is_recurring);
+                if (response.data.is_recurring) {
+                    $('#mpwpb-cancel-modal-title').text(mpwpb_dashboard.cancel_series_title);
+                    $form.find('.mpwpb-submit-cancellation').text(mpwpb_dashboard.cancel_series_submit);
+                }
+                $form.removeAttr('hidden');
+                window.setTimeout(function() { $('#mpwpb_cancel_reason').trigger('focus'); }, 50);
+            },
+            error: function(xhr) {
+                $('.mpwpb-cancel-modal__loading').hide();
+                var message = xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message
+                    ? xhr.responseJSON.data.message : mpwpb_dashboard.cancel_error;
+                cancellationMessage('error', message);
+            }
+        });
+    }
+
+    // Customer cancellation is a request reviewed by an administrator. Staff
+    // cancellation retains its existing direct-action confirmation workflow.
+    $(document).on('click', '.mpwpb-cancel-btn, .woocommerce-button.mpwpb_cancel', function(e) {
+        e.preventDefault();
+        var $trigger = $(this);
+        var bookingId = cancellationBookingId($trigger);
+
+        if (!bookingId) {
+            return;
+        }
+        if (!isStaffContext()) {
+            openCancellationModal(bookingId);
+            return;
+        }
+        if (!confirm(mpwpb_dashboard.cancel_confirm)) {
+            return;
+        }
+
+        var originalText = $trigger.text();
+        $.ajax({
+            type: 'POST',
+            url: mpwpb_dashboard.ajaxurl,
+            data: {
+                action: 'mpwpb_staff_cancel_booking',
+                booking_id: bookingId,
+                nonce: mpwpb_dashboard.nonce
+            },
+            beforeSend: function() {
+                $trigger.prop('disabled', true).text('Processing...');
+            },
+            success: function(response) {
+                if (response && response.success) {
+                    alert(response.data.message);
+                    window.location.reload();
+                } else {
+                    alert(response && response.data && response.data.message ? response.data.message : mpwpb_dashboard.cancel_error);
+                    $trigger.prop('disabled', false).text(originalText);
+                }
+            },
+            error: function() {
+                alert(mpwpb_dashboard.cancel_error);
+                $trigger.prop('disabled', false).text(originalText);
+            }
+        });
+    });
+
+    $(document).on('click', '.mpwpb-cancel-close', function(e) {
+        e.preventDefault();
+        closeCancellationModal();
+    });
+
+    $(window).on('click', function(e) {
+        if ($(e.target).is('#mpwpb-cancel-modal')) {
+            closeCancellationModal();
+        }
+    });
+
+    $(document).on('submit', '#mpwpb-cancel-form', function(e) {
+        e.preventDefault();
+        var $form = $(this);
+        var $submit = $form.find('.mpwpb-submit-cancellation');
+        var reason = $.trim($('#mpwpb_cancel_reason').val());
+        if (reason.length < 5 || !$('#mpwpb_cancel_acknowledge').is(':checked')) {
+            cancellationMessage('error', mpwpb_dashboard.cancel_error);
+            return;
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: mpwpb_dashboard.ajaxurl,
+            data: {
+                action: 'mpwpb_cancel_booking',
+                booking_id: $('#mpwpb_cancel_booking_id').val(),
+                reason: reason,
+                nonce: mpwpb_dashboard.nonce
+            },
+            beforeSend: function() {
+                $submit.prop('disabled', true).text(mpwpb_dashboard.cancel_processing);
+                $('.mpwpb-cancel-modal__message').hide();
+            },
+            success: function(response) {
+                if (response && response.success) {
+                    $form.attr('hidden', true);
+                    cancellationMessage('success', response.data.message);
+                    window.setTimeout(function() { window.location.reload(); }, 1800);
+                } else {
+                    cancellationMessage('error', response && response.data && response.data.message ? response.data.message : mpwpb_dashboard.cancel_error);
+                    $submit.prop('disabled', false).text($form.data('is-recurring') ? mpwpb_dashboard.cancel_series_submit : mpwpb_dashboard.cancel_submit);
+                }
+            },
+            error: function(xhr) {
+                var message = xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message
+                    ? xhr.responseJSON.data.message : mpwpb_dashboard.cancel_error;
+                cancellationMessage('error', message);
+                $submit.prop('disabled', false).text($form.data('is-recurring') ? mpwpb_dashboard.cancel_series_submit : mpwpb_dashboard.cancel_submit);
+            }
+        });
     });
     
     // Reschedule booking - open modal

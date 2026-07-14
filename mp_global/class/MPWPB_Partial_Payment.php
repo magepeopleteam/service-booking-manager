@@ -371,20 +371,20 @@
 			 * used by mpwpb_coupon/mpwpb_registration in MPWPB_Dependencies.php.
 			 */
 			public function enqueue_checkout_block_script(): void {
-				if (!self::is_enabled()) {
+				if (!self::is_enabled() || !function_exists('is_checkout') || !is_checkout()) {
 					return;
 				}
 				wp_enqueue_style(
 					'mpwpb_payment_choice_block',
 					MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-payment-choice-block.css',
 					[],
-					time()
+					MPWPB_VERSION
 				);
 				wp_enqueue_script(
 					'mpwpb_payment_choice_block',
 					MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-payment-choice-block.js',
 					['wp-element', 'wp-plugins', 'wp-data', 'wc-blocks-checkout', 'wc-blocks-components'],
-					time(),
+					MPWPB_VERSION,
 					true
 				);
 				wp_localize_script('mpwpb_payment_choice_block', 'mpwpbPaymentChoiceI18n', [

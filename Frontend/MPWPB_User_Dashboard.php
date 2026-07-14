@@ -12,6 +12,7 @@ if (!class_exists('MPWPB_User_Dashboard')) {
         public function __construct() {
             add_shortcode('mpwpb-user-dashboard', array($this, 'user_dashboard'));
             add_action('wp_ajax_mpwpb_cancel_booking', array($this, 'cancel_booking'));
+            add_action('wp_ajax_mpwpb_get_cancellation_details', array($this, 'get_cancellation_details'));
             add_action('wp_ajax_mpwpb_reschedule_booking', array($this, 'reschedule_booking'));
             // Names deliberately avoid mpwpb_get_available_dates/times -- the
             // Pro add-on's Admin/MPWPB_Backend_Order_Management.php already
@@ -22,12 +23,17 @@ if (!class_exists('MPWPB_User_Dashboard')) {
             add_action('wp_ajax_mpwpb_update_user_profile', array($this, 'update_user_profile'));
             add_action('wp_ajax_mpwpb_submit_gdpr_request', array($this, 'submit_gdpr_request'));
             add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+            add_filter('body_class', array($this, 'account_body_classes'));
+            add_action('woocommerce_account_dashboard', array($this, 'woocommerce_account_dashboard_overview'), 5);
         }
 
         /**
          * Enqueue necessary scripts and styles for the dashboard
          */
         public function enqueue_scripts() {
+			if (!MPWPB_Global_Function::current_page_has_shortcode(array('mpwpb-user-dashboard', 'custom_payment_my_account')) && !(function_exists('is_account_page') && is_account_page())) {
+				return;
+			}
             wp_enqueue_style('mpwpb-user-dashboard', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_user_dashboard.css', array(), MPWPB_VERSION);
             wp_enqueue_script('mpwpb-user-dashboard', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_user_dashboard.js', array('jquery'), MPWPB_VERSION, true);
             // 'staff' picks the mpwpb_staff_* AJAX action names (Admin/MPWPB_Staff_DashBoard.php)
@@ -39,8 +45,89 @@ if (!class_exists('MPWPB_User_Dashboard')) {
                 'nonce' => wp_create_nonce('mpwpb_dashboard_nonce'),
                 'context' => $is_staff ? 'staff' : 'customer',
                 'cancel_confirm' => __('Are you sure you want to cancel this booking?', 'service-booking-manager'),
-                'reschedule_confirm' => __('Are you sure you want to reschedule this booking?', 'service-booking-manager')
+                'cancel_loading' => __('Loading booking details…', 'service-booking-manager'),
+                'cancel_processing' => __('Submitting request…', 'service-booking-manager'),
+                'cancel_title' => __('Request booking cancellation', 'service-booking-manager'),
+                'cancel_series_title' => __('Request recurring series cancellation', 'service-booking-manager'),
+                'cancel_submit' => __('Submit cancellation request', 'service-booking-manager'),
+                'cancel_series_submit' => __('Submit series cancellation request', 'service-booking-manager'),
+                'cancel_error' => __('The cancellation request could not be submitted. Please try again.', 'service-booking-manager'),
+                'reschedule_confirm' => __('Are you sure you want to reschedule this booking?', 'service-booking-manager'),
+                'recurring_edit_title' => __('Edit appointment', 'service-booking-manager'),
+                'recurring_add_title' => __('Add appointment', 'service-booking-manager'),
+                'recurring_update' => __('Update appointment', 'service-booking-manager'),
+                'recurring_add' => __('Add appointment', 'service-booking-manager'),
+                'recurring_saving' => __('Saving changes…', 'service-booking-manager'),
+                'recurring_loading_times' => __('Loading available times…', 'service-booking-manager'),
+                'recurring_no_times' => __('No available times remain for this date.', 'service-booking-manager'),
+                'recurring_error' => __('The recurring appointment could not be updated. Please try again.', 'service-booking-manager')
             ));
+        }
+
+        /**
+         * Add narrow body classes so the WooCommerce dashboard design cannot
+         * leak into Orders, Addresses, or any other account endpoint.
+         */
+        public function account_body_classes($classes) {
+            if (!is_user_logged_in() || !function_exists('is_account_page') || !is_account_page()) {
+                return $classes;
+            }
+
+            $classes[] = 'mpwpb-modern-account';
+            if (!function_exists('is_wc_endpoint_url') || !is_wc_endpoint_url()) {
+                $classes[] = 'mpwpb-account-dashboard';
+            }
+
+            return array_values(array_unique($classes));
+        }
+
+        /**
+         * Add useful account shortcuts beneath WooCommerce's native welcome
+         * copy. The native text and endpoint URLs remain intact, so this is a
+         * presentation enhancement rather than a template override.
+         */
+        public function woocommerce_account_dashboard_overview(): void {
+            if (!is_user_logged_in() || !function_exists('wc_get_account_endpoint_url')) {
+                return;
+            }
+
+            $actions = array(
+                'orders' => array(
+                    'title' => __('View orders', 'service-booking-manager'),
+                    'description' => __('Review purchases and booking payments.', 'service-booking-manager'),
+                    'url' => wc_get_account_endpoint_url('orders'),
+                ),
+                'addresses' => array(
+                    'title' => __('Manage addresses', 'service-booking-manager'),
+                    'description' => __('Update your billing and shipping details.', 'service-booking-manager'),
+                    'url' => wc_get_account_endpoint_url('edit-address'),
+                ),
+                'account' => array(
+                    'title' => __('Account details', 'service-booking-manager'),
+                    'description' => __('Change your name, email, or password.', 'service-booking-manager'),
+                    'url' => wc_get_account_endpoint_url('edit-account'),
+                ),
+            );
+            ?>
+            <section class="mpwpb-account-overview" aria-labelledby="mpwpb-account-overview-title">
+                <div class="mpwpb-account-overview__heading">
+                    <span><?php esc_html_e('Account overview', 'service-booking-manager'); ?></span>
+                    <h2 id="mpwpb-account-overview-title"><?php esc_html_e('What would you like to do?', 'service-booking-manager'); ?></h2>
+                </div>
+                <div class="mpwpb-account-overview__grid">
+                    <?php foreach ($actions as $key => $action) : ?>
+                        <a class="mpwpb-account-action mpwpb-account-action--<?php echo esc_attr($key); ?>" href="<?php echo esc_url($action['url']); ?>">
+                            <span class="mpwpb-account-action__icon" aria-hidden="true"></span>
+                            <span class="mpwpb-account-action__copy">
+                                <strong><?php echo esc_html($action['title']); ?></strong>
+                                <small><?php echo esc_html($action['description']); ?></small>
+                            </span>
+                            <span class="mpwpb-account-action__arrow" aria-hidden="true">&rarr;</span>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
+            </section>
+            <?php
         }
 
         /**
@@ -189,7 +276,7 @@ if (MPWPB_Global_Function::is_gdpr_enabled()) {
                 </table>
             </div>
 
-            <?php self::render_reschedule_modal(); ?>
+            <?php self::render_action_modals(); ?>
             <?php
         }
 
@@ -237,7 +324,7 @@ if (MPWPB_Global_Function::is_gdpr_enabled()) {
                 </div>
             </div>
 
-            <?php self::render_reschedule_modal(); ?>
+            <?php self::render_action_modals(); ?>
             <?php
         }
 
@@ -268,28 +355,66 @@ if (MPWPB_Global_Function::is_gdpr_enabled()) {
         }
 
         /**
-         * Finds the single booking created for an order (WC or native --
-         * both write mpwpb_order_id via MPWPB_Woocommerce::create_bookings_from_data()).
-         * This plugin's checkout model is one booking per order (single hidden
-         * product / single-item cart at checkout) -- if more than one is ever
-         * found, no-op defensively rather than guess which booking to act on.
-         * Shared by Frontend/MPWPB_Wc_Account_Order_Actions.php (WooCommerce
-         * My Account) and Frontend/MPWPB_Custom_Payment_My_Account.php
-         * (Custom Payment dashboard) so both stay in sync.
+         * Return every booking occurrence created for an order. Recurring
+         * checkout intentionally creates one mpwpb_booking per date, so order
+         * integrations must not assume that every order maps to one post.
          */
-        public static function get_booking_for_order($order_id) {
+        public static function get_bookings_for_order($order_id): array {
             $ids = get_posts(array(
                 'post_type' => 'mpwpb_booking',
-                'posts_per_page' => 2,
+                'post_status' => 'any',
+                'posts_per_page' => -1,
                 'fields' => 'ids',
                 'meta_key' => 'mpwpb_order_id',
-                'meta_value' => $order_id,
+                'meta_value' => absint($order_id),
             ));
+            $ids = array_values(array_unique(array_map('intval', $ids)));
+            usort($ids, static function($left, $right) {
+                $left_index = (int) get_post_meta($left, 'mpwpb_recurring_index', true);
+                $right_index = (int) get_post_meta($right, 'mpwpb_recurring_index', true);
+                if ($left_index && $right_index && $left_index !== $right_index) {
+                    return $left_index <=> $right_index;
+                }
+                $left_date = strtotime((string) get_post_meta($left, 'mpwpb_date', true)) ?: PHP_INT_MAX;
+                $right_date = strtotime((string) get_post_meta($right, 'mpwpb_date', true)) ?: PHP_INT_MAX;
+                return $left_date === $right_date ? $left <=> $right : $left_date <=> $right_date;
+            });
+            return $ids;
+        }
+
+        /**
+         * Backwards-compatible single-booking helper. Callers that support
+         * recurring orders must use get_bookings_for_order() explicitly.
+         */
+        public static function get_booking_for_order($order_id) {
+            $ids = self::get_bookings_for_order($order_id);
             return count($ids) === 1 ? (int) $ids[0] : 0;
+        }
+
+        public static function get_series_cancellation_booking(array $booking_ids): int {
+            foreach ($booking_ids as $booking_id) {
+                $status = (string) get_post_meta($booking_id, 'mpwpb_order_status', true);
+                $date = (string) get_post_meta($booking_id, 'mpwpb_date', true);
+                if ($status !== 'cancelled' && MPWPB_Booking_History::is_within_lead_time($date, 'cancel')) {
+                    return (int) $booking_id;
+                }
+            }
+            return 0;
+        }
+
+        public static function get_series_cancellation_status(array $booking_ids): string {
+            foreach ($booking_ids as $booking_id) {
+                $status = MPWPB_Cancellation::get_status($booking_id);
+                if ($status === MPWPB_Cancellation::STATUS_PENDING) {
+                    return $status;
+                }
+            }
+            return '';
         }
 
         public static function render_booking_actions($booking_id, $service_id, $render_modal = false) {
             $booking = (object) array(
+                'ID' => $booking_id,
                 'mpwpb_date' => get_post_meta($booking_id, 'mpwpb_date', true),
                 'mpwpb_order_status' => get_post_meta($booking_id, 'mpwpb_order_status', true),
             );
@@ -299,9 +424,12 @@ if (MPWPB_Global_Function::is_gdpr_enabled()) {
             // so paid/due visibility and the Pay Balance button only need to
             // exist in one place.
             self::render_payment_status($booking_id);
-            if (self::can_cancel_booking($booking)) : ?>
-                <button class="mpwpb-btn mpwpb-cancel-btn" data-id="<?php echo esc_attr($booking_id); ?>">
-                    <?php esc_html_e('Cancel', 'service-booking-manager'); ?>
+            $cancellation_status = MPWPB_Cancellation::get_status($booking_id);
+            if ($cancellation_status === MPWPB_Cancellation::STATUS_PENDING) : ?>
+                <span class="mpwpb-cancellation-pending"><i class="fas fa-clock" aria-hidden="true"></i><?php esc_html_e('Cancellation pending approval', 'service-booking-manager'); ?></span>
+            <?php elseif (self::can_cancel_booking($booking)) : ?>
+                <button type="button" class="mpwpb-btn mpwpb-cancel-btn" data-id="<?php echo esc_attr($booking_id); ?>">
+                    <?php esc_html_e('Request Cancellation', 'service-booking-manager'); ?>
                 </button>
             <?php endif;
             if (self::can_reschedule_booking($booking)) : ?>
@@ -310,7 +438,7 @@ if (MPWPB_Global_Function::is_gdpr_enabled()) {
                 </button>
             <?php endif;
             if ($render_modal) {
-                self::render_reschedule_modal();
+                self::render_action_modals();
             }
         }
 
@@ -344,6 +472,55 @@ if (MPWPB_Global_Function::is_gdpr_enabled()) {
                 <a class="mpwpb-btn mpwpb-pay-balance-btn" href="<?php echo esc_url(add_query_arg('mpwpb_pay_balance', $booking_id, home_url('/'))); ?>">
                     <?php esc_html_e('Pay Balance', 'service-booking-manager'); ?>
                 </a>
+            </div>
+            <?php
+        }
+
+        public static function render_action_modals(): void {
+            self::render_cancel_modal();
+            self::render_reschedule_modal();
+        }
+
+        public static function render_cancel_modal(): void { ?>
+            <div id="mpwpb-cancel-modal" class="mpwpb-modal mpwpb-cancel-modal" role="dialog" aria-modal="true" aria-labelledby="mpwpb-cancel-modal-title" aria-hidden="true">
+                <div class="mpwpb-modal-content mpwpb-cancel-modal__content">
+                    <button type="button" class="mpwpb-close mpwpb-cancel-close" aria-label="<?php esc_attr_e('Close cancellation dialog', 'service-booking-manager'); ?>">&times;</button>
+                    <div class="mpwpb-cancel-modal__heading">
+                        <span class="mpwpb-cancel-modal__icon" aria-hidden="true"><i class="fas fa-calendar-times"></i></span>
+                        <div>
+                            <span class="mpwpb-cancel-modal__eyebrow"><?php esc_html_e('Cancellation request', 'service-booking-manager'); ?></span>
+                            <h3 id="mpwpb-cancel-modal-title"><?php esc_html_e('Request booking cancellation', 'service-booking-manager'); ?></h3>
+                            <p><?php esc_html_e('Your booking stays active until an administrator reviews and approves this request.', 'service-booking-manager'); ?></p>
+                        </div>
+                    </div>
+
+                    <div class="mpwpb-cancel-modal__message" role="status" aria-live="polite"></div>
+                    <div class="mpwpb-cancel-modal__loading"><?php esc_html_e('Loading booking details…', 'service-booking-manager'); ?></div>
+
+                    <form id="mpwpb-cancel-form" hidden>
+                        <input type="hidden" id="mpwpb_cancel_booking_id" name="booking_id">
+                        <dl class="mpwpb-cancel-summary">
+                            <div><dt><?php esc_html_e('Booking', 'service-booking-manager'); ?></dt><dd data-cancel-detail="booking"></dd></div>
+                            <div><dt><?php esc_html_e('Order', 'service-booking-manager'); ?></dt><dd data-cancel-detail="order"></dd></div>
+                            <div><dt><?php esc_html_e('Service', 'service-booking-manager'); ?></dt><dd data-cancel-detail="service"></dd></div>
+                            <div><dt><?php esc_html_e('Appointment', 'service-booking-manager'); ?></dt><dd data-cancel-detail="appointment"></dd></div>
+                        </dl>
+                        <div class="mpwpb-cancel-policy"><i class="fas fa-info-circle" aria-hidden="true"></i><span data-cancel-detail="policy"></span></div>
+                        <div class="mpwpb-form-group mpwpb-cancel-reason-field">
+                            <label for="mpwpb_cancel_reason"><?php esc_html_e('Why would you like to cancel?', 'service-booking-manager'); ?> <span aria-hidden="true">*</span></label>
+                            <textarea id="mpwpb_cancel_reason" name="reason" rows="4" minlength="5" maxlength="1000" required placeholder="<?php esc_attr_e('Please provide a short reason so the administrator can review your request.', 'service-booking-manager'); ?>"></textarea>
+                            <small><?php esc_html_e('This reason is shared with the administrator.', 'service-booking-manager'); ?></small>
+                        </div>
+                        <label class="mpwpb-cancel-confirmation">
+                            <input type="checkbox" id="mpwpb_cancel_acknowledge" required>
+                            <span><?php esc_html_e('I understand that this is a request and my booking is not cancelled until it is approved.', 'service-booking-manager'); ?></span>
+                        </label>
+                        <div class="mpwpb-cancel-modal__actions">
+                            <button type="button" class="mpwpb-btn mpwpb-cancel-close mpwpb-btn-secondary"><?php esc_html_e('Keep booking', 'service-booking-manager'); ?></button>
+                            <button type="submit" class="mpwpb-btn mpwpb-submit-cancellation"><?php esc_html_e('Submit cancellation request', 'service-booking-manager'); ?></button>
+                        </div>
+                    </form>
+                </div>
             </div>
             <?php
         }
@@ -725,6 +902,7 @@ if (MPWPB_Global_Function::is_gdpr_enabled()) {
          */
         private static function can_cancel_booking($booking) {
             return $booking->mpwpb_order_status != 'cancelled'
+                && MPWPB_Cancellation::get_status($booking->ID ?? 0) !== MPWPB_Cancellation::STATUS_PENDING
                 && MPWPB_Booking_History::is_within_lead_time($booking->mpwpb_date, 'cancel');
         }
 
@@ -733,6 +911,7 @@ if (MPWPB_Global_Function::is_gdpr_enabled()) {
          */
         private static function can_reschedule_booking($booking) {
             return $booking->mpwpb_order_status != 'cancelled'
+                && MPWPB_Cancellation::get_status($booking->ID ?? 0) !== MPWPB_Cancellation::STATUS_PENDING
                 && MPWPB_Booking_History::is_within_lead_time($booking->mpwpb_date, 'reschedule');
         }
 
@@ -759,13 +938,65 @@ if (MPWPB_Global_Function::is_gdpr_enabled()) {
                 wp_send_json_error(array('message' => esc_html__('You do not have permission to cancel this booking', 'service-booking-manager')));
             }
 
-            $result = MPWPB_Booking_History::cancel($booking_id, __('Booking cancelled by customer.', 'service-booking-manager'));
+            $reason = isset($_POST['reason']) ? sanitize_textarea_field(wp_unslash($_POST['reason'])) : '';
+            $result = MPWPB_Cancellation::request($booking_id, $user_id, $reason);
             if (is_wp_error($result)) {
                 wp_send_json_error(array('message' => $result->get_error_message()));
             }
 
             wp_send_json_success(array(
-                'message' => esc_html__('Booking cancelled successfully', 'service-booking-manager')
+                'message' => esc_html__('Your cancellation request was submitted. The booking remains active until an administrator approves it.', 'service-booking-manager')
+            ));
+        }
+
+        /**
+         * Return customer-safe booking details for the cancellation modal.
+         */
+        public function get_cancellation_details() {
+            if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_dashboard_nonce')) {
+                wp_send_json_error(array('message' => esc_html__('Security check failed', 'service-booking-manager')), 403);
+            }
+            $booking_id = isset($_POST['booking_id']) ? absint($_POST['booking_id']) : 0;
+            if (!$booking_id || get_post_type($booking_id) !== 'mpwpb_booking' || (int) get_post_meta($booking_id, 'mpwpb_user_id', true) !== get_current_user_id()) {
+                wp_send_json_error(array('message' => esc_html__('You do not have permission to view this booking.', 'service-booking-manager')), 403);
+            }
+            $booking = (object) array(
+                'ID' => $booking_id,
+                'mpwpb_date' => get_post_meta($booking_id, 'mpwpb_date', true),
+                'mpwpb_order_status' => get_post_meta($booking_id, 'mpwpb_order_status', true),
+            );
+            if (!self::can_cancel_booking($booking)) {
+                $message = MPWPB_Cancellation::get_status($booking_id) === MPWPB_Cancellation::STATUS_PENDING
+                    ? __('A cancellation request is already awaiting review.', 'service-booking-manager')
+                    : __('This booking is no longer eligible for online cancellation.', 'service-booking-manager');
+                wp_send_json_error(array('message' => $message), 400);
+            }
+            $date = (string) get_post_meta($booking_id, 'mpwpb_date', true);
+            $order_id = absint(get_post_meta($booking_id, 'mpwpb_order_id', true));
+            $series_ids = self::get_bookings_for_order($order_id);
+            if (!$series_ids) {
+                $series_ids = array($booking_id);
+            }
+            $appointments = array();
+            foreach ($series_ids as $series_id) {
+                if ((int) get_post_meta($series_id, 'mpwpb_user_id', true) !== get_current_user_id()) {
+                    continue;
+                }
+                $series_date = (string) get_post_meta($series_id, 'mpwpb_date', true);
+                $appointments[] = MPWPB_Global_Function::date_format($series_date) . ' · ' . MPWPB_Global_Function::date_format($series_date, 'time');
+            }
+            $is_recurring = count($appointments) > 1;
+            $lead_time = max(0, (int) MPWPB_Global_Function::get_settings('mpwpb_general_settings', 'cancellation_lead_time', 24));
+            wp_send_json_success(array(
+                'booking_id' => $booking_id,
+                'booking' => $is_recurring ? sprintf(__('%d recurring appointments', 'service-booking-manager'), count($appointments)) : '#' . $booking_id,
+                'order' => '#' . $order_id,
+                'service' => get_the_title((int) get_post_meta($booking_id, 'mpwpb_id', true)),
+                'appointment' => implode('  •  ', $appointments),
+                'policy' => $is_recurring
+                    ? sprintf(_n('This request covers the entire recurring series. It must be submitted at least %d hour before the next appointment.', 'This request covers the entire recurring series. It must be submitted at least %d hours before the next appointment.', $lead_time, 'service-booking-manager'), $lead_time)
+                    : sprintf(_n('Cancellation requests must be submitted at least %d hour before the appointment.', 'Cancellation requests must be submitted at least %d hours before the appointment.', $lead_time, 'service-booking-manager'), $lead_time),
+                'is_recurring' => $is_recurring,
             ));
         }
 

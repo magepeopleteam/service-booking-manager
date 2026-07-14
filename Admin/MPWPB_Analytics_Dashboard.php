@@ -40,7 +40,7 @@ if (!class_exists('MPWPB_Analytics_Dashboard')) {
             }
             
             wp_enqueue_style('mpwpb-analytics-dashboard', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_analytics_dashboard.css', array(), MPWPB_VERSION);
-            wp_enqueue_script('mpwpb-analytics-dashboard', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_analytics_dashboard.js', array('jquery', 'chartjs'), MPWPB_VERSION, true);
+			wp_enqueue_script('chartjs', 'https://cdn.jsdelivr.net/npm/chart.js', array(), '3.9.1', true);
         }
         
         /**
@@ -281,7 +281,11 @@ if (!class_exists('MPWPB_Analytics_Dashboard')) {
                         csvData.forEach(function(row) {
                             var csvRow = row.map(function(field) {
                                 // Escape quotes and wrap in quotes if contains comma or quote
-                                if (typeof field === 'string' && (field.includes(',') || field.includes('"') || field.includes('\n'))) {
+								field = String(field == null ? '' : field);
+								if (/^[=+\-@]/.test(field)) {
+									field = "'" + field;
+								}
+                                if (field.includes(',') || field.includes('"') || field.includes('\n') || field.includes('\r')) {
                                     return '"' + field.replace(/"/g, '""') + '"';
                                 }
                                 return field;

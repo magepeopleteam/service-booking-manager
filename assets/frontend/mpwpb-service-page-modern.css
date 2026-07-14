@@ -1228,3 +1228,35 @@ button._mpBtn_btLight_2_min_150.mpwpb_price_calculation.mpwpb_ex_service_button 
 .mpwpb_service_item .mpwpb_service_duration .fa-clock{
 	font-weight:400;color:#b0b3b8;
 }
+
+/* Reorder recovery feedback remains visible while the wizard advances from
+   Services to Date & Time. It is deliberately matched by the popup itself,
+   not an outer page wrapper, so shortcode/theme variations cannot strip the
+   spacing and leave this as the plain edge-to-edge sentence it replaced. */
+div.mpwpb_popup[data-popup="#mpwpb_static_popup"] .mpwpb-reorder-notice{
+	box-sizing:border-box;display:flex !important;align-items:flex-start;gap:11px;
+	margin:12px 16px 4px !important;padding:12px 14px !important;
+	border:1px solid #f5d98b !important;border-left:4px solid #e9a008 !important;
+	border-radius:10px !important;background:linear-gradient(135deg,#fffbeb 0%,#fffdf7 100%) !important;
+	box-shadow:0 4px 14px rgba(146,95,10,.08);color:#6b4508 !important;
+	font-size:12.5px;line-height:1.45;text-align:left;
+}
+div.mpwpb_popup[data-popup="#mpwpb_static_popup"] .mpwpb-reorder-notice-icon{
+	display:inline-flex;align-items:center;justify-content:center;flex:0 0 26px;
+	width:26px;height:26px;margin-top:1px;border-radius:50%;
+	background:#fef0bd;color:#a86403;font-size:11px;
+}
+div.mpwpb_popup[data-popup="#mpwpb_static_popup"] .mpwpb-reorder-notice-content{
+	dis:flex;flex-direction:column;min-width:0;gap:2px;
+}
+div.mpwpb_popup[data-popup="#mpwpb_static_popup"] .mpwpb-reorder-notice strong{
+	dis:block;color:#6b4508 !important;font-size:12.5px;font-weight:800;line-height:1.35;
+}
+div.mpwpb_popup[data-popup="#mpwpb_static_popup"] .mpwpb-reorder-notice-message{
+	dis:block;color:#7c5a1b;font-size:12px;line-height:1.45;overflow-wrap:anywhere;
+}
+@media (max-width:480px){
+	div.mpwpb_popup[data-popup="#mpwpb_static_popup"] .mpwpb-reorder-notice{
+		margin:10px 12px 2px !important;padding:11px 12px !important;gap:9px;
+	}
+}

@@ -176,6 +176,28 @@
 }
 .woocommerce-MyAccount-content .woocommerce-orders-table__cell-order-actions .woocommerce-button.mpwpb_cancel:hover { background: #fef2f2; }
 
+.woocommerce-MyAccount-content .woocommerce-orders-table__cell-order-actions .woocommerce-button.mpwpb_cancel_pending {
+	pointer-events: none;
+	background: #fff7ed;
+	border-color: #fed7aa;
+	color: #9a3412;
+}
+.woocommerce-MyAccount-content .woocommerce-orders-table__cell-order-actions .woocommerce-button.mpwpb_cancel_pending::before {
+	content: "\f017";
+	margin-right: 5px;
+}
+
+.woocommerce-MyAccount-content .woocommerce-orders-table__cell-order-actions .woocommerce-button.mpwpb_manage_recurring {
+	background: #fff;
+	border-color: #bae6fd;
+	color: #0369a1;
+}
+.woocommerce-MyAccount-content .woocommerce-orders-table__cell-order-actions .woocommerce-button.mpwpb_manage_recurring::before {
+	content: "\f021";
+	margin-right: 5px;
+}
+.woocommerce-MyAccount-content .woocommerce-orders-table__cell-order-actions .woocommerce-button.mpwpb_manage_recurring:hover { background: #f0f9ff; }
+
 /* Mobile -- WooCommerce's own shop_table_responsive breakpoint (768px,
    set via the stylesheet's own `media` attribute, not an @media block
    here) hides <thead> and stacks each <td> as a block with a

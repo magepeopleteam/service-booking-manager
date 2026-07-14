@@ -33,7 +33,7 @@ if (!class_exists('MPWPB_Recurring_Booking')) {
 //            if (is_singular(MPWPB_Function::get_cpt()) || (is_a(get_post(), 'WP_Post') && has_shortcode(get_post()->post_content, 'mpwpb-registration'))) {
 				global $post;
 				$is_service = is_singular(MPWPB_Function::get_cpt());
-				$has_registration = is_a($post, 'WP_Post') && has_shortcode($post->post_content, 'mpwpb-registration');
+				$has_registration = MPWPB_Global_Function::current_page_has_shortcode('service-booking');
 				if (!$is_service && !$has_registration) {
 					return;
 				}

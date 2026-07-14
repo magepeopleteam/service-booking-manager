@@ -26,6 +26,7 @@
 				}
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_CPT.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Status.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Cancellation_Requests.php';
 				//*************Coupon Engine*****************//
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Coupon_CPT.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Coupon_Settings.php';

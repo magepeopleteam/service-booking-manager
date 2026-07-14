@@ -286,27 +286,40 @@
 				$now_full = current_time( 'Y-m-d H:i' );
 
 				$all_slots = [];
-				$slot_length = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_time_slot_length', 30);
-				$slot_length = $slot_length * 60;
+				$slot_length = max(1, (int) MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_time_slot_length', 30)) * 60;
 				// Get English day name regardless of locale
 				$day_num = date('w', strtotime($start_date)); // 0=Sunday, 1=Monday, etc.
 				$english_days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 				$day_name = $english_days[$day_num];
 				
 				
-				$start_time = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_start_time');
-				if (!$start_time) {
-					$day_name = 'default';
-					$start_time = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_start_time', 10);
+				$default_start = (float) MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_default_start_time', 10);
+				$default_end = (float) MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_default_end_time', 18);
+				$default_break_start = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_default_start_break_time', '');
+				$default_break_end = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_default_end_break_time', '');
+				$day_start = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_start_time', '');
+				$day_end = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_end_time', '');
+				$day_break_start = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_start_break_time', '');
+				$day_break_end = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_end_break_time', '');
+
+				$start_time = (float) ($day_start === '' ? $default_start : $day_start) * HOUR_IN_SECONDS;
+				$end_time = (float) ($day_end === '' ? $default_end : $day_end) * HOUR_IN_SECONDS;
+				$break_start_value = $day_break_start === '' ? $default_break_start : $day_break_start;
+				$break_end_value = $day_break_end === '' ? $default_break_end : $day_break_end;
+				$start_time_break = $break_start_value === '' ? 0 : (float) $break_start_value * HOUR_IN_SECONDS;
+				$end_time_break = $break_end_value === '' ? 0 : (float) $break_end_value * HOUR_IN_SECONDS;
+				$has_break = $start_time_break > 0 && $end_time_break > $start_time_break;
+
+				if ($end_time <= $start_time) {
+					return array();
 				}
-				
-				$start_time = $start_time * 3600;
-				$end_time = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_end_time', 18) * 3600;
-				$start_time_break = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_start_break_time', 0) * 3600;
-				$end_time_break = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_' . $day_name . '_end_break_time', 0) * 3600;
-				for ($i = $start_time; $i <= $end_time; $i = $i + $slot_length) {
-					if ($i < $start_time_break || $i >= $end_time_break) {
-						$date_time=$start_date . ' ' . date_i18n('H:i', $i);
+				for ($i = $start_time; $i + $slot_length <= $end_time; $i += $slot_length) {
+					$slot_end = $i + $slot_length;
+					$overlaps_break = $has_break && $i < $end_time_break && $slot_end > $start_time_break;
+					if (!$overlaps_break) {
+						$hours = floor($i / HOUR_IN_SECONDS);
+						$minutes = floor(($i % HOUR_IN_SECONDS) / MINUTE_IN_SECONDS);
+						$date_time = $start_date . ' ' . sprintf('%02d:%02d', $hours, $minutes);
 						$slice_time = self::slice_buffer_time( $date_time );
 						if(strtotime($now_full)<strtotime($slice_time)){
 							$all_slots[] = $date_time;

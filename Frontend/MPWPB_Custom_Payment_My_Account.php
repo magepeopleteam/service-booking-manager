@@ -357,7 +357,7 @@
 						<?php endforeach; ?>
 					</tbody>
 				</table>
-				<?php MPWPB_User_Dashboard::render_reschedule_modal(); ?>
+				<?php MPWPB_User_Dashboard::render_action_modals(); ?>
 				<?php
 			}
 		}

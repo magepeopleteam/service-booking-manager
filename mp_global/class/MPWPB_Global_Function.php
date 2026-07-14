@@ -31,7 +31,8 @@
 				return array_unique($all_data);
 			}
 			public static function get_post_info($post_id, $key, $default = '') {
-				$data = get_post_meta($post_id, $key, true) ?: $default;
+				$data = get_post_meta($post_id, $key, true);
+				$data = $data === '' || $data === null ? $default : $data;
 				return self::data_sanitize($data);
 			}
 			//***********************************//
@@ -209,10 +210,37 @@
 			//***********************************//
 			public static function get_settings($section, $key, $default = '') {
 				$options = get_option($section);
-				if (isset($options[$key]) && $options[$key]) {
-					$default = $options[$key];
+				if (is_array($options) && array_key_exists($key, $options)) {
+					return $options[$key];
 				}
 				return $default;
+			}
+			public static function current_page_has_shortcode($shortcodes): bool {
+				$post = get_post();
+				if (!$post instanceof WP_Post) {
+					return false;
+				}
+				foreach ((array) $shortcodes as $shortcode) {
+					if (has_shortcode($post->post_content, $shortcode)) {
+						return true;
+					}
+				}
+				return false;
+			}
+			public static function is_booking_frontend_context(): bool {
+				$is_context = is_singular('mpwpb_item') || (bool) get_query_var('mpwpb_checkout');
+				if (!$is_context) {
+					$is_context = self::current_page_has_shortcode(array(
+						'service-booking',
+						'mpwpb-user-dashboard',
+						'custom_payment_my_account',
+						'mpwpb_booking_confirmation',
+					));
+				}
+				if (!$is_context && function_exists('is_checkout')) {
+					$is_context = is_checkout() || is_cart() || is_account_page();
+				}
+				return (bool) apply_filters('mpwpb_is_booking_frontend_context', $is_context);
 			}
 			public static function get_style_settings($key, $default = '') {
 				return self::get_settings('mpwpb_style_settings', $key, $default);
@@ -556,7 +584,8 @@
 		if (!class_exists('MP_Global_Function')) {
 			class MP_Global_Function {
 				public static function get_post_info($post_id, $key, $default = '') {
-					$data = get_post_meta($post_id, $key, true) ?: $default;
+					$data = get_post_meta($post_id, $key, true);
+					$data = $data === '' || $data === null ? $default : $data;
 					return self::data_sanitize($data);
 				}
 				public static function data_sanitize($data) {
@@ -626,8 +655,8 @@
 				}
 				public static function get_settings($section, $key, $default = '') {
 					$options = get_option($section);
-					if (isset($options[$key]) && $options[$key]) {
-						$default = $options[$key];
+					if (is_array($options) && array_key_exists($key, $options)) {
+						return $options[$key];
 					}
 					return $default;
 				}
