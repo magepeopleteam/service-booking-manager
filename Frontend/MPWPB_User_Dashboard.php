@@ -28,8 +28,8 @@ if (!class_exists('MPWPB_User_Dashboard')) {
          * Enqueue necessary scripts and styles for the dashboard
          */
         public function enqueue_scripts() {
-            wp_enqueue_style('mpwpb-user-dashboard', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_user_dashboard.css', array(), time());
-            wp_enqueue_script('mpwpb-user-dashboard', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_user_dashboard.js', array('jquery'), time(), true);
+            wp_enqueue_style('mpwpb-user-dashboard', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_user_dashboard.css', array(), MPWPB_VERSION);
+            wp_enqueue_script('mpwpb-user-dashboard', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_user_dashboard.js', array('jquery'), MPWPB_VERSION, true);
             // 'staff' picks the mpwpb_staff_* AJAX action names (Admin/MPWPB_Staff_DashBoard.php)
             // instead of the customer ones below -- both used to register the
             // same action names and silently collided.

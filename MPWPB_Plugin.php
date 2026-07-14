@@ -26,6 +26,9 @@
 				if (!defined('MPWPB_PLUGIN_URL')) {
 					define('MPWPB_PLUGIN_URL', plugins_url() . '/' . plugin_basename(dirname(__FILE__)));
 				}
+				if (!defined('MPWPB_VERSION')) {
+					define('MPWPB_VERSION', '1.3.1');
+				}
 				require_once MPWPB_PLUGIN_DIR . '/mp_global/MPWPB_Global_File_Load.php';
 				add_action('activated_plugin', array($this, 'activation_redirect'), 90, 1);
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Dependencies.php';
@@ -50,7 +53,8 @@
 						));
 					}
 					flush_rewrite_rules();
-					exit(esc_url_raw(wp_redirect(admin_url('edit.php?post_type=mpwpb_item&page=mpwpb_service_list'))));
+					wp_safe_redirect(admin_url('edit.php?post_type=mpwpb_item&page=mpwpb_service_list'));
+					exit;
 				}
 			}
 			public static function plugin_activate() {

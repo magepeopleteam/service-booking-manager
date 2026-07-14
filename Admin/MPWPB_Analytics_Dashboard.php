@@ -39,8 +39,8 @@ if (!class_exists('MPWPB_Analytics_Dashboard')) {
                 return;
             }
             
-            wp_enqueue_style('mpwpb-analytics-dashboard', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_analytics_dashboard.css', array(), time());
-            wp_enqueue_script('mpwpb-analytics-dashboard', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_analytics_dashboard.js', array('jquery', 'chartjs'), time(), true);
+            wp_enqueue_style('mpwpb-analytics-dashboard', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_analytics_dashboard.css', array(), MPWPB_VERSION);
+            wp_enqueue_script('mpwpb-analytics-dashboard', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_analytics_dashboard.js', array('jquery', 'chartjs'), MPWPB_VERSION, true);
         }
         
         /**

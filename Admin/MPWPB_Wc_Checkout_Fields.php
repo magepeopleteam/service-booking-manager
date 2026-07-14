@@ -68,14 +68,14 @@
 				$this->settings_options = get_option('mpwpb_custom_checkout_fields');
 			}
 			public function admin_enqueue() {
-				wp_enqueue_style('mpwpb_checkout', MPWPB_PLUGIN_URL . '/assets/checkout/css/mpwpb-pro-checkout.css', array(), time());
-				wp_enqueue_style('mpwpb_modal_custom', MPWPB_PLUGIN_URL . '/assets/checkout/css/mpwpb-modal-custom.css', array(), time());
-				wp_enqueue_script('mpwpb_checkout', MPWPB_PLUGIN_URL . '/assets/checkout/js/mpwpb-pro-checkout.js', array('jquery'), time(), true);
-				wp_enqueue_script('mpwpb_modal_fix', MPWPB_PLUGIN_URL . '/assets/checkout/js/mpwpb-modal-fix.js', array('jquery', 'mpwpb_checkout'), time(), true);
+				wp_enqueue_style('mpwpb_checkout', MPWPB_PLUGIN_URL . '/assets/checkout/css/mpwpb-pro-checkout.css', array(), MPWPB_VERSION);
+				wp_enqueue_style('mpwpb_modal_custom', MPWPB_PLUGIN_URL . '/assets/checkout/css/mpwpb-modal-custom.css', array(), MPWPB_VERSION);
+				wp_enqueue_script('mpwpb_checkout', MPWPB_PLUGIN_URL . '/assets/checkout/js/mpwpb-pro-checkout.js', array('jquery'), MPWPB_VERSION, true);
+				wp_enqueue_script('mpwpb_modal_fix', MPWPB_PLUGIN_URL . '/assets/checkout/js/mpwpb-modal-fix.js', array('jquery', 'mpwpb_checkout'), MPWPB_VERSION, true);
 			}
 			public function frontend_enqueue() {
-				wp_enqueue_style('mpwpb_checkout_front_style', MPWPB_PLUGIN_URL . '/assets/checkout/front/css/mpwpb-pro-checkout-front-style.css', array(), time());
-				wp_enqueue_script('mpwpb_checkout_front_script', MPWPB_PLUGIN_URL . '/assets/checkout/front/js/mpwpb-pro-checkout-front-script.js', array('jquery'), time(), true);
+				wp_enqueue_style('mpwpb_checkout_front_style', MPWPB_PLUGIN_URL . '/assets/checkout/front/css/mpwpb-pro-checkout-front-style.css', array(), MPWPB_VERSION);
+				wp_enqueue_script('mpwpb_checkout_front_script', MPWPB_PLUGIN_URL . '/assets/checkout/front/js/mpwpb-pro-checkout-front-script.js', array('jquery'), MPWPB_VERSION, true);
 			}
 			public function checkout_menu() {
 				$cpt = MPWPB_Function::get_cpt();

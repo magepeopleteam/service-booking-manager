@@ -33,7 +33,7 @@ if (!class_exists('MPWPB_Ajax_File_Upload')) {
          */
         public function enqueue_scripts() {
             if (MPWPB_Global_Function::is_mpwpb_checkout_page()) {
-                wp_enqueue_script('mpwpb-file-upload', MPWPB_PLUGIN_URL . '/assets/checkout/front/js/mpwpb-file-upload.js', array('jquery'), time(), true);
+                wp_enqueue_script('mpwpb-file-upload', MPWPB_PLUGIN_URL . '/assets/checkout/front/js/mpwpb-file-upload.js', array('jquery'), MPWPB_VERSION, true);
                 wp_localize_script('mpwpb-file-upload', 'mpwpb_file_upload', array(
                     'ajax_url' => admin_url('admin-ajax.php'),
                     'nonce' => wp_create_nonce('mpwpb_file_upload_nonce'),
@@ -87,7 +87,10 @@ if (!class_exists('MPWPB_Ajax_File_Upload')) {
             // Create upload overrides
             $upload_overrides = array(
                 'test_form' => false,
-                'mimes' => $this->allowed_mime_types
+				'mimes' => $this->allowed_mime_types,
+				'unique_filename_callback' => static function($dir, $name, $ext) {
+					return 'mpwpb-' . wp_generate_password(32, false, false) . $ext;
+				},
             );
             
             // Use WordPress's built-in file handling

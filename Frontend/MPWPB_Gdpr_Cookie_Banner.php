@@ -22,8 +22,8 @@
 				add_action('wp_footer', array($this, 'render_banner'));
 			}
 			public function enqueue(): void {
-				wp_enqueue_style('mpwpb_gdpr_cookie_banner', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-gdpr-cookie-banner.css', array(), time());
-				wp_enqueue_script('mpwpb_gdpr_cookie_banner', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-gdpr-cookie-banner.js', array('jquery'), time(), true);
+				wp_enqueue_style('mpwpb_gdpr_cookie_banner', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-gdpr-cookie-banner.css', array(), MPWPB_VERSION);
+				wp_enqueue_script('mpwpb_gdpr_cookie_banner', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-gdpr-cookie-banner.js', array('jquery'), MPWPB_VERSION, true);
 				wp_localize_script('mpwpb_gdpr_cookie_banner', 'mpwpb_gdpr', array(
 					'message' => MPWPB_Global_Function::get_gdpr_setting('cookie_banner_message', esc_html__('We use cookies to remember your booking details and improve your experience. Do you accept?', 'service-booking-manager')),
 					'accept_text' => MPWPB_Global_Function::get_gdpr_setting('cookie_accept_text', esc_html__('Accept', 'service-booking-manager')),

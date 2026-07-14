@@ -60,7 +60,7 @@
 			}
 			public function global_enqueue() {
 				do_action('add_mpwpb_common_script');
-				wp_enqueue_style('mage-icon', MPWPB_PLUGIN_URL . '/assets/mage-icon/css/mage-icon.css', array(), time());
+				wp_enqueue_style('mage-icon', MPWPB_PLUGIN_URL . '/assets/mage-icon/css/mage-icon.css', array(), MPWPB_VERSION);
 				
                 self::staff_dashboard_enqueue_scripts();
 			}
@@ -71,8 +71,8 @@
 
                     wp_enqueue_script('jquery-ui-sortable');
                     // your script depends on jQuery UI
-                    wp_enqueue_style('mpwpb-user-dashboard', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_user_dashboard.css', array(), time());
-                    wp_enqueue_script('mpwpb-user-dashboard', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_user_dashboard.js', array('jquery'), time(), true);
+                    wp_enqueue_style('mpwpb-user-dashboard', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_user_dashboard.css', array(), MPWPB_VERSION);
+                    wp_enqueue_script('mpwpb-user-dashboard', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_user_dashboard.js', array('jquery'), MPWPB_VERSION, true);
                     wp_localize_script('mpwpb-user-dashboard', 'mpwpb_dashboard', array(
                         'ajaxurl' => admin_url('admin-ajax.php'),
                         'nonce' => wp_create_nonce('mpwpb_dashboard_nonce'),
@@ -84,15 +84,15 @@
 			public function admin_scripts() {
 				$this->global_enqueue();
 				// ****custom************//
-				wp_enqueue_style('mpwpb_admin', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_admin.css', [], time());
-				wp_enqueue_style('admin_style', MPWPB_PLUGIN_URL . '/assets/admin/admin_style.css', [], time());
-                wp_enqueue_style('mpwpb_service_list', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_service_list.css', [], time());
-                wp_enqueue_style('mpwpb_staff_member', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_staff_member.css', [], time());
-                wp_enqueue_style('mpwpb_analytics_dashboard', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_analytics_dashboard.css', [], time());
-				wp_enqueue_script('mpwpb_admin', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_admin.js', ['jquery'], time(), true);
+				wp_enqueue_style('mpwpb_admin', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_admin.css', [], MPWPB_VERSION);
+				wp_enqueue_style('admin_style', MPWPB_PLUGIN_URL . '/assets/admin/admin_style.css', [], MPWPB_VERSION);
+                wp_enqueue_style('mpwpb_service_list', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_service_list.css', [], MPWPB_VERSION);
+                wp_enqueue_style('mpwpb_staff_member', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_staff_member.css', [], MPWPB_VERSION);
+                wp_enqueue_style('mpwpb_analytics_dashboard', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_analytics_dashboard.css', [], MPWPB_VERSION);
+				wp_enqueue_script('mpwpb_admin', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_admin.js', ['jquery'], MPWPB_VERSION, true);
 				// Staff Management page reskin — live off-day/schedule-row sync only;
 				// no-ops (returns early) on any other admin screen.
-				wp_enqueue_script('mpwpb_staff_management_modern', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb-staff-management-modern.js', ['jquery'], time(), true);
+				wp_enqueue_script('mpwpb_staff_management_modern', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb-staff-management-modern.js', ['jquery'], MPWPB_VERSION, true);
 				wp_localize_script('mpwpb_staff_management_modern', 'mpwpbStaffScheduleI18n', array(
 					'active' => __('ACTIVE', 'service-booking-manager'),
 					'off'    => __('OFF', 'service-booking-manager'),
@@ -109,33 +109,33 @@
 				$this->global_enqueue();
 				wp_enqueue_script('wc-checkout');
 				// custom
-				wp_enqueue_style('mpwpb', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb.css', [], time());
-				wp_enqueue_script('mpwpb', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb.js', ['jquery'], time(), true);
-				wp_enqueue_style('mpwpb_registration', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_registration.css', [], time());
-				wp_enqueue_script('mpwpb_registration', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_registration.js', ['jquery'], time());
-				wp_enqueue_style('mpwpb_coupon', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-coupon.css', [], time());
+				wp_enqueue_style('mpwpb', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb.css', [], MPWPB_VERSION);
+				wp_enqueue_script('mpwpb', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb.js', ['jquery'], MPWPB_VERSION, true);
+				wp_enqueue_style('mpwpb_registration', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_registration.css', [], MPWPB_VERSION);
+				wp_enqueue_script('mpwpb_registration', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_registration.js', ['jquery'], MPWPB_VERSION);
+				wp_enqueue_style('mpwpb_coupon', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-coupon.css', [], MPWPB_VERSION);
 				// Depends on mpwpb_registration (not just jquery) so the
 				// mpwpb_ajax object it localizes is guaranteed to already exist.
-				wp_enqueue_script('mpwpb_coupon', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-coupon.js', ['jquery', 'mpwpb_registration'], time(), true);
+				wp_enqueue_script('mpwpb_coupon', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-coupon.js', ['jquery', 'mpwpb_registration'], MPWPB_VERSION, true);
 				// Pay in Full / Pay Deposit Now toggle on the checkout pages
 				// (WC checkout + native checkout) -- same AJAX-then-refresh
 				// pattern as mpwpb_coupon above.
-				wp_enqueue_script('mpwpb_payment_choice', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-payment-choice.js', ['jquery', 'mpwpb_registration'], time(), true);
+				wp_enqueue_script('mpwpb_payment_choice', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-payment-choice.js', ['jquery', 'mpwpb_registration'], MPWPB_VERSION, true);
 				// Single service page redesign (hero/tabs/Overview/FAQ/Details) —
 				// pure reskin, loaded after mpwpb_registration so its overrides win.
-				wp_enqueue_style('mpwpb_service_page_modern', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-service-page-modern.css', ['mpwpb_registration'], time());
-				wp_enqueue_script('mpwpb_service_page_modern', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-service-page-modern.js', ['jquery', 'mpwpb_registration'], time(), true);
+				wp_enqueue_style('mpwpb_service_page_modern', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-service-page-modern.css', ['mpwpb_registration'], MPWPB_VERSION);
+				wp_enqueue_script('mpwpb_service_page_modern', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-service-page-modern.js', ['jquery', 'mpwpb_registration'], MPWPB_VERSION, true);
 				// "Our services" sidebar tree expand/collapse only — selecting a
 				// service still goes through mpwpb_registration.js unchanged.
-				wp_enqueue_script('mpwpb_service_tree', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-service-tree.js', ['jquery', 'mpwpb_registration'], time(), true);
+				wp_enqueue_script('mpwpb_service_tree', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-service-tree.js', ['jquery', 'mpwpb_registration'], MPWPB_VERSION, true);
 				// Booking popup's inner picker: relocates the real category/
 				// service elements (untouched click handlers/hidden inputs)
 				// into a unified checkbox-tree — no new selection logic.
-				wp_enqueue_script('mpwpb_booking_tree', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-booking-tree.js', ['jquery', 'mpwpb_registration', 'mpwpb_service_tree'], time(), true);
+				wp_enqueue_script('mpwpb_booking_tree', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-booking-tree.js', ['jquery', 'mpwpb_registration', 'mpwpb_service_tree'], MPWPB_VERSION, true);
 				// WooCommerce My Account > Orders reskin — pure CSS, no
 				// template override or new markup (see the file's own header
 				// comment). Loaded after mpwpb_registration so its overrides win.
-				wp_enqueue_style('mpwpb_account_orders_modern', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-account-orders-modern.css', ['mpwpb_registration'], time());
+				wp_enqueue_style('mpwpb_account_orders_modern', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-account-orders-modern.css', ['mpwpb_registration'], MPWPB_VERSION);
 				wp_localize_script('mpwpb_registration', 'mpwpb_ajax', array(
 					'ajax_url' => admin_url('admin-ajax.php'),
 					'nonce'    => wp_create_nonce('mpwpb_nonce'),

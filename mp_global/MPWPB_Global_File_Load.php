@@ -49,8 +49,8 @@
 				wp_enqueue_script('mp_select_2', MPWPB_GLOBAL_PLUGIN_URL . '/assets/select_2/select2.min.js', array(), '4.0.13',true);
 				wp_enqueue_style('mp_owl_carousel', MPWPB_GLOBAL_PLUGIN_URL . '/assets/owl_carousel/owl.carousel.min.css', array(), '2.3.4');
 				wp_enqueue_script('mp_owl_carousel', MPWPB_GLOBAL_PLUGIN_URL . '/assets/owl_carousel/owl.carousel.min.js', array(), '2.3.4',true);
-				wp_enqueue_style('mpwpb_plugin_global', MPWPB_GLOBAL_PLUGIN_URL . '/assets/mp_style/mpwpb_plugin_global.css', array(), time());
-				wp_enqueue_script('mpwpb_plugin_global', MPWPB_GLOBAL_PLUGIN_URL . '/assets/mp_style/mpwpb_plugin_global.js', array('jquery'), time());
+				wp_enqueue_style('mpwpb_plugin_global', MPWPB_GLOBAL_PLUGIN_URL . '/assets/mp_style/mpwpb_plugin_global.css', array(), MPWPB_VERSION);
+				wp_enqueue_script('mpwpb_plugin_global', MPWPB_GLOBAL_PLUGIN_URL . '/assets/mp_style/mpwpb_plugin_global.js', array('jquery'), MPWPB_VERSION);
 				do_action('add_mpwpb_global_enqueue');
 			}
 			public function admin_enqueue() {
@@ -64,13 +64,13 @@
 				wp_enqueue_style('wp-codemirror');
 				wp_enqueue_script('wp-codemirror');;
 				//loading Time picker
-				wp_enqueue_script('jquery.timepicker.min', MPWPB_GLOBAL_PLUGIN_URL . '/assets/admin/jquery.timepicker.min.js', array('jquery'), time(), true);
-				wp_enqueue_style('jquery.timepicker.min', MPWPB_GLOBAL_PLUGIN_URL . '/assets/admin/jquery.timepicker.min.css', array(), time());
+				wp_enqueue_script('jquery.timepicker.min', MPWPB_GLOBAL_PLUGIN_URL . '/assets/admin/jquery.timepicker.min.js', array('jquery'), MPWPB_VERSION, true);
+				wp_enqueue_style('jquery.timepicker.min', MPWPB_GLOBAL_PLUGIN_URL . '/assets/admin/jquery.timepicker.min.css', array(), MPWPB_VERSION);
 				//=====================//
 				wp_enqueue_script('form-field-dependency', MPWPB_GLOBAL_PLUGIN_URL . '/assets/admin/form-field-dependency.js', array('jquery'), '1.0', true);
 				// admin setting global
-				wp_enqueue_script('mpwpb_admin_settings', MPWPB_GLOBAL_PLUGIN_URL . '/assets/admin/mpwpb_admin_settings.js', array('jquery'), time(), true);
-				wp_enqueue_style('mpwpb_admin_settings', MPWPB_GLOBAL_PLUGIN_URL . '/assets/admin/mpwpb_admin_settings.css', array(), time());
+				wp_enqueue_script('mpwpb_admin_settings', MPWPB_GLOBAL_PLUGIN_URL . '/assets/admin/mpwpb_admin_settings.js', array('jquery'), MPWPB_VERSION, true);
+				wp_enqueue_style('mpwpb_admin_settings', MPWPB_GLOBAL_PLUGIN_URL . '/assets/admin/mpwpb_admin_settings.css', array(), MPWPB_VERSION);
 				do_action('add_mpwpb_admin_enqueue');
 			}
 			public function frontend_enqueue() {
