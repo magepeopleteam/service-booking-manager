@@ -122,7 +122,7 @@
 							'label' => $label . ' ' . esc_html__('Label', 'service-booking-manager'),
 							'desc' => esc_html__('If you like to change the label in the dashboard menu, you can change it here.', 'service-booking-manager'),
 							'type' => 'text',
-							'default' => 'service-booking-manager'
+							'default' => esc_html__('Service Booking', 'service-booking-manager')
 						),
 						array(
 							'name' => 'slug',
@@ -151,7 +151,8 @@
 							'label' => $label . ' ' . esc_html__('Category Slug', 'service-booking-manager'),
 							'desc' => esc_html__('Please enter the slug name you want for  category. Remember after change this slug you need to flush permalink, Just go to  ', 'service-booking-manager') . '<strong>' . esc_html__('Settings-> Permalinks', 'service-booking-manager') . '</strong> ' . esc_html__('hit the Save Settings button.', 'service-booking-manager'),
 							'type' => 'text',
-							'default' => 'service-category'
+							'default' => 'service-category',
+							'sanitize_callback' => 'sanitize_title'
 						),
 						array(
 							'name' => 'organizer_label',
@@ -165,7 +166,8 @@
 							'label' => $label . ' ' . esc_html__('Organizer Slug', 'service-booking-manager'),
 							'desc' => esc_html__('Please enter the slug name you want for the   organizer. Remember, after changing this slug, you need to flush the permalinks. Just go to ', 'service-booking-manager') . '<strong>' . esc_html__('Settings-> Permalinks', 'service-booking-manager') . '</strong> ' . esc_html__('hit the Save Settings button.', 'service-booking-manager'),
 							'type' => 'text',
-							'default' => 'service-organizer'
+							'default' => 'service-organizer',
+							'sanitize_callback' => 'sanitize_title'
 						),
 						array(
 							'name' => 'category_text',
@@ -205,6 +207,7 @@
 							'desc' => esc_html__('Please enter here  buffer time in minute. By default is 0', 'service-booking-manager'),
 							'type' => 'number',
 							'default' => 0,
+							'min' => 0,
 							'placeholder' => esc_html__('Ex:50', 'service-booking-manager'),
 						),
 						array(
@@ -213,6 +216,7 @@
 							'desc' => esc_html__('Customers and staff can only cancel a booking online if it starts at least this many hours from now. Default is 24.', 'service-booking-manager'),
 							'type' => 'number',
 							'default' => 24,
+							'min' => 0,
 							'placeholder' => esc_html__('Ex:24', 'service-booking-manager'),
 						),
 						array(
@@ -221,6 +225,7 @@
 							'desc' => esc_html__('Customers and staff can only reschedule a booking online if it starts at least this many hours from now. Default is 48.', 'service-booking-manager'),
 							'type' => 'number',
 							'default' => 48,
+							'min' => 0,
 							'placeholder' => esc_html__('Ex:48', 'service-booking-manager'),
 						),
                         array(
@@ -285,6 +290,19 @@
 							)
 						),
 						array(
+							'name' => 'date_format_without_year',
+							'label' => esc_html__('Date Format Without Year', 'service-booking-manager'),
+							'desc' => esc_html__('Controls compact date pickers that intentionally omit the year.', 'service-booking-manager'),
+							'type' => 'select',
+							'default' => 'D d M',
+							'options' => array(
+								'd M' => date_i18n('j M', strtotime($current_date)),
+								'D d M' => date_i18n('D j M', strtotime($current_date)),
+								'M d' => date_i18n('M j', strtotime($current_date)),
+								'D M d' => date_i18n('D M j', strtotime($current_date)),
+							)
+						),
+						array(
 							'name' => 'date_format_short',
 							'label' => esc_html__('Short Date  Format', 'service-booking-manager'),
 							'desc' => esc_html__('If you want to change Short Date  Format, please select format. Default  is M , Y.', 'service-booking-manager'),
@@ -298,7 +316,7 @@
 								'M - y' => date_i18n('M - y', strtotime($current_date)),
 								'F , Y' => date_i18n('F , Y', strtotime($current_date)),
 								'F , y' => date_i18n('F , y', strtotime($current_date)),
-								'F - Y' => date_i18n('F - y', strtotime($current_date)),
+								'F - Y' => date_i18n('F - Y', strtotime($current_date)),
 								'F - y' => date_i18n('F - y', strtotime($current_date)),
 								'm - Y' => date_i18n('m - Y', strtotime($current_date)),
 								'm - y' => date_i18n('m - y', strtotime($current_date)),
@@ -586,8 +604,12 @@
 			 * @return mixed Sanitized value
 			 */
 			public function sanitize_slug_field($value, $old_value) {
-				if (is_array($value) && isset($value['slug']) && !empty($value['slug'])) {
-					$value['slug'] = sanitize_title($value['slug']);
+				if (is_array($value)) {
+					foreach (array('slug', 'category_slug', 'organizer_slug') as $slug_key) {
+						if (!empty($value[$slug_key])) {
+							$value[$slug_key] = sanitize_title($value[$slug_key]);
+						}
+					}
 				}
 				return $value;
 			}
@@ -604,11 +626,17 @@
 					return;
 				}
 
-				// Check if slug has changed
-				$old_slug = is_array($old_value) && isset($old_value['slug']) ? $old_value['slug'] : '';
-				$new_slug = is_array($value) && isset($value['slug']) ? $value['slug'] : '';
+				$slug_changed = false;
+				foreach (array('slug', 'category_slug', 'organizer_slug') as $slug_key) {
+					$old_slug = is_array($old_value) && isset($old_value[$slug_key]) ? $old_value[$slug_key] : '';
+					$new_slug = is_array($value) && isset($value[$slug_key]) ? $value[$slug_key] : '';
+					if ($old_slug !== $new_slug && !empty($new_slug)) {
+						$slug_changed = true;
+						break;
+					}
+				}
 
-				if ($old_slug !== $new_slug && !empty($new_slug)) {
+				if ($slug_changed) {
 					// Re-register post type with new slug
 					if (class_exists('MPWPB_CPT')) {
 						MPWPB_CPT::register_service_post_type();

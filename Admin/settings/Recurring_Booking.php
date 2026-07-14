@@ -20,8 +20,8 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
 
 		public function recurring_booking_settings($post_id) {
 			$enable_recurring = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_enable_recurring', 'no');
-			$recurring_types = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_recurring_types', array('daily, weekly', 'bi-weekly', 'monthly'));
-			$max_recurring_count = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_max_recurring_count', 10);
+			$recurring_types = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_recurring_types', array('daily', 'weekly', 'bi-weekly', 'monthly'));
+			$max_recurring_count = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_max_recurring_count', 26);
 			$recurring_discount = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_recurring_discount', 0);
             $checked = $enable_recurring == 'yes' ? 'checked' : '';
             ?>
@@ -118,7 +118,17 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
 				$dates = isset($_POST['dates']) ? array_map('sanitize_text_field', wp_unslash($_POST['dates'])) : [];
                 $selectedRecurringDays = isset($_POST['selectedRecurringDays']) ? array_map('sanitize_text_field', wp_unslash( $_POST['selectedRecurringDays'] ) ) : [];
 				// Validate the data
-				if (!$post_id || !$recurring_type || $recurring_count < 2 || empty($dates)) {
+				$enabled = $post_id ? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_enable_recurring', 'no') : 'no';
+				$allowed_types = $post_id ? (array) MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_recurring_types', array('daily', 'weekly', 'bi-weekly', 'monthly')) : array();
+				$max_count = $post_id ? max(2, min(52, absint(MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_max_recurring_count', 26)))) : 0;
+				$start_datetime = !empty($dates[0]) ? substr($dates[0], 0, 16) : '';
+				$start_date = substr($start_datetime, 0, 10);
+				$valid_start = $post_id && $start_datetime && in_array($start_date, MPWPB_Function::get_date($post_id), true)
+					&& in_array($start_datetime, MPWPB_Function::get_time_slot($post_id, $start_date), true);
+				$selectedRecurringDays = array_values(array_intersect($selectedRecurringDays, array('monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday')));
+				if (!$post_id || get_post_type($post_id) !== MPWPB_Function::get_cpt() || get_post_status($post_id) !== 'publish'
+					|| $enabled !== 'yes' || !in_array($recurring_type, $allowed_types, true)
+					|| $recurring_count < 2 || $recurring_count > $max_count || !$valid_start) {
 					wp_send_json_error(['message' => __('Invalid data provided', 'service-booking-manager')]);
 					return;
 				}
@@ -220,7 +230,7 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
 		update_post_meta($post_id, 'mpwpb_recurring_types', $recurring_types);
 		
 		// Save max recurring count
-		$max_recurring_count = isset($_POST['mpwpb_max_recurring_count']) ? absint($_POST['mpwpb_max_recurring_count']) : 10;
+		$max_recurring_count = isset($_POST['mpwpb_max_recurring_count']) ? absint($_POST['mpwpb_max_recurring_count']) : 26;
 		update_post_meta($post_id, 'mpwpb_max_recurring_count', $max_recurring_count);
 		
 		// Save recurring discount

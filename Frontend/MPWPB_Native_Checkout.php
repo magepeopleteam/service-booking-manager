@@ -768,6 +768,17 @@
 					wp_safe_redirect(add_query_arg('mpwpb_error', '1', self::get_checkout_url()));
 					exit;
 				}
+				$booking_validation = MPWPB_Woocommerce::validate_stored_booking_item($item);
+				if (is_wp_error($booking_validation)) {
+					if ($is_ajax_submit) {
+						wp_send_json_error(['message' => $booking_validation->get_error_message()]);
+					}
+					wp_safe_redirect(add_query_arg([
+						'mpwpb_error' => '1',
+						'mpwpb_error_msg' => rawurlencode($booking_validation->get_error_message()),
+					], self::get_checkout_url()));
+					exit;
+				}
 				// Re-validate any applied coupon right before charging -- it may have
 				// expired, hit its usage limit, or stopped qualifying (e.g. email
 				// typed after applying) since it was first applied to the cart.

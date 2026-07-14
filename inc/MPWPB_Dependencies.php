@@ -13,6 +13,7 @@
 				$this->load_file();
 				add_action( 'admin_init', array( $this, 'mpwpb_upgrade' ) );
 				add_action('wp_enqueue_scripts', [$this, 'frontend_script'], 90);
+				add_action('wp_footer', [$this, 'ensure_service_import_map'], 1);
 				add_action('admin_enqueue_scripts', [$this, 'admin_scripts'], 90);
 			}
 			public function language_load(): void {
@@ -58,6 +59,16 @@
 				}
 
 			}
+			/**
+			 * The plugin's classic single-service template discovers the block
+			 * theme/WooCommerce modules after WordPress's head import-map pass.
+			 * Print the now-complete map before footer modules execute.
+			 */
+			public function ensure_service_import_map(): void {
+				if (is_singular(MPWPB_Function::get_cpt()) && function_exists('wp_script_modules')) {
+					wp_script_modules()->print_import_map();
+				}
+			}
 			public function global_enqueue() {
 				do_action('add_mpwpb_common_script');
 				wp_enqueue_style('mage-icon', MPWPB_PLUGIN_URL . '/assets/mage-icon/css/mage-icon.css', array(), MPWPB_VERSION);
@@ -97,7 +108,6 @@
 					'active' => __('ACTIVE', 'service-booking-manager'),
 					'off'    => __('OFF', 'service-booking-manager'),
 				));
-				wp_enqueue_script('chartjs', 'https://cdn.jsdelivr.net/npm/chart.js', [], '3.9.1', true);
 				wp_localize_script('mpwpb_admin', 'mpwpb_admin_ajax', array(
 					'ajax_url' => admin_url('admin-ajax.php'),
 					'nonce'    => wp_create_nonce('mpwpb_admin_nonce'),
@@ -106,6 +116,9 @@
 				do_action('add_mpwpb_admin_script');
 			}
 			public function frontend_script() {
+				if (!MPWPB_Global_Function::is_booking_frontend_context()) {
+					return;
+				}
 				$this->global_enqueue();
 				wp_enqueue_script('wc-checkout');
 				// custom
@@ -145,6 +158,7 @@
 					// or a signal to load the native billing form inside the same
 					// popup instead of leaving it (Custom Payment, WooCommerce off).
 					'is_custom_payment_mode' => MPWPB_Global_Function::is_custom_payment_mode(),
+					'booking_error' => esc_html__('The booking could not be completed. Please review your selection and try again.', 'service-booking-manager'),
 				));
 				do_action('add_mpwpb_frontend_script');
 			}

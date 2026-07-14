@@ -19,14 +19,11 @@ if (!class_exists('MPWPB_Waiting_List')) {
          */
         public function enqueue_scripts() {
 
-            $post_content = isset( get_post()->post_content ) ? get_post()->post_content : '';
-            // Only enqueue on service booking pages
-            if( $post_content ){
-                if (is_singular(MPWPB_Function::get_cpt()) || has_shortcode( $post_content, 'mpwpb-registration')) {
+			// Only enqueue on service booking pages.
+			if (is_singular(MPWPB_Function::get_cpt()) || MPWPB_Global_Function::current_page_has_shortcode('service-booking')) {
                     wp_enqueue_style('mpwpb-waiting-list', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_waiting_list.css', array());
                     wp_enqueue_script('mpwpb-waiting-list', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_waiting_list.js', array('jquery'),  true);
-                }
-            }
+			}
         }
     }
     new MPWPB_Waiting_List();

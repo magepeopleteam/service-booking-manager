@@ -583,7 +583,9 @@
 			 * never prefilled -- the old date has passed, the customer must
 			 * pick a fresh one.
 			 *
-			 * @return array{service_keys:int[], staff_id:string}|null Null
+			 * @return array{service_keys:int[], service_quantities:array,
+			 *         extra_services:array, staff_id:string, advance_to_schedule:bool,
+			 *         notice_title:string, notice:string}|null Null
 			 *         when there's no reorder request, or it doesn't belong to
 			 *         the current user / this service (never surfaces someone
 			 *         else's booking data).
@@ -599,22 +601,122 @@
 					return null;
 				}
 
-				$old_services = get_post_meta($booking_id, 'mpwpb_service', true);
+				$old_services = self::normalise_reorder_value(get_post_meta($booking_id, 'mpwpb_service', true));
+				$old_extras = self::normalise_reorder_value(get_post_meta($booking_id, 'mpwpb_extra_service_info', true));
+				if (!is_array($old_extras) || !$old_extras) {
+					$old_extras = self::normalise_reorder_value(get_post_meta($booking_id, 'mpwpb_extra_services', true));
+				}
+
+				// Backend-created and older bookings did not always copy the
+				// selection arrays onto the booking CPT. WooCommerce's line item is
+				// the second authoritative copy, so recover from it before deciding
+				// that an order has nothing to restore.
+				$order_item = self::get_reorder_order_item($booking_id, $post_id);
+				if ((!is_array($old_services) || !$old_services) && $order_item) {
+					$old_services = self::normalise_reorder_value($order_item->get_meta('_mpwpb_service', true));
+				}
+				if ((!is_array($old_extras) || !$old_extras) && $order_item) {
+					$old_extras = self::normalise_reorder_value($order_item->get_meta('_mpwpb_extra_service_info', true));
+				}
+
 				$live_services = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
 				$service_keys = array();
+				$service_quantities = array();
+				$missing_services = 0;
 				if (is_array($old_services)) {
 					foreach ($old_services as $old_service) {
-						$key = self::find_key_by_name($live_services, is_array($old_service) ? ($old_service['name'] ?? '') : '');
+						if (!is_array($old_service)) {
+							continue;
+						}
+						$key = null;
+						$stored_key = isset($old_service['service_id']) ? absint($old_service['service_id']) - 1 : -1;
+						if ($stored_key >= 0 && isset($live_services[$stored_key])) {
+							$stored_name = (string) ($old_service['name'] ?? '');
+							$live_name = (string) ($live_services[$stored_key]['name'] ?? '');
+							if ($stored_name === '' || $stored_name === $live_name) {
+								$key = $stored_key;
+							}
+						}
+						if ($key === null) {
+							$key = self::find_key_by_name($live_services, $old_service['name'] ?? '');
+						}
 						if ($key !== null) {
-							$service_keys[] = $key + 1;
+							$service_id = $key + 1;
+							$service_keys[] = $service_id;
+							$service_quantities[$service_id] = max(1, absint($old_service['qty'] ?? 1));
+						} else {
+							$missing_services++;
 						}
 					}
 				}
 
+				$live_extras = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', array());
+				$extra_services = array();
+				$missing_extras = 0;
+				if (is_array($old_extras)) {
+					foreach ($old_extras as $old_extra) {
+						if (!is_array($old_extra)) {
+							continue;
+						}
+						$name = (string) ($old_extra['ex_name'] ?? $old_extra['name'] ?? '');
+						if (self::find_key_by_name($live_extras, $name) !== null) {
+							$extra_services[] = array(
+								'name' => $name,
+								'qty' => max(1, absint($old_extra['ex_qty'] ?? $old_extra['qty'] ?? 1)),
+							);
+						} elseif ($name !== '') {
+							$missing_extras++;
+						}
+					}
+				}
+
+				if (!$service_keys) {
+					$notice_title = __('Review your reorder', 'service-booking-manager');
+					$notice = $extra_services
+						? __('The original order did not store a base service. Its available extras were restored; choose a service and a new date and time to continue.', 'service-booking-manager')
+						: __('The original service is no longer available. Choose a current service and a new date and time to continue.', 'service-booking-manager');
+				} elseif ($missing_services || $missing_extras) {
+					$notice_title = __('Review your reorder', 'service-booking-manager');
+					$notice = __('Available choices from the original order were restored. Some old choices are no longer available; review the selection and choose a new date and time.', 'service-booking-manager');
+				} else {
+					$notice_title = __('Reorder ready', 'service-booking-manager');
+					$notice = __('Your previous choices were restored. Choose a new date and time to complete the reorder.', 'service-booking-manager');
+				}
+
 				return array(
 					'service_keys' => $service_keys,
+					'service_quantities' => $service_quantities,
+					'extra_services' => $extra_services,
 					'staff_id' => get_post_meta($booking_id, 'mpwpb_staff_term_id', true),
+					'advance_to_schedule' => !empty($service_keys),
+					'notice_title' => $notice_title,
+					'notice' => $notice,
 				);
+			}
+
+			/** Find the WooCommerce line item which produced this booking. */
+			private static function get_reorder_order_item($booking_id, $post_id) {
+				if (!function_exists('wc_get_order')) {
+					return null;
+				}
+				$order = wc_get_order(absint(get_post_meta($booking_id, 'mpwpb_order_id', true)));
+				if (!$order) {
+					return null;
+				}
+				foreach ($order->get_items() as $item) {
+					if ((int) self::normalise_reorder_value($item->get_meta('_mpwpb_id', true)) === (int) $post_id) {
+						return $item;
+					}
+				}
+				return null;
+			}
+
+			/** Unwrap legacy values which were saved as serialized strings. */
+			private static function normalise_reorder_value($value) {
+				for ($i = 0; $i < 2 && is_string($value) && is_serialized($value); $i++) {
+					$value = maybe_unserialize($value);
+				}
+				return $value;
 			}
 
 			/**

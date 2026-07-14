@@ -285,6 +285,9 @@ if (!class_exists('MPWPB_Staff_Booking')) {
         }
 
         public function mpwpb_get_available_staff() {
+			if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_nonce')) {
+				wp_send_json_error(array('message' => esc_html__('Security check failed.', 'service-booking-manager')), 403);
+			}
             $service_id = isset($_POST['service_id']) ? sanitize_text_field($_POST['service_id']) : '';
             $date       = isset($_POST['staff_date']) ? sanitize_text_field(wp_unslash($_POST['staff_date'])) : '';
             $time       = isset($_POST['staff_time']) ? sanitize_text_field($_POST['staff_time']) : '';
@@ -294,14 +297,19 @@ if (!class_exists('MPWPB_Staff_Booking')) {
                 'html' => '',
                 'count' => 0
             ];
-            if ($service_id) {
+			if ($service_id && get_post_type($service_id) === MPWPB_Function::get_cpt() && get_post_status($service_id) === 'publish') {
                 $available_staff = [];
 
                 $enable_staff_member = get_post_meta($service_id, 'mpwpb_staff_member_add', true);
                 if ($enable_staff_member === 'on') {
-                    $get_selected_staff = get_post_meta($service_id, 'mpwpb_selected_staff_ids', array());
-
-                    $flat_selected_staff_ids = is_array($get_selected_staff) ? call_user_func_array('array_merge', $get_selected_staff) : [];
+					$get_selected_staff = get_post_meta($service_id, 'mpwpb_selected_staff_ids', true);
+					$flat_selected_staff_ids = array();
+					if (is_array($get_selected_staff)) {
+						array_walk_recursive($get_selected_staff, static function ($staff_id) use (&$flat_selected_staff_ids) {
+							$flat_selected_staff_ids[] = absint($staff_id);
+						});
+						$flat_selected_staff_ids = array_values(array_unique(array_filter($flat_selected_staff_ids)));
+					}
                     if (!empty($flat_selected_staff_ids)) {
                         $all_staffs = get_users([
                             'include' => $flat_selected_staff_ids,

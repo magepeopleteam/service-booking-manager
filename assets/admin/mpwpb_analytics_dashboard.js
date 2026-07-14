@@ -1,4 +1,5 @@
-jQuery(document).ready(function($) {
+(function($) {
+  jQuery(document).ready(function() {
     // Initialize Chart.js if it's not already loaded
     if (typeof Chart === 'undefined') {
         console.warn('Chart.js is not loaded. Analytics charts will not be displayed.');
@@ -15,7 +16,7 @@ jQuery(document).ready(function($) {
     });
     
     // Handle form submission
-    $('form').on('submit', function(e) {
+    $('#analytics-filter-form').on('submit', function(e) {
         e.preventDefault();
         loadAnalyticsData();
     });
@@ -39,7 +40,7 @@ jQuery(document).ready(function($) {
         // You can add date picker initialization here if needed
         // For now, we'll use the browser's built-in date picker
     }
-});
+  });
 
 // Chart initialization functions remain the same
 function initBookingsOverTimeChart() {
@@ -141,7 +142,7 @@ function loadAnalyticsData() {
         return;
     }
     
-    var formData = $('form').serialize();
+    var formData = $('#analytics-filter-form').serialize();
     
     $.ajax({
         url: mpwpb_analytics.ajax_url,
@@ -173,7 +174,7 @@ function exportAnalyticsData() {
         return;
     }
     
-    var formData = $('form').serialize();
+    var formData = $('#analytics-filter-form').serialize();
     
     $.ajax({
         url: mpwpb_analytics.ajax_url,
@@ -216,7 +217,13 @@ function downloadCSV(csvData, filename) {
     // Convert array of arrays to CSV string
     var csvContent = '';
     csvData.forEach(function(rowArray) {
-        var row = rowArray.join(',');
+		var row = rowArray.map(function(value) {
+			var field = String(value == null ? '' : value);
+			if (/^[=+\-@]/.test(field)) {
+				field = "'" + field;
+			}
+			return /[",\r\n]/.test(field) ? '"' + field.replace(/"/g, '""') + '"' : field;
+		}).join(',');
         csvContent += row + '\n';
     });
     
@@ -230,14 +237,5 @@ function downloadCSV(csvData, filename) {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-}    // Update summary stats
-    if (data.summary) {
-        $('.mpwpb-total-bookings').text(data.summary.total_bookings);
-        $('.mpwpb-total-revenue').text(data.summary.total_revenue);
-        $('.mpwpb-avg-booking-value').text(data.summary.avg_booking_value);
-        $('.mpwpb-conversion-rate').text(data.summary.conversion_rate);
-    }
-    
-    // Update charts if they exist
-    // This would require re-initializing the charts with new data
 }
+})(jQuery);

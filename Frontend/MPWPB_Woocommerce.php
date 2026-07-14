@@ -18,6 +18,7 @@
 				//add_filter('woocommerce_add_to_cart_redirect', [$this, 'add_to_cart_redirect'], 10, 2);
 				//************//
 				add_action('woocommerce_after_checkout_validation', array($this, 'after_checkout_validation'));
+				add_action('woocommerce_store_api_checkout_update_order_meta', array($this, 'validate_store_api_checkout'));
 				add_action('woocommerce_checkout_create_order_line_item', array($this, 'checkout_create_order_line_item'), 90, 4);
 				add_action('woocommerce_checkout_order_processed', array($this, 'checkout_order_processed'), 90, 3);
 				add_action('woocommerce_store_api_checkout_order_processed', array($this, 'checkout_order_processed'), 90, 3);
@@ -86,14 +87,222 @@
 				return $cart_item_data;
 			}
 			/**
+			 * Resolve either a service post or its linked hidden WooCommerce
+			 * product to the real service post. AJAX input must never be allowed
+			 * to turn this endpoint into a generic add-any-product endpoint.
+			 */
+			public static function resolve_service_id($candidate): int {
+				$candidate = absint($candidate);
+				if ($candidate && get_post_type($candidate) === MPWPB_Function::get_cpt()) {
+					return $candidate;
+				}
+				$service_id = $candidate ? absint(get_post_meta($candidate, 'link_mpwpb_id', true)) : 0;
+				return $service_id && get_post_type($service_id) === MPWPB_Function::get_cpt() ? $service_id : 0;
+			}
+
+			private static function request_array($key): array {
+				if (!isset($_POST[$key]) || !is_array($_POST[$key])) {
+					return array();
+				}
+				return array_map('sanitize_text_field', wp_unslash($_POST[$key]));
+			}
+
+			private static function normalize_datetime($value): string {
+				$value = trim((string) $value);
+				if (!preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}(?::\d{2})?$/', $value)) {
+					return '';
+				}
+				$date = DateTime::createFromFormat('!Y-m-d H:i:s', strlen($value) === 19 ? $value : $value . ':00');
+				$errors = DateTime::getLastErrors();
+				if (!$date || (is_array($errors) && ($errors['warning_count'] || $errors['error_count']))) {
+					return '';
+				}
+				return $date->format('Y-m-d H:i');
+			}
+
+			private static function is_open_date($post_id, $date, $allow_recurring_future = false): bool {
+				if (in_array($date, MPWPB_Function::get_date($post_id), true)) {
+					return true;
+				}
+				if (!$allow_recurring_future || MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_date_type', 'repeated') !== 'repeated') {
+					return false;
+				}
+
+				$start_date = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_repeated_start_date', current_time('Y-m-d'));
+				$repeat_after = max(1, absint(MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_repeated_after', 1)));
+				$start = strtotime($start_date . ' 00:00:00');
+				$check = strtotime($date . ' 00:00:00');
+				if (!$start || !$check || $check < $start || ((int) floor(($check - $start) / DAY_IN_SECONDS)) % $repeat_after !== 0) {
+					return false;
+				}
+
+				$off_days = array_filter(array_map('strtolower', array_map('trim', explode(',', (string) MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_off_days', '')))));
+				$off_dates = array_map(
+					static function ($off_date) {
+						return date_i18n('Y-m-d', strtotime($off_date));
+					},
+					(array) MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_off_dates', array())
+				);
+				return !in_array(strtolower(date('l', $check)), $off_days, true) && !in_array($date, $off_dates, true);
+			}
+
+			private static function validate_datetime($post_id, $datetime, $allow_recurring_future = false): bool {
+				$normalized = self::normalize_datetime($datetime);
+				if (!$normalized) {
+					return false;
+				}
+				$date = substr($normalized, 0, 10);
+				if (!self::is_open_date($post_id, $date, $allow_recurring_future)) {
+					return false;
+				}
+				$slots = array_map(array(__CLASS__, 'normalize_datetime'), MPWPB_Function::get_time_slot($post_id, $date));
+				return in_array($normalized, $slots, true) && MPWPB_Function::get_total_available($post_id, $normalized) > 0;
+			}
+
+			private static function validate_staff($post_id, $staff_id, array $dates): bool {
+				$staff_id = absint($staff_id);
+				if (!$staff_id) {
+					return true;
+				}
+				$user = get_userdata($staff_id);
+				if (!$user || !in_array('mpwpb_staff', (array) $user->roles, true)) {
+					return false;
+				}
+				if (get_post_meta($post_id, 'mpwpb_staff_member_add', true) !== 'on') {
+					return false;
+				}
+				$selected = get_post_meta($post_id, 'mpwpb_selected_staff_ids', true);
+				$selected_ids = array();
+				if (is_array($selected)) {
+					array_walk_recursive($selected, static function ($selected_id) use (&$selected_ids) {
+						$selected_ids[] = absint($selected_id);
+					});
+				}
+				$selected = array_values(array_unique(array_filter($selected_ids)));
+				if (!in_array($staff_id, $selected, true)) {
+					return false;
+				}
+				foreach ($dates as $datetime) {
+					$date = substr($datetime, 0, 10);
+					$time = (int) substr($datetime, 11, 2);
+					if (!MPWPB_Staff_Booking::get_date_check($staff_id, $date, (string) $time)
+						|| !MPWPB_Staff_Booking::mpwpb_is_staff_available_time($staff_id, (string) $time, $date)) {
+						return false;
+					}
+				}
+				return true;
+			}
+
+			/** Validate and normalize every customer-controlled booking choice. */
+			public static function validate_booking_request($candidate) {
+				$post_id = self::resolve_service_id($candidate);
+				if (!$post_id || get_post_status($post_id) !== 'publish') {
+					return new WP_Error('mpwpb_invalid_service', esc_html__('This booking service is not available.', 'service-booking-manager'));
+				}
+
+				$services = self::request_array('mpwpb_service');
+				$service_qty = self::request_array('mpwpb_service_qty');
+				$configured_services = (array) MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
+				$max_service_qty = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_multiple_service_select', 'off') === 'on' ? 10 : 1;
+				if (!$services) {
+					return new WP_Error('mpwpb_missing_selection', esc_html__('Please select at least one service.', 'service-booking-manager'));
+				}
+				if (count($services) !== count(array_unique(array_map('absint', $services)))) {
+					return new WP_Error('mpwpb_duplicate_selection', esc_html__('The same service cannot be selected more than once.', 'service-booking-manager'));
+				}
+				foreach ($services as $service_id) {
+					$service_id = absint($service_id);
+					$quantity = isset($service_qty[$service_id]) ? absint($service_qty[$service_id]) : 1;
+					if (!$service_id || !isset($configured_services[$service_id - 1]) || empty($configured_services[$service_id - 1]['name']) || $quantity < 1 || $quantity > $max_service_qty) {
+						return new WP_Error('mpwpb_invalid_selection', esc_html__('The selected service or quantity is invalid.', 'service-booking-manager'));
+					}
+				}
+				$category = isset($_POST['mpwpb_category']) ? absint($_POST['mpwpb_category']) : 0;
+				$sub_category = isset($_POST['mpwpb_sub_category']) ? absint($_POST['mpwpb_sub_category']) : 0;
+				if (($category && MPWPB_Function::get_category_name($post_id, $category) === '')
+					|| ($sub_category && MPWPB_Function::get_sub_category_name($post_id, $sub_category) === '')) {
+					return new WP_Error('mpwpb_invalid_category', esc_html__('The selected service category is invalid.', 'service-booking-manager'));
+				}
+
+				$date_value = isset($_POST['mpwpb_date']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_date'])) : '';
+				$dates = array_values(array_filter(array_map(array(__CLASS__, 'normalize_datetime'), explode(',', $date_value))));
+				$is_recurring = isset($_POST['is_recurring_on']) && sanitize_text_field(wp_unslash($_POST['is_recurring_on'])) === 'on';
+				$recurring_count = isset($_POST['recurringCount']) ? absint($_POST['recurringCount']) : 1;
+				$max_recurring = max(2, absint(MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_max_recurring_count', 26)));
+				if (!$dates || count($dates) !== count(explode(',', $date_value)) || count($dates) !== count(array_unique($dates))) {
+					return new WP_Error('mpwpb_invalid_date', esc_html__('The selected booking date or time is invalid.', 'service-booking-manager'));
+				}
+				if ($is_recurring) {
+					if (MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_enable_recurring', 'no') !== 'yes' || $recurring_count < 2 || $recurring_count > $max_recurring || count($dates) !== $recurring_count) {
+						return new WP_Error('mpwpb_invalid_recurring', esc_html__('The recurring booking selection is invalid.', 'service-booking-manager'));
+					}
+				} elseif (count($dates) !== 1) {
+					return new WP_Error('mpwpb_invalid_date_count', esc_html__('Please select one booking date and time.', 'service-booking-manager'));
+				}
+				foreach ($dates as $index => $datetime) {
+					if (!self::validate_datetime($post_id, $datetime, $is_recurring && $index > 0)) {
+						return new WP_Error('mpwpb_unavailable_date', esc_html__('One of the selected booking times is no longer available.', 'service-booking-manager'));
+					}
+				}
+
+				$extra_names = array_values(self::request_array('mpwpb_extra_service_type'));
+				$extra_qty = array_values(self::request_array('mpwpb_extra_service_qty'));
+				$configured_extras = (array) MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', array());
+				$extras_by_name = array();
+				foreach ($configured_extras as $extra) {
+					if (!empty($extra['name'])) {
+						$extras_by_name[(string) $extra['name']] = max(1, absint($extra['qty'] ?? 1));
+					}
+				}
+				if ($extra_names && MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_extra_service_active', 'off') !== 'on') {
+					return new WP_Error('mpwpb_invalid_extra', esc_html__('Extra services are not available for this booking.', 'service-booking-manager'));
+				}
+				foreach ($extra_names as $key => $name) {
+					$quantity = isset($extra_qty[$key]) ? absint($extra_qty[$key]) : 0;
+					if (!isset($extras_by_name[$name]) || $quantity < 1 || $quantity > $extras_by_name[$name]) {
+						return new WP_Error('mpwpb_invalid_extra', esc_html__('An extra service or quantity is invalid.', 'service-booking-manager'));
+					}
+				}
+
+				$staff_id = isset($_POST['mpwpb_staff_member']) ? absint($_POST['mpwpb_staff_member']) : 0;
+				if (!self::validate_staff($post_id, $staff_id, $dates)) {
+					return new WP_Error('mpwpb_invalid_staff', esc_html__('The selected staff member is not available.', 'service-booking-manager'));
+				}
+				return true;
+			}
+
+			/** Recheck a stored cart item immediately before an order is created. */
+			public static function validate_stored_booking_item($item) {
+				if (!is_array($item)) {
+					return new WP_Error('mpwpb_invalid_cart_item', esc_html__('The booking cart item is invalid.', 'service-booking-manager'));
+				}
+				$post_id = absint($item['mpwpb_id'] ?? 0);
+				$date_segments = explode(',', (string) ($item['mpwpb_date'] ?? ''));
+				$dates = array_values(array_filter(array_map(array(__CLASS__, 'normalize_datetime'), $date_segments)));
+				if (!$post_id || get_post_status($post_id) !== 'publish' || !$dates || count($dates) !== count($date_segments) || count($dates) !== count(array_unique($dates))) {
+					return new WP_Error('mpwpb_invalid_cart_item', esc_html__('The booking cart item is invalid.', 'service-booking-manager'));
+				}
+				foreach ($dates as $index => $datetime) {
+					if (!self::validate_datetime($post_id, $datetime, $index > 0)) {
+						return new WP_Error('mpwpb_unavailable_cart_item', esc_html__('A booking time in your cart is no longer available. Please choose another time.', 'service-booking-manager'));
+					}
+				}
+				if (!self::validate_staff($post_id, $item['mpwpb_staff_member_id'] ?? 0, $dates)) {
+					return new WP_Error('mpwpb_unavailable_staff', esc_html__('The selected staff member is no longer available.', 'service-booking-manager'));
+				}
+				return true;
+			}
+			/**
 			 * Builds the booking selection array from the current $_POST request.
 			 * Shared by the WooCommerce cart bridge (add_cart_item_data) and the
 			 * native (non-WooCommerce) add-to-cart path so both stay in sync.
 			 */
 			public static function build_booking_item_from_request($product_id): array {
 				$cart_item_data = array();
-				$linked_id = MPWPB_Global_Function::get_post_info($product_id, 'link_mpwpb_id', $product_id);
-				$product_id = is_string(get_post_status($linked_id)) ? $linked_id : $product_id;
+				$product_id = self::resolve_service_id($product_id);
+				if (!$product_id || is_wp_error(self::validate_booking_request($product_id))) {
+					return array();
+				}
                 $enable_recurring = MPWPB_Global_Function::get_post_info( $product_id, 'mpwpb_enable_recurring', 'no');
                 $recurring_discount = MPWPB_Global_Function::get_post_info( $product_id, 'mpwpb_recurring_discount', 0 );
 
@@ -106,8 +315,8 @@
 					if (get_post_type($product_id) == MPWPB_Function::get_cpt()) {
 						$category = isset($_POST['mpwpb_category']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_category'])) : '';
 						$sub_category = isset($_POST['mpwpb_sub_category']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_sub_category'])) : '';
-						$services = isset($_POST['mpwpb_service']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_service'])) : [];
-						$services_qty = isset($_POST['mpwpb_service_qty']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_service_qty'])) : [];
+						$services = self::request_array('mpwpb_service');
+						$services_qty = self::request_array('mpwpb_service_qty');
 						$date = isset($_POST['mpwpb_date']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_date'])) : '';
 						$all_service = [];
 						if (is_array($services) && sizeof($services)) {
@@ -115,13 +324,13 @@
 								$all_service[$key]['service_id'] = $service; // 1-based index, needed for coupon service matching
 								$all_service[$key]['name'] = MPWPB_Function::get_service_name($product_id, $service);
 								$all_service[$key]['price'] = MPWPB_Function::get_price($product_id, $service, $date);
-								$all_service[$key]['qty'] = $services_qty[ $service ];
+								$all_service[$key]['qty'] = isset($services_qty[$service]) ? max(1, absint($services_qty[$service])) : 1;
 							}
 						}
 
-						$ex_service_types = isset($_POST['mpwpb_extra_service_type']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_extra_service_type'])) : [];
-						$ex_service_qty = isset($_POST['mpwpb_extra_service_qty']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_extra_service_qty'])) : [];
-						$ex_service_group = isset($_POST['mpwpb_extra_service']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_extra_service'])) : [];
+						$ex_service_types = array_values(self::request_array('mpwpb_extra_service_type'));
+						$ex_service_qty = array_values(self::request_array('mpwpb_extra_service_qty'));
+						$ex_service_group = array_fill(0, count($ex_service_types), '');
 						$is_recurring_on = isset($_POST['is_recurring_on']) ? sanitize_text_field( wp_unslash( $_POST['is_recurring_on'] ) ) : 'off';
 						$total_price = self::get_cart_total_price($product_id, $all_service, $ex_service_types, $ex_service_qty, $ex_service_group);
                         if( $is_recurring_on === 'on' ){
@@ -131,8 +340,8 @@
 
                         $mpwpb_staff_member_id = isset($_POST['mpwpb_staff_member']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_staff_member'])) : '';
                         if( $mpwpb_staff_member_id ){
-                            $mpwpb_staff_date = get_userdata($mpwpb_staff_member_id);
-                            $mpwpb_staff_member = $mpwpb_staff_date->display_name;
+							$mpwpb_staff_data = get_userdata($mpwpb_staff_member_id);
+							$mpwpb_staff_member = $mpwpb_staff_data ? $mpwpb_staff_data->display_name : '';
                         }else{
                             $mpwpb_staff_member = '';
                         }
@@ -268,8 +477,40 @@
 				foreach ($items as $values) {
 					$post_id = array_key_exists('mpwpb_id', $values) ? $values['mpwpb_id'] : 0;
 					if (get_post_type($post_id) == MPWPB_Function::get_cpt()) {
+						$validation = self::validate_stored_booking_item($values);
+						if (is_wp_error($validation)) {
+							wc_add_notice($validation->get_error_message(), 'error');
+						}
 						//wc_add_notice( __( "custom_notice", 'fake_error' ), 'error');
 						do_action('mpwpb_validate_cart_item', $values, $post_id);
+					}
+				}
+			}
+			/** Blocks/Store API equivalent of the classic checkout validation hook. */
+			public function validate_store_api_checkout(): void {
+				if (!function_exists('WC') || !WC()->cart) {
+					return;
+				}
+				foreach (WC()->cart->get_cart() as $values) {
+					$post_id = absint($values['mpwpb_id'] ?? 0);
+					if (get_post_type($post_id) !== MPWPB_Function::get_cpt()) {
+						continue;
+					}
+					$validation = self::validate_stored_booking_item($values);
+					if (is_wp_error($validation)) {
+						throw new Exception($validation->get_error_message());
+					}
+					if (!empty($values['mpwpb_coupon_code']) && class_exists('MPWPB_Coupon_Validator')) {
+						$email = WC()->customer ? sanitize_email(WC()->customer->get_billing_email()) : '';
+						$context = MPWPB_Coupon_Validator::build_context($values, $email, get_current_user_id());
+						$coupon_validation = MPWPB_Coupon_Validator::validate($values['mpwpb_coupon_code'], $context);
+						if (!$coupon_validation['valid']) {
+							throw new Exception(sprintf(
+								/* translators: %s: coupon validation failure reason */
+								esc_html__('Your coupon is no longer valid: %s', 'service-booking-manager'),
+								$coupon_validation['message']
+							));
+						}
 					}
 				}
 			}
@@ -307,7 +548,7 @@
                     if( is_array($date_array) && sizeof($date_array) > 0 ) {
                         foreach ($date_array as $days) {
                             $item->add_meta_data(esc_html__('Date ', 'service-booking-manager'), esc_html(MPWPB_Global_Function::date_format($days)));
-                            $item->add_meta_data(esc_html__('Time ', 'service-booking-manager'), esc_html(MPWPB_Global_Function::date_format($date, 'time')));
+                            $item->add_meta_data(esc_html__('Time ', 'service-booking-manager'), esc_html(MPWPB_Global_Function::date_format($days, 'time')));
                         }
                     }
 					if (sizeof($extra_service) > 0) {
@@ -823,10 +1064,21 @@
 			}
 			/****************************/
 			public function mpwpb_add_to_cart() {
-				if (isset($_POST['nonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_nonce')) {
-					$link_id = isset($_POST['link_id']) ? sanitize_text_field(wp_unslash($_POST['link_id'])) : '';
+				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_nonce')) {
+					wp_send_json_error(array('message' => esc_html__('Security check failed. Please refresh the page and try again.', 'service-booking-manager')), 403);
+				}
+				$link_id = isset($_POST['link_id']) ? absint($_POST['link_id']) : 0;
+				$service_id = self::resolve_service_id($link_id);
+				$validation = self::validate_booking_request($service_id);
+				if (is_wp_error($validation)) {
+					wp_send_json_error(array('message' => $validation->get_error_message()), 400);
+				}
 					if (!MPWPB_Global_Function::is_wc_payment_mode()) {
-						echo esc_url(MPWPB_Native_Checkout::add_to_cart($link_id));
+						$url = MPWPB_Native_Checkout::add_to_cart($service_id);
+						if (!$url) {
+							wp_send_json_error(array('message' => esc_html__('The booking could not be added. Please try again.', 'service-booking-manager')), 400);
+						}
+						echo esc_url($url);
 						die();
 					}
 					if (MPWPB_Global_Function::get_payment_setting('wc_require_login') === 'on' && !is_user_logged_in()) {
@@ -843,7 +1095,7 @@
 					// type). Resolve/create the real hidden product now rather than
 					// silently failing to add to cart.
 					if (get_post_type($link_id) === MPWPB_Function::get_cpt() && class_exists('MPWPB_Hidden_Product')) {
-						$link_id = MPWPB_Hidden_Product::ensure_hidden_product($link_id);
+						$link_id = MPWPB_Hidden_Product::ensure_hidden_product($service_id);
 					}
 					$product_id = apply_filters('woocommerce_add_to_cart_product_id', $link_id);
 					$quantity = 1;
@@ -853,9 +1105,9 @@
 					if ($passed_validation && WC()->cart->add_to_cart($product_id, 1) && 'publish' === $product_status) {
 						$redirect_mode = MPWPB_Global_Function::get_payment_setting('wc_add_to_cart_redirect', 'checkout');
 						echo esc_url($redirect_mode === 'cart' ? wc_get_cart_url() : wc_get_checkout_url());
+						die();
 					}
-				}
-				die();
+					wp_send_json_error(array('message' => esc_html__('The booking could not be added to the cart. Please try again.', 'service-booking-manager')), 400);
 			}
 
             public static function calculate_discounted_total( $price, $recurringCount, $discountPercent ) {

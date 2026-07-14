@@ -26,6 +26,11 @@
                 return false;
             }
 
+			public static function has_waiting_list_slots( $post_id, $date ) {
+				return MPWPB_Global_Function::get_post_info( $post_id, 'mpwpb_enable_waiting_list', 'no' ) === 'yes'
+					&& !empty( MPWPB_Function::get_time_slot( $post_id, $date ) );
+			}
+
             /**
              * The date to default-select/show time slots for isn't
              * necessarily $all_dates[0] -- if that date's slots have all
@@ -42,14 +47,15 @@
                         return $date;
                     }
                 }
-                return $all_dates[0];
+				return $all_dates[0] ?? '';
             }
 
             public static function display_booking_time( $post_id, $all_dates, $active_date = null ){
-                $start_date = $all_dates[0];
-                $end_date = end($all_dates);
+				if ( empty( $all_dates ) ) {
+					return;
+				}
                 $active_date = $active_date ?? self::get_default_active_date( $post_id, $all_dates );
-                while (strtotime($start_date) <= strtotime($end_date)) {
+                foreach ( $all_dates as $start_date ) {
                     if( $start_date === $active_date ){
                         $display = 'flex';
                     }else{
@@ -73,7 +79,11 @@
                                             <span class="mpwpb-happy-hour-badge"><?php echo esc_html($happy_hours_badge); ?></span>
                                         <?php } ?>
                                     </button>
-                                <?php } else {
+								<?php } elseif ( MPWPB_Global_Function::get_post_info( $post_id, 'mpwpb_enable_waiting_list', 'no' ) === 'yes' ) {
+									?>
+									<button type="button" class="_mpBtn waiting-list" data-slot="<?php echo esc_attr( $slot ); ?>" data-post-id="<?php echo esc_attr( $post_id ); ?>"><?php esc_html_e('Join Waiting List', 'service-booking-manager'); ?></button>
+									<?php
+								} else {
                                     ?>
                                     <button type="button" class="_mpBtn mActive booked"><?php esc_html_e('Booked', 'service-booking-manager'); ?></button>
                                     <?php
@@ -82,10 +92,13 @@
                         } ?>
                     </div>
                     <?php
-                    $start_date = date_i18n('Y-m-d', strtotime($start_date . ' +1 day'));
                 }
             }
             public static function display_booking_date( $post_id, $all_dates, $active_date = null ){
+				if ( empty( $all_dates ) ) {
+					echo '<p class="mpwpb-no-booking-dates">' . esc_html__('No booking dates are currently available.', 'service-booking-manager') . '</p>';
+					return;
+				}
                 $start_date = $all_dates[0];
                 $end_date = end($all_dates);
                 $active_date = $active_date ?? self::get_default_active_date( $post_id, $all_dates );
@@ -119,7 +132,7 @@
                             <div class="_mpBtn_mpDisabled_fullHeight_bgLight mpwpb_get_close_date">
                                 <div class="mpwpb_close_date"><?php echo esc_html(MPWPB_Global_Function::date_format($start_date)); ?></div>
                             </div>
-                        <?php } elseif ( ! self::has_available_slots( $post_id, $start_date ) ) {
+						<?php } elseif ( ! self::has_available_slots( $post_id, $start_date ) && ! self::has_waiting_list_slots( $post_id, $start_date ) ) {
                             // An open day (it's in $all_dates), but every one
                             // of its slots is already gone -- either passed
                             // (typically today, once its cutoff time is

@@ -13,6 +13,9 @@
 				add_action( 'admin_head', array( $this, 'add_global_style' ), 100 );
 			}
 			public function add_global_style() {
+				if (!is_admin() && !MPWPB_Global_Function::is_booking_frontend_context()) {
+					return;
+				}
 				$default_color   = MPWPB_Global_Function::get_style_settings( 'default_text_color', '#303030' );
 				$theme_color     = MPWPB_Global_Function::get_style_settings( 'theme_color', '#00685f' );
 				$alternate_color = MPWPB_Global_Function::get_style_settings( 'theme_alternate_color', '#fff' );
