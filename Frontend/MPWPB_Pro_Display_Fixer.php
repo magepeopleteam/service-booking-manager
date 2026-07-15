@@ -27,12 +27,11 @@ if (!class_exists('MPWPB_Pro_Display_Fixer')) {
             
             // Only run on the order edit page
             if ($pagenow == 'post.php' && isset($_GET['post']) && get_post_type($_GET['post']) == 'shop_order') {
-                // Remove the original file display functions
-                remove_all_actions('woocommerce_admin_order_data_after_billing_address');
-                remove_all_actions('woocommerce_admin_order_data_after_shipping_address');
-                
-                // Re-add our custom file display function
-                add_action('woocommerce_admin_order_data_after_billing_address', array($this, 'display_uploaded_files'), 20);
+				// Preserve WooCommerce and third-party address callbacks. The shared
+				// file helper owns this output whenever the free plugin is active.
+				if (!class_exists('MPWPB_File_Display_Helper')) {
+					add_action('woocommerce_admin_order_data_after_billing_address', array($this, 'display_uploaded_files'), 20);
+				}
             }
         }
         

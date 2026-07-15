@@ -166,10 +166,11 @@
 				add_action('admin_footer', array($this, 'icon_popup'));
 			}
 			public static function mi_icon($icon_type="fi") {
-				$mi_icon_json = file_get_contents(MPWPB_PLUGIN_URL . '/assets/mage-icon/data.json');
+				$icon_file = MPWPB_PLUGIN_DIR . '/assets/mage-icon/data.json';
+				$mi_icon_json = is_readable($icon_file) ? file_get_contents($icon_file) : '';
 				$mi_icons = json_decode($mi_icon_json, true);
 				$all_icon = [];
-				foreach($mi_icons as $mi_icon){
+				foreach((array) $mi_icons as $mi_icon){
 					$all_icon["{$icon_type} mi-{$mi_icon}"] = $mi_icon;
 				}
 				return $all_icon;

@@ -12,6 +12,7 @@
 	if (!class_exists('MPWPB_Native_Order')) {
 		class MPWPB_Native_Order {
 			const CPT = 'mpwpb_order';
+			const ACCESS_KEY_META = 'mpwpb_order_access_key';
 
 			public function __construct() {
 				add_action('init', [$this, 'register_cpt']);
@@ -69,7 +70,40 @@
 				// tax enabled, or WooCommerce's own tax calculation is off.
 				update_post_meta($order_id, 'mpwpb_tax_amount', $args['tax_amount'] ?? 0);
 				update_post_meta($order_id, 'mpwpb_line_items', $args['line_items'] ?? []);
+				self::get_access_key($order_id);
 				return (int) $order_id;
+			}
+			/** Random guest-facing key, equivalent to a WooCommerce order key. */
+			public static function get_access_key($order_id): string {
+				$order_id = absint($order_id);
+				if (!$order_id || get_post_type($order_id) !== self::CPT) {
+					return '';
+				}
+				$key = (string) get_post_meta($order_id, self::ACCESS_KEY_META, true);
+				if (!$key) {
+					$key = 'mpwpb_' . wp_generate_password(40, false, false);
+					update_post_meta($order_id, self::ACCESS_KEY_META, $key);
+				}
+				return $key;
+			}
+			public static function current_user_can_view($order_id, $provided_key = ''): bool {
+				$order_id = absint($order_id);
+				if (!$order_id || get_post_type($order_id) !== self::CPT) {
+					return false;
+				}
+				if (current_user_can('manage_options') || current_user_can('manage_woocommerce')) {
+					return true;
+				}
+				$owner_id = absint(get_post_meta($order_id, 'mpwpb_user_id', true));
+				if ($owner_id && is_user_logged_in() && $owner_id === get_current_user_id()) {
+					return true;
+				}
+				$stored_key = (string) get_post_meta($order_id, self::ACCESS_KEY_META, true);
+				$provided_key = sanitize_text_field((string) $provided_key);
+				if (strlen($provided_key) > 80) {
+					return false;
+				}
+				return $stored_key !== '' && $provided_key !== '' && hash_equals($stored_key, $provided_key);
 			}
 			public static function set_status($order_id, $status): void {
 				update_post_meta($order_id, 'mpwpb_order_status', $status);

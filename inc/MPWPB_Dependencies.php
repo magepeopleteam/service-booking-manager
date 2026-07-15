@@ -41,7 +41,6 @@
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Direct_Form_Modifier.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Ajax_File_Upload.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_File_Display_Helper.php';
-				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Display_Fixer.php';
 			}
 			public function mpwpb_upgrade() {
 				if ( get_option( 'mpwpb_conflict_update' ) != 'completed' ) {
@@ -145,9 +144,9 @@
 				// service elements (untouched click handlers/hidden inputs)
 				// into a unified checkbox-tree — no new selection logic.
 				wp_enqueue_script('mpwpb_booking_tree', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-booking-tree.js', ['jquery', 'mpwpb_registration', 'mpwpb_service_tree'], MPWPB_VERSION, true);
-				// WooCommerce My Account > Orders reskin — pure CSS, no
-				// template override or new markup (see the file's own header
-				// comment). Loaded after mpwpb_registration so its overrides win.
+				// Account-area presentation: WooCommerce's stock Orders table
+				// reskin plus the scoped Custom Payment dashboard cards/table.
+				// Loaded after mpwpb_registration so its overrides win.
 				wp_enqueue_style('mpwpb_account_orders_modern', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-account-orders-modern.css', ['mpwpb_registration'], MPWPB_VERSION);
 				wp_localize_script('mpwpb_registration', 'mpwpb_ajax', array(
 					'ajax_url' => admin_url('admin-ajax.php'),
@@ -158,6 +157,7 @@
 					// or a signal to load the native billing form inside the same
 					// popup instead of leaving it (Custom Payment, WooCommerce off).
 					'is_custom_payment_mode' => MPWPB_Global_Function::is_custom_payment_mode(),
+					'is_wc_payment_mode' => MPWPB_Global_Function::is_wc_payment_mode(),
 					'booking_error' => esc_html__('The booking could not be completed. Please review your selection and try again.', 'service-booking-manager'),
 				));
 				do_action('add_mpwpb_frontend_script');

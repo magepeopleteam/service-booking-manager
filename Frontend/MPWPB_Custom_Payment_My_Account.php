@@ -105,7 +105,7 @@
 						<ul class="mpwpb-tabs-nav">
 							<?php foreach ($tabs as $tab_key => $tab_label) : ?>
 								<li class="<?php echo $tab === $tab_key ? 'active' : ''; ?>">
-									<a href="<?php echo esc_url(add_query_arg('cp_tab', $tab_key)); ?>"><?php echo esc_html($tab_label); ?></a>
+									<a href="<?php echo esc_url(add_query_arg('cp_tab', $tab_key, remove_query_arg('order_id'))); ?>"><?php echo esc_html($tab_label); ?></a>
 								</li>
 							<?php endforeach; ?>
 							<li><a href="<?php echo esc_url(wp_logout_url(get_permalink())); ?>"><?php esc_html_e('Logout', 'service-booking-manager'); ?></a></li>
@@ -133,7 +133,11 @@
 								}
 								break;
 							case 'account-details':
-								MPWPB_User_Dashboard::user_profile($user_id);
+								?>
+								<div class="mpwpb-cp-account-details mpwpb-cp-account-surface">
+									<?php MPWPB_User_Dashboard::user_profile($user_id, add_query_arg('cp_tab', 'orders', remove_query_arg('order_id'))); ?>
+								</div>
+								<?php
 								break;
 							case 'privacy':
 								if (MPWPB_Global_Function::is_gdpr_enabled()) {
@@ -155,25 +159,57 @@
 				$user = wp_get_current_user();
 				$orders = $this->get_custom_payment_orders($user_id, 5);
 				?>
-				<div class="mpwpb-cp-dashboard">
-					<p>
-						<?php
-						printf(
-							/* translators: 1: customer display name (bold), 2: opening <a> tag for the logout link, 3: closing </a> tag */
-							esc_html__('Hello %1$s (not you? %2$sLog out%3$s)', 'service-booking-manager'),
-							'<strong>' . esc_html($user->display_name) . '</strong>',
-							'<a href="' . esc_url(wp_logout_url(get_permalink())) . '">',
-							'</a>'
-						);
-						?>
-					</p>
-					<p><?php esc_html_e('From your account dashboard you can view your recent custom payment orders, manage your account details, and request your data.', 'service-booking-manager'); ?></p>
-					<?php if ($orders) : ?>
-						<h3><?php esc_html_e('Recent Orders', 'service-booking-manager'); ?></h3>
-						<?php $this->orders_table($orders); ?>
-					<?php endif; ?>
+				<div class="mpwpb-cp-dashboard mpwpb-cp-account-surface">
+					<section class="mpwpb-cp-welcome" aria-labelledby="mpwpb-cp-welcome-title">
+						<span class="mpwpb-cp-welcome-icon" aria-hidden="true"><i class="fas fa-user"></i></span>
+						<div class="mpwpb-cp-welcome-copy">
+							<span class="mpwpb-cp-eyebrow"><?php esc_html_e('Account overview', 'service-booking-manager'); ?></span>
+							<h2 id="mpwpb-cp-welcome-title">
+								<?php
+								printf(
+									/* translators: %s: customer display name */
+									esc_html__('Hello, %s!', 'service-booking-manager'),
+									esc_html($user->display_name)
+								);
+								?>
+							</h2>
+							<p><?php esc_html_e('View your recent custom payment orders, manage your account details, and control your privacy preferences from one place.', 'service-booking-manager'); ?></p>
+						</div>
+						<a class="mpwpb-cp-logout" href="<?php echo esc_url(wp_logout_url(get_permalink())); ?>">
+							<i class="fas fa-right-from-bracket" aria-hidden="true"></i>
+							<?php esc_html_e('Log out', 'service-booking-manager'); ?>
+						</a>
+					</section>
+
+					<section class="mpwpb-cp-recent-orders" aria-labelledby="mpwpb-cp-recent-orders-title">
+						<header class="mpwpb-cp-section-header">
+							<div>
+								<span class="mpwpb-cp-eyebrow"><?php esc_html_e('Latest activity', 'service-booking-manager'); ?></span>
+								<h3 id="mpwpb-cp-recent-orders-title"><?php esc_html_e('Recent Orders', 'service-booking-manager'); ?></h3>
+							</div>
+							<?php if ($orders) : ?>
+								<a class="mpwpb-cp-view-all" href="<?php echo esc_url(add_query_arg('cp_tab', 'orders')); ?>">
+									<?php esc_html_e('View all orders', 'service-booking-manager'); ?>
+									<i class="fas fa-arrow-right" aria-hidden="true"></i>
+								</a>
+							<?php endif; ?>
+						</header>
+						<?php if ($orders) : ?>
+							<div class="mpwpb-cp-orders-table-wrap">
+								<?php $this->orders_table($orders, true); ?>
+							</div>
+						<?php else : ?>
+							<div class="mpwpb-cp-empty-orders">
+								<span aria-hidden="true"><i class="fas fa-receipt"></i></span>
+								<div>
+									<strong><?php esc_html_e('No orders yet', 'service-booking-manager'); ?></strong>
+									<p><?php esc_html_e('Your custom payment orders will appear here after checkout.', 'service-booking-manager'); ?></p>
+								</div>
+							</div>
+						<?php endif; ?>
+					</section>
 					<?php if (MPWPB_Global_Function::is_gdpr_enabled()) : ?>
-						<div class="mpwpb-message info" style="margin-top:20px;">
+						<div class="mpwpb-message info mpwpb-cp-privacy-note">
 							<?php
 							printf(
 								/* translators: %s: "Privacy & Data" tab link */
@@ -190,10 +226,8 @@
 			private function orders_tab(int $user_id): void {
 				$order_id = isset($_GET['order_id']) ? absint($_GET['order_id']) : 0;
 				if ($order_id) {
-					// Ownership check -- this dashboard is only ever reached while
-					// logged in, so unlike the checkout thank-you URL (which just
-					// trusts the order ID + status=success in the query string),
-					// a viewer here must actually own the order.
+					// This account view always requires logged-in ownership. Guest
+					// confirmation links use the separate random native order key.
 					$order = get_post($order_id);
 					$owner_id = (int) get_post_meta($order_id, 'mpwpb_user_id', true);
 					if ($order && $order->post_type === MPWPB_Native_Order::CPT && $owner_id === $user_id) {
@@ -203,12 +237,42 @@
 					echo '<div class="mpwpb-message error">' . esc_html__('That order could not be found.', 'service-booking-manager') . '</div>';
 				}
 				$orders = $this->get_custom_payment_orders($user_id, 50);
-				echo '<h3>' . esc_html__('My Custom Payment Orders', 'service-booking-manager') . '</h3>';
-				if (empty($orders)) {
-					echo '<div class="mpwpb-no-bookings">' . esc_html__('You have no custom payment orders yet.', 'service-booking-manager') . '</div>';
-					return;
-				}
-				$this->orders_table($orders);
+				?>
+				<div class="mpwpb-cp-orders-page mpwpb-cp-account-surface">
+					<section class="mpwpb-cp-orders-panel" aria-labelledby="mpwpb-cp-orders-title">
+						<header class="mpwpb-cp-section-header mpwpb-cp-orders-header">
+							<div>
+								<span class="mpwpb-cp-eyebrow"><?php esc_html_e('Order history', 'service-booking-manager'); ?></span>
+								<h3 id="mpwpb-cp-orders-title"><?php esc_html_e('My Custom Payment Orders', 'service-booking-manager'); ?></h3>
+								<p><?php esc_html_e('Review your payment history and manage the bookings connected to each order.', 'service-booking-manager'); ?></p>
+							</div>
+							<span class="mpwpb-cp-orders-count">
+								<i class="fas fa-receipt" aria-hidden="true"></i>
+								<?php
+								printf(
+									/* translators: %d: number of displayed orders */
+									esc_html(_n('%d order', '%d orders', count($orders), 'service-booking-manager')),
+									count($orders)
+								);
+								?>
+							</span>
+						</header>
+						<?php if ($orders) : ?>
+							<div class="mpwpb-cp-orders-table-wrap">
+								<?php $this->orders_table($orders, true); ?>
+							</div>
+						<?php else : ?>
+							<div class="mpwpb-cp-empty-orders">
+								<span aria-hidden="true"><i class="fas fa-receipt"></i></span>
+								<div>
+									<strong><?php esc_html_e('No orders yet', 'service-booking-manager'); ?></strong>
+									<p><?php esc_html_e('Your custom payment orders will appear here after checkout.', 'service-booking-manager'); ?></p>
+								</div>
+							</div>
+						<?php endif; ?>
+					</section>
+				</div>
+				<?php
 			}
 			private function render_order_details(WP_Post $order): void {
 				$order_id = $order->ID;
@@ -222,41 +286,55 @@
 					$item['mpwpb_tp'] = $total;
 				}
 				?>
-				<p><a href="<?php echo esc_url(remove_query_arg('order_id')); ?>">&laquo; <?php esc_html_e('Back to Orders', 'service-booking-manager'); ?></a></p>
-				<h3>
-					<?php
-					printf(
-						/* translators: %d: order ID */
-						esc_html__('Order #%d', 'service-booking-manager'),
-						$order_id
-					);
-					?>
-				</h3>
-				<table class="mpwpb-bookings-table">
-					<tbody>
-						<tr>
-							<td><?php esc_html_e('Date', 'service-booking-manager'); ?></td>
-							<td><?php echo esc_html(get_the_date('', $order)); ?></td>
-						</tr>
-						<tr>
-							<td><?php esc_html_e('Status', 'service-booking-manager'); ?></td>
-							<td><span class="mpwpb-status mpwpb-status-<?php echo esc_attr(strtolower($status)); ?>"><?php echo esc_html($status ? ucfirst($status) : '—'); ?></span></td>
-						</tr>
-						<tr>
-							<td><?php esc_html_e('Payment Method', 'service-booking-manager'); ?></td>
-							<td><?php echo esc_html($gateway ? ucfirst($gateway) : '—'); ?></td>
-						</tr>
-						<tr>
-							<td><?php esc_html_e('Total', 'service-booking-manager'); ?></td>
-							<td><?php echo wp_kses_post(MPWPB_Global_Function::wc_price(0, $total)); ?></td>
-						</tr>
-					</tbody>
-				</table>
-				<?php if (!empty($item)) : ?>
-					<?php MPWPB_Native_Checkout::render_booking_recap($item, $post_id, false); ?>
-				<?php endif; ?>
-				<?php MPWPB_Native_Checkout::render_customer_info_card($order_id); ?>
-				<?php $this->render_manage_booking_section($order_id); ?>
+				<div class="mpwpb-cp-order-detail mpwpb-cp-account-surface">
+					<a class="mpwpb-cp-order-back" href="<?php echo esc_url(remove_query_arg('order_id')); ?>">
+						<i class="fas fa-arrow-left" aria-hidden="true"></i>
+						<?php esc_html_e('Back to Orders', 'service-booking-manager'); ?>
+					</a>
+
+					<header class="mpwpb-cp-order-hero">
+						<span class="mpwpb-cp-order-hero-icon" aria-hidden="true"><i class="fas fa-receipt"></i></span>
+						<div class="mpwpb-cp-order-hero-copy">
+							<span class="mpwpb-cp-eyebrow"><?php esc_html_e('Order details', 'service-booking-manager'); ?></span>
+							<h3>
+								<?php
+								printf(
+									/* translators: %d: order ID */
+									esc_html__('Order #%d', 'service-booking-manager'),
+									$order_id
+								);
+								?>
+							</h3>
+							<p><?php esc_html_e('Review your payment information, appointment schedule, and booking details.', 'service-booking-manager'); ?></p>
+						</div>
+						<span class="mpwpb-status mpwpb-status-<?php echo esc_attr(strtolower($status)); ?>"><?php echo esc_html($status ? ucfirst($status) : '—'); ?></span>
+					</header>
+
+					<dl class="mpwpb-cp-order-facts">
+						<div class="mpwpb-cp-order-fact">
+							<span class="mpwpb-cp-order-fact-icon" aria-hidden="true"><i class="fas fa-calendar-alt"></i></span>
+							<div><dt><?php esc_html_e('Order Date', 'service-booking-manager'); ?></dt><dd><?php echo esc_html(get_the_date('', $order)); ?></dd></div>
+						</div>
+						<div class="mpwpb-cp-order-fact">
+							<span class="mpwpb-cp-order-fact-icon" aria-hidden="true"><i class="fas fa-circle-check"></i></span>
+							<div><dt><?php esc_html_e('Status', 'service-booking-manager'); ?></dt><dd><?php echo esc_html($status ? ucfirst($status) : '—'); ?></dd></div>
+						</div>
+						<div class="mpwpb-cp-order-fact">
+							<span class="mpwpb-cp-order-fact-icon" aria-hidden="true"><i class="fas fa-wallet"></i></span>
+							<div><dt><?php esc_html_e('Payment Method', 'service-booking-manager'); ?></dt><dd><?php echo esc_html($gateway ? ucfirst($gateway) : '—'); ?></dd></div>
+						</div>
+						<div class="mpwpb-cp-order-fact mpwpb-cp-order-fact--total">
+							<span class="mpwpb-cp-order-fact-icon" aria-hidden="true"><i class="fas fa-coins"></i></span>
+							<div><dt><?php esc_html_e('Order Total', 'service-booking-manager'); ?></dt><dd><?php echo wp_kses_post(MPWPB_Global_Function::wc_price(0, $total)); ?></dd></div>
+						</div>
+					</dl>
+
+					<?php if (!empty($item)) : ?>
+						<?php MPWPB_Native_Checkout::render_booking_recap($item, $post_id, false); ?>
+					<?php endif; ?>
+					<?php MPWPB_Native_Checkout::render_customer_info_card($order_id); ?>
+					<?php $this->render_manage_booking_section($order_id); ?>
+				</div>
 				<?php
 			}
 
@@ -274,13 +352,21 @@
 				}
 				$service_id = get_post_meta($booking_id, 'mpwpb_id', true);
 				?>
-				<h3><?php esc_html_e('Manage Your Booking', 'service-booking-manager'); ?></h3>
-				<p class="mpwpb-wc-account-actions">
-					<?php MPWPB_User_Dashboard::render_booking_actions($booking_id, $service_id, true); ?>
-					<a href="<?php echo esc_url(MPWPB_User_Dashboard::get_reorder_url($booking_id, $service_id)); ?>" class="mpwpb-btn mpwpb-reorder-btn">
-						<?php esc_html_e('Reorder', 'service-booking-manager'); ?>
-					</a>
-				</p>
+				<section class="mpwpb-cp-manage-booking" aria-labelledby="mpwpb-cp-manage-booking-title">
+					<header>
+						<span aria-hidden="true"><i class="fas fa-calendar-check"></i></span>
+						<div>
+							<h3 id="mpwpb-cp-manage-booking-title"><?php esc_html_e('Manage Your Booking', 'service-booking-manager'); ?></h3>
+							<p><?php esc_html_e('Reorder this service or update your appointment when available.', 'service-booking-manager'); ?></p>
+						</div>
+					</header>
+					<div class="mpwpb-wc-account-actions">
+						<?php MPWPB_User_Dashboard::render_booking_actions($booking_id, $service_id, true); ?>
+						<a href="<?php echo esc_url(MPWPB_User_Dashboard::get_reorder_url($booking_id, $service_id)); ?>" class="mpwpb-btn mpwpb-reorder-btn">
+							<?php esc_html_e('Reorder', 'service-booking-manager'); ?>
+						</a>
+					</div>
+				</section>
 				<?php
 			}
 
@@ -323,9 +409,9 @@
 				));
 			}
 
-			private function orders_table(array $orders): void {
+			private function orders_table(array $orders, bool $dashboard_context = false): void {
 				?>
-				<table class="mpwpb-bookings-table">
+				<table class="mpwpb-bookings-table<?php echo $dashboard_context ? ' mpwpb-cp-orders-table' : ''; ?>">
 					<thead>
 						<tr>
 							<th><?php esc_html_e('Order', 'service-booking-manager'); ?></th>
@@ -344,14 +430,22 @@
 							$view_url = add_query_arg(['cp_tab' => 'orders', 'order_id' => $order->ID]);
 							?>
 							<tr>
-								<td>#<?php echo esc_html($order->ID); ?></td>
-								<td><?php echo esc_html(get_the_date('', $order)); ?></td>
-								<td><span class="mpwpb-status mpwpb-status-<?php echo esc_attr(strtolower($status)); ?>"><?php echo esc_html($status ? ucfirst($status) : '—'); ?></span></td>
-								<td><?php echo wp_kses_post(MPWPB_Global_Function::wc_price(0, $total)); ?></td>
-								<td><?php echo esc_html($gateway ? ucfirst($gateway) : '—'); ?></td>
-								<td>
-									<a class="mpwpb-btn mpwpb-view-btn" href="<?php echo esc_url($view_url); ?>"><?php esc_html_e('View Details', 'service-booking-manager'); ?></a>
-									<?php $this->render_booking_action_links($order->ID); ?>
+								<td<?php if ($dashboard_context) : ?> data-label="<?php esc_attr_e('Order', 'service-booking-manager'); ?>"<?php endif; ?>>
+									<?php if ($dashboard_context) : ?>
+										<a class="mpwpb-cp-order-number" href="<?php echo esc_url($view_url); ?>">#<?php echo esc_html($order->ID); ?></a>
+									<?php else : ?>
+										#<?php echo esc_html($order->ID); ?>
+									<?php endif; ?>
+								</td>
+								<td<?php if ($dashboard_context) : ?> data-label="<?php esc_attr_e('Date', 'service-booking-manager'); ?>"<?php endif; ?>><?php echo esc_html(get_the_date('', $order)); ?></td>
+								<td<?php if ($dashboard_context) : ?> data-label="<?php esc_attr_e('Status', 'service-booking-manager'); ?>"<?php endif; ?>><span class="mpwpb-status mpwpb-status-<?php echo esc_attr(strtolower($status)); ?>"><?php echo esc_html($status ? ucfirst($status) : '—'); ?></span></td>
+								<td<?php if ($dashboard_context) : ?> data-label="<?php esc_attr_e('Total', 'service-booking-manager'); ?>"<?php endif; ?>><?php echo wp_kses_post(MPWPB_Global_Function::wc_price(0, $total)); ?></td>
+								<td<?php if ($dashboard_context) : ?> data-label="<?php esc_attr_e('Payment Method', 'service-booking-manager'); ?>"<?php endif; ?>><?php echo esc_html($gateway ? ucfirst($gateway) : '—'); ?></td>
+								<td<?php echo $dashboard_context ? ' class="mpwpb-cp-order-actions"' : ''; ?><?php if ($dashboard_context) : ?> data-label="<?php esc_attr_e('Actions', 'service-booking-manager'); ?>"<?php endif; ?>>
+									<?php if ($dashboard_context) : ?><div class="mpwpb-cp-order-actions-list"><?php endif; ?>
+										<a class="mpwpb-btn mpwpb-view-btn" href="<?php echo esc_url($view_url); ?>"><?php esc_html_e('View Details', 'service-booking-manager'); ?></a>
+										<?php $this->render_booking_action_links($order->ID); ?>
+									<?php if ($dashboard_context) : ?></div><?php endif; ?>
 								</td>
 							</tr>
 						<?php endforeach; ?>

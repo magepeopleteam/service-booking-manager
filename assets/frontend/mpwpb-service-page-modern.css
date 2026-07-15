@@ -27,6 +27,136 @@
 .mpwpb-static-template.mpwpb_registration > header{
 	background-color:var(--mpwpb_color_theme);background-size:cover;background-position:center;position:relative;overflow:hidden;
 }
+
+/* -------------------------------------------------------------------- *
+ * Inline WooCommerce checkout
+ * -------------------------------------------------------------------- */
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form{display:none;margin:0 !important;padding:0 18px 24px;}
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form [hidden]{display:none !important;}
+.mpwpb-static-template .mpwpb-inline-checkout-notices:empty{display:none;}
+.mpwpb-static-template .mpwpb-inline-checkout-notices{margin:0 0 14px;}
+.mpwpb-static-template .mpwpb-inline-checkout-notices .woocommerce-error,
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form .woocommerce-error{
+	display:block;margin:0 0 14px !important;padding:12px 14px !important;border:1px solid #fecaca;border-radius:10px;background:#fef2f2;color:#991b1b;font-size:13px;
+}
+.mpwpb-static-template .mpwpb-inline-checkout-heading{margin:0 0 18px;padding-bottom:14px;border-bottom:1px solid #e5e7eb;}
+.mpwpb-static-template .mpwpb-inline-checkout-heading h3{margin:0 0 4px !important;color:#0f172a;font-size:18px !important;font-weight:800;}
+.mpwpb-static-template .mpwpb-inline-checkout-heading p{margin:0 !important;color:#64748b;font-size:12.5px;}
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form .col2-set,
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form .col-1,
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form .col-2{float:none !important;width:100% !important;margin:0 !important;}
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form .woocommerce-billing-fields > h3,
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form .woocommerce-additional-fields > h3,
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form #order_review_heading{
+	margin:12px 0 !important;color:var(--mpwpb_color_theme);font-size:15px !important;font-weight:800;
+}
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form .woocommerce-billing-fields__field-wrapper,
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form .woocommerce-shipping-fields__field-wrapper{
+	dis:grid;grid-template-columns:1fr 1fr;gap:12px;
+}
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form .form-row{float:none !important;width:100% !important;margin:0 0 12px !important;padding:0 !important;}
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form .form-row-wide{grid-column:1/-1;}
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form label{display:block !important;margin:0 0 6px;color:#334155;font-size:12px;font-weight:700;}
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form input.input-text,
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form textarea,
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form select,
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form .select2-selection{
+	box-sizing:border-box;width:100% !important;min-height:42px;padding:9px 11px;border:1px solid #cbd5e1;border-radius:9px;background:#fff;color:#0f172a;font-size:13px;
+}
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form textarea{min-height:78px;resize:vertical;}
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form .woocommerce-invalid input,
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form .woocommerce-invalid select{border-color:#dc2626 !important;box-shadow:0 0 0 2px rgba(220,38,38,.1);}
+.mpwpb-static-template .mpwpb-inline-stage-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px;padding-top:15px;border-top:1px solid #e5e7eb;}
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form button.button{
+	min-height:40px;padding:9px 16px !important;border:1px solid var(--mpwpb_color_theme) !important;border-radius:9px !important;background:#fff !important;color:var(--mpwpb_color_theme) !important;font-size:13px !important;font-weight:700;
+}
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form button.button.alt,
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form #place_order{
+	background:var(--mpwpb_color_theme) !important;color:#fff !important;
+}
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form table.shop_table{width:100%;margin:0 0 15px;border:1px solid #e2e8f0;border-collapse:separate;border-spacing:0;border-radius:10px;font-size:12.5px;overflow:hidden;}
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form table.shop_table th,
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form table.shop_table td{padding:10px;border-bottom:1px solid #edf2f7;text-align:left;}
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form #payment{border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;padding:14px;}
+.mpwpb-static-template .mpwpb-inline-coupon{margin:0 0 14px;padding:12px;border:1px solid #e2e8f0;border-radius:10px;background:#f8fafc;}
+.mpwpb-static-template .mpwpb-inline-coupon > div{display:flex;gap:8px;}
+.mpwpb-static-template .mpwpb-inline-coupon input{min-width:0;flex:1;}
+.mpwpb-static-template .mpwpb-inline-coupon-message{display:block !important;margin-top:6px;font-size:11.5px;}
+.mpwpb-static-template .mpwpb-inline-coupon-message.is-error{color:#b91c1c;}
+.mpwpb-static-template .mpwpb-inline-coupon-message.is-success{color:#047857;}
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form #payment ul.payment_methods{margin:0 0 14px !important;padding:0 !important;list-style:none !important;}
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form #payment li{display:block !important;margin:0 0 10px !important;padding:10px !important;border:1px solid #dbe3ec;border-radius:9px;background:#fff;list-style:none !important;}
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form #payment label{display:inline-flex !important;align-items:center;gap:7px;margin:0;}
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form .payment_box{margin-top:9px;padding:10px;border-radius:8px;background:#f1f5f9;font-size:12px;}
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form .place-order{margin:0 !important;}
+.mpwpb-static-template .mpwpb-inline-wc-checkout-form #place_order{float:none;width:100%;margin-top:12px !important;}
+.mpwpb-static-template .mpwpb-inline-checkout-footer-hidden{display:none !important;}
+.mpwpb-static-template .mpwpb-inline-confirmation{padding:8px 18px 28px;}
+.mpwpb-static-template .mpwpb-inline-confirmation .woocommerce-order-overview{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 !important;padding:0 !important;list-style:none !important;}
+.mpwpb-static-template .mpwpb-inline-confirmation .woocommerce-order-overview li{margin:0 !important;padding:11px;border:1px solid #e2e8f0;border-radius:9px;background:#f8fafc;list-style:none !important;font-size:11px;}
+.mpwpb-static-template .mpwpb-inline-confirmation table{width:100%;font-size:12px;}
+.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-inline-confirmation-summary{
+	margin:0 0 18px;padding:18px;border:1px solid #a7f3d0;border-radius:14px;background:linear-gradient(135deg,#ecfdf5,#f0fdfa);box-shadow:0 8px 24px rgba(5,150,105,.08);
+}
+.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-inline-confirmation-summary::before{
+	content:'\2713';display:grid;width:42px;height:42px;margin-bottom:12px;place-items:center;border-radius:50%;background:#059669;color:#fff;font-size:23px;font-weight:800;box-shadow:0 7px 18px rgba(5,150,105,.24);
+}
+.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-inline-confirmation-summary h2{margin:0 0 8px !important;color:#065f46 !important;font-size:20px !important;line-height:1.25;}
+.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-inline-confirmation-summary p{margin:3px 0 !important;color:#475569;font-size:12.5px;}
+.mpwpb-static-template .mpwpb-inline-confirmation > .woocommerce-order > p.woocommerce-notice{margin:0 0 14px !important;padding:12px 14px;border-radius:10px;background:#f8fafc;color:#334155;font-size:13px;}
+.mpwpb-static-template .mpwpb-inline-confirmation .woocommerce-order-details,
+.mpwpb-static-template .mpwpb-inline-confirmation .woocommerce-customer-details{margin:20px 0 0;}
+.mpwpb-static-template .mpwpb-inline-confirmation .woocommerce-order-details__title,
+.mpwpb-static-template .mpwpb-inline-confirmation .woocommerce-column__title,
+.mpwpb-static-template .mpwpb-inline-confirmation > h2{
+	margin:22px 0 10px !important;padding:0 0 9px;border-bottom:1px solid #e2e8f0;color:var(--mpwpb_color_theme) !important;font-size:18px !important;font-weight:800;line-height:1.3;
+}
+.mpwpb-static-template .mpwpb-inline-confirmation .woocommerce-table--order-details{
+	width:100%;margin:0 !important;border:1px solid #e2e8f0;border-collapse:separate;border-spacing:0;border-radius:12px;background:#fff;overflow:hidden;
+}
+.mpwpb-static-template .mpwpb-inline-confirmation .woocommerce-table--order-details th,
+.mpwpb-static-template .mpwpb-inline-confirmation .woocommerce-table--order-details td{padding:11px 12px !important;border:0;border-bottom:1px solid #edf2f7;vertical-align:top;}
+.mpwpb-static-template .mpwpb-inline-confirmation .woocommerce-table--order-details th{color:#334155;font-weight:700;text-align:left;}
+.mpwpb-static-template .mpwpb-inline-confirmation .woocommerce-table--order-details td{color:#475569;text-align:right;}
+.mpwpb-static-template .mpwpb-inline-confirmation .woocommerce-table--order-details tr:last-child th,
+.mpwpb-static-template .mpwpb-inline-confirmation .woocommerce-table--order-details tr:last-child td{border-bottom:0;}
+.mpwpb-static-template .mpwpb-inline-confirmation .woocommerce-table--order-details tr:has(.order-actions-button){display:grid;grid-template-columns:1fr;gap:8px;padding:12px;background:#f8fafc;}
+.mpwpb-static-template .mpwpb-inline-confirmation .woocommerce-table--order-details tr:has(.order-actions-button) th,
+.mpwpb-static-template .mpwpb-inline-confirmation .woocommerce-table--order-details tr:has(.order-actions-button) td{display:flex !important;width:100%;padding:0 !important;border:0;flex-wrap:wrap;gap:8px;justify-content:flex-start;white-space:normal;}
+.mpwpb-static-template .mpwpb-inline-confirmation a.order-actions-button{
+	display:inline-flex !important;min-height:38px;margin:0 !important;padding:9px 13px !important;align-items:center;border:1px solid #cbd5e1 !important;border-radius:9px !important;background:#fff !important;color:#334155 !important;font-size:12px !important;font-weight:700 !important;line-height:1.2;text-decoration:none !important;box-shadow:none !important;
+}
+.mpwpb-static-template .mpwpb-inline-confirmation a.order-actions-button:hover{border-color:#99f6e4 !important;background:#f0fdfa !important;color:#0f766e !important;}
+.mpwpb-static-template .mpwpb-inline-confirmation a.order-actions-button.mpwpb_cancel{border-color:#fecdd3 !important;background:#fff1f2 !important;color:#be123c !important;}
+.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-wc-account-actions{
+	dis:grid;grid-template-columns:1fr 1fr;gap:9px;margin:0 0 18px;padding:16px;border:1px solid #dbe4ee;border-radius:14px;background:linear-gradient(180deg,#f8fafc,#fff);box-shadow:0 6px 18px rgba(15,23,42,.05);
+}
+.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-wc-account-actions .mpwpb-btn{
+	dis:inline-flex;min-height:42px;margin:0 !important;padding:10px 12px;align-items:center;justify-content:center;border:1px solid #cbd5e1;border-radius:10px;background:#fff;color:#334155;font-size:12px;font-weight:750;line-height:1.25;text-align:center;text-decoration:none;cursor:pointer;
+}
+.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-wc-account-actions .mpwpb-reschedule-btn{border-color:#99f6e4;background:#f0fdfa;color:#0f766e;}
+.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-wc-account-actions .mpwpb-cancel-btn{border-color:#fecdd3;background:#fff1f2;color:#be123c;}
+.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-wc-account-actions .mpwpb-reorder-btn{border-color:#bfdbfe;background:#eff6ff;color:#1d4ed8;}
+.mpwpb-static-template .mpwpb-inline-confirmation .woocommerce-customer-details address{padding:14px;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;color:#475569;font-size:12.5px;font-style:normal;line-height:1.65;}
+/* These modal fragments are printed by the order-details hook. They must stay
+   out of document flow until their dashboard JavaScript explicitly opens one. */
+.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-modal{display:none;position:fixed;inset:0;width:100%;height:100%;z-index:100000;overflow:auto;background:rgba(15,23,42,.68);backdrop-filter:blur(4px);}
+.mpwpb-static-template .mpwpb-inline-confirmation #mpwpb-reschedule-modal .mpwpb-modal-content{width:min(480px,calc(100% - 28px));margin:7vh auto;padding:24px;border:1px solid #dbe4ee;border-radius:16px;background:#fff;box-shadow:0 28px 70px rgba(15,23,42,.28);}
+.mpwpb-static-template .mpwpb-inline-confirmation #mpwpb-reschedule-modal h3{margin:0 0 18px;padding:0 38px 12px 0;border-bottom:1px solid #e2e8f0;color:#0f172a;font-size:20px;}
+.mpwpb-static-template .mpwpb-inline-confirmation #mpwpb-reschedule-modal .mpwpb-form-group{margin:0 0 14px;}
+.mpwpb-static-template .mpwpb-inline-confirmation #mpwpb-reschedule-modal label{display:block;margin:0 0 6px;color:#334155;font-size:12px;font-weight:700;}
+.mpwpb-static-template .mpwpb-inline-confirmation #mpwpb-reschedule-modal select{box-sizing:border-box;width:100%;min-height:42px;padding:8px 10px;border:1px solid #cbd5e1;border-radius:9px;background:#fff;}
+.mpwpb-static-template .mpwpb-inline-confirmation #mpwpb-reschedule-modal .mpwpb-submit-btn{width:100%;margin:4px 0 0;padding:11px;border:0;border-radius:9px;background:var(--mpwpb_color_theme);color:#fff;font-weight:750;}
+@media(max-width:600px){
+	.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_step.active .mpwpb_cart_progress_label{font-size:10px;}
+	.mpwpb-static-template .mpwpb-inline-wc-checkout-form .woocommerce-billing-fields__field-wrapper,
+	.mpwpb-static-template .mpwpb-inline-wc-checkout-form .woocommerce-shipping-fields__field-wrapper{grid-template-columns:1fr;}
+	.mpwpb-static-template .mpwpb-inline-wc-checkout-form .form-row-wide{grid-column:auto;}
+	.mpwpb-static-template .mpwpb-inline-checkout-stage-actions{align-items:stretch;flex-direction:column-reverse;}
+	.mpwpb-static-template .mpwpb-inline-checkout-stage-actions button{width:100%;}
+	.mpwpb-static-template .mpwpb-inline-confirmation .woocommerce-order-overview{grid-template-columns:1fr;}
+	.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-wc-account-actions{grid-template-columns:1fr;}
+}
 .mpwpb-static-template.mpwpb_registration > header::before{
 	background:linear-gradient(120deg,var(--mpwpb_color_theme_ee,rgba(0,0,0,.75)) 20%,var(--mpwpb_color_theme_cc,rgba(0,0,0,.55)) 70%);
 }
@@ -1280,4 +1410,101 @@ div.mpwpb_popup[data-popup="#mpwpb_static_popup"] .mpwpb-reorder-notice-message{
 	div.mpwpb_popup[data-popup="#mpwpb_static_popup"] .mpwpb-reorder-notice{
 		margin:10px 12px 2px !important;padding:11px 12px !important;gap:9px;
 	}
+}
+
+/* Recurring appointment series inside the inline WooCommerce confirmation.
+   The account-page component normally has four wide columns; this scoped
+   layout keeps its counters and controls aligned in the narrower drawer. */
+.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-recurring-account{
+	margin:18px 0;border-radius:16px;
+}
+.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-recurring-account__header{
+	display:grid;grid-template-columns:minmax(0,1fr) 38px;align-items:center;gap:12px;
+	padding:20px 18px;background:linear-gradient(135deg,#f0fdfa 0%,#f8fafc 100%);
+}
+.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-recurring-account__header::before{
+	background:var(--mpwpb_color_theme);
+}
+.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-recurring-account__eyebrow{
+	background:#f0fdfa;color:var(--mpwpb_color_theme);
+}
+.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-recurring-account__count{
+	display:grid !important;place-items:center !important;align-self:center;
+	box-sizing:border-box;width:38px;height:38px;min-width:38px;margin:0;padding:0;
+	border-radius:11px;background:var(--mpwpb_color_theme);color:#fff;
+	box-shadow:0 8px 18px rgba(15,118,110,.22);font-size:15px;line-height:1;text-align:center;
+}
+.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-recurring-account__list{
+	gap:10px;padding:16px;
+}
+.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-recurring-occurrence{
+	grid-template-columns:32px minmax(0,1fr) auto;grid-template-rows:auto auto;
+	gap:7px 10px;padding:13px 12px 13px 15px;
+}
+.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-recurring-occurrence::before{
+	background:var(--mpwpb_color_theme);
+}
+.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-recurring-occurrence__number{
+	display:grid !important;grid-column:1;grid-row:1 / span 2;place-items:center !important;
+	align-self:center;box-sizing:border-box;width:32px;height:32px;min-width:32px;margin:0;padding:0;
+	border:1px solid var(--mpwpb_color_theme);border-radius:9px;background:#f0fdfa;
+	color:var(--mpwpb_color_theme);font-size:12px;line-height:1;text-align:center;
+}
+.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-recurring-occurrence > div:not(.mpwpb-recurring-occurrence__actions){
+	grid-column:2;grid-row:1 / span 2;
+}
+.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-recurring-occurrence .mpwpb-status{
+	grid-column:3;grid-row:1;padding:5px 9px;font-size:9.5px;
+}
+.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-recurring-occurrence__actions{
+	grid-column:3;grid-row:2;justify-self:end;gap:5px !important;
+}
+.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-recurring-occurrence__actions .mpwpb-btn{
+	min-height:28px;margin:0 !important;padding:5px 8px !important;font-size:10px !important;line-height:1.1;
+}
+.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-recurring-account__actions{
+	display:grid !important;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;
+	align-items:stretch;padding:12px;
+}
+.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-recurring-account__actions .mpwpb-btn{
+	display:inline-flex !important;align-items:center;justify-content:center;gap:4px;
+	box-sizing:border-box;width:100% !important;min-width:0;min-height:32px;margin:0 !important;
+	padding:6px 5px !important;border-radius:8px;font-size:9.5px !important;font-weight:700;
+	line-height:1.15;text-align:center;white-space:normal;
+}
+.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-recurring-account__actions .mpwpb-recurring-add{
+	border-color:var(--mpwpb_color_theme) !important;background:var(--mpwpb_color_theme) !important;color:#fff !important;
+}
+.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-recurring-account__actions .mpwpb-reorder-btn{
+	border-color:var(--mpwpb_color_theme) !important;background:#fff !important;color:var(--mpwpb_color_theme) !important;
+}
+
+/* Inline WooCommerce recovery state: scoped to the booking checkout drawer. */
+.mpwpb-static-template .mpwpb_order_proceed_area .mpwpb-checkout-preparing{
+	margin:0;padding:210px 20px 24px;color:#64748b;font-size:12px;text-align:center;
+}
+.mpwpb-static-template .mpwpb_order_proceed_area .mpwpb-checkout-recovery{
+	display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:12px;align-items:center;
+	margin:18px;padding:16px;border:1px solid #bae6e1;border-radius:12px;
+	background:linear-gradient(135deg,#f0fdfa,#f8fafc);color:#334155;
+}
+.mpwpb-static-template .mpwpb_order_proceed_area .mpwpb-checkout-recovery > .fas{
+	display:grid !important;width:38px;height:38px;place-items:center;border-radius:10px;
+	background:var(--mpwpb_color_theme);color:#fff;font-size:14px;
+}
+.mpwpb-static-template .mpwpb_order_proceed_area .mpwpb-checkout-recovery strong{
+	display:block;color:#0f766e;font-size:13px;line-height:1.35;
+}
+.mpwpb-static-template .mpwpb_order_proceed_area .mpwpb-checkout-recovery p{
+	margin:3px 0 0 !important;color:#64748b;font-size:11.5px;line-height:1.45;
+}
+.mpwpb-static-template .mpwpb_order_proceed_area .mpwpb-inline-retry-checkout{
+	min-height:34px;margin:0 !important;padding:7px 12px !important;border:0 !important;border-radius:8px !important;
+	background:var(--mpwpb_color_theme) !important;color:#fff !important;font-size:11px !important;font-weight:700;
+}
+@media(max-width:480px){
+	.mpwpb-static-template .mpwpb_order_proceed_area .mpwpb-checkout-recovery{
+		grid-template-columns:34px minmax(0,1fr);margin:12px;padding:13px;
+	}
+	.mpwpb-static-template .mpwpb_order_proceed_area .mpwpb-inline-retry-checkout{grid-column:1/-1;width:100%;}
 }

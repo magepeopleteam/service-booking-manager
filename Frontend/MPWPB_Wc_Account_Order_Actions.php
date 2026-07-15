@@ -137,7 +137,7 @@
 				$cancellation_status = MPWPB_User_Dashboard::get_series_cancellation_status($booking_ids);
 				$cancellation_booking_id = MPWPB_User_Dashboard::get_series_cancellation_booking($booking_ids);
 				$first_booking_id = (int) $booking_ids[0];
-				$reschedule_lead = max(0, (int) MPWPB_Global_Function::get_settings('mpwpb_general_settings', 'reschedule_lead_time', 48));
+				$reschedule_lead = max(0, (int) MPWPB_Global_Function::get_settings('mpwpb_general_settings', 'reschedule_lead_time', 24));
 				$locked_hint = $reschedule_lead > 0
 					? sprintf(_n('Editing closes %d hour before the appointment.', 'Editing closes %d hours before the appointment.', $reschedule_lead, 'service-booking-manager'), $reschedule_lead)
 					: __('This appointment can no longer be edited online.', 'service-booking-manager');

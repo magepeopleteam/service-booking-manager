@@ -31,7 +31,8 @@ if (!class_exists('MPWPB_User_Dashboard')) {
          * Enqueue necessary scripts and styles for the dashboard
          */
         public function enqueue_scripts() {
-			if (!MPWPB_Global_Function::current_page_has_shortcode(array('mpwpb-user-dashboard', 'custom_payment_my_account')) && !(function_exists('is_account_page') && is_account_page())) {
+			$inline_wc_checkout = is_singular(MPWPB_Function::get_cpt()) && MPWPB_Global_Function::is_wc_payment_mode();
+			if (!$inline_wc_checkout && !MPWPB_Global_Function::current_page_has_shortcode(array('mpwpb-user-dashboard', 'custom_payment_my_account')) && !(function_exists('is_account_page') && is_account_page())) {
 				return;
 			}
             wp_enqueue_style('mpwpb-user-dashboard', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_user_dashboard.css', array(), MPWPB_VERSION);
@@ -566,7 +567,7 @@ if (MPWPB_Global_Function::is_gdpr_enabled()) {
          * Display user profile management form
          */
         /** public+static so other shortcodes (e.g. Frontend/MPWPB_Custom_Payment_My_Account.php) can reuse this same account-details form instead of duplicating it. */
-        public static function user_profile($user_id) {
+        public static function user_profile($user_id, $bookings_url = '') {
             $user = get_userdata($user_id);
             $role_key = $user && !empty($user->roles) ? $user->roles[0] : '';
             $role_names = wp_roles()->role_names;
@@ -702,7 +703,7 @@ if (MPWPB_Global_Function::is_gdpr_enabled()) {
                                     <strong><?php echo esc_html($total_bookings); ?></strong>
                                 </div>
                             </div>
-                            <a href="<?php echo esc_url(add_query_arg('tab', 'bookings')); ?>" class="mpwpb-btn mpwpb-btn-outline mpwpb-profile-sidebar-link"><?php esc_html_e('View My Bookings', 'service-booking-manager'); ?></a>
+                            <a href="<?php echo esc_url($bookings_url ?: add_query_arg('tab', 'bookings')); ?>" class="mpwpb-btn mpwpb-btn-outline mpwpb-profile-sidebar-link"><?php esc_html_e('View My Bookings', 'service-booking-manager'); ?></a>
                         </div>
                     </div>
                 </div>

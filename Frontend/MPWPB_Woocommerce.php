@@ -45,11 +45,26 @@
 			/**
 			 * "After Confirming the Order, Redirect To" setting.
 			 */
+			private static function order_contains_booking($order): bool {
+				if (!$order instanceof WC_Order) {
+					return false;
+				}
+				foreach ($order->get_items() as $item) {
+					if (get_post_type(absint($item->get_meta('_mpwpb_id', true))) === MPWPB_Function::get_cpt()) {
+						return true;
+					}
+				}
+				return false;
+			}
 			public function filter_return_url($return_url, $order) {
-				if (!$order || MPWPB_Global_Function::get_payment_setting('wc_order_confirm_redirect', 'default') !== 'plugin_thank_you') {
+				if (!self::order_contains_booking($order) || MPWPB_Global_Function::get_payment_setting('wc_order_confirm_redirect', 'default') !== 'plugin_thank_you') {
 					return $return_url;
 				}
-				return add_query_arg(['mpwpb_wc_thankyou' => '1', 'mpwpb_order' => $order->get_id()], home_url('/'));
+				return add_query_arg([
+					'mpwpb_wc_thankyou' => '1',
+					'mpwpb_order' => $order->get_id(),
+					'mpwpb_order_key' => $order->get_order_key(),
+				], home_url('/'));
 			}
 			public function add_thank_you_query_var($vars) {
 				$vars[] = 'mpwpb_wc_thankyou';
@@ -60,10 +75,16 @@
 					return;
 				}
 				$order_id = isset($_GET['mpwpb_order']) ? absint($_GET['mpwpb_order']) : 0;
+				$order_key = isset($_GET['mpwpb_order_key']) ? wc_clean(wp_unslash($_GET['mpwpb_order_key'])) : '';
 				$order = $order_id ? wc_get_order($order_id) : null;
+				$valid_order = $order
+					&& self::order_contains_booking($order)
+					&& $order_key !== ''
+					&& hash_equals((string) $order->get_order_key(), (string) $order_key)
+					&& (!is_user_logged_in() || !$order->get_customer_id() || (int) $order->get_customer_id() === get_current_user_id() || current_user_can('manage_woocommerce'));
 				get_header();
 				echo '<div class="mpwpb_style" style="max-width:640px;margin:40px auto;">';
-				if ($order) {
+				if ($valid_order) {
 					echo '<h2>' . esc_html__('Thank you, your booking is confirmed!', 'service-booking-manager') . '</h2>';
 					echo '<p>' . esc_html(
 						sprintf(
@@ -184,7 +205,7 @@
 				}
 				foreach ($dates as $datetime) {
 					$date = substr($datetime, 0, 10);
-					$time = (int) substr($datetime, 11, 2);
+					$time = (int) substr($datetime, 11, 2) + ((int) substr($datetime, 14, 2) / 60);
 					if (!MPWPB_Staff_Booking::get_date_check($staff_id, $date, (string) $time)
 						|| !MPWPB_Staff_Booking::mpwpb_is_staff_available_time($staff_id, (string) $time, $date)) {
 						return false;
@@ -481,6 +502,18 @@
 						if (is_wp_error($validation)) {
 							wc_add_notice($validation->get_error_message(), 'error');
 						}
+						if (!empty($values['mpwpb_coupon_code']) && class_exists('MPWPB_Coupon_Validator')) {
+							$email = isset($_POST['billing_email']) ? sanitize_email(wp_unslash($_POST['billing_email'])) : '';
+							$context = MPWPB_Coupon_Validator::build_context($values, $email, get_current_user_id());
+							$coupon_validation = MPWPB_Coupon_Validator::validate($values['mpwpb_coupon_code'], $context);
+							if (!$coupon_validation['valid']) {
+								wc_add_notice(sprintf(
+									/* translators: %s: coupon validation failure reason */
+									esc_html__('Your coupon is no longer valid: %s', 'service-booking-manager'),
+									esc_html($coupon_validation['message'])
+								), 'error');
+							}
+						}
 						//wc_add_notice( __( "custom_notice", 'fake_error' ), 'error');
 						do_action('mpwpb_validate_cart_item', $values, $post_id);
 					}
@@ -508,7 +541,7 @@
 							throw new Exception(sprintf(
 								/* translators: %s: coupon validation failure reason */
 								esc_html__('Your coupon is no longer valid: %s', 'service-booking-manager'),
-								$coupon_validation['message']
+								esc_html($coupon_validation['message'])
 							));
 						}
 					}
@@ -1111,7 +1144,10 @@
 			}
 
             public static function calculate_discounted_total( $price, $recurringCount, $discountPercent ) {
-                $total = $price * $recurringCount;
+				$price = max(0, (float) $price);
+				$recurringCount = max(1, absint($recurringCount));
+				$discountPercent = max(0, min(100, (float) $discountPercent));
+				$total = $price * $recurringCount;
                 $discountAmount = ($total * $discountPercent) / 100;
                 $finalTotal = $total - $discountAmount;
                 return round($finalTotal, 2);

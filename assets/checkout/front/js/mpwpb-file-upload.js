@@ -14,13 +14,13 @@ jQuery(document).ready(function($) {
         
         // Check if a file was selected
         if ($fileInput[0].files.length === 0) {
-            $statusMessage.html('No file selected');
+            $statusMessage.text('No file selected');
             $hiddenInput.val('');
             return;
         }
         
         // Show loading message
-        $statusMessage.html('Uploading file...');
+        $statusMessage.text('Uploading file...');
         
         // Create form data
         var formData = new FormData();
@@ -42,13 +42,13 @@ jQuery(document).ready(function($) {
                     $hiddenInput.val(response.data.url);
                     
                     // Show success message
-                    $statusMessage.html('File uploaded successfully: ' + response.data.filename);
+                    $statusMessage.text('File uploaded successfully: ' + response.data.filename);
                     $statusMessage.addClass('success').removeClass('error');
                     
                     console.log('File uploaded successfully:', response.data);
                 } else {
                     // Show error message
-                    $statusMessage.html('Error uploading file: ' + response.data.message);
+                    $statusMessage.text('Error uploading file: ' + response.data.message);
                     $statusMessage.addClass('error').removeClass('success');
                     $hiddenInput.val('');
                     
@@ -57,7 +57,7 @@ jQuery(document).ready(function($) {
             },
             error: function(xhr, status, error) {
                 // Show error message
-                $statusMessage.html('Error uploading file: ' + error);
+                $statusMessage.text('Error uploading file: ' + error);
                 $statusMessage.addClass('error').removeClass('success');
                 $hiddenInput.val('');
                 

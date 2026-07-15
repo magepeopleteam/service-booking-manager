@@ -102,15 +102,17 @@
 			}
 			//**************Post duplicator*********************//
 			public function mpwpb_item_duplicate() {
-				global $wpdb;
 				if (!(isset($_GET['post']) || isset($_POST['post']) || (isset($_REQUEST['action']) && 'mpwpb_item_duplicate' == $_REQUEST['action']))) {
-					wp_die('No post to duplicate has been supplied!');
+					wp_die(esc_html__('No service to duplicate has been supplied.', 'service-booking-manager'), '', array('response' => 403));
 				}
 				if (!isset($_GET['duplicate_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['duplicate_nonce'])), basename(__FILE__))) {
-					return;
+					wp_die(esc_html__('Security check failed.', 'service-booking-manager'), '', array('response' => 403));
 				}
 				$post_id = (isset($_GET['post']) ? absint(wp_unslash($_GET['post'])) : absint(wp_unslash($_POST['post'])));
 				$post = get_post($post_id);
+				if (!$post || $post->post_type !== MPWPB_Function::get_cpt() || !current_user_can('edit_post', $post_id)) {
+					wp_die(esc_html__('You are not allowed to duplicate this service.', 'service-booking-manager'), '', array('response' => 403));
+				}
 				$current_user = wp_get_current_user();
 				$new_post_author = $current_user->ID;
 				if (isset($post) && $post != null) {
@@ -169,7 +171,7 @@
 				}
 			}
 			public function post_duplicator($actions, $post) {
-				if (current_user_can('edit_posts')) {
+				if ($post->post_type === MPWPB_Function::get_cpt() && current_user_can('edit_post', $post->ID)) {
 					$actions['duplicate'] = '<a href="' . wp_nonce_url('admin.php?action=mpwpb_item_duplicate&post=' . $post->ID, basename(__FILE__), 'duplicate_nonce') . '" title="' . esc_html__('Duplicate Post', 'service-booking-manager') . '" rel="permalink">' . esc_html__('Duplicate', 'service-booking-manager') . '</a>';
 				}
 				return $actions;

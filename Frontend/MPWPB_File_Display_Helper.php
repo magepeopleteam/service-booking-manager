@@ -46,6 +46,20 @@ if (!class_exists('MPWPB_File_Display_Helper')) {
         public function display_order_files($order) {
             // Get the order ID
             $order_id = $order->get_id();
+			$allowed_meta_keys = array();
+			$settings = get_option('mpwpb_custom_checkout_fields', array());
+			foreach (array('billing', 'shipping', 'order') as $section) {
+				foreach ((array) ($settings[$section] ?? array()) as $field_key => $field) {
+					if (is_array($field)
+						&& ($field['custom_field'] ?? '') === '1'
+						&& ($field['type'] ?? '') === 'file') {
+						$allowed_meta_keys[] = '_' . sanitize_key($field_key);
+					}
+				}
+			}
+			if (empty($allowed_meta_keys)) {
+				return;
+			}
 
             // Get all meta data for this order
             $meta_data = get_post_meta($order_id);
@@ -54,7 +68,7 @@ if (!class_exists('MPWPB_File_Display_Helper')) {
             $file_fields = array();
             foreach ($meta_data as $key => $value) {
                 // Only process fields that start with an underscore (custom fields)
-                if (substr($key, 0, 1) === '_') {
+				if (in_array($key, $allowed_meta_keys, true)) {
                     // Skip filename fields
                     if (strpos($key, '_filename') !== false) {
                         continue;
