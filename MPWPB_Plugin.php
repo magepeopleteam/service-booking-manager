@@ -59,6 +59,11 @@
 			}
 			public static function plugin_activate() {
 				set_transient('mpwpb_plugin_activated', true, 30);
+				// Activation runs after the current request's init hook. Register the
+				// service post type now so its permalink rules exist before flushing.
+				if (class_exists('MPWPB_CPT')) {
+					MPWPB_CPT::register_service_post_type();
+				}
 				// Auto-create the Custom Payment "My Account" page, same
 				// convention WooCommerce uses for its own "My Account" page
 				// on activation -- MPWPB_Custom_Payment_My_Account is
