@@ -110,7 +110,7 @@
 			 */
 			public static function is_within_lead_time($booking_date, $action = 'cancel'): bool {
 				$hours = $action === 'reschedule'
-					? (int) MPWPB_Global_Function::get_settings('mpwpb_general_settings', 'reschedule_lead_time', 48)
+					? (int) MPWPB_Global_Function::get_settings('mpwpb_general_settings', 'reschedule_lead_time', 24)
 					: (int) MPWPB_Global_Function::get_settings('mpwpb_general_settings', 'cancellation_lead_time', 24);
 
 				$booking_time = strtotime((string) $booking_date);

@@ -15,7 +15,10 @@
 
 			public static function get_token($create = false) {
 				if (!empty($_COOKIE[self::COOKIE_NAME])) {
-					return preg_replace('/[^a-zA-Z0-9]/', '', wp_unslash($_COOKIE[self::COOKIE_NAME]));
+					$token = sanitize_text_field(wp_unslash($_COOKIE[self::COOKIE_NAME]));
+					if (preg_match('/^[a-zA-Z0-9]{32}$/', $token)) {
+						return $token;
+					}
 				}
 				if (!$create) {
 					return '';

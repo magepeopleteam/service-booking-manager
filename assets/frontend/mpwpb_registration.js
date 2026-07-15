@@ -674,6 +674,7 @@ function mpwpb_price_calculation($this) {
         parent.find('.all_service_area,.mpwpb_order_proceed_area,.next_service_area').slideUp(300)
         mpwpb_load_bg_image();
         parent.data('mpwpbStep', 'date_time');
+        parent.find('#mpwpb_progress_billing,#mpwpb_progress_payment,#mpwpb_progress_confirmation').removeClass('active');
         if (typeof updateSelectedSummary === 'function') { updateSelectedSummary(parent); }
     }
     function load_service_tab(parent) {
@@ -681,6 +682,7 @@ function mpwpb_price_calculation($this) {
         parent.find('.mpwpb_date_time_area,.mpwpb_order_proceed_area,.next_date_area').slideUp(300);
         mpwpb_load_bg_image();
         parent.data('mpwpbStep', 'service');
+        parent.find('#mpwpb_progress_date_time,#mpwpb_progress_billing,#mpwpb_progress_payment,#mpwpb_progress_confirmation').removeClass('active');
         if (typeof updateSelectedSummary === 'function') { updateSelectedSummary(parent); }
     }
     function load_order_proceed_tab(parent) {
@@ -782,6 +784,7 @@ function mpwpb_price_calculation($this) {
                 }
             });
             var isCustomPaymentMode = !!mpwpb_ajax.is_custom_payment_mode;
+            var isInlineWcMode = !!mpwpb_ajax.is_wc_payment_mode;
             $.ajax({
                 type: 'POST',
                 url: mpwpb_ajax.ajax_url,
@@ -816,7 +819,7 @@ function mpwpb_price_calculation($this) {
                     $nextBtn.data('mpwpb-original-html', $nextBtn.html());
                     $nextBtn.prop('disabled', true).addClass('mpwpb-cta-loading')
                         .html('<i class="fas fa-spinner fa-spin _mR_xs"></i> ' + (mpwpb_ajax.processing_text || 'Please wait...'));
-                    if (isCustomPaymentMode) {
+                    if (isCustomPaymentMode || isInlineWcMode) {
                         // Custom Payment stays in the same popup afterwards (see the
                         // success handler below), so ease straight into the Checkout
                         // step now -- the same smooth slide every other step change
@@ -850,6 +853,12 @@ function mpwpb_price_calculation($this) {
                     // fetched form reads.
                     if (isCustomPaymentMode) {
                         mpwpb_load_native_checkout_form(parent);
+                    } else if (isInlineWcMode) {
+						if (typeof data === 'string' && data.indexOf('wp-login.php') !== -1) {
+							window.location.href = data;
+							return;
+						}
+                        mpwpb_load_wc_checkout_form(parent);
                     } else {
                         window.location.href = data;
                     }
@@ -859,8 +868,15 @@ function mpwpb_price_calculation($this) {
                     if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
                         message = xhr.responseJSON.data.message;
                     }
-                    alert(message);
-                    if (isCustomPaymentMode) {
+                    if (isInlineWcMode) {
+						var $inlineContent = parent.find('.mpwpb-inline-wc-checkout-content');
+						parent.find('.mpwpb-inline-confirmation-host').remove();
+						$inlineContent.html('<p class="mpwpb-checkout-error" role="alert">' + $('<div>').text(message).html() + '</p>');
+						parent.find('form.mpwpb-inline-wc-checkout-form').show();
+					} else {
+						alert(message);
+					}
+                    if (isCustomPaymentMode || isInlineWcMode) {
                         parent.find('.mpwpb_order_proceed_area').css('min-height', '');
                         mpwpb_loaderRemove(parent.find('.mpwpb_order_proceed_area'));
                     } else {
@@ -967,6 +983,267 @@ function mpwpb_price_calculation($this) {
             }
         });
     }
+
+    function mpwpb_inline_notice(parent, message) {
+        var $notice = parent.find('.mpwpb-inline-checkout-notices');
+        $notice.html('<div class="woocommerce-error" role="alert">' + $('<div>').text(message).html() + '</div>');
+        var $body = parent.closest('.mpwpb_popup').find('.mpwpb_popup_body');
+        if ($body.length) {
+            $body.animate({scrollTop: Math.max(0, $notice.position().top - 20)}, 250);
+        }
+    }
+
+    function mpwpb_load_wc_checkout_form(parent) {
+        var $target = parent.find('.mpwpb_order_proceed_area');
+        var $form = $target.find('form.mpwpb-inline-wc-checkout-form');
+        var serviceId = parseInt(parent.attr('data-post-id'), 10) || 0;
+        if ($target.data('mpwpbCheckoutLoading')) {
+            return;
+        }
+        if (!$form.length) {
+			// Recover stale cached markup in place. WooCommerce checkout uses
+			// delegated form handlers, so a safe wrapper can be created without
+			// forcing a disruptive full-page reload.
+			$form = $('<form>', {
+				name: 'checkout',
+				method: 'post',
+				'class': 'checkout woocommerce-checkout mpwpb-inline-wc-checkout-form',
+				action: (typeof wc_checkout_params !== 'undefined' && wc_checkout_params.checkout_url) ? wc_checkout_params.checkout_url : window.location.href,
+				enctype: 'multipart/form-data',
+				'aria-label': 'Booking checkout'
+			}).append('<div class="mpwpb-inline-wc-checkout-content"></div>');
+			$target.empty().append($form);
+        }
+		$target.find('.mpwpb-inline-confirmation-host').remove();
+		$form.show().removeClass('processing').attr('aria-busy', 'true');
+        $target.data('mpwpbCheckoutLoading', true);
+        load_order_proceed_tab(parent);
+        $target.css('min-height', '260px');
+        mpwpb_loader($target);
+        var checkoutFinished = false;
+		$form.find('.mpwpb-inline-wc-checkout-content').html('<p class="mpwpb-checkout-preparing" role="status">Securely preparing your WooCommerce checkout&hellip;</p>');
+
+        function showCheckoutRecovery(message) {
+            checkoutFinished = true;
+            var safeMessage = $('<div>').text(message || 'We could not connect to checkout. Your booking selection is still safe.').html();
+            $form.find('.mpwpb-inline-wc-checkout-content').html(
+                '<div class="mpwpb-checkout-recovery" role="alert">' +
+                    '<span class="fas fa-wifi" aria-hidden="true"></span>' +
+                    '<div><strong>Checkout is taking longer than expected</strong><p>' + safeMessage + '</p></div>' +
+                    '<button type="button" class="button mpwpb-inline-retry-checkout">Try Again</button>' +
+                '</div>'
+            );
+            $form.show().attr('aria-busy', 'false');
+        }
+
+        function requestCheckout(attempt) {
+            $.ajax({
+                type: 'POST',
+                url: mpwpb_ajax.ajax_url,
+                dataType: 'json',
+                timeout: 12000,
+                data: {
+                    action: 'mpwpb_inline_wc_checkout',
+                    nonce: mpwpb_ajax.nonce,
+                    service_id: serviceId,
+                    source_url: window.location.href.split('#')[0]
+                }
+            }).done(function (response) {
+                if (!response || !response.success) {
+                    if (attempt < 2) {
+                        window.setTimeout(function () { requestCheckout(attempt + 1); }, 450 * (attempt + 1));
+                        return;
+                    }
+                    showCheckoutRecovery(response && response.data && response.data.message ? response.data.message : 'Please try connecting again.');
+                    return;
+                }
+                checkoutFinished = true;
+                $form.find('.mpwpb-inline-wc-checkout-content').html(response.data.html);
+                $form.show().attr('aria-busy', 'false');
+                parent.find('#mpwpb_progress_billing').addClass('active');
+                parent.find('.popupFooter').addClass('mpwpb-inline-checkout-footer-hidden');
+                $(document.body).trigger('init_checkout');
+                $(document.body).trigger('payment_method_selected');
+                $form.find('input, select, textarea').filter(':visible').first().trigger('focus');
+            }).fail(function (xhr) {
+                if (attempt < 2) {
+                    window.setTimeout(function () { requestCheckout(attempt + 1); }, 450 * (attempt + 1));
+                    return;
+                }
+                var message = xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message ? xhr.responseJSON.data.message : 'Please check your connection and try again. Your booking selection has not been lost.';
+                showCheckoutRecovery(message);
+            }).always(function () {
+                if (checkoutFinished) {
+                    $target.data('mpwpbCheckoutLoading', false).css('min-height', '');
+                    mpwpb_loaderRemove($target);
+                }
+            });
+        }
+
+        requestCheckout(0);
+    }
+
+    $(document).on('click', '.mpwpb-inline-retry-checkout', function () {
+        var $parent = $(this).closest('div.mpwpb_registration');
+        $parent.find('.mpwpb-inline-wc-checkout-content').empty();
+        mpwpb_load_wc_checkout_form($parent);
+    });
+
+    function mpwpb_show_wc_confirmation(parent, orderId, orderKey) {
+        var $target = parent.find('.mpwpb_order_proceed_area');
+		var $form = $target.find('form.mpwpb-inline-wc-checkout-form');
+		var $confirmation = $target.find('.mpwpb-inline-confirmation-host');
+		if (!$confirmation.length) {
+			$confirmation = $('<div class="mpwpb-inline-confirmation-host"></div>').appendTo($target);
+		}
+        if (!orderId || !orderKey || $target.data('confirmationLoading')) {
+            return;
+        }
+        $target.data('confirmationLoading', true).attr('aria-busy', 'true');
+        mpwpb_loader($target);
+        $.ajax({
+            type: 'POST',
+            url: mpwpb_ajax.ajax_url,
+            dataType: 'json',
+            data: {
+                action: 'mpwpb_inline_wc_confirmation',
+                nonce: mpwpb_ajax.nonce,
+                order_id: orderId,
+                order_key: orderKey
+            }
+        }).done(function (response) {
+            if (!response || !response.success) {
+                mpwpb_inline_notice(parent, response && response.data && response.data.message ? response.data.message : 'Confirmation could not be loaded.');
+                return;
+            }
+			$form.hide().removeClass('processing').attr('aria-busy', 'false');
+			$confirmation.html(response.data.html).show();
+			$target.attr('aria-busy', 'false');
+            parent.data('mpwpbStep', 'confirmation');
+            parent.find('.popupFooter').addClass('mpwpb-inline-checkout-footer-hidden');
+            parent.find('.mpwpb_cart_progress_step').addClass('active');
+            var cleanUrl = window.location.href.replace(/([?&])(mpwpb_inline_order|key)=[^&#]*/g, '$1').replace(/[?&]$/, '');
+            window.history.replaceState({}, document.title, cleanUrl);
+			$confirmation.find('h2, .woocommerce-order-overview').first().attr('tabindex', '-1').trigger('focus');
+        }).always(function () {
+            $target.data('confirmationLoading', false);
+            mpwpb_loaderRemove($target);
+        });
+    }
+
+    $(document).on('click', '.mpwpb-inline-continue-payment', function () {
+        var $form = $(this).closest('form.checkout');
+        var $parent = $form.closest('div.mpwpb_registration');
+        $form.find('[data-inline-stage="billing"] .input-text:visible, [data-inline-stage="billing"] select:visible, [data-inline-stage="billing"] input:checkbox:visible').trigger('validate');
+        var $invalid = $form.find('[data-inline-stage="billing"] .woocommerce-invalid:visible').first();
+        if ($invalid.length) {
+            mpwpb_inline_notice($parent, 'Please complete all required billing fields.');
+            $invalid.find('input, select, textarea').first().trigger('focus');
+            return;
+        }
+        $form.find('[data-inline-stage="billing"]').prop('hidden', true);
+        $form.find('[data-inline-stage="payment"]').prop('hidden', false);
+        $parent.find('#mpwpb_progress_billing').addClass('active');
+        $parent.find('#mpwpb_progress_payment').addClass('active');
+        $(document.body).trigger('update_checkout');
+        $form.find('[data-inline-stage="payment"] h3').first().attr('tabindex', '-1').trigger('focus');
+    });
+
+    $(document).on('click', '.mpwpb-inline-back-to-billing', function () {
+        var $form = $(this).closest('form.checkout');
+        $form.find('[data-inline-stage="payment"]').prop('hidden', true);
+        $form.find('[data-inline-stage="billing"]').prop('hidden', false);
+        $form.find('[data-inline-stage="billing"] input:visible').first().trigger('focus');
+    });
+
+    $(document).on('click', '.mpwpb-inline-apply-coupon', function () {
+        var $button = $(this);
+        var $form = $button.closest('form.checkout');
+        var $field = $form.find('#mpwpb_inline_coupon_code');
+        var $message = $form.find('.mpwpb-inline-coupon-message');
+        var code = $.trim($field.val());
+        if (!code || typeof wc_checkout_params === 'undefined') {
+            $message.text('Please enter a coupon code.').addClass('is-error');
+            $field.trigger('focus');
+            return;
+        }
+        $button.prop('disabled', true);
+        $message.removeClass('is-error is-success').text('Applying…');
+        $.ajax({
+            type: 'POST',
+            url: wc_checkout_params.wc_ajax_url.toString().replace('%%endpoint%%', 'apply_coupon'),
+            dataType: 'html',
+            data: {
+                security: wc_checkout_params.apply_coupon_nonce,
+                coupon_code: code,
+                billing_email: $form.find('[name="billing_email"]').val() || ''
+            }
+        }).done(function (response) {
+            var isError = response && (response.indexOf('woocommerce-error') !== -1 || response.indexOf('is-error') !== -1);
+            $message.text($('<div>').html(response).text().trim()).toggleClass('is-error', isError).toggleClass('is-success', !isError);
+            if (!isError) {
+                $field.val('');
+                $(document.body).trigger('applied_coupon_in_checkout', [code]);
+                $(document.body).trigger('update_checkout', {update_shipping_method: false});
+            }
+        }).always(function () {
+            $button.prop('disabled', false);
+        });
+    });
+
+    $(document).on('click', '.mpwpb-inline-back-to-booking', function () {
+        var parent = $(this).closest('div.mpwpb_registration');
+        parent.find('.popupFooter').removeClass('mpwpb-inline-checkout-footer-hidden');
+        load_date_time_tab(parent);
+    });
+
+    $(document).ready(function () {
+		$(document.body).on('checkout_error.mpwpbInline', function () {
+			var $form = $('form.mpwpb-inline-wc-checkout-form:visible').first();
+			if (!$form.length) {
+				return;
+			}
+			var $error = $form.find('.woocommerce-error, .woocommerce-invalid').first();
+			var $body = $form.closest('.mpwpb_popup').find('.mpwpb_popup_body');
+			if ($error.length && $body.length) {
+				$body.animate({scrollTop: Math.max(0, $error.position().top - 20)}, 250);
+				$error.find('input, select, textarea').first().trigger('focus');
+			}
+		});
+
+        $('form.mpwpb-inline-wc-checkout-form').on('checkout_place_order_success.mpwpbInline', function (event, result) {
+            var redirect;
+            try {
+                redirect = new URL(result.redirect, window.location.href);
+            } catch (e) {
+                return true;
+            }
+            if (redirect.origin !== window.location.origin) {
+                return true;
+            }
+            var orderId = parseInt(redirect.searchParams.get('mpwpb_inline_order'), 10) || 0;
+            var orderKey = redirect.searchParams.get('key') || '';
+            if (!orderId) {
+                var match = redirect.pathname.match(/order-received\/(\d+)/);
+                orderId = match ? parseInt(match[1], 10) : 0;
+            }
+            if (!orderId || !orderKey) {
+                return true;
+            }
+            mpwpb_show_wc_confirmation($(this).closest('div.mpwpb_registration'), orderId, orderKey);
+            return false;
+        });
+
+        var params = new URLSearchParams(window.location.search);
+        var returnOrder = parseInt(params.get('mpwpb_inline_order'), 10) || 0;
+        var returnKey = params.get('key') || '';
+        if (returnOrder && returnKey && typeof mpwpb_ajax !== 'undefined' && mpwpb_ajax.is_wc_payment_mode) {
+            var $parent = $('div.mpwpb_registration').first();
+            $('[data-target-popup="#mpwpb_static_popup"]').first().trigger('click');
+            load_order_proceed_tab($parent);
+            mpwpb_show_wc_confirmation($parent, returnOrder, returnKey);
+        }
+    });
     $(document).on('submit', 'div.mpwpb_registration .mpwpb-checkout-form', function (e) {
         e.preventDefault();
         var $form = $(this);

@@ -199,17 +199,17 @@ if (!class_exists('MPWPB_Staff_Booking')) {
 
             $prefix = "mpwpb_{$day}_";
 
-            $default_start_time = (int) get_user_meta($user_id, 'mpwpb_default_start_time', true);
-            $default_end_time = (int) get_user_meta($user_id, 'mpwpb_default_end_time', true);
-            $default_start_break_time = (int) get_user_meta($user_id, 'mpwpb_default_start_break_time', true);
-            $default_end_break_time = (int) get_user_meta($user_id, 'mpwpb_default_end_break_time', true);
+            $default_start_time = (float) get_user_meta($user_id, 'mpwpb_default_start_time', true);
+            $default_end_time = (float) get_user_meta($user_id, 'mpwpb_default_end_time', true);
+            $default_start_break_time = (float) get_user_meta($user_id, 'mpwpb_default_start_break_time', true);
+            $default_end_break_time = (float) get_user_meta($user_id, 'mpwpb_default_end_break_time', true);
 
-            $start_time = (int) get_user_meta($user_id, $prefix . 'start_time', true);
-            $end_time = (int) get_user_meta($user_id, $prefix . 'end_time', true);
-            $start_break = (int) get_user_meta($user_id, $prefix . 'start_break_time', true);
-            $end_break = (int) get_user_meta($user_id, $prefix . 'end_break_time', true);
+            $start_time = (float) get_user_meta($user_id, $prefix . 'start_time', true);
+            $end_time = (float) get_user_meta($user_id, $prefix . 'end_time', true);
+            $start_break = (float) get_user_meta($user_id, $prefix . 'start_break_time', true);
+            $end_break = (float) get_user_meta($user_id, $prefix . 'end_break_time', true);
 
-            $check_time = (int) $check_time;
+            $check_time = (float) $check_time;
 
             if( $start_time && $end_time ) {
                 if ($check_time < $start_time || $check_time >= $end_time) {
@@ -344,8 +344,8 @@ if (!class_exists('MPWPB_Staff_Booking')) {
                             }
                             $html .=
                                 '<div class="mpwp_select_staff_card">
-                                <input type="hidden" class="mpwpb_selected_staff" name="mpwpb_selected_staff_id[]" value="' . $staff->ID . '">
-                                <img class="mpwp_select_staff_avatar" src="' . $image_url . '" alt="' . $staff->user_nicename . '">
+                                <input type="hidden" class="mpwpb_selected_staff" name="mpwpb_selected_staff_id[]" value="' . esc_attr($staff->ID) . '">
+                                <img class="mpwp_select_staff_avatar" src="' . esc_url($image_url) . '" alt="' . esc_attr($staff->user_nicename) . '">
                                 <div class="mpwp_select_staff_name">' . esc_html($staff->display_name) . '</div>
                             </div>';
 

@@ -3182,9 +3182,129 @@
     .mpwpb-appointments-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .mpwpb-modal-content {
         width: 90%;
         margin: 20% auto;
+    }
+}
+
+/* ============================================================
+   WooCommerce My Account order-action buttons
+   (Orders list cells + the View Order "Actions:" row). The active
+   theme renders these as plain black .wp-element-button boxes with
+   no spacing, so they overlap. Restyle them into clean, semantic
+   MagePeople buttons. This stylesheet only loads on account pages,
+   so these rules never leak onto unrelated WooCommerce buttons.
+   ============================================================ */
+.woocommerce-orders-table__cell-order-actions,
+.woocommerce-table--order-details tfoot td:has(a[class*="mpwpb_"]) {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-end;
+    white-space: nowrap;
+}
+/* The View Order "Actions:" value cell lives in the narrow Total column;
+   let its inline button row overflow left into the empty space instead of
+   wrapping, so all actions stay on one line. Matched on our own mpwpb_*
+   classes (always present) rather than WooCommerce's order-actions-button
+   class, which is not reliably emitted. */
+.woocommerce-table--order-details tfoot td:has(a[class*="mpwpb_"]) {
+    overflow: visible;
+}
+.woocommerce-table--order-details tfoot td:has(a[class*="mpwpb_"]) > a.button {
+    flex: 0 0 auto;
+}
+.woocommerce-table--order-details tfoot td:has(.order-actions-button) {
+    padding-top: 14px !important;
+    padding-bottom: 14px !important;
+}
+
+.woocommerce-orders-table__cell-order-actions a.button,
+a.order-actions-button,
+a.button.mpwpb_reorder,
+a.button.mpwpb_manage_recurring,
+a.button.mpwpb_cancel,
+a.button.mpwpb_cancel_pending,
+a.button.mpwpb_pay_balance,
+a.button.mpwpb_reschedule {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 6px;
+    min-height: 38px;
+    margin: 0 !important;
+    padding: 9px 16px !important;
+    border: 1px solid #d6ddea !important;
+    border-radius: 10px !important;
+    background: #fff !important;
+    color: #334155 !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    letter-spacing: 0 !important;
+    text-decoration: none !important;
+    box-shadow: none !important;
+    transition: transform .15s ease, box-shadow .15s ease, background .15s ease, border-color .15s ease, color .15s ease;
+}
+
+.woocommerce-orders-table__cell-order-actions a.button:hover,
+a.order-actions-button:hover,
+a.button.mpwpb_reorder:hover,
+a.button.mpwpb_reschedule:hover {
+    border-color: #c7d2fe !important;
+    background: #f5f8ff !important;
+    color: #1d4ed8 !important;
+}
+
+/* Primary — View + Manage Recurring */
+.woocommerce-orders-table__cell-order-actions a.button.view,
+a.button.mpwpb_manage_recurring {
+    border-color: transparent !important;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+    color: #fff !important;
+    box-shadow: 0 6px 16px rgba(37, 99, 235, .24) !important;
+}
+.woocommerce-orders-table__cell-order-actions a.button.view:hover,
+a.button.mpwpb_manage_recurring:hover {
+    color: #fff !important;
+    transform: translateY(-1px);
+    box-shadow: 0 9px 22px rgba(37, 99, 235, .32) !important;
+}
+
+/* Success — Pay Balance */
+a.button.mpwpb_pay_balance {
+    border-color: transparent !important;
+    background: linear-gradient(135deg, #10b981, #059669) !important;
+    color: #fff !important;
+    box-shadow: 0 6px 16px rgba(16, 185, 129, .24) !important;
+}
+a.button.mpwpb_pay_balance:hover { color: #fff !important; transform: translateY(-1px); box-shadow: 0 9px 22px rgba(16, 185, 129, .3) !important; }
+
+/* Danger — Cancel / Cancel Series */
+a.button.mpwpb_cancel {
+    border-color: #fecdd3 !important;
+    background: #fff5f6 !important;
+    color: #e11d48 !important;
+}
+a.button.mpwpb_cancel:hover { border-color: #fb7185 !important; background: #ffe4e8 !important; color: #be123c !important; }
+
+/* Cancellation pending — muted, non-interactive look */
+a.button.mpwpb_cancel_pending {
+    border-color: #e6ebf2 !important;
+    background: #f1f5f9 !important;
+    color: #94a3b8 !important;
+    cursor: default !important;
+    box-shadow: none !important;
+}
+a.button.mpwpb_cancel_pending:hover { transform: none; }
+
+@media (max-width: 600px) {
+    .woocommerce-orders-table__cell-order-actions,
+    .woocommerce-table--order-details tfoot td:has(a[class*="mpwpb_"]) {
+        flex-wrap: wrap !important;
+        justify-content: flex-start;
+        white-space: normal;
     }
 }

@@ -31,7 +31,8 @@ if (!class_exists('MPWPB_User_Dashboard')) {
          * Enqueue necessary scripts and styles for the dashboard
          */
         public function enqueue_scripts() {
-			if (!MPWPB_Global_Function::current_page_has_shortcode(array('mpwpb-user-dashboard', 'custom_payment_my_account')) && !(function_exists('is_account_page') && is_account_page())) {
+			$inline_wc_checkout = is_singular(MPWPB_Function::get_cpt()) && MPWPB_Global_Function::is_wc_payment_mode();
+			if (!$inline_wc_checkout && !MPWPB_Global_Function::current_page_has_shortcode(array('mpwpb-user-dashboard', 'custom_payment_my_account')) && !(function_exists('is_account_page') && is_account_page())) {
 				return;
 			}
             wp_enqueue_style('mpwpb-user-dashboard', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_user_dashboard.css', array(), MPWPB_VERSION);

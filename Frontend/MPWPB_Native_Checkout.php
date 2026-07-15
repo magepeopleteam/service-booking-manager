@@ -18,18 +18,21 @@
 		class MPWPB_Native_Checkout {
 			private $checkout_content_rendered = false;
 			public function __construct() {
+				// Confirmation views and gateway callbacks must remain available for
+				// orders already in flight even if an administrator later switches
+				// the site back to WooCommerce checkout.
+				add_filter('query_vars', [$this, 'add_query_var']);
+				add_action('template_redirect', [$this, 'maybe_render_checkout']);
+				add_action('wp_ajax_mpwpb_stripe_webhook', [$this, 'handle_stripe_webhook']);
+				add_action('wp_ajax_nopriv_mpwpb_stripe_webhook', [$this, 'handle_stripe_webhook']);
+				add_shortcode('mpwpb_booking_confirmation', [$this, 'render_confirmation_shortcode']);
 				if (MPWPB_Global_Function::is_wc_payment_mode()) {
 					return;
 				}
-				add_filter('query_vars', [$this, 'add_query_var']);
-				add_action('template_redirect', [$this, 'maybe_render_checkout']);
 				add_action('wp_ajax_mpwpb_native_checkout_submit', [$this, 'handle_checkout_submit']);
 				add_action('wp_ajax_nopriv_mpwpb_native_checkout_submit', [$this, 'handle_checkout_submit']);
 				add_action('wp_ajax_mpwpb_native_checkout_form', [$this, 'ajax_render_embedded_form']);
 				add_action('wp_ajax_nopriv_mpwpb_native_checkout_form', [$this, 'ajax_render_embedded_form']);
-				add_action('wp_ajax_mpwpb_stripe_webhook', [$this, 'handle_stripe_webhook']);
-				add_action('wp_ajax_nopriv_mpwpb_stripe_webhook', [$this, 'handle_stripe_webhook']);
-				add_shortcode('mpwpb_booking_confirmation', [$this, 'render_confirmation_shortcode']);
 			}
 			public function add_query_var($vars) {
 				$vars[] = 'mpwpb_checkout';
@@ -45,16 +48,20 @@
 			 * built-in thank-you view on the checkout URL itself.
 			 */
 			public static function get_confirmation_url($order_id): string {
+				$order_key = MPWPB_Native_Order::get_access_key($order_id);
+				$args = ['mpwpb_order' => $order_id, 'mpwpb_order_key' => $order_key, 'status' => 'success'];
 				$page_id = (int) MPWPB_Global_Function::get_payment_setting('confirmation_page_id');
 				if ($page_id && get_post_status($page_id) === 'publish') {
-					return add_query_arg(['mpwpb_order' => $order_id, 'status' => 'success'], get_permalink($page_id));
+					return add_query_arg($args, get_permalink($page_id));
 				}
-				return add_query_arg(['mpwpb_checkout' => '1', 'mpwpb_order' => $order_id, 'status' => 'success'], home_url('/'));
+				$args['mpwpb_checkout'] = '1';
+				return add_query_arg($args, home_url('/'));
 			}
 			public function render_confirmation_shortcode(): string {
 				$order_id = isset($_GET['mpwpb_order']) ? absint($_GET['mpwpb_order']) : 0;
+				$order_key = isset($_GET['mpwpb_order_key']) ? sanitize_text_field(wp_unslash($_GET['mpwpb_order_key'])) : '';
 				$status = isset($_GET['status']) ? sanitize_text_field(wp_unslash($_GET['status'])) : '';
-				if (!$order_id || $status !== 'success' || get_post_type($order_id) !== MPWPB_Native_Order::CPT) {
+				if (!$order_id || $status !== 'success' || !MPWPB_Native_Order::current_user_can_view($order_id, $order_key)) {
 					return '<p>' . esc_html__('No booking information found.', 'service-booking-manager') . '</p>';
 				}
 				// Same rule as filter_checkout_content(): status=success only marks
@@ -487,6 +494,13 @@
 				if (!get_query_var('mpwpb_checkout')) {
 					return;
 				}
+				if (MPWPB_Global_Function::is_wc_payment_mode()) {
+					$order_id = isset($_GET['mpwpb_order']) ? absint($_GET['mpwpb_order']) : 0;
+					$order_key = isset($_GET['mpwpb_order_key']) ? sanitize_text_field(wp_unslash($_GET['mpwpb_order_key'])) : '';
+					if (!MPWPB_Native_Order::current_user_can_view($order_id, $order_key)) {
+						return;
+					}
+				}
 				add_filter('the_content', [$this, 'filter_checkout_content'], 999);
 			}
 			public function filter_checkout_content($content) {
@@ -495,8 +509,9 @@
 				}
 				$this->checkout_content_rendered = true;
 				$order_id = isset($_GET['mpwpb_order']) ? absint($_GET['mpwpb_order']) : 0;
+				$order_key = isset($_GET['mpwpb_order_key']) ? sanitize_text_field(wp_unslash($_GET['mpwpb_order_key'])) : '';
 				$status = isset($_GET['status']) ? sanitize_text_field(wp_unslash($_GET['status'])) : '';
-				$valid_order = $order_id && get_post_type($order_id) === MPWPB_Native_Order::CPT;
+				$valid_order = $order_id && MPWPB_Native_Order::current_user_can_view($order_id, $order_key);
 				ob_start();
 				echo '<div class="mpwpb_style mpwpb_native_checkout">';
 				if ($valid_order && $status === 'success') {
@@ -927,12 +942,20 @@
 				$gateway_return = isset($_GET['mpwpb_gateway_return']) ? sanitize_text_field(wp_unslash($_GET['mpwpb_gateway_return'])) : '';
 				if ($gateway_return === 'stripe') {
 					$session_id = isset($_GET['session_id']) ? sanitize_text_field(wp_unslash($_GET['session_id'])) : '';
+					$stored_session_id = (string) get_post_meta($order_id, 'mpwpb_stripe_session_id', true);
+					if ($session_id === '' || $stored_session_id === '' || !hash_equals($stored_session_id, $session_id)) {
+						return;
+					}
 					$result = MPWPB_Stripe_Gateway::retrieve_session($session_id);
 					if ($result['ok'] && !empty($result['paid']) && (int) ($result['order_id'] ?? 0) === (int) $order_id) {
 						$this->finalize_paid_order($order_id, 'stripe', $session_id);
 					}
 				} elseif ($gateway_return === 'paypal') {
 					$paypal_order_id = isset($_GET['token']) ? sanitize_text_field(wp_unslash($_GET['token'])) : '';
+					$stored_paypal_order_id = (string) get_post_meta($order_id, 'mpwpb_paypal_order_id', true);
+					if ($paypal_order_id === '' || $stored_paypal_order_id === '' || !hash_equals($stored_paypal_order_id, $paypal_order_id)) {
+						return;
+					}
 					$result = MPWPB_Paypal_Gateway::capture_order($paypal_order_id);
 					if ($result['ok'] && !empty($result['captured']) && (int) ($result['order_id'] ?? 0) === (int) $order_id) {
 						$this->finalize_paid_order($order_id, 'paypal', $paypal_order_id);
@@ -996,8 +1019,10 @@
 				if (($event['type'] ?? '') === 'checkout.session.completed') {
 					$session = $event['data']['object'] ?? [];
 					$order_id = (int) ($session['metadata']['mpwpb_order_id'] ?? ($session['client_reference_id'] ?? 0));
-					if ($order_id && get_post_type($order_id) === MPWPB_Native_Order::CPT && ($session['payment_status'] ?? '') === 'paid') {
-						$this->finalize_paid_order($order_id, 'stripe', $session['id'] ?? '');
+					$session_id = sanitize_text_field((string) ($session['id'] ?? ''));
+					$stored_session_id = $order_id ? (string) get_post_meta($order_id, 'mpwpb_stripe_session_id', true) : '';
+					if ($order_id && get_post_type($order_id) === MPWPB_Native_Order::CPT && ($session['payment_status'] ?? '') === 'paid' && $session_id !== '' && $stored_session_id !== '' && hash_equals($stored_session_id, $session_id)) {
+						$this->finalize_paid_order($order_id, 'stripe', $session_id);
 					}
 				}
 				status_header(200);

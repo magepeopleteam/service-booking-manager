@@ -91,22 +91,53 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
             if (!$is_staff && !current_user_can('create_users') && !current_user_can('manage_options')) {
                 wp_send_json_error('Unauthorized request');
             }
+			if ($is_staff && !current_user_can('create_users') && !current_user_can('manage_options') && !self::can_modify_own_schedule($user_id)) {
+				wp_send_json_error('You are not allowed to modify your schedule.');
+			}
 
-            $off_dates_json = isset($_POST['offDates_str']) ? wp_unslash(sanitize_text_field($_POST['offDates_str'])) : '';
-            $off_days = isset($_POST['offDays']) ? sanitize_text_field(wp_unslash($_POST['offDays'])) : '';
-            $off_dates = json_decode($off_dates_json, true);
+			$allowed_days = array('default', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday');
+			$allowed_off_days = array_slice($allowed_days, 1);
+			$off_dates_json = isset($_POST['offDates_str']) ? sanitize_text_field(wp_unslash($_POST['offDates_str'])) : '';
+			$requested_off_days = isset($_POST['offDays']) ? explode(',', sanitize_text_field(wp_unslash($_POST['offDays']))) : array();
+			$off_days = implode(',', array_values(array_intersect($allowed_off_days, array_map('strtolower', array_map('trim', $requested_off_days)))));
+			$decoded_off_dates = json_decode($off_dates_json, true);
+			$off_dates = array();
+			if (is_array($decoded_off_dates)) {
+				foreach ($decoded_off_dates as $off_date) {
+					$off_date = sanitize_text_field((string) $off_date);
+					$date_object = DateTime::createFromFormat('Y-m-d', $off_date);
+					if ($date_object && $date_object->format('Y-m-d') === $off_date) {
+						$off_dates[] = $off_date;
+					}
+				}
+				$off_dates = array_values(array_unique($off_dates));
+			}
             if (!$user_id) {
                 wp_send_json_error('User not logged in');
             }
             if (!isset($_POST['schedule']) || !is_array($_POST['schedule'])) {
                 wp_send_json_error('Invalid or missing schedule data');
             }
-            $raw_schedule = $_POST['schedule'];
+			$raw_schedule = wp_unslash($_POST['schedule']);
             foreach ($raw_schedule as $day => $times ) {
-                $start = isset($times['start_time']) ? sanitize_text_field($times['start_time']) : '';
-                $end = isset($times['end_time']) ? sanitize_text_field($times['end_time']) : '';
-                $break_start = isset($times['start_break_time']) ? sanitize_text_field($times['start_break_time']) : '';
-                $break_end = isset($times['end_break_time']) ? sanitize_text_field($times['end_break_time']) : '';
+				$day = sanitize_key($day);
+				if (!in_array($day, $allowed_days, true) || !is_array($times)) {
+					continue;
+				}
+				$start = isset($times['start_time']) ? sanitize_text_field($times['start_time']) : '';
+				$end = isset($times['end_time']) ? sanitize_text_field($times['end_time']) : '';
+				$break_start = isset($times['start_break_time']) ? sanitize_text_field($times['start_break_time']) : '';
+				$break_end = isset($times['end_break_time']) ? sanitize_text_field($times['end_break_time']) : '';
+				foreach (array('start', 'end', 'break_start', 'break_end') as $time_key) {
+					if (${$time_key} !== '') {
+						$numeric_time = is_numeric(${$time_key}) ? (float) ${$time_key} : -1;
+						if ($numeric_time < 0 || $numeric_time > 23.5 || floor($numeric_time * 2) !== $numeric_time * 2) {
+							${$time_key} = '';
+						} else {
+							${$time_key} = (string) $numeric_time;
+						}
+					}
+				}
                     if( $break_start !== '' &&  $break_end === '' ){
                         $break_start = '';
                     } else if( $break_start === '' &&  $break_end !== '' ){
@@ -1545,8 +1576,8 @@ if (!class_exists('MPWPB_Staff_DashBoard')) {
          * exact same rendering, JS (#saveScheduleBtn handler in
          * mpwpb_user_dashboard.js), and AJAX action
          * (wp_ajax_mpwpb_save_specific_schedule, handled by
-         * mpwpb_save_specific_schedule() above, which already authorizes
-         * staff themselves, not just admins) as the older "Manage Holidays"
+         * mpwpb_save_specific_schedule() above, which authorizes only staff
+         * with the admin-controlled schedule permission) as the older "Manage Holidays"
          * tab -- same data, same save path, just a more prominent/dedicated
          * entry point. Shared the same way as render_my_service_tab()/
          * render_my_appointment_tab() above.

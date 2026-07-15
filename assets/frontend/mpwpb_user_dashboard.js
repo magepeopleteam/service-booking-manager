@@ -11,10 +11,19 @@ jQuery(document).ready(function($) {
     // WooCommerce View Order > recurring-series manager. The editor is a
     // strict Date -> Time -> Services flow: later stages remain unavailable
     // until the preceding live availability choice succeeds.
-    var $recurringEditor = $('#mpwpb-recurring-editor');
-    if ($recurringEditor.length) {
-        var $recurringForm = $('#mpwpb-recurring-editor-form');
-        var recurringSelection = {};
+    var $recurringEditor = $();
+    var $recurringForm = $();
+    var recurringSelection = {};
+
+        function resolveRecurringEditor($trigger) {
+            var $confirmation = $trigger && $trigger.length ? $trigger.closest('.mpwpb-inline-confirmation') : $();
+            $recurringEditor = $confirmation.length ? $confirmation.find('#mpwpb-recurring-editor').first() : $();
+            if (!$recurringEditor.length) {
+                $recurringEditor = $('#mpwpb-recurring-editor').first();
+            }
+            $recurringForm = $recurringEditor.find('#mpwpb-recurring-editor-form').first();
+            return $recurringEditor.length && $recurringForm.length;
+        }
 
         function recurringMessage(type, text) {
             $recurringEditor.find('.mpwpb-recurring-editor__message')
@@ -68,14 +77,21 @@ jQuery(document).ready(function($) {
         }
 
         function openRecurringEditor($trigger, mode) {
+            if (!resolveRecurringEditor($trigger)) {
+                return;
+            }
+            var $inlineConfirmation = $trigger.closest('.mpwpb-inline-confirmation');
+            if ($inlineConfirmation.length) {
+                $recurringEditor.data('mpwpb-inline-origin', $inlineConfirmation).addClass('mpwpb-inline-recurring-modal').appendTo(document.body);
+            }
             var selection = $trigger.data('selection') || {};
             if (typeof selection === 'string') {
                 try { selection = JSON.parse(selection); } catch (error) { selection = {}; }
             }
             $recurringForm[0].reset();
-            $('#mpwpb_recurring_editor_booking_id').val($trigger.data('booking-id'));
-            $('#mpwpb_recurring_editor_mode').val(mode);
-            $('#mpwpb_recurring_editor_date, #mpwpb_recurring_editor_time').val('');
+            $recurringForm.find('#mpwpb_recurring_editor_booking_id').val($trigger.data('booking-id'));
+            $recurringForm.find('#mpwpb_recurring_editor_mode').val(mode);
+            $recurringForm.find('#mpwpb_recurring_editor_date, #mpwpb_recurring_editor_time').val('');
             var currentDate = mode === 'edit' ? String($trigger.data('current-date') || '') : '';
             $recurringEditor.find('[data-recurring-date]').each(function() {
                 var $date = $(this);
@@ -93,20 +109,33 @@ jQuery(document).ready(function($) {
         }
 
         function closeRecurringEditor() {
+            if (!$recurringEditor.length) {
+                resolveRecurringEditor();
+            }
             $recurringEditor.removeClass('is-open').attr('aria-hidden', 'true');
+            var $origin = $recurringEditor.data('mpwpb-inline-origin');
+            if ($origin && $origin.length && $.contains(document, $origin[0])) {
+                $recurringEditor.appendTo($origin);
+            }
             $('body').removeClass('noScroll');
         }
 
         $(document).on('click', '.mpwpb-recurring-edit', function() { openRecurringEditor($(this), 'edit'); });
         $(document).on('click', '.mpwpb-recurring-add', function() { openRecurringEditor($(this), 'add'); });
         $(document).on('click', '.mpwpb-recurring-editor__close', closeRecurringEditor);
-        $recurringEditor.on('click', function(event) { if ($(event.target).is($recurringEditor)) { closeRecurringEditor(); } });
+        $(document).on('click', '#mpwpb-recurring-editor', function(event) {
+            if ($(event.target).is(this)) {
+                $recurringEditor = $(this);
+                $recurringForm = $recurringEditor.find('#mpwpb-recurring-editor-form').first();
+                closeRecurringEditor();
+            }
+        });
 
         $(document).on('click', '[data-recurring-date]', function() {
             var $button = $(this);
             var date = $button.data('recurring-date');
-            $('#mpwpb_recurring_editor_date').val(date);
-            $('#mpwpb_recurring_editor_time').val('');
+            $recurringForm.find('#mpwpb_recurring_editor_date').val(date);
+            $recurringForm.find('#mpwpb_recurring_editor_time').val('');
             $recurringEditor.find('[data-recurring-date]').removeClass('is-selected');
             $button.addClass('is-selected');
             recurringStage('time');
@@ -115,7 +144,7 @@ jQuery(document).ready(function($) {
             $.post(mpwpb_dashboard.ajaxurl, {
                 action: 'mpwpb_recurring_account_times',
                 nonce: mpwpb_dashboard.nonce,
-                booking_id: $('#mpwpb_recurring_editor_booking_id').val(),
+                booking_id: $recurringForm.find('#mpwpb_recurring_editor_booking_id').val(),
                 date: date
             }).done(function(response) {
                 $grid.empty();
@@ -140,7 +169,7 @@ jQuery(document).ready(function($) {
             var $button = $(this);
             $recurringEditor.find('[data-recurring-time]').removeClass('is-selected');
             $button.addClass('is-selected');
-            $('#mpwpb_recurring_editor_time').val($button.data('value'));
+            $recurringForm.find('#mpwpb_recurring_editor_time').val($button.data('value'));
             recurringStage('services');
             recurringUpdatePrice();
         });
@@ -157,8 +186,10 @@ jQuery(document).ready(function($) {
             recurringUpdatePrice();
         });
 
-        $recurringForm.on('submit', function(event) {
+        $(document).on('submit', '#mpwpb-recurring-editor-form', function(event) {
             event.preventDefault();
+            $recurringForm = $(this);
+            $recurringEditor = $recurringForm.closest('#mpwpb-recurring-editor');
             var $submit = $recurringForm.find('button[type="submit"]');
             if (!$recurringForm.find('input[name="services[]"]:checked').length) {
                 recurringMessage('error', 'Select at least one service.');
@@ -185,7 +216,6 @@ jQuery(document).ready(function($) {
         if (window.location.hash === '#mpwpb-recurring-bookings') {
             $('#mpwpb-recurring-bookings').addClass('is-targeted');
         }
-    }
 
     // My Appointment filter/pagination -- ajax, no full My Account page
     // reload. #mpwpb-appt-list-wrap holds everything that depends on the
@@ -511,30 +541,50 @@ jQuery(document).ready(function($) {
         }
     }
 
+    var $activeCancellationModal = $();
+
     function closeCancellationModal() {
-        $('#mpwpb-cancel-modal').hide().attr('aria-hidden', 'true');
-        $('#mpwpb-cancel-form').attr('hidden', true)[0].reset();
-        $('.mpwpb-cancel-modal__message').removeClass('success error').empty().hide();
+        var $modal = $activeCancellationModal.length ? $activeCancellationModal : $('#mpwpb-cancel-modal').first();
+        var $form = $modal.find('#mpwpb-cancel-form').first();
+        $modal.hide().attr('aria-hidden', 'true');
+        if ($form.length) {
+            $form.attr('hidden', true)[0].reset();
+        }
+        $modal.find('.mpwpb-cancel-modal__message').removeClass('success error').empty().hide();
+        var $origin = $modal.data('mpwpb-inline-origin');
+        if ($origin && $origin.length && $.contains(document, $origin[0])) {
+            $modal.appendTo($origin);
+        }
+        $activeCancellationModal = $();
     }
 
     function cancellationMessage(type, message) {
-        $('.mpwpb-cancel-modal__message').removeClass('success error').addClass(type).text(message).show();
+        var $modal = $activeCancellationModal.length ? $activeCancellationModal : $('#mpwpb-cancel-modal').first();
+        $modal.find('.mpwpb-cancel-modal__message').removeClass('success error').addClass(type).text(message).show();
     }
 
-    function openCancellationModal(bookingId) {
-        var $modal = $('#mpwpb-cancel-modal');
-        var $form = $('#mpwpb-cancel-form');
+    function openCancellationModal(bookingId, $trigger) {
+        var $confirmation = $trigger && $trigger.length ? $trigger.closest('.mpwpb-inline-confirmation') : $();
+        var $modal = $confirmation.length ? $confirmation.find('#mpwpb-cancel-modal').first() : $();
+        if (!$modal.length) {
+            $modal = $('#mpwpb-cancel-modal').first();
+        }
+        var $form = $modal.find('#mpwpb-cancel-form').first();
         if (!$modal.length || !bookingId) {
             return;
         }
+        if ($confirmation.length) {
+            $modal.data('mpwpb-inline-origin', $confirmation).addClass('mpwpb-inline-cancel-modal').appendTo(document.body);
+        }
+        $activeCancellationModal = $modal;
 
         $form.attr('hidden', true)[0].reset();
         $form.data('is-recurring', false);
-        $('#mpwpb_cancel_booking_id').val(bookingId);
-        $('#mpwpb-cancel-modal-title').text(mpwpb_dashboard.cancel_title);
+        $form.find('#mpwpb_cancel_booking_id').val(bookingId);
+        $modal.find('#mpwpb-cancel-modal-title').text(mpwpb_dashboard.cancel_title);
         $form.find('.mpwpb-submit-cancellation').text(mpwpb_dashboard.cancel_submit);
-        $('.mpwpb-cancel-modal__message').removeClass('success error').empty().hide();
-        $('.mpwpb-cancel-modal__loading').text(mpwpb_dashboard.cancel_loading).show();
+        $modal.find('.mpwpb-cancel-modal__message').removeClass('success error').empty().hide();
+        $modal.find('.mpwpb-cancel-modal__loading').text(mpwpb_dashboard.cancel_loading).show();
         $modal.show().attr('aria-hidden', 'false');
 
         $.ajax({
@@ -546,24 +596,24 @@ jQuery(document).ready(function($) {
                 nonce: mpwpb_dashboard.nonce
             },
             success: function(response) {
-                $('.mpwpb-cancel-modal__loading').hide();
+                $modal.find('.mpwpb-cancel-modal__loading').hide();
                 if (!response || !response.success) {
                     cancellationMessage('error', response && response.data && response.data.message ? response.data.message : mpwpb_dashboard.cancel_error);
                     return;
                 }
                 ['booking', 'order', 'service', 'appointment', 'policy'].forEach(function(key) {
-                    $('[data-cancel-detail="' + key + '"]').text(response.data[key] || '—');
+                    $modal.find('[data-cancel-detail="' + key + '"]').text(response.data[key] || '—');
                 });
                 $form.data('is-recurring', !!response.data.is_recurring);
                 if (response.data.is_recurring) {
-                    $('#mpwpb-cancel-modal-title').text(mpwpb_dashboard.cancel_series_title);
+                    $modal.find('#mpwpb-cancel-modal-title').text(mpwpb_dashboard.cancel_series_title);
                     $form.find('.mpwpb-submit-cancellation').text(mpwpb_dashboard.cancel_series_submit);
                 }
                 $form.removeAttr('hidden');
-                window.setTimeout(function() { $('#mpwpb_cancel_reason').trigger('focus'); }, 50);
+                window.setTimeout(function() { $form.find('#mpwpb_cancel_reason').trigger('focus'); }, 50);
             },
             error: function(xhr) {
-                $('.mpwpb-cancel-modal__loading').hide();
+                $modal.find('.mpwpb-cancel-modal__loading').hide();
                 var message = xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message
                     ? xhr.responseJSON.data.message : mpwpb_dashboard.cancel_error;
                 cancellationMessage('error', message);
@@ -582,7 +632,7 @@ jQuery(document).ready(function($) {
             return;
         }
         if (!isStaffContext()) {
-            openCancellationModal(bookingId);
+            openCancellationModal(bookingId, $trigger);
             return;
         }
         if (!confirm(mpwpb_dashboard.cancel_confirm)) {
@@ -631,9 +681,10 @@ jQuery(document).ready(function($) {
     $(document).on('submit', '#mpwpb-cancel-form', function(e) {
         e.preventDefault();
         var $form = $(this);
+        $activeCancellationModal = $form.closest('#mpwpb-cancel-modal');
         var $submit = $form.find('.mpwpb-submit-cancellation');
-        var reason = $.trim($('#mpwpb_cancel_reason').val());
-        if (reason.length < 5 || !$('#mpwpb_cancel_acknowledge').is(':checked')) {
+        var reason = $.trim($form.find('#mpwpb_cancel_reason').val());
+        if (reason.length < 5 || !$form.find('#mpwpb_cancel_acknowledge').is(':checked')) {
             cancellationMessage('error', mpwpb_dashboard.cancel_error);
             return;
         }
@@ -643,13 +694,13 @@ jQuery(document).ready(function($) {
             url: mpwpb_dashboard.ajaxurl,
             data: {
                 action: 'mpwpb_cancel_booking',
-                booking_id: $('#mpwpb_cancel_booking_id').val(),
+                booking_id: $form.find('#mpwpb_cancel_booking_id').val(),
                 reason: reason,
                 nonce: mpwpb_dashboard.nonce
             },
             beforeSend: function() {
                 $submit.prop('disabled', true).text(mpwpb_dashboard.cancel_processing);
-                $('.mpwpb-cancel-modal__message').hide();
+                $activeCancellationModal.find('.mpwpb-cancel-modal__message').hide();
             },
             success: function(response) {
                 if (response && response.success) {
@@ -671,7 +722,7 @@ jQuery(document).ready(function($) {
     });
     
     // Reschedule booking - open modal
-    $('.mpwpb-reschedule-btn').on('click', function(e) {
+    $(document).on('click', '.mpwpb-reschedule-btn', function(e) {
         e.preventDefault();
         
         const bookingId = $(this).data('id');
@@ -717,7 +768,7 @@ jQuery(document).ready(function($) {
     });
     
     // Close modal when clicking the X
-    $('.mpwpb-close').on('click', function() {
+    $(document).on('click', '#mpwpb-reschedule-modal .mpwpb-close', function() {
         $('#mpwpb-reschedule-modal').css('display', 'none');
     });
     
@@ -729,7 +780,7 @@ jQuery(document).ready(function($) {
     });
     
     // Get time slots when date is selected
-    $('#new_date').on('change', function() {
+    $(document).on('change', '#new_date', function() {
         const date = $(this).val();
         const serviceId = $('#service_id').val();
         
@@ -771,7 +822,7 @@ jQuery(document).ready(function($) {
     });
     
     // Submit reschedule form
-    $('#mpwpb-reschedule-form').on('submit', function(e) {
+    $(document).on('submit', '#mpwpb-reschedule-form', function(e) {
         e.preventDefault();
         
         const bookingId = $('#booking_id').val();

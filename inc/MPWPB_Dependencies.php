@@ -41,7 +41,6 @@
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Direct_Form_Modifier.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Ajax_File_Upload.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_File_Display_Helper.php';
-				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Display_Fixer.php';
 			}
 			public function mpwpb_upgrade() {
 				if ( get_option( 'mpwpb_conflict_update' ) != 'completed' ) {
@@ -158,6 +157,7 @@
 					// or a signal to load the native billing form inside the same
 					// popup instead of leaving it (Custom Payment, WooCommerce off).
 					'is_custom_payment_mode' => MPWPB_Global_Function::is_custom_payment_mode(),
+					'is_wc_payment_mode' => MPWPB_Global_Function::is_wc_payment_mode(),
 					'booking_error' => esc_html__('The booking could not be completed. Please review your selection and try again.', 'service-booking-manager'),
 				));
 				do_action('add_mpwpb_frontend_script');

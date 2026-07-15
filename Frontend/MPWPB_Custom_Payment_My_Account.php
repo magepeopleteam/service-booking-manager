@@ -190,10 +190,8 @@
 			private function orders_tab(int $user_id): void {
 				$order_id = isset($_GET['order_id']) ? absint($_GET['order_id']) : 0;
 				if ($order_id) {
-					// Ownership check -- this dashboard is only ever reached while
-					// logged in, so unlike the checkout thank-you URL (which just
-					// trusts the order ID + status=success in the query string),
-					// a viewer here must actually own the order.
+					// This account view always requires logged-in ownership. Guest
+					// confirmation links use the separate random native order key.
 					$order = get_post($order_id);
 					$owner_id = (int) get_post_meta($order_id, 'mpwpb_user_id', true);
 					if ($order && $order->post_type === MPWPB_Native_Order::CPT && $owner_id === $user_id) {

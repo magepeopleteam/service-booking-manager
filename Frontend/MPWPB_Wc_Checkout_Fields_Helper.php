@@ -291,6 +291,7 @@
 				add_action('woocommerce_after_checkout_billing_form', array($this, 'file_upload_field'));
 				add_action('woocommerce_after_checkout_shipping_form', array($this, 'file_upload_field'));
 				add_action('woocommerce_after_checkout_order_form', array($this, 'file_upload_field'));
+				add_action('woocommerce_after_checkout_validation', array($this, 'validate_required_file_fields'), 20, 2);
 				add_action('woocommerce_checkout_update_order_meta', array($this, 'save_custom_checkout_fields_to_order'), 99, 2);
 				add_action('woocommerce_before_order_details', array($this, 'order_details'), 99, 1);
 				add_action('woocommerce_admin_order_data_after_billing_address', array($this, 'order_details'), 99, 1);
@@ -523,7 +524,7 @@
 								$is_required = isset($file_field['required']) && $file_field['required'] == '1';
 
 								// Check if we have a file URL from the AJAX upload
-								$file_url = isset($_POST[$p]) ? esc_url_raw($_POST[$p]) : '';
+								$file_url = isset($_POST[$p]) ? $this->validate_checkout_upload_url(wp_unslash($_POST[$p])) : '';
 
 								if (!empty($file_url)) {
 									// We have a file URL from the AJAX upload
@@ -543,8 +544,9 @@
 										update_post_meta($order_id, '_' . $p, esc_url($image_url));
 
 										// Save the original filename if available
-										if (session_id() && isset($_SESSION['mpwpb_file_original_names'][$p])) {
-											$original_filename = $_SESSION['mpwpb_file_original_names'][$p];
+										$original_names = function_exists('WC') && WC()->session ? (array) WC()->session->get('mpwpb_file_original_names', array()) : array();
+										if (isset($original_names[$p])) {
+											$original_filename = $original_names[$p];
 											update_post_meta($order_id, '_' . $p . '_filename', sanitize_text_field($original_filename));
 											// error_log('Saved original filename for field ' . $p . ': ' . $original_filename);
 										}
@@ -563,11 +565,44 @@
 				}
 
 				// Clean up session data
-				if (session_id() && isset($_SESSION['mpwpb_file_original_names'])) {
-					unset($_SESSION['mpwpb_file_original_names']);
+				if (function_exists('WC') && WC()->session) {
+					WC()->session->__unset('mpwpb_file_original_names');
 				}
 
 				// error_log('Finished saving custom checkout fields for order ID: ' . $order_id);
+			}
+
+			public function validate_required_file_fields($data, $errors): void {
+				if (!$errors instanceof WP_Error) {
+					return;
+				}
+				$settings = get_option('mpwpb_custom_checkout_fields', array());
+				foreach (array('billing', 'shipping', 'order') as $section) {
+					foreach ((array) ($settings[$section] ?? array()) as $field_key => $field) {
+						if (!is_array($field)
+							|| ($field['custom_field'] ?? '') !== '1'
+							|| ($field['type'] ?? '') !== 'file'
+							|| ($field['required'] ?? '') !== '1'
+							|| ($field['disabled'] ?? '') === '1'
+							|| ($field['deleted'] ?? '') === 'deleted') {
+							continue;
+						}
+						$field_key = sanitize_key($field_key);
+						$stored_url = isset($_POST[$field_key]) ? $this->validate_checkout_upload_url(wp_unslash($_POST[$field_key])) : '';
+						$file_key = $field_key . '_file';
+						$has_direct_upload = isset($_FILES[$file_key]) && $this->is_valid_direct_upload($_FILES[$file_key]);
+						if (!$stored_url && !$has_direct_upload) {
+							$errors->add(
+								'mpwpb_required_upload',
+								sprintf(
+									/* translators: %s: checkout upload field label */
+									esc_html__('%s is a required field.', 'service-booking-manager'),
+									esc_html($field['label'] ?? $field_key)
+								)
+							);
+						}
+					}
+				}
 			}
 			function get_post($order_id) {
 				$args = array(
@@ -616,7 +651,7 @@
 					// error_log('File found in $_FILES: ' . $file_field_name . ' - Name: ' . $_FILES[$file_field_name]['name']);
 
 					// Check if the file has a valid size (not zero)
-					if ($_FILES[$file_field_name]['size'] > 0) {
+					if ($this->is_valid_direct_upload($_FILES[$file_field_name])) {
 					// Create proper upload overrides
 					$upload_overrides = array(
 						'test_form' => false,
@@ -666,20 +701,64 @@
 
 				if ($image_url) {
 					// Store the original filename in a separate meta field for display purposes
-					$original_filename = isset($_FILES[$file_field_name]) ? sanitize_text_field($_FILES[$file_field_name]['name']) : '';
+					$original_filename = isset($_FILES[$file_field_name]) ? sanitize_file_name(wp_unslash($_FILES[$file_field_name]['name'])) : '';
 					if (!empty($original_filename)) {
 						// Store the original filename in a session variable to be used when saving order meta
-						if (!session_id()) {
-							session_start();
-						}
 						$field_base_name = str_replace('_file', '', $file_field_name);
-						$_SESSION['mpwpb_file_original_names'][$field_base_name] = $original_filename;
+						if (function_exists('WC') && WC()->session) {
+							$original_names = (array) WC()->session->get('mpwpb_file_original_names', array());
+							$original_names[$field_base_name] = $original_filename;
+							WC()->session->set('mpwpb_file_original_names', $original_names);
+						}
 						// error_log('Stored original filename for ' . $field_base_name . ': ' . $original_filename);
 					}
 					return $image_url;
 				} else {
 					return false;
 				}
+			}
+
+			private function is_valid_direct_upload(array $file): bool {
+				if (!is_string($file['name'] ?? null) || !is_string($file['tmp_name'] ?? null) || !is_numeric($file['size'] ?? null) || !is_numeric($file['error'] ?? null)) {
+					return false;
+				}
+				if ((int) ($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+					return false;
+				}
+				$size = (int) ($file['size'] ?? 0);
+				$max_upload_size = apply_filters('mpwpb_max_checkout_upload_size', 5 * MB_IN_BYTES);
+				$original_name = sanitize_file_name(wp_unslash($file['name'] ?? ''));
+				$extension = strtolower(pathinfo($original_name, PATHINFO_EXTENSION));
+				if ($size <= 0 || $size > $max_upload_size || !in_array($extension, $this->allowed_extensions, true) || empty($file['tmp_name'])) {
+					return false;
+				}
+				$file_type = wp_check_filetype_and_ext($file['tmp_name'], $original_name, $this->allowed_mime_types);
+				return !empty($file_type['ext']) && !empty($file_type['type']);
+			}
+
+			private function validate_checkout_upload_url($url): string {
+				$url = esc_url_raw((string) $url);
+				if (!$url) {
+					return '';
+				}
+				$uploads = wp_get_upload_dir();
+				$base_url = trailingslashit((string) ($uploads['baseurl'] ?? ''));
+				$base_dir = wp_normalize_path(trailingslashit((string) ($uploads['basedir'] ?? '')));
+				if (!$base_url || !$base_dir || strpos($url, $base_url) !== 0) {
+					return '';
+				}
+				$relative = rawurldecode(substr($url, strlen($base_url)));
+				if ($relative === '' || strpos($relative, '..') !== false || !preg_match('/^(?:.+\/)?mpwpb-[a-zA-Z0-9]{32}\.(?:jpe?g|png|pdf)$/i', $relative)) {
+					return '';
+				}
+				$file_path = wp_normalize_path($base_dir . ltrim($relative, '/'));
+				$real_path = realpath($file_path);
+				$real_base = realpath($base_dir);
+				if (!$real_path || !$real_base || strpos(wp_normalize_path($real_path), trailingslashit(wp_normalize_path($real_base))) !== 0 || !is_file($real_path)) {
+					return '';
+				}
+				$file_type = wp_check_filetype(basename($real_path), $this->allowed_mime_types);
+				return !empty($file_type['ext']) && !empty($file_type['type']) ? $url : '';
 			}
 			function order_details($order_id) {
 				$order = wc_get_order($order_id);

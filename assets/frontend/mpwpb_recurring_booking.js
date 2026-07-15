@@ -87,7 +87,7 @@
         let day = String(dateObj.getDate()).padStart(2, '0');
 
         let formattedDate = `${year}-${month}-${day}`;
-        let hours24 = dateObj.getHours();
+        let hours24 = dateObj.getHours() + (dateObj.getMinutes() / 60);
 
         let ajaxUrl = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.ajax_url : mpwpb_ajax.ajax_url;
         let nonce = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.nonce : mpwpb_ajax.nonce;

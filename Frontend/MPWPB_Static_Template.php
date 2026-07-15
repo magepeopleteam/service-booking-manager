@@ -22,35 +22,21 @@
 			}
 
             public function mpwpb_progress_bar_callback( $service_id, $is_active ) {
-                $enable_staff_member = get_post_meta($service_id, 'mpwpb_staff_member_add', true);
+				$steps = [
+					'mpwpb_progress_service' => esc_html__('Service', 'service-booking-manager'),
+					'mpwpb_progress_date_time' => esc_html__('Date & Time', 'service-booking-manager'),
+					'mpwpb_progress_billing' => esc_html__('Billing', 'service-booking-manager'),
+					'mpwpb_progress_payment' => esc_html__('Payment', 'service-booking-manager'),
+					'mpwpb_progress_confirmation' => esc_html__('Confirmation', 'service-booking-manager'),
+				];
                 ?>
-                <div class="mpwpb_cart_progress_wrapper">
-                    <div class="mpwpb_cart_progress_step active" id="mpwpb_progress_service">
-                        <div class="mpwpb_cart_progress_circle"><?php esc_html_e(1, 'service-booking-manager') ?></div>
-                        <div class="mpwpb_cart_progress_label"><?php esc_html_e('Service', 'service-booking-manager') ?></div>
-                    </div>
-                    <div class="mpwpb_cart_progress_arrow">→</div>
-                    <div class="mpwpb_cart_progress_step" id="mpwpb_progress_date_time">
-                        <div class="mpwpb_cart_progress_circle"><?php esc_html_e(2, 'service-booking-manager') ?></div>
-                        <div class="mpwpb_cart_progress_label"><?php esc_html_e('Date & Time', 'service-booking-manager') ?></div>
-                    </div>
-                    <div class="mpwpb_cart_progress_arrow">→</div>
-                    <?php  if ( $enable_staff_member === 'on' ) {
-                        $number = 4;
-                        ?>
-                        <div class="mpwpb_cart_progress_step" id="mpwpb_progress_staff">
-                            <div class="mpwpb_cart_progress_circle"><?php esc_html_e(3, 'service-booking-manager') ?></div>
-                            <div class="mpwpb_cart_progress_label"><?php esc_html_e('Staff', 'service-booking-manager') ?></div>
-                        </div>
-                        <div class="mpwpb_cart_progress_arrow" id="mpwpb_staff_arrow">→</div>
-                    <?php } else {  $number = 3; }?>
-                    <div class="mpwpb_cart_progress_step" id="mpwpb_progress_checkout">
-                        <div class="mpwpb_cart_progress_circle"><?php echo esc_html( $number ) ?></div>
-                        <div class="mpwpb_cart_progress_label"><?php esc_html_e('Checkout', 'service-booking-manager') ?></div>
-                    </div>
+				<div class="mpwpb_cart_progress_wrapper" aria-label="<?php esc_attr_e('Booking progress', 'service-booking-manager'); ?>">
+					<?php foreach ($steps as $step_id => $label) { ?>
+						<div class="mpwpb_cart_progress_step<?php echo $step_id === 'mpwpb_progress_service' ? ' active' : ''; ?>" id="<?php echo esc_attr($step_id); ?>">
+							<div class="mpwpb_cart_progress_label"><?php echo esc_html($label); ?></div>
+						</div>
+					<?php } ?>
                 </div>
-
-
                 <?php
             }
 			public function features_heighlight($limit = '') {

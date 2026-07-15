@@ -600,8 +600,11 @@ if (!class_exists('MPWPB_Reviews_Admin')) {
             if (!isset($_GET['page']) || $_GET['page'] !== 'mpwpb-reviews' || !isset($_GET['action'])) {
                 return;
             }
+			if (!current_user_can('manage_options')) {
+				wp_die(esc_html__('You do not have permission to perform this action', 'service-booking-manager'), '', array('response' => 403));
+			}
 
-            $action = sanitize_text_field($_GET['action']);
+			$action = sanitize_key(wp_unslash($_GET['action']));
 
             if ($action === 'send_review_request') {
                 if (!isset($_GET['booking_id'])) {

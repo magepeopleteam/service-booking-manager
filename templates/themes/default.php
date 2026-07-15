@@ -84,7 +84,13 @@
 								<?php include(MPWPB_Function::template_path('registration/extra_services.php')); ?>
                             </div>
 							<?php include(MPWPB_Function::template_path('registration/date_time_select.php')); ?>
-                            <div class="mpwpb_order_proceed_area"></div>
+                            <div class="mpwpb_order_proceed_area">
+								<?php if (MPWPB_Global_Function::is_wc_payment_mode()) { ?>
+									<form name="checkout" method="post" class="checkout woocommerce-checkout mpwpb-inline-wc-checkout-form" action="<?php echo esc_url(wc_get_checkout_url()); ?>" enctype="multipart/form-data" aria-label="<?php esc_attr_e('Booking checkout', 'service-booking-manager'); ?>">
+										<div class="mpwpb-inline-wc-checkout-content"></div>
+									</form>
+								<?php } ?>
+							</div>
                         </div>
 
                         <div class="service-cart">
