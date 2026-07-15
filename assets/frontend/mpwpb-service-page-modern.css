@@ -152,6 +152,27 @@
 	display:list-item !important;
 	margin:0 0 6px !important;
 }
+/* Service Details is also administrator-authored rich text. Keep its inline
+   formatting and list structure from being changed by shared UI utilities. */
+.mpwpb-static-template #service-details .mpwpb-service-details-content small,
+.mpwpb-static-template #service-details .mpwpb-service-details-content span,
+.mpwpb-static-template #service-details .mpwpb-service-details-content strong,
+.mpwpb-static-template #service-details .mpwpb-service-details-content b,
+.mpwpb-static-template #service-details .mpwpb-service-details-content em,
+.mpwpb-static-template #service-details .mpwpb-service-details-content i{
+	display:inline !important;
+}
+.mpwpb-static-template #service-details .mpwpb-service-details-content ol,
+.mpwpb-static-template #service-details .mpwpb-service-details-content ul{
+	margin:10px 0 0 0 !important;
+	padding-left:22px !important;
+}
+.mpwpb-static-template #service-details .mpwpb-service-details-content ol{list-style:decimal outside !important;}
+.mpwpb-static-template #service-details .mpwpb-service-details-content ul{list-style:disc outside !important;}
+.mpwpb-static-template #service-details .mpwpb-service-details-content li{
+	display:list-item !important;
+	margin:0 0 6px !important;
+}
 #service-staff h2{font-size:16px !important;}
 
 /* Title + "Write a Review" trigger, same row, button pinned top-right. */
