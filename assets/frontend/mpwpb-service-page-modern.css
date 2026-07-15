@@ -204,6 +204,93 @@
 }
 
 /* -------------------------------------------------------------------- *
+ *  Feature Highlights popup — deliberately scoped to .popup-features.
+ *  The popup is moved beneath <body> by mpwpb-service-page-modern.js, so
+ *  selectors must not depend on the original service-header ancestry.
+ *  !important overrides the plugin's older shared popup frame without
+ *  changing booking, review, gallery, or admin popups.
+ * -------------------------------------------------------------------- */
+div.mpwpb_popup.popup-features{
+	box-sizing:border-box;padding:24px;background:rgba(15,23,42,.72) !important;
+	-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
+}
+div.mpwpb_popup.popup-features .mpwpb_popup_main_area{
+	box-sizing:border-box;min-width:0 !important;width:min(92vw,520px) !important;max-width:520px !important;
+	min-height:0 !important;height:auto !important;max-height:calc(100vh - 48px) !important;
+	overflow:hidden;background:#fff !important;border:0 !important;border-radius:20px !important;
+	box-shadow:0 28px 80px rgba(15,23,42,.34) !important;
+}
+div.mpwpb_popup.popup-features.in .mpwpb_popup_main_area{
+	animation:mpwpb-feature-popup-in .2s ease-out both;
+}
+@keyframes mpwpb-feature-popup-in{
+	from{opacity:0;transform:translateY(12px) scale(.98);}
+	to{opacity:1;transform:translateY(0) scale(1);}
+}
+div.mpwpb_popup.popup-features .mpwpb_popup_header{
+	display:flex !important;align-items:flex-start !important;justify-content:space-between !important;gap:20px !important;
+	padding:24px 26px !important;border:0 !important;background:var(--mpwpb_color_theme) !important;
+}
+div.mpwpb_popup.popup-features .mpwpb-feature-popup-heading{
+	display:flex;min-width:0;flex:1;flex-direction:column;align-items:flex-start;gap:5px;
+}
+div.mpwpb_popup.popup-features .mpwpb-feature-popup-kicker{
+	color:rgba(255,255,255,.72);font-size:10.5px;font-weight:800;line-height:1.2;
+	letter-spacing:.11em;text-transform:uppercase;
+}
+div.mpwpb_popup.popup-features .mpwpb_popup_header h3{
+	margin:0 !important;color:#fff !important;font-size:22px !important;font-weight:800 !important;line-height:1.25 !important;
+}
+div.mpwpb_popup.popup-features .mpwpb_popup_header p{
+	margin:1px 0 0 !important;color:rgba(255,255,255,.8) !important;font-size:13px !important;line-height:1.5 !important;text-align:left !important;
+}
+div.mpwpb_popup.popup-features .mpwpb_popup_close{
+	position:static !important;inset:auto !important;display:inline-flex !important;align-items:center !important;justify-content:center !important;
+	box-sizing:border-box;width:34px !important;height:34px !important;min-width:34px !important;margin:0 !important;padding:0 !important;
+	border:1px solid rgba(255,255,255,.28) !important;border-radius:999px !important;
+	background:rgba(255,255,255,.12) !important;color:#fff !important;font-size:14px !important;line-height:1 !important;
+	box-shadow:none !important;cursor:pointer;transition:background .16s ease,transform .16s ease;
+}
+div.mpwpb_popup.popup-features .mpwpb_popup_close:hover,
+div.mpwpb_popup.popup-features .mpwpb_popup_close:focus-visible{
+	background:rgba(255,255,255,.24) !important;color:#fff !important;transform:rotate(4deg);
+}
+div.mpwpb_popup.popup-features .mpwpb_popup_close:focus-visible{outline:2px solid #fff !important;outline-offset:2px;}
+div.mpwpb_popup.popup-features .mpwpb_popup_close i{margin:0 !important;color:inherit !important;}
+div.mpwpb_popup.popup-features .mpwpb_popup_body{
+	box-sizing:border-box;padding:22px 26px 26px !important;overflow:auto !important;background:#fff !important;
+}
+div.mpwpb_popup.popup-features ul.features{
+	display:grid !important;grid-template-columns:1fr;gap:10px !important;
+	margin:0 !important;padding:0 !important;list-style:none !important;
+}
+div.mpwpb_popup.popup-features ul.features li{
+	display:flex !important;align-items:center !important;gap:12px !important;box-sizing:border-box;
+	margin:0 !important;padding:12px 14px !important;border:1px solid #e6ebf1 !important;border-radius:12px !important;
+	background:#f8fafc !important;color:#263548 !important;font-size:13.5px !important;font-weight:650 !important;line-height:1.45 !important;
+}
+div.mpwpb_popup.popup-features .mpwpb-feature-popup-icon{
+	display:inline-flex;align-items:center;justify-content:center;flex:0 0 28px;width:28px;height:28px;
+	border-radius:999px;background:var(--mpwpb_color_theme);color:#fff;font-size:10px;
+	box-shadow:0 4px 10px rgba(15,118,110,.16);
+}
+div.mpwpb_popup.popup-features .mpwpb-feature-popup-icon i{margin:0 !important;color:inherit !important;}
+div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-wrap:anywhere;}
+
+@media(max-width:520px){
+	div.mpwpb_popup.popup-features{padding:14px;}
+	div.mpwpb_popup.popup-features .mpwpb_popup_main_area{width:100% !important;max-height:calc(100vh - 28px) !important;border-radius:16px !important;}
+	div.mpwpb_popup.popup-features .mpwpb_popup_header{gap:14px !important;padding:20px !important;}
+	div.mpwpb_popup.popup-features .mpwpb_popup_header h3{font-size:19px !important;}
+	div.mpwpb_popup.popup-features .mpwpb_popup_body{padding:16px !important;}
+	div.mpwpb_popup.popup-features ul.features li{padding:11px 12px !important;font-size:13px !important;}
+}
+
+@media(prefers-reduced-motion:reduce){
+	div.mpwpb_popup.popup-features.in .mpwpb_popup_main_area{animation:none;}
+}
+
+/* -------------------------------------------------------------------- *
  *  Tab bar — reused .mpwpb-details-page-tab / nav markup, restyled as a
  *  sticky pill switcher; the active tab is now driven by real JS
  *  (mpwpb-service-page-modern.js) instead of the previously-dead handler.

@@ -85,22 +85,31 @@
 			}
 			public function popup_feature_lists() {
 				$features_heightlight = MPWPB_Global_Function::get_post_info(get_the_ID(), 'mpwpb_features', []);
-				?>
-                <div class="mpwpb_popup mpwpb_style popup-features" data-popup="#mpwpb_view_more_popup">
-                    <div class="mpwpb_popup_main_area">
-                        <div class="mpwpb_popup_header">
-                            <h3><?php esc_html_e('Features Heighlight', 'service-booking-manager'); ?></h3>
-                            <span class="fas fa-times mpwpb_popup_close"></span>
-                        </div>
-                        <div class="mpwpb_popup_body">
-                            <ul class="features">
-								<?php
-									foreach ($features_heightlight as $value):
-										?>
-                                        <li style="color:#333"><i class="fas fa-check-circle"></i><?php echo esc_html($value); ?></li>
-									<?php endforeach; ?>
-                            </ul>
-                        </div>
+					?>
+	                <div class="mpwpb_popup mpwpb_style popup-features" data-popup="#mpwpb_view_more_popup">
+	                    <div class="mpwpb_popup_main_area">
+	                        <div class="mpwpb_popup_header">
+	                            <div class="mpwpb-feature-popup-heading">
+	                                <span class="mpwpb-feature-popup-kicker"><?php esc_html_e('Service benefits', 'service-booking-manager'); ?></span>
+	                                <h3><?php esc_html_e('Feature Highlights', 'service-booking-manager'); ?></h3>
+	                                <p><?php esc_html_e('Everything that makes this service a great choice.', 'service-booking-manager'); ?></p>
+	                            </div>
+	                            <button type="button" class="mpwpb_popup_close" aria-label="<?php esc_attr_e('Close feature highlights', 'service-booking-manager'); ?>">
+	                                <i class="fas fa-times" aria-hidden="true"></i>
+	                            </button>
+	                        </div>
+	                        <div class="mpwpb_popup_body">
+	                            <ul class="features">
+									<?php
+										foreach ($features_heightlight as $value):
+											?>
+	                                        <li>
+	                                            <span class="mpwpb-feature-popup-icon"><i class="fas fa-check" aria-hidden="true"></i></span>
+	                                            <span class="mpwpb-feature-popup-label"><?php echo esc_html($value); ?></span>
+	                                        </li>
+										<?php endforeach; ?>
+	                            </ul>
+	                        </div>
                     </div>
                 </div>
 				<?php
