@@ -1,4 +1,4 @@
-=== WPBookingly – Appointment Booking Plugin for WooCommerce | Online Booking Calendar & Service Manager ===
+=== Appointment Booking Plugin for WooCommerce | Online Booking Calendar & Service Manager ===
 Contributors: aamahin, magepeopleteam
 Tags: appointment booking, booking calendar, service booking, online booking, woocommerce booking
 Requires at least: 5.3
