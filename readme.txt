@@ -34,7 +34,10 @@ Customers can view booking details, reorder an available service, request cancel
 The service page, booking drawer, checkout confirmation, order-received details, account tables, action buttons, and reschedule dialogs now share a modern responsive design. Service Details retain the paragraphs, headings, lists, and formatting entered in the WordPress editor.
 
 **Improved administration**:
-The modern service editor covers categories and services, extra services, pricing, schedules, staff, recurring rules, taxes, waiting lists, FAQs, galleries, and formatted service details. The service list, booking administration, staff dashboard, reviews, cancellation requests, analytics, quick setup, business templates, and built-in help guide have also been improved.
+The modern service editor covers categories and services, extra services, pricing, schedules, staff, recurring rules, taxes, waiting lists, FAQs, galleries, and formatted service details. The service list, booking administration, staff dashboard, reviews, cancellation requests, analytics, quick setup, and built-in help guide have also been improved.
+
+**One-Click Business Templates**:
+Start from the Service List and choose a ready-made business type to create a complete, ready-to-book service in seconds. A template can populate the service title, categories, services and prices, extras, features, overview, details, FAQs, operating schedule, capacity, recurring settings, sample staff profiles, and sample reviews. The imported service opens in the normal editor and every setting remains fully editable, so administrators can replace the sample content and publish the exact workflow their business needs.
 
 **Advanced booking coupons**:
 Create fixed, percentage, or fixed-price booking discounts with service, total, quantity, date, time, customer, account, staff, and usage restrictions. Coupon validation is shared by custom/native checkout, classic WooCommerce checkout, and WooCommerce Checkout Blocks so the same rule is applied on every supported checkout path.
@@ -351,7 +354,8 @@ Please report security bugs found in the source code of the WpBookingly plugin t
 == Changelog ==
 = 1.3.1 =
 * Added a modern service creation and editing workflow for services, categories, extras, schedules, recurring rules, tax, staff, waiting lists, FAQs, galleries, and formatted service details.
-* Added business templates, an improved quick-setup experience, an expanded service list, analytics, staff tools, reviews management, cancellation administration, and a searchable in-plugin help guide.
+* Added One-Click Business Templates that create an editable, ready-to-book service with predefined categories, services, pricing, extras, content, FAQs, schedules, capacity, recurring settings, sample staff, and sample reviews.
+* Added an improved quick-setup experience, an expanded service list, analytics, staff tools, reviews management, cancellation administration, and a searchable in-plugin help guide.
 * Added partial-payment support across supported custom/native, classic WooCommerce, and WooCommerce Checkout Blocks flows, including paid and balance-due information.
 * Added a complete custom/native checkout with protected confirmations, native orders, offline payments, and edition-dependent Stripe and PayPal controls.
 * Added an inline WooCommerce checkout to the service booking drawer, including billing fields, order review, taxes, coupons, terms, gateways, external payment redirects, and checkout-state recovery.
