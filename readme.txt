@@ -1,4 +1,4 @@
-=== Appointment Booking Plugin for WooCommerce – WpBookingly | All-in-One Service Manager ===
+=== Appointment Booking Plugin for WooCommerce – All-in-One Service Manager ===
 Contributors: aamahin, magepeopleteam
 Tags: appointment booking, Car Wash Booking, Booking calendar, Service Booking
 Requires at least: 5.3
