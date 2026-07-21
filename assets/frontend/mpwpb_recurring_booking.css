@@ -388,6 +388,13 @@ input:checked + .slider:before {
     padding: 20px;
     z-index: 10000;
     width: 300px;
+    /* Never exceed the viewport on narrow phones (<324px), and cap the
+       height so the time-slot list scrolls inside the modal instead of
+       overflowing off-screen on small devices. */
+    max-width: calc(100vw - 24px);
+    max-height: calc(100vh - 24px);
+    box-sizing: border-box;
+    overflow-y: auto;
     border-radius: 8px;
     box-shadow: 0 0 15px rgba(0,0,0,0.2);
     text-align: center;

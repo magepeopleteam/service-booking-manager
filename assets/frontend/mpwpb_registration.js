@@ -783,7 +783,14 @@ function mpwpb_price_calculation($this) {
                     count++;
                 }
             });
-            var isCustomPaymentMode = !!mpwpb_ajax.is_custom_payment_mode;
+            // "Native" = every non-WooCommerce checkout (offline / Stripe /
+            // PayPal, and whether or not Pro is active). The server already
+            // routes all non-WC bookings through MPWPB_Native_Checkout, so the
+            // drawer must render that checkout inline for all of them -- not
+            // only the Pro "custom" mode this was originally gated to
+            // (is_custom_payment_mode), which left free/native setups (WooCommerce
+            // off, Pro off) falling through to the full-page redirect below.
+            var isNativeMode = !mpwpb_ajax.is_wc_payment_mode;
             var isInlineWcMode = !!mpwpb_ajax.is_wc_payment_mode;
             $.ajax({
                 type: 'POST',
@@ -819,10 +826,10 @@ function mpwpb_price_calculation($this) {
                     $nextBtn.data('mpwpb-original-html', $nextBtn.html());
                     $nextBtn.prop('disabled', true).addClass('mpwpb-cta-loading')
                         .html('<i class="fas fa-spinner fa-spin _mR_xs"></i> ' + (mpwpb_ajax.processing_text || 'Please wait...'));
-                    if (isCustomPaymentMode || isInlineWcMode) {
-                        // Custom Payment stays in the same popup afterwards (see the
-                        // success handler below), so ease straight into the Checkout
-                        // step now -- the same smooth slide every other step change
+                    if (isNativeMode || isInlineWcMode) {
+                        // Native/WC checkout stays in the same popup afterwards (see
+                        // the success handler below), so ease straight into the
+                        // Checkout step now -- the same smooth slide every other step change
                         // uses -- instead of freezing the whole screen behind the
                         // full-page loader while mpwpb_add_to_cart (and the native
                         // billing form fetch that follows it) run in the background.
@@ -845,13 +852,14 @@ function mpwpb_price_calculation($this) {
                     }
                 },
                 success: function (data) {
-                    // Custom Payment (WooCommerce off): stay in the same popup and
-                    // load the native billing form into the "Checkout" step instead
-                    // of navigating away -- mpwpb_add_to_cart still returns a URL
-                    // string here (unchanged contract), it's just not used in this
-                    // mode; the cart item it already stored server-side is what the
-                    // fetched form reads.
-                    if (isCustomPaymentMode) {
+                    // Native checkout (WooCommerce off -- offline/Stripe/PayPal,
+                    // Pro or free): stay in the same popup and load the native
+                    // billing form into the "Checkout" step instead of navigating
+                    // away -- mpwpb_add_to_cart still returns a URL string here
+                    // (unchanged contract), it's just not used in this mode; the
+                    // cart item it already stored server-side is what the fetched
+                    // form reads.
+                    if (isNativeMode) {
                         mpwpb_load_native_checkout_form(parent);
                     } else if (isInlineWcMode) {
 						if (typeof data === 'string' && data.indexOf('wp-login.php') !== -1) {
@@ -876,7 +884,7 @@ function mpwpb_price_calculation($this) {
 					} else {
 						alert(message);
 					}
-                    if (isCustomPaymentMode || isInlineWcMode) {
+                    if (isNativeMode || isInlineWcMode) {
                         parent.find('.mpwpb_order_proceed_area').css('min-height', '');
                         mpwpb_loaderRemove(parent.find('.mpwpb_order_proceed_area'));
                     } else {
@@ -1253,7 +1261,21 @@ function mpwpb_price_calculation($this) {
         $error.hide().text('');
         $btn.prop('disabled', true);
         $.post(mpwpb_ajax.ajax_url, $form.serialize()).done(function (response) {
-            if (response && response.success && response.data && response.data.redirect) {
+            if (response && response.success && response.data && response.data.inline_html) {
+                // Offline bookings complete server-side immediately, so the
+                // confirmation renders straight into the drawer (same Checkout
+                // step area the form occupied) instead of navigating to a
+                // separate thank-you page -- a fully in-drawer flow end to end.
+                mpwpb_gdpr_save_billing_cookie($form);
+                var $proceed = parent.find('.mpwpb_order_proceed_area');
+                $proceed.html(response.data.inline_html);
+                parent.data('mpwpbStep', 'confirmation');
+                // No footer recap on the confirmation screen -- the inline
+                // thank-you already shows the full booking summary.
+                parent.find('#mpwpb_selected_summary').empty().hide();
+                parent.find('.mpwpb_popup_body').scrollTop(0);
+            } else if (response && response.success && response.data && response.data.redirect) {
+                // Stripe/PayPal must hand off to the gateway's own hosted page.
                 mpwpb_gdpr_save_billing_cookie($form);
                 window.location.href = response.data.redirect;
             } else {

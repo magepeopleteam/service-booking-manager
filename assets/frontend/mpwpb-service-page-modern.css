@@ -941,9 +941,36 @@ label.mpwpb-checkout-field{display:inline-block;}
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_popup_main_area{
 	margin:0 !important;width:100% !important;max-width:560px !important;min-width:0 !important;
-	top:30px !important;
-	height:100vh !important;max-height:96vh !important;border-radius:0 !important;
+	/* Dock the drawer to the full visible viewport height. 100dvh (dynamic
+	   viewport height) is preferred over 100vh so the docked footer/Continue
+	   button can never end up hidden behind a mobile browser's collapsing
+	   address bar -- 100vh there resolves to the *largest* possible viewport
+	   (toolbar retracted), pushing the bottom of the drawer below the fold,
+	   whereas 100dvh always tracks the currently visible height. The plain
+	   100vh line is kept first as the fallback for browsers without dvh. The
+	   previous `top:30px` + `max-height:96vh` combo offset the whole panel
+	   down while still sizing it ~full height, so its bottom (footer + action
+	   button) was clipped off-screen -- most visibly on phones/tablets. */
+	top:0 !important;
+	height:100vh !important;height:100dvh !important;
+	max-height:100vh !important;max-height:100dvh !important;border-radius:0 !important;
 	box-shadow:-8px 0 30px rgba(15,23,42,.18) !important;
+}
+/* Only logged-in users see WordPress's fixed admin bar (front-end visitors
+   never do), so offset the drawer below it just for them -- otherwise the
+   header/close would sit hidden behind the bar. 32px on desktop and 46px on
+   the <=782px admin-bar layout mirror WP core's own html{margin-top} values. */
+.admin-bar .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_popup_main_area{
+	top:32px !important;
+	height:calc(100vh - 32px) !important;height:calc(100dvh - 32px) !important;
+	max-height:calc(100vh - 32px) !important;max-height:calc(100dvh - 32px) !important;
+}
+@media screen and (max-width:782px){
+	.admin-bar .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_popup_main_area{
+		top:46px !important;
+		height:calc(100vh - 46px) !important;height:calc(100dvh - 46px) !important;
+		max-height:calc(100vh - 46px) !important;max-height:calc(100dvh - 46px) !important;
+	}
 }
 .mpwpb-static-template .sidebar .mpwpb_popup.in .mpwpb_popup_main_area{
 	animation:mpwpbDrawerIn .32s cubic-bezier(.16,1,.3,1);
@@ -959,10 +986,10 @@ label.mpwpb-checkout-field{display:inline-block;}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_popup_header h5{font-size:19px !important;text-align:left !important;font-weight:800;}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_popup_header p{font-size:12.5px !important;text-align:left !important;opacity:.85;margin-top:4px !important;}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_popup_close{
-	/* Pushed down past the WordPress admin toolbar (fixed at the very top
-	   of the viewport, same as this drawer) so it doesn't sit hidden/half
-	   -covered behind it for logged-in users. */
-	position:absolute !important;top:30px !important;right:16px !important;width:30px !important;height:30px !important;
+	/* Sits inside the drawer header (which now already starts below the WP
+	   admin bar via the main-area offset above), aligned with the title.
+	   34px keeps it a comfortable tap target on touch devices. */
+	position:absolute !important;top:16px !important;right:14px !important;width:34px !important;height:34px !important;
 	border-radius:999px !important;background:rgba(255,255,255,.18) !important;font-size:13px !important;color:#fff;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_popup_close:hover{background:rgba(255,255,255,.3) !important;}
@@ -1069,8 +1096,64 @@ label.mpwpb-checkout-field{display:inline-block;}
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpd_btn_proceed:hover{filter:brightness(.92);}
 
+/* -------------------------------------------------------------------- *
+ *  Responsive drawer — tablets & phones
+ *  The drawer stays a right-docked 560px panel from tablet up; at <=640px
+ *  it goes edge-to-edge full-screen. These blocks size the header, the
+ *  footer action bar, tap targets and iOS safe-area padding so the whole
+ *  booking wizard is comfortable to operate on every device.
+ * -------------------------------------------------------------------- */
+
+/* Give the footer's Total/Continue row a comfortable touch height on any
+   device narrow enough to plausibly be a tablet or phone. Kept as flex so
+   min-height reliably centers the label (buttons are inline-block by
+   default, where min-height alone would not). */
+@media(max-width:768px){
+	.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_service_next,
+	.mpwpb-static-template .sidebar .mpwpb_popup .next_date_area ._mpBtn_dBR{
+		display:inline-flex !important;align-items:center;justify-content:center;min-height:46px;
+	}
+	.mpwpb-static-template .sidebar .mpwpb_popup .next_service_area .justifyBetween,
+	.mpwpb-static-template .sidebar .mpwpb_popup .next_date_area .justifyBetween{
+		gap:10px;align-items:center;
+	}
+}
+
+/* Phones: full-screen drawer, tightened header, stacked full-width action
+   button, and safe-area padding so the primary CTA clears the iOS home
+   indicator instead of sitting under it. */
 @media(max-width:640px){
 	.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_popup_main_area{max-width:100vw !important;}
+
+	.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_popup_header{padding:18px 54px 14px 18px !important;}
+	.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_popup_header h5{font-size:17px !important;}
+	.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_popup_close{
+		top:14px !important;right:12px !important;width:38px !important;height:38px !important;font-size:14px !important;
+	}
+	.mpwpb-static-template .sidebar .mpwpb_popup .service-items{padding:14px !important;}
+	.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_wrapper{padding:22px 16px 0 16px !important;}
+
+	/* Footer keeps the docked look but adds the home-indicator inset. */
+	.mpwpb-static-template .sidebar .mpwpb_popup .popupFooter{
+		padding-bottom:calc(env(safe-area-inset-bottom, 0px) + 12px) !important;
+	}
+	.mpwpb-static-template .sidebar .mpwpb_popup .mpwpd_btn_proceed{
+		padding-bottom:calc(env(safe-area-inset-bottom, 0px) + 14px) !important;
+	}
+
+	/* Service step: Total on its own line, Continue full-width below it. */
+	.mpwpb-static-template .sidebar .mpwpb_popup .next_service_area .justifyBetween{flex-wrap:wrap;}
+	.mpwpb-static-template .sidebar .mpwpb_popup .next_service_area h3{flex:1 1 100%;justify-content:flex-start;font-size:15px;}
+	.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_service_next{flex:1 1 100%;min-height:48px;}
+
+	/* Date & Time step: Back + Total share the top line, Checkout full-width
+	   below. flex-wrap lets them reflow instead of overflowing the panel. */
+	.mpwpb-static-template .sidebar .mpwpb_popup .next_date_area .justifyBetween{flex-wrap:wrap;}
+	.mpwpb-static-template .sidebar .mpwpb_popup .next_date_area h4.mpwpb-total{flex:1 1 auto;justify-content:flex-end;font-size:15px !important;}
+	.mpwpb-static-template .sidebar .mpwpb_popup .next_date_area #mpwpb_date_time_next_btn_id,
+	.mpwpb-static-template .sidebar .mpwpb_popup .next_date_area #mpwpb_show_hide_staff_member{
+		flex:1 1 100%;min-height:48px;
+	}
 }
 
 /* -------------------------------------------------------------------- *

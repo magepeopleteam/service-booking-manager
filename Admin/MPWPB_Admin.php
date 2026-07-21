@@ -74,6 +74,10 @@
 				}
 				//****************Native (non-WooCommerce) Checkout*********************** */
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Native_Order.php';
+				// Free, basic Orders screen for native orders -- self-gates to
+				// "Pro inactive AND WooCommerce mode off" so it never collides with
+				// Pro's own Order List or WooCommerce's Orders screen.
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Native_Order_List.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Native_Checkout_Settings.php';
 				//****************GDPR*********************** */
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Gdpr_Settings.php';
@@ -85,6 +89,9 @@
 				// appends after every other item above (Service List/Coupons/
 				// Status/Reviews/Staff Members/Settings/Analytics), landing last.
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Pro_Locked_Menus.php';
+				// Modern "Upgrade to Pro" admin notice -- self-gates to Pro-inactive
+				// and only renders on this plugin's own screens.
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Pro_Upsell_Notice.php';
 			}
 			public function flush_rewrite() {
 				flush_rewrite_rules();

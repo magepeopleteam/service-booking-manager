@@ -1130,8 +1130,19 @@ div.registration_tab_item {
 }
 @media only screen and (min-width: 768px) {
   .mpwpb-static-template .sidebar {
-    width: 30%;
     padding-bottom: 10px;
+  }
+}
+/* The booking widget only becomes a real 30%-wide side column once the parent
+   `main` actually switches to a row at >=1024px (see `.mpwpb_registration main`
+   and `.mpwpb-static-template .main` above, both keyed to 1024px). Applying
+   width:30% from 768px — while `main` is still flex-direction:column and
+   `.main` is width:100% — squeezed the entire booking widget into a narrow
+   30% strip on tablet portrait (768–1023px). Keeping it full-width until the
+   layout is genuinely two-column fixes that. */
+@media only screen and (min-width: 1024px) {
+  .mpwpb-static-template .sidebar {
+    width: 30%;
   }
 }
 .mpwpb-static-template .sidebar [class*=_mpBtn] {
@@ -1489,12 +1500,12 @@ div.registration_tab_item {
    align-items:stretch), so it's already stretched to match the much taller
    .main content column's height, giving the sticky widget plenty of room to
    follow scroll without any scroll-listener/left-offset JS. Scoped to
-   min-width:768px, the actual breakpoint where .sidebar becomes a real side
-   column (see the later, higher-priority .mpwpb-static-template .sidebar
-   rule below that wins over the dead 1024px one above it) -- on mobile the
-   widget is already collapsed behind the #mpwpb_mobile_booking_mobile
-   toggle instead. */
-@media (min-width: 768px) {
+   min-width:1024px, the actual breakpoint where .sidebar becomes a real side
+   column (see the .mpwpb-static-template .sidebar width:30% rule above) -- on
+   tablet/mobile the widget is a full-width stacked block (or collapsed behind
+   the #mpwpb_mobile_booking_mobile toggle at <=600px), where sticking a
+   full-width element to the top would just cover the content below it. */
+@media (min-width: 1024px) {
   .mpwpb-static-template .sidebar .mpwpb_static_area.mpwpb-sticky-enabled {
     position: sticky;
     top: 50px;
@@ -2063,7 +2074,11 @@ button.mpwpb_service_button.mActive:hover{
     width: 100%;
     padding-bottom: 10px;
 }
-@media only screen and (min-width: 768px) {
+/* Matches the width:30% breakpoint above: the booking widget only becomes a
+   30% side column at >=1024px, where the parent `main` is actually a two-
+   column row. Below that it stays full-width (was squeezed to 30% on tablet
+   portrait, 768–1023px, while still stacked). */
+@media only screen and (min-width: 1024px) {
   .mpwpb-static-template .sidebar
   {
       width: 30%;

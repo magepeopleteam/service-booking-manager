@@ -895,7 +895,20 @@
 					exit;
 				}
 				if ($is_ajax_submit) {
-					wp_send_json_success(['redirect' => $redirect['url']]);
+					// Offline bookings are already confirmed server-side above, so
+					// their confirmation can render straight into the booking drawer
+					// -- return the exact same thank-you markup the standalone
+					// confirmation page uses (built from the order's stored
+					// mpwpb_line_items, so the just-cleared cart doesn't matter).
+					// Stripe/PayPal must still send the customer to the gateway's
+					// hosted page, so they only receive the redirect URL.
+					$response = ['redirect' => $redirect['url']];
+					if ($gateway !== 'stripe' && $gateway !== 'paypal') {
+						ob_start();
+						$this->render_thank_you($order_id);
+						$response['inline_html'] = ob_get_clean();
+					}
+					wp_send_json_success($response);
 				}
 				wp_safe_redirect($redirect['url']);
 				exit;
