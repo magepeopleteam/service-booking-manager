@@ -197,14 +197,14 @@
 			}
 		});
 
-		// On the Checkout step, Custom Payment mode's native billing form
+		// On the Checkout step, the native (non-WooCommerce) billing form
 		// already renders its own full booking recap (MPWPB_Native_Checkout::
-		// render_booking_recap(), the .mpwpb-checkout-summary block) -- this
-		// footer widget would just be a duplicate of it there, so skip it in
-		// that one case. Still shown on Checkout for WooCommerce mode (no
-		// recap of its own) and on the Date & Time step either way.
-		var isCustomCheckoutStep = step === 'checkout' && typeof mpwpb_ajax !== 'undefined' && mpwpb_ajax.is_custom_payment_mode;
-		if (!rowsList.length || step === 'service' || isCustomCheckoutStep) {
+		// render_booking_recap()) -- this footer widget would just duplicate it
+		// there, so skip it for every native checkout (offline/Stripe/PayPal,
+		// Pro or free), not only the Pro "custom" mode. Still shown on Checkout
+		// for WooCommerce mode (no recap of its own) and on Date & Time either way.
+		var isNativeCheckoutStep = step === 'checkout' && typeof mpwpb_ajax !== 'undefined' && !mpwpb_ajax.is_wc_payment_mode;
+		if (!rowsList.length || step === 'service' || isNativeCheckoutStep) {
 			$container.empty().hide();
 			return;
 		}

@@ -22,13 +22,22 @@
 			}
 
             public function mpwpb_progress_bar_callback( $service_id, $is_active ) {
+				// Step ids match exactly what mpwpb_registration.js drives via
+				// mpwpb_set_progress() (service | date_time | staff | checkout |
+				// confirmation). "Staff" is only a real step when this service has
+				// staff selection enabled, so it's rendered conditionally -- omit
+				// it and the flow is a clean Service -> Date & Time -> Checkout ->
+				// Confirmation. The old Billing/Payment split never matched the
+				// actual single-panel checkout and left the bar out of sync.
 				$steps = [
 					'mpwpb_progress_service' => esc_html__('Service', 'service-booking-manager'),
 					'mpwpb_progress_date_time' => esc_html__('Date & Time', 'service-booking-manager'),
-					'mpwpb_progress_billing' => esc_html__('Billing', 'service-booking-manager'),
-					'mpwpb_progress_payment' => esc_html__('Payment', 'service-booking-manager'),
-					'mpwpb_progress_confirmation' => esc_html__('Confirmation', 'service-booking-manager'),
 				];
+				if ( MPWPB_Global_Function::get_post_info( $service_id, 'mpwpb_staff_member_add', 'no' ) === 'on' ) {
+					$steps['mpwpb_progress_staff'] = esc_html__('Staff', 'service-booking-manager');
+				}
+				$steps['mpwpb_progress_checkout'] = esc_html__('Checkout', 'service-booking-manager');
+				$steps['mpwpb_progress_confirmation'] = esc_html__('Confirmation', 'service-booking-manager');
                 ?>
 				<div class="mpwpb_cart_progress_wrapper" aria-label="<?php esc_attr_e('Booking progress', 'service-booking-manager'); ?>">
 					<?php foreach ($steps as $step_id => $label) { ?>

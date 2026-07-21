@@ -621,7 +621,9 @@ function mpwpb_price_calculation($this) {
         mpwpb_all_content_change($this);
     });
     $(document).on('click', 'div.mpwpb_registration .mpwpb_service_next', function () {
-        $("#mpwpb_progress_date_time").addClass('active');
+        // Progress is set by load_date_time_tab() below (only when a service is
+        // actually selected) via mpwpb_set_progress() -- not here, or it would
+        // advance the bar even when the "select a service" alert fires.
         let parent = $(this).closest('div.mpwpb_registration');
         let mpwpb_service = {};
         let service_count = 0;
@@ -669,12 +671,31 @@ function mpwpb_price_calculation($this) {
     // its own copy of this show/hide logic -- the summary is deliberately
     // hidden on the Service step (the tree above it already shows what's
     // selected) and only shown from Date & Time onward.
+    // Single source of truth for the top step bar. Given the current step key
+    // (service | date_time | staff | checkout | confirmation) it marks every
+    // segment before the current one as completed (.is-done), the current one
+    // .active (the only one that shows its caption -- see
+    // mpwpb-service-page-modern.css), and clears the rest. Centralising this
+    // fixes the old scattered add/removeClass calls that referenced step ids
+    // which weren't always rendered (e.g. #mpwpb_progress_checkout), leaving
+    // the bar stuck showing earlier captions with no active segment.
+    function mpwpb_set_progress(parent, key) {
+        var $steps = parent.find('.mpwpb_cart_progress_step');
+        if (!$steps.length) { return; }
+        var $current = parent.find('#mpwpb_progress_' + key);
+        if (!$current.length) { return; }
+        var currentIndex = $steps.index($current);
+        $steps.each(function (i) {
+            $(this).removeClass('active is-done')
+                .addClass(i < currentIndex ? 'is-done' : (i === currentIndex ? 'active' : ''));
+        });
+    }
     function load_date_time_tab(parent) {
         parent.find('.mpwpb_date_time_area,.next_date_area').slideDown(350);
         parent.find('.all_service_area,.mpwpb_order_proceed_area,.next_service_area').slideUp(300)
         mpwpb_load_bg_image();
         parent.data('mpwpbStep', 'date_time');
-        parent.find('#mpwpb_progress_billing,#mpwpb_progress_payment,#mpwpb_progress_confirmation').removeClass('active');
+        mpwpb_set_progress(parent, 'date_time');
         if (typeof updateSelectedSummary === 'function') { updateSelectedSummary(parent); }
     }
     function load_service_tab(parent) {
@@ -682,7 +703,7 @@ function mpwpb_price_calculation($this) {
         parent.find('.mpwpb_date_time_area,.mpwpb_order_proceed_area,.next_date_area').slideUp(300);
         mpwpb_load_bg_image();
         parent.data('mpwpbStep', 'service');
-        parent.find('#mpwpb_progress_date_time,#mpwpb_progress_billing,#mpwpb_progress_payment,#mpwpb_progress_confirmation').removeClass('active');
+        mpwpb_set_progress(parent, 'service');
         if (typeof updateSelectedSummary === 'function') { updateSelectedSummary(parent); }
     }
     function load_order_proceed_tab(parent) {
@@ -690,6 +711,7 @@ function mpwpb_price_calculation($this) {
         parent.find('.all_service_area,.mpwpb_date_time_area,.next_date_area,.next_service_area').slideUp(300)
         mpwpb_load_bg_image();
         parent.data('mpwpbStep', 'checkout');
+        mpwpb_set_progress(parent, 'checkout');
         if (typeof updateSelectedSummary === 'function') { updateSelectedSummary(parent); }
     }
     //==========date============//
@@ -741,7 +763,32 @@ function mpwpb_price_calculation($this) {
 
         if (date) {
 
-            $("#mpwpb_progress_checkout").addClass('active');
+            // No payment method configured (no WooCommerce gateway, no native
+            // payment set up) -- there's nothing to complete the booking against,
+            // so stop here with a clear message instead of taking the customer
+            // into an unusable checkout. The server enforces the same block.
+            if (!mpwpb_ajax.has_payment_method) {
+                mpwpb_set_progress(parent, 'checkout');
+                load_order_proceed_tab(parent);
+                var isBookingAdmin = !!mpwpb_ajax.is_booking_admin;
+                // Customers only ever see the short friendly line -- never the
+                // admin/technical wording. Admins additionally get a button
+                // straight to the payment settings so they can fix it in place.
+                var noPayMsg = isBookingAdmin ? mpwpb_ajax.no_payment_admin : mpwpb_ajax.no_payment_customer;
+                var noPayHtml = '<div class="mpwpb-checkout-embed"><div class="mpwpb-checkout-nopay' +
+                    (isBookingAdmin ? ' mpwpb-checkout-nopay--admin' : '') + '">' +
+                    '<i class="fas fa-' + (isBookingAdmin ? 'exclamation-circle' : 'clock') + '"></i>' +
+                    '<p>' + $('<div>').text(noPayMsg).html() + '</p>';
+                if (isBookingAdmin && mpwpb_ajax.payment_settings_url) {
+                    noPayHtml += '<a class="mpwpb-checkout-nopay-btn" href="' + mpwpb_ajax.payment_settings_url + '" target="_blank" rel="noopener">' +
+                        '<i class="fas fa-cog"></i> ' + $('<div>').text(mpwpb_ajax.payment_settings_label || 'Go to Payment Settings').html() + '</a>';
+                }
+                noPayHtml += '</div></div>';
+                parent.find('.mpwpb_order_proceed_area').html(noPayHtml);
+                return;
+            }
+
+            mpwpb_set_progress(parent, 'checkout');
 
             let link_id = $(this).attr('data-wc_link_id');
             let mpwpb_category = parent.find('[name="mpwpb_category"]').val();
@@ -783,7 +830,14 @@ function mpwpb_price_calculation($this) {
                     count++;
                 }
             });
-            var isCustomPaymentMode = !!mpwpb_ajax.is_custom_payment_mode;
+            // "Native" = every non-WooCommerce checkout (offline / Stripe /
+            // PayPal, and whether or not Pro is active). The server already
+            // routes all non-WC bookings through MPWPB_Native_Checkout, so the
+            // drawer must render that checkout inline for all of them -- not
+            // only the Pro "custom" mode this was originally gated to
+            // (is_custom_payment_mode), which left free/native setups (WooCommerce
+            // off, Pro off) falling through to the full-page redirect below.
+            var isNativeMode = !mpwpb_ajax.is_wc_payment_mode;
             var isInlineWcMode = !!mpwpb_ajax.is_wc_payment_mode;
             $.ajax({
                 type: 'POST',
@@ -819,10 +873,10 @@ function mpwpb_price_calculation($this) {
                     $nextBtn.data('mpwpb-original-html', $nextBtn.html());
                     $nextBtn.prop('disabled', true).addClass('mpwpb-cta-loading')
                         .html('<i class="fas fa-spinner fa-spin _mR_xs"></i> ' + (mpwpb_ajax.processing_text || 'Please wait...'));
-                    if (isCustomPaymentMode || isInlineWcMode) {
-                        // Custom Payment stays in the same popup afterwards (see the
-                        // success handler below), so ease straight into the Checkout
-                        // step now -- the same smooth slide every other step change
+                    if (isNativeMode || isInlineWcMode) {
+                        // Native/WC checkout stays in the same popup afterwards (see
+                        // the success handler below), so ease straight into the
+                        // Checkout step now -- the same smooth slide every other step change
                         // uses -- instead of freezing the whole screen behind the
                         // full-page loader while mpwpb_add_to_cart (and the native
                         // billing form fetch that follows it) run in the background.
@@ -845,13 +899,14 @@ function mpwpb_price_calculation($this) {
                     }
                 },
                 success: function (data) {
-                    // Custom Payment (WooCommerce off): stay in the same popup and
-                    // load the native billing form into the "Checkout" step instead
-                    // of navigating away -- mpwpb_add_to_cart still returns a URL
-                    // string here (unchanged contract), it's just not used in this
-                    // mode; the cart item it already stored server-side is what the
-                    // fetched form reads.
-                    if (isCustomPaymentMode) {
+                    // Native checkout (WooCommerce off -- offline/Stripe/PayPal,
+                    // Pro or free): stay in the same popup and load the native
+                    // billing form into the "Checkout" step instead of navigating
+                    // away -- mpwpb_add_to_cart still returns a URL string here
+                    // (unchanged contract), it's just not used in this mode; the
+                    // cart item it already stored server-side is what the fetched
+                    // form reads.
+                    if (isNativeMode) {
                         mpwpb_load_native_checkout_form(parent);
                     } else if (isInlineWcMode) {
 						if (typeof data === 'string' && data.indexOf('wp-login.php') !== -1) {
@@ -876,7 +931,7 @@ function mpwpb_price_calculation($this) {
 					} else {
 						alert(message);
 					}
-                    if (isCustomPaymentMode || isInlineWcMode) {
+                    if (isNativeMode || isInlineWcMode) {
                         parent.find('.mpwpb_order_proceed_area').css('min-height', '');
                         mpwpb_loaderRemove(parent.find('.mpwpb_order_proceed_area'));
                     } else {
@@ -1060,7 +1115,7 @@ function mpwpb_price_calculation($this) {
                 checkoutFinished = true;
                 $form.find('.mpwpb-inline-wc-checkout-content').html(response.data.html);
                 $form.show().attr('aria-busy', 'false');
-                parent.find('#mpwpb_progress_billing').addClass('active');
+                mpwpb_set_progress(parent, 'checkout');
                 parent.find('.popupFooter').addClass('mpwpb-inline-checkout-footer-hidden');
                 $(document.body).trigger('init_checkout');
                 $(document.body).trigger('payment_method_selected');
@@ -1121,7 +1176,7 @@ function mpwpb_price_calculation($this) {
 			$target.attr('aria-busy', 'false');
             parent.data('mpwpbStep', 'confirmation');
             parent.find('.popupFooter').addClass('mpwpb-inline-checkout-footer-hidden');
-            parent.find('.mpwpb_cart_progress_step').addClass('active');
+            mpwpb_set_progress(parent, 'confirmation');
             var cleanUrl = window.location.href.replace(/([?&])(mpwpb_inline_order|key)=[^&#]*/g, '$1').replace(/[?&]$/, '');
             window.history.replaceState({}, document.title, cleanUrl);
 			$confirmation.find('h2, .woocommerce-order-overview').first().attr('tabindex', '-1').trigger('focus');
@@ -1143,8 +1198,7 @@ function mpwpb_price_calculation($this) {
         }
         $form.find('[data-inline-stage="billing"]').prop('hidden', true);
         $form.find('[data-inline-stage="payment"]').prop('hidden', false);
-        $parent.find('#mpwpb_progress_billing').addClass('active');
-        $parent.find('#mpwpb_progress_payment').addClass('active');
+        mpwpb_set_progress($parent, 'checkout');
         $(document.body).trigger('update_checkout');
         $form.find('[data-inline-stage="payment"] h3').first().attr('tabindex', '-1').trigger('focus');
     });
@@ -1253,7 +1307,22 @@ function mpwpb_price_calculation($this) {
         $error.hide().text('');
         $btn.prop('disabled', true);
         $.post(mpwpb_ajax.ajax_url, $form.serialize()).done(function (response) {
-            if (response && response.success && response.data && response.data.redirect) {
+            if (response && response.success && response.data && response.data.inline_html) {
+                // Offline bookings complete server-side immediately, so the
+                // confirmation renders straight into the drawer (same Checkout
+                // step area the form occupied) instead of navigating to a
+                // separate thank-you page -- a fully in-drawer flow end to end.
+                mpwpb_gdpr_save_billing_cookie($form);
+                var $proceed = parent.find('.mpwpb_order_proceed_area');
+                $proceed.html(response.data.inline_html);
+                parent.data('mpwpbStep', 'confirmation');
+                mpwpb_set_progress(parent, 'confirmation');
+                // No footer recap on the confirmation screen -- the inline
+                // thank-you already shows the full booking summary.
+                parent.find('#mpwpb_selected_summary').empty().hide();
+                parent.find('.mpwpb_popup_body').scrollTop(0);
+            } else if (response && response.success && response.data && response.data.redirect) {
+                // Stripe/PayPal must hand off to the gateway's own hosted page.
                 mpwpb_gdpr_save_billing_cookie($form);
                 window.location.href = response.data.redirect;
             } else {
@@ -1309,8 +1378,9 @@ function mpwpb_price_calculation($this) {
         $("#mpwpb_datetime_holder").fadeIn();
         $("#mpwpb_display_service_btn").fadeIn();
 
-        $("#mpwpb_progress_staff").removeClass('active');
-        $("#mpwpb_progress_checkout").removeClass('active');
+        // Back from the Staff sub-step to Date & Time (visibility-only toggle,
+        // no load_* call here) -- move the bar back accordingly.
+        mpwpb_set_progress($(this).closest('div.mpwpb_registration'), 'date_time');
     });
 
     $(document).on('click', '#mpwpb_show_hide_staff_member', function () {
@@ -1327,7 +1397,7 @@ function mpwpb_price_calculation($this) {
             .html('<i class="fas fa-spinner fa-spin _mR_xs"></i> ' + (mpwpb_ajax.processing_text || 'Please wait...'));
 
         $("#mpwpb_date_time_next_btn_id").fadeIn();
-        $("#mpwpb_progress_staff").addClass('active');
+        mpwpb_set_progress($(this).closest('div.mpwpb_registration'), 'staff');
         $("#mpwpb_datetime_holder").hide();
         $("#mpwpb_staff_member_booking_area").fadeIn();
 
@@ -1370,13 +1440,10 @@ function mpwpb_price_calculation($this) {
 
         $("#mpwpb_staff_member_booking").val( staffId );
 
-        // Only one progress circle should read as "active" at a time --
-        // #mpwpb_progress_staff was turned on when this step was entered
-        // (#mpwpb_show_hide_staff_member click handler) and never turned
-        // back off, so picking a staff member used to leave both Staff and
-        // Checkout marked active simultaneously.
-        $("#mpwpb_progress_staff").removeClass('active');
-        $("#mpwpb_progress_checkout").addClass('active');
+        // Picking a staff member only reveals the "Proceed to Checkout" button;
+        // it doesn't advance to the Checkout step yet, so the bar stays on Staff
+        // (mpwpb_set_progress moves it to Checkout when Proceed is clicked).
+        mpwpb_set_progress($(this).closest('div.mpwpb_registration'), 'staff');
     });
 
     $(document).on('click', '#mpwpb_mobile_booking_mobile', function () {

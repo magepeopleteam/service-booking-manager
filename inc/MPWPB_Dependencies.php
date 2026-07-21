@@ -158,6 +158,21 @@
 					// popup instead of leaving it (Custom Payment, WooCommerce off).
 					'is_custom_payment_mode' => MPWPB_Global_Function::is_custom_payment_mode(),
 					'is_wc_payment_mode' => MPWPB_Global_Function::is_wc_payment_mode(),
+					// True only when a real payment method is set up (WooCommerce with
+					// an enabled gateway, or a configured native/custom method). When
+					// false the "Proceed to Checkout" step is blocked front-end-side
+					// with a clear message (the server enforces the same in
+					// MPWPB_Woocommerce::mpwpb_add_to_cart()).
+					'has_payment_method' => MPWPB_Global_Function::has_functional_payment_method(),
+					'is_booking_admin' => current_user_can('manage_options'),
+					// Customers never see the technical/admin wording -- only this
+					// short, friendly line. Admins get the actionable message plus a
+					// button straight to the Payment Method settings section (URL only
+					// exposed to users who can actually manage it).
+					'no_payment_customer' => esc_html__('Online booking is temporarily unavailable. Please contact us and we\'ll be glad to complete your booking.', 'service-booking-manager'),
+					'no_payment_admin' => esc_html__('No payment method is configured. Activate WooCommerce (with a payment gateway) or set up a native payment method to accept bookings.', 'service-booking-manager'),
+					'payment_settings_url' => current_user_can('manage_options') ? esc_url(admin_url('edit.php?post_type=mpwpb_item&page=mpwpb_settings_page#mpwpb_payment_method_settings')) : '',
+					'payment_settings_label' => esc_html__('Go to Payment Settings', 'service-booking-manager'),
 					'booking_error' => esc_html__('The booking could not be completed. Please review your selection and try again.', 'service-booking-manager'),
 				));
 				do_action('add_mpwpb_frontend_script');

@@ -1100,6 +1100,15 @@
 				if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mpwpb_nonce')) {
 					wp_send_json_error(array('message' => esc_html__('Security check failed. Please refresh the page and try again.', 'service-booking-manager')), 403);
 				}
+				// A booking can only be completed when a real payment method is set
+				// up -- either WooCommerce (active, with an enabled gateway) or a
+				// configured native/custom payment method. Without one, there is
+				// nothing to charge or record against, so refuse here rather than
+				// letting an order be created with no payment path. This is the
+				// authoritative gate; the front-end shows a matching message too.
+				if (!MPWPB_Global_Function::has_functional_payment_method()) {
+					wp_send_json_error(array('message' => esc_html__('Online booking is currently unavailable because no payment method is configured. Please contact the site administrator.', 'service-booking-manager')), 400);
+				}
 				$link_id = isset($_POST['link_id']) ? absint($_POST['link_id']) : 0;
 				$service_id = self::resolve_service_id($link_id);
 				$validation = self::validate_booking_request($service_id);
