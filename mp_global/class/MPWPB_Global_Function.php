@@ -669,6 +669,18 @@
 					}
 					return $default;
 				}
+				/**
+				 * Method parity with the ecab-taxi-booking-manager copy of this shared
+				 * class: whichever MagePeople plugin loads first wins the
+				 * MP_Global_Function name, so every copy must expose format_price() or
+				 * plugins that call it fatal when this copy shadows theirs.
+				 */
+				public static function format_price($price) {
+					if (function_exists('wc_price')) {
+						return wc_price($price);
+					}
+					return number_format((float) $price, 2);
+				}
 				public static function wc_price($post_id, $price, $args = array()): string {
 					$num_of_decimal = get_option('woocommerce_price_num_decimals', 2);
 					$args = wp_parse_args($args, array(
