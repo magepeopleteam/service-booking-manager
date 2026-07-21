@@ -306,6 +306,15 @@
 						return $symbol . $formatted;
 				}
 			}
+			/**
+			 * Public, WooCommerce-independent price formatter for a raw amount --
+			 * the native counterpart of wc_price(). Used by the global wc_price()
+			 * fallback shim (see MPWPB_Global_File_Load) so add-ons that call
+			 * wc_price() directly don't fatal when WooCommerce is inactive.
+			 */
+			public static function native_price_html($amount): string {
+				return self::native_format_amount((float) $amount);
+			}
 			private static function native_price_convert_raw($price) {
 				$price = wp_strip_all_tags($price);
 				$symbol = self::native_currency_setting('symbol', '$');

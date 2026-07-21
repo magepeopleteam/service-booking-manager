@@ -682,9 +682,25 @@ function mpwpb_sticky_management() {
             let tabLists = parent.find('.tabLists:first');
             // let tabLists = $(this).find('.mpwpb_add_update_tab:first');
             // Skip groups that already have an active tab so this is safe to call
-            // repeatedly and never disturbs the user's current selection.
+            // repeatedly and never disturbs the user's current selection. Checked
+            // BEFORE the hash below so a late re-run (e.g. window 'load' after a
+            // manual tab click) can never yank the user back to the hashed tab.
             if (tabLists.find('[data-tabs-target].active').length > 0) {
                 return;
+            }
+            // Deep-link support (initial activation only): when the URL hash names
+            // a tab in this group, open it -- taking priority over the remembered/
+            // first tab. This is what lets other screens link straight to a
+            // section, e.g. the front-end "Go to Payment Settings" button pointing
+            // at #mpwpb_payment_method_settings. The hash is validated against a
+            // strict id pattern first so it can never break the attribute selector.
+            let hash = window.location.hash;
+            if (hash && /^#[\w-]+$/.test(hash)) {
+                let $hashTab = tabLists.find('[data-tabs-target="' + hash + '"]');
+                if ($hashTab.length) {
+                    $hashTab.trigger('click');
+                    return;
+                }
             }
             let remembered = mpwpbRecallTab(parent);
             let $target = remembered ? tabLists.find('[data-tabs-target="' + remembered + '"]') : $();

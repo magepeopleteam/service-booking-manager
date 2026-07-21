@@ -810,6 +810,29 @@ span.mpwpb-tree-service-name{padding-left:5px;}
 }
 .mpwpb-checkout-total strong{color:var(--mpwpb_color_theme);font-size:17px;}
 .mpwpb-checkout-empty{color:#64748b;font-size:13.5px;}
+/* Shown in the checkout step when no payment method is configured (see the
+   has_payment_method guard in mpwpb_registration.js). */
+.mpwpb-checkout-nopay{
+	display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;
+	margin:8px 0;padding:26px 20px;border:1px solid #fde68a;border-radius:12px;
+	background:linear-gradient(135deg,#fffbeb,#fffdf7);color:#7c5a1b;
+}
+.mpwpb-checkout-nopay i{
+	font-size:38px;color:#e9a008;
+}
+.mpwpb-checkout-nopay p{margin:0;font-size:13.5px;font-weight:600;line-height:1.5;max-width:420px;}
+/* Customer-facing variant: calm/neutral, no "misconfiguration" alarm colour. */
+.mpwpb-checkout-nopay:not(.mpwpb-checkout-nopay--admin){
+	border-color:#e5e9f0;background:#f8fafc;color:#475569;
+}
+.mpwpb-checkout-nopay:not(.mpwpb-checkout-nopay--admin) i{color:var(--mpwpb_color_theme);}
+.mpwpb-checkout-nopay-btn{
+	display:inline-flex;align-items:center;gap:7px;margin-top:6px;padding:11px 20px;border-radius:10px;
+	background:var(--mpwpb_color_theme);color:#fff !important;font-size:13px;font-weight:700;text-decoration:none;
+	transition:filter .12s ease;
+}
+.mpwpb-checkout-nopay-btn:hover{filter:brightness(.92);color:#fff !important;}
+.mpwpb-checkout-nopay-btn i{font-size:12px;}
 .mpwpb-checkout-error{
 	margin:0;padding:10px 14px;border-radius:9px;background:#fdecea;color:#b32d2e;font-size:13px;font-weight:600;
 }
@@ -1023,6 +1046,13 @@ label.mpwpb-checkout-field{display:inline-block;}
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_step.active{
 	background:var(--mpwpb_color_theme);
+}
+/* Steps already completed stay filled (in the theme colour) but faded, so the
+   bar reads as real progress -- earlier steps done, current step highlighted,
+   later steps still grey. Driven by mpwpb_set_progress() in
+   mpwpb_registration.js (.is-done on every step before the active one). */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_step.is-done{
+	background:var(--mpwpb_color_theme);opacity:.45;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_circle{display:none !important;}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_arrow{display:none !important;}
