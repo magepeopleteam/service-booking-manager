@@ -1048,6 +1048,51 @@ function mpwpb_price_calculation($this) {
         }
     }
 
+    function mpwpb_bind_inline_wc_success($form) {
+        $form.off('checkout_place_order_success.mpwpbInline').on('checkout_place_order_success.mpwpbInline', function (event, result) {
+            var redirect;
+            try {
+                redirect = new URL(result.redirect, window.location.href);
+            } catch (e) {
+                return true;
+            }
+            if (redirect.origin !== window.location.origin) {
+                return true;
+            }
+            var orderId = parseInt(redirect.searchParams.get('mpwpb_inline_order'), 10) || 0;
+            var orderKey = redirect.searchParams.get('key') || '';
+            if (!orderId) {
+                var match = redirect.pathname.match(/order-received\/(\d+)/);
+                orderId = match ? parseInt(match[1], 10) : 0;
+            }
+            if (!orderId || !orderKey) {
+                return true;
+            }
+            mpwpb_show_wc_confirmation($(this).closest('div.mpwpb_registration'), orderId, orderKey);
+            return false;
+        });
+    }
+
+    function mpwpb_reset_inline_wc_submission($form) {
+        $form.data('mpwpbFallbackSubmitting', false).removeClass('processing').attr('aria-busy', 'false');
+        $form.find('#place_order').prop('disabled', false);
+        if (typeof $form.unblock === 'function') {
+            $form.unblock();
+        }
+    }
+
+    function mpwpb_inline_wc_result_message(result) {
+        if (result && result.messages) {
+            var text = $('<div>').html(result.messages).text().replace(/\s+/g, ' ').trim();
+            if (text) {
+                return text;
+            }
+        }
+        return (typeof wc_checkout_params !== 'undefined' && wc_checkout_params.i18n_checkout_error)
+            ? wc_checkout_params.i18n_checkout_error
+            : 'The order could not be processed. Please review your details and try again.';
+    }
+
     function mpwpb_load_wc_checkout_form(parent) {
         var $target = parent.find('.mpwpb_order_proceed_area');
         var $form = $target.find('form.mpwpb-inline-wc-checkout-form');
@@ -1069,6 +1114,7 @@ function mpwpb_price_calculation($this) {
 			}).append('<div class="mpwpb-inline-wc-checkout-content"></div>');
 			$target.empty().append($form);
         }
+        mpwpb_bind_inline_wc_success($form);
 		$target.find('.mpwpb-inline-confirmation-host').remove();
 		$form.show().removeClass('processing').attr('aria-busy', 'true');
         $target.data('mpwpbCheckoutLoading', true);
@@ -1252,6 +1298,8 @@ function mpwpb_price_calculation($this) {
     });
 
     $(document).ready(function () {
+        mpwpb_bind_inline_wc_success($('form.mpwpb-inline-wc-checkout-form'));
+
 		$(document.body).on('checkout_error.mpwpbInline', function () {
 			var $form = $('form.mpwpb-inline-wc-checkout-form:visible').first();
 			if (!$form.length) {
@@ -1265,29 +1313,6 @@ function mpwpb_price_calculation($this) {
 			}
 		});
 
-        $('form.mpwpb-inline-wc-checkout-form').on('checkout_place_order_success.mpwpbInline', function (event, result) {
-            var redirect;
-            try {
-                redirect = new URL(result.redirect, window.location.href);
-            } catch (e) {
-                return true;
-            }
-            if (redirect.origin !== window.location.origin) {
-                return true;
-            }
-            var orderId = parseInt(redirect.searchParams.get('mpwpb_inline_order'), 10) || 0;
-            var orderKey = redirect.searchParams.get('key') || '';
-            if (!orderId) {
-                var match = redirect.pathname.match(/order-received\/(\d+)/);
-                orderId = match ? parseInt(match[1], 10) : 0;
-            }
-            if (!orderId || !orderKey) {
-                return true;
-            }
-            mpwpb_show_wc_confirmation($(this).closest('div.mpwpb_registration'), orderId, orderKey);
-            return false;
-        });
-
         var params = new URLSearchParams(window.location.search);
         var returnOrder = parseInt(params.get('mpwpb_inline_order'), 10) || 0;
         var returnKey = params.get('key') || '';
@@ -1296,8 +1321,85 @@ function mpwpb_price_calculation($this) {
             $('[data-target-popup="#mpwpb_static_popup"]').first().trigger('click');
             load_order_proceed_tab($parent);
             mpwpb_show_wc_confirmation($parent, returnOrder, returnKey);
-        }
+		}
     });
+
+	/*
+	 * WooCommerce captures `form.checkout` once when checkout.js initializes and
+	 * binds submit directly to that collection. If a cached service template is
+	 * missing the persistent form, mpwpb_load_wc_checkout_form() rebuilds it
+	 * later; WooCommerce therefore never sees its submit event and the browser
+	 * navigates directly to ?wc-ajax=checkout, displaying the JSON response.
+	 *
+	 * This delegated handler is only a safety net: a normally initialized WC
+	 * form prevents/stops its submit before it reaches document, while a late
+	 * form reaches this handler and is submitted through the same WC endpoint.
+	 */
+	$(document).on('submit.mpwpbInlineFallback', 'form.mpwpb-inline-wc-checkout-form', function (event) {
+		if (event.isDefaultPrevented()) {
+			return;
+		}
+		event.preventDefault();
+
+		var $form = $(this);
+		var parent = $form.closest('div.mpwpb_registration');
+		if ($form.data('mpwpbFallbackSubmitting')) {
+			return false;
+		}
+		if (typeof wc_checkout_params === 'undefined' || !wc_checkout_params.checkout_url) {
+			mpwpb_inline_notice(parent, 'Checkout is unavailable. Please refresh the page and try again.');
+			return false;
+		}
+
+		mpwpb_bind_inline_wc_success($form);
+		var paymentMethod = $form.find('input[name="payment_method"]:checked').val() || '';
+		var checkoutContext = {
+			$checkout_form: $form,
+			get_payment_method: function () { return paymentMethod; }
+		};
+		if ($form.triggerHandler('checkout_place_order', [checkoutContext]) === false ||
+			(paymentMethod && $form.triggerHandler('checkout_place_order_' + paymentMethod, [checkoutContext]) === false)) {
+			return false;
+		}
+
+		var orderAccepted = false;
+		$form.data('mpwpbFallbackSubmitting', true).addClass('processing').attr('aria-busy', 'true');
+		$form.find('#place_order').prop('disabled', true);
+		$.ajax({
+			type: 'POST',
+			url: wc_checkout_params.checkout_url,
+			data: $form.serialize(),
+			dataType: 'json'
+		}).done(function (result) {
+			if (result && result.result === 'success' && result.redirect) {
+				orderAccepted = true;
+				if ($form.triggerHandler('checkout_place_order_success', [result, checkoutContext]) !== false) {
+					window.location.assign(decodeURI(result.redirect));
+				}
+				return;
+			}
+			if (result && result.reload) {
+				window.location.reload();
+				return;
+			}
+			if (result && result.refresh) {
+				$(document.body).trigger('update_checkout');
+			}
+			mpwpb_inline_notice(parent, mpwpb_inline_wc_result_message(result));
+			$(document.body).trigger('checkout_error');
+		}).fail(function (xhr) {
+			var result = xhr && xhr.responseJSON ? xhr.responseJSON : null;
+			mpwpb_inline_notice(parent, mpwpb_inline_wc_result_message(result));
+			$(document.body).trigger('checkout_error');
+		}).always(function () {
+			// Once WC accepted the order, keep the form locked until the verified
+			// confirmation replaces it; unlocking could create a duplicate order.
+			if (!orderAccepted) {
+				mpwpb_reset_inline_wc_submission($form);
+			}
+		});
+		return false;
+	});
     $(document).on('submit', 'div.mpwpb_registration .mpwpb-checkout-form', function (e) {
         e.preventDefault();
         var $form = $(this);
