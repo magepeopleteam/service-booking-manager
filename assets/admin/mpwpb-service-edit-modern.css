@@ -1,0 +1,646 @@
+/* =====================================================================
+ * Modern Service Editor  ·  mpwpb-service-edit-modern.css
+ * Scoped under .mpwpb-sme (shell) or body.mpwpb-sme-active (WP chrome
+ * takeover) so the classic editor and the rest of wp-admin are never
+ * affected.
+ *
+ * The shell reuses the existing classic section markup for the step
+ * bodies. That markup also carries the legacy `mpwpb_style` class (on the
+ * root) so classic JS (tabs, collapse, sortable, datepicker, icon/image
+ * picker) keeps working; therefore rules that restyle reused elements are
+ * prefixed `.mpwpb-sme.mpwpb_style` to win specificity over the legacy
+ * `div.mpwpb_style ...` rules in mpwpb_plugin_global.css.
+ * ===================================================================== */
+
+.mpwpb-sme{
+	--bg:#eef1f6; --surface:#fff; --inset:#f8fafc;
+	--band:#f1f5f9; --band-line:#e6ebf2;
+	--ink:#0f172a; --ink-2:#475569; --muted:#94a3b8; --line:#e4e9f0;
+	--brand:#2451e0; --brand-600:#1d3fb8; --brand-soft:#eaf0ff; --brand-ring:rgba(36,81,224,.16);
+	--blue:#2451e0; --blue-soft:#eaf0ff; --ok:#16a34a; --ok-soft:#ecfdf3;
+	--shadow-sm:0 1px 2px rgba(15,23,42,.05),0 1px 3px rgba(15,23,42,.04);
+	--radius:14px;
+	font-family:'Inter',system-ui,-apple-system,sans-serif;
+	color:var(--ink-2);font-size:14px;line-height:1.5;
+	-webkit-font-smoothing:antialiased;background:var(--bg);margin:0;
+}
+div#mpwpb-sme{background:#F8FAFC;}
+.mpwpb-sme *,
+.mpwpb-sme *::before,
+.mpwpb-sme *::after{box-sizing:border-box;}
+.mpwpb-sme h1,.mpwpb-sme h2,.mpwpb-sme h3,.mpwpb-sme h4{
+	font-family:'Plus Jakarta Sans','Inter',sans-serif;color:var(--ink);margin:0;
+}
+
+/* -------------------------------------------------------------------- *
+ *  Full-screen takeover (only when modern editor is active) — hides ALL
+ *  WP chrome so the editor takes over the screen edge to edge.
+ * -------------------------------------------------------------------- */
+html.mpwpb-sme-html.wp-toolbar{padding-top:0 !important;}
+html.mpwpb-sme-html,
+body.mpwpb-sme-active{background:#eef1f6 !important;}
+body.mpwpb-sme-active #wpadminbar,
+body.mpwpb-sme-active #adminmenumain,
+body.mpwpb-sme-active #adminmenuback,
+body.mpwpb-sme-active #adminmenuwrap,
+body.mpwpb-sme-active #screen-meta,
+body.mpwpb-sme-active #screen-meta-links,
+body.mpwpb-sme-active #wpfooter,
+body.mpwpb-sme-active .wrap > h1.wp-heading-inline,
+body.mpwpb-sme-active .wrap > .page-title-action,
+body.mpwpb-sme-active .wrap > hr.wp-header-end,
+body.mpwpb-sme-active #post-body-content,
+body.mpwpb-sme-active #postbox-container-1,
+body.mpwpb-sme-active #poststuff #postbox-container-2 .postbox:not(#mpwpb_sme_meta_box_panel){
+	display:none !important;
+}
+body.mpwpb-sme-active #titlediv{position:absolute;left:-9999px;top:-9999px;}
+body.mpwpb-sme-active #wpcontent{margin-left:0 !important;padding-left:0 !important;}
+body.mpwpb-sme-active #wpbody-content{padding:0 !important;float:none;}
+body.mpwpb-sme-active div.wrap{margin:0 !important;padding:0 !important;max-width:none !important;}
+body.mpwpb-sme-active #poststuff{margin:0 !important;padding:0 !important;min-width:0;}
+body.mpwpb-sme-active #poststuff .stuffbox>h3,
+body.mpwpb-sme-active #poststuff h2,
+body.mpwpb-sme-active #poststuff h3.hndle{padding:8px 0px;}
+body.mpwpb-sme-active #post-body{margin:0 !important;padding:0 !important;}
+body.mpwpb-sme-active #post-body.columns-2 #postbox-container-2{width:100% !important;float:none !important;margin:0 !important;}
+body.mpwpb-sme-active #mpwpb_sme_meta_box_panel{border:0;background:transparent;box-shadow:none;margin:0;}
+body.mpwpb-sme-active #mpwpb_sme_meta_box_panel > .postbox-header{display:none;}
+body.mpwpb-sme-active #mpwpb_sme_meta_box_panel > .inside{margin:0;padding:0;}
+
+/* ==================================================================== *
+ *  SHELL (unique class names — no conflict with classic)
+ * ==================================================================== */
+
+/* Topbar */
+.mpwpb-sme__topbar{
+	position:sticky;top:0;z-index:30;
+	background:rgba(255,255,255,.92);backdrop-filter:blur(10px);
+	border-bottom:1px solid var(--line);
+	display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:14px;padding:12px 26px;
+}
+.mpwpb-sme__back{display:inline-flex;align-items:center;gap:6px;color:var(--ink-2);font-weight:500;font-size:13.5px;padding:7px 11px;border-radius:9px;text-decoration:none;}
+.mpwpb-sme__back:hover{background:var(--band);color:var(--ink);}
+.mpwpb-sme__back .dashicons{font-size:17px;width:17px;height:17px;}
+.mpwpb-sme.mpwpb_style .mpwpb-sme__topbar input.mpwpb-sme__ttl-input{
+	justify-self:center;width:460px;min-width:160px;text-align:center;
+	font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:15px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--ink);
+	background:transparent;border:1px solid transparent;border-radius:8px;padding:6px 12px;transition:.15s;box-shadow:none;min-height:0;height:auto;
+}
+.mpwpb-sme.mpwpb_style .mpwpb-sme__topbar input.mpwpb-sme__ttl-input:hover{background:var(--band);}
+.mpwpb-sme.mpwpb_style .mpwpb-sme__topbar input.mpwpb-sme__ttl-input:focus{outline:none;background:#fff;border-color:var(--line);box-shadow:0 0 0 3px var(--brand-ring);text-transform:none;letter-spacing:normal;}
+
+/* Required-field guard (submitForm()'s validateRequiredFields()) -- applied
+   to the topbar/inline title inputs and the Featured Image rail card. */
+input.mpwpb-sme__field-invalid,
+textarea.mpwpb-sme__field-invalid{
+	border-color:#dc2626 !important;
+	background:#fef2f2 !important;
+	box-shadow:0 0 0 3px rgba(220,38,38,.12) !important;
+}
+.mpwpb-sme__rail-card.mpwpb-sme__field-invalid{
+	border-color:#dc2626 !important;
+	box-shadow:0 0 0 3px rgba(220,38,38,.12) !important;
+}
+.mpwpb-sme__acts{justify-self:end;display:flex;align-items:center;gap:10px;}
+
+.mpwpb-sme__local-save{
+	display:inline-flex;align-items:center;gap:7px;min-height:34px;padding:6px 11px;
+	border:1px solid #e2e8f0;border-radius:999px;background:#fff;color:#64748b;
+	font-size:11.5px;font-weight:650;line-height:1.2;white-space:nowrap;box-sizing:border-box;
+}
+.mpwpb-sme__local-save-dot{width:8px;height:8px;border-radius:50%;background:#94a3b8;box-shadow:0 0 0 3px rgba(148,163,184,.14);}
+.mpwpb-sme__local-save.is-saving{border-color:#fde7b2;background:#fffbeb;color:#9a6700;}
+.mpwpb-sme__local-save.is-saving .mpwpb-sme__local-save-dot{background:#f59e0b;box-shadow:0 0 0 3px rgba(245,158,11,.15);animation:mpwpbSmeLocalSaving 1s ease-in-out infinite;}
+.mpwpb-sme__local-save.is-saved{border-color:#ccebd9;background:#f0fdf4;color:#167447;}
+.mpwpb-sme__local-save.is-saved .mpwpb-sme__local-save-dot{background:#22a861;box-shadow:0 0 0 3px rgba(34,168,97,.14);}
+.mpwpb-sme__local-save.is-error{border-color:#fecaca;background:#fef2f2;color:#b42318;}
+.mpwpb-sme__local-save.is-error .mpwpb-sme__local-save-dot{background:#dc2626;box-shadow:0 0 0 3px rgba(220,38,38,.12);}
+@keyframes mpwpbSmeLocalSaving{50%{opacity:.38;transform:scale(.82);}}
+
+.mpwpb-sme__status-pill{display:inline-flex;align-items:center;line-height:1.2;font-size:12.5px;font-weight:700;padding:9px 14px;border-radius:999px;box-sizing:border-box;}
+.mpwpb-sme__status-pill.is-published{background:var(--ok-soft);color:var(--ok);}
+.mpwpb-sme__status-pill.is-draft{background:#f1f5f9;color:var(--muted);}
+
+.mpwpb-sme__btn{
+	font-family:inherit;font-size:13.5px;font-weight:600;cursor:pointer;border-radius:10px;
+	padding:9px 16px;border:1px solid var(--line);background:#fff;color:var(--ink-2);
+	display:inline-flex;align-items:center;gap:7px;transition:.15s;line-height:1.2;text-decoration:none;height:auto;
+}
+.mpwpb-sme__btn:hover{background:var(--band);color:var(--ink);}
+.mpwpb-sme__btn:disabled{opacity:.45;cursor:not-allowed;}
+.mpwpb-sme__btn--primary,
+.mpwpb-sme__btn--primary:hover{
+	background:linear-gradient(135deg,var(--brand),var(--brand-600));color:#fff;border-color:transparent;box-shadow:0 6px 16px var(--brand-ring);
+}
+.mpwpb-sme__btn--primary:hover{filter:brightness(1.05);}
+
+/* Update/Publish split button — primary action + caret opening one
+   status-flip option ("Switch to Draft" / "Save Draft") + Classic editor. */
+.mpwpb-sme__split{position:relative;display:inline-flex;}
+.mpwpb-sme__split .mpwpb-sme__btn--primary{border-radius:10px 0 0 10px;}
+button.mpwpb-sme__btn.mpwpb-sme__btn--primary.mpwpb-sme__split-caret{border-radius:0 10px 10px 0;}
+.mpwpb-sme__split-caret{padding:9px 10px;border-left:1px solid rgba(255,255,255,.35);}
+.mpwpb-sme__split-caret .dashicons{font-size:16px;width:16px;height:16px;}
+.mpwpb-sme__split-menu{
+	position:absolute;top:calc(100% + 6px);right:0;z-index:40;min-width:180px;
+	background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 28px rgba(15,23,42,.14);
+	padding:6px;
+}
+.mpwpb-sme__split-menu[hidden]{display:none;}
+.mpwpb-sme__split-menu-item{
+	display:block;width:100%;text-align:left;font-family:inherit;font-size:13px;font-weight:600;
+	padding:9px 12px;border-radius:7px;border:none;background:transparent;color:var(--ink-2);cursor:pointer;
+}
+.mpwpb-sme__split-menu-item:hover{background:var(--band);color:var(--ink);}
+
+/* Wrap + stepper */
+.mpwpb-sme__wrap{max-width:1440px;margin:0 auto;padding:26px;}
+.mpwpb-sme__stepper{display:flex;align-items:flex-start;justify-content:center;background:#FEFEFF;border-bottom:1px solid var(--line);padding:14px 26px;margin:0;position:sticky;top:57px;z-index:29;box-shadow:0 4px 20px -2px rgba(0,0,0,0.03);}
+.mpwpb-sme__payment-notice{text-align:center;background:#fef3c7;color:#b45309;font-size:13px;font-weight:600;padding:10px 26px;}
+.mpwpb-sme__payment-notice-link{color:#b45309;text-decoration:underline;}
+.mpwpb-sme__payment-notice-link:hover{color:#92400e;}
+.mpwpb-sme__rail-payment-warning{margin:12px 0 0;padding:5px 20px !important;border-radius:10px;border:1px solid #ddd;background:#fef3c7;color:#b45309;font-size:12px;font-weight:600;line-height:1.5;text-align:right;width:100%;}
+.mpwpb-sme__rail-payment-warning a{color:#b45309;text-decoration:underline;font-weight:700;}
+.mpwpb-sme__rail-payment-warning a:hover{color:#92400e;}
+.mpwpb-sme__rail-payment-link{display:block !important;margin:12px 0 0 auto !important;padding:5px 20px !important;border-radius:10px;border:1px solid #ddd;background:#f6f7f7;font-size:12px;font-weight:600;line-height:1.5;text-align:right !important;width:70% !important;}
+.mpwpb-sme__rail-payment-link a{color:var(--brand,#2451e0);text-decoration:underline;font-weight:700;}
+.mpwpb-sme__rail-payment-link a:hover{color:#1a3aa8;}
+.mpwpb-sme__payment-modal{position:fixed;inset:0;background:rgba(15,23,42,.68);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);z-index:100001;align-items:center;justify-content:center;padding:24px;}
+.mpwpb-sme__payment-modal-box{position:relative;background:#f8fafc;border:1px solid rgba(255,255,255,.72);border-radius:20px;max-width:800px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 30px 80px rgba(15,23,42,.32),0 8px 24px rgba(15,23,42,.16);}
+.mpwpb-sme__payment-modal-box::before{content:"";position:absolute;top:0;left:0;right:0;z-index:3;height:5px;background:linear-gradient(90deg,#315bdc 0%,#6366f1 52%,#8b5cf6 100%);}
+.mpwpb-sme__payment-modal-head{display:flex;align-items:center;justify-content:space-between;padding:23px 26px 19px;border-bottom:1px solid #e5eaf2;position:sticky;top:0;background:linear-gradient(145deg,#f8faff 0%,#fff 70%);z-index:2;}
+.mpwpb-sme__payment-modal-head h2{margin:0;font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:17px;font-weight:750;color:#172033;letter-spacing:-.01em;}
+.mpwpb-sme__payment-modal-close{display:grid;place-items:center;width:34px;height:34px;min-height:0;border:1px solid #dce3ee;border-radius:10px;background:#fff;font-size:20px;line-height:1;cursor:pointer;color:#64748b;padding:0;transition:.15s;}
+.mpwpb-sme__payment-modal-close:hover{border-color:#cbd5e1;background:#f3f6fa;color:#172033;transform:rotate(4deg);}
+.mpwpb-sme__payment-modal-body{padding:24px;background:#f8fafc;}
+@media(max-width:760px){.mpwpb-sme__payment-modal{padding:12px;}.mpwpb-sme__payment-modal-head{padding:20px 18px 16px;}.mpwpb-sme__payment-modal-body{padding:16px;}}
+.mpwpb-sme__step{display:flex;flex-direction:column;align-items:center;gap:6px;flex:0 0 auto;text-align:center;cursor:pointer;}
+.mpwpb-sme__num{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:14px;background:#d1d5db;border:none;color:#fff;transition:.2s;}
+.mpwpb-sme__lab{font-size:12px;font-weight:500;color:#9ca3af;margin-top:2px;}
+.mpwpb-sme__step.done .mpwpb-sme__num{background:var(--brand);color:#fff;}
+.mpwpb-sme__step.done .mpwpb-sme__lab{color:#374151;}
+.mpwpb-sme__step.active .mpwpb-sme__num{background:var(--brand);color:#fff;box-shadow:0 0 0 4px var(--brand-ring);}
+.mpwpb-sme__step.active .mpwpb-sme__lab{color:#111827;font-weight:600;}
+.mpwpb-sme__conn{flex:0 0 150px;height:2px;background:#d1d5db;margin-top:17px;}
+.mpwpb-sme__conn.done{background:var(--brand);}
+
+/* Panels + cards */
+.mpwpb-sme__panel{display:none;}
+.mpwpb-sme__panel.active{display:block;animation:mpwpbSmeFade .25s ease;}
+/* Opacity-only (no transform): a transformed ancestor becomes the
+   containing block for any position:fixed descendant (e.g. the FAQ
+   modal's centered overlay), which would break its viewport-relative
+   centering for the animation's duration. */
+@keyframes mpwpbSmeFade{from{opacity:0;}to{opacity:1;}}
+.mpwpb-sme__postfields{background:#fff;border:1px solid #e2e8f0;border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:visible;margin-bottom:22px;}
+.mpwpb-sme__postfields-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 24px;border-bottom:1px solid var(--band-line);background:#e7f0fd;border-radius:var(--radius) var(--radius) 0 0;}
+.mpwpb-sme__postfields-header-text{min-width:0;}
+.mpwpb-sme__postfields-header-title{font-size:15px;font-weight:700;color:var(--ink);}
+.mpwpb-sme__postfields-header-sub{font-size:12.5px;color:var(--muted);margin-top:3px;}
+.mpwpb-sme__postfields-header-actions{flex:0 0 auto;}
+.mpwpb-sme__postfields-header-actions:empty{display:none;}
+.mpwpb-sme__postfields-body{padding:20px 24px;}
+
+/* Basic Information (title / Service Title / Service Sub Title / Service Overview) subsection */
+.mpwpb-sme__subsection-label{display:flex;flex-direction:column;gap:3px;margin-bottom:8px;}
+.mpwpb-sme__subsection-label label{font-size:13.5px;font-weight:700;color:var(--ink);}
+.mpwpb-sme__subsection-label ~ .mpwpb-sme__subsection-label{margin-top:18px;}
+.mpwpb-sme__postfields-body #mpwpb-sme-title-inline{width:100%;}
+.mpwpb-sme__content-slot{margin-top:4px;}
+.mpwpb-sme__content-slot #wp-mpwpb_service_overview_content-wrap{border-color:var(--line);}
+
+/* Service Title / Service Sub Title — the classic input/textarea carry no
+   .formControl class (untouched shared markup), so styled by name here. */
+.mpwpb-sme__field-slot{margin-top:4px;}
+.mpwpb-sme__field-slot input[name="mpwpb_shortcode_title"],
+.mpwpb-sme__field-slot textarea[name="mpwpb_shortcode_sub_title"]{
+	width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 15px;
+	font-size:14px;font-family:inherit;line-height:1.4;color:var(--ink);background:#fff;box-shadow:none;
+}
+.mpwpb-sme__field-slot textarea[name="mpwpb_shortcode_sub_title"]{resize:vertical;min-height:70px;}
+.mpwpb-sme__field-slot input[name="mpwpb_shortcode_title"]:focus,
+.mpwpb-sme__field-slot textarea[name="mpwpb_shortcode_sub_title"]:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-ring);}
+
+/* The modern editor doesn't use WordPress' native post_content editor
+   (Service Overview above replaces it in this UI) — hidden via CSS so
+   there's no flash of the un-styled native editor before JS relocates
+   the rest of the panel. Classic mode still renders/edits it normally. */
+body.mpwpb-sme-active #postdivrich{display:none;}
+
+/* Body = main column + sticky preview rail */
+.mpwpb-sme__body{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:24px;align-items:start;}
+.mpwpb-sme__main{min-width:0;}
+.mpwpb-sme__rail{position:sticky;top:84px;z-index:5;display:flex;flex-direction:column;gap:18px;}
+.mpwpb-sme__rail-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;}
+
+/* Featured Image card — title, big preview, text-link actions. */
+.mpwpb-sme__feat-head{padding:16px 16px 0;font-size:15px;font-weight:800;color:var(--ink);}
+.mpwpb-sme__feat-preview{position:relative;margin:14px 16px 0;height:180px;min-height:140px;border-radius:12px;border:1px solid var(--line);background:#ebebeb;display:grid;place-items:center;color:#cbd5e1;overflow:hidden;}
+.mpwpb-sme__feat-preview img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;}
+.mpwpb-sme__rail-hero-ph{font-size:46px;width:46px;height:46px;opacity:.7;}
+.mpwpb-sme__feat-acts{display:flex;align-items:center;gap:22px;padding:14px 16px 18px;}
+.mpwpb-sme__feat-link{font-family:inherit;font-size:12px !important;font-weight:600;color:var(--blue);background:none;border:0;padding:0;cursor:pointer;}
+.mpwpb-sme__feat-link:hover{text-decoration:underline;}
+.mpwpb-sme__feat-link--rm{color:var(--brand);}
+
+/* Gallery Images card — light header band (title + subtitle + real
+   MPWPB_Custom_Layout::switch_button() toggle), then the classic
+   mpwpb_add_multi_image() thumbnail row + "+ Add Image" pill, restyled to
+   match this card's look. Markup/click handlers are the untouched classic
+   ones (mp_global/assets/admin/mpwpb_admin_settings.js) — only appearance
+   is overridden here, scoped to this card so the classic Gallery tab's own
+   look elsewhere is unaffected. */
+.mpwpb-sme__gallery-head{
+	display:flex;align-items:center;justify-content:space-between;gap:12px;
+	padding:16px;background:linear-gradient(180deg,#fbfcfe,var(--band));border-bottom:1px solid var(--band-line);
+}
+.mpwpb-sme__gallery-head .mpwpb-sme__feat-head{padding:0;}
+.mpwpb-sme__gallery-sub{margin:2px 0 0;font-size:12.5px;font-weight:500;color:#333;}
+.mpwpb-sme__gallery-head .roundSwitch{width:40px;height:22px;}
+.mpwpb-sme__gallery-head .roundSwitch::before{height:18px;width:18px;}
+.mpwpb-sme__gallery-head .roundSwitchLabel input:checked + .roundSwitch{background-color:var(--brand);}
+.mpwpb-sme__gallery-head .roundSwitchLabel input:checked + .roundSwitch::before{transform:translateX(18px);}
+.mpwpb-sme__gallery-body{padding:16px;}
+.mpwpb-sme__gallery-body .mpwpb_multi_image{
+	display:flex;flex-wrap:wrap;gap:10px;margin:0 0 14px;
+}
+.mpwpb-sme__gallery-body .mpwpb_multi_image_item{
+	position:relative;width:calc(25% - 8px);min-width:0;aspect-ratio:1;margin:0;border-radius:10px;overflow:hidden;border:1px solid var(--line);
+}
+.mpwpb-sme__gallery-body .mpwpb_multi_image_item img{width:100%;height:100%;object-fit:cover;display:block;}
+.mpwpb-sme__gallery-body .mpwpb_multi_image_item .mpwpb_remove_multi_image{
+	position:absolute;top:4px;right:4px;width:18px;height:18px;display:flex;align-items:center;justify-content:center;
+	border-radius:50%;background:rgba(15,23,42,.65);color:#fff;font-size:9px;opacity:0;transition:.15s;
+}
+.mpwpb-sme__gallery-body .mpwpb_multi_image_item:hover .mpwpb_remove_multi_image{opacity:1;}
+.mpwpb-sme__gallery-body .add_multi_image{
+	display:flex;align-items:center;justify-content:center;gap:8px;width:100%;
+	background:#fff;border:1px solid var(--line);border-radius:10px;color:var(--ink);
+	font-size:13px;font-weight:600;padding:10px 16px;cursor:pointer;
+}
+.mpwpb-sme__gallery-body .add_multi_image:hover{border-color:var(--brand);color:var(--brand);}
+.mpwpb-sme__gallery-body .add_multi_image .fa-images{
+	display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;
+	border-radius:5px;background:var(--ink);color:#fff;font-size:10px;margin:0 !important;
+}
+
+/* Rail cards gated by step, via the shell's data-step attribute (set in
+   mpwpb-service-edit-modern.js). data-sme-step-only holds a SPACE-SEPARATED
+   list of step ids (e.g. "pricing advanced"), matched with ~= (token match). */
+.mpwpb-sme__rail-card[data-sme-step-only]{display:none;}
+.mpwpb-sme[data-step="general"] .mpwpb-sme__rail-card[data-sme-step-only~="general"],
+.mpwpb-sme[data-step="availability"] .mpwpb-sme__rail-card[data-sme-step-only~="availability"],
+.mpwpb-sme[data-step="pricing"] .mpwpb-sme__rail-card[data-sme-step-only~="pricing"],
+.mpwpb-sme[data-step="advanced"] .mpwpb-sme__rail-card[data-sme-step-only~="advanced"]{display:block;}
+.mpwpb-sme__rail-info-list{padding:6px 16px 14px;}
+.mpwpb-sme__rail-info-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--band-line);}
+.mpwpb-sme__rail-info-row:last-child{border-bottom:0;}
+.mpwpb-sme__rail-info-row > span:first-child{font-size:12px;color:var(--muted);font-weight:600;}
+.mpwpb-sme__rail-info-row strong{font-size:13px;color:var(--ink);font-weight:700;text-align:right;}
+.mpwpb-sme__rail-pill{font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;}
+.mpwpb-sme__rail-pill.is-on{color:var(--ok);background:var(--ok-soft);}
+.mpwpb-sme__rail-pill.is-off{color:var(--muted);background:var(--inset);}
+
+/* Shortcode & Template rail card — Add To Cart shortcode display + the
+   classic mpwpb_template <select> (no .formControl class, styled by name),
+   relocated here from the General Settings card in the main panel. */
+.mpwpb-sme__rail-field-list{padding:8px 16px 16px;display:flex;flex-direction:column;gap:14px;}
+.mpwpb-sme__rail-field-list .label{font-size:12px;margin-bottom:6px;}
+.mpwpb-sme__rail-field-list .shortcode code{
+	display:block;width:100%;padding:8px 10px;background:var(--inset);border:1px solid var(--line);border-radius:8px;
+	font-size:11px;line-height:1.5;color:var(--ink-2);word-break:break-all;white-space:normal;
+}
+.mpwpb-sme__rail-field-list select[name="mpwpb_template"]{
+	width:100%;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:13px;
+	font-family:inherit;color:var(--ink);background:#fff;box-shadow:none;
+}
+.mpwpb-sme__rail-field-list select[name="mpwpb_template"]:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-ring);}
+
+@media(max-width:1100px){
+	.mpwpb-sme__body{grid-template-columns:1fr;}
+	.mpwpb-sme__rail{position:static;flex-direction:row;flex-wrap:wrap;}
+	.mpwpb-sme__rail-card{flex:1 1 240px;}
+}
+
+/* Sticky bottom navbar. Explicit low z-index: position:sticky always
+   creates its own stacking context (even with z-index:auto), and without
+   an explicit value here it can end up compositing above the FAQ modal's
+   overlay (z-index:100010) depending on where that overlay's containing
+   block resolves, cutting the modal off at this bar. */
+.mpwpb-sme__navbar{position:sticky;bottom:0;z-index:5;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border-top:1px solid var(--line);margin-top:8px;}
+.mpwpb-sme__navinner{max-width:1320px;margin:0 auto;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:14px 26px;}
+.mpwpb-sme__stepof{justify-self:center;font-size:13px;color:var(--muted);font-weight:500;}
+.mpwpb-sme__nav-back{justify-self:start;}
+.mpwpb-sme__navinner .mpwpb-sme__btn--primary{justify-self:end;}
+
+/* Toast */
+.mpwpb-sme__toast{position:fixed;bottom:90px;left:54%;transform:translate(-50%,16px);opacity:0;visibility:hidden;pointer-events:none;background:var(--ink);color:#fff;padding:11px 18px;border-radius:12px;font-size:13.5px;font-weight:500;display:flex;align-items:center;gap:9px;box-shadow:0 12px 30px rgba(0,0,0,.25);z-index:100001;transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .3s ease,visibility .3s;}
+.mpwpb-sme__toast.show{transform:translate(-50%,0);opacity:1;visibility:visible;pointer-events:auto;}
+.mpwpb-sme__toast .dashicons{color:#4ade80;}
+
+/* ==================================================================== *
+ *  REUSED MARKUP MAPPING  (prefixed .mpwpb-sme.mpwpb_style to win over
+ *  legacy `div.mpwpb_style ...` rules from mpwpb_plugin_global.css)
+ * ==================================================================== */
+
+/* Hide each reused classic tab's own duplicate <header> title block — the
+   new card wrapper above already supplies a title/subtitle, so the
+   classic markup's own heading is now redundant chrome. (Section subheads
+   further down inside each tab, e.g. <section class="section">, are real
+   content and are left untouched.) */
+.mpwpb-sme.mpwpb_style .tabsItem > header{display:none;}
+.mpwpb-sme.mpwpb_style .tabsItem{display:block;}
+/* Extra Service's card body is now rendered entirely by MPWPB_Extra_Service_Modern
+   (a modern-only list, see mpwpb-extra-service-modern.js) instead of reusing the
+   classic tabsItem markup, so the toggle-slot wrapper just needs to stay out of
+   the flow once JS has relocated the real checkbox up into the card header. */
+.mpwpb-esm-toggle-slot:empty{display:none;}
+
+/* Form controls */
+.mpwpb-sme.mpwpb_style input[type=text],
+.mpwpb-sme.mpwpb_style input[type=number],
+.mpwpb-sme.mpwpb_style input[type=time],
+.mpwpb-sme.mpwpb_style input[type=date],
+.mpwpb-sme.mpwpb_style input[type=email],
+.mpwpb-sme.mpwpb_style input[type=url],
+.mpwpb-sme.mpwpb_style select,
+.mpwpb-sme.mpwpb_style textarea,
+.mpwpb-sme.mpwpb_style .formControl{
+	width:100%;font-family:inherit;font-size:13px;color:var(--ink);background:var(--inset);
+	border:1px solid var(--line);border-radius:10px;padding:10px 15px;transition:.15s;box-shadow:none;line-height:1.4;min-height:0;height:auto;
+}
+.mpwpb-sme.mpwpb_style input:focus,
+.mpwpb-sme.mpwpb_style select:focus,
+.mpwpb-sme.mpwpb_style textarea:focus,
+.mpwpb-sme.mpwpb_style .formControl:focus{outline:none;border-color:var(--brand);background:#fff;box-shadow:0 0 0 3px var(--brand-ring);}
+.mpwpb-sme.mpwpb_style select.formControl,
+.mpwpb-sme.mpwpb_style select{
+	appearance:none;-webkit-appearance:none;
+	background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+	background-repeat:no-repeat;background-position:right 12px center;padding-right:36px;
+}
+.mpwpb-sme.mpwpb_style .max_300,
+.mpwpb-sme.mpwpb_style .max_200,
+.mpwpb-sme.mpwpb_style .max_100{max-width:none;width:auto;}
+
+/* Toggle switch — drive the SAME ::before knob that classic uses (the
+ * classic knob is .roundSwitch::before, so we must override it, not add a
+ * second knob, otherwise the toggle renders doubled). */
+.mpwpb-sme.mpwpb_style .roundSwitchLabel{position:relative;display:inline-block;width:46px;height:26px;flex:none;cursor:pointer;margin:0;vertical-align:middle;}
+.mpwpb-sme.mpwpb_style .roundSwitchLabel input[type="checkbox"]{display:none;opacity:0;width:0;height:0;position:absolute;margin:0;}
+.mpwpb-sme.mpwpb_style .roundSwitch{position:absolute;inset:0;width:46px;height:26px;min-width:0;background:#cbd5e1;border-radius:999px;transition:.2s;display:block;}
+.mpwpb-sme.mpwpb_style .roundSwitch::after{content:none;display:none;}
+.mpwpb-sme.mpwpb_style .roundSwitch::before{content:"";position:absolute;left:3px;top:3px;bottom:auto;width:20px;height:20px;background:#fff;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:.2s;}
+.mpwpb-sme.mpwpb_style .roundSwitchLabel input:checked + .roundSwitch{background:linear-gradient(135deg,var(--brand),#60a5fa);}
+.mpwpb-sme.mpwpb_style .roundSwitchLabel input:checked + .roundSwitch::before{transform:translateX(20px);}
+
+/* Row layout (label + control) — MPWPB's own generic flex/layout utility
+   classes, shared with mpwpb_plugin_global.css across the whole admin. */
+.mpwpb-sme.mpwpb_style [class*="_dFlex_justifyBetween"]{display:flex;justify-content:space-between;align-items:center;gap:16px;}
+.mpwpb-sme.mpwpb_style [class*="_dFlex_fdColumn"]{display:flex;flex-direction:column;gap:2px;}
+.mpwpb-sme.mpwpb_style [class*="_dFlex_alignCenter"]{display:flex;align-items:center;gap:8px;}
+.mpwpb-sme.mpwpb_style .justifyBetween{display:flex;justify-content:space-between;align-items:center;gap:16px;}
+.mpwpb-sme.mpwpb_style .allCenter{display:flex;align-items:center;justify-content:center;gap:8px;}
+.mpwpb-sme.mpwpb_style [class*="_dLayout"]{border:0;background:transparent;padding:0;margin-bottom:20px;}
+.mpwpb-sme.mpwpb_style .label{font-weight:600;color:var(--ink);font-size:13.5px;line-height:1.35;display:block;margin-bottom:6px;}
+.mpwpb-sme.mpwpb_style .label p{margin:0 0 6px;font-weight:600;color:var(--ink);}
+.mpwpb-sme.mpwpb_style section.section{padding:14px 0 6px;border-top:1px solid var(--band-line);margin-top:6px;}
+/* The first section.section in a reused classic tab always just repeats
+   the same title/subtitle already hidden above (.tabsItem > header) — now
+   redundant with the modern card's own header too, so hide it outright. */
+.mpwpb-sme.mpwpb_style section.section:first-of-type{display:none;}
+.mpwpb-sme.mpwpb_style section.section h2{font-size:14px;font-weight:700;color:var(--ink);}
+.mpwpb-sme.mpwpb_style section.section span{font-size:12.5px;color:var(--muted);}
+.mpwpb-sme.mpwpb_style .tabsItem > section:not(.section){margin-bottom:16px;}
+
+/* "Add row" repeater buttons (Particular Dates / Off Dates / Features) */
+.mpwpb-sme.mpwpb_style ._themeButton_xs_mT_xs,
+.mpwpb-sme.mpwpb_style button.mp_add_item,
+.mpwpb-sme.mpwpb_style button.mpwpb_add_item{
+	display:inline-flex;align-items:center;gap:6px;margin-top:10px;
+	padding:7px 14px;border-radius:999px;border:1.5px dashed var(--brand);
+	background:var(--brand);color:#fff;font-size:12.5px;font-weight:600;
+	cursor:pointer;transition:.15s;line-height:1;text-transform:none;
+}
+.mpwpb-sme.mpwpb_style ._themeButton_xs_mT_xs:hover,
+.mpwpb-sme.mpwpb_style button.mp_add_item:hover,
+.mpwpb-sme.mpwpb_style button.mpwpb_add_item:hover{filter:brightness(1.08);}
+
+/* Remove/move row buttons */
+.mpwpb-sme.mpwpb_style .buttonGroup{display:inline-flex;align-items:center;gap:6px;}
+.mpwpb-sme.mpwpb_style .mp_remove_area,
+.mpwpb-sme.mpwpb_style .mpwpb_remove_area{
+	background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;
+}
+
+/* Modal-based CRUD panels (Add New Service / Extra Service / Category / FAQ) —
+   restyle the slide-in without touching mpwpb_admin.js's open/close logic. */
+.mpwpb-sme.mpwpb_style .mpwpb-modal-content{background:#fff;}
+.mpwpb-sme.mpwpb_style .mpwpb-service-card,
+.mpwpb-sme.mpwpb_style .mpwpb_service_card{
+	border:1px solid var(--line);border-radius:12px;background:var(--surface);box-shadow:var(--shadow-sm);
+}
+
+/* Schedule table (Date & Time) */
+.mpwpb-sme.mpwpb_style table{width:100%;border-collapse:collapse;}
+.mpwpb-sme.mpwpb_style table th,
+.mpwpb-sme.mpwpb_style table td{padding:8px 10px;border-bottom:1px solid var(--band-line);text-align:left;font-size:13px;}
+
+/* ==================================================================== *
+ *  Skeleton loaders (removed by JS once a panel/rail card is shown)
+ * ==================================================================== */
+.mpwpb-sme__skel{background:linear-gradient(90deg,#eef1f6 25%,#f6f8fb 37%,#eef1f6 63%);background-size:400% 100%;animation:mpwpbSmeShimmer 1.4s ease infinite;border-radius:6px;}
+@keyframes mpwpbSmeShimmer{0%{background-position:100% 50%;}100%{background-position:0 50%;}}
+.mpwpb-sme__skel-ov{position:absolute;inset:0;background:#fff;padding:22px;z-index:2;transition:opacity .2s ease;}
+.mpwpb-sme__panel--loading{position:relative;min-height:220px;}
+.mpwpb-sme__panel--loading .mpwpb-sme__postfields{visibility:hidden;}
+.mpwpb-sme__rail-card--loading{position:relative;min-height:120px;}
+.mpwpb-sme__rail-card--loading > *:not(.mpwpb-sme__skel-ov){visibility:hidden;}
+.mpwpb-sme__skel-ov.out{opacity:0;pointer-events:none;}
+.mpwpb-sme__rail-card .mpwpb-sme__skel-ov{padding:16px;background:#fff;}
+.mpwpb-sme__skel-card{margin-bottom:20px;}
+.mpwpb-sme__skel-card-hd{height:14px;margin-bottom:14px;}
+.mpwpb-sme__skel-row{display:flex;align-items:center;gap:12px;padding:7px 0;}
+.mpwpb-sme__skel-lbl{height:13px;width:28%;flex-shrink:0;}
+.mpwpb-sme__skel-inp{height:32px;flex:1;border-radius:8px;}
+.mpwpb-sme__skel-block{border-radius:10px;}
+
+#mpwpb_tax_class_row select, #mpwpb_tax_class_row input{margin-top:10px !important; margin-bottom: 10px !important; }
+
+/* Happy Hours Pricing — modern two-part rule builder. The real fields are
+   moved into this layout by mpwpb-service-edit-modern.js; classic mode keeps
+   the original renderer and styling untouched. */
+.mpwpb-sme__postfields[data-sme-section="MPWPB_Happy_Hours_Settings"]{
+	--hh-accent:#7c3aed;--hh-soft:#f5f3ff;--hh-line:#ddd6fe;
+}
+.mpwpb-sme__postfields[data-sme-section="MPWPB_Happy_Hours_Settings"] > .mpwpb-sme__postfields-header{
+	background:linear-gradient(135deg,#f5f3ff 0%,#eef2ff 100%);border-bottom-color:var(--hh-line);
+}
+.mpwpb-sme__postfields[data-sme-section="MPWPB_Happy_Hours_Settings"] .mpwpb-pro-badge{display:inline-block !important;}
+.mpwpb-sme__postfields[data-sme-section="MPWPB_Happy_Hours_Settings"] .roundSwitchLabel{display:inline-flex !important;}
+.mpwpb-sme__postfields[data-sme-section="MPWPB_Happy_Hours_Settings"] .mpwpb-sme__postfields-body{padding:22px 24px 24px;}
+.mpwpb-sme__postfields[data-sme-section="MPWPB_Happy_Hours_Settings"] .tabsItem{margin:0;}
+.mpwpb-sme.mpwpb_style #mpwpb_happy_hours_row.mpwpb-hh{margin:0;}
+.mpwpb-hh__layout{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.mpwpb-hh__group{
+	min-width:0;border:1px solid var(--line);border-radius:14px;background:#fff;overflow:hidden;
+	box-shadow:0 1px 2px rgba(15,23,42,.03);transition:border-color .18s,box-shadow .18s;
+}
+.mpwpb-hh__group:focus-within{border-color:#a78bfa;box-shadow:0 0 0 3px rgba(124,58,237,.10);}
+.mpwpb-hh__group-head{display:flex;align-items:center;gap:12px;padding:16px 17px;background:#fafafa;border-bottom:1px solid #eef0f4;}
+.mpwpb-sme__postfields[data-sme-section="MPWPB_Happy_Hours_Settings"] .mpwpb-hh__group-icon{
+	display:grid !important;place-items:center;width:36px;height:36px;flex:0 0 36px;border-radius:10px;
+	background:var(--hh-soft);color:var(--hh-accent);font-size:18px;line-height:1;
+}
+.mpwpb-hh__group-head h4{font-size:13.5px;font-weight:750;color:var(--ink);line-height:1.25;}
+.mpwpb-hh__group-head p{margin:2px 0 0;font-size:11.5px;line-height:1.4;color:var(--muted);font-weight:500;}
+.mpwpb-hh__fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:17px;}
+.mpwpb-sme.mpwpb_style .mpwpb-hh__field{display:block;margin:0;min-width:0;font-weight:400;}
+.mpwpb-sme.mpwpb_style .mpwpb-hh__field > div:first-child{margin-bottom:8px;}
+.mpwpb-sme.mpwpb_style .mpwpb-hh__field > div:first-child p{margin:0 0 3px;font-size:12.5px;font-weight:700;color:var(--ink);}
+.mpwpb-sme.mpwpb_style .mpwpb-hh__field > div:first-child span{display:block !important;font-size:10.5px;line-height:1.35;color:var(--muted);font-weight:500;}
+.mpwpb-sme.mpwpb_style .mpwpb-hh__field > div:last-child{width:100%;}
+.mpwpb-sme.mpwpb_style .mpwpb-hh__field input.formControl,
+.mpwpb-sme.mpwpb_style .mpwpb-hh__field select.formControl{
+	width:100% !important;max-width:none !important;height:44px !important;min-height:44px;padding:0 12px !important;
+	border:1px solid #dbe1e9 !important;border-radius:10px !important;background:#fff !important;color:var(--ink) !important;
+	font-family:'Inter',system-ui,sans-serif;font-size:13px;font-weight:600;box-shadow:none !important;transition:.15s;
+}
+.mpwpb-sme.mpwpb_style .mpwpb-hh__field input.formControl:focus,
+.mpwpb-sme.mpwpb_style .mpwpb-hh__field select.formControl:focus{border-color:var(--hh-accent) !important;box-shadow:0 0 0 3px rgba(124,58,237,.10) !important;outline:none;}
+.mpwpb-hh__value-control{position:relative;}
+.mpwpb-sme.mpwpb_style .mpwpb-hh__value-control input.formControl{padding-right:38px !important;}
+.mpwpb-sme.mpwpb_style .mpwpb-hh__value-control.is-prefix input.formControl{padding-right:12px !important;padding-left:32px !important;}
+.mpwpb-sme__postfields[data-sme-section="MPWPB_Happy_Hours_Settings"] .mpwpb-hh__value-suffix{
+	position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--hh-accent);font-size:13px;font-weight:800;pointer-events:none;
+}
+.mpwpb-sme__postfields[data-sme-section="MPWPB_Happy_Hours_Settings"] .mpwpb-hh__value-control.is-prefix .mpwpb-hh__value-suffix{left:12px;right:auto;}
+.mpwpb-hh__preview{
+	display:flex;align-items:center;gap:12px;margin-top:18px;padding:13px 15px;border:1px solid var(--hh-line);
+	border-radius:12px;background:linear-gradient(135deg,var(--hh-soft),#fafaff);color:#5b21b6;
+}
+.mpwpb-sme__postfields[data-sme-section="MPWPB_Happy_Hours_Settings"] .mpwpb-hh__preview-icon{
+	display:grid !important;width:32px;height:32px;place-items:center;flex:0 0 32px;border-radius:9px;background:#ede9fe;color:var(--hh-accent);font-size:17px;
+}
+.mpwpb-hh__preview-copy{display:flex;flex-direction:column;min-width:0;line-height:1.3;}
+.mpwpb-sme__postfields[data-sme-section="MPWPB_Happy_Hours_Settings"] .mpwpb-hh__preview-label{display:block !important;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#8b5cf6;}
+.mpwpb-hh__preview-copy strong{display:block !important;font-size:13px;font-weight:750;color:#4c1d95;white-space:normal;}
+.mpwpb-hh__preview-copy strong span{display:inline !important;}
+.mpwpb-sme__postfields[data-sme-section="MPWPB_Happy_Hours_Settings"] .mpwpb-hh__preview-badge{
+	margin-left:auto;padding:5px 9px;border-radius:999px;background:#fff;border:1px solid var(--hh-line);color:#6d28d9;font-size:10.5px;font-weight:750;white-space:nowrap;
+}
+
+/* Recurring Booking — repeat pattern + limits builder. */
+.mpwpb-sme__postfields[data-sme-section="MPWPB_Recurring_Booking_Settings"]{--recur:#0f766e;--recur-soft:#ecfdf5;--recur-line:#a7f3d0;}
+.mpwpb-sme__postfields[data-sme-section="MPWPB_Recurring_Booking_Settings"] > .mpwpb-sme__postfields-header{background:linear-gradient(135deg,#ecfdf5,#f0fdfa);border-bottom-color:var(--recur-line);}
+.mpwpb-recur__body{margin:0;}
+.mpwpb-recur__layout{display:grid;grid-template-columns:1.2fr .8fr;gap:18px;}
+.mpwpb-recur__group{min-width:0;border:1px solid var(--line);border-radius:14px;background:#fff;overflow:hidden;box-shadow:0 1px 2px rgba(15,23,42,.03);}
+.mpwpb-recur__head{display:flex;align-items:center;gap:12px;padding:16px 17px;background:#fafafa;border-bottom:1px solid #eef0f4;}
+.mpwpb-sme__postfields[data-sme-section="MPWPB_Recurring_Booking_Settings"] .mpwpb-recur__head > .dashicons{display:grid !important;place-items:center;width:36px;height:36px;flex:0 0 36px;border-radius:10px;background:var(--recur-soft);color:var(--recur);font-size:18px;}
+.mpwpb-recur__head h4{font-size:13.5px;font-weight:750;color:var(--ink);line-height:1.25;}
+.mpwpb-recur__head p{margin:2px 0 0;font-size:11.5px;line-height:1.4;color:var(--muted);font-weight:500;}
+.mpwpb-recur__pattern-body,.mpwpb-recur__limit-fields{padding:17px;}
+.mpwpb-sme.mpwpb_style .mpwpb-recur__patterns,
+.mpwpb-sme.mpwpb_style .mpwpb-recur__field{margin:0;}
+.mpwpb-sme.mpwpb_style .mpwpb-recur__patterns > .label,
+.mpwpb-sme.mpwpb_style .mpwpb-recur__field > .label{margin:0;}
+.mpwpb-sme.mpwpb_style .mpwpb-recur__patterns > .label > p,
+.mpwpb-sme.mpwpb_style .mpwpb-recur__field > .label > p{margin:0 0 9px;font-size:12.5px;font-weight:700;color:var(--ink);}
+.mpwpb-sme.mpwpb_style .mpwpb-recur__patterns .groupCheckBox{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.mpwpb-sme.mpwpb_style .mpwpb-recur__patterns .customCheckboxLabel{display:block;width:auto;padding:0;margin:0;}
+.mpwpb-sme.mpwpb_style .mpwpb-recur__patterns .customCheckbox{
+	dis:block !important;min-height:42px;padding:12px 12px 11px 39px;border:1px solid #dbe5e2;border-radius:10px;background:#fff;
+	font-size:12.5px;font-weight:650;color:var(--ink-2);line-height:1.35;transition:.15s;
+}
+.mpwpb-sme.mpwpb_style .mpwpb-recur__patterns .customCheckbox::before{left:12px;top:11px;width:18px;height:18px;border:1.5px solid #9ca3af;border-radius:5px;background:#fff;}
+.mpwpb-sme.mpwpb_style .mpwpb-recur__patterns .customCheckboxLabel input:checked ~ .customCheckbox{border-color:#5eead4;background:var(--recur-soft);color:#115e59;box-shadow:0 0 0 2px rgba(15,118,110,.08);}
+.mpwpb-sme.mpwpb_style .mpwpb-recur__patterns .customCheckboxLabel input:checked ~ .customCheckbox::before{background:var(--recur);border-color:var(--recur);}
+.mpwpb-sme.mpwpb_style .mpwpb-recur__patterns .customCheckboxLabel input:checked ~ .customCheckbox::after{left:15px;top:15px;width:11px;height:6px;border-width:0 0 2px 2px;border-color:#fff;}
+.mpwpb-recur__limit-fields{display:grid;gap:15px;}
+.mpwpb-sme.mpwpb_style .mpwpb-recur__field input{height:44px;border-radius:10px;background:#fff;}
+.mpwpb-recur__discount-control{position:relative;}
+.mpwpb-sme.mpwpb_style .mpwpb-recur__discount-control input{padding-right:36px;}
+.mpwpb-sme__postfields[data-sme-section="MPWPB_Recurring_Booking_Settings"] .mpwpb-recur__discount-control > span{position:absolute;right:13px;top:50%;transform:translateY(-50%);display:inline !important;color:var(--recur);font-weight:800;}
+.mpwpb-recur__summary{display:flex;align-items:center;gap:12px;margin-top:18px;padding:13px 15px;border:1px solid var(--recur-line);border-radius:12px;background:linear-gradient(135deg,var(--recur-soft),#f8fffd);}
+.mpwpb-sme__postfields[data-sme-section="MPWPB_Recurring_Booking_Settings"] .mpwpb-recur__summary > .dashicons{display:grid !important;place-items:center;width:32px;height:32px;flex:0 0 32px;border-radius:9px;background:#d1fae5;color:var(--recur);font-size:17px;}
+.mpwpb-recur__summary > div{display:flex;flex-direction:column;min-width:0;}
+.mpwpb-sme__postfields[data-sme-section="MPWPB_Recurring_Booking_Settings"] .mpwpb-recur__summary small{display:block !important;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#10b981;}
+.mpwpb-recur__summary strong{display:block !important;font-size:12.5px;color:#065f46;font-weight:700;}
+.mpwpb-recur__summary strong span{display:inline !important;}
+
+/* Tax Settings — two-field rule card. */
+.mpwpb-sme__postfields[data-sme-section="Tax_Settings"]{--tax:#b45309;--tax-soft:#fffbeb;--tax-line:#fde68a;}
+.mpwpb-sme__postfields[data-sme-section="Tax_Settings"] > .mpwpb-sme__postfields-header{background:linear-gradient(135deg,#fffbeb,#fff7ed);border-bottom-color:var(--tax-line);}
+.mpwpb-sme.mpwpb_style #mpwpb_tax_class_row.mpwpb-tax-modern{margin:0;}
+.mpwpb-tax-modern__fields{display:grid;grid-template-columns:1.35fr .65fr;gap:16px;}
+.mpwpb-sme.mpwpb_style .mpwpb-tax-modern__field{display:block;margin:0;padding:17px;border:1px solid var(--line);border-radius:13px;background:#fff;}
+.mpwpb-sme.mpwpb_style .mpwpb-tax-modern__field > div:first-child{margin-bottom:9px;}
+.mpwpb-sme.mpwpb_style .mpwpb-tax-modern__field > div:first-child p{margin:0 0 3px;font-size:12.5px;font-weight:700;color:var(--ink);}
+.mpwpb-sme.mpwpb_style .mpwpb-tax-modern__field > div:first-child span{display:block !important;font-size:10.5px;line-height:1.4;color:var(--muted);font-weight:500;}
+.mpwpb-sme.mpwpb_style .mpwpb-tax-modern__field select,
+.mpwpb-sme.mpwpb_style .mpwpb-tax-modern__field input{height:44px !important;max-width:none !important;background:#fff;}
+.mpwpb-sme.mpwpb_style #mpwpb_tax_class_row.mpwpb-tax-modern select,
+.mpwpb-sme.mpwpb_style #mpwpb_tax_class_row.mpwpb-tax-modern input{margin:0 !important;}
+.mpwpb-tax-modern__rate-control{position:relative;}
+.mpwpb-sme.mpwpb_style .mpwpb-tax-modern__rate-control input{padding-right:36px;}
+.mpwpb-sme__postfields[data-sme-section="Tax_Settings"] .mpwpb-tax-modern__rate-control > span{position:absolute;right:13px;top:50%;transform:translateY(-50%);display:inline !important;color:var(--tax);font-weight:800;}
+.mpwpb-tax-modern__summary{display:flex;align-items:center;gap:12px;margin-top:16px;padding:13px 15px;border:1px solid var(--tax-line);border-radius:12px;background:var(--tax-soft);}
+.mpwpb-sme__postfields[data-sme-section="Tax_Settings"] .mpwpb-tax-modern__summary > .dashicons{display:grid !important;place-items:center;width:32px;height:32px;flex:0 0 32px;border-radius:9px;background:#fef3c7;color:var(--tax);font-size:17px;}
+.mpwpb-tax-modern__summary > div{display:flex;flex-direction:column;min-width:0;}
+.mpwpb-sme__postfields[data-sme-section="Tax_Settings"] .mpwpb-tax-modern__summary small{display:block !important;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#d97706;}
+.mpwpb-tax-modern__summary strong{display:block !important;font-size:13px;color:#92400e;font-weight:750;}
+.mpwpb-tax-modern__summary strong span{display:inline !important;}
+.mpwpb-sme__postfields[data-sme-section="Tax_Settings"] .mpwpb-tax-modern__badge{margin-left:auto;padding:5px 9px;border:1px solid var(--tax-line);border-radius:999px;background:#fff;color:var(--tax);font-size:10.5px;font-weight:750;white-space:nowrap;}
+
+/* Staff selector — integrate the existing live AJAX avatar tiles. */
+.mpwpb-sme__postfields[data-sme-section="Staff_Member"] > .mpwpb-sme__postfields-header{background:linear-gradient(135deg,#eff6ff,#eef2ff);border-bottom-color:#bfdbfe;}
+.mpwpb-sme.mpwpb_style .mpwpb-staff-modern{margin:0;}
+.mpwpb-staff-modern__head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:15px;}
+.mpwpb-staff-modern__head > div{display:flex;align-items:center;gap:11px;min-width:0;}
+.mpwpb-sme__postfields[data-sme-section="Staff_Member"] .mpwpb-staff-modern__head .dashicons{display:grid !important;place-items:center;width:36px;height:36px;flex:0 0 36px;border-radius:10px;background:#dbeafe;color:#2563eb;font-size:18px;}
+.mpwpb-staff-modern__head h4{font-size:13.5px;font-weight:750;color:var(--ink);}
+.mpwpb-staff-modern__head p{margin:2px 0 0;font-size:11.5px;color:var(--muted);}
+.mpwpb-staff-modern__head > strong{padding:6px 10px;border-radius:999px;background:#eff6ff;color:#2563eb;font-size:10.5px;font-weight:750;white-space:nowrap;}
+.mpwpb-sme.mpwpb_style .mpwpb-staff-modern .mpwpb-staff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;}
+.mpwpb-sme.mpwpb_style .mpwpb-staff-modern .mpwpb-staff-tile{display:flex;flex-direction:row;align-items:center;gap:10px;width:100%;min-width:0;margin:0;padding:11px;border:1px solid var(--line);border-radius:12px;background:#fff;box-shadow:none;transition:.15s;text-align:left;}
+.mpwpb-sme.mpwpb_style .mpwpb-staff-modern .mpwpb-staff-tile:hover{border-color:#93c5fd;background:#f8fbff;transform:translateY(-1px);}
+.mpwpb-sme.mpwpb_style .mpwpb-staff-modern .mpwpb-staff-tile.is-selected{border-color:#60a5fa;background:#eff6ff;box-shadow:0 0 0 2px rgba(37,99,235,.08);}
+.mpwpb-sme.mpwpb_style .mpwpb-staff-modern .mpwpb-staff-tile-avatar{width:42px;height:42px;flex:0 0 42px;margin:0;border:2px solid #fff;box-shadow:0 1px 3px rgba(15,23,42,.12);}
+.mpwpb-sme.mpwpb_style .mpwpb-staff-modern .mpwpb-staff-tile-name.mpwpb-staff-tile-name{display:block;text-align:left;font-size:12.5px;color:var(--ink);flex:1;}
+.mpwpb-sme.mpwpb_style .mpwpb-staff-modern .mpwpb-staff-tile-check.mpwpb-staff-tile-check{top:7px;right:7px;width:17px;height:17px;background:#2563eb;}
+.mpwpb-sme.mpwpb_style .mpwpb-staff-modern .mpwpb-staff-grid:empty{display:block;padding:28px;text-align:center;border:1px dashed var(--line);border-radius:12px;background:#fafafa;}
+.mpwpb-sme.mpwpb_style .mpwpb-staff-modern .mpwpb-staff-grid:empty::after{content:attr(data-empty);font-size:12.5px;color:var(--muted);}
+
+/* ==================================================================== *
+ *  Responsive
+ * ==================================================================== */
+@media(max-width:980px){
+	.mpwpb-sme__topbar{grid-template-columns:auto 1fr auto;padding:10px 16px;}
+	.mpwpb-sme__ttl-input{min-width:0;}
+	.mpwpb-sme__wrap{padding:16px;}
+	.mpwpb-sme__stepper{padding:12px 16px;overflow-x:auto;}
+	.mpwpb-sme__conn{flex:0 0 60px;}
+}
+@media(max-width:760px){
+	.mpwpb-sme__acts{gap:6px;}
+	.mpwpb-sme__local-save{display:none;}
+	.mpwpb-sme__status-pill{display:none;}
+	.mpwpb-sme__lab{display:none;}
+	.mpwpb-sme__navinner{grid-template-columns:auto 1fr auto;padding:10px 16px;}
+	.mpwpb-hh__layout{grid-template-columns:1fr;}
+	.mpwpb-recur__layout{grid-template-columns:1fr;}
+	.mpwpb-tax-modern__fields{grid-template-columns:1fr;}
+}
+@media(max-width:480px){
+	.mpwpb-sme__back span:last-child{display:none;}
+	.mpwpb-sme__postfields-body{padding:16px;}
+	.mpwpb-hh__fields{grid-template-columns:1fr;}
+	.mpwpb-hh__preview{align-items:flex-start;flex-wrap:wrap;}
+	.mpwpb-sme__postfields[data-sme-section="MPWPB_Happy_Hours_Settings"] .mpwpb-hh__preview-badge{margin-left:44px;}
+	.mpwpb-sme.mpwpb_style .mpwpb-recur__patterns .groupCheckBox{grid-template-columns:1fr;}
+	.mpwpb-staff-modern__head{align-items:flex-start;flex-direction:column;}
+	.mpwpb-sme.mpwpb_style .mpwpb-staff-modern .mpwpb-staff-grid{grid-template-columns:1fr;}
+	.mpwpb-sme__postfields[data-sme-section="Tax_Settings"] .mpwpb-tax-modern__badge{display:none;}
+}

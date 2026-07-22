@@ -457,6 +457,7 @@
         $('input[name="service_price"]').val('');
         $('input[name="service_price"]').removeClass('required');
 
+        $('input[name="service_unit"]').val('');
         $('input[name="service_duration"]').val('');
         $('textarea[name="service_description"]').val('');
         $('textarea[name="service_image_icon"]').val('');
@@ -556,6 +557,8 @@
         var name = parent.find('td .service-name').text().trim();
         var price = parent.find('td:nth-child(3)').text().trim();
         var duratoin = parent.find('td:nth-child(4)').text().trim();
+        var serviceUnit = parent.data('service-unit');
+        $('input[name="service_unit"]').val(serviceUnit === undefined ? '' : serviceUnit);
         $('.mpwpb_icon_item').hide();
         $('.mpwpb_image_item').hide();
         $('input[name="service_item_id"]').val(itemId);
@@ -579,9 +582,12 @@
             $('input[name="mpwpb_show_category_status"]').prop('checked', true);
             $('[data-collapse="#mpwpb_show_category_status"]').slideDown();
             $('select[name="mpwpb_parent_cat"]').val(parentCat);
+            // FIX: Populate hidden inputs so category is preserved on update
+            $('input[name="mpwpb_parent_cat_id"]').val(parentCat);
             if (subCat != '') {
                 $('.sub-category-container').slideDown('fast');
                 $('select[name="mpwpb_sub_category"]').val(subCat);
+                $('input[name="mpwpb_sub_cat_id"]').val(subCat);
             }
         } else {
             $('input[name="mpwpb_show_category_status"]').val('off');
@@ -605,6 +611,8 @@
         var name = parent.find('.service-name').text().trim();
         var price = parent.find('.mpwpb_service_price').text().trim();
         var duratoin = parent.find('.mpwpb_service_duration').text().trim();
+        var serviceUnit = parent.data('service-unit');
+        $('input[name="service_unit"]').val(serviceUnit === undefined ? '' : serviceUnit);
         $('.mpwpb_icon_item').hide();
         $('.mpwpb_image_item').hide();
         $('input[name="service_item_id"]').val(itemId);
@@ -628,9 +636,12 @@
             $('input[name="mpwpb_show_category_status"]').prop('checked', true);
             $('[data-collapse="#mpwpb_show_category_status"]').slideDown();
             $('select[name="mpwpb_parent_cat"]').val(parentCat);
+            // FIX: Populate hidden inputs so category is preserved on update
+            $('input[name="mpwpb_parent_cat_id"]').val(parentCat);
             if (subCat != '') {
                 $('.sub-category-container').slideDown('fast');
                 $('select[name="mpwpb_sub_category"]').val(subCat);
+                $('input[name="mpwpb_sub_cat_id"]').val(subCat);
             }
         } else {
             $('input[name="mpwpb_show_category_status"]').val('off');
@@ -648,6 +659,7 @@
         var service_image_icon = $('input[name="service_image_icon"]');
         var service_name = $('input[name="service_name"]');
         var service_price = $('input[name="service_price"]');
+        var service_unit = $('input[name="service_unit"]');
         var service_duration = $('input[name="service_duration"]');
         var service_description = $('textarea[name="service_description"]');
         var show_category_status = $('input[name="mpwpb_show_category_status"]');
@@ -662,6 +674,7 @@
                     service_image_icon: service_image_icon.val(),
                     service_name: service_name.val(),
                     service_price: service_price.val(),
+                    service_unit: service_unit.val(),
                     service_duration: service_duration.val(),
                     service_description: service_description.val(),
                     service_postID: postID.val(),
@@ -1733,7 +1746,12 @@
         $('.'+class_name).each(function() {
             let by_filter = $(this).data( service_status ).toLowerCase();
             if( searchText === 'all' ){
-                $(this).fadeIn();
+                // "All" shows active items only; trashed rows stay hidden until the Trash tab is clicked.
+                if ( by_filter === 'trash' ) {
+                    $(this).fadeOut();
+                } else {
+                    $(this).fadeIn();
+                }
             }else{
                 if ( by_filter.includes( searchText ) ) {
                     $(this).fadeIn();
@@ -1774,6 +1792,59 @@
         let tab_holder_id = tab_id+'_holder';
         $("#"+tab_holder_id).siblings().fadeOut();
         $("#"+tab_holder_id).fadeIn();
+    });
+
+    // "Cancel" on the Add/Update Staff form: just switch back to the Staff
+    // Lists tab (same behavior as clicking the header's "Staff Lists" button),
+    // without submitting the form.
+    $(document).on( 'click', '#mpwpb_staff_form_cancel', function(e) {
+        e.preventDefault();
+        $('#mpwpb_staff_lists').trigger('click');
+    });
+
+    // Schedule Type pills: purely a visual front-end for the real (visually
+    // hidden) mpwpb_date_type <select> — setting its value and firing 'change'
+    // keeps the existing select[data-collapse-target] toggle logic (mpwpb_plugin_global.js)
+    // working exactly as before, no new collapse behavior to maintain here.
+    $(document).on( 'click', '.mpwpb_schedule_type_pill', function(e) {
+        e.preventDefault();
+        let type = $(this).data('schedule-type');
+        $(this).siblings('.mpwpb_schedule_type_pill').removeClass('mpActive');
+        $(this).addClass('mpActive');
+        $(this).closest('.mpPanelBody').find('select[name="mpwpb_date_type"]').val(type).trigger('change');
+    });
+
+    // "Copy Monday to All": copies Monday's start/end/break-time <select> values
+    // onto every other day's matching selects, then triggers 'change' on each so
+    // the existing off-day-row sync (mpwpb-staff-management-modern.js) and any
+    // other change-driven logic stays correct. Purely a client-side convenience —
+    // nothing is saved until the form is actually submitted.
+    $(document).on( 'click', '#mpwpb_copy_monday_to_all', function(e) {
+        e.preventDefault();
+        let $table = $(this).closest('.mpPanelBody').find('table');
+        let $mondayRow = $table.find('tr[data-day-name-row], tr').filter(function() {
+            return $(this).find('[data-day-name="monday"]').length > 0;
+        });
+        if (!$mondayRow.length) {
+            return;
+        }
+        let mondayValues = {};
+        $mondayRow.find('select').each(function() {
+            let name = $(this).attr('name');
+            if (name) {
+                mondayValues[name.replace('_monday_', '_%DAY%_')] = $(this).val();
+            }
+        });
+        let days = ['tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+        days.forEach(function(day) {
+            $.each(mondayValues, function(pattern, value) {
+                let targetName = pattern.replace('%DAY%', day);
+                let $target = $table.find('select[name="' + targetName + '"]');
+                if ($target.length && $target.find('option[value="' + value + '"]').length) {
+                    $target.val(value).trigger('change');
+                }
+            });
+        });
     });
 
     $(document).on( 'click', '#remove_profile_image_button', function(e) {

@@ -524,8 +524,13 @@
 				$categories = $this->get_categories($post_id);
 				if (!empty($categories)) {
 					if (isset($_POST['itemId'])) {
-						unset($categories[sanitize_text_field(wp_unslash($_POST['itemId']))]);
-						$categories = array_values($categories);
+						$deleted_cat_id = sanitize_text_field(wp_unslash($_POST['itemId']));
+						unset($categories[$deleted_cat_id]);
+						// Deliberately NOT array_values()-reindexed: existing ids (this array's own
+						// keys) are referenced elsewhere as stable ids (mpwpb_sub_category_service's
+						// cat_id, mpwpb_service's parent_cat/sub_cat). Reindexing here would silently
+						// shift every subsequent category's id and misattribute other services.
+						$this->cascade_category_deletion($post_id, $deleted_cat_id);
 					}
 				}
 				$result = update_post_meta($post_id, 'mpwpb_category_service', $categories);
@@ -561,8 +566,11 @@
 				$sub_categories = $this->get_sub_categories($post_id);
 				if (!empty($sub_categories)) {
 					if (isset($_POST['itemId'])) {
-						unset($sub_categories[sanitize_text_field(wp_unslash($_POST['itemId']))]);
-						$sub_categories = array_values($sub_categories);
+						$deleted_sub_id = sanitize_text_field(wp_unslash($_POST['itemId']));
+						unset($sub_categories[$deleted_sub_id]);
+						// Not reindexed — same reasoning as delete_category_service(): this array's
+						// keys are the stable ids mpwpb_service's sub_cat field references.
+						$this->reassign_services_for_deleted_ids($post_id, [], [$deleted_sub_id]);
 					}
 				}
 				$result = update_post_meta($post_id, 'mpwpb_sub_category_service', $sub_categories);
@@ -582,6 +590,56 @@
 					]);
 				}
 				die;
+			}
+			/**
+			 * When a top-level category is deleted, also delete every subcategory
+			 * that pointed at it (cat_id match) — without reindexing, same as the
+			 * parent delete — and reassign services affected by either to
+			 * "Uncategorized" (both fields cleared, matching the mockup's flat
+			 * reassign-to-null behavior rather than "promoted to parent").
+			 */
+			private function cascade_category_deletion($post_id, $deleted_cat_id) {
+				$sub_categories = $this->get_sub_categories($post_id);
+				$deleted_sub_ids = [];
+				if (!empty($sub_categories)) {
+					foreach ($sub_categories as $sub_id => $sub_cat) {
+						if (isset($sub_cat['cat_id']) && $sub_cat['cat_id'] == $deleted_cat_id) {
+							$deleted_sub_ids[] = $sub_id;
+							unset($sub_categories[$sub_id]);
+						}
+					}
+					if (!empty($deleted_sub_ids)) {
+						update_post_meta($post_id, 'mpwpb_sub_category_service', $sub_categories);
+					}
+				}
+				$this->reassign_services_for_deleted_ids($post_id, [$deleted_cat_id], $deleted_sub_ids);
+			}
+			/**
+			 * Clear parent_cat/sub_cat (send to "Uncategorized") on every service
+			 * that referenced one of the just-deleted category/subcategory ids.
+			 */
+			private function reassign_services_for_deleted_ids($post_id, $deleted_cat_ids, $deleted_sub_ids) {
+				if (empty($deleted_cat_ids) && empty($deleted_sub_ids)) {
+					return;
+				}
+				$services = get_post_meta($post_id, 'mpwpb_service', true);
+				$services = is_array($services) ? $services : [];
+				if (empty($services)) {
+					return;
+				}
+				$changed = false;
+				foreach ($services as $service_id => $service) {
+					$parent_matches = !empty($deleted_cat_ids) && isset($service['parent_cat']) && in_array($service['parent_cat'], $deleted_cat_ids, false);
+					$sub_matches = !empty($deleted_sub_ids) && isset($service['sub_cat']) && in_array($service['sub_cat'], $deleted_sub_ids, false);
+					if ($parent_matches || $sub_matches) {
+						$services[$service_id]['parent_cat'] = '';
+						$services[$service_id]['sub_cat'] = '';
+						$changed = true;
+					}
+				}
+				if ($changed) {
+					update_post_meta($post_id, 'mpwpb_service', $services);
+				}
 			}
 		}
 		new MPWPB_Service_Category();

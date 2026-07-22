@@ -1,0 +1,164 @@
+/* =====================================================================
+ * Modern Coupon Editor  ·  mpwpb-coupon-edit-modern.css
+ * Scoped under .mpwpb-cem (shell) or body.mpwpb-cem-active (WP chrome
+ * takeover) so nothing outside the coupon add/edit screen is affected.
+ *
+ * The shell reuses the existing tab-content markup (Admin/coupon-settings/
+ * *.php) unchanged -- that markup also carries the legacy `mpwpb_style`
+ * class so the shared tab-switching JS (mp_global/assets/mp_style/
+ * mpwpb_plugin_global.js) keeps working; rules that restyle it are
+ * prefixed `.mpwpb-cem.mpwpb_style` to win specificity over the legacy
+ * `div.mpwpb_style ...` rules in mpwpb_plugin_global.css.
+ * ===================================================================== */
+
+.mpwpb-cem{
+	--bg:#eef1f6; --surface:#fff; --inset:#f8fafc;
+	--band:#f1f5f9; --band-line:#e6ebf2;
+	--ink:#0f172a; --ink-2:#475569; --muted:#94a3b8; --line:#e4e9f0;
+	--brand:#2451e0; --brand-600:#1d3fb8; --brand-soft:#eaf0ff; --brand-ring:rgba(36,81,224,.16);
+	--ok:#16a34a; --ok-soft:#ecfdf3; --danger:#dc2626;
+	--shadow-sm:0 1px 2px rgba(15,23,42,.05),0 1px 3px rgba(15,23,42,.04);
+	--radius:14px;
+	font-family:'Inter',system-ui,-apple-system,sans-serif;
+	color:var(--ink-2);font-size:14px;line-height:1.5;
+	-webkit-font-smoothing:antialiased;
+}
+.mpwpb-cem *,
+.mpwpb-cem *::before,
+.mpwpb-cem *::after{box-sizing:border-box;}
+.mpwpb-cem h1,.mpwpb-cem h2,.mpwpb-cem h3,.mpwpb-cem h4{
+	font-family:'Plus Jakarta Sans','Inter',sans-serif;color:var(--ink);margin:0;
+}
+
+/* -------------------------------------------------------------------- *
+ *  WP chrome removal — right sidebar (Publish box) + Screen Options bar.
+ *  Deliberately leaves #wpadminbar/admin menu/#wpfooter alone: the ask
+ *  was to remove the sidebar and screen bar, not go full-bleed.
+ * -------------------------------------------------------------------- */
+body.mpwpb-cem-active #screen-meta,
+body.mpwpb-cem-active #screen-meta-links,
+body.mpwpb-cem-active #postbox-container-1,
+body.mpwpb-cem-active #post-body-content,
+body.mpwpb-cem-active .wrap > h1.wp-heading-inline,
+body.mpwpb-cem-active .wrap > .page-title-action,
+body.mpwpb-cem-active .wrap > hr.wp-header-end,
+body.mpwpb-cem-active #poststuff #postbox-container-2 .postbox:not(#mpwpb_coupon_meta_box_panel){
+	display:none !important;
+}
+body.mpwpb-cem-active #titlediv{position:absolute;left:-9999px;top:-9999px;}
+body.mpwpb-cem-active #post-body.columns-2 #postbox-container-2{width:100% !important;float:none !important;margin:0 !important;}
+body.mpwpb-cem-active #poststuff{margin-top:0;}
+body.mpwpb-cem-active #mpwpb_coupon_meta_box_panel{border:0;background:transparent;box-shadow:none;margin:0;}
+body.mpwpb-cem-active #mpwpb_coupon_meta_box_panel > .postbox-header{display:none;}
+body.mpwpb-cem-active #mpwpb_coupon_meta_box_panel > .inside{margin:0;padding:0;}
+body.mpwpb-cem-active #wpbody-content{background:var(--bg,#eef1f6);}
+
+/* ==================================================================== *
+ *  SHELL
+ * ==================================================================== */
+
+.mpwpb-cem__topbar{
+	position:sticky;top:32px;z-index:20;
+	background:rgba(255,255,255,.96);backdrop-filter:blur(10px);
+	border:1px solid var(--line);border-radius:var(--radius);
+	display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;
+	padding:12px 20px;margin-bottom:20px;box-shadow:var(--shadow-sm);
+}
+@media screen and (max-width:782px){.mpwpb-cem__topbar{top:46px;}}
+.mpwpb-cem__back{display:inline-flex;align-items:center;gap:6px;color:var(--ink-2);font-weight:500;font-size:13.5px;padding:7px 11px;border-radius:9px;text-decoration:none;white-space:nowrap;}
+.mpwpb-cem__back:hover{background:var(--band);color:var(--ink);}
+.mpwpb-cem__back .dashicons{font-size:17px;width:17px;height:17px;}
+
+.mpwpb-cem.mpwpb_style input.mpwpb-cem__ttl-input{
+	width:100%;max-width:420px;justify-self:start;
+	font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:16px;font-weight:700;color:var(--ink);
+	background:transparent;border:1px solid transparent;border-radius:8px;padding:8px 12px;transition:.15s;box-shadow:none;min-height:0;height:auto;
+}
+.mpwpb-cem.mpwpb_style input.mpwpb-cem__ttl-input:hover{background:var(--band);}
+.mpwpb-cem.mpwpb_style input.mpwpb-cem__ttl-input:focus{outline:none;background:#fff;border-color:var(--line);box-shadow:0 0 0 3px var(--brand-ring);}
+
+.mpwpb-cem__acts{display:flex;align-items:center;gap:10px;justify-self:end;}
+.mpwpb-cem__status-pill{
+	display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;
+	font-size:12px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap;
+}
+.mpwpb-cem__status-pill.is-active{background:var(--ok-soft);color:var(--ok);}
+.mpwpb-cem__status-pill.is-draft{background:var(--band);color:var(--ink-2);}
+
+.mpwpb-cem.mpwpb_style button.mpwpb-cem__btn,
+.mpwpb-cem.mpwpb_style a.mpwpb-cem__btn{
+	display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:9px;
+	background:#fff;color:var(--ink);font-size:13.5px;font-weight:600;padding:9px 14px;cursor:pointer;white-space:nowrap;text-decoration:none;
+}
+.mpwpb-cem.mpwpb_style .mpwpb-cem__btn--primary{background:var(--brand);border-color:var(--brand);color:#fff;}
+.mpwpb-cem.mpwpb_style .mpwpb-cem__btn--primary:hover{background:var(--brand-600);border-color:var(--brand-600);}
+
+.mpwpb-cem__split{position:relative;display:inline-flex;}
+.mpwpb-cem.mpwpb_style .mpwpb-cem__split-caret{border-left:1px solid rgba(255,255,255,.35);border-top-left-radius:0;border-bottom-left-radius:0;padding:9px 10px;}
+.mpwpb-cem.mpwpb_style .mpwpb-cem__split [data-cem-save]{border-top-right-radius:0;border-bottom-right-radius:0;}
+.mpwpb-cem__split-menu{
+	position:absolute;top:calc(100% + 6px);right:0;min-width:190px;background:#fff;border:1px solid var(--line);
+	border-radius:10px;box-shadow:0 8px 24px rgba(15,23,42,.12);padding:6px;z-index:40;
+}
+.mpwpb-cem.mpwpb_style button.mpwpb-cem__split-menu-item,
+.mpwpb-cem.mpwpb_style a.mpwpb-cem__split-menu-item{
+	display:block;width:100%;text-align:left;background:none;border:0;border-radius:7px;padding:9px 10px;
+	font-size:13.5px;font-weight:500;color:var(--ink-2);cursor:pointer;text-decoration:none;
+}
+.mpwpb-cem.mpwpb_style .mpwpb-cem__split-menu-item:hover{background:var(--band);color:var(--ink);}
+.mpwpb-cem.mpwpb_style .mpwpb-cem__split-menu-item--danger{color:var(--danger);}
+.mpwpb-cem.mpwpb_style .mpwpb-cem__split-menu-item--danger:hover{background:#fef2f2;}
+
+/* Body: rail + card */
+.mpwpb-cem__body{display:grid;grid-template-columns:230px minmax(0,1fr);gap:20px;align-items:start;}
+@media screen and (max-width:960px){.mpwpb-cem__body{grid-template-columns:1fr;}}
+
+.mpwpb-cem__rail{position:sticky;top:100px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:10px;}
+@media screen and (max-width:960px){.mpwpb-cem__rail{position:static;}}
+.mpwpb-cem__rail ul.tabLists{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;}
+@media screen and (max-width:960px){.mpwpb-cem__rail ul.tabLists{flex-direction:row;flex-wrap:wrap;}}
+.mpwpb-cem.mpwpb_style .mpwpb-cem__rail ul.tabLists li[data-tabs-target]{
+	display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;
+	font-size:13.5px;font-weight:600;color:var(--ink-2);cursor:pointer;
+}
+.mpwpb-cem.mpwpb_style .mpwpb-cem__rail ul.tabLists li[data-tabs-target] .dashicons{font-size:18px;width:18px;height:18px;color:var(--muted);}
+.mpwpb-cem.mpwpb_style .mpwpb-cem__rail ul.tabLists li[data-tabs-target]:hover{background:var(--band);color:var(--ink);}
+.mpwpb-cem.mpwpb_style .mpwpb-cem__rail ul.tabLists li[data-tabs-target].active{background:var(--brand-soft);color:var(--brand);}
+.mpwpb-cem.mpwpb_style .mpwpb-cem__rail ul.tabLists li[data-tabs-target].active .dashicons{color:var(--brand);}
+
+.mpwpb-cem__card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:26px 28px;min-width:0;}
+
+/* ==================================================================== *
+ *  Re-skin the reused tab-body markup (Admin/coupon-settings/*.php) —
+ *  same DOM shape as before, only restyled: .tabsItem > header + section.
+ * ==================================================================== */
+.mpwpb-cem.mpwpb_style .tabsItem{display:none;}
+.mpwpb-cem.mpwpb_style .tabsItem.active{display:block;}
+.mpwpb-cem.mpwpb_style .tabsItem > header{margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--band-line);}
+.mpwpb-cem.mpwpb_style .tabsItem > header h2{font-size:18px;font-weight:700;color:var(--ink);}
+.mpwpb-cem.mpwpb_style .tabsItem > header span{display:block;margin-top:4px;font-size:13px;color:var(--muted);}
+
+.mpwpb-cem.mpwpb_style section.section{padding:16px 0;display:flex;flex-wrap:wrap;gap:16px;border-bottom:1px solid var(--band-line);}
+.mpwpb-cem.mpwpb_style section.section:last-child{border-bottom:0;padding-bottom:0;}
+.mpwpb-cem.mpwpb_style section.section h3{flex:0 0 100%;font-size:13px;font-weight:700;color:var(--ink);text-transform:uppercase;letter-spacing:.03em;margin-bottom:4px;}
+.mpwpb-cem.mpwpb_style section.section > span{flex:0 0 100%;font-size:12.5px;color:var(--muted);}
+
+.mpwpb-cem.mpwpb_style label.label{flex:1 1 220px;min-width:0;display:flex;flex-direction:column;gap:6px;margin:0;}
+.mpwpb-cem.mpwpb_style label.label > p{font-size:13px;font-weight:600;color:var(--ink-2);margin:0;}
+.mpwpb-cem.mpwpb_style label.label input[type="text"],
+.mpwpb-cem.mpwpb_style label.label input[type="number"],
+.mpwpb-cem.mpwpb_style label.label input[type="date"],
+.mpwpb-cem.mpwpb_style label.label input[type="time"],
+.mpwpb-cem.mpwpb_style label.label select,
+.mpwpb-cem.mpwpb_style label.label textarea{
+	width:100%;border:1px solid var(--line);border-radius:9px;background:var(--inset);
+	padding:9px 12px;font-size:13.5px;color:var(--ink);min-height:0;box-shadow:none;
+}
+.mpwpb-cem.mpwpb_style label.label select[multiple]{min-height:150px;background:var(--surface);}
+.mpwpb-cem.mpwpb_style label.label input:focus,
+.mpwpb-cem.mpwpb_style label.label select:focus,
+.mpwpb-cem.mpwpb_style label.label textarea:focus{outline:none;border-color:var(--brand);background:#fff;box-shadow:0 0 0 3px var(--brand-ring);}
+
+.mpwpb-cem.mpwpb_style section.shortcode{padding:12px 14px;background:var(--inset);border-radius:9px;border:1px solid var(--line);}
+.mpwpb-cem.mpwpb_style section.shortcode label.label{flex-direction:row;align-items:center;justify-content:space-between;}
+.mpwpb-cem.mpwpb_style section.shortcode code{background:#fff;border:1px solid var(--line);border-radius:6px;padding:4px 8px;}

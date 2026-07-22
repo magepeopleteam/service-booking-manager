@@ -8,12 +8,17 @@
 	}
 	$post_id = $post_id ?? get_the_id();
 	$all_dates = $all_dates ?? MPWPB_Function::get_date($post_id);
+	// The static template shows every available date at once as a wrapped
+	// grid (see mpwpb-service-page-modern.css), so it opts out of the
+	// sliding owl-carousel entirely -- other templates (e.g. default.php)
+	// keep the carousel unchanged.
+	$mpwpb_is_static_template = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_template', 'static.php') === 'static.php';
 
 	$enable_waiting_list = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_enable_waiting_list', 'no');
 	$enable_recurring = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_enable_recurring', 'no');
 	$recurring_types = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_recurring_types', array( 'daily','weekly', 'bi-weekly', 'monthly' ) );
 
-    $max_recurring_count = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_max_recurring_count', 10);
+    $max_recurring_count = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_max_recurring_count', 26);
 	$recurring_discount = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_recurring_discount', 0);
 
     $enable_staff_member = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_staff_member_add', 'no');
@@ -68,21 +73,31 @@
         <div class="mpwpb_date_carousel groupRadioCheck" id="mpwpb_datetime_holder">
             <header class="_dFlex_alignCenter_justifyBetween">
                 <input type="hidden" name="mpwpb_date">
-                <h3 class="mpwpb_date_staff_select"><?php esc_html_e('Choose Date & Time', 'service-booking-manager'); ?></h3>
+                <h3 class="mpwpb_date_staff_select"><?php esc_html_e('Choose Date', 'service-booking-manager'); ?></h3>
 				<?php include(MPWPB_Function::template_path('layout/carousel_indicator.php')); ?>
             </header>
             <div class="" >
-                <div class="owl-theme mpwpb-owl-carousel" id="mpwpb_datetime_holder1">
+                <div class="<?php echo $mpwpb_is_static_template ? 'mpwpb-date-grid' : 'owl-theme mpwpb-owl-carousel'; ?>" id="mpwpb_datetime_holder1">
                     <?php if (sizeof($all_dates) > 0) {
-                        $booking_date_output = MPWPB_Details_Layout::display_booking_date( $post_id, $all_dates );
+                        // Computed once and passed to both calls so the date
+                        // marked "selected" and the time panel shown by
+                        // default always agree on the same date -- each used
+                        // to independently default to $all_dates[0], which
+                        // could point at a date with zero actual time slots
+                        // left (already past, or fully booked).
+                        $active_date = MPWPB_Details_Layout::get_default_active_date( $post_id, $all_dates );
+                        $booking_date_output = MPWPB_Details_Layout::display_booking_date( $post_id, $all_dates, $active_date );
                         if ( $booking_date_output !== null ) {
                             echo wp_kses_post( $booking_date_output );
                         }
                     ?>
                 </div>
+                <header class="_dFlex_alignCenter_justifyBetween">
+                    <h3 class="mpwpb_date_staff_select"><?php esc_html_e('Choose Time', 'service-booking-manager'); ?></h3>
+                </header>
                 <div class="mpwpb_select_time_holder" id="<?php echo esc_attr( $post_id );?>">
                     <?php
-                        $booking_time_output = MPWPB_Details_Layout::display_booking_time( $post_id, $all_dates );
+                        $booking_time_output = MPWPB_Details_Layout::display_booking_time( $post_id, $all_dates, $active_date );
                         if ( $booking_time_output !== null ) {
                             echo wp_kses_post( $booking_time_output );
                         }
@@ -93,8 +108,7 @@
                 ?>
                     <h5><?php esc_html_e('Date not available', 'service-booking-manager'); ?></h5> <?php
                 }
-                if ( is_plugin_active('service-booking-manager-pro/MPWPB_Plugin_Pro.php') ) {
-                    if ($enable_recurring === 'yes') { ?>
+                if ($enable_recurring === 'yes') { ?>
                         <div class="_dShadow_7_mB_xs mpwpb_recurring_booking_area" id="mpwpb_recurring_booking_area" style="display: none;">
                             <div class="mpwpb_recurring_booking">
                                 <header class="_dFlex_alignCenter_justifyBetween">
@@ -167,7 +181,6 @@
                             </div>
                         </div>
                     <?php }
-                }
                 ?>
             </div>
         </div>
@@ -182,6 +195,22 @@
                     <header class="_dFlex_alignCenter_justifyBetween">
                         <h3 class="mpwpb_date_staff_select"><?php esc_html_e('Select Staff', 'service-booking-manager'); ?></h3>
                     </header>
+
+                    <!-- Populated by JS (mpwpb_registration.js) when this step is
+                         entered -- the date/time picked in the previous step
+                         otherwise isn't shown anywhere while choosing staff. -->
+                    <div class="mpwpb_staff_step_summary" id="mpwpb_staff_step_summary">
+                        <div class="mpwpb_staff_step_summary_row">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span><?php esc_html_e('Selected Date & Time', 'service-booking-manager'); ?>:</span>
+                            <strong id="mpwpb_staff_selected_datetime">&mdash;</strong>
+                        </div>
+                        <div class="mpwpb_staff_step_summary_row">
+                            <i class="fas fa-receipt"></i>
+                            <span><?php esc_html_e('Booking Total', 'service-booking-manager'); ?>:</span>
+                            <strong id="mpwpb_staff_selected_total"><?php echo wp_kses_post(MPWPB_Global_Function::wc_price($post_id, 0)); ?></strong>
+                        </div>
+                    </div>
 
                     <input type="hidden" class="mpwpb_staff_member_booking" name="mpwpb_staff_member_booking" id="mpwpb_staff_member_booking" value="">
                     <div class="mpwpb_staff_member_booking" id="mpwpb_staff_member_holder"></div>

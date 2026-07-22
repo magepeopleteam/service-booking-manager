@@ -33,17 +33,16 @@ if ( ! class_exists( 'MPWPB_Service_List' ) ) {
 
         function mpwpb_duplicate_post_function() {
             if ( !isset( $_GET['post_id']) || !isset($_GET['_wpnonce']) ||
-                !wp_verify_nonce($_GET['_wpnonce'], 'mpwpb_duplicate_post_' . sanitize_text_field( $_GET['post_id'] ) )
+				!wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['_wpnonce'])), 'mpwpb_duplicate_post_' . absint($_GET['post_id']))
             ) {
-                wp_die('Invalid request (missing or invalid nonce).');
+				wp_die(esc_html__('Invalid request (missing or invalid nonce).', 'service-booking-manager'), '', array('response' => 403));
             }
 
-            $post_id = (int)sanitize_text_field( wp_unslash( $_GET['post_id'] ) );
+			$post_id = absint(wp_unslash($_GET['post_id']));
             $post = get_post($post_id);
-
-            /*if (!$post || $post->post_type !== 'mpwpb_tour') {
-                wp_die('Invalid post or post type.');
-            }*/
+			if (!$post || $post->post_type !== MPWPB_Function::get_cpt() || !current_user_can('edit_post', $post_id)) {
+				wp_die(esc_html__('You are not allowed to duplicate this service.', 'service-booking-manager'), '', array('response' => 403));
+			}
 
             // Create new post array
             $new_post = array(
@@ -63,6 +62,7 @@ if ( ! class_exists( 'MPWPB_Service_List' ) ) {
 
             // Copy post meta
             $meta = get_post_meta($post_id);
+			unset($meta['total_booking']);
             foreach ($meta as $key => $values) {
                 foreach ($values as $value) {
                     add_post_meta($new_post_id, $key, maybe_unserialize($value));

@@ -227,7 +227,7 @@
                 </div>
 				<?php
 			}
-			public function time_slot_tr($post_id, $day) {
+			public function time_slot_tr($post_id, $day, $is_off = false) {
 				$start_name = 'mpwpb_' . $day . '_start_time';
 				$default_start_time = $day == 'default' ? 10 : '';
 				$start_time = MPWPB_Global_Function::get_post_info($post_id, $start_name, $default_start_time);
@@ -237,7 +237,7 @@
 				$start_name_break = 'mpwpb_' . $day . '_start_break_time';
 				$start_time_break = MPWPB_Global_Function::get_post_info($post_id, $start_name_break);
 				?>
-                <tr>
+                <tr<?php echo $is_off ? ' class="mpwpb-dtm-row-off"' : ''; ?>>
                     <td style="text-transform: capitalize;"><?php echo esc_html($day); ?></td>
                     <td class="mpwpb_start_time" data-day-name="<?php echo esc_attr($day); ?>">
 						<?php //echo '<pre>'; print_r( $start_time );echo '</pre>'; ?>

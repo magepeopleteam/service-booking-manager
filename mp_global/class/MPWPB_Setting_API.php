@@ -91,7 +91,7 @@
 			}
 			public function get_field_description($args) {
 				if (!empty($args['desc'])) {
-					$desc = sprintf('<br/><i class="info_text"><span class="fas fa-info-circle"></span>%s</i>', $args['desc']);
+					$desc = sprintf('<br/><i class="info_text">%s</i>', $args['desc']);
 				} else {
 					$desc = '';
 				}
@@ -159,9 +159,9 @@
 				?>
                 <label>
                     <input type="number" name="<?php echo esc_attr($name); ?>" class="formControl" value="<?php echo esc_attr($value); ?>" placeholder="<?php echo esc_attr($placeholder); ?>"
-						<?php echo esc_attr(empty($args['min']) ? '' : ' min="' . $args['min'] . '"'); ?>
-						<?php echo esc_attr(empty($args['max']) ? '' : ' max="' . $args['max'] . '"'); ?>
-						<?php echo esc_attr(empty($args['step']) ? '' : ' step="' . $args['step'] . '"'); ?>
+						<?php echo $args['min'] === '' ? '' : ' min="' . esc_attr($args['min']) . '"'; ?>
+						<?php echo $args['max'] === '' ? '' : ' max="' . esc_attr($args['max']) . '"'; ?>
+						<?php echo $args['step'] === '' ? '' : ' step="' . esc_attr($args['step']) . '"'; ?>
                     />
                 </label>
 				<?php
@@ -298,7 +298,7 @@
 					'name' => $args['section'] . '[' . $args['id'] . ']',
 					'id' => $args['section'] . '[' . $args['id'] . ']',
 				);
-				wp_dropdown_pages(esc_attr($dropdown_args));
+				wp_dropdown_pages($dropdown_args);
 			}
 			// function sanitize_options($options) {
 			// 	if (!$options) {
@@ -315,23 +315,89 @@
 			// 	return $options;
 			// }
 			public function sanitize_options($input) {
-				return is_array($input) ? array_map('sanitize_text_field', $input) : sanitize_text_field($input);
+				if (!is_array($input)) {
+					return sanitize_text_field($input);
+				}
+
+				$output = array();
+				foreach ($input as $key => $value) {
+					$field = $this->get_field_definition($key);
+					$sanitize_callback = $field['sanitize_callback'] ?? false;
+					if ($sanitize_callback && is_callable($sanitize_callback)) {
+						$output[$key] = call_user_func($sanitize_callback, $value);
+						continue;
+					}
+
+					$type = $field['type'] ?? 'text';
+					switch ($type) {
+						case 'multicheck':
+							$allowed = array_keys((array) ($field['options'] ?? array()));
+							$values = is_array($value) ? $value : array();
+							$output[$key] = array();
+							foreach ($values as $item_key => $item_value) {
+								$item_value = sanitize_key($item_value);
+								if (in_array($item_value, $allowed, true)) {
+									$output[$key][sanitize_key($item_key)] = $item_value;
+								}
+							}
+							break;
+						case 'number':
+							$number = is_numeric($value) ? (float) $value : (float) ($field['default'] ?? 0);
+							if (isset($field['min']) && $field['min'] !== '') {
+								$number = max((float) $field['min'], $number);
+							}
+							if (isset($field['max']) && $field['max'] !== '') {
+								$number = min((float) $field['max'], $number);
+							}
+							$output[$key] = floor($number) === $number ? (int) $number : $number;
+							break;
+						case 'select':
+						case 'radio':
+							$allowed = array_keys((array) ($field['options'] ?? array()));
+							$value = sanitize_text_field($value);
+							$output[$key] = in_array($value, $allowed, true) ? $value : ($field['default'] ?? '');
+							break;
+						case 'checkbox':
+							$output[$key] = $value === 'on' ? 'on' : 'off';
+							break;
+						case 'color':
+							$output[$key] = sanitize_hex_color($value) ?: ($field['default'] ?? '');
+							break;
+						case 'pages':
+							$output[$key] = absint($value);
+							break;
+						case 'url':
+							$output[$key] = esc_url_raw($value);
+							break;
+						case 'wysiwyg':
+							$output[$key] = wp_kses_post($value);
+							break;
+						case 'textarea':
+							$output[$key] = $key === 'custom_css' ? wp_strip_all_tags($value) : sanitize_textarea_field($value);
+							break;
+						default:
+							$output[$key] = is_array($value) ? map_deep($value, 'sanitize_text_field') : sanitize_text_field($value);
+					}
+				}
+				return $output;
+			}
+			private function get_field_definition($slug) {
+				foreach ($this->settings_fields as $options) {
+					foreach ($options as $option) {
+						if (($option['name'] ?? '') === $slug) {
+							return $option;
+						}
+					}
+				}
+				return array();
 			}
 			function get_sanitize_callback($slug = '') {
 				if (empty($slug)) {
 					return false;
 				}
 				// Iterate over registered fields and see if we can find proper callback
-				foreach ($this->settings_fields as $section => $options) {
-					foreach ($options as $option) {
-						if ($option['name'] != $slug) {
-							continue;
-						}
-						// Return the callback name
-						return isset($option['sanitize_callback']) && is_callable($option['sanitize_callback']) ? $option['sanitize_callback'] : false;
-					}
-				}
-				return false;
+				$option = $this->get_field_definition($slug);
+				return isset($option['sanitize_callback']) && is_callable($option['sanitize_callback']) ? $option['sanitize_callback'] : false;
 			}
 			function show_navigation() {
 				$count = count($this->settings_sections);

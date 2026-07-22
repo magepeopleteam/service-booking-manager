@@ -18,11 +18,24 @@
 				add_filter('wp_mail_content_type', array($this, 'email_content_type'));
 			}
 			private function load_file(): void {
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Help_Guide.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Taxonomy.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Dummy_Import.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Hidden_Product.php';
+				if (MPWPB_Global_Function::is_wc_payment_mode()) {
+					require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Hidden_Product.php';
+				}
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_CPT.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Status.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Cancellation_Requests.php';
+				//*************Coupon Engine*****************//
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Coupon_CPT.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Coupon_Settings.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/coupon-settings/General.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/coupon-settings/Discount.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/coupon-settings/Services.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/coupon-settings/Restrictions.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/coupon-settings/Scheduling_Staff.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/coupon-settings/Usage_Limits.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Reviews_Admin.php';
 		        require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Extended_Settings.php';
 
@@ -43,15 +56,42 @@
 
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Service_Settings.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Staff_Member.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Tax_Settings.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings/Happy_Hours.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings-modern/MPWPB_Categories_Services_Modern.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings-modern/MPWPB_Extra_Service_Modern.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings-modern/MPWPB_Date_Time_Modern.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings-modern/MPWPB_Service_Features_Modern.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/settings-modern/MPWPB_Settings_Modern.php';
 
 				//****************Woocommerce Checkout*********************** */
-				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Settings.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Fields.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Billing.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Shipping.php';
-				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Order.php';
+				if (MPWPB_Global_Function::is_wc_payment_mode()) {
+					require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Settings.php';
+					require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Fields.php';
+					require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Billing.php';
+					require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Shipping.php';
+					require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Wc_Checkout_Order.php';
+				}
+				//****************Native (non-WooCommerce) Checkout*********************** */
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Native_Order.php';
+				// Free, basic Orders screen for native orders -- self-gates to
+				// "Pro inactive AND WooCommerce mode off" so it never collides with
+				// Pro's own Order List or WooCommerce's Orders screen.
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Native_Order_List.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Native_Checkout_Settings.php';
+				//****************GDPR*********************** */
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Gdpr_Settings.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Gdpr_Requests.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Analytics_Dashboard.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Analytics_Ajax.php';
+				//****************Pro-only menu: locked teaser when Pro is inactive*********************** */
+				// Required last so its no-explicit-position menu item naturally
+				// appends after every other item above (Service List/Coupons/
+				// Status/Reviews/Staff Members/Settings/Analytics), landing last.
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Pro_Locked_Menus.php';
+				// Modern "Upgrade to Pro" admin notice -- self-gates to Pro-inactive
+				// and only renders on this plugin's own screens.
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Pro_Upsell_Notice.php';
 			}
 			public function flush_rewrite() {
 				flush_rewrite_rules();
@@ -62,19 +102,24 @@
 				if ($post_type === MPWPB_Function::get_cpt() && $user_status == 'yes') {
 					return false;
 				}
+				if ($post_type === 'mpwpb_coupon') {
+					return false;
+				}
 				return $current_status;
 			}
 			//**************Post duplicator*********************//
 			public function mpwpb_item_duplicate() {
-				global $wpdb;
 				if (!(isset($_GET['post']) || isset($_POST['post']) || (isset($_REQUEST['action']) && 'mpwpb_item_duplicate' == $_REQUEST['action']))) {
-					wp_die('No post to duplicate has been supplied!');
+					wp_die(esc_html__('No service to duplicate has been supplied.', 'service-booking-manager'), '', array('response' => 403));
 				}
 				if (!isset($_GET['duplicate_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['duplicate_nonce'])), basename(__FILE__))) {
-					return;
+					wp_die(esc_html__('Security check failed.', 'service-booking-manager'), '', array('response' => 403));
 				}
 				$post_id = (isset($_GET['post']) ? absint(wp_unslash($_GET['post'])) : absint(wp_unslash($_POST['post'])));
 				$post = get_post($post_id);
+				if (!$post || $post->post_type !== MPWPB_Function::get_cpt() || !current_user_can('edit_post', $post_id)) {
+					wp_die(esc_html__('You are not allowed to duplicate this service.', 'service-booking-manager'), '', array('response' => 403));
+				}
 				$current_user = wp_get_current_user();
 				$new_post_author = $current_user->ID;
 				if (isset($post) && $post != null) {
@@ -133,7 +178,7 @@
 				}
 			}
 			public function post_duplicator($actions, $post) {
-				if (current_user_can('edit_posts')) {
+				if ($post->post_type === MPWPB_Function::get_cpt() && current_user_can('edit_post', $post->ID)) {
 					$actions['duplicate'] = '<a href="' . wp_nonce_url('admin.php?action=mpwpb_item_duplicate&post=' . $post->ID, basename(__FILE__), 'duplicate_nonce') . '" title="' . esc_html__('Duplicate Post', 'service-booking-manager') . '" rel="permalink">' . esc_html__('Duplicate', 'service-booking-manager') . '</a>';
 				}
 				return $actions;

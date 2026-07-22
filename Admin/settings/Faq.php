@@ -117,11 +117,12 @@
 								<?php
 									$content = '';
 									$editor_id = 'mpwpb_faq_content';
-									$settings = array(
-										'textarea_name' => 'mpwpb_faq_content',
-										'media_buttons' => true,
-										'textarea_rows' => 10,
-									);
+								$settings = array(
+									'textarea_name' => 'mpwpb_faq_content',
+									'wpautop'       => false,
+									'media_buttons' => true,
+									'textarea_rows' => 10,
+								);
 									wp_editor($content, $editor_id, $settings);
 								?>
                                 <div class="mT"></div>

@@ -1,6 +1,6 @@
 <?php
 	/**
-	 * Plugin Name: Appointment Booking Plugin for WooCommerce – WpBookingly | All-in-One Service Manager
+	 * Plugin Name: Appointment Booking Plugin for WooCommerce – All-in-One Service Manager
 	 * Plugin URI: http://mage-people.com
 	 * Description: A complete solution for Any kind of service booking.
 	 * Version: 1.3.1
@@ -26,15 +26,12 @@
 				if (!defined('MPWPB_PLUGIN_URL')) {
 					define('MPWPB_PLUGIN_URL', plugins_url() . '/' . plugin_basename(dirname(__FILE__)));
 				}
-				require_once MPWPB_PLUGIN_DIR . '/mp_global/MPWPB_Global_File_Load.php';
-				if (MPWPB_Global_Function::check_woocommerce() == 1) {
-					add_action('activated_plugin', array($this, 'activation_redirect'), 90, 1);
-					require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Dependencies.php';
-				} else {
-					require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Woo_Installer.php';
-					new MPWPB_Woo_Installer();
-					add_action('activated_plugin', array($this, 'activation_redirect_setup'), 90, 1);
+				if (!defined('MPWPB_VERSION')) {
+					define('MPWPB_VERSION', '1.3.1');
 				}
+				require_once MPWPB_PLUGIN_DIR . '/mp_global/MPWPB_Global_File_Load.php';
+				add_action('activated_plugin', array($this, 'activation_redirect'), 90, 1);
+				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Dependencies.php';
 				$this->appsero_init_tracker_service_booking_manager();
 			}
 			public function appsero_init_tracker_service_booking_manager() {
@@ -56,27 +53,26 @@
 						));
 					}
 					flush_rewrite_rules();
-					exit(esc_url_raw(wp_redirect(admin_url('edit.php?post_type=mpwpb_item&page=mpwpb_service_list'))));
+					wp_safe_redirect(admin_url('edit.php?post_type=mpwpb_item&page=mpwpb_service_list'));
+					exit;
 				}
-			}
-			public function activation_redirect_setup($plugin) {
-				if ($plugin == plugin_basename(__FILE__)) {
-					exit(esc_url_raw(wp_redirect(admin_url('edit.php?post_type=mpwpb_item&page=mpwpb_service_list'))));
-				}
-			}
-			public function woocommerce_not_active() {
-				$wc_install_url = get_admin_url() . 'plugin-install.php?s=woocommerce&tab=search&type=term';
-				?>
-				<div class="error" style="background-color: #ffe0e0;">
-					<p>
-						<?php esc_html_e('You Must Install WooCommerce Plugin before activating Service Booking Manager, Because It is dependent on Woocommerce Plugin.', 'service-booking-manager');?>
-						<a class="btn button" href="<?php echo esc_url($wc_install_url); ?>"><?php esc_html_e('Click Here to Install', 'service-booking-manager'); ?></a>
-					</p>
-				</div>
-				<?php
 			}
 			public static function plugin_activate() {
 				set_transient('mpwpb_plugin_activated', true, 30);
+				// Activation runs after the current request's init hook. Register the
+				// service post type now so its permalink rules exist before flushing.
+				if (class_exists('MPWPB_CPT')) {
+					MPWPB_CPT::register_service_post_type();
+				}
+				// Auto-create the Custom Payment "My Account" page, same
+				// convention WooCommerce uses for its own "My Account" page
+				// on activation -- MPWPB_Custom_Payment_My_Account is
+				// already required/instantiated by this point (loaded via
+				// inc/MPWPB_Dependencies.php, above, before WordPress fires
+				// this activation callback).
+				if (class_exists('MPWPB_Custom_Payment_My_Account')) {
+					MPWPB_Custom_Payment_My_Account::maybe_create_page();
+				}
 				flush_rewrite_rules();
 			}
 		}

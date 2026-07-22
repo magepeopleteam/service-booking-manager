@@ -26,7 +26,6 @@
 					$sub_category_name = array_key_exists('sub_cat', $service_item)&& ($service_item['sub_cat']|| $service_item['sub_cat']==0)  ?(int) $service_item['sub_cat']+1 : '';
 					$service_name = array_key_exists('name', $service_item) ? $service_item['name'] : '';
 					$service_image = array_key_exists('image', $service_item) ? $service_item['image'] : '';
-					$service_icon = array_key_exists('icon', $service_item) ? $service_item['icon'] : '';
 					$service_price = array_key_exists('price', $service_item) ? $service_item['price'] : 0;
 					$service_wc_price = MPWPB_Global_Function::wc_price($post_id, $service_price);
 					$service_price = MPWPB_Global_Function::price_convert_raw($service_wc_price);
@@ -48,20 +47,17 @@
                             <div class="_dFlex_justifyBetween_fullWidth">
                                 <div class="_fdColumn_fullWidth">
                                     <div class="alignCenter">
-										<?php if ($service_icon) { ?>
-                                            <span class="<?php echo esc_attr($service_icon); ?> mR_xs"></span>
-										<?php } ?>
                                         <h6><?php echo esc_html($service_name); ?></h6>
                                     </div>
                                     <div class="_equalChild">
-										<?php if (isset($ex_service_info['details'])) { ?>
-                                            <div data-collapse-target="<?php echo esc_attr($unique_id); ?>" data-read data-open-text="<?php esc_attr_e('Close Details', 'service-booking-manager'); ?>" data-close-text="<?php esc_attr_e('View Details', 'service-booking-manager'); ?>">
-                                                <span data-text>&nbsp;</span>
+										<?php if (!empty($service_details)) { ?>
+                                            <div class="mpwpb_service_details_toggle" data-collapse-target="<?php echo esc_attr($unique_id); ?>" data-read data-open-text="<?php esc_attr_e('Close Details', 'service-booking-manager'); ?>" data-close-text="<?php esc_attr_e('Details', 'service-booking-manager'); ?>">
+                                                <span data-text><?php esc_html_e('Details', 'service-booking-manager'); ?></span>
                                             </div>
 										<?php } ?>
 										<?php if ($service_duration) { ?>
-                                            <h6 class="textTheme alignCenter">
-                                                <span class="fas fa-clock mR_xs"></span>
+                                            <h6 class="textTheme alignCenter mpwpb_service_duration">
+                                                <span class="far fa-clock mR_xs"></span>
                                                 <span><?php echo wp_kses_post($service_duration); ?></span>
                                             </h6>
 										<?php } ?>

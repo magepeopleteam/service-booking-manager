@@ -1,5 +1,6 @@
 div.mpwpb_global_settings {
   max-width: 1700px;
+}
 /*
     Author: Shahadat Hossain
     Email: raselsha@gmail.com 
@@ -769,7 +770,7 @@ div.mpwpb_style.mpwpb_global_settings .tabLists {
     height: 0;
     border-top: 10px solid transparent;
     border-bottom: 10px solid transparent;
-    border-left: 8px solid var(--mage-primary);
+    border-left: none;
   }
   .mpwpb_style [data-tabs-target]{
     padding: 10px;

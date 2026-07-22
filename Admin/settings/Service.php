@@ -93,6 +93,7 @@
 				$new_data = [
 					'name' => isset($_POST['service_name'])?sanitize_text_field(wp_unslash($_POST['service_name'])):'',
 					'price' =>isset($_POST['service_price'])? sanitize_text_field(wp_unslash($_POST['service_price'])):'',
+					'service_unit' =>isset($_POST['service_unit'])? sanitize_text_field(wp_unslash($_POST['service_unit'])):'',
 					'duration' => isset($_POST['service_duration'])?sanitize_text_field(wp_unslash($_POST['service_duration'])):'',
 					'details' => isset($_POST['service_description'])?sanitize_text_field(wp_unslash($_POST['service_description'])):'',
 					'icon' => $iconClass,
@@ -426,6 +427,7 @@
 				$new_data = [
 					'name' => isset($_POST['service_name'])?sanitize_text_field(wp_unslash($_POST['service_name'])):'',
 					'price' =>isset($_POST['service_price'])? sanitize_text_field(wp_unslash($_POST['service_price'])):'',
+					'service_unit' =>isset($_POST['service_unit'])? sanitize_text_field(wp_unslash($_POST['service_unit'])):'',
 					'duration' => isset($_POST['service_duration'])?sanitize_text_field(wp_unslash($_POST['service_duration'])):'',
 					'details' => isset($_POST['service_description'])?sanitize_text_field(wp_unslash($_POST['service_description'])):'',
 					'icon' => $iconClass,
@@ -539,8 +541,10 @@
 				$services = $this->get_services($post_id);
 				if (!empty($services)) {
 					if (isset($_POST['itemId'])) {
+						// Not array_values()-reindexed on purpose: nothing else references a
+						// service's array position, but keeping keys stable is consistent with
+						// the same fix applied to categories/subcategories (see Category.php).
 						unset($services[sanitize_text_field(wp_unslash($_POST['itemId']))]);
-						$services = array_values($services);
 					}
 				}
 				$result = update_post_meta($post_id, 'mpwpb_service', $services);
@@ -592,6 +596,7 @@
                         data-cat-status="<?php echo esc_attr($service['show_cat_status']); ?>"
                         data-parent-cat="<?php echo esc_attr($service['parent_cat']); ?>"
                         data-sub-cat="<?php echo esc_attr($service['sub_cat']); ?>"
+                        data-service-unit="<?php echo esc_attr(isset($service['service_unit']) ? $service['service_unit'] : ''); ?>"
                         title="<?php echo esc_attr($service['details']); ?>"
                 >
                     <td data-imageid="<?php echo esc_attr($service['image']); ?>">
@@ -631,6 +636,7 @@
                      data-cat-status="<?php echo esc_attr($service['show_cat_status']); ?>"
                      data-parent-cat="<?php echo esc_attr($service['parent_cat']); ?>"
                      data-sub-cat="<?php echo esc_attr($service['sub_cat']); ?>"
+                     data-service-unit="<?php echo esc_attr(isset($service['service_unit']) ? $service['service_unit'] : ''); ?>"
                      title="<?php echo esc_attr($service['details']); ?>"
                 >
                     <div class="mpwpb_service_icon" data-imageid="<?php echo esc_attr($service['image']); ?>">

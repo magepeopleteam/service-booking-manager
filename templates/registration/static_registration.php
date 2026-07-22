@@ -5,12 +5,26 @@
 	$post_id = $post_id ?? get_the_id();
 	$service_text = $service_text ?? MPWPB_Function::get_service_text($post_id);
 	$all_services = $all_services ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
-	$all_category = $all_category ?? MPWPB_Function::get_category($post_id);
-	$all_sub_category = $all_sub_category ?? MPWPB_Function::get_sub_category($post_id);
+	// Not MPWPB_Function::get_category()/get_sub_category() -- those read the
+	// legacy, unused 'mpwpb_category_infos' meta shape. Pre-seeding these two
+	// variable names with that (always-empty) legacy data blocked every child
+	// template's own `?? get_post_info(...)` fallback from ever running,
+	// since `??` only triggers on null/unset, not on an already-empty array.
+	// That silently broke the category/sub-category picker and hid the
+	// Continue button below on every post using the current data model.
+	$all_category = $all_category ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_category_service', array());
+	$all_sub_category = $all_sub_category ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_sub_category_service', array());
 	$all_service_list = $all_service_list ?? MPWPB_Function::get_all_service($post_id);
 	$extra_services = $extra_services ?? MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', array());
 	$title = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_shortcode_title');
 	$sub_title = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_shortcode_sub_title');
+
+	// "Reorder" from a past booking (Frontend/MPWPB_User_Dashboard.php's
+	// Reorder link) -- lands here via ?mpwpb_reorder={booking_id} on this
+	// same service's normal booking page/shortcode. Both the shortcode and
+	// single-page rendering paths funnel through this one file, so this is
+	// the single shared place to seed it once.
+	$mpwpb_reorder_prefill = MPWPB_Static_Template::get_reorder_prefill($post_id);
 
     $is_multiselect = get_post_meta( $post_id, 'mpwpb_service_multiple_category_check', true );
     $enable_recurring = MPWPB_Global_Function::get_post_info( $post_id, 'mpwpb_enable_recurring', 'no');
@@ -18,16 +32,60 @@
 
     $mpwpb_general_settings = get_option( 'mpwpb_general_settings', [] );
     $is_sticky_on_scrolling = isset( $mpwpb_general_settings['booking_widget_sticky_on_scrolling'] ) ? $mpwpb_general_settings['booking_widget_sticky_on_scrolling'] : 'yes';
+
+	/**
+	 * Rendered as a sibling AFTER .mpwpb_static_cateogry closes (not inside
+	 * category_selection_static.php) so it sits outside that wrapper's
+	 * scrollable tree -- only the category/service list itself scrolls
+	 * (mpwpb_registration.css, .mpwpb-service-tree), this CTA stays fixed
+	 * in view underneath it.
+	 */
+	if (!function_exists('mpwpb_static_cta_footer')) {
+		function mpwpb_static_cta_footer($all_category, $all_services) {
+			if (sizeof($all_category) < 1 && sizeof($all_services) < 1) {
+				return;
+			}
+			?>
+			<div class="mpwpb-tree-cta-footer">
+				<button type="button" class="mpwpb-tree-cta-btn" data-target-popup="#mpwpb_static_popup"><?php esc_html_e('Select Service & Confirm Booking', 'service-booking-manager'); ?></button>
+			</div>
+			<div class="mpwpb-tree-trust">
+				<div class="mpwpb-tree-trust-item">
+					<i class="fas fa-shield-alt"></i>
+					<span><?php esc_html_e('Secure Payment Protection', 'service-booking-manager'); ?></span>
+				</div>
+				<div class="mpwpb-tree-trust-item">
+					<i class="fas fa-calendar-alt"></i>
+					<span><?php esc_html_e('Free Rescheduling up to 24h', 'service-booking-manager'); ?></span>
+				</div>
+			</div>
+			<?php
+		}
+	}
+	if ($mpwpb_reorder_prefill) {
+		// Echoed directly here (not wp_add_inline_script('mpwpb_registration', ...))
+		// because that script is enqueued without in_footer -- WordPress prints
+		// it during wp_head(), which runs BEFORE this template (part of the
+		// main content loop) ever executes. By the time this code ran,
+		// mpwpb_registration's <script> tag was already on the page and
+		// wp_add_inline_script() silently had nothing left to attach to, so
+		// mpwpbReorderPrefill never existed at all. A plain inline <script>
+		// tag printed right here in the body always runs at the right time,
+		// regardless of where any enqueued file was placed.
+		?>
+		<script>var mpwpbReorderPrefill = <?php echo wp_json_encode($mpwpb_reorder_prefill, JSON_HEX_TAG | JSON_HEX_AMP); ?>;</script>
+		<?php
+	}
 ?>
     <div class="mpwpb_static_theme">
-        <div class="mpwpb_static_area">
+        <div class="mpwpb_static_area<?php echo $is_sticky_on_scrolling === 'yes' ? ' mpwpb-sticky-enabled' : ''; ?>">
             <input type="hidden" name="mpwpb_sticky_on_scrolling" id="mpwpb_sticky_on_scrolling" value="<?php echo esc_attr( $is_sticky_on_scrolling )?>">
             <?php if( $shortcode === 'yes' ){ ?>
             <div class="mpwpb_static " id="mpwpb_make_static_booking">
-				<?php include(MPWPB_Function::template_path('layout/title_details_page.php')); ?>
                 <div class="mpwpb_static_cateogry">
 					<?php include(MPWPB_Function::template_path('registration/category_selection_static.php')); ?>
                 </div>
+				<?php mpwpb_static_cta_footer($all_category, $all_services); ?>
             </div>
             <?php } else{?>
                 <div class="mpwpb_static " id="mpwpb_make_static_booking">
@@ -35,6 +93,7 @@
                     <div class="mpwpb_static_cateogry">
                         <?php include(MPWPB_Function::template_path('registration/category_selection_static.php')); ?>
                     </div>
+					<?php mpwpb_static_cta_footer($all_category, $all_services); ?>
                 </div>
                 <div class="mpwpb_mobile_booking" id="mpwpb_mobile_booking_mobile"><?php esc_html_e('Make Service Booking', 'service-booking-manager'); ?></div>
             <?php }?>
@@ -71,8 +130,8 @@
                                     </div>
 
                                     <div class="selection-header">
-                                        <h3><?php esc_html_e('Select Service Type', 'service-booking-manager'); ?></h3>
-                                        <p><?php esc_html_e('Choose the perfect wash for your vehicle', 'service-booking-manager'); ?></p>
+                                        <h3><?php esc_html_e('Your services', 'service-booking-manager'); ?></h3>
+                                        <p><?php esc_html_e('Tick services from any category — use the −/+ control to set quantity.', 'service-booking-manager'); ?></p>
                                     </div>
 
 
@@ -82,7 +141,13 @@
                                     <?php include(MPWPB_Function::template_path('registration/extra_services.php')); ?>
                                 </div>
                                 <?php include(MPWPB_Function::template_path('registration/date_time_select.php')); ?>
-                                <div class="mpwpb_order_proceed_area"></div>
+                                <div class="mpwpb_order_proceed_area">
+									<?php if (MPWPB_Global_Function::is_wc_payment_mode()) { ?>
+										<form name="checkout" method="post" class="checkout woocommerce-checkout mpwpb-inline-wc-checkout-form" action="<?php echo esc_url(wc_get_checkout_url()); ?>" enctype="multipart/form-data" aria-label="<?php esc_attr_e('Booking checkout', 'service-booking-manager'); ?>">
+											<div class="mpwpb-inline-wc-checkout-content"></div>
+										</form>
+									<?php } ?>
+								</div>
                             </div>
 
                             <div class="service-cart">
@@ -176,6 +241,16 @@
                     </div>
                 </div>
                 <div class="popupFooter _justifyBetween">
+                    <!-- Live summary of what's currently checked in the tree above
+                         (name, qty, price per row) so the user can confirm their
+                         selection before continuing -- populated/updated entirely
+                         client-side (updateSelectedSummary() in mpwpb-booking-
+                         tree.js). Hidden on the Service step (that step already
+                         shows the tree itself, so it'd be pure duplication) and
+                         whenever nothing is selected; shown on Date & Time and
+                         Checkout, truncated to 3 rows with a "view more" toggle
+                         once more than 3 are selected. -->
+                    <div class="mpwpb-selected-summary" id="mpwpb_selected_summary"></div>
 					<?php include(MPWPB_Function::template_path('registration/next_service.php')); ?>
 					<?php include(MPWPB_Function::template_path('registration/next_date_time.php')); ?>
                 </div>

@@ -4,7 +4,7 @@
 	.mpwpb_style *,
 	.mpwpb_style *::after,
 	.mpwpb_style *::before { -webkit-box-sizing: border-box; box-sizing: border-box; }
-	body { margin: 0; padding: 0; }
+	.mpwpb_style { margin: 0; padding: 0; }
 	body.noScroll { overflow: hidden; }
 	/******/
 	.mpwpb_style { font-size: var(--mpwpb_fs); font-weight: var(--mpwpb_fw); color: var(--d_color); line-height: 1.5; width: 100%; }
@@ -307,7 +307,7 @@
 	.mpwpb_style .dNone, .mpwpb_style [class*="_dNone"] { display: none; }
 	.mpwpb_style .dBlock, .mpwpb_style [class*="_dBlock"] { display: block; }
 	.mpwpb_style .dInlineBlock, .mpwpb_style [class*="_dInlineBlock"],
-	.mpwpb_style small, .mpwpb_style span, .mpwpb_style strong { display: inline-block; }
+	.mpwpb_style small, .mpwpb_style span, .mpwpb_style strong { display: flex; }
 	/**************/
 	.mpwpb_style .fLeft, .mpwpb_style [class*="_fLeft"] { float: left; }
 	.mpwpb_style .fRight, .mpwpb_style [class*="_fRight"] { float: right; }
@@ -398,7 +398,7 @@
 }
 /******************************************************************** Loader Section ************************************************/
 @media only screen and (min-width: 10px) {
-	div[class*="mpwpb_loader"]{ position: absolute; z-index: 11111; left: 0; right: 0; top: 0; bottom: 0; font-size: var(--mpwpb_fs_h1); width: 100%; height: 100%; }
+	div[class*="mpwpb_loader"]{ position: absolute; z-index: 11111; left: 0; right: 0; top: 0; bottom: 0; font-size: var(--mpwpb_fs_h1); width: 100%; height: 100%; display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: center; justify-content: center; }
 	div[class*="mpwpb_loader"] { background: #0003; color: var(--mpwpb_color_theme); }
 	div[class*="mpwpb_loader"].pFixed { position: fixed; max-width: 100vw; max-height: 100vh; }
 	div.mpwpb_loader_xs { font-size: var(--mpwpb_fs_h5); }
@@ -1026,6 +1026,12 @@
 	.mpwpb_style table tr[data-collapse].mActive { display: table-row; }
 	.mpwpb_style table th[data-collapse].mActive,
 	.mpwpb_style table td[data-collapse].mActive { display: table-cell; }
+}
+/* Event settings page */
+@media only screen and (min-width: 10px) {
+	.mpwpb_style table th, .mpwpb_style table td {
+		border-bottom: 1px solid var(--mpwpb_color_border);
+	}
 }
 /******************************************************************** Tabs section ************************************************/
 @media only screen and (min-width: 10px) {

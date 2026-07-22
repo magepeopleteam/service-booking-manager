@@ -39,8 +39,8 @@ if (!class_exists('MPWPB_Analytics_Dashboard')) {
                 return;
             }
             
-            wp_enqueue_style('mpwpb-analytics-dashboard', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_analytics_dashboard.css', array(), time());
-            wp_enqueue_script('mpwpb-analytics-dashboard', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_analytics_dashboard.js', array('jquery', 'chartjs'), time(), true);
+            wp_enqueue_style('mpwpb-analytics-dashboard', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_analytics_dashboard.css', array(), MPWPB_VERSION);
+			wp_enqueue_script('chartjs', 'https://cdn.jsdelivr.net/npm/chart.js', array(), '3.9.1', true);
         }
         
         /**
@@ -112,7 +112,7 @@ if (!class_exists('MPWPB_Analytics_Dashboard')) {
                         <div class="mpwpb-widget mpwpb-widget-1-4">
                             <div class="mpwpb-widget-content">
                                 <h3><?php esc_html_e('Revenue', 'service-booking-manager'); ?></h3>
-                                <div class="mpwpb-widget-value mpwpb-total-revenue"><?php echo wp_kses_post(wc_price($this->get_total_revenue())); ?></div>
+                                <div class="mpwpb-widget-value mpwpb-total-revenue"><?php echo wp_kses_post(MPWPB_Global_Function::format_price($this->get_total_revenue())); ?></div>
                                 <div class="mpwpb-widget-description"><?php esc_html_e('Total revenue generated', 'service-booking-manager'); ?></div>
                             </div>
                         </div>
@@ -120,7 +120,7 @@ if (!class_exists('MPWPB_Analytics_Dashboard')) {
                         <div class="mpwpb-widget mpwpb-widget-1-4">
                             <div class="mpwpb-widget-content">
                                 <h3><?php esc_html_e('Avg. Booking Value', 'service-booking-manager'); ?></h3>
-                                <div class="mpwpb-widget-value mpwpb-avg-booking-value"><?php echo wp_kses_post(wc_price($this->get_average_booking_value())); ?></div>
+                                <div class="mpwpb-widget-value mpwpb-avg-booking-value"><?php echo wp_kses_post(MPWPB_Global_Function::format_price($this->get_average_booking_value())); ?></div>
                                 <div class="mpwpb-widget-description"><?php esc_html_e('Average per booking', 'service-booking-manager'); ?></div>
                             </div>
                         </div>
@@ -281,7 +281,11 @@ if (!class_exists('MPWPB_Analytics_Dashboard')) {
                         csvData.forEach(function(row) {
                             var csvRow = row.map(function(field) {
                                 // Escape quotes and wrap in quotes if contains comma or quote
-                                if (typeof field === 'string' && (field.includes(',') || field.includes('"') || field.includes('\n'))) {
+								field = String(field == null ? '' : field);
+								if (/^[=+\-@]/.test(field)) {
+									field = "'" + field;
+								}
+                                if (field.includes(',') || field.includes('"') || field.includes('\n') || field.includes('\r')) {
                                     return '"' + field.replace(/"/g, '""') + '"';
                                 }
                                 return field;
@@ -460,6 +464,43 @@ if (!class_exists('MPWPB_Analytics_Dashboard')) {
         }
         
         /**
+         * Same "is this a real, counted booking" rule the Order List page
+         * uses (MPWPB_Function_PRO::attendee_query()) -- a booking counts
+         * when its own mpwpb_order_status meta is 'partially-paid' or one of
+         * the site's configured "booked" statuses (mpwpb_global_settings /
+         * set_book_status, default processing+completed). Deliberately does
+         * NOT go through MPWPB_Global_Function::get_order($order_id) --
+         * that helper only ever resolves in WooCommerce mode
+         * (wc_get_order()) and unconditionally returns false otherwise, so
+         * every count here silently stayed at 0 for Custom/native-mode
+         * sites even though the same bookings show up fine on Order List.
+         */
+        private function get_valid_booking_statuses() {
+            $set_book_status = MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'set_book_status', array('processing', 'completed'));
+            return !empty($set_book_status) ? (array) $set_book_status : array();
+        }
+        private function is_valid_order_status($order_status) {
+            if ($order_status === 'partially-paid') {
+                return true;
+            }
+            return in_array($order_status, $this->get_valid_booking_statuses(), true);
+        }
+        /**
+         * Same amount rule Order List uses: a partially-paid booking's
+         * "revenue" is the amount actually collected so far (mpwpb_amount_paid,
+         * booking-level and source-agnostic -- see MPWPB_Partial_Payment), not
+         * its full contracted price, since the rest is still outstanding.
+         * '_order_total' (the old rule here) is a WooCommerce-only order meta
+         * key that never exists on a native (Custom Payment) order.
+         */
+        private function get_booking_amount($booking_id, $order_id, $order_status) {
+            if ($order_status === 'partially-paid' && $order_id) {
+                return (float) MPWPB_Global_Function::get_post_info($booking_id, 'mpwpb_amount_paid');
+            }
+            return (float) MPWPB_Global_Function::get_post_info($booking_id, 'mpwpb_tp');
+        }
+
+        /**
          * Get total bookings count
          */
         private function get_total_bookings() {
@@ -500,17 +541,14 @@ if (!class_exists('MPWPB_Analytics_Dashboard')) {
                 while ($query->have_posts()) {
                     $query->the_post();
                     $booking_id = get_the_ID();
-                    $order_id = get_post_meta($booking_id, 'mpwpb_order_id', true);
-                    if ($order_id) {
-                        $order = wc_get_order($order_id);
-                        if ($order && $order->get_id() && $order->get_status() !== 'trash') {
-                            $valid_bookings++;
-                        }
+                    $order_status = get_post_meta($booking_id, 'mpwpb_order_status', true);
+                    if ($this->is_valid_order_status($order_status)) {
+                        $valid_bookings++;
                     }
                 }
                 wp_reset_postdata();
             }
-            
+
             return $valid_bookings;
         }
         
@@ -527,13 +565,21 @@ if (!class_exists('MPWPB_Analytics_Dashboard')) {
                 'meta_query' => array(
                     'relation' => 'AND',
                     array(
-                        'key' => 'mpwpb_order_status',
-                        'value' => array('completed', 'processing'),
-                        'compare' => 'IN'
+                        'relation' => 'OR',
+                        array(
+                            'key' => 'mpwpb_order_status',
+                            'value' => 'partially-paid',
+                            'compare' => '='
+                        ),
+                        array(
+                            'key' => 'mpwpb_order_status',
+                            'value' => $this->get_valid_booking_statuses(),
+                            'compare' => 'IN'
+                        )
                     )
                 )
             );
-            
+
             // Add date filter if specified
             if ($start_date && $end_date) {
                 $args['date_query'] = array(
@@ -544,7 +590,7 @@ if (!class_exists('MPWPB_Analytics_Dashboard')) {
                     )
                 );
             }
-            
+
             // Add service filter if specified
             if ($service_id) {
                 $args['meta_query'][] = array(
@@ -553,24 +599,23 @@ if (!class_exists('MPWPB_Analytics_Dashboard')) {
                     'compare' => '='
                 );
             }
-            
+
             $query = new WP_Query($args);
             $total_revenue = 0;
-            
+
             if ($query->have_posts()) {
                 while ($query->have_posts()) {
                     $query->the_post();
-                    $order_id = get_post_meta(get_the_ID(), 'mpwpb_order_id', true);
-                    if ($order_id) {
-                        $order = wc_get_order($order_id);
-                        if ($order && $order->get_status() !== 'trash' && ($order->get_status() === 'completed' || $order->get_status() === 'processing')) {
-                            $total_revenue += $order->get_total();
-                        }
+                    $booking_id = get_the_ID();
+                    $order_id = get_post_meta($booking_id, 'mpwpb_order_id', true);
+                    $order_status = get_post_meta($booking_id, 'mpwpb_order_status', true);
+                    if ($this->is_valid_order_status($order_status)) {
+                        $total_revenue += $this->get_booking_amount($booking_id, $order_id, $order_status);
                     }
                 }
                 wp_reset_postdata();
             }
-            
+
             return $total_revenue;
         }
         
@@ -668,25 +713,24 @@ if (!class_exists('MPWPB_Analytics_Dashboard')) {
                 if ($query->have_posts()) {
                     while ($query->have_posts()) {
                         $query->the_post();
-                        $order_id = get_post_meta(get_the_ID(), 'mpwpb_order_id', true);
-                        if ($order_id) {
-                            $order = wc_get_order($order_id);
-                            if ($order && $order->get_id() && $order->get_status() !== 'trash') {
-                                $valid_bookings++;
-                            }
+                        $order_status = get_post_meta(get_the_ID(), 'mpwpb_order_status', true);
+                        if ($this->is_valid_order_status($order_status)) {
+                            $valid_bookings++;
                         }
                     }
                     wp_reset_postdata();
                 }
-                
+
                 $data[] = $valid_bookings;
             }
-            
-            // If no data, return array with zeros for the period
-            if (empty($data) || array_sum($data) === 0) {
-                $data = array_fill(0, count($period), 0);
-            }
-            
+
+            // $data already has exactly one entry per day in $period (zero or
+            // not) from the loop above -- no fallback needed. (The removed
+            // fallback called count() on $period, a DatePeriod object; that's
+            // a fatal TypeError on PHP 8+, not just a warning, so this ran
+            // fatally on every page load where revenue data came back empty --
+            // which, before the get_order() fix above, was every load.)
+
             return $data;
         }
         
@@ -748,17 +792,14 @@ if (!class_exists('MPWPB_Analytics_Dashboard')) {
             if ($query->have_posts()) {
                 while ($query->have_posts()) {
                     $query->the_post();
-                    $order_id = get_post_meta(get_the_ID(), 'mpwpb_order_id', true);
-                    if ($order_id) {
-                        $order = wc_get_order($order_id);
-                        if ($order && $order->get_id() && $order->get_status() !== 'trash') {
-                            $service_id = get_post_meta(get_the_ID(), 'mpwpb_id', true);
-                            if ($service_id) {
-                                if (!isset($service_counts[$service_id])) {
-                                    $service_counts[$service_id] = 0;
-                                }
-                                $service_counts[$service_id]++;
+                    $order_status = get_post_meta(get_the_ID(), 'mpwpb_order_status', true);
+                    if ($this->is_valid_order_status($order_status)) {
+                        $service_id = get_post_meta(get_the_ID(), 'mpwpb_id', true);
+                        if ($service_id) {
+                            if (!isset($service_counts[$service_id])) {
+                                $service_counts[$service_id] = 0;
                             }
+                            $service_counts[$service_id]++;
                         }
                     }
                 }
@@ -843,19 +884,18 @@ if (!class_exists('MPWPB_Analytics_Dashboard')) {
             if ($query->have_posts()) {
                 while ($query->have_posts()) {
                     $query->the_post();
-                    $order_id = get_post_meta(get_the_ID(), 'mpwpb_order_id', true);
-                    if ($order_id) {
-                        $order = wc_get_order($order_id);
-                        if ($order && $order->get_id() && $order->get_status() !== 'trash') {
-                            $valid_bookings[] = array(
-                                'id' => get_the_ID(),
-                                'service_id' => get_post_meta(get_the_ID(), 'mpwpb_id', true),
-                                'date' => get_post_meta(get_the_ID(), 'mpwpb_date', true),
-                                'order_id' => $order_id,
-                                'order_status' => get_post_meta(get_the_ID(), 'mpwpb_order_status', true),
-                                'order' => $order
-                            );
-                        }
+                    $booking_id = get_the_ID();
+                    $order_id = get_post_meta($booking_id, 'mpwpb_order_id', true);
+                    $order_status = get_post_meta($booking_id, 'mpwpb_order_status', true);
+                    if ($this->is_valid_order_status($order_status)) {
+                        $valid_bookings[] = array(
+                            'id' => $booking_id,
+                            'service_id' => get_post_meta($booking_id, 'mpwpb_id', true),
+                            'date' => get_post_meta($booking_id, 'mpwpb_date', true),
+                            'order_id' => $order_id,
+                            'order_status' => $order_status,
+                            'amount' => $this->get_booking_amount($booking_id, $order_id, $order_status)
+                        );
                     }
                 }
                 wp_reset_postdata();
@@ -887,11 +927,12 @@ if (!class_exists('MPWPB_Analytics_Dashboard')) {
                             $service_id = $booking_data['service_id'];
                             $service_name = get_the_title($service_id);
                             $booking_date = $booking_data['date'];
-                            $order_id = $booking_data['order_id'];
                             $order_status = $booking_data['order_status'];
-                            $order = $booking_data['order'];
-                            $customer_name = $order ? $order->get_billing_first_name() . ' ' . $order->get_billing_last_name() : 'N/A';
-                            $amount = $order ? $order->get_total() : 0;
+                            $amount = $booking_data['amount'];
+                            // Same source as Order List's Billing Name column -- the
+                            // booking post's own title, not an order's billing fields
+                            // (which only ever resolve in WooCommerce mode).
+                            $customer_name = get_the_title($booking_id);
                             ?>
                             <tr>
                                 <td>#<?php echo esc_html($booking_id); ?></td>
@@ -903,7 +944,7 @@ if (!class_exists('MPWPB_Analytics_Dashboard')) {
                                         <?php echo esc_html(ucfirst($order_status)); ?>
                                     </span>
                                 </td>
-                                <td><?php echo $order ? wp_kses_post(wc_price($amount)) : 'N/A'; ?></td>
+                                <td><?php echo wp_kses_post(MPWPB_Global_Function::format_price($amount)); ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>

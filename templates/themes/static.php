@@ -15,7 +15,11 @@
         <header style="background-image: url('<?php echo esc_url(get_the_post_thumbnail_url()); ?>');">
             <div class="template-header">
                 <div class="header-content">
+                    <span class="mpwpb-hero-eyebrow"><i class="fas fa-store"></i> <?php echo esc_html(get_bloginfo('name')); ?></span>
                     <h2><?php the_title(); ?></h2>
+					<?php if (has_excerpt() || get_the_content()): ?>
+                    <p class="mpwpb-hero-subtext"><?php echo esc_html(get_the_excerpt()); ?></p>
+					<?php endif; ?>
                     <!-- dispaly service static page reatings using this hook -->
 					<?php do_action('mpwpb_service_show_ratings'); ?>
                     <!-- dispaly service static page feature heighlight using this hook -->
@@ -42,5 +46,7 @@
 	            <?php include(MPWPB_Function::template_path('registration/static_registration.php')); ?>
             </div>
         </main>
+        <!-- dispaly service past work gallery section using this hook -->
+		<?php do_action('mpwpb_service_gallery'); ?>
     </div>
 <?php

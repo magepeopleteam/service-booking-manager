@@ -31,7 +31,8 @@
 				return array_unique($all_data);
 			}
 			public static function get_post_info($post_id, $key, $default = '') {
-				$data = get_post_meta($post_id, $key, true) ?: $default;
+				$data = get_post_meta($post_id, $key, true);
+				$data = $data === '' || $data === null ? $default : $data;
 				return self::data_sanitize($data);
 			}
 			//***********************************//
@@ -209,10 +210,37 @@
 			//***********************************//
 			public static function get_settings($section, $key, $default = '') {
 				$options = get_option($section);
-				if (isset($options[$key]) && $options[$key]) {
-					$default = $options[$key];
+				if (is_array($options) && array_key_exists($key, $options)) {
+					return $options[$key];
 				}
 				return $default;
+			}
+			public static function current_page_has_shortcode($shortcodes): bool {
+				$post = get_post();
+				if (!$post instanceof WP_Post) {
+					return false;
+				}
+				foreach ((array) $shortcodes as $shortcode) {
+					if (has_shortcode($post->post_content, $shortcode)) {
+						return true;
+					}
+				}
+				return false;
+			}
+			public static function is_booking_frontend_context(): bool {
+				$is_context = is_singular('mpwpb_item') || (bool) get_query_var('mpwpb_checkout');
+				if (!$is_context) {
+					$is_context = self::current_page_has_shortcode(array(
+						'service-booking',
+						'mpwpb-user-dashboard',
+						'custom_payment_my_account',
+						'mpwpb_booking_confirmation',
+					));
+				}
+				if (!$is_context && function_exists('is_checkout')) {
+					$is_context = is_checkout() || is_cart() || is_account_page();
+				}
+				return (bool) apply_filters('mpwpb_is_booking_frontend_context', $is_context);
 			}
 			public static function get_style_settings($key, $default = '') {
 				return self::get_settings('mpwpb_style_settings', $key, $default);
@@ -223,8 +251,17 @@
 			public static function get_licence_settings($key, $default = '') {
 				return self::get_settings('mpwpb_license_settings', $key, $default);
 			}
+			public static function get_gdpr_setting($key, $default = '') {
+				return self::get_settings('mpwpb_gdpr_settings', $key, $default);
+			}
+			public static function is_gdpr_enabled(): bool {
+				return self::get_gdpr_setting('enable_gdpr') === 'on';
+			}
 			//***********************************//
 			public static function price_convert_raw($price) {
+				if (!self::is_wc_payment_mode()) {
+					return self::native_price_convert_raw($price);
+				}
 				$display_suffix = get_option('woocommerce_price_display_suffix') ? get_option('woocommerce_price_display_suffix') : '';
 				$price = wp_strip_all_tags($price);
 				$price = str_replace(get_woocommerce_currency_symbol(), '', $price);
@@ -236,7 +273,79 @@
 				$price = str_replace('&nbsp;', '', $price);
 				return max($price, 0);
 			}
+			/**
+			 * Simple currency formatting for a plain amount (no post/tax/qty
+			 * context) — for templates that call native wc_price() directly.
+			 */
+			public static function format_price($price): string {
+				if (self::is_wc_payment_mode()) {
+					return wc_price($price);
+				}
+				return self::native_format_amount((float) $price);
+			}
+			//***** Native (non-WooCommerce) currency formatting *****//
+			public static function native_currency_setting($key, $default = '') {
+				return self::get_settings('mpwpb_currency_settings', $key, $default);
+			}
+			private static function native_format_amount($amount): string {
+				$decimals = (int) self::native_currency_setting('decimals', 2);
+				$decimal_sep = self::native_currency_setting('decimal_separator', '.');
+				$thousand_sep = self::native_currency_setting('thousand_separator', ',');
+				$symbol = self::native_currency_setting('symbol', '$');
+				$position = self::native_currency_setting('position', 'left');
+				$formatted = number_format($amount, $decimals, $decimal_sep, $thousand_sep);
+				switch ($position) {
+					case 'right':
+						return $formatted . $symbol;
+					case 'left_space':
+						return $symbol . ' ' . $formatted;
+					case 'right_space':
+						return $formatted . ' ' . $symbol;
+					case 'left':
+					default:
+						return $symbol . $formatted;
+				}
+			}
+			/**
+			 * Public, WooCommerce-independent price formatter for a raw amount --
+			 * the native counterpart of wc_price(). Used by the global wc_price()
+			 * fallback shim (see MPWPB_Global_File_Load) so add-ons that call
+			 * wc_price() directly don't fatal when WooCommerce is inactive.
+			 */
+			public static function native_price_html($amount): string {
+				return self::native_format_amount((float) $amount);
+			}
+			private static function native_price_convert_raw($price) {
+				$price = wp_strip_all_tags($price);
+				$symbol = self::native_currency_setting('symbol', '$');
+				$thousand_sep = self::native_currency_setting('thousand_separator', ',');
+				$decimal_sep = self::native_currency_setting('decimal_separator', '.');
+				$price = str_replace($symbol, '', $price);
+				$price = str_replace($thousand_sep, 't_s', $price);
+				$price = str_replace($decimal_sep, 'd_s', $price);
+				$price = str_replace('t_s', '', $price);
+				$price = str_replace('d_s', '.', $price);
+				$price = str_replace('&nbsp;', '', $price);
+				return max((float) trim($price), 0);
+			}
+			private static function native_price($price, $args = array()): string {
+				$args = wp_parse_args($args, array(
+					'qty' => '',
+					'price' => '',
+				));
+				$qty = '' !== $args['qty'] ? max(0.0, (float) $args['qty']) : 1;
+				if ('' === $price) {
+					return '';
+				} elseif (empty($qty)) {
+					return '0';
+				}
+				$line_price = (float) $price * (int) $qty;
+				return self::native_format_amount($line_price);
+			}
 			public static function wc_price($post_id, $price, $args = array()): string {
+				if (!self::is_wc_payment_mode()) {
+					return self::native_price($price, $args);
+				}
 				$num_of_decimal = get_option('woocommerce_price_num_decimals', 2);
 				$args = wp_parse_args($args, array(
 					'qty' => '',
@@ -327,6 +436,23 @@
 					return 0;
 				}
 			}
+			public static function is_mpwpb_checkout_page(): bool {
+				if (self::is_wc_payment_mode()) {
+					return function_exists('is_checkout') && is_checkout();
+				}
+				return (bool) get_query_var('mpwpb_checkout', false);
+			}
+			/**
+			 * wc_get_order() is undefined when WooCommerce is inactive.
+			 * Callers already null/false-check the return value (as they must
+			 * for wc_get_order() itself, which can return false for a bad ID).
+			 */
+			public static function get_order($order_id) {
+				if (self::is_wc_payment_mode()) {
+					return wc_get_order($order_id);
+				}
+				return false;
+			}
 			public static function check_woocommerce(): int {
 				include_once(ABSPATH . 'wp-admin/includes/plugin.php');
 				$plugin_dir = ABSPATH . 'wp-content/plugins/woocommerce';
@@ -337,6 +463,83 @@
 				} else {
 					return 0;
 				}
+			}
+			//***** Explicit Payment Method switch (WooCommerce vs Custom) *****//
+			/**
+			 * Returns 'woocommerce', 'custom', 'none' (both explicitly disabled),
+			 * or '' (not yet configured). Existing sites that already had
+			 * WooCommerce active before this setting existed are transparently
+			 * migrated to 'woocommerce' the first time this is read, so
+			 * upgrading never breaks them; once a value (including 'none') is
+			 * explicitly stored, that migration no longer applies.
+			 */
+			public static function get_payment_method_type(): string {
+				$stored = self::get_settings('mpwpb_payment_method_settings', 'payment_method_type', '');
+				if (in_array($stored, ['woocommerce', 'custom', 'none'], true)) {
+					return $stored;
+				}
+				if (self::check_woocommerce() == 1) {
+					$settings = get_option('mpwpb_payment_method_settings');
+					$settings = is_array($settings) ? $settings : [];
+					$settings['payment_method_type'] = 'woocommerce';
+					update_option('mpwpb_payment_method_settings', $settings);
+					return 'woocommerce';
+				}
+				return '';
+			}
+			/**
+			 * True only when the admin has WooCommerce selected AND it's
+			 * actually active — falls back to false (not the WC code path)
+			 * if WC gets deactivated without updating the setting.
+			 */
+			public static function is_wc_payment_mode(): bool {
+				return self::get_payment_method_type() === 'woocommerce' && self::check_woocommerce() == 1;
+			}
+			/**
+			 * Custom Payment (native Stripe/PayPal/Offline checkout) is a Pro
+			 * feature. Gated here (not just in the settings-screen JS) so it
+			 * can never actually run just because 'custom' happens to be
+			 * stored — e.g. if Pro was later deactivated.
+			 */
+			public static function is_pro_active(): bool {
+				if (!function_exists('is_plugin_active')) {
+					include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+				}
+				return is_plugin_active('service-booking-manager-pro/MPWPB_Plugin_Pro.php');
+			}
+			public static function is_custom_payment_mode(): bool {
+				return self::get_payment_method_type() === 'custom' && self::is_pro_active();
+			}
+			public static function get_payment_setting($key, $default = '') {
+				return self::get_settings('mpwpb_payment_method_settings', $key, $default);
+			}
+			/**
+			 * Partial Payment now has its own Settings tab/option
+			 * (mpwpb_partial_payment_settings) -- see MPWPB_Native_Checkout_Settings's
+			 * render_partial_payment_panel() and MPWPB_Partial_Payment::maybe_migrate_settings()
+			 * for the one-time migration off the old mpwpb_payment_method_settings keys.
+			 */
+			public static function get_partial_payment_setting($key, $default = '') {
+				return self::get_settings('mpwpb_partial_payment_settings', $key, $default);
+			}
+			public static function has_functional_payment_method(): bool {
+				if (self::is_wc_payment_mode()) {
+					if (!function_exists('WC') || !WC()->payment_gateways()) {
+						return false;
+					}
+					foreach (WC()->payment_gateways()->payment_gateways() as $gateway) {
+						if ($gateway->enabled === 'yes') {
+							return true;
+						}
+					}
+					return false;
+				}
+				if (self::is_custom_payment_mode()) {
+					return self::get_payment_setting('offline_enabled') === 'on'
+						|| self::get_payment_setting('stripe_enabled') === 'on'
+						|| self::get_payment_setting('paypal_enabled') === 'on';
+				}
+				return false;
 			}
 			public static function check_product_in_cart($post_id) {
 				$status = self::check_woocommerce();
@@ -390,7 +593,8 @@
 		if (!class_exists('MP_Global_Function')) {
 			class MP_Global_Function {
 				public static function get_post_info($post_id, $key, $default = '') {
-					$data = get_post_meta($post_id, $key, true) ?: $default;
+					$data = get_post_meta($post_id, $key, true);
+					$data = $data === '' || $data === null ? $default : $data;
 					return self::data_sanitize($data);
 				}
 				public static function data_sanitize($data) {
@@ -460,10 +664,22 @@
 				}
 				public static function get_settings($section, $key, $default = '') {
 					$options = get_option($section);
-					if (isset($options[$key]) && $options[$key]) {
-						$default = $options[$key];
+					if (is_array($options) && array_key_exists($key, $options)) {
+						return $options[$key];
 					}
 					return $default;
+				}
+				/**
+				 * Method parity with the ecab-taxi-booking-manager copy of this shared
+				 * class: whichever MagePeople plugin loads first wins the
+				 * MP_Global_Function name, so every copy must expose format_price() or
+				 * plugins that call it fatal when this copy shadows theirs.
+				 */
+				public static function format_price($price) {
+					if (function_exists('wc_price')) {
+						return wc_price($price);
+					}
+					return number_format((float) $price, 2);
 				}
 				public static function wc_price($post_id, $price, $args = array()): string {
 					$num_of_decimal = get_option('woocommerce_price_num_decimals', 2);

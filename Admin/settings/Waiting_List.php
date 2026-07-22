@@ -95,7 +95,7 @@ if (!class_exists('MPWPB_Waiting_List_Settings')) {
 				$phone = isset($_POST['phone']) ? sanitize_text_field(wp_unslash($_POST['phone'])) : '';
 				
 				// Validate the data
-				if (!$post_id || !$date || !$name || !$email) {
+				if (!$post_id || get_post_type($post_id) !== MPWPB_Function::get_cpt() || get_post_status($post_id) !== 'publish' || !$date || !$name || !$email) {
 					wp_send_json_error(['message' => __('Please fill all required fields', 'service-booking-manager')]);
 					return;
 				}
@@ -106,9 +106,18 @@ if (!class_exists('MPWPB_Waiting_List_Settings')) {
 					wp_send_json_error(['message' => __('Waiting list is not enabled for this service', 'service-booking-manager')]);
 					return;
 				}
+
+				$date = strlen($date) === 19 ? substr($date, 0, 16) : $date;
+				$date_only = substr($date, 0, 10);
+				if (!in_array($date_only, MPWPB_Function::get_date($post_id), true)
+					|| !in_array($date, MPWPB_Function::get_time_slot($post_id, $date_only), true)
+					|| MPWPB_Function::get_total_available($post_id, $date) > 0) {
+					wp_send_json_error(['message' => __('This time slot is not eligible for the waiting list.', 'service-booking-manager')]);
+					return;
+				}
 				
 				// Check if waiting list is full
-				$max_waiting_list = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_max_waiting_list', 10);
+				$max_waiting_list = max(1, min(50, absint(MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_max_waiting_list', 10))));
 				$waiting_list = get_post_meta($post_id, 'mpwpb_waiting_list_' . sanitize_title($date), true);
 				
 				if (!is_array($waiting_list)) {
@@ -152,7 +161,7 @@ if (!class_exists('MPWPB_Waiting_List_Settings')) {
 				$post_id = isset($_POST['post_id']) ? absint($_POST['post_id']) : 0;
 				$date = isset($_POST['date']) ? sanitize_text_field(wp_unslash($_POST['date'])) : '';
 				
-				if (!$post_id || !$date) {
+				if (!$post_id || get_post_type($post_id) !== MPWPB_Function::get_cpt() || get_post_status($post_id) !== 'publish' || !$date) {
 					wp_send_json_error(['message' => __('Invalid data provided', 'service-booking-manager')]);
 					return;
 				}
@@ -164,7 +173,7 @@ if (!class_exists('MPWPB_Waiting_List_Settings')) {
 					$waiting_list = [];
 				}
 				
-				$max_waiting_list = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_max_waiting_list', 10);
+				$max_waiting_list = max(1, min(50, absint(MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_max_waiting_list', 10))));
 				$waiting_list_count = count($waiting_list);
 				$waiting_list_available = $enable_waiting_list === 'yes' && $waiting_list_count < $max_waiting_list;
 				

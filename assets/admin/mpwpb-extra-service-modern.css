@@ -1,0 +1,14 @@
+/* =====================================================================
+ * Extra Service (Pricing step)  ·  mpwpb-extra-service-modern.css
+ * Deliberately thin: visually reuses .mpwpb-csm__* (header/list/row/modal/
+ * field) classes from mpwpb-categories-services-modern.css, declared as a
+ * style dependency, rather than duplicating near-identical rules in a
+ * second stylesheet. Only the handful of things unique to this list
+ * (no sidebar, no category chips) live here.
+ * ===================================================================== */
+
+.mpwpb-esm{padding:4px 0 0;}
+.mpwpb-esm *,
+.mpwpb-esm *::before,
+.mpwpb-esm *::after{box-sizing:border-box;}
+.mpwpb-esm .mpwpb-csm__header{margin-bottom:14px;}

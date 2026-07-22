@@ -32,8 +32,8 @@ if (!class_exists('MPWPB_Ajax_File_Upload')) {
          * Enqueue scripts for file upload
          */
         public function enqueue_scripts() {
-            if (is_checkout()) {
-                wp_enqueue_script('mpwpb-file-upload', MPWPB_PLUGIN_URL . '/assets/checkout/front/js/mpwpb-file-upload.js', array('jquery'), time(), true);
+            if (MPWPB_Global_Function::is_mpwpb_checkout_page()) {
+                wp_enqueue_script('mpwpb-file-upload', MPWPB_PLUGIN_URL . '/assets/checkout/front/js/mpwpb-file-upload.js', array('jquery'), MPWPB_VERSION, true);
                 wp_localize_script('mpwpb-file-upload', 'mpwpb_file_upload', array(
                     'ajax_url' => admin_url('admin-ajax.php'),
                     'nonce' => wp_create_nonce('mpwpb_file_upload_nonce'),
@@ -51,9 +51,31 @@ if (!class_exists('MPWPB_Ajax_File_Upload')) {
                 wp_send_json_error(array('message' => 'Invalid nonce'));
                 return;
             }
+
+            // A public checkout nonce alone must not act as a general-purpose
+            // media-library upload token. Require this browser to hold a real
+            // service-booking cart and bound abusive repeated uploads per cart.
+            $cart_context = $this->get_booking_cart_context();
+            if (!$cart_context) {
+                wp_send_json_error(array('message' => 'A valid booking cart is required'), 403);
+            }
+			$field_name = isset($_POST['field_name']) ? sanitize_key(wp_unslash($_POST['field_name'])) : '';
+			if (!$this->is_configured_file_field($field_name)) {
+				wp_send_json_error(array('message' => 'This upload field is not available'), 400);
+			}
+            $rate_key = 'mpwpb_upload_' . md5($cart_context);
+            $upload_count = (int) get_transient($rate_key);
+            if ($upload_count >= 10) {
+                wp_send_json_error(array('message' => 'Upload limit reached. Please continue checkout or try again later.'), 429);
+            }
             
             // Check if file was uploaded
-            if (!isset($_FILES['file']) || empty($_FILES['file']['name'])) {
+			if (!isset($_FILES['file'])
+				|| !is_array($_FILES['file'])
+				|| !is_string($_FILES['file']['name'] ?? null)
+				|| !is_string($_FILES['file']['tmp_name'] ?? null)
+				|| empty($_FILES['file']['name'])
+				|| (int) ($_FILES['file']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
                 wp_send_json_error(array('message' => 'No file uploaded'));
                 return;
             }
@@ -63,12 +85,13 @@ if (!class_exists('MPWPB_Ajax_File_Upload')) {
             // error_log('File data: ' . print_r($_FILES['file'], true));
             
             // Check file size
-            if ($_FILES['file']['size'] <= 0) {
+			$file_size = is_numeric($_FILES['file']['size'] ?? null) ? (int) $_FILES['file']['size'] : 0;
+			if ($file_size <= 0) {
                 wp_send_json_error(array('message' => 'File has zero size'));
                 return;
             }
             $max_upload_size = apply_filters('mpwpb_max_checkout_upload_size', 5 * MB_IN_BYTES);
-            if ($_FILES['file']['size'] > $max_upload_size) {
+			if ($file_size > $max_upload_size) {
                 wp_send_json_error(array('message' => 'File is too large'));
                 return;
             }
@@ -87,7 +110,10 @@ if (!class_exists('MPWPB_Ajax_File_Upload')) {
             // Create upload overrides
             $upload_overrides = array(
                 'test_form' => false,
-                'mimes' => $this->allowed_mime_types
+				'mimes' => $this->allowed_mime_types,
+				'unique_filename_callback' => static function($dir, $name, $ext) {
+					return 'mpwpb-' . wp_generate_password(32, false, false) . $ext;
+				},
             );
             
             // Use WordPress's built-in file handling
@@ -114,12 +140,13 @@ if (!class_exists('MPWPB_Ajax_File_Upload')) {
                     wp_update_attachment_metadata($attach_id, $attach_data);
                     // error_log('File added to media library with ID: ' . $attach_id);
                 }
+				set_transient($rate_key, $upload_count + 1, HOUR_IN_SECONDS);
                 
                 // Return success response
                 wp_send_json_success(array(
                     'url' => $image_url,
                     'filename' => $filename,
-                    'field_name' => isset($_POST['field_name']) ? sanitize_text_field(wp_unslash($_POST['field_name'])) : '',
+					'field_name' => $field_name,
                 ));
             } else {
                 $error = isset($movefile['error']) ? $movefile['error'] : 'Unknown error';
@@ -127,6 +154,48 @@ if (!class_exists('MPWPB_Ajax_File_Upload')) {
                 wp_send_json_error(array('message' => $error));
             }
         }
+
+        private function get_booking_cart_context(): string {
+            if (class_exists('MPWPB_Native_Cart')) {
+                $native_item = MPWPB_Native_Cart::get_item();
+                $native_token = MPWPB_Native_Cart::get_token(false);
+                if ($native_token && !empty($native_item['mpwpb_id']) && get_post_type(absint($native_item['mpwpb_id'])) === MPWPB_Function::get_cpt()) {
+                    return 'native:' . $native_token;
+                }
+            }
+            if (function_exists('WC') && WC()->cart) {
+                foreach (WC()->cart->get_cart() as $cart_item) {
+                    $service_id = absint($cart_item['mpwpb_id'] ?? 0);
+                    if ($service_id && get_post_type($service_id) === MPWPB_Function::get_cpt()) {
+                        $session_id = WC()->session ? (string) WC()->session->get_customer_id() : '';
+                        return 'wc:' . ($session_id ?: wp_get_session_token());
+                    }
+                }
+            }
+            return '';
+        }
+
+		private function is_configured_file_field(string $field_name): bool {
+			if (!$field_name || substr($field_name, -5) !== '_file') {
+				return false;
+			}
+			$field_key = substr($field_name, 0, -5);
+			$settings = get_option('mpwpb_custom_checkout_fields', array());
+			if (!is_array($settings)) {
+				return false;
+			}
+			foreach (array('billing', 'shipping', 'order') as $section) {
+				$field = $settings[$section][$field_key] ?? null;
+				if (is_array($field)
+					&& ($field['custom_field'] ?? '') === '1'
+					&& ($field['type'] ?? '') === 'file'
+					&& ($field['disabled'] ?? '') !== '1'
+					&& ($field['deleted'] ?? '') !== 'deleted') {
+					return true;
+				}
+			}
+			return false;
+		}
     }
     
     // Initialize the class

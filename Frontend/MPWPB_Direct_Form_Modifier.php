@@ -44,7 +44,7 @@ if (!class_exists('MPWPB_Direct_Form_Modifier')) {
          * Add a direct form modification to the footer
          */
         public function add_direct_form_modification() {
-            if (is_checkout()) {
+            if (MPWPB_Global_Function::is_mpwpb_checkout_page()) {
                 ?>
                 <script type="text/javascript">
                     jQuery(document).ready(function($) {
