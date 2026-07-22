@@ -20,7 +20,7 @@ Customers browse real-time availability, pick a service and time slot, and confi
 
 ▶️ [Watch the Quick Overview Video](https://youtu.be/46_WERFyyGc)
 🌐 [Live Frontend Demo](https://wpbookingly.com/)
-📘 [Full Documentation](https://docs.mage-people.com/docs/plugins/wpbookingly/overview)
+📘 [Full Documentation](https://docs.mage-people.com/plugins/wpbookingly/overview)
 ⬇️ [Free Download on WordPress.org](https://downloads.wordpress.org/plugin/service-booking-manager.zip)
 
 = Why Choose WPBookingly as Your WordPress Booking Plugin? =
