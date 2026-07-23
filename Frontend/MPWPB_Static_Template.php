@@ -240,7 +240,7 @@
                     </div>
 					<?php endif; ?>
                     <div class="mpwpb-overview-stat">
-                        <p class="mpwpb-overview-stat-num"><?php echo esc_html($time_slot_length > 0 ? $time_slot_length . ' ' . __('min', 'service-booking-manager') : '—'); ?></p>
+                        <p class="mpwpb-overview-stat-num"><?php echo esc_html($time_slot_length > 0 ? MPWPB_Function::format_slot_duration($time_slot_length) : '—'); ?></p>
                         <p class="mpwpb-overview-stat-label"><?php esc_html_e('Typical slot length', 'service-booking-manager'); ?></p>
                     </div>
                     <div class="mpwpb-overview-stat">

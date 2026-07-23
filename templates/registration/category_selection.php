@@ -129,7 +129,7 @@
                                             <?php if ($service_duration) { ?>
                                                 <h6 class="textTheme alignCenter">
                                                     <span class="fas fa-clock mR_xs"></span>
-                                                    <span><?php echo wp_kses_post($service_duration); ?></span>
+                                                    <span><?php echo wp_kses_post(MPWPB_Function::format_duration_text($service_duration)); ?></span>
                                                 </h6>
                                             <?php } ?>
                                             <h6 class="_textTheme_min_100"><?php echo wp_kses_post($service_wc_price); ?></h6>

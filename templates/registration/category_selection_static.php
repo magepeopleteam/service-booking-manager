@@ -62,7 +62,7 @@
 	            <span class="mpwpb-tree-checkbox" data-tree-checkbox></span>
 	            <span class="mpwpb-tree-service-main">
 	                <span class="mpwpb-tree-service-name"><?php echo esc_html($service_name); ?></span>
-					<?php if ($duration) { ?><span class="mpwpb-tree-duration"><i class="fas fa-clock"></i> <?php echo wp_kses_post($duration); ?></span><?php } ?>
+					<?php if ($duration) { ?><span class="mpwpb-tree-duration"><i class="fas fa-clock"></i> <?php echo wp_kses_post(MPWPB_Function::format_duration_text($duration)); ?></span><?php } ?>
 	            </span>
 	            <span class="mpwpb-tree-service-side">
 	                <span class="mpwpb-tree-price"><?php echo wp_kses_post($wc_price); ?></span>

@@ -350,6 +350,52 @@
 			}
 
 			/**
+			 * Best-effort parse of a free-text duration into whole minutes.
+			 * Understands "45", "30m", "30 min", "2h", "2 hours", "1h 30m".
+			 * Returns 0 when nothing recognisable is found.
+			 */
+			public static function parse_duration_to_minutes($duration) {
+				$duration = strtolower(trim((string) $duration));
+				if ($duration === '') {
+					return 0;
+				}
+				$minutes = 0;
+				$matched = false;
+				if (preg_match('/(\d+(?:\.\d+)?)\s*(?:h|hr|hrs|hour|hours)\b/', $duration, $m)) {
+					$minutes += (float) $m[1] * 60;
+					$matched = true;
+				}
+				if (preg_match('/(\d+(?:\.\d+)?)\s*(?:m|min|mins|minute|minutes)\b/', $duration, $m)) {
+					$minutes += (float) $m[1];
+					$matched = true;
+				}
+				// A bare number is taken as minutes ("45").
+				if (!$matched && preg_match('/^(\d+(?:\.\d+)?)$/', $duration, $m)) {
+					$minutes = (float) $m[1];
+					$matched = true;
+				}
+				return $matched ? (int) round($minutes) : 0;
+			}
+
+			/**
+			 * Display label for an admin-entered service duration.
+			 *
+			 * That field is free text, so values are normalised to minutes and
+			 * re-rendered through format_slot_duration() -- "240m" reads as
+			 * "4 Hours" instead of "240m". Anything not recognisable as a
+			 * duration (e.g. "Half day") is returned untouched so custom wording
+			 * is never mangled.
+			 */
+			public static function format_duration_text($duration) {
+				$duration = trim((string) $duration);
+				if ($duration === '') {
+					return '';
+				}
+				$minutes = self::parse_duration_to_minutes($duration);
+				return $minutes > 0 ? self::format_slot_duration($minutes) : $duration;
+			}
+
+			/**
 			 * "10:00 am - 11:00 am" for a slot, using the site's configured time
 			 * format (including the plugin's 24-hour option). Falls back to just
 			 * the start time when no usable length is known, so callers can use
