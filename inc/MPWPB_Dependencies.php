@@ -99,7 +99,13 @@
                 wp_enqueue_style('mpwpb_service_list', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_service_list.css', [], MPWPB_VERSION);
                 wp_enqueue_style('mpwpb_staff_member', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_staff_member.css', [], MPWPB_VERSION);
                 wp_enqueue_style('mpwpb_analytics_dashboard', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_analytics_dashboard.css', [], MPWPB_VERSION);
-				wp_enqueue_script('mpwpb_admin', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_admin.js', ['jquery'], MPWPB_VERSION, true);
+				// Versioned by file mtime, not MPWPB_VERSION: this file changes between
+				// releases, and with a static version browsers kept serving a stale copy,
+				// so newly added admin behaviour (e.g. the Time Slot Length "Custom"
+				// toggle) appeared to work only in some browsers/sessions.
+				$mpwpb_admin_js = MPWPB_PLUGIN_DIR . '/assets/admin/mpwpb_admin.js';
+				$mpwpb_admin_js_ver = file_exists($mpwpb_admin_js) ? (string) filemtime($mpwpb_admin_js) : MPWPB_VERSION;
+				wp_enqueue_script('mpwpb_admin', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_admin.js', ['jquery'], $mpwpb_admin_js_ver, true);
 				// Staff Management page reskin — live off-day/schedule-row sync only;
 				// no-ops (returns early) on any other admin screen.
 				wp_enqueue_script('mpwpb_staff_management_modern', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb-staff-management-modern.js', ['jquery'], MPWPB_VERSION, true);
