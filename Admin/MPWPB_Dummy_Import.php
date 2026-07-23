@@ -15,6 +15,7 @@
 				add_action('admin_enqueue_scripts', array($this, 'enqueue_assets'));
 				add_action('admin_footer', array($this, 'render_popup'));
 				add_action('wp_ajax_mpwpb_import_dummy_data', array($this, 'ajax_import_dummy_data'));
+				add_action('wp_ajax_mpwpb_import_dummy_step', array($this, 'ajax_import_dummy_step'));
 				add_action('wp_ajax_mpwpb_dismiss_dummy_import', array($this, 'ajax_dismiss_dummy_import'));
 			}
 
@@ -58,166 +59,208 @@
 			}
 
 			public function render_popup() {
-				$display_style = $this->should_auto_show_popup() ? '' : 'display: none;';
+				// Only render when WooCommerce is active — this is exactly when the
+				// popup styles are enqueued (see enqueue_assets), so the markup is
+				// never left on screen unstyled.
+				if (MPWPB_Global_Function::check_woocommerce() != 1) {
+					return;
+				}
+				// Show the corner widget only on the plugin's Service List and Status
+				// screens — never scattered across every admin page.
+				$screen    = function_exists('get_current_screen') ? get_current_screen() : null;
+				$screen_id = $screen ? $screen->id : '';
+				$allowed   = array('mpwpb_item_page_mpwpb_service_list', 'mpwpb_item_page_mpwpb_status_page');
+				if (!in_array($screen_id, $allowed, true)) {
+					return;
+				}
+				// Auto-run the import (no confirmation modal) on the Service List page
+				// when the site has no services yet and it was not skipped before.
+				$auto_start = ($screen_id === 'mpwpb_item_page_mpwpb_service_list') && $this->should_auto_show_popup();
 				?>
-				<div id="mpwpb-woo-overlay" class="mpwpb-woo-overlay mpwpb-dummy-overlay" style="<?php echo esc_attr($display_style); ?>">
-					<div class="mpwpb-woo-popup">
-						<div class="mpwpb-woo-header">
-							<div class="mpwpb-woo-header-icon">
-								<svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-									<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-								</svg>
-							</div>
-							<span class="mpwpb-woo-header-text"><?php esc_html_e('Service Booking Manager', 'service-booking-manager'); ?></span>
+				<!-- Floating circular progress widget (bottom-right) -->
+				<div id="mpwpb-import-progress" class="mpwpb-ipw" role="status" aria-live="polite">
+					<button type="button" class="mpwpb-ipw-close" aria-label="<?php esc_attr_e('Skip', 'service-booking-manager'); ?>" title="<?php esc_attr_e('Skip', 'service-booking-manager'); ?>">
+						<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+					</button>
+					<div class="mpwpb-ipw-ring">
+						<svg viewBox="0 0 120 120" aria-hidden="true">
+							<defs>
+								<linearGradient id="mpwpbIpwGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+									<stop offset="0%" stop-color="#2563eb"/>
+									<stop offset="100%" stop-color="#3b82f6"/>
+								</linearGradient>
+							</defs>
+							<circle class="mpwpb-ipw-track" cx="60" cy="60" r="52"></circle>
+							<circle class="mpwpb-ipw-fill" cx="60" cy="60" r="52"></circle>
+						</svg>
+						<div class="mpwpb-ipw-center"><span class="mpwpb-ipw-num">0</span><span class="mpwpb-ipw-pct">%</span></div>
+						<div class="mpwpb-ipw-check" aria-hidden="true">
+							<svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
 						</div>
-
-						<div class="mpwpb-woo-icon-wrapper">
-							<div class="mpwpb-woo-icon">
-								<svg width="40" height="40" viewBox="0 0 24 24" fill="none">
-									<circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
-									<path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-								</svg>
-							</div>
-						</div>
-
-						<div class="mpwpb-woo-content">
-							<h2 class="mpwpb-woo-title"><?php esc_html_e('Import Dummy Services?', 'service-booking-manager'); ?></h2>
-							<p class="mpwpb-woo-desc">
-								<?php esc_html_e('Would you like to import dummy services, categories, and settings to see how Service Booking Manager works?', 'service-booking-manager'); ?>
-							</p>
-						</div>
-
-						<div id="mpwpb-woo-progress" class="mpwpb-woo-progress" style="display:none;">
-							<div class="mpwpb-woo-progress-bar">
-								<div id="mpwpb-woo-progress-fill" class="mpwpb-woo-progress-fill"></div>
-							</div>
-							<p id="mpwpb-woo-status-text" class="mpwpb-woo-status-text"></p>
-						</div>
-
-						<div class="mpwpb-woo-actions">
-							<button type="button" id="mpwpb-dummy-install-btn" class="mpwpb-woo-btn mpwpb-woo-btn-primary">
-								<span class="mpwpb-woo-btn-icon">
-									<svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-										<path d="M10 3v10m0 0l-4-4m4 4l4-4M3 17h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-									</svg>
-								</span>
-								<span class="mpwpb-woo-btn-text"><?php esc_html_e('Yes, Import Data', 'service-booking-manager'); ?></span>
-							</button>
-							<button type="button" id="mpwpb-dummy-dismiss-btn" class="mpwpb-woo-btn mpwpb-woo-btn-secondary">
-								<?php esc_html_e('No, Skip', 'service-booking-manager'); ?>
-							</button>
-						</div>
+					</div>
+					<div class="mpwpb-ipw-body">
+						<div class="mpwpb-ipw-title"><?php esc_html_e('Importing Services', 'service-booking-manager'); ?></div>
+						<div class="mpwpb-ipw-status"><?php esc_html_e('Preparing…', 'service-booking-manager'); ?></div>
 					</div>
 				</div>
 
 				<script>
 				(function($) {
 					$(document).ready(function() {
-						var $overlay = $('#mpwpb-woo-overlay.mpwpb-dummy-overlay');
-						var $popup = $overlay.find('.mpwpb-woo-popup');
-						var $btn = $('#mpwpb-dummy-install-btn');
-						var $dismissBtn = $('#mpwpb-dummy-dismiss-btn');
-						var $progress = $('#mpwpb-woo-progress');
-						var $fill = $('#mpwpb-woo-progress-fill');
-						var $status = $('#mpwpb-woo-status-text');
-						var $actions = $overlay.find('.mpwpb-woo-actions');
-						var isWorking = false;
+						var $widget  = $('#mpwpb-import-progress');
+						if (!$widget.length) return;
 
-						if (!$overlay.length) return;
+						var $ring    = $widget.find('.mpwpb-ipw-fill');
+						var $num     = $widget.find('.mpwpb-ipw-num');
+						var $wtitle  = $widget.find('.mpwpb-ipw-title');
+						var $wstatus = $widget.find('.mpwpb-ipw-status');
 
-						// Manual trigger from other pages
-					$(document).on('click', '#mpwpb-trigger-dummy-import-btn', function(e) {
-							e.preventDefault();
-							isWorking = false;
-							$btn.prop('disabled', false);
-							$dismissBtn.prop('disabled', false);
-							$popup.removeClass('mpwpb-state-success mpwpb-state-error');
-							$progress.hide();
-							$fill.css('width', '0%');
-							$status.text('').removeClass('mpwpb-success mpwpb-error');
-							$actions.slideDown(0);
-							$overlay.css('display', 'flex').hide().fadeIn(200);
-						});
+						var CIRC         = 2 * Math.PI * 52; // ring circumference (r = 52)
+						var nonce        = '<?php echo wp_create_nonce("mpwpb_import_dummy"); ?>';
+						var dismissNonce = '<?php echo wp_create_nonce("mpwpb_dismiss_dummy"); ?>';
+						var autoStart    = <?php echo $auto_start ? 'true' : 'false'; ?>;
+						var isWorking    = false;
+						var cancelled    = false;
+						var currentStep  = 0;
+						var stepRetries  = 0;
+						var shownPct     = 0;
+						var rafId        = null;
 
-						$btn.on('click', function(e) {
-							e.preventDefault();
+						var i18n = {
+							importing:  '<?php echo esc_js(__("Importing Services", "service-booking-manager")); ?>',
+							preparing:  '<?php echo esc_js(__("Preparing demo data…", "service-booking-manager")); ?>',
+							adding:     '<?php echo esc_js(__("Adding", "service-booking-manager")); ?>',
+							complete:   '<?php echo esc_js(__("Import complete!", "service-booking-manager")); ?>',
+							reloading:  '<?php echo esc_js(__("All set — reloading…", "service-booking-manager")); ?>',
+							retry:      '<?php echo esc_js(__("Connection hiccup — retrying…", "service-booking-manager")); ?>',
+							failed:     '<?php echo esc_js(__("Import failed. Please try again.", "service-booking-manager")); ?>',
+							already:    '<?php echo esc_js(__("Demo data is already present.", "service-booking-manager")); ?>'
+						};
+
+						function setRing(pct) {
+							pct = Math.max(0, Math.min(100, pct));
+							$ring.css('stroke-dashoffset', CIRC * (1 - pct / 100));
+						}
+
+						// Smoothly count the number up to the latest real percentage so the
+						// ring never looks frozen between AJAX round-trips.
+						function animateTo(target) {
+							target = Math.max(0, Math.min(100, Math.round(target)));
+							setRing(target); // CSS transition handles the ring glide
+							if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+							var start = shownPct;
+							if (target <= start) { shownPct = target; $num.text(target); return; }
+							var t0 = null;
+							function frame(ts) {
+								if (t0 === null) { t0 = ts; }
+								var p   = Math.min(1, (ts - t0) / 450);
+								var val = Math.round(start + (target - start) * p);
+								shownPct = val;
+								$num.text(val);
+								rafId = (p < 1) ? requestAnimationFrame(frame) : null;
+							}
+							rafId = requestAnimationFrame(frame);
+						}
+
+						function resetWidget() {
+							$widget.removeClass('mpwpb-ipw-done mpwpb-ipw-error');
+							shownPct = 0;
+							setRing(0);
+							$num.text('0');
+							$wtitle.text(i18n.importing);
+							$wstatus.text(i18n.preparing);
+						}
+
+						function startImport() {
 							if (isWorking) return;
-							isWorking = true;
-							$btn.prop('disabled', true);
-							$dismissBtn.prop('disabled', true);
+							isWorking   = true;
+							cancelled   = false;
+							currentStep = 0;
+							stepRetries = 0;
+							resetWidget();
+							$widget.addClass('mpwpb-ipw-open');
+							// small delay so the widget's entrance animation is seen first
+							setTimeout(function() { if (!cancelled) { runStep(0); } }, 450);
+						}
 
-							$actions.slideUp(250);
-							$progress.slideDown(300);
-
-							$fill.css('width', '50%');
-							$status.text('<?php echo esc_js(__("Importing dummy data. This may take a moment...", "service-booking-manager")); ?>').removeClass('mpwpb-success mpwpb-error');
-
+						function runStep(step) {
+							if (cancelled) return;
+							currentStep = step;
 							$.ajax({
 								url: ajaxurl,
 								type: 'POST',
-								data: {
-									action: 'mpwpb_import_dummy_data',
-									nonce: '<?php echo wp_create_nonce("mpwpb_import_dummy"); ?>'
-								},
+								data: { action: 'mpwpb_import_dummy_step', step: step, nonce: nonce },
 								success: function(response) {
-									if (response.success) {
-										$fill.css('width', '100%');
-										$status.text('<?php echo esc_js(__("Import complete!", "service-booking-manager")); ?>').addClass('mpwpb-success');
-										$popup.addClass('mpwpb-state-success');
-										$popup.find('.mpwpb-woo-icon').html(
-											'<svg width="40" height="40" viewBox="0 0 24 24" fill="none">' +
-											'<circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>' +
-											'<path d="M8 12l3 3 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
-											'</svg>'
-										);
-										$popup.find('.mpwpb-woo-title').text('<?php echo esc_js(__("Success", "service-booking-manager")); ?>');
-										$popup.find('.mpwpb-woo-desc').text('<?php echo esc_js(__("Dummy data imported successfully. Reloading page...", "service-booking-manager")); ?>');
-
-										setTimeout(function() {
-											window.location.reload();
-										}, 1500);
-									} else {
-										showError(response.data && response.data.message ? response.data.message : '<?php echo esc_js(__("Failed to import.", "service-booking-manager")); ?>');
-									}
+									if (cancelled) return;
+									if (!response || !response.success || !response.data) { return handleError(); }
+									stepRetries = 0;
+									var d   = response.data;
+									var pct = (typeof d.percent !== 'undefined') ? parseInt(d.percent, 10) : 0;
+									animateTo(pct);
+									if (d.label) { $wstatus.text(i18n.adding + ' ' + d.label); }
+									if (d.done) { d.skipped ? alreadyDone() : finish(); }
+									else { runStep(parseInt(d.step, 10)); }
 								},
-								error: function() {
-									showError('<?php echo esc_js(__("Failed to import. Please try again.", "service-booking-manager")); ?>');
-								}
+								error: function() { if (!cancelled) { handleError(); } }
 							});
-						});
+						}
 
-					$dismissBtn.on('click', function(e) {
+						function finish() {
+							animateTo(100);
+							$widget.addClass('mpwpb-ipw-done');
+							$wtitle.text(i18n.complete);
+							$wstatus.text(i18n.reloading);
+							setTimeout(function() { window.location.reload(); }, 1400);
+						}
+
+						// Backend reported nothing to import (data already exists): just
+						// acknowledge and slide away without a disruptive reload.
+						function alreadyDone() {
+							isWorking = false;
+							$widget.addClass('mpwpb-ipw-done');
+							$wtitle.text(i18n.complete);
+							$wstatus.text(i18n.already);
+							setTimeout(function() { $widget.removeClass('mpwpb-ipw-open'); }, 2600);
+						}
+
+						function handleError() {
+							if (stepRetries < 2) {
+								stepRetries++;
+								$wstatus.text(i18n.retry);
+								setTimeout(function() { if (!cancelled) { runStep(currentStep); } }, 900 * stepRetries);
+								return;
+							}
+							isWorking = false;
+							$widget.addClass('mpwpb-ipw-error');
+							$wtitle.text(i18n.failed);
+							$wstatus.text('');
+							setTimeout(function() { $widget.removeClass('mpwpb-ipw-open'); }, 3200);
+						}
+
+						// Skip / close — stop further steps and remember the choice so the
+						// import does not auto-prompt again on the next page load.
+						$widget.on('click', '.mpwpb-ipw-close', function(e) {
 							e.preventDefault();
-							if (isWorking) return;
-							isWorking = true;
-
-							$overlay.fadeOut(200);
-
+							cancelled = true;
+							isWorking = false;
+							if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+							$widget.removeClass('mpwpb-ipw-open');
 							$.ajax({
 								url: ajaxurl,
 								type: 'POST',
-								data: {
-									action: 'mpwpb_dismiss_dummy_import',
-									nonce: '<?php echo wp_create_nonce("mpwpb_dismiss_dummy"); ?>'
-								}
+								data: { action: 'mpwpb_dismiss_dummy_import', nonce: dismissNonce }
 							});
 						});
 
-						function showError(message) {
+						// Manual trigger (e.g. the Status page "Import Dummy Data" button).
+						$(document).on('click', '#mpwpb-trigger-dummy-import-btn', function(e) {
+							e.preventDefault();
 							isWorking = false;
-							$popup.addClass('mpwpb-state-error');
-							$status.text(message).addClass('mpwpb-error');
-							$fill.css('width', '100%');
+							startImport();
+						});
 
-							$btn.prop('disabled', false);
-							$dismissBtn.prop('disabled', false);
-							$actions.slideDown(250);
-
-							setTimeout(function() {
-								$popup.removeClass('mpwpb-state-error');
-								$progress.slideUp(250);
-								$fill.css('width', '0%');
-							}, 3000);
+						if (autoStart) {
+							startImport();
 						}
 					});
 				})(jQuery);
@@ -244,45 +287,130 @@
 				wp_send_json_success();
 			}
 
+			/**
+			 * Stepped / batched dummy import — imports ONE service per AJAX request.
+			 *
+			 * The legacy single-request importer built all services (each with a
+			 * full-size image + generated thumbnails) in one PHP request, which could
+			 * exhaust memory or hit max_execution_time on constrained hosts and crash
+			 * the import. Processing one service per round keeps every request light.
+			 *
+			 * Request : step  — 0-based index of the service to import this round.
+			 * Response: done, step (completed count), total, percent, label.
+			 */
+			public function ajax_import_dummy_step() {
+				check_ajax_referer('mpwpb_import_dummy', 'nonce');
+				if (!current_user_can('manage_options')) {
+					wp_send_json_error(array('message' => __('Permission denied.', 'service-booking-manager')));
+				}
+				$step  = isset($_POST['step']) ? absint($_POST['step']) : 0;
+				$items = $this->get_dummy_items();
+				$total = count($items);
+
+				if ($total === 0) {
+					update_option('mpwpb_dummy_already_inserted', 'yes');
+					wp_send_json_success(array('done' => true, 'step' => 0, 'total' => 0, 'percent' => 100, 'skipped' => true));
+				}
+
+				// First round: run the eligibility guard once and seed taxonomies.
+				// The guard only fires on step 0 because later steps intentionally
+				// find the services they just inserted — re-running a "no services
+				// yet" check would abort the import mid-way.
+				if ($step === 0) {
+					$existing = MPWPB_Global_Function::query_post_type('mpwpb_item');
+					if ($existing->post_count > 0) {
+						wp_send_json_success(array('done' => true, 'step' => $total, 'total' => $total, 'percent' => 100, 'skipped' => true));
+					}
+					delete_option('mpwpb_dummy_already_inserted');
+					$this->import_taxonomies($this->dummy_data());
+				}
+
+				if ($step >= $total) {
+					update_option('mpwpb_dummy_already_inserted', 'yes');
+					wp_send_json_success(array('done' => true, 'step' => $total, 'total' => $total, 'percent' => 100));
+				}
+
+				$label = isset($items[$step]['name']) ? $items[$step]['name'] : '';
+				$this->import_single_item($items[$step], $step);
+
+				$next = $step + 1;
+				$done = $next >= $total;
+				if ($done) {
+					update_option('mpwpb_dummy_already_inserted', 'yes');
+				}
+				wp_send_json_success(array(
+					'done'    => $done,
+					'step'    => $next,
+					'total'   => $total,
+					'percent' => (int) round(($next / $total) * 100),
+					'label'   => $label,
+				));
+			}
+
+			/**
+			 * Flat, 0-indexed list of the dummy services to import.
+			 */
+			private function get_dummy_items(): array {
+				$data = $this->dummy_data();
+				return isset($data['custom_post']['mpwpb_item']) && is_array($data['custom_post']['mpwpb_item'])
+					? array_values($data['custom_post']['mpwpb_item'])
+					: array();
+			}
+
+			/**
+			 * Seed any dummy taxonomy terms that do not already exist.
+			 */
+			private function import_taxonomies(array $dummy_data) {
+				if (empty($dummy_data['taxonomy']) || !is_array($dummy_data['taxonomy'])) {
+					return;
+				}
+				foreach ($dummy_data['taxonomy'] as $taxonomy => $dummy_taxonomy) {
+					$check_taxonomy = MPWPB_Global_Function::get_taxonomy($taxonomy);
+					if (is_string($check_taxonomy) || sizeof($check_taxonomy) == 0) {
+						foreach ($dummy_taxonomy as $taxonomy_data) {
+							wp_insert_term($taxonomy_data['name'], $taxonomy);
+						}
+					}
+				}
+			}
+
+			/**
+			 * Insert a single dummy service (post + meta + featured image).
+			 *
+			 * @param array $dummy_data Service definition from dummy_data().
+			 * @param int   $key        Index used to locate its bundled image.
+			 */
+			private function import_single_item(array $dummy_data, $key) {
+				$post_id = wp_insert_post(array(
+					'post_title'  => isset($dummy_data['name']) ? $dummy_data['name'] : '',
+					'post_status' => 'publish',
+					'post_type'   => 'mpwpb_item',
+				));
+				if (is_wp_error($post_id) || !$post_id) {
+					return;
+				}
+				if (array_key_exists('post_data', $dummy_data) && is_array($dummy_data['post_data'])) {
+					foreach ($dummy_data['post_data'] as $meta_key => $data) {
+						update_post_meta($post_id, $meta_key, $data);
+					}
+				}
+				$image = MPWPB_PLUGIN_DIR . '/assets/images/dummy-image-' . $key . '.png';
+				if (file_exists($image)) {
+					$image_attached = self::insert_media($image);
+					if (is_array($image_attached) && !empty($image_attached['id'])) {
+						set_post_thumbnail($post_id, $image_attached['id']);
+					}
+				}
+			}
+
 			private function do_dummy_import() {
 				$dummy_post = get_option('mpwpb_dummy_already_inserted');
-				$all_post = MPWPB_Global_Function::query_post_type('mpwpb_item');
+				$all_post   = MPWPB_Global_Function::query_post_type('mpwpb_item');
 				if ($all_post->post_count == 0 && $dummy_post != 'yes') {
 					$dummy_data = $this->dummy_data();
-					foreach ($dummy_data as $type => $dummy) {
-						if ($type == 'taxonomy') {
-							foreach ($dummy as $taxonomy => $dummy_taxonomy) {
-								$check_taxonomy = MPWPB_Global_Function::get_taxonomy($taxonomy);
-								if (is_string($check_taxonomy) || sizeof($check_taxonomy) == 0) {
-									foreach ($dummy_taxonomy as $taxonomy_data) {
-										wp_insert_term($taxonomy_data['name'], $taxonomy);
-									}
-								}
-							}
-						}
-						if ($type == 'custom_post') {
-							foreach ($dummy as $custom_post => $dummy_post) {
-								$post = MPWPB_Global_Function::query_post_type($custom_post);
-								if ($post->post_count == 0) {
-									foreach ($dummy_post as $key => $dummy_data) {
-										$title = $dummy_data['name'];
-										$post_id = wp_insert_post([
-											'post_title' => $title,
-											'post_status' => 'publish',
-											'post_type' => $custom_post
-										]);
-										if (array_key_exists('post_data', $dummy_data)) {
-											foreach ($dummy_data['post_data'] as $meta_key => $data) {
-												update_post_meta($post_id, $meta_key, $data);
-											}
-										}
-										$image = MPWPB_PLUGIN_DIR . '/assets/images/dummy-image-' . $key . '.png';
-										$image_attached = self::insert_media($image);
-										set_post_thumbnail($post_id, $image_attached['id'] ?? '');
-									}
-								}
-							}
-						}
+					$this->import_taxonomies($dummy_data);
+					foreach ($this->get_dummy_items() as $key => $item) {
+						$this->import_single_item($item, $key);
 					}
 					update_option('mpwpb_dummy_already_inserted', 'yes');
 				}
