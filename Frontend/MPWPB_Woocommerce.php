@@ -374,6 +374,10 @@
 						$cart_item_data['mpwpb_sub_category'] = MPWPB_Function::get_sub_category_name($product_id, $sub_category);
 						$cart_item_data['mpwpb_service'] = $all_service;
 						$cart_item_data['mpwpb_date'] = $date;
+						// Frozen at add-to-cart time so the booked slot keeps its
+						// original length even if the service is edited before the
+						// order is completed.
+						$cart_item_data['mpwpb_slot_length'] = MPWPB_Function::get_slot_length($product_id);
 						$cart_item_data['mpwpb_extra_service_info'] = self::cart_extra_service_info($product_id, $date, $ex_service_types, $ex_service_qty);
 						$cart_item_data['mpwpb_tp'] = $total_price;
 						$cart_item_data['line_total'] = $total_price;
@@ -578,10 +582,22 @@
 							$item->add_meta_data(esc_html__('Price ', 'service-booking-manager'), MPWPB_Global_Function::wc_price($post_id, $service['price']));
 						}
 					}
+                    // Slot length is captured at purchase time, not read live from
+                    // the service later -- an admin changing "Time Slot Length"
+                    // afterwards must never rewrite what an existing customer
+                    // already booked. These visible meta rows are what WooCommerce
+                    // then renders everywhere for free: admin order detail, every
+                    // order email, My Account order details, the thank-you page and
+                    // any PDF that prints order item meta.
+                    $slot_length = (int) ($values['mpwpb_slot_length'] ?? 0) ?: MPWPB_Function::get_slot_length($post_id);
+                    $slot_duration_label = MPWPB_Function::format_slot_duration($slot_length);
                     if( is_array($date_array) && sizeof($date_array) > 0 ) {
                         foreach ($date_array as $days) {
                             $item->add_meta_data(esc_html__('Date ', 'service-booking-manager'), esc_html(MPWPB_Global_Function::date_format($days)));
-                            $item->add_meta_data(esc_html__('Time ', 'service-booking-manager'), esc_html(MPWPB_Global_Function::date_format($days, 'time')));
+                            $item->add_meta_data(esc_html__('Time ', 'service-booking-manager'), esc_html(MPWPB_Function::format_slot_time_range($days, $slot_length)));
+                        }
+                        if ($slot_duration_label) {
+                            $item->add_meta_data(esc_html__('Duration ', 'service-booking-manager'), esc_html($slot_duration_label));
                         }
                     }
 					if (sizeof($extra_service) > 0) {
@@ -601,6 +617,10 @@
 					$item->add_meta_data('_mpwpb_id', $post_id);
 					$item->add_meta_data('_mpwpb_staff_term_id', $staff_member);
 					$item->add_meta_data('_mpwpb_date', $date);
+					// Machine-readable copy so order list / PDF / calendar can
+					// recompute the end time without re-reading (possibly changed)
+					// service settings.
+					$item->add_meta_data('_mpwpb_slot_length', $slot_length);
 					if ($category) {
 						$item->add_meta_data('_mpwpb_category', $category);
 						if ($sub_category) {
@@ -650,6 +670,9 @@
 					$line_items[] = [
 						'post_id' => $post_id,
 						'date' => $date ? sanitize_text_field(wp_unslash($date)) : '',
+						// 0 on orders placed before slot length was recorded; the
+						// booking builder falls back to the service setting then.
+						'slot_length' => (int) wc_get_order_item_meta($item_id, '_mpwpb_slot_length'),
 						'staff_term_id' => wc_get_order_item_meta($item_id, '_mpwpb_staff_term_id'),
 						'category' => $category ? sanitize_text_field(wp_unslash($category)) : '',
 						'sub_category' => $sub_category ? sanitize_text_field(wp_unslash($sub_category)) : '',
@@ -786,6 +809,11 @@
 						$data = [];
 						$data['mpwpb_id'] = $post_id;
 						$data['mpwpb_date'] = $occurrence_date;
+						// Frozen per booking so the recorded end time stays correct
+						// even if the service's slot length is edited later. Prefer
+						// what the order item stored at purchase time; only fall back
+						// to the service's current setting for older orders.
+						$data['mpwpb_slot_length'] = (int) ($line_item['slot_length'] ?? 0) ?: MPWPB_Function::get_slot_length($post_id);
 						if ($occurrence_count > 1) {
 							$data['mpwpb_recurring_index'] = $occurrence_index + 1;
 							$data['mpwpb_recurring_total'] = $occurrence_count;

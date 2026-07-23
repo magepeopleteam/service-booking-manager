@@ -65,6 +65,10 @@
                     <div class="mpwpb_time_display" id="<?php echo esc_attr($start_date);?>" style="display: <?php echo esc_attr( $display );?>" data-date-filder="<?php echo esc_attr( $start_date );?>">
                         <?php
                         $all_time_slots = MPWPB_Function::get_time_slot( $post_id, $start_date );
+                        // data-date feeds the wizard's "Selected Date & Time" summary
+                        // (mpwpb_registration.js) -- carry the slot's end time so the
+                        // customer sees the whole window, not just when it starts.
+                        $slot_minutes = MPWPB_Function::get_slot_length( $post_id );
                         $happy_hours_badge = class_exists('MPWPB_Happy_Hours_Helper') ? MPWPB_Happy_Hours_Helper::get_badge_label( $post_id ) : '';
                         $happy_hours_rule = $happy_hours_badge !== '' ? MPWPB_Happy_Hours_Helper::get_rule( $post_id ) : null;
                         if (sizeof($all_time_slots) > 0) {
@@ -73,7 +77,7 @@
                                 if ($available > 0) {
                                     $is_happy_hour = $happy_hours_rule !== null && MPWPB_Happy_Hours_Helper::time_in_window( $slot, $happy_hours_rule );
                                     ?>
-                                    <button type="button" class=" to-book mpwpb_time_btn<?php echo $is_happy_hour ? ' mpwpb-happy-hour-slot' : ''; ?>" data-date="<?php echo esc_attr(MPWPB_Global_Function::date_format($slot, 'full')); ?>" data-radio-check="<?php echo esc_attr($slot); ?>" data-open-icon="fas fa-check" data-close-icon=""<?php if ( $is_happy_hour ) { ?> data-hh-type="<?php echo esc_attr($happy_hours_rule['discount_type']); ?>" data-hh-value="<?php echo esc_attr($happy_hours_rule['discount_value']); ?>"<?php } ?>>
+                                    <button type="button" class=" to-book mpwpb_time_btn<?php echo $is_happy_hour ? ' mpwpb-happy-hour-slot' : ''; ?>" data-date="<?php echo esc_attr(MPWPB_Global_Function::date_format($slot, 'date') . ' ' . MPWPB_Function::format_slot_time_range($slot, $slot_minutes)); ?>" data-radio-check="<?php echo esc_attr($slot); ?>" data-open-icon="fas fa-check" data-close-icon=""<?php if ( $is_happy_hour ) { ?> data-hh-type="<?php echo esc_attr($happy_hours_rule['discount_type']); ?>" data-hh-value="<?php echo esc_attr($happy_hours_rule['discount_value']); ?>"<?php } ?>>
                                         <!-- <span data-icon></span> --><?php echo esc_html(MPWPB_Global_Function::date_format($slot, 'time')); ?>
                                         <?php if ( $is_happy_hour ) { ?>
                                             <span class="mpwpb-happy-hour-badge"><?php echo esc_html($happy_hours_badge); ?></span>

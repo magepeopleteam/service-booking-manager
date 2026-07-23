@@ -110,7 +110,20 @@
 					$active_days = isset($_POST['mpwpb_active_days']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_active_days'])) : '';
 					update_post_meta($post_id, 'mpwpb_active_days', $active_days);
 					//**********************//
+					// "custom" means the admin typed a free length into the companion
+					// number field instead of picking a preset. Stored as plain minutes
+					// either way, so every consumer keeps reading one simple integer.
 					$time_slot_length = isset($_POST['mpwpb_time_slot_length']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_time_slot_length'])) : '';
+					if ($time_slot_length === 'custom') {
+						$time_slot_length = isset($_POST['mpwpb_time_slot_length_custom']) ? absint(wp_unslash($_POST['mpwpb_time_slot_length_custom'])) : 0;
+					} else {
+						$time_slot_length = absint($time_slot_length);
+					}
+					// Never persist 0/blank -- that would make get_time_slot() fall back
+					// to its own default and silently change an existing schedule.
+					if ($time_slot_length < 1) {
+						$time_slot_length = MPWPB_Function::get_slot_length($post_id);
+					}
 					$capacity_per_session = isset($_POST['mpwpb_capacity_per_session']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_capacity_per_session'])) : '';
 					update_post_meta($post_id, 'mpwpb_time_slot_length', $time_slot_length);
 					update_post_meta($post_id, 'mpwpb_capacity_per_session', $capacity_per_session);
