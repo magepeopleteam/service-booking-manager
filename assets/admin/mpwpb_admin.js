@@ -1878,17 +1878,45 @@
     // classes). Picking "Custom…" reveals a minutes input; the save handler
     // (MPWPB_Settings) resolves "custom" to that number, so only one plain
     // integer is ever stored in mpwpb_time_slot_length.
-    $(document).on('change', '.mpwpb-slot-length-select', function () {
-        var $select = $(this);
-        var $custom = $select.closest('.mpwpb-dtm__field, label, div').find('.mpwpb-dtm__slot-custom').first();
-        if (!$custom.length) { return; }
+    function mpwpbSlotCustomWrap($select) {
+        // The wrapper is always a SIBLING of the select -- a <div> inside
+        // .mpwpb-dtm__field (modern) or a <span> inside the <label> (classic).
+        // Preferring the sibling avoids depending on the surrounding container,
+        // which differs between the two editors.
+        var $wrap = $select.siblings('.mpwpb-dtm__slot-custom').first();
+        if (!$wrap.length) {
+            $wrap = $select.closest('.mpwpb-dtm__field, label, td, div').find('.mpwpb-dtm__slot-custom').first();
+        }
+        return $wrap;
+    }
+
+    function mpwpbSyncSlotCustom($select) {
+        var $wrap = mpwpbSlotCustomWrap($select);
+        if (!$wrap.length) { return; }
         var isCustom = $select.val() === 'custom';
-        $custom.toggle(isCustom);
-        var $input = $custom.find('.mpwpb-slot-length-custom');
+        // Explicit show()/hide() rather than toggle(), so the rendered state is
+        // always derived from the current value instead of whatever inline
+        // style the markup happened to be rendered with.
+        if (isCustom) { $wrap.show(); } else { $wrap.hide(); }
         // Only required while it is the live value, otherwise an empty hidden
         // field would block the form from submitting.
-        $input.prop('required', isCustom);
-        if (isCustom) { $input.trigger('focus'); }
+        $wrap.find('.mpwpb-slot-length-custom').prop('required', isCustom);
+    }
+
+    $(document).on('change', '.mpwpb-slot-length-select', function () {
+        var $select = $(this);
+        mpwpbSyncSlotCustom($select);
+        if ($select.val() === 'custom') {
+            mpwpbSlotCustomWrap($select).find('.mpwpb-slot-length-custom').trigger('focus');
+        }
+    });
+
+    // Reconcile on load so the visible state always matches the selected value
+    // even if the markup was rendered/injected with a stale inline style.
+    $(function () {
+        $('.mpwpb-slot-length-select').each(function () {
+            mpwpbSyncSlotCustom($(this));
+        });
     });
 
 })(jQuery);

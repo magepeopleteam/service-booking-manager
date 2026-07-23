@@ -47,6 +47,13 @@
 
 .mpwpb-dtm__hint{margin:0 0 12px;font-size:12px;color:var(--muted,#94a3b8);}
 
+/* Time Slot Length -> "Custom…" reveals a free minutes input, toggled in
+   mpwpb_admin.js. Deliberately no display rule here: visibility is owned by
+   the inline style JS sets, and a class-level display would fight it. */
+.mpwpb-dtm__slot-custom{margin-top:8px;}
+.mpwpb-dtm__slot-custom .mpwpb-slot-length-custom{width:100%;}
+.mpwpb-dtm__slot-custom .mpwpb-dtm__hint{margin:6px 0 0;}
+
 /* -------------------------------------------------------------------- *
  *  Weekly off-day pills — reuses .groupCheckBox/.customCheckboxLabel so
  *  the shared click handler (mpwpb_plugin_global.js) keeps recomputing
