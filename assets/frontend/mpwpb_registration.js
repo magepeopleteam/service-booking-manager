@@ -1486,6 +1486,16 @@ function mpwpb_price_calculation($this) {
     });
 
     $(document).on('click', '#mpwpb_show_hide_staff_member', function () {
+        // Date & Time is a required step: block advancing to Staff until a
+        // time slot (which carries its date) has actually been picked. Without
+        // this the "Next Staff Member" button had no validation of its own
+        // (unlike "Proceed to Checkout"), so staff-enabled services could skip
+        // date/time entirely.
+        let parentGuard = $(this).closest('div.mpwpb_registration');
+        if (!parentGuard.find('[name="mpwpb_date"]').val()) {
+            mpwpb_alert($(this));
+            return;
+        }
         // Purely client-side (no AJAX -- the staff cards are already in the
         // DOM from page load, see mpwpbReorderPrefill's comment above), but
         // the fadeIn()/hide() swap plus whatever staff photos are loading for
@@ -1522,17 +1532,33 @@ function mpwpb_price_calculation($this) {
 
     $(document).on('click', '.mpwpb_get_date', function () {
         let parent = $(this).closest('div.mpwpb_registration');
+        let $picker = $(this).closest('.groupRadioCheck');
+
+        let selectedDate = $(this).attr('data-find-time');
+        // Read the card selected BEFORE this click (server pre-selects the
+        // default date) so we can tell whether the date genuinely changed.
+        let prevSelectedDate = parent.find('.mpwpb_get_date.mpwpb_get_date_selected').attr('data-find-time');
 
         $(".mpwpb_get_date").removeClass('mpwpb_get_date_selected');
         $(this).addClass('mpwpb_get_date_selected');
-
-        let selectedDate = $(this).attr('data-find-time');
 
         // Hide all date sections first
         $('.mpwpb_time_display').hide();
 
         // Show only the one that matches the selected date
         $('.mpwpb_time_display[data-date-filder="' + selectedDate + '"]').fadeIn();
+
+        // Switching to a different date invalidates the time picked for the
+        // previous date -- clear it so the customer must choose a time for THIS
+        // date before advancing (Date & Time is a required step) and the
+        // submitted date/time can never be a stale, mismatched pair.
+        if (prevSelectedDate && prevSelectedDate !== selectedDate) {
+            $picker.find('.mpwpb_time_btn').removeClass('mpActive mpwpb_active_time');
+            let $dateInput = $picker.find('input[name="mpwpb_date"]');
+            if ($dateInput.val()) {
+                $dateInput.val('').trigger('change');
+            }
+        }
     });
 
     $(document).on('click', '.mpwp_select_staff_card', function () {
