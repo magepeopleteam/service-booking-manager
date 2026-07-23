@@ -172,6 +172,10 @@
 					$line_items[] = [
 						'post_id' => $cart_item['mpwpb_id'] ?? 0,
 						'date' => $cart_item['mpwpb_date'] ?? '',
+						// Slot length frozen when the item was added to the cart; 0
+						// on older carts, where the booking builder falls back to the
+						// service's current setting.
+						'slot_length' => (int) ($cart_item['mpwpb_slot_length'] ?? 0),
 						'staff_term_id' => $cart_item['mpwpb_staff_member_id'] ?? '',
 						'category' => $cart_item['mpwpb_category'] ?? '',
 						'sub_category' => $cart_item['mpwpb_sub_category'] ?? '',

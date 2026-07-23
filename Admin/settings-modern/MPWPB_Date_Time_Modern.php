@@ -123,17 +123,29 @@
 										<input type="text" class="formControl mpwpb_number_validation" name="mpwpb_active_days" value="<?php echo esc_attr($active_days); ?>"/>
 									</div>
 
+									<?php
+										// Presets + free "Custom" value. Any minute value is valid
+										// (get_time_slot()/get_slot_length() clamp only to >= 1), so a
+										// saved length that isn't one of the presets must still show
+										// correctly instead of rendering as an empty select.
+										$slot_presets = MPWPB_Function::slot_length_presets();
+										$slot_is_custom = $time_slot !== '' && !array_key_exists((int) $time_slot, $slot_presets);
+									?>
 									<div class="mpwpb-dtm__field">
 										<label class="mpwpb-dtm__field-label"><?php esc_html_e('Time Slot Length', 'service-booking-manager'); ?> <span class="textRequired">&nbsp;*</span></label>
-										<select class="formControl" name="mpwpb_time_slot_length">
-											<option selected disabled><?php esc_html_e('Select time slot Length', 'service-booking-manager'); ?></option>
-											<option value="10" <?php selected($time_slot, 10); ?>><?php esc_html_e('10 min', 'service-booking-manager'); ?></option>
-											<option value="15" <?php selected($time_slot, 15); ?>><?php esc_html_e('15 min', 'service-booking-manager'); ?></option>
-											<option value="30" <?php selected($time_slot, 30); ?>><?php esc_html_e('30 min', 'service-booking-manager'); ?></option>
-											<option value="60" <?php selected($time_slot, 60); ?>><?php esc_html_e('1 Hour', 'service-booking-manager'); ?></option>
-											<option value="120" <?php selected($time_slot, 120); ?>><?php esc_html_e('2 Hour', 'service-booking-manager'); ?></option>
-											<option value="180" <?php selected($time_slot, 180); ?>><?php esc_html_e('3 Hour', 'service-booking-manager'); ?></option>
+										<select class="formControl mpwpb-slot-length-select" name="mpwpb_time_slot_length">
+											<option value="" <?php selected($time_slot, ''); ?> disabled><?php esc_html_e('Select time slot Length', 'service-booking-manager'); ?></option>
+											<?php foreach ($slot_presets as $preset_value => $preset_label) { ?>
+												<option value="<?php echo esc_attr($preset_value); ?>" <?php selected((int) $time_slot, $preset_value); ?>><?php echo esc_html($preset_label); ?></option>
+											<?php } ?>
+											<option value="custom" <?php selected($slot_is_custom, true); ?>><?php esc_html_e('Custom…', 'service-booking-manager'); ?></option>
 										</select>
+										<div class="mpwpb-dtm__slot-custom" style="<?php echo $slot_is_custom ? '' : 'display:none;'; ?>">
+											<input type="number" class="formControl mpwpb-slot-length-custom" name="mpwpb_time_slot_length_custom" min="1" step="1"
+											       value="<?php echo esc_attr($slot_is_custom ? (int) $time_slot : ''); ?>"
+											       placeholder="<?php esc_attr_e('Ex. 45', 'service-booking-manager'); ?>"/>
+											<small class="mpwpb-dtm__hint"><?php esc_html_e('Length in minutes.', 'service-booking-manager'); ?></small>
+										</div>
 									</div>
 
 									<div class="mpwpb-dtm__field">

@@ -1873,4 +1873,22 @@
         alert('Copied!');
     });
 
+    //==========Time Slot Length: presets + custom value=================//
+    // Shared by both the modern and the classic service editor (same markup
+    // classes). Picking "Custom…" reveals a minutes input; the save handler
+    // (MPWPB_Settings) resolves "custom" to that number, so only one plain
+    // integer is ever stored in mpwpb_time_slot_length.
+    $(document).on('change', '.mpwpb-slot-length-select', function () {
+        var $select = $(this);
+        var $custom = $select.closest('.mpwpb-dtm__field, label, div').find('.mpwpb-dtm__slot-custom').first();
+        if (!$custom.length) { return; }
+        var isCustom = $select.val() === 'custom';
+        $custom.toggle(isCustom);
+        var $input = $custom.find('.mpwpb-slot-length-custom');
+        // Only required while it is the live value, otherwise an empty hidden
+        // field would block the form from submitting.
+        $input.prop('required', isCustom);
+        if (isCustom) { $input.trigger('focus'); }
+    });
+
 })(jQuery);

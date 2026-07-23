@@ -187,11 +187,23 @@
 				$time_format = $use_24hour === 'yes' ? 'H:i' : 'g:i A';
 				/* translators: %s: formatted time, e.g. "10:30 AM" */
 				$slot_format = sprintf(__('l, M j \@ %s', 'service-booking-manager'), $time_format);
+				// Show the slot's end time too ("10:00 AM - 11:00 AM") so the
+				// customer can see how long the appointment actually runs. Prefer
+				// the length frozen on the booking; fall back to the service's
+				// current setting for older records that predate it.
+				$slot_minutes = (int) ($item['mpwpb_slot_length'] ?? 0);
+				if ($slot_minutes < 1) {
+					$slot_minutes = MPWPB_Function::get_slot_length($post_id);
+				}
 				$slot_displays = [];
 				foreach ($date_segments as $segment) {
 					$segment_ts = strtotime($segment);
 					if ($segment_ts) {
-						$slot_displays[] = date_i18n($slot_format, $segment_ts);
+						$slot_display = date_i18n($slot_format, $segment_ts);
+						if ($slot_minutes > 0) {
+							$slot_display .= ' - ' . date_i18n($time_format, $segment_ts + ($slot_minutes * MINUTE_IN_SECONDS));
+						}
+						$slot_displays[] = $slot_display;
 					}
 				}
 

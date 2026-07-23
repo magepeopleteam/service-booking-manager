@@ -282,11 +282,98 @@
 				}
 				return apply_filters('mpwpb_get_date', $all_dates, $post_id);
 			}
+			/**
+			 * Quick-pick slot lengths (minutes => label) offered in the editor.
+			 * Purely a convenience list -- admins can enter any custom length,
+			 * so nothing downstream may treat these as the allowed set.
+			 */
+			public static function slot_length_presets(): array {
+				return apply_filters('mpwpb_slot_length_presets', array(
+					10 => __('10 min', 'service-booking-manager'),
+					15 => __('15 min', 'service-booking-manager'),
+					30 => __('30 min', 'service-booking-manager'),
+					45 => __('45 min', 'service-booking-manager'),
+					60 => __('1 Hour', 'service-booking-manager'),
+					90 => __('1h 30m', 'service-booking-manager'),
+					120 => __('2 Hours', 'service-booking-manager'),
+					180 => __('3 Hours', 'service-booking-manager'),
+				));
+			}
+
+			/**
+			 * Booking slot length (in minutes) configured for a service.
+			 *
+			 * The editor offers presets plus a free "Custom" value, so this can be
+			 * any positive number of minutes -- never assume one of the old fixed
+			 * options. Clamped to >= 1 so slot maths can never step by zero.
+			 */
+			public static function get_slot_length($post_id, $fallback = 30) {
+				return max(1, (int) MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_time_slot_length', $fallback));
+			}
+
+			/**
+			 * Slot length recorded ON a booking, falling back to the service's
+			 * current setting for bookings created before the length was stored
+			 * per booking (so existing orders still render a duration).
+			 */
+			public static function get_booking_slot_length($booking_id, $post_id = 0) {
+				$stored = (int) get_post_meta($booking_id, 'mpwpb_slot_length', true);
+				if ($stored > 0) {
+					return $stored;
+				}
+				$post_id = $post_id ?: (int) get_post_meta($booking_id, 'mpwpb_id', true);
+				return $post_id ? self::get_slot_length($post_id) : 0;
+			}
+
+			/**
+			 * Human label for a slot length -- "45 min", "1 Hour", "2 Hours", "1h 30m".
+			 */
+			public static function format_slot_duration($minutes) {
+				$minutes = (int) $minutes;
+				if ($minutes < 1) {
+					return '';
+				}
+				$hours = intdiv($minutes, 60);
+				$mins = $minutes % 60;
+				if ($hours > 0 && $mins > 0) {
+					/* translators: 1: whole hours, 2: leftover minutes */
+					return sprintf(__('%1$dh %2$dm', 'service-booking-manager'), $hours, $mins);
+				}
+				if ($hours > 0) {
+					return $hours === 1
+						? __('1 Hour', 'service-booking-manager')
+						/* translators: %d: number of hours */
+						: sprintf(__('%d Hours', 'service-booking-manager'), $hours);
+				}
+				/* translators: %d: number of minutes */
+				return sprintf(__('%d min', 'service-booking-manager'), $mins);
+			}
+
+			/**
+			 * "10:00 am - 11:00 am" for a slot, using the site's configured time
+			 * format (including the plugin's 24-hour option). Falls back to just
+			 * the start time when no usable length is known, so callers can use
+			 * this unconditionally.
+			 */
+			public static function format_slot_time_range($start, $minutes) {
+				$timestamp = $start ? strtotime($start) : false;
+				if (!$timestamp) {
+					return '';
+				}
+				$start_label = MPWPB_Global_Function::date_format($start, 'time');
+				$minutes = (int) $minutes;
+				if ($minutes < 1) {
+					return $start_label;
+				}
+				$end = date_i18n('Y-m-d H:i', $timestamp + ($minutes * MINUTE_IN_SECONDS));
+				return $start_label . ' - ' . MPWPB_Global_Function::date_format($end, 'time');
+			}
+
 			public static function get_time_slot($post_id, $start_date) {
 				$now_full = current_time( 'Y-m-d H:i' );
 
 				$all_slots = [];
-				$slot_length = max(1, (int) MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_time_slot_length', 30)) * 60;
+				$slot_length = self::get_slot_length($post_id) * 60;
 				// Get English day name regardless of locale
 				$day_num = date('w', strtotime($start_date)); // 0=Sunday, 1=Monday, etc.
 				$english_days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
