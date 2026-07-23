@@ -40,7 +40,7 @@
             <?php
             if( $enable_staff_member === 'on' ){
             ?>
-            <button class="_mpBtn_dBR mActive" id="mpwpb_show_hide_staff_member" type="button" data-wc_link_id="<?php echo esc_attr($link_wc_product); ?>" style="display: none">
+            <button class="_mpBtn_dBR mActive" id="mpwpb_show_hide_staff_member" type="button" data-wc_link_id="<?php echo esc_attr($link_wc_product); ?>" data-alert="<?php esc_attr_e('Please Select Date & Time', 'service-booking-manager'); ?>" style="display: none">
                 <?php esc_html_e('Next Staff Member', 'service-booking-manager'); ?>
                 <i class="fas fa-long-arrow-alt-right _mL_xs"></i>
             </button>

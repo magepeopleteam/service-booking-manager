@@ -1227,7 +1227,12 @@ label.mpwpb-checkout-field{display:inline-block;}
    default, where min-height alone would not). */
 @media(max-width:768px){
 	.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_service_next,
-	.mpwpb-static-template .sidebar .mpwpb_popup .next_date_area ._mpBtn_dBR{
+	/* Only the buttons JS is actually showing -- the `:not(display:none)` guard
+	   stops this !important flex rule from overriding the inline display:none
+	   that JS/PHP use to keep the second "Back", "Next Staff Member" and
+	   "Proceed to Checkout" hidden until their step. Without it, all of them
+	   render at once on mobile (the "double Back" bug). */
+	.mpwpb-static-template .sidebar .mpwpb_popup .next_date_area ._mpBtn_dBR:not([style*="display: none"]):not([style*="display:none"]){
 		display:inline-flex !important;align-items:center;justify-content:center;min-height:46px;
 	}
 	.mpwpb-static-template .sidebar .mpwpb_popup .next_service_area .justifyBetween,
