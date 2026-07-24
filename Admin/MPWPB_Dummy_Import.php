@@ -23,11 +23,22 @@
 				return get_option('mpwpb_dummy_already_inserted') == 'yes';
 			}
 
+			/**
+			 * The demo services are plain mpwpb_item posts + meta -- they never
+			 * touch WooCommerce -- so the import is offered regardless of the
+			 * payment mode. It only requires that the site has no services yet.
+			 */
 			public function is_eligible() {
 				$count_posts = wp_count_posts('mpwpb_item');
 				$count_existing = isset($count_posts->publish) ? $count_posts->publish : 0;
-				$plugin_active = MPWPB_Global_Function::check_woocommerce();
-				return $plugin_active == 1;
+				return $count_existing === 0;
+			}
+
+			/** Screens the import widget is allowed to appear on. */
+			private function is_import_screen(): bool {
+				$screen = function_exists('get_current_screen') ? get_current_screen() : null;
+				$screen_id = $screen ? $screen->id : '';
+				return in_array($screen_id, array('mpwpb_item_page_mpwpb_service_list', 'mpwpb_item_page_mpwpb_status_page'), true);
 			}
 
 			private function should_auto_show_popup() {
@@ -47,7 +58,10 @@
 			}
 
 			public function enqueue_assets() {
-				if (MPWPB_Global_Function::check_woocommerce() != 1) {
+				// Scoped to the two screens the widget actually renders on
+				// (Service List / Status) rather than gated on WooCommerce --
+				// the import works in standalone (Custom Payment) mode too.
+				if (!$this->is_import_screen()) {
 					return;
 				}
 				wp_enqueue_style(
@@ -59,20 +73,16 @@
 			}
 
 			public function render_popup() {
-				// Only render when WooCommerce is active — this is exactly when the
-				// popup styles are enqueued (see enqueue_assets), so the markup is
-				// never left on screen unstyled.
-				if (MPWPB_Global_Function::check_woocommerce() != 1) {
+				// Show the corner widget only on the plugin's Service List and Status
+				// screens — never scattered across every admin page. Its styles are
+				// enqueued on exactly these same screens (see enqueue_assets), so the
+				// markup is never left unstyled. Not gated on WooCommerce: the demo
+				// services are plain posts and import fine in standalone mode.
+				if (!$this->is_import_screen()) {
 					return;
 				}
-				// Show the corner widget only on the plugin's Service List and Status
-				// screens — never scattered across every admin page.
 				$screen    = function_exists('get_current_screen') ? get_current_screen() : null;
 				$screen_id = $screen ? $screen->id : '';
-				$allowed   = array('mpwpb_item_page_mpwpb_service_list', 'mpwpb_item_page_mpwpb_status_page');
-				if (!in_array($screen_id, $allowed, true)) {
-					return;
-				}
 				// Auto-run the import (no confirmation modal) on the Service List page
 				// when the site has no services yet and it was not skipped before.
 				$auto_start = ($screen_id === 'mpwpb_item_page_mpwpb_service_list') && $this->should_auto_show_popup();
