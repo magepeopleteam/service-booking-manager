@@ -495,20 +495,53 @@
 			public static function is_wc_payment_mode(): bool {
 				return self::get_payment_method_type() === 'woocommerce' && self::check_woocommerce() == 1;
 			}
-			/**
-			 * Custom Payment (native Stripe/PayPal/Offline checkout) is a Pro
-			 * feature. Gated here (not just in the settings-screen JS) so it
-			 * can never actually run just because 'custom' happens to be
-			 * stored — e.g. if Pro was later deactivated.
-			 */
 			public static function is_pro_active(): bool {
 				if (!function_exists('is_plugin_active')) {
 					include_once(ABSPATH . 'wp-admin/includes/plugin.php');
 				}
 				return is_plugin_active('service-booking-manager-pro/MPWPB_Plugin_Pro.php');
 			}
+			/** Public pricing page every "PRO" lock in the free plugin links to. */
+			public static function pro_upgrade_url(): string {
+				$url = class_exists('MPWPB_Pro_Upsell_Notice')
+					? MPWPB_Pro_Upsell_Notice::PRO_URL
+					: 'https://mage-people.com/product/service-booking-plugin-wpbookingly/#pricing';
+				return apply_filters('mpwpb_pro_upgrade_url', $url);
+			}
+			/**
+			 * Custom Payment (the built-in, non-WooCommerce checkout) is a FREE
+			 * mode: its Offline Payment gateway ships in this plugin and works
+			 * standalone. Only the online gateways are Pro -- that gate lives in
+			 * is_gateway_available() per gateway, not on the mode as a whole, so
+			 * deactivating Pro degrades a standalone site to offline bookings
+			 * instead of killing checkout outright.
+			 */
 			public static function is_custom_payment_mode(): bool {
-				return self::get_payment_method_type() === 'custom' && self::is_pro_active();
+				return self::get_payment_method_type() === 'custom';
+			}
+			/**
+			 * Custom Payment gateways that require Pro. Offline is deliberately
+			 * absent -- it is the free standalone payment method.
+			 */
+			public static function is_gateway_pro_only($gateway): bool {
+				return in_array($gateway, ['stripe', 'paypal'], true);
+			}
+			/**
+			 * True when a Custom Payment gateway is both switched on by the admin
+			 * AND actually usable on this site (Pro present for the Pro-only
+			 * ones). This is the authoritative gate -- the settings screen only
+			 * mirrors it visually, so a stored 'on' from a site that later lost
+			 * Pro can never quietly keep charging through Stripe/PayPal.
+			 */
+			public static function is_gateway_available($gateway): bool {
+				if (self::get_payment_setting($gateway . '_enabled') !== 'on') {
+					return false;
+				}
+				return !self::is_gateway_pro_only($gateway) || self::is_pro_active();
+			}
+			/** Free standalone payment method -- see is_gateway_available(). */
+			public static function offline_payment_enabled(): bool {
+				return self::is_gateway_available('offline');
 			}
 			public static function get_payment_setting($key, $default = '') {
 				return self::get_settings('mpwpb_payment_method_settings', $key, $default);
@@ -535,9 +568,9 @@
 					return false;
 				}
 				if (self::is_custom_payment_mode()) {
-					return self::get_payment_setting('offline_enabled') === 'on'
-						|| self::get_payment_setting('stripe_enabled') === 'on'
-						|| self::get_payment_setting('paypal_enabled') === 'on';
+					return self::is_gateway_available('offline')
+						|| self::is_gateway_available('stripe')
+						|| self::is_gateway_available('paypal');
 				}
 				return false;
 			}

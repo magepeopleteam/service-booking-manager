@@ -218,22 +218,22 @@
 					}
 					?>
 
-					<?php if ($wc_active) { ?>
-						<div class="mpwpb-st-card mpwpb-st-block mpwpb-st-import">
-							<div class="mpwpb-st-card-head"><span class="mpwpb-st-ico mpwpb-st-ico-blue"><span class="dashicons dashicons-download"></span></span><h3><?php esc_html_e('Dummy Data Import', 'service-booking-manager'); ?></h3></div>
-							<div class="mpwpb-st-import-body">
-								<?php if ($dummy_imported) { ?>
-									<p><span class="dashicons dashicons-yes-alt" style="color:#16a34a;"></span> <?php esc_html_e('Dummy data has already been imported. You can re-import to restore the default demo services.', 'service-booking-manager'); ?></p>
-								<?php } else { ?>
-									<p><span class="dashicons dashicons-info" style="color:#2563eb;"></span> <?php esc_html_e('Import dummy services to quickly see how Service Booking Manager works. This creates sample service posts with categories and settings.', 'service-booking-manager'); ?></p>
-								<?php } ?>
-								<button type="button" id="mpwpb-trigger-dummy-import-btn" class="mpwpb-st-import-btn">
-									<span class="dashicons dashicons-download"></span>
-									<?php echo $dummy_imported ? esc_html__('Re-Import Dummy Data', 'service-booking-manager') : esc_html__('Import Dummy Data', 'service-booking-manager'); ?>
-								</button>
-							</div>
+					<?php /* Dummy import needs no WooCommerce -- the demo services are
+					         plain posts, so this is offered in standalone mode too. */ ?>
+					<div class="mpwpb-st-card mpwpb-st-block mpwpb-st-import">
+						<div class="mpwpb-st-card-head"><span class="mpwpb-st-ico mpwpb-st-ico-blue"><span class="dashicons dashicons-download"></span></span><h3><?php esc_html_e('Dummy Data Import', 'service-booking-manager'); ?></h3></div>
+						<div class="mpwpb-st-import-body">
+							<?php if ($dummy_imported) { ?>
+								<p><span class="dashicons dashicons-yes-alt" style="color:#16a34a;"></span> <?php esc_html_e('Dummy data has already been imported. You can re-import to restore the default demo services.', 'service-booking-manager'); ?></p>
+							<?php } else { ?>
+								<p><span class="dashicons dashicons-info" style="color:#2563eb;"></span> <?php esc_html_e('Import dummy services to quickly see how Service Booking Manager works. This creates sample service posts with categories and settings.', 'service-booking-manager'); ?></p>
+							<?php } ?>
+							<button type="button" id="mpwpb-trigger-dummy-import-btn" class="mpwpb-st-import-btn">
+								<span class="dashicons dashicons-download"></span>
+								<?php echo $dummy_imported ? esc_html__('Re-Import Dummy Data', 'service-booking-manager') : esc_html__('Import Dummy Data', 'service-booking-manager'); ?>
+							</button>
 						</div>
-					<?php } ?>
+					</div>
 
 				</div>
 				<?php
