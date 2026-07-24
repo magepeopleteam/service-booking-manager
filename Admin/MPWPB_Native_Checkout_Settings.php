@@ -203,6 +203,18 @@
 				return $default_fields;
 			}
 			/**
+			 * Settings keys owned by a Pro-only gateway, so a free site can
+			 * round-trip them untouched instead of dropping them (the gateway's
+			 * config panel isn't rendered there -- see render_payment_method_panel()).
+			 */
+			private static function pro_gateway_setting_keys(string $gateway): array {
+				$map = [
+					'stripe' => ['stripe_mode', 'stripe_publishable_key', 'stripe_secret_key', 'stripe_webhook_secret'],
+					'paypal' => ['paypal_mode', 'paypal_client_id', 'paypal_client_secret'],
+				];
+				return $map[$gateway] ?? [];
+			}
+			/**
 			 * Fully custom section renderer (registered as the section
 			 * 'callback' in sec_reg() above, so no per-field table is used
 			 * for this tab). Prints its own Save Changes button, since it
@@ -214,16 +226,22 @@
 				$wc_active = $wc_status == 1;
 				$pro_active = MPWPB_Global_Function::is_pro_active();
 				$option = 'mpwpb_payment_method_settings';
+				$upgrade_url = MPWPB_Global_Function::pro_upgrade_url();
+				// 'pro' marks the online gateways: they stay locked without Pro.
+				// Offline carries no flag -- it is the free standalone payment
+				// method, so a free site can take real bookings in Custom mode.
 				$gateways = [
 					'paypal' => [
 						'label' => esc_html__('PayPal', 'service-booking-manager'),
 						'icon' => 'fab fa-paypal',
 						'gradient' => 'linear-gradient(135deg,#003b7a,#0073c4)',
+						'pro' => true,
 					],
 					'stripe' => [
 						'label' => esc_html__('Credit/Debit Card (Stripe)', 'service-booking-manager'),
 						'icon' => 'fab fa-stripe-s',
 						'gradient' => 'linear-gradient(135deg,#4338ca,#6d5bf0)',
+						'pro' => true,
 					],
 					'offline' => [
 						'label' => esc_html__('Offline Payment', 'service-booking-manager'),
@@ -295,6 +313,11 @@
 					.mpwpb-gateway-configure::after { content: "\f347"; font-family: dashicons; font-size: 14px; transition: transform .15s ease; }
 					.mpwpb-gateway-configure[aria-expanded="true"]::after { transform: rotate(180deg); }
 					.mpwpb-gateway-configure:hover { background: rgba(255,255,255,.24); transform: translateY(-1px); }
+					.mpwpb-gateway-card--locked { filter: saturate(.55); }
+					.mpwpb-gateway-card--locked .mpwpb-gateway-name { display: inline-flex; align-items: center; }
+					a.mpwpb-gateway-configure.mpwpb-gateway-upgrade { text-decoration: none; color: #fff; }
+					a.mpwpb-gateway-configure.mpwpb-gateway-upgrade::after { content: none; }
+					a.mpwpb-gateway-configure.mpwpb-gateway-upgrade .dashicons { width: 14px; height: 14px; font-size: 14px; line-height: 14px; }
 					.mpwpb-gw-panel { position: relative; border: 1px solid #dce3ee; border-top: none; border-radius: 0 0 14px 14px; padding: 20px; margin: 0 0 16px; background: #fff; box-shadow: 0 12px 24px rgba(15,23,42,.08); }
 					.mpwpb-gw-panel .mpwpb-gw-enable-row { display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 14px !important; margin: 0 0 6px !important; padding: 0 0 16px !important; border-bottom: 1px solid #e8edf4; color: #26334a; font-size: 12.5px; font-weight: 750 !important; }
 					.mpwpb-gw-panel .mpwpb-gw-enable-label { flex: 1; min-width: 0; }
@@ -572,27 +595,60 @@
 						<div>
 							<strong>
 								<?php esc_html_e('Enable Custom Payment Method', 'service-booking-manager'); ?>
-								<?php if (!$pro_active) : ?>
-									<span class="mpwpb-pro-badge"><?php esc_html_e('PRO', 'service-booking-manager'); ?></span>
-								<?php endif; ?>
 							</strong>
 							<p class="description">
 								<?php if ($pro_active) : ?>
 									<?php esc_html_e('If enabled, the custom payment gateways below (PayPal, Stripe, Offline) will be used for checkout.', 'service-booking-manager'); ?>
 								<?php else : ?>
-									<?php esc_html_e('Requires the service-booking-manager-pro plugin to be installed and activated.', 'service-booking-manager'); ?>
+									<?php esc_html_e('If enabled, bookings are taken through the built-in checkout instead of WooCommerce. Offline Payment is included free; PayPal and Stripe require Pro.', 'service-booking-manager'); ?>
 								<?php endif; ?>
 							</p>
 						</div>
 						<label class="mpwpb-toggle-switch mpwpb-toggle-switch-lg">
-							<input type="checkbox" id="mpwpb_custom_enable_toggle" <?php disabled(!$pro_active); ?> <?php checked($payment_type === 'custom'); ?>/>
+							<input type="checkbox" id="mpwpb_custom_enable_toggle" <?php checked($payment_type === 'custom'); ?>/>
 							<span class="mpwpb-toggle-slider"></span>
 						</label>
 					</div>
 
-					<div class="mpwpb-custom-dependent <?php echo ($payment_type === 'custom' && $pro_active) ? '' : 'mpwpb-locked'; ?>">
+					<div class="mpwpb-custom-dependent <?php echo $payment_type === 'custom' ? '' : 'mpwpb-locked'; ?>">
 					<?php foreach ($gateways as $key => $gw) :
 						$enabled = MPWPB_Global_Function::get_payment_setting($key . '_enabled') === 'on';
+						// Pro-only gateway on a free site: show the card, but with no
+						// switch and no config panel. The stored value is preserved in
+						// a hidden field so saving this page from a free site never
+						// wipes credentials/state configured while Pro was active.
+						$locked = !empty($gw['pro']) && !$pro_active;
+						if ($locked) :
+							?>
+							<div class="mpwpb-gateway-card mpwpb-gateway-card--locked" style="background:<?php echo esc_attr($gw['gradient']); ?>">
+								<div class="mpwpb-gateway-row">
+									<span class="mpwpb-gateway-icon"><i class="<?php echo esc_attr($gw['icon']); ?>"></i></span>
+									<span class="mpwpb-gateway-name">
+										<?php echo esc_html($gw['label']); ?>
+										<span class="mpwpb-pro-badge"><?php esc_html_e('PRO', 'service-booking-manager'); ?></span>
+									</span>
+									<?php
+									// This panel's save rewrites the whole option from what
+									// was submitted, so every key of a locked gateway has to
+									// ride along or a save from a downgraded site would wipe
+									// credentials that are still valid once Pro comes back.
+									$preserved_keys = array_merge([$key . '_enabled'], self::pro_gateway_setting_keys($key));
+									foreach ($preserved_keys as $preserved_key) :
+										$preserved_value = MPWPB_Global_Function::get_payment_setting($preserved_key);
+										if ($preserved_value === '' || is_array($preserved_value)) {
+											continue;
+										}
+										?>
+										<input type="hidden" name="<?php echo esc_attr($option); ?>[<?php echo esc_attr($preserved_key); ?>]" value="<?php echo esc_attr($preserved_value); ?>"/>
+									<?php endforeach; ?>
+									<a class="mpwpb-gateway-configure mpwpb-gateway-upgrade" href="<?php echo esc_url($upgrade_url); ?>" target="_blank" rel="noopener">
+										<span class="dashicons dashicons-lock" aria-hidden="true"></span><?php esc_html_e('Unlock with Pro', 'service-booking-manager'); ?>
+									</a>
+								</div>
+							</div>
+							<?php
+							continue;
+						endif;
 						?>
 						<div class="mpwpb-gateway-card" style="background:<?php echo esc_attr($gw['gradient']); ?>">
 							<div class="mpwpb-gateway-row">
@@ -711,19 +767,15 @@
 					(function ($) {
 						"use strict";
 						$(document).ready(function () {
-							var mpwpbProActive = <?php echo $pro_active ? 'true' : 'false'; ?>;
 							// Single source of truth for both "which gateway is enabled" toggles
 							// (WooCommerce tab's and Custom tab's) plus their dependent sections.
 							// Value is one of 'woocommerce', 'custom', or 'none' — both switches can
 							// be off at once, but turning one on always turns the other off, so at
-							// most one is ever active. Custom is a Pro feature: silently refuses to
-							// activate it without Pro (mirrored by a real server-side gate in
-							// MPWPB_Global_Function::is_custom_payment_mode(), this is just so the
-							// UI doesn't show a state it won't actually run in).
+							// most one is ever active. Custom Payment itself is free (its Offline
+							// gateway ships in this plugin); only the individual Stripe/PayPal cards
+							// are Pro-locked, server-side in
+							// MPWPB_Global_Function::is_gateway_available().
 							function mpwpbSyncPaymentToggles(value) {
-								if (value === 'custom' && !mpwpbProActive) {
-									value = 'none';
-								}
 								$('#mpwpb_payment_method_type_input').val(value);
 								$('#mpwpb_wc_enable_toggle').prop('checked', value === 'woocommerce');
 								$('#mpwpb_custom_enable_toggle').prop('checked', value === 'custom');

@@ -77,17 +77,21 @@
 				return ob_get_clean();
 			}
 			/**
-			 * Gateways the admin has enabled under Payment Method > Custom.
+			 * Gateways the admin has enabled under Payment Method > Custom AND
+			 * that are actually usable here -- Offline is free, Stripe/PayPal
+			 * need Pro (MPWPB_Global_Function::is_gateway_available()). Used
+			 * both to render the payment choices and to validate the submitted
+			 * one, so an unavailable gateway can't be forced through by POST.
 			 */
 			public static function get_enabled_gateways(): array {
 				$gateways = [];
-				if (MPWPB_Global_Function::get_payment_setting('offline_enabled') === 'on') {
+				if (MPWPB_Global_Function::is_gateway_available('offline')) {
 					$gateways['offline'] = esc_html__('Offline Payment', 'service-booking-manager');
 				}
-				if (MPWPB_Global_Function::get_payment_setting('stripe_enabled') === 'on') {
+				if (MPWPB_Global_Function::is_gateway_available('stripe')) {
 					$gateways['stripe'] = esc_html__('Credit/Debit Card (Stripe)', 'service-booking-manager');
 				}
-				if (MPWPB_Global_Function::get_payment_setting('paypal_enabled') === 'on') {
+				if (MPWPB_Global_Function::is_gateway_available('paypal')) {
 					$gateways['paypal'] = esc_html__('PayPal', 'service-booking-manager');
 				}
 				return $gateways;
