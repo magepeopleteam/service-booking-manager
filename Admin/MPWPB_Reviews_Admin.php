@@ -1653,7 +1653,17 @@ if (!class_exists('MPWPB_Reviews_Admin')) {
                     var content = $(this).data('content');
 
                     $('#mpwpb-review-title').text(title);
-                    $('#mpwpb-review-content').html('<p>' + content + '</p>');
+                    // Render the review body as TEXT, never HTML. The content is
+                    // customer-supplied and only passes through sanitize_textarea_field()
+                    // on save, which strips literal < > but not HTML entities. An
+                    // entity-encoded payload (e.g. "&lt;script&gt;") survives that,
+                    // and esc_attr() on the data-content attribute does not
+                    // double-encode it, so the browser decodes it once back to raw
+                    // markup when reading the attribute. Using .html() here would
+                    // then execute it in the moderator's browser (stored DOM XSS).
+                    // .text() coerces to a string and never parses markup.
+                    var reviewContent = (content == null) ? '' : String(content);
+                    $('#mpwpb-review-content').empty().append($('<p></p>').text(reviewContent));
                     $('#mpwpb-review-modal').show();
                 });
 
