@@ -4,7 +4,7 @@ Tags: appointment booking, booking calendar, service booking, online booking, wo
 Requires at least: 5.3
 Tested up to: 7.0
 Requires PHP: 7.0
-Stable tag: 1.3.1
+Stable tag: 1.4.0
 WC requires at least: 3.0
 WC tested up to: 10.9.1
 License: GPLv2 or later
@@ -47,13 +47,15 @@ Customers browse real-time availability, pick a service and time slot, and confi
 * Real-time calendar sync to prevent double bookings
 * Custom staff schedules and working hours
 * Configurable service durations and buffer time
+* Dynamic time-slot length — pick a preset or set any custom duration in minutes
 * Automated time-slot management
 * Group booking support
 * Recurring appointment controls
 
 **Checkout & Payments**
 * Two full checkout modes: **WooCommerce mode** (taxes, coupons, gateways, emails, orders) or **Custom/Native mode** (WPBookingly's own cart, checkout, and orders — no WooCommerce required)
-* Inline WooCommerce checkout inside the booking drawer with gateway redirects and automatic retry on temporary failures
+* Free Offline payment gateway in Custom/Native mode — take bookings without WooCommerce and without a paid upgrade
+* Inline checkout inside the booking drawer in both modes, with gateway redirects and automatic retry on temporary failures
 * Advanced booking coupons with service, price, quantity, date, staff, and usage restrictions
 * Partial-payment support across native and WooCommerce checkout flows
 
@@ -105,6 +107,7 @@ Take your booking system further with:
 * Custom client forms
 * Group & multi-service booking
 * Advanced analytics and reporting
+* Online Stripe and PayPal gateways for Custom/Native mode
 * Extended WooCommerce payment gateways
 
 👉 Try the [WPBookingly Pro Demo](https://mage-people.com/product/wordpress-service-booking-plugin-all-kind-of-service-booking-solution/)
@@ -146,7 +149,7 @@ Use `[service-booking post_id="123"]` and replace `123` with your service's post
 Current versions register the service post type and flush rewrite rules automatically on activation. If you upgraded from an older version, deactivate and reactivate WPBookingly, or go to **Settings > Permalinks** and click Save Changes. If the issue persists, check your web server's rewrite rules and file permissions.
 
 = Which payment gateways does WPBookingly support? =
-In WooCommerce mode, WPBookingly uses any gateway enabled in WooCommerce, including Stripe and PayPal. Custom/Native mode offers its own gateway options based on your installed edition and Payment Settings. Always test gateway credentials over HTTPS before going live.
+In WooCommerce mode, WPBookingly uses any gateway enabled in WooCommerce, including Stripe and PayPal. In Custom/Native mode the Offline payment gateway is included free, so you can accept bookings and collect payment manually without WooCommerce; online Stripe and PayPal checkout in this mode requires WPBookingly Pro. Always test gateway credentials over HTTPS before going live.
 
 = Can customers manage their own bookings? =
 Yes. Customers can view booking details, reorder a service, request cancellation, and reschedule eligible appointments from their account area. WooCommerce-mode bookings appear under WooCommerce **My Account > Orders**; Custom/Native bookings appear on the automatically created WPBookingly My Account page, or on any page using the `[mpwpb-user-dashboard]` shortcode.
@@ -178,6 +181,31 @@ Please report security issues through the official [Patchstack Vulnerability Dis
 5. Admin analytics, booking administration, and staff dashboard.
 
 == Changelog ==
+
+= 1.4.0 =
+* Added Dynamic Time Slot Length: choose one of the presets or type any custom slot length in minutes, in both the modern and classic service editors.
+* Added booking duration everywhere: the booked time range and duration now appear on the order item, order emails, My Account, the thank-you page, the native checkout recap, and the booking wizard summary. The slot length is frozen at checkout, so editing a service later never rewrites what a customer already booked.
+* Added Offline Payment as a free standalone gateway, so Custom/Native payment mode now works without WooCommerce and without Pro. Stripe and PayPal remain Pro features.
+* Added inline Custom/Native checkout inside the booking drawer for every non-WooCommerce setup, including the offline booking confirmation, instead of redirecting to a separate checkout page.
+* Added an Orders screen for Custom/Native bookings on free sites, giving a read-only overview of placed bookings.
+* Added an automatic demo-data import with a floating circular progress widget. Services are imported one per request so constrained hosts no longer hit memory or execution-time limits, and the import now works in standalone mode without WooCommerce.
+* Added a required payment method check: a booking can no longer be completed until a working gateway is configured. Customers see a short notice, and administrators get a direct "Go to Payment Settings" link.
+* Added a redesigned Review Settings screen with a card layout, an auto-send toggle, a "send after N days" option, and clickable placeholder chips that insert into the email body.
+* Improved the booking drawer on phones and tablets with a full visible-height layout, admin-bar aware spacing, touch-sized footer actions, and a corrected tablet breakpoint.
+* Improved the drawer progress bar so the completed and current steps always match the step being displayed.
+* Improved duration display so anything an hour or longer reads hour-wise (for example "4 hours" instead of "240 min") across the service overview and duration chips.
+* Improved admin styling with a refreshed sidebar, corrected sticky positioning while scrolling, and updated default colours.
+* Improved Custom Payment mode stability by adding fallbacks for WooCommerce helper functions, preventing fatal errors on admin screens when WooCommerce is not active.
+* Fixed recurring bookings reporting inflated revenue: each occurrence stored the whole series total, so Analytics and the Order List multiplied the amount by the number of occurrences.
+* Fixed staff photos rendering as ovals or rectangles instead of circles in the staff edit form and staff list.
+* Fixed the booking wizard allowing the staff step to be reached without picking a date and time, and cleared a previously picked time when the date changes so a mismatched date/time pair can never be submitted.
+* Fixed two Back buttons appearing at once in the booking wizard on mobile.
+* Fixed the "Custom" slot-length input intermittently not appearing when selected.
+* Fixed "Send Request" and saving on the Reviews screen giving no feedback and switching away from the active tab.
+* Fixed a fatal error ("Call to undefined method MP_Global_Function::format_price()") on sites running this plugin alongside other MagePeople plugins.
+* Fixed a documentation link that contained a duplicate /docs path.
+* Security: fixed a stored cross-site scripting issue in the admin review "View" modal, where review content submitted by a customer could execute script in a moderator's browser. Review content is now rendered as plain text.
+* Security: added a capability check to the review send-request action and restricted the payment settings link to users allowed to manage settings. The server now refuses to create an order when no payment method is available.
 
 = 1.3.1 =
 * Added a modern service creation and editing workflow covering categories, extras, schedules, recurring rules, tax, staff, waiting lists, FAQs, galleries, and formatted service details.
@@ -230,6 +258,9 @@ Please report security issues through the official [Patchstack Vulnerability Dis
 Initial release of Service Booking Manager (WPBookingly). No upgrade necessary at this time.
 
 == Upgrade Notice ==
+
+= 1.4.0 =
+Security release, recommended for all users. Fixes a stored XSS issue in the admin review modal and inflated recurring-booking revenue in reports. Custom/Native mode is now free with Offline payment, so review Payment Settings, clear caches, and test one booking after updating.
 
 = 1.3.1 =
 Back up your site before updating. After updating, review Payment Settings and booking policies, clear any page/cache optimisation caches, and test one complete booking in your selected checkout mode. Existing service, booking, and order data remains fully intact.

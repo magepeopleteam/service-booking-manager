@@ -3,7 +3,7 @@
 	 * Plugin Name: Appointment Booking Plugin for WooCommerce – All-in-One Service Manager
 	 * Plugin URI: http://mage-people.com
 	 * Description: A complete solution for Any kind of service booking.
-	 * Version: 1.3.1
+	 * Version: 1.4.0
 	 * Author: MagePeople Team
 	 * Author URI: http://www.mage-people.com/
 	 * Text Domain: service-booking-manager
@@ -27,7 +27,7 @@
 					define('MPWPB_PLUGIN_URL', plugins_url() . '/' . plugin_basename(dirname(__FILE__)));
 				}
 				if (!defined('MPWPB_VERSION')) {
-					define('MPWPB_VERSION', '1.3.1');
+					define('MPWPB_VERSION', '1.4.0');
 				}
 				require_once MPWPB_PLUGIN_DIR . '/mp_global/MPWPB_Global_File_Load.php';
 				add_action('activated_plugin', array($this, 'activation_redirect'), 90, 1);
