@@ -6,6 +6,31 @@
   --mage-border: #DDD;
 }
 
+/* Keep the booking flow inside the real mobile viewport. This is deliberately
+   scoped instead of relying on a theme-wide border-box reset: page builders
+   and iOS Safari can otherwise calculate width:100% content plus padding as a
+   wider box, leaving the portrait layout horizontally clipped. */
+.mpwpb_registration,
+.mpwpb_registration *,
+.mpwpb_registration *::before,
+.mpwpb_registration *::after {
+  box-sizing: border-box;
+}
+.mpwpb_registration {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  -webkit-text-size-adjust: 100%;
+}
+.mpwpb_registration main,
+.mpwpb-static-template .main,
+.mpwpb-static-template .sidebar,
+.mpwpb-static-template .mpwpb_static_area,
+.mpwpb-static-template .mpwpb_static {
+  min-width: 0;
+  max-width: 100%;
+}
+
 div.registration_tab_item {
   -webkit-transition: all 350ms ease-in-out;
   -moz-transition: all 350ms ease-in-out;

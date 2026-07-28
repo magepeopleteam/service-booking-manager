@@ -12,6 +12,10 @@
 				add_action('init', [$this, 'language_load']);
 				$this->load_file();
 				add_action( 'admin_init', array( $this, 'mpwpb_upgrade' ) );
+				// Print the mobile viewport before theme/page-builder assets.
+				// Safari can otherwise keep its 980px fallback layout viewport
+				// when a theme emits the viewport tag late in a large wp_head().
+				add_action('wp_head', [$this, 'frontend_viewport_meta'], -1000);
 				add_action('wp_enqueue_scripts', [$this, 'frontend_script'], 90);
 				add_action('wp_footer', [$this, 'ensure_service_import_map'], 1);
 				add_action('admin_enqueue_scripts', [$this, 'admin_scripts'], 90);
@@ -67,6 +71,25 @@
 				if (is_singular(MPWPB_Function::get_cpt()) && function_exists('wp_script_modules')) {
 					wp_script_modules()->print_import_map();
 				}
+			}
+			/**
+			 * Ensure iOS Safari receives the booking-flow viewport before large
+			 * theme or page-builder styles can delay their own declaration.
+			 *
+			 * A duplicate viewport declaration is harmless when a well-behaved
+			 * theme already prints one. Keeping this scoped to booking contexts
+			 * prevents the plugin from changing unrelated frontend pages.
+			 */
+			public function frontend_viewport_meta(): void {
+				$is_booking_flow = is_singular(MPWPB_Function::get_cpt())
+					|| (bool) get_query_var('mpwpb_checkout')
+					|| MPWPB_Global_Function::current_page_has_shortcode('service-booking');
+				if (!$is_booking_flow) {
+					return;
+				}
+				?>
+				<meta name="viewport" content="width=device-width, initial-scale=1">
+				<?php
 			}
 			public function global_enqueue() {
 				do_action('add_mpwpb_common_script');
