@@ -101,6 +101,13 @@
 				exit;
 			}
 			public function add_cart_item_data($cart_item_data, $product_id) {
+				// Never trust the incoming value to still be an array: this filter
+				// runs through every plugin on the site first, and a callback that
+				// early-returns with a bare `return;` hands the rest of the chain a
+				// null -- which used to fatal here on array_merge() and took the
+				// whole add-to-cart request down with a 500 (the front end could
+				// only show its generic "booking could not be completed" message).
+				$cart_item_data = is_array($cart_item_data) ? $cart_item_data : array();
 				$booking_item = self::build_booking_item_from_request($product_id);
 				if (!empty($booking_item)) {
 					$cart_item_data = array_merge($cart_item_data, $booking_item);

@@ -143,6 +143,20 @@
 				));
 				do_action('add_mpwpb_admin_script');
 			}
+			/**
+			 * Cache-busting version for a bundled asset.
+			 *
+			 * MPWPB_VERSION only changes on a plugin release, so a fix shipped to
+			 * a site between releases kept the same ?ver= and stayed stale behind
+			 * browser and (worse) CDN caches -- a pull-CDN such as CDN Enabler /
+			 * KeyCDN keys purely on the URL, so it can serve the superseded file
+			 * indefinitely. Falling back to the file's mtime makes the URL change
+			 * whenever the file actually does.
+			 */
+			public static function asset_version($relative_path) {
+				$file = MPWPB_PLUGIN_DIR . $relative_path;
+				return file_exists($file) ? MPWPB_VERSION . '.' . filemtime($file) : MPWPB_VERSION;
+			}
 			public function frontend_script() {
 				if (!MPWPB_Global_Function::is_booking_frontend_context()) {
 					return;
@@ -150,8 +164,8 @@
 				$this->global_enqueue();
 				wp_enqueue_script('wc-checkout');
 				// custom
-				wp_enqueue_style('mpwpb', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb.css', [], MPWPB_VERSION);
-				wp_enqueue_script('mpwpb', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb.js', ['jquery'], MPWPB_VERSION, true);
+				wp_enqueue_style('mpwpb', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb.css', [], self::asset_version('/assets/frontend/mpwpb.css'));
+				wp_enqueue_script('mpwpb', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb.js', ['jquery'], self::asset_version('/assets/frontend/mpwpb.js'), true);
 				wp_enqueue_style('mpwpb_registration', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_registration.css', [], MPWPB_VERSION);
 				wp_enqueue_script('mpwpb_registration', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_registration.js', ['jquery'], MPWPB_VERSION);
 				wp_enqueue_style('mpwpb_coupon', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-coupon.css', [], MPWPB_VERSION);

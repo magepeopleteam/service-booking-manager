@@ -288,6 +288,7 @@
 					"pdf" => "application/pdf"
 				);
 				add_filter('woocommerce_checkout_fields', array($this, 'get_checkout_fields_for_checkout'), 10);
+				add_action('template_redirect', array($this, 'maybe_apply_checkout_section_settings'));
 				add_action('woocommerce_after_checkout_billing_form', array($this, 'file_upload_field'));
 				add_action('woocommerce_after_checkout_shipping_form', array($this, 'file_upload_field'));
 				add_action('woocommerce_after_checkout_order_form', array($this, 'file_upload_field'));
@@ -329,53 +330,132 @@
 				}
 				return $fields;
 			}
-			public function get_checkout_fields_for_checkout() {
-				$fields = array();
-				$checkout_fields = WC()->checkout->get_checkout_fields();
-				$fields['billing'] = $checkout_fields['billing'];
-				$fields['shipping'] = $checkout_fields['shipping'];
-				$fields['order'] = $checkout_fields['order'];
-				if (isset($checkout_fields) && is_array($checkout_fields)) {
-					foreach ($checkout_fields as $key => $key_fields) {
-						if (is_array($key_fields)) {
-							foreach ($key_fields as $name => $field_array) {
-								if (self::check_deleted_field($key, $name) || self::check_disabled_field($key, $name)) {
-									unset($fields[$key][$name]);
-								}
-							}
+			/**
+			 * True only once an admin has actually saved something on this
+			 * plugin's "WC Checkout Fields" screen (option mpwpb_custom_checkout_fields).
+			 *
+			 * Everything below is an opt-in customisation of the STORE-WIDE
+			 * WooCommerce checkout, so until that opt-in exists this helper must
+			 * leave the checkout completely untouched. Without this gate a plain
+			 * activation silently stripped country / address / city / state /
+			 * postcode / company from every checkout on the site (see the legacy
+			 * default list in check_disabled_field()) and hid the order review +
+			 * order notes sections -- breaking checkouts that have nothing to do
+			 * with bookings.
+			 */
+			public static function is_configured(): bool {
+				if (!isset(self::$settings_options)) {
+					// Safety net for any call that lands before init() ran.
+					self::$settings_options = get_option('mpwpb_custom_checkout_fields');
+				}
+				return is_array(self::$settings_options) && !empty(self::$settings_options);
+			}
+			/**
+			 * woocommerce_checkout_fields filter callback. Also called directly
+			 * (no argument) by file_upload_field() / save_custom_checkout_fields_to_order()
+			 * / order_details() when they need the resolved field list.
+			 *
+			 * It must build on top of the fields it is handed, not re-read them
+			 * from WC()->checkout->get_checkout_fields(): WooCommerce populates
+			 * WC_Checkout::$fields BEFORE applying this filter, so re-reading
+			 * returns the raw, unfiltered defaults and silently discarded every
+			 * other plugin's/theme's checkout customisation (and dropped the
+			 * 'account' fieldset entirely).
+			 */
+			public function get_checkout_fields_for_checkout($fields = null) {
+				$from_filter = func_num_args() > 0;
+				if (!is_array($fields)) {
+					$fields = (function_exists('WC') && WC()->checkout) ? WC()->checkout->get_checkout_fields() : array();
+					$fields = is_array($fields) ? $fields : array();
+				}
+				if (!self::is_configured()) {
+					return $from_filter ? $fields : self::normalize_fieldsets($fields);
+				}
+				foreach (array('billing', 'shipping', 'order') as $key) {
+					if (empty($fields[$key]) || !is_array($fields[$key])) {
+						continue;
+					}
+					foreach (array_keys($fields[$key]) as $name) {
+						if (self::check_deleted_field($key, $name) || self::check_disabled_field($key, $name)) {
+							unset($fields[$key][$name]);
 						}
 					}
 				}
-				if (isset(self::$settings_options) && is_array(self::$settings_options)) {
-					foreach (self::$settings_options as $key => $key_fields) {
-						if (is_array($key_fields)) {
-							foreach ($key_fields as $name => $field_array) {
-								if (self::check_deleted_field($key, $name) || self::check_disabled_field($key, $name)) {
-									unset($fields[$key][$name]);
-								} else {
-									$fields[$key][$name] = $field_array;
-								}
-							}
+				foreach ((array) self::$settings_options as $key => $key_fields) {
+					if (!in_array($key, array('billing', 'shipping', 'order'), true) || !is_array($key_fields)) {
+						continue;
+					}
+					foreach ($key_fields as $name => $field_array) {
+						if (!is_array($field_array)) {
+							continue;
+						}
+						if (self::check_deleted_field($key, $name) || self::check_disabled_field($key, $name)) {
+							unset($fields[$key][$name]);
+						} else {
+							$fields[$key][$name] = $field_array;
 						}
 					}
+				}
+				return $from_filter ? $fields : self::normalize_fieldsets($fields);
+			}
+			/**
+			 * Direct (non-filter) callers index ['billing'] / ['shipping'] / ['order']
+			 * unconditionally, so guarantee those three keys for them only -- the
+			 * filtered array is returned exactly as its shape came in.
+			 */
+			private static function normalize_fieldsets($fields): array {
+				foreach (array('billing', 'shipping', 'order') as $key) {
+					if (!isset($fields[$key]) || !is_array($fields[$key])) {
+						$fields[$key] = array();
+					}
+				}
+				return $fields;
+			}
+			/**
+			 * "Hide Order Review" / "Hide Order Additional Information" settings.
+			 *
+			 * These used to be applied as side effects from inside the
+			 * woocommerce_checkout_fields filter, which also fires during AJAX and
+			 * admin requests and made the removal order-dependent. They belong on a
+			 * real page-load hook, scoped to an actual checkout page, and only when
+			 * the admin opted in.
+			 */
+			public function maybe_apply_checkout_section_settings(): void {
+				if (!self::is_configured() || !function_exists('is_checkout') || !is_checkout()) {
+					return;
+				}
+				if (function_exists('is_order_received_page') && is_order_received_page()) {
+					return;
 				}
 				if (self::hide_checkout_order_review_section()) {
 					remove_action('woocommerce_checkout_order_review', 'woocommerce_order_review', 10);
 				}
-				if (self::hide_checkout_order_additional_information_section() || (isset($fields['order']) && is_array($fields['order']) && count($fields['order']) == 0)) {
+				if (self::hide_checkout_order_additional_information_section()
+					|| self::check_deleted_field('order', 'order_comments')
+					|| self::check_disabled_field('order', 'order_comments')) {
 					add_filter('woocommerce_enable_order_notes_field', '__return_false');
 				}
-				return $fields;
 			}
-			public static function hide_checkout_order_additional_information_section() {
-				if (!self::$settings_options || (is_array(self::$settings_options) && ((!array_key_exists('hide_checkout_order_additional_information', self::$settings_options)) || (array_key_exists('hide_checkout_order_additional_information', self::$settings_options) && self::$settings_options['hide_checkout_order_additional_information'] == 'on')))) {
-					return true;
-				}
+			/**
+			 * Honoured only when explicitly switched on and saved. An absent key
+			 * means the admin never opened the Checkout Settings screen, which must
+			 * not be read as "hide it" -- that is what removed the order notes from
+			 * every checkout on a fresh install.
+			 */
+			public static function hide_checkout_order_additional_information_section(): bool {
+				return self::is_configured()
+					&& isset(self::$settings_options['hide_checkout_order_additional_information'])
+					&& self::$settings_options['hide_checkout_order_additional_information'] === 'on';
 			}
-			public static function hide_checkout_order_review_section() {
-				if (!self::$settings_options || (is_array(self::$settings_options) && ((!array_key_exists('hide_checkout_order_review', self::$settings_options)) || (array_key_exists('hide_checkout_order_review', self::$settings_options) && self::$settings_options['hide_checkout_order_review'] == 'on')))) {
-					return true;
-				}
+			/**
+			 * As above. Removing woocommerce_order_review() takes the whole item /
+			 * totals table off the checkout, so it may only ever happen on an
+			 * explicit, saved opt-in.
+			 */
+			public static function hide_checkout_order_review_section(): bool {
+				return self::is_configured()
+					&& isset(self::$settings_options['hide_checkout_order_review'])
+					&& self::$settings_options['hide_checkout_order_review'] === 'on';
 			}
 			public static function check_deleted_field($key, $name) {
 				if ((isset(self::$settings_options[$key][$name]) && (isset(self::$settings_options[$key][$name]['deleted']) && self::$settings_options[$key][$name]['deleted'] == 'deleted'))) {
@@ -385,12 +465,18 @@
 				}
 			}
 			public static function check_disabled_field($key, $name) {
-				$default_disabled_field = array('billing' => array('billing_company' => '', 'billing_country' => '', 'billing_address_1' => '', 'billing_address_2' => '', 'billing_city' => '', 'billing_state' => '', 'billing_postcode' => ''));
-				if ((!isset(self::$settings_options[$key][$name]) && isset($default_disabled_field[$key][$name])) || (isset(self::$settings_options[$key][$name]) && (isset(self::$settings_options[$key][$name]['disabled']) && self::$settings_options[$key][$name]['disabled'] == '1'))) {
-					return true;
-				} else {
+				if (isset(self::$settings_options[$key][$name])) {
+					return isset(self::$settings_options[$key][$name]['disabled']) && self::$settings_options[$key][$name]['disabled'] == '1';
+				}
+				// Legacy behaviour: address fields a booking rarely needs are off
+				// unless the admin switched them back on. This only applies once the
+				// admin has configured this screen -- applying it to an unconfigured
+				// site stripped the address block out of an untouched store checkout.
+				if (!self::is_configured()) {
 					return false;
 				}
+				$default_disabled_field = array('billing' => array('billing_company' => '', 'billing_country' => '', 'billing_address_1' => '', 'billing_address_2' => '', 'billing_city' => '', 'billing_state' => '', 'billing_postcode' => ''));
+				return isset($default_disabled_field[$key][$name]);
 			}
 			public static function default_woocommerce_checkout_required_fields() {
 				return array(
