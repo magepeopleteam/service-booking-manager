@@ -1,31 +1,38 @@
-/********************************************************************************************************************/
-@media only screen and (min-width: 10px) {
-	.woocommerce.woocommerce-checkout form #customer_details.col2-set,
-	.woocommerce-page.woocommerce-checkout form #customer_details.col2-set{width: 45%;}
-	.woocommerce.woocommerce-checkout form #order_review,
-	.woocommerce.woocommerce-checkout form #order_review_heading,
-	.woocommerce-page.woocommerce-checkout form #order_review,
-	.woocommerce-page.woocommerce-checkout form #order_review_heading{width: 50%;}
-	table.woocommerce-checkout-review-order-table .product-name{min-width: calc(100% - 125px);display: table-cell !important;}
-}
-/********************************************************************************************************************/
-@media only screen and (min-width: 10px) {
-}
-/********************************************************************************************************************/
-@media only screen and (min-width: 10px) {
-}
-/********************************************************************************************************************/
-@media only screen and (min-width: 10px) {
+/**
+ * Checkout layout tweaks for the checkout THIS PLUGIN renders itself, inside
+ * the booking drawer (.mpwpb_order_proceed_area) -- a narrow panel that has to
+ * stack billing and order review into a single column.
+ *
+ * Every rule here must stay scoped to the plugin's own markup.
+ *
+ * These rules were previously written against bare
+ * `.woocommerce-checkout form #customer_details` / `#order_review` selectors,
+ * which also matched the STORE's own WooCommerce checkout page. Combined with
+ * `width: 100% !important` that flattened the theme's two-column checkout into
+ * one stacked column on every site the plugin was activated on -- the
+ * !important beat the theme regardless of its specificity, and these files are
+ * enqueued after the theme's. The unscoped review-table and shop_table rules
+ * below had the same problem: they reshaped the store's own order-review
+ * columns.
+ */
+
+.mpwpb_order_proceed_area form #customer_details.col2-set,
+.mpwpb_order_proceed_area form #order_review,
+.mpwpb_order_proceed_area form #order_review_heading {
+	width: 100% !important;
+	float: none !important;
 }
 
-.woocommerce.woocommerce-checkout form #customer_details.col2-set, .woocommerce-page.woocommerce-checkout form #customer_details.col2-set {
-	width: 100% !important;
+.mpwpb_order_proceed_area table.woocommerce-checkout-review-order-table .product-name {
+	min-width: calc(100% - 125px);
+	display: table-cell !important;
 }
 
-.woocommerce.woocommerce-checkout form #order_review, .woocommerce.woocommerce-checkout form #order_review_heading, .woocommerce-page.woocommerce-checkout form #order_review, .woocommerce-page.woocommerce-checkout form #order_review_heading{
-	width: 100% !important;
+.mpwpb_order_proceed_area table.shop_table,
+.mpwpb-active table.shop_table {
+	width: 100%;
 }
-.mpwpb-active h1.wp-block-post-title{ max-width: 1200px !important; }
-.woocommerce-page table.shop_table {
-	width: 100% !important;
+
+.mpwpb-active h1.wp-block-post-title {
+	max-width: 1200px !important;
 }
