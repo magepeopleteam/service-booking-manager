@@ -9,6 +9,7 @@
 		class MPWPB_Inline_WC_Checkout {
 			public function __construct() {
 				add_filter('woocommerce_is_checkout', [$this, 'is_inline_checkout_context']);
+				add_filter('woocommerce_get_script_data', [$this, 'filter_checkout_script_data'], 10, 2);
 				add_filter('woocommerce_get_return_url', [$this, 'filter_return_url'], 100, 2);
 				add_action('wp_ajax_mpwpb_inline_wc_checkout', [$this, 'render_checkout']);
 				add_action('wp_ajax_nopriv_mpwpb_inline_wc_checkout', [$this, 'render_checkout']);
@@ -22,6 +23,39 @@
 					return (bool) $is_checkout;
 				}
 				return is_singular(MPWPB_Function::get_cpt());
+			}
+
+			/**
+			 * Stop WooCommerce's checkout.js from running a full order-review
+			 * refresh as soon as a service page loads.
+			 *
+			 * wc_checkout_params.is_checkout is derived from is_checkout(), which
+			 * is_inline_checkout_context() deliberately forces true here so the
+			 * checkout/gateway scripts are available for the drawer. checkout.js
+			 * reads that flag and fires update_order_review() on page load; with
+			 * nothing in the cart yet WooCommerce answers with its "Sorry, your
+			 * session has expired." fragment keyed on form.woocommerce-checkout --
+			 * and the drawer's inline checkout form carries exactly that class, so
+			 * the whole form got replaced by that error before the visitor had even
+			 * picked a service.
+			 *
+			 * The flag is only meaningful once there is a booking to review, and
+			 * the drawer triggers init_checkout itself right after it injects the
+			 * checkout markup, so nothing is lost by switching it off here. The
+			 * real WooCommerce checkout page is not a service single, so it is
+			 * never affected.
+			 */
+			public function filter_checkout_script_data($params, $handle) {
+				if ('wc-checkout' !== $handle || !is_array($params) || empty($params['is_checkout'])) {
+					return $params;
+				}
+				if (is_admin() || !MPWPB_Global_Function::is_wc_payment_mode()) {
+					return $params;
+				}
+				if (is_singular(MPWPB_Function::get_cpt()) && !self::cart_has_booking()) {
+					$params['is_checkout'] = 0;
+				}
+				return $params;
 			}
 
 			private static function verify_request(): void {
