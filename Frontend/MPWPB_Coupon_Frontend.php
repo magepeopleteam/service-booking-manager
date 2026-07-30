@@ -13,20 +13,36 @@
 				add_action('wp_ajax_nopriv_mpwpb_apply_coupon', [$this, 'apply_coupon']);
 				add_action('wp_ajax_mpwpb_remove_coupon', [$this, 'remove_coupon']);
 				add_action('wp_ajax_nopriv_mpwpb_remove_coupon', [$this, 'remove_coupon']);
-				// This action/hook only exists in this plugin's own checkout
-				// template override and only ever fires from real WooCommerce
-				// checkout rendering -- self-gating, no is_wc_payment_mode()
-				// guard needed at registration time (checking that here, at
-				// construct time, would be the same load-order bug documented
-				// for MPWPB_Marketing/MPWPB_Coupon_Fields in the previous
+				// woocommerce_checkout_before_order_review_heading is a WooCommerce
+				// CORE hook (checkout/form-checkout.php), not one of this plugin's
+				// own -- it fires on every WooCommerce checkout. render_wc_coupon_box()
+				// self-gates on the cart actually holding a booking, so no
+				// is_wc_payment_mode() guard is needed at registration time (checking
+				// that here, at construct time, would be the same load-order bug
+				// documented for MPWPB_Marketing/MPWPB_Coupon_Fields in the previous
 				// coupon feature: WooCommerce may not be loaded yet).
-				add_action('woocommerce_checkout_before_order_review_heading', [$this, 'render_wc_coupon_box']);
+				//
+				// Priority 100 is deliberate. Page builders assemble their checkout
+				// layout out of UNBALANCED markup fragments hooked here: Elementor
+				// Pro's Checkout widget opens its right column at priority 5 and only
+				// opens the order-review wrapper at priority 95. At the default 10
+				// this box landed between those two opening divs -- loose inside the
+				// sticky right column, outside anything the builder's CSS sizes --
+				// which threw it out of the checkout layout entirely. Running last
+				// keeps it inside the order-review wrapper. On stock WooCommerce and
+				// classic themes the output position is unchanged (still immediately
+				// before the "Your order" heading).
+				add_action('woocommerce_checkout_before_order_review_heading', [$this, 'render_wc_coupon_box'], 100);
 				// Hardening: re-validate a still-applied coupon right before a WC
 				// order is actually placed (mirrors the equivalent re-check added
 				// to MPWPB_Native_Checkout::handle_checkout_submit()).
 				add_action('mpwpb_validate_cart_item', [$this, 'revalidate_at_wc_checkout'], 10, 2);
 				add_action('woocommerce_blocks_loaded', [$this, 'register_store_api_extension']);
 				add_action('wp_enqueue_scripts', [$this, 'enqueue_checkout_block_assets']);
+				add_action('save_post_mpwpb_coupon', [__CLASS__, 'flush_has_coupons_cache']);
+				add_action('deleted_post', [__CLASS__, 'flush_has_coupons_cache']);
+				add_action('trashed_post', [__CLASS__, 'flush_has_coupons_cache']);
+				add_action('untrashed_post', [__CLASS__, 'flush_has_coupons_cache']);
 			}
 
 			public function apply_coupon(): void {
@@ -205,6 +221,9 @@
 				if (!class_exists('WooCommerce') || (function_exists('is_checkout') && !is_checkout())) {
 					return;
 				}
+				if (!self::store_has_coupons()) {
+					return; // same rule as the classic checkout box: no coupons, no UI
+				}
 				$js = '/assets/frontend/mpwpb-coupon-block.js';
 				$css = '/assets/frontend/mpwpb-coupon-block.css';
 				wp_enqueue_style('mpwpb_coupon_block', MPWPB_PLUGIN_URL . $css, [], file_exists(MPWPB_PLUGIN_DIR . $css) ? filemtime(MPWPB_PLUGIN_DIR . $css) : '1.0.0');
@@ -225,6 +244,45 @@
 			 * toggle -- both need the same "which cart item is the booking"
 			 * lookup, so it's public/static rather than duplicated.
 			 */
+			/**
+			 * True when the store has at least one published booking coupon.
+			 *
+			 * The coupon UI is only ever useful on a store that actually has
+			 * coupons. Rendering it unconditionally meant stores that never
+			 * created one still got a dead input injected into their WooCommerce
+			 * checkout, where it has nothing to do but get in the way of the
+			 * theme's / page builder's layout.
+			 *
+			 * Cached, and invalidated whenever a coupon is saved or deleted (see
+			 * flush_has_coupons_cache), so a newly created coupon shows up
+			 * immediately rather than after the transient expires.
+			 */
+			public static function store_has_coupons(): bool {
+				$cached = get_transient('mpwpb_has_coupons');
+				if (false !== $cached) {
+					return 'yes' === $cached;
+				}
+				$found = get_posts([
+					'post_type' => 'mpwpb_coupon',
+					'post_status' => 'publish',
+					'posts_per_page' => 1,
+					'fields' => 'ids',
+					'no_found_rows' => true,
+					'update_post_meta_cache' => false,
+					'update_post_term_cache' => false,
+				]);
+				$has_coupons = !empty($found);
+				set_transient('mpwpb_has_coupons', $has_coupons ? 'yes' : 'no', DAY_IN_SECONDS);
+				return $has_coupons;
+			}
+
+			public static function flush_has_coupons_cache($post_id = 0): void {
+				if ($post_id && 'mpwpb_coupon' !== get_post_type($post_id)) {
+					return;
+				}
+				delete_transient('mpwpb_has_coupons');
+			}
+
 			public static function find_wc_booking_cart_key() {
 				foreach (WC()->cart->get_cart() as $key => $value) {
 					if (!empty($value['mpwpb_id'])) {
@@ -258,6 +316,9 @@
 			public function render_wc_coupon_box(): void {
 				if (!function_exists('WC') || !WC()->cart) {
 					return;
+				}
+				if (!self::store_has_coupons()) {
+					return; // no booking coupon exists, so this box could never do anything
 				}
 				$cart_key = self::find_wc_booking_cart_key();
 				if (!$cart_key) {
