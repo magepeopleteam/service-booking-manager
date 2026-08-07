@@ -339,7 +339,7 @@
 							)
 						),
 					)),
-					'mpwpb_slider_settings' => array(
+					'mpwpb_slider_settings' => apply_filters('filter_mpwpb_slider_settings', array(
 						array(
 							'name' => 'slider_type',
 							'label' => esc_html__('Slider Type', 'service-booking-manager'),
@@ -429,8 +429,32 @@
 								'on' => esc_html__('ON', 'service-booking-manager'),
 								'off' => esc_html__('Off', 'service-booking-manager')
 							)
+						),
+						array(
+							'name' => 'slider_caption',
+							'label' => esc_html__('Show Caption Text On Slides', 'service-booking-manager'),
+							'desc' => esc_html__('Print a text caption over each gallery slide. Off keeps the image-only slider. Default Off.', 'service-booking-manager'),
+							'type' => 'select',
+							'default' => 'off',
+							'options' => array(
+								'on' => esc_html__('ON', 'service-booking-manager'),
+								'off' => esc_html__('Off', 'service-booking-manager')
+							)
+						),
+						array(
+							'name' => 'slider_caption_source',
+							'label' => esc_html__('Caption Text', 'service-booking-manager'),
+							'desc' => esc_html__('Which text to print on the slides when captions are on. "Image Caption" uses each image\'s own caption from the Media Library and falls back to the service description when an image has none.', 'service-booking-manager'),
+							'type' => 'select',
+							'default' => 'image',
+							'options' => array(
+								'image' => esc_html__('Image Caption', 'service-booking-manager'),
+								'title' => esc_html__('Service Title', 'service-booking-manager'),
+								'description' => esc_html__('Service Description', 'service-booking-manager'),
+								'title_description' => esc_html__('Service Title + Description', 'service-booking-manager')
+							)
 						)
-					),
+					)),
 					'mpwpb_style_settings' => apply_filters('filter_mpwpb_style_settings', array(
 						array(
 							'name' => 'theme_color',

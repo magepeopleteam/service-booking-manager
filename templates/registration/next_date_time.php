@@ -46,6 +46,16 @@
             </button>
             <?php }?>
 
+            <?php
+                /**
+                 * Alternative ways to complete the booking that are not "pay now"
+                 * -- add-ons (Pro) use this for redeeming an already-paid session
+                 * package. Rendered beside "Proceed to Checkout" so the customer
+                 * chooses after picking the same service, date and time.
+                 */
+                do_action('mpwpb_booking_footer_actions', $post_id, $link_wc_product);
+            ?>
+
             <button class="_mpBtn_dBR mActive mpwpb_date_time_next" id="mpwpb_date_time_next_btn_id" type="button" data-wc_link_id="<?php echo esc_attr($link_wc_product); ?>" data-alert="<?php esc_html_e('Please Select Date & Time', 'service-booking-manager'); ?>" style="display: none">
 				<?php esc_html_e('Proceed to Checkout', 'service-booking-manager'); ?>
                 <i class="fas fa-long-arrow-alt-right _mL_xs"></i>

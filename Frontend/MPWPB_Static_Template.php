@@ -48,6 +48,67 @@
                 </div>
                 <?php
             }
+			/**
+			 * Text for the small pill above the service title in the page header
+			 * ("featured box"). Before this was configurable the header printed the
+			 * site name unconditionally, which admins had no way to change or find
+			 * in Service Settings -- the site name is now only the *fallback*, used
+			 * when no per-service badge text has been entered, so the header keeps
+			 * looking the same until someone actually changes it.
+			 *
+			 * @return string Empty string when the badge is switched off.
+			 */
+			public static function hero_badge_text($post_id = 0) {
+				$post_id = $post_id ?: get_the_ID();
+				if (MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_hero_badge_status', 'on') !== 'on') {
+					return '';
+				}
+				$text = trim((string) MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_hero_badge_text', ''));
+				return $text !== '' ? $text : get_bloginfo('name');
+			}
+
+			/**
+			 * Short description printed under the service title in the page header.
+			 *
+			 * The header used to call get_the_excerpt() alone, so services whose
+			 * description lives in the Service Sub Title or the Service Overview
+			 * editor (rather than in post_content/post_excerpt) rendered an empty
+			 * line. The first two links of the chain are exactly what
+			 * get_the_excerpt() already resolved to, so nothing changes for services
+			 * that were displaying correctly -- the later links only fill in cases
+			 * that previously came out blank.
+			 *
+			 * @return string Empty string when the description is switched off or
+			 *                nothing at all has been written for this service.
+			 */
+			public static function hero_subtitle($post_id = 0) {
+				$post_id = $post_id ?: get_the_ID();
+				if (MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_hero_subtitle_status', 'on') !== 'on') {
+					return '';
+				}
+				$explicit = trim((string) MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_hero_subtitle', ''));
+				if ($explicit !== '') {
+					return $explicit;
+				}
+				$post = get_post($post_id);
+				$candidates = array(
+					$post ? $post->post_excerpt : '',
+					(string) MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_shortcode_sub_title', ''),
+					$post ? $post->post_content : '',
+					(string) MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service_overview_content', ''),
+				);
+				foreach ($candidates as $candidate) {
+					// Shortcodes are stripped rather than run: this is a one-line
+					// summary slot, and executing a shortcode here could echo a whole
+					// block of markup into the header.
+					$text = trim(wp_strip_all_tags(strip_shortcodes((string) $candidate)));
+					if ($text !== '') {
+						return wp_trim_words($text, 40, '…');
+					}
+				}
+				return '';
+			}
+
 			public function features_heighlight($limit = '') {
 				$features_heightlight = MPWPB_Global_Function::get_post_info(get_the_ID(), 'mpwpb_features', []);
 				$limit = $limit ? $limit : 3;
@@ -359,32 +420,79 @@
 				if ($display_status !== 'on' || empty($image_ids)) {
 					return;
 				}
+				$cfg = self::slider_config($post_id);
+				// Only the carousel type gets owl behaviour; "Post Thumbnail" turns
+				// the same markup into a plain wrapped grid (no sliding, no nav).
+				$is_carousel = $cfg['slider_type'] === 'slider' && count($image_ids) > 1;
+				$show_nav = $is_carousel && $cfg['indicator_visible'] === 'on' && $cfg['indicator_type'] === 'icon';
+				$show_dots = $is_carousel && $cfg['indicator_visible'] === 'on' && $cfg['indicator_type'] === 'image';
+				$show_thumbs = $is_carousel && $cfg['showcase_visible'] === 'on';
+				$track_class = $is_carousel ? 'owl-theme mpwpb-owl-carousel' : 'mpwpb-gallery-static-grid';
+				$section_class = 'mpwpb-gallery-section'
+					. ' mpwpb-gallery--' . $cfg['slider_style']
+					. ($show_thumbs ? ' mpwpb-gallery--thumbs-' . $cfg['showcase_position'] : '')
+					. ($cfg['caption'] === 'on' ? ' mpwpb-gallery--captioned' : '');
 				?>
-                <section id="service-gallery" class="mpwpb-gallery-section">
+                <section id="service-gallery" class="<?php echo esc_attr($section_class); ?>"
+                         data-mpwpb-slider="<?php echo esc_attr(wp_json_encode($cfg)); ?>">
                     <div class="mpwpb-gallery-head">
                         <div>
                             <h2><?php esc_html_e('Our Past Work', 'service-booking-manager'); ?></h2>
                             <p class="mpwpb-gallery-sub"><?php esc_html_e('See the stunning results of our meticulous work.', 'service-booking-manager'); ?></p>
                         </div>
+						<?php if ($show_nav): ?>
                         <div class="mpwpb-gallery-nav">
                             <span class="fas fa-chevron-left prev"></span>
                             <span class="fas fa-chevron-right next"></span>
                         </div>
+						<?php endif; ?>
                     </div>
-                    <div class="owl-theme mpwpb-owl-carousel">
-						<?php foreach ($image_ids as $image_id):
+                    <div class="<?php echo esc_attr($track_class); ?>">
+						<?php $slide_index = 0;
+						foreach ($image_ids as $image_id):
 							$image_url = MPWPB_Global_Function::get_image_url('', $image_id, 'large');
 							if (!$image_url) {
 								continue;
 							}
 							$full_url = MPWPB_Global_Function::get_image_url('', $image_id, 'full') ?: $image_url;
+							$caption = $cfg['caption'] === 'on' ? self::slide_caption($post_id, $image_id, $cfg['caption_source']) : array();
 							?>
-                            <div class="mpwpb-gallery-item" data-target-popup="#mpwpb_gallery_lightbox" data-full="<?php echo esc_url($full_url); ?>">
+                            <div class="mpwpb-gallery-item" data-target-popup="#mpwpb_gallery_lightbox" data-slide-index="<?php echo esc_attr($slide_index); ?>" data-full="<?php echo esc_url($full_url); ?>">
                                 <img src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_attr(get_the_title($post_id)); ?>"/>
                                 <span class="mpwpb-gallery-zoom"><i class="fas fa-search-plus"></i></span>
+								<?php if (!empty($caption['title']) || !empty($caption['text'])): ?>
+                                <div class="mpwpb-gallery-caption">
+									<?php if (!empty($caption['title'])): ?>
+                                        <strong class="mpwpb-gallery-caption-title"><?php echo esc_html($caption['title']); ?></strong>
+									<?php endif; ?>
+									<?php if (!empty($caption['text'])): ?>
+                                        <span class="mpwpb-gallery-caption-text"><?php echo esc_html($caption['text']); ?></span>
+									<?php endif; ?>
+                                </div>
+								<?php endif; ?>
                             </div>
-						<?php endforeach; ?>
+							<?php $slide_index++;
+						endforeach; ?>
                     </div>
+					<?php if ($show_dots): ?>
+                    <div class="mpwpb-gallery-dots" aria-hidden="true"></div>
+					<?php endif; ?>
+					<?php if ($show_thumbs): ?>
+                    <div class="mpwpb-gallery-thumbs">
+						<?php $thumb_index = 0;
+						foreach ($image_ids as $image_id):
+							$thumb_url = MPWPB_Global_Function::get_image_url('', $image_id, array(150, 100));
+							if (!$thumb_url) {
+								continue;
+							}
+							?>
+                            <button type="button" class="mpwpb-gallery-thumb<?php echo $thumb_index === 0 ? ' is-active' : ''; ?>" data-slide-target="<?php echo esc_attr($thumb_index); ?>">
+                                <img src="<?php echo esc_url($thumb_url); ?>" alt=""/>
+                            </button>
+							<?php $thumb_index++;
+						endforeach; ?>
+                    </div>
+					<?php endif; ?>
                 </section>
                 <!-- Click-to-zoom viewer: reuses the plugin's existing generic
                      popup mechanism (data-target-popup/data-popup, document-
@@ -396,14 +504,107 @@
                     <div class="mpwpb_popup_main_area">
                         <span class="fas fa-times mpwpb_popup_close"></span>
                         <div class="mpwpb-gallery-lightbox-body">
+							<?php if ($cfg['popup_icon_indicator'] === 'on'): ?>
                             <span class="fas fa-chevron-left mpwpb-gallery-lightbox-prev"></span>
+							<?php endif; ?>
                             <img src="" alt="" class="mpwpb-gallery-lightbox-img"/>
+							<?php if ($cfg['popup_icon_indicator'] === 'on'): ?>
                             <span class="fas fa-chevron-right mpwpb-gallery-lightbox-next"></span>
+							<?php endif; ?>
                         </div>
+						<?php if ($cfg['caption'] === 'on'): ?>
+                        <div class="mpwpb-gallery-lightbox-caption"></div>
+						<?php endif; ?>
+						<?php if ($cfg['popup_image_indicator'] === 'on'): ?>
+                        <div class="mpwpb-gallery-lightbox-thumbs">
+							<?php $lb_index = 0;
+							foreach ($image_ids as $image_id):
+								$thumb_url = MPWPB_Global_Function::get_image_url('', $image_id, array(150, 100));
+								if (!$thumb_url) {
+									continue;
+								}
+								?>
+                                <button type="button" class="mpwpb-gallery-lightbox-thumb" data-slide-target="<?php echo esc_attr($lb_index); ?>">
+                                    <img src="<?php echo esc_url($thumb_url); ?>" alt=""/>
+                                </button>
+								<?php $lb_index++;
+							endforeach; ?>
+                        </div>
+						<?php endif; ?>
                         <div class="mpwpb-gallery-lightbox-counter"></div>
                     </div>
                 </div>
 				<?php
+			}
+
+			/**
+			 * Resolved gallery-slider configuration for one service.
+			 *
+			 * Every value comes from Settings > Slider Settings. Those options had
+			 * existed for a long time but nothing on the front end read them (their
+			 * only consumer, MPWPB_Custom_Slider, is never rendered), which is why
+			 * changing them appeared to do nothing at all. The gallery slider is
+			 * the one real slider on the service page, so it is what they now drive.
+			 *
+			 * 'mpwpb_slider_config' lets Pro override any key per service.
+			 */
+			public static function slider_config($post_id = 0): array {
+				$post_id = $post_id ?: get_the_ID();
+				$cfg = array(
+					'slider_type' => MPWPB_Global_Function::get_slider_settings('slider_type', 'slider'),
+					'slider_style' => MPWPB_Global_Function::get_slider_settings('slider_style', 'style_1'),
+					'indicator_visible' => MPWPB_Global_Function::get_slider_settings('indicator_visible', 'on'),
+					'indicator_type' => MPWPB_Global_Function::get_slider_settings('indicator_type', 'icon'),
+					'showcase_visible' => MPWPB_Global_Function::get_slider_settings('showcase_visible', 'on'),
+					'showcase_position' => MPWPB_Global_Function::get_slider_settings('showcase_position', 'right'),
+					'popup_image_indicator' => MPWPB_Global_Function::get_slider_settings('popup_image_indicator', 'on'),
+					'popup_icon_indicator' => MPWPB_Global_Function::get_slider_settings('popup_icon_indicator', 'on'),
+					'caption' => MPWPB_Global_Function::get_slider_settings('slider_caption', 'off'),
+					'caption_source' => MPWPB_Global_Function::get_slider_settings('slider_caption_source', 'image'),
+					// Carousel behaviour. Free ships the values the gallery has always
+					// used; Pro turns these into real settings.
+					'autoplay' => 'off',
+					'autoplay_speed' => 5000,
+					'loop' => 'off',
+					'items_desktop' => 4,
+					'items_tablet' => 2,
+					'items_mobile' => 2,
+					'margin' => 2,
+				);
+				$cfg = apply_filters('mpwpb_slider_config', $cfg, $post_id);
+				// Normalised here (not at the call sites) so a filtered/garbage value
+				// can never reach the JSON the JS reads.
+				$cfg['autoplay_speed'] = max(1000, (int) $cfg['autoplay_speed']);
+				$cfg['items_desktop'] = max(1, (int) $cfg['items_desktop']);
+				$cfg['items_tablet'] = max(1, (int) $cfg['items_tablet']);
+				$cfg['items_mobile'] = max(1, (int) $cfg['items_mobile']);
+				$cfg['margin'] = max(0, (int) $cfg['margin']);
+				return $cfg;
+			}
+
+			/**
+			 * Caption title/text for one slide.
+			 *
+			 * @return array{title?:string,text?:string}
+			 */
+			private static function slide_caption($post_id, $image_id, $source): array {
+				$description = self::hero_subtitle($post_id);
+				switch ($source) {
+					case 'title':
+						return array('title' => get_the_title($post_id));
+					case 'description':
+						return array('text' => $description);
+					case 'title_description':
+						return array('title' => get_the_title($post_id), 'text' => $description);
+					case 'image':
+					default:
+						$attachment = get_post($image_id);
+						// post_excerpt is where WordPress stores an attachment's Caption.
+						$image_caption = $attachment ? trim((string) $attachment->post_excerpt) : '';
+						return $image_caption !== ''
+							? array('text' => $image_caption)
+							: array('text' => $description);
+				}
 			}
 			/**
 			 * Approved reviews for a service, newest first. Reads the

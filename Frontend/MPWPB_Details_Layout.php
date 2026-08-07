@@ -109,6 +109,9 @@
 
                 $today = date_i18n('Y-m-d');
                 $tomorrow = date_i18n('Y-m-d', strtotime('+1 day'));
+                // Tracks the month of the previously rendered card so the first
+                // card of each month can be flagged (see $is_month_start below).
+                $rendered_month = '';
 
                 while (strtotime($start_date) <= strtotime($end_date)) {
                     if( $start_date === $active_date ){
@@ -120,21 +123,44 @@
                     // weekday name in a compact card -- falls back to the
                     // short weekday (Wed, Thu...) beyond that, with the
                     // day-of-month as the big number.
+                    // is-relative-label marks the two labels that are NOT just the
+                    // weekday name, so a layout that already shows weekday columns
+                    // (the Pro month calendar) can hide the redundant ones and keep
+                    // "Today"/"Tomorrow".
+                    $day_label_class = 'mptrs_day_with_date';
                     if ( $start_date === $today ) {
                         $day_label = esc_html__('Today', 'service-booking-manager');
+                        $day_label_class .= ' is-relative-label';
                     } elseif ( $start_date === $tomorrow ) {
                         $day_label = esc_html__('Tomorrow', 'service-booking-manager');
+                        $day_label_class .= ' is-relative-label';
                     } else {
                         $day_label = date_i18n('D', strtotime($start_date));
                     }
                     $day_number = date_i18n('j', strtotime($start_date));
+                    // The month used to be printed only on closed dates (which
+                    // rendered a full formatted date) -- every bookable date showed
+                    // just a weekday + day number, so a range spanning a month
+                    // boundary gave no way to tell which month a day belonged to.
+                    // It is now shown on every card, and highlighted on the first
+                    // card of each month so the boundary is obvious at a glance.
+                    $month_label = date_i18n('M', strtotime($start_date));
+                    $is_month_start = $month_label !== $rendered_month;
+                    $rendered_month = $month_label;
+                    $month_class = 'mpwpb-date-month' . ($is_month_start ? ' is-month-start' : '');
                     ?>
-                    <div class="fdColumn mpwpb_date_time_line">
+                    <div class="fdColumn mpwpb_date_time_line<?php echo $is_month_start ? ' mpwpb-date-month-start' : ''; ?>"
+                         data-date="<?php echo esc_attr( $start_date ); ?>"
+                         data-month-label="<?php echo esc_attr( date_i18n('F Y', strtotime($start_date)) ); ?>">
 
                         <?php if (!in_array($start_date, $all_dates)) {
                             ?>
                             <div class="_mpBtn_mpDisabled_fullHeight_bgLight mpwpb_get_close_date">
-                                <div class="mpwpb_close_date"><?php echo esc_html(MPWPB_Global_Function::date_format($start_date)); ?></div>
+                                <div class="mpwpb_close_date">
+                                    <span class="<?php echo esc_attr( $month_class ); ?>"><?php echo esc_html( $month_label ); ?></span>
+                                    <strong class="mpwpb-date-number"><?php echo esc_html( $day_number ); ?></strong>
+                                    <span class="mpwpb_date_closed_label"><?php esc_html_e('Closed', 'service-booking-manager'); ?></span>
+                                </div>
                             </div>
 						<?php } elseif ( ! self::has_available_slots( $post_id, $start_date ) && ! self::has_waiting_list_slots( $post_id, $start_date ) ) {
                             // An open day (it's in $all_dates), but every one
@@ -148,14 +174,16 @@
                             // to it and it can't end up selected.
                             ?>
                             <div class="_mpBtn_mpDisabled_fullHeight_bgLight mpwpb_get_date_passed">
-                                <span class="mptrs_day_with_date"><?php echo esc_html( $day_label ); ?></span>
+                                <span class="<?php echo esc_attr( $day_label_class ); ?>"><?php echo esc_html( $day_label ); ?></span>
                                 <strong class="mpwpb-date-number"><?php echo esc_html( $day_number ); ?></strong>
+                                <span class="<?php echo esc_attr( $month_class ); ?>"><?php echo esc_html( $month_label ); ?></span>
                                 <span class="mpwpb_date_passed_label"><?php esc_html_e('Passed', 'service-booking-manager'); ?></span>
                             </div>
                         <?php } else { ?>
                             <div class="<?php echo esc_attr( $selected );?> mpwpb_get_date" data-find-time="<?php echo esc_attr( $start_date );?>">
-                                <span class="mptrs_day_with_date"><?php echo esc_html( $day_label ); ?></span>
+                                <span class="<?php echo esc_attr( $day_label_class ); ?>"><?php echo esc_html( $day_label ); ?></span>
                                 <strong class="mpwpb-date-number"><?php echo esc_html( $day_number ); ?></strong>
+                                <span class="<?php echo esc_attr( $month_class ); ?>"><?php echo esc_html( $month_label ); ?></span>
                             </div>
                         <?php } ?>
                     </div>

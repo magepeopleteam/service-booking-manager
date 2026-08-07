@@ -94,6 +94,14 @@
                         <?php include(MPWPB_Function::template_path('registration/category_selection_static.php')); ?>
                     </div>
 					<?php mpwpb_static_cta_footer($all_category, $all_services); ?>
+					<?php
+						/**
+						 * Extra panels below the booking CTA in the sidebar -- used by
+						 * add-ons (Pro) for things that are bought or redeemed outside
+						 * the date/time wizard, such as prepaid session packages.
+						 */
+						do_action('mpwpb_after_booking_sidebar', $post_id);
+					?>
                 </div>
                 <div class="mpwpb_mobile_booking" id="mpwpb_mobile_booking_mobile"><?php esc_html_e('Make Service Booking', 'service-booking-manager'); ?></div>
             <?php }?>

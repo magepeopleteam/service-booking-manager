@@ -32,8 +32,34 @@
 				$button_color    = MPWPB_Global_Function::get_style_settings( 'button_color', $alternate_color );
 				$button_bg       = MPWPB_Global_Function::get_style_settings( 'button_bg', '#ea8125' );
 				$section_bg      = MPWPB_Global_Function::get_style_settings( 'section_bg', '#FAFCFE' );
+				/**
+				 * Featured-image overlay. The defaults below reproduce the hard-coded
+				 * gradient the service page header has always used (theme colour at
+				 * hex alpha 'ee' = 93% fading to 'cc' = 80%), so appearance is
+				 * unchanged until an admin actually edits these. Pro exposes them as
+				 * real settings via 'mpwpb_hero_overlay_defaults' and can additionally
+				 * override any of the four per service through the inline style the
+				 * static template prints on <header>.
+				 */
+				$overlay = apply_filters( 'mpwpb_hero_overlay_defaults', array(
+					'color'        => $theme_color,
+					'opacity_from' => 0.93,
+					'opacity_to'   => 0.80,
+					'angle'        => 120,
+					'from_stop'    => 20,
+					'to_stop'      => 70,
+				) );
+				$overlay_from = MPWPB_Global_Function::hex_to_rgba( $overlay['color'], $overlay['opacity_from'], 'rgba(0,0,0,.75)' );
+				$overlay_to   = MPWPB_Global_Function::hex_to_rgba( $overlay['color'], $overlay['opacity_to'], 'rgba(0,0,0,.55)' );
 				?>
 				<style>
+					:root {
+						--mpwpb_hero_overlay_from: <?php echo esc_attr($overlay_from); ?>;
+						--mpwpb_hero_overlay_to: <?php echo esc_attr($overlay_to); ?>;
+						--mpwpb_hero_overlay_angle: <?php echo esc_attr((float) $overlay['angle']); ?>deg;
+						--mpwpb_hero_overlay_from_stop: <?php echo esc_attr((float) $overlay['from_stop']); ?>%;
+						--mpwpb_hero_overlay_to_stop: <?php echo esc_attr((float) $overlay['to_stop']); ?>%;
+					}
 					:root {
 						--mpwpb_container_Width: 1320px;
 						--mpwpb_sidebarLeft: 280px;

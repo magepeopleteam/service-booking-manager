@@ -520,6 +520,12 @@
 			if ($grid.data('mpwpbPaginated')) {
 				return;
 			}
+			// A different date view (e.g. the Pro month calendar) owns the layout
+			// and its own paging; 8-at-a-time paging on top of it would fight for
+			// control of which cards are visible.
+			if ($grid.attr('data-mpwpb-date-view') && $grid.attr('data-mpwpb-date-view') !== 'strip') {
+				return;
+			}
 			$grid.data('mpwpbPaginated', true);
 
 			var $items = $grid.children('.mpwpb_date_time_line');
@@ -527,9 +533,34 @@
 			var currentPage = 0;
 			var $nav = $grid.closest('.mpwpb_date_carousel').find('#mpwpb_carousel_area').first();
 
+			// Which month(s) the visible page covers. Only 8 of (often) 90 dates
+			// are on screen at a time and the cards carry an abbreviated month at
+			// most, so without this the customer paging through the range has no
+			// reliable indication of which month they are looking at. Label text
+			// comes from data-month-label, already localised server-side by
+			// date_i18n(), so no month names are hard-coded here.
+			var $dateHeading = $grid.closest('.mpwpb_date_carousel').find('.mpwpb_date_staff_select').first();
+			var $monthLabel = $dateHeading.find('.mpwpb-date-visible-month');
+			if (!$monthLabel.length && $dateHeading.length) {
+				$monthLabel = $('<span class="mpwpb-date-visible-month"></span>').appendTo($dateHeading);
+			}
+
+			function renderMonthLabel($visible) {
+				var months = [];
+				$visible.each(function () {
+					var label = $(this).attr('data-month-label');
+					if (label && months.indexOf(label) === -1) {
+						months.push(label);
+					}
+				});
+				$monthLabel.text(months.join(' – '));
+			}
+
 			function renderPage() {
 				$items.hide();
-				$items.slice(currentPage * pageSize, currentPage * pageSize + pageSize).show();
+				var $visible = $items.slice(currentPage * pageSize, currentPage * pageSize + pageSize);
+				$visible.show();
+				renderMonthLabel($visible);
 				$nav.toggle(pageCount > 1);
 				$nav.find('.prev').toggleClass('mpDisabled', currentPage === 0);
 				$nav.find('.next').toggleClass('mpDisabled', currentPage >= pageCount - 1);

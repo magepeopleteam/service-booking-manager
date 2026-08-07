@@ -104,6 +104,7 @@
 							array('MPWPB_General_Settings', 'general_settings', __('Customer Reviews', 'service-booking-manager'), __('Rating, scale and review count shown for this service.', 'service-booking-manager')),
 							array('MPWPB_Service_Features_Modern', 'render', __('Service Feature Details', 'service-booking-manager'), __('Highlight key features of this service.', 'service-booking-manager')),
 							array('MPWPB_Service_Details', 'service_details', __('Service Details', 'service-booking-manager'), __('Overview and details content shown on the service page.', 'service-booking-manager')),
+							array('Service_Settings', 'page_header_settings', __('Page Header', 'service-booking-manager'), __('Badge and short description shown over the featured image at the top of the service page.', 'service-booking-manager')),
 						),
 					),
 					array(
@@ -136,7 +137,15 @@
 				// which show them unconditionally) -- always included here too.
 				$steps[3]['sections'][] = array('Staff_Member', 'staff_member_settings', __('Staff Member', 'service-booking-manager'), __('Assign staff members who can be booked for this service.', 'service-booking-manager'));
 				$steps[3]['sections'][] = array('MPWPB_Recurring_Booking_Settings', 'recurring_booking_settings', __('Recurring Booking', 'service-booking-manager'), __('Let customers book this service on a recurring schedule.', 'service-booking-manager'));
-				return $steps;
+				/**
+				 * Lets add-ons (Pro) register their own per-service sections in the
+				 * modern editor exactly the way the classic editor already lets them
+				 * register tabs via 'add_mpwpb_settings_tab_content'. Each section is
+				 * the same [class, method, title, subtitle] tuple used above, and is
+				 * rendered through the identical render_section_card() path -- so a
+				 * section written once works in both editors with no duplicate markup.
+				 */
+				return apply_filters('mpwpb_service_editor_steps', $steps);
 			}
 
 			/**

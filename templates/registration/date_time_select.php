@@ -14,6 +14,13 @@
 	// keep the carousel unchanged.
 	$mpwpb_is_static_template = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_template', 'static.php') === 'static.php';
 
+	// How the date cards are laid out. 'strip' is the built-in wrapped grid that
+	// pages 8 dates at a time; add-ons (Pro) can return 'month' to regroup the
+	// very same cards into a full month calendar. Only the layout changes -- the
+	// cards, their data-find-time hooks and every handler bound to them are
+	// identical either way.
+	$mpwpb_date_view = apply_filters('mpwpb_date_picker_view', 'strip', $post_id);
+
 	$enable_waiting_list = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_enable_waiting_list', 'no');
 	$enable_recurring = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_enable_recurring', 'no');
 	$recurring_types = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_recurring_types', array( 'daily','weekly', 'bi-weekly', 'monthly' ) );
@@ -77,7 +84,7 @@
 				<?php include(MPWPB_Function::template_path('layout/carousel_indicator.php')); ?>
             </header>
             <div class="" >
-                <div class="<?php echo $mpwpb_is_static_template ? 'mpwpb-date-grid' : 'owl-theme mpwpb-owl-carousel'; ?>" id="mpwpb_datetime_holder1">
+                <div class="<?php echo $mpwpb_is_static_template ? 'mpwpb-date-grid' : 'owl-theme mpwpb-owl-carousel'; ?>" id="mpwpb_datetime_holder1" data-mpwpb-date-view="<?php echo esc_attr($mpwpb_date_view); ?>">
                     <?php if (sizeof($all_dates) > 0) {
                         // Computed once and passed to both calls so the date
                         // marked "selected" and the time panel shown by
@@ -114,6 +121,14 @@
                                 <header class="_dFlex_alignCenter_justifyBetween">
                                     <h3><?php esc_html_e('Recurring Booking Options', 'service-booking-manager'); ?></h3>
                                 </header>
+                                <?php
+                                    /**
+                                     * Explanatory copy about how recurring booking works, rendered
+                                     * immediately above the controls it describes. Add-ons (Pro)
+                                     * fill this; nothing is printed without one.
+                                     */
+                                    do_action('mpwpb_before_recurring_options', $post_id);
+                                ?>
                                 <div class="mpwpb_recurring_options">
                                     <div class="mpwpb_recurring_toggle">
                                         <label class="switch">

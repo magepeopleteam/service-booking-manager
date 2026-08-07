@@ -32,13 +32,72 @@
 		$('body').append($viewMorePopup);
 	}
 
-	// "Our Past Work" gallery -- reuses the same owl-carousel init helper
-	// (mpwpb.js, mpwpb_active_carousel) and .prev/.next -> .owl-prev/.owl-next
-	// click-proxy pattern already used for the date/time carousel elsewhere
-	// in the plugin. No-ops via .each() if the section isn't rendered
-	// (gallery off or no images -- see MPWPB_Static_Template::show_service_gallery()).
-	if (typeof mpwpb_active_carousel === 'function') {
-		mpwpb_active_carousel($('.mpwpb-static-template .mpwpb-gallery-section'), 4);
+	// "Our Past Work" gallery. Options come from Settings > Slider Settings,
+	// serialised into data-mpwpb-slider by
+	// MPWPB_Static_Template::show_service_gallery() -- previously this called
+	// mpwpb_active_carousel() with hard-coded values, so none of those settings
+	// had any visible effect. Falls back to exactly those old hard-coded values
+	// when the attribute is missing (older cached markup).
+	var $gallerySection = $('.mpwpb-static-template .mpwpb-gallery-section');
+	if ($gallerySection.length) {
+		var sliderCfg = $gallerySection.data('mpwpb-slider') || {};
+		var $track = $gallerySection.find('.mpwpb-owl-carousel');
+		var itemsFor = function (key, fallback) {
+			var n = parseInt(sliderCfg[key], 10);
+			return n > 0 ? n : fallback;
+		};
+
+		// Only present for slider_type = "slider"; "Post Thumbnail" renders
+		// .mpwpb-gallery-static-grid instead and needs no JS at all.
+		if ($track.length && $.fn.owlCarousel) {
+			var owlNav = sliderCfg.indicator_visible !== 'off' && sliderCfg.indicator_type !== 'image';
+			var perView = itemsFor('items_desktop', 4);
+			$track.owlCarousel({
+				loop: sliderCfg.loop === 'on',
+				margin: itemsFor('margin', 2),
+				nav: owlNav,
+				dots: false,
+				autoplay: sliderCfg.autoplay === 'on',
+				autoplayTimeout: itemsFor('autoplay_speed', 5000),
+				autoplayHoverPause: true,
+				// style_2 is the "showcase" look: one large slide at a time.
+				items: sliderCfg.slider_style === 'style_2' ? 1 : perView,
+				responsiveClass: true,
+				responsive: {
+					0: { items: sliderCfg.slider_style === 'style_2' ? 1 : itemsFor('items_mobile', 2) },
+					600: { items: sliderCfg.slider_style === 'style_2' ? 1 : itemsFor('items_tablet', 2) },
+					1000: { items: sliderCfg.slider_style === 'style_2' ? 1 : perView }
+				}
+			});
+			$gallerySection.find('.mpwpb-gallery-nav .next').on('click', function () {
+				$track.trigger('next.owl.carousel');
+			});
+			$gallerySection.find('.mpwpb-gallery-nav .prev').on('click', function () {
+				$track.trigger('prev.owl.carousel');
+			});
+
+			// Thumbnail strip / dot indicators -- both jump the carousel and are
+			// kept in sync with it as it moves (autoplay, drag, arrows).
+			var $thumbs = $gallerySection.find('.mpwpb-gallery-thumb');
+			var $dotsWrap = $gallerySection.find('.mpwpb-gallery-dots');
+			if ($dotsWrap.length) {
+				$gallerySection.find('.mpwpb-gallery-item').each(function (i) {
+					$dotsWrap.append($('<button type="button" class="mpwpb-gallery-dot"></button>').attr('data-slide-target', i));
+				});
+			}
+			var $dots = $dotsWrap.find('.mpwpb-gallery-dot');
+			$gallerySection.on('click', '.mpwpb-gallery-thumb, .mpwpb-gallery-dot', function () {
+				$track.trigger('to.owl.carousel', [parseInt($(this).attr('data-slide-target'), 10) || 0, 300]);
+			});
+			$track.on('changed.owl.carousel', function (e) {
+				// e.item.index is the raw index inside owl's cloned item list;
+				// relative() maps it back to a real slide number when loop is on.
+				var current = e.relatedTarget ? e.relatedTarget.relative(e.item.index) : e.item.index;
+				$thumbs.removeClass('is-active').eq(current).addClass('is-active');
+				$dots.removeClass('is-active').eq(current).addClass('is-active');
+			});
+			$dots.first().addClass('is-active');
+		}
 	}
 
 	// "Our Past Work" click-to-zoom -- opening/closing the lightbox itself is
@@ -46,10 +105,16 @@
 	// data-popup, document-delegated in mp_global/assets/mp_style/
 	// mpwpb_plugin_global.js); this only swaps the lightbox <img> to whichever
 	// thumbnail was clicked and cycles prev/next through the same image set.
-	var $galleryItems = $('.mpwpb-static-template .mpwpb-gallery-item');
+	// Clones are excluded: owl duplicates slides when loop is on, and counting
+	// them would both inflate the "3 / 12" counter and misalign prev/next.
+	var $galleryItems = $('.mpwpb-static-template .mpwpb-gallery-item').filter(function () {
+		return !$(this).closest('.owl-item.cloned').length;
+	});
 	if ($galleryItems.length) {
 		var $lightboxImg = $('.mpwpb-gallery-lightbox-img');
 		var $lightboxCounter = $('.mpwpb-gallery-lightbox-counter');
+		var $lightboxCaption = $('.mpwpb-gallery-lightbox-caption');
+		var $lightboxThumbs = $('.mpwpb-gallery-lightbox-thumb');
 		var galleryIndex = 0;
 
 		var showGalleryImage = function (index) {
@@ -61,10 +126,18 @@
 				alt: $item.find('img').attr('alt') || ''
 			});
 			$lightboxCounter.text((galleryIndex + 1) + ' / ' + total);
+			// .text() on the slide's own caption node -- never .html() -- so the
+			// escaped server-rendered caption stays escaped.
+			$lightboxCaption.text($item.find('.mpwpb-gallery-caption').text().trim());
+			$lightboxThumbs.removeClass('is-active').eq(galleryIndex).addClass('is-active');
 		};
 
-		$galleryItems.on('click', function () {
-			showGalleryImage($galleryItems.index(this));
+		// Delegated so cloned slides (owl loop mode) open the lightbox too;
+		// data-slide-index is authoritative because a clone's DOM position
+		// does not match the image it shows.
+		$(document).on('click', '.mpwpb-static-template .mpwpb-gallery-item', function () {
+			var idx = parseInt($(this).attr('data-slide-index'), 10);
+			showGalleryImage(isNaN(idx) ? $galleryItems.index(this) : idx);
 		});
 		$('.mpwpb-gallery-lightbox-next').on('click', function (e) {
 			e.stopPropagation();
@@ -73,6 +146,10 @@
 		$('.mpwpb-gallery-lightbox-prev').on('click', function (e) {
 			e.stopPropagation();
 			showGalleryImage(galleryIndex - 1);
+		});
+		$('.mpwpb-gallery-lightbox-thumb').on('click', function (e) {
+			e.stopPropagation();
+			showGalleryImage(parseInt($(this).attr('data-slide-target'), 10) || 0);
 		});
 	}
 

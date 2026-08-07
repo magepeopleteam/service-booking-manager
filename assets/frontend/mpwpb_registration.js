@@ -1599,4 +1599,26 @@ function mpwpb_price_calculation($this) {
         $(tabId).addClass('active');
     });
 
+    /**
+     * Public entry point into the booking drawer's inline WooCommerce checkout.
+     *
+     * Everything above lives inside this IIFE, so an add-on that has put its own
+     * item in the cart -- e.g. a prepaid session package, which has no date/time
+     * and therefore never travels through the date/time step -- had no way to
+     * hand the customer to the drawer's checkout step, and was forced to redirect
+     * them to the standalone /checkout page instead. This exposes exactly that
+     * one step: it opens no popup and adds nothing to the cart itself.
+     *
+     * @param {jQuery} [$registration] The .mpwpb_registration widget; defaults to the first on the page.
+     * @returns {boolean} False when there is no widget to drive.
+     */
+    window.mpwpbOpenInlineCheckout = function ($registration) {
+        var parent = ($registration && $registration.length) ? $registration : $('div.mpwpb_registration').first();
+        if (!parent.length) {
+            return false;
+        }
+        mpwpb_load_wc_checkout_form(parent);
+        return true;
+    };
+
 }(jQuery));

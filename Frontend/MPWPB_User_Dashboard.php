@@ -32,7 +32,20 @@ if (!class_exists('MPWPB_User_Dashboard')) {
          */
         public function enqueue_scripts() {
 			$inline_wc_checkout = is_singular(MPWPB_Function::get_cpt()) && MPWPB_Global_Function::is_wc_payment_mode();
-			if (!$inline_wc_checkout && !MPWPB_Global_Function::current_page_has_shortcode(array('mpwpb-user-dashboard', 'custom_payment_my_account')) && !(function_exists('is_account_page') && is_account_page())) {
+			// The order-received ("thank you") page is a CHECKOUT endpoint, not an
+			// account page -- but WooCommerce renders order-details.php there, which
+			// fires 'woocommerce_order_details_after_order_table', which is where
+			// MPWPB_Wc_Account_Order_Actions prints the "Manage Your Booking" block
+			// and its cancel/reschedule modals. Without this branch those modals were
+			// emitted with neither their stylesheet nor their script, so they dumped
+			// raw onto the page: stray close glyphs, a permanent "Loading booking
+			// details…", and an unstyled reschedule form. The order-pay endpoint
+			// renders the same template and had the same problem.
+			$order_pages = function_exists('is_order_received_page')
+				&& (is_order_received_page() || is_wc_endpoint_url('order-pay'));
+			if (!$inline_wc_checkout && !$order_pages
+				&& !MPWPB_Global_Function::current_page_has_shortcode(array('mpwpb-user-dashboard', 'custom_payment_my_account'))
+				&& !(function_exists('is_account_page') && is_account_page())) {
 				return;
 			}
             wp_enqueue_style('mpwpb-user-dashboard', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_user_dashboard.css', array(), MPWPB_VERSION);

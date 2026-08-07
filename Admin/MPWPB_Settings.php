@@ -191,6 +191,22 @@
 					update_post_meta($post_id, 'mpwpb_service_rating_text', $service_rating_text);
 					update_post_meta($post_id, 'mpwpb_service_multiple_category_check', $service_multiple_category_check);
 					update_post_meta($post_id, 'mpwpb_multiple_service_select', $multiple_service_select);
+					// Page header (featured box) content -- see Admin/settings/Service_Settings.php.
+					// Gated on the marker field that section prints: the two switches are
+					// checkboxes, and a checkbox that was simply never rendered is
+					// indistinguishable from one the admin unticked. Without the marker, a
+					// save from any screen that omits this section would read both as "off"
+					// and blank the header.
+					if (isset($_POST['mpwpb_hero_fields_present'])) {
+						$hero_badge_status = isset($_POST['mpwpb_hero_badge_status']) ? 'on' : 'off';
+						$hero_subtitle_status = isset($_POST['mpwpb_hero_subtitle_status']) ? 'on' : 'off';
+						$hero_badge_text = isset($_POST['mpwpb_hero_badge_text']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_hero_badge_text'])) : '';
+						$hero_subtitle = isset($_POST['mpwpb_hero_subtitle']) ? sanitize_textarea_field(wp_unslash($_POST['mpwpb_hero_subtitle'])) : '';
+						update_post_meta($post_id, 'mpwpb_hero_badge_status', $hero_badge_status);
+						update_post_meta($post_id, 'mpwpb_hero_badge_text', $hero_badge_text);
+						update_post_meta($post_id, 'mpwpb_hero_subtitle_status', $hero_subtitle_status);
+						update_post_meta($post_id, 'mpwpb_hero_subtitle', $hero_subtitle);
+					}
 					$features = isset($_POST['mpwpb_features']) ? array_map('sanitize_text_field', wp_unslash($_POST['mpwpb_features'])) : [];
 					$features_lists = array();
 					if (sizeof($features) > 0) {

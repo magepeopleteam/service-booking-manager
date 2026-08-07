@@ -300,9 +300,30 @@
 			}
 
 			/** Recheck a stored cart item immediately before an order is created. */
+			/**
+			 * True for a cart item that belongs to a service but is not itself a
+			 * scheduled appointment -- an add-on (Pro) selling a prepaid session
+			 * package, for instance: it is paid for now and scheduled later, so it
+			 * carries no date, no time slot and no staff member.
+			 *
+			 * Such an item still has to be recognised as a booking item everywhere
+			 * that matters (inline checkout, cart thumbnail, order line meta), which
+			 * is why it carries 'mpwpb_id' like any other -- but every date/time
+			 * rule below must skip it, because there is nothing scheduled to check.
+			 */
+			public static function is_unscheduled_cart_item($item): bool {
+				return (bool) apply_filters('mpwpb_cart_item_unscheduled', false, $item);
+			}
+			/** Same rule as is_unscheduled_cart_item(), for an order line item. */
+			public static function is_unscheduled_order_item($item, $item_id = 0): bool {
+				return (bool) apply_filters('mpwpb_order_item_unscheduled', false, $item, $item_id);
+			}
 			public static function validate_stored_booking_item($item) {
 				if (!is_array($item)) {
 					return new WP_Error('mpwpb_invalid_cart_item', esc_html__('The booking cart item is invalid.', 'service-booking-manager'));
+				}
+				if (self::is_unscheduled_cart_item($item)) {
+					return true;
 				}
 				$post_id = absint($item['mpwpb_id'] ?? 0);
 				$date_segments = explode(',', (string) ($item['mpwpb_date'] ?? ''));
@@ -491,7 +512,10 @@
 			 */
 			public function get_item_data($item_data, $cart_item) {
 				$post_id = array_key_exists('mpwpb_id', $cart_item) ? $cart_item['mpwpb_id'] : 0;
-				if (get_post_type($post_id) == MPWPB_Function::get_cpt()) {
+				// show_cart_item() renders the chosen date, category and services --
+				// none of which an unscheduled item has, so it would print an empty
+				// "Booking Details" block (and read missing keys) for one.
+				if (get_post_type($post_id) == MPWPB_Function::get_cpt() && !self::is_unscheduled_cart_item($cart_item)) {
 					ob_start();
 					$this->show_cart_item($cart_item, $post_id);
 					do_action('mpwpb_show_cart_item', $cart_item, $post_id);
@@ -668,6 +692,14 @@
 				foreach ($order->get_items() as $item_id => $item) {
 					$post_id = wc_get_order_item_meta($item_id, '_mpwpb_id');
 					if (get_post_type($post_id) != MPWPB_Function::get_cpt()) {
+						continue;
+					}
+					// Order-item counterpart of is_unscheduled_cart_item(): a line that
+					// belongs to a service but books no appointment (a prepaid session
+					// package). Without this it would produce a booking with an empty
+					// date -- a phantom appointment in the customer's series, the staff
+					// schedule and every admin list.
+					if (self::is_unscheduled_order_item($item, $item_id)) {
 						continue;
 					}
 					$date = wc_get_order_item_meta($item_id, '_mpwpb_date');

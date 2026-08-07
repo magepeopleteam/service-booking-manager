@@ -251,6 +251,32 @@
 			public static function get_licence_settings($key, $default = '') {
 				return self::get_settings('mpwpb_license_settings', $key, $default);
 			}
+			/**
+			 * "#00685f" + 0.8 => "rgba(0,104,95,0.8)". Accepts 3- or 6-digit hex
+			 * with or without the leading '#'; anything unparseable falls back to
+			 * $fallback so a bad saved colour can never emit broken CSS.
+			 *
+			 * @param string $hex     Hex colour.
+			 * @param float  $alpha   0..1 (clamped).
+			 * @param string $fallback Returned verbatim when $hex is not a hex colour.
+			 */
+			public static function hex_to_rgba($hex, $alpha = 1.0, $fallback = 'rgba(0,0,0,0.75)'): string {
+				$hex = ltrim(trim((string) $hex), '#');
+				if (strlen($hex) === 3) {
+					$hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+				}
+				if (!preg_match('/^[0-9a-fA-F]{6}$/', $hex)) {
+					return $fallback;
+				}
+				$alpha = max(0, min(1, (float) $alpha));
+				return sprintf(
+					'rgba(%d,%d,%d,%s)',
+					hexdec(substr($hex, 0, 2)),
+					hexdec(substr($hex, 2, 2)),
+					hexdec(substr($hex, 4, 2)),
+					rtrim(rtrim(number_format($alpha, 3, '.', ''), '0'), '.') ?: '0'
+				);
+			}
 			public static function get_gdpr_setting($key, $default = '') {
 				return self::get_settings('mpwpb_gdpr_settings', $key, $default);
 			}
