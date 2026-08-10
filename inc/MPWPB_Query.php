@@ -10,8 +10,10 @@
 		class MPWPB_Query {
 			public function __construct() {}
 			public static function query_all_sold( $post_id, $date) {
-				$_seat_booked_status      = MPWPB_Global_Function::get_settings('mpwpb_global_settings', 'set_book_status', array('processing', 'completed'));
-				$seat_booked_status       = ! empty( $_seat_booked_status ) ? $_seat_booked_status : [];
+				// Always a non-empty list -- see get_seat_booked_statuses(). With an
+				// empty one every status filter below fell away, so this counted
+				// bookings of ANY status against availability, cancelled included.
+				$seat_booked_status       = MPWPB_Global_Function::get_seat_booked_statuses();
 
 				$date_filter              = ! empty( $date ) ? array(
 					'key'     => 'mpwpb_date',

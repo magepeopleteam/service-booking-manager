@@ -552,6 +552,70 @@
 		});
 	}
 
+	// Full-calendar layout (.mpwpb-date-calendar, "Date Picker Layout" =
+	// Full Calendar). display_booking_date() renders every month the booking
+	// window touches as its own .mpwpb-date-calendar-month grid; this shows
+	// one at a time and repurposes the header's .prev/.next arrows to step
+	// whole months instead of a handful of days. A 90-day window is 3-4
+	// arrow clicks end to end rather than a dozen, and the month name is
+	// always on screen.
+	function initDateCalendarPagination($registration) {
+		$registration.find('.mpwpb-date-calendar').each(function () {
+			var $calendar = $(this);
+			if ($calendar.data('mpwpbCalendarPaged')) {
+				return;
+			}
+			$calendar.data('mpwpbCalendarPaged', true);
+
+			var $months = $calendar.children('.mpwpb-date-calendar-month');
+			if (!$months.length) {
+				return;
+			}
+			// Open on the month holding the pre-selected date, not always the
+			// first one -- the default active date is the first one that still
+			// has free slots, which can be in a later month.
+			var current = $months.index($months.filter(function () {
+				return $(this).find('.mpwpb_get_date_selected').length > 0;
+			}).first());
+			if (current < 0) {
+				current = 0;
+			}
+			var $nav = $calendar.closest('.mpwpb_date_carousel').find('#mpwpb_carousel_area').first();
+
+			function renderMonth() {
+				$months.hide().eq(current).show();
+				$nav.toggle($months.length > 1);
+				$nav.find('.prev').toggleClass('mpDisabled', current === 0);
+				$nav.find('.next').toggleClass('mpDisabled', current >= $months.length - 1);
+			}
+
+			$nav.on('click', '.prev', function () {
+				if (current > 0) {
+					current--;
+					renderMonth();
+				}
+			});
+			$nav.on('click', '.next', function () {
+				if (current < $months.length - 1) {
+					current++;
+					renderMonth();
+				}
+			});
+
+			// Picking a date in another month (recurring booking, or any code
+			// that moves the selection) should bring that month into view.
+			$calendar.on('click', '.mpwpb_get_date', function () {
+				var index = $months.index($(this).closest('.mpwpb-date-calendar-month'));
+				if (index > -1 && index !== current) {
+					current = index;
+					renderMonth();
+				}
+			});
+
+			renderMonth();
+		});
+	}
+
 	// "Proceed to Checkout" is forced always-visible via CSS (see
 	// mpwpb-service-page-modern.css) instead of the plain display:none/
 	// fadeIn toggling mpwpb_registration.js and mpwpb_recurring_booking.js
@@ -573,6 +637,7 @@
 			initExtraServiceDetails($(this));
 			initExtraServiceLayout($(this));
 			initDateGridPagination($(this));
+			initDateCalendarPagination($(this));
 			updateCheckoutReadyState($(this));
 		});
 	});

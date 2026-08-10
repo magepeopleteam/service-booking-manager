@@ -1986,10 +1986,29 @@ button.mpwpb_service_button.mActive:hover{
 .mpwpb_get_close_date
 {
   background-color: #fbeeee  !important;
-  cursor: pointer;
+  cursor: not-allowed;
   padding: 15px !important;
   min-height: 80px !important;
   border-radius: 10px;
+  text-align: center;
+}
+
+/* A closed day now shows the same weekday + day-number card as every other
+   day, with a "Closed" label instead of the full "12 September 2026" it used
+   to print. That was the only place the month appeared anywhere in the
+   picker, so open days looked like they were missing information the closed
+   ones had. */
+.mpwpb_get_close_date .mptrs_day_with_date,
+.mpwpb_get_close_date .mpwpb-date-number{
+  color: #b98d8d !important;
+}
+
+.mpwpb_close_date{
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  color: #c2a0a0;
+  text-transform: uppercase;
 }
 
 .mpwpb_get_date_passed{

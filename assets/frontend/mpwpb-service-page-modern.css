@@ -1716,3 +1716,67 @@ div.mpwpb_popup[data-popup="#mpwpb_static_popup"] .mpwpb-reorder-notice-message{
 	}
 	.mpwpb-static-template .mpwpb_order_proceed_area .mpwpb-inline-retry-checkout{grid-column:1/-1;width:100%;}
 }
+
+/* -------------------------------------------------------------------- *
+ *  Date picker -> full month calendar ("Date Picker Layout" = Full
+ *  Calendar, Settings > Global). display_booking_date() emits one
+ *  .mpwpb-date-calendar-month per month in the booking window, each a
+ *  real 7-column grid; initDateCalendarPagination() in
+ *  mpwpb-booking-tree.js shows one month at a time and turns the header
+ *  arrows into month navigation.
+ *
+ *  Deliberately NOT scoped to the static template / sidebar popup the way
+ *  the .mpwpb-date-grid rules above are: this layout is a global setting,
+ *  so it has to look right in every template and in the popup alike.
+ * -------------------------------------------------------------------- */
+.mpwpb_style .mpwpb-date-calendar{display:block !important;width:100%;}
+.mpwpb_style .mpwpb-date-calendar .mpwpb-date-calendar-month{display:block;width:100%;}
+.mpwpb_style .mpwpb-date-calendar .mpwpb-date-month-label{
+	font-size:15px;font-weight:700;color:#1e293b;text-align:center;margin:0 0 10px;text-transform:capitalize;
+}
+.mpwpb_style .mpwpb-date-calendar .mpwpb-date-weekday-row,
+.mpwpb_style .mpwpb-date-calendar .mpwpb-date-month-days{
+	display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;
+}
+.mpwpb_style .mpwpb-date-calendar .mpwpb-date-weekday-row{margin-bottom:6px;}
+.mpwpb_style .mpwpb-date-calendar .mpwpb-date-weekday-row span{
+	font-size:11px;font-weight:700;color:#94a3b8;text-align:center;text-transform:uppercase;letter-spacing:.02em;
+}
+.mpwpb_style .mpwpb-date-calendar .mpwpb-date-blank{
+	display:flex;align-items:center;justify-content:center;min-height:38px;
+	font-size:13px;color:#e2e8f0;
+}
+.mpwpb_style .mpwpb-date-calendar .mpwpb_date_time_line{
+	width:auto !important;flex:none !important;margin:0 !important;
+}
+/* The weekday is already the column header here, so the per-cell "Mon /
+   Today" label would only repeat it and force the cells taller. */
+.mpwpb_style .mpwpb-date-calendar .mptrs_day_with_date{display:none !important;}
+.mpwpb_style .mpwpb-date-calendar .mpwpb_get_date,
+.mpwpb_style .mpwpb-date-calendar .mpwpb_get_close_date,
+.mpwpb_style .mpwpb-date-calendar .mpwpb_get_date_passed{
+	display:flex !important;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+	width:100%;height:100%;min-height:38px !important;padding:6px 2px !important;
+	border:1px solid #e5e9f0 !important;border-radius:10px;margin:0 !important;
+}
+.mpwpb_style .mpwpb-date-calendar .mpwpb-date-number{font-size:15px;font-weight:700;color:#1e293b;line-height:1.1;}
+.mpwpb_style .mpwpb-date-calendar .mpwpb_get_date_selected .mpwpb-date-number{color:#fff !important;}
+.mpwpb_style .mpwpb-date-calendar .mpwpb_get_close_date,
+.mpwpb_style .mpwpb-date-calendar .mpwpb_get_date_passed{
+	background-color:#f8fafc !important;cursor:not-allowed !important;opacity:.6;
+}
+.mpwpb_style .mpwpb-date-calendar .mpwpb_get_close_date .mpwpb-date-number,
+.mpwpb_style .mpwpb-date-calendar .mpwpb_get_date_passed .mpwpb-date-number{color:#94a3b8 !important;}
+/* "Closed"/"Passed" spelled out does not fit a calendar cell -- the greyed
+   cell already says it, and the title attribute carries the full date. */
+.mpwpb_style .mpwpb-date-calendar .mpwpb_close_date,
+.mpwpb_style .mpwpb-date-calendar .mpwpb_date_passed_label{
+	font-size:8px;font-weight:600;color:#cbcfcf;text-transform:uppercase;line-height:1;
+	white-space:nowrap;overflow:hidden;text-overflow:clip;max-width:100%;
+}
+@media(max-width:420px){
+	.mpwpb_style .mpwpb-date-calendar .mpwpb-date-weekday-row,
+	.mpwpb_style .mpwpb-date-calendar .mpwpb-date-month-days{gap:4px;}
+	.mpwpb_style .mpwpb-date-calendar .mpwpb_close_date,
+	.mpwpb_style .mpwpb-date-calendar .mpwpb_date_passed_label{display:none;}
+}

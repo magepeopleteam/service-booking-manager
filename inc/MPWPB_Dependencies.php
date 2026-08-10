@@ -166,7 +166,7 @@
 				// custom
 				wp_enqueue_style('mpwpb', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb.css', [], self::asset_version('/assets/frontend/mpwpb.css'));
 				wp_enqueue_script('mpwpb', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb.js', ['jquery'], self::asset_version('/assets/frontend/mpwpb.js'), true);
-				wp_enqueue_style('mpwpb_registration', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_registration.css', [], MPWPB_VERSION);
+				wp_enqueue_style('mpwpb_registration', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_registration.css', [], self::asset_version('/assets/frontend/mpwpb_registration.css'));
 				wp_enqueue_script('mpwpb_registration', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_registration.js', ['jquery'], MPWPB_VERSION);
 				wp_enqueue_style('mpwpb_coupon', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-coupon.css', [], MPWPB_VERSION);
 				// Depends on mpwpb_registration (not just jquery) so the
@@ -178,7 +178,7 @@
 				wp_enqueue_script('mpwpb_payment_choice', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-payment-choice.js', ['jquery', 'mpwpb_registration'], MPWPB_VERSION, true);
 				// Single service page redesign (hero/tabs/Overview/FAQ/Details) —
 				// pure reskin, loaded after mpwpb_registration so its overrides win.
-				wp_enqueue_style('mpwpb_service_page_modern', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-service-page-modern.css', ['mpwpb_registration'], MPWPB_VERSION);
+				wp_enqueue_style('mpwpb_service_page_modern', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-service-page-modern.css', ['mpwpb_registration'], self::asset_version('/assets/frontend/mpwpb-service-page-modern.css'));
 				wp_enqueue_script('mpwpb_service_page_modern', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-service-page-modern.js', ['jquery', 'mpwpb_registration'], MPWPB_VERSION, true);
 				// "Our services" sidebar tree expand/collapse only — selecting a
 				// service still goes through mpwpb_registration.js unchanged.
@@ -186,7 +186,7 @@
 				// Booking popup's inner picker: relocates the real category/
 				// service elements (untouched click handlers/hidden inputs)
 				// into a unified checkbox-tree — no new selection logic.
-				wp_enqueue_script('mpwpb_booking_tree', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-booking-tree.js', ['jquery', 'mpwpb_registration', 'mpwpb_service_tree'], MPWPB_VERSION, true);
+				wp_enqueue_script('mpwpb_booking_tree', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-booking-tree.js', ['jquery', 'mpwpb_registration', 'mpwpb_service_tree'], self::asset_version('/assets/frontend/mpwpb-booking-tree.js'), true);
 				// Account-area presentation: WooCommerce's stock Orders table
 				// reskin plus the scoped Custom Payment dashboard cards/table.
 				// Loaded after mpwpb_registration so its overrides win.

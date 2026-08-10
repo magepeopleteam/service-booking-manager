@@ -269,6 +269,17 @@
 							)
 						),
 						array(
+							'name' => 'date_picker_layout',
+							'label' => esc_html__('Date Picker Layout', 'service-booking-manager'),
+							'desc' => esc_html__('How the booking form shows available dates. "Slider" keeps the row of day cards, paged a few at a time. "Full Calendar" shows a real month grid with the month name and year, one month per page -- far easier once the booking window is long (30, 60, 90 days).', 'service-booking-manager'),
+							'type' => 'select',
+							'default' => 'slider',
+							'options' => array(
+								'slider' => esc_html__('Slider (day cards)', 'service-booking-manager'),
+								'calendar' => esc_html__('Full Calendar (month grid)', 'service-booking-manager'),
+							)
+						),
+						array(
 							'name' => 'date_format',
 							'label' => esc_html__('Date Picker Format', 'service-booking-manager'),
 							'desc' => esc_html__('If you want to change Date Picker Format, please select format. Default  is D d M , yy.', 'service-booking-manager'),

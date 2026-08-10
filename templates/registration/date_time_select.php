@@ -13,6 +13,15 @@
 	// sliding owl-carousel entirely -- other templates (e.g. default.php)
 	// keep the carousel unchanged.
 	$mpwpb_is_static_template = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_template', 'static.php') === 'static.php';
+	// "Date Picker Layout" (Settings > Global). The month-grid layout replaces
+	// both the wrapped grid and the carousel, because paging a long booking
+	// window a few days at a time is the problem it exists to solve.
+	$mpwpb_date_layout = MPWPB_Details_Layout::get_date_picker_layout();
+	if ( $mpwpb_date_layout === 'calendar' ) {
+		$mpwpb_date_holder_class = 'mpwpb-date-calendar';
+	} else {
+		$mpwpb_date_holder_class = $mpwpb_is_static_template ? 'mpwpb-date-grid' : 'owl-theme mpwpb-owl-carousel';
+	}
 
 	$enable_waiting_list = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_enable_waiting_list', 'no');
 	$enable_recurring = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_enable_recurring', 'no');
@@ -77,7 +86,7 @@
 				<?php include(MPWPB_Function::template_path('layout/carousel_indicator.php')); ?>
             </header>
             <div class="" >
-                <div class="<?php echo $mpwpb_is_static_template ? 'mpwpb-date-grid' : 'owl-theme mpwpb-owl-carousel'; ?>" id="mpwpb_datetime_holder1">
+                <div class="<?php echo esc_attr( $mpwpb_date_holder_class ); ?>" id="mpwpb_datetime_holder1">
                     <?php if (sizeof($all_dates) > 0) {
                         // Computed once and passed to both calls so the date
                         // marked "selected" and the time panel shown by
