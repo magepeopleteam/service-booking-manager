@@ -781,6 +781,7 @@
 				if ($order_status == 'failed') {
 					return;
 				}
+				$booking_created = false;
 				foreach ($line_items as $line_item) {
 					$post_id = $line_item['post_id'] ?? 0;
 					if (get_post_type($post_id) != MPWPB_Function::get_cpt()) {
@@ -872,6 +873,7 @@
 						$data['mpwpb_billing_address'] = trim(($billing['address_1'] ?? '') . ' ' . ($billing['address_2'] ?? ''));
 						$booking_data = apply_filters('add_mpwpb_booking_data', $data, $post_id);
 						$new_booking_id = self::add_cpt_data('mpwpb_booking', $booking_data['mpwpb_billing_name'], $booking_data);
+						$booking_created = $booking_created || (bool) $new_booking_id;
 						if ($new_booking_id && $amount_due > 0 && class_exists('MPWPB_Booking_History') && class_exists('MPWPB_Partial_Payment')) {
 							MPWPB_Booking_History::log(
 								$new_booking_id,
@@ -903,6 +905,99 @@
 						}
 					}
 				}
+				if ($booking_created) {
+					self::send_booking_confirmation_mail($order_id);
+				}
+			}
+			/**
+			 * Asks the booking confirmation / PDF-ticket mailer to run for this order.
+			 *
+			 * That email is fully configurable (Settings > Email: subject, body,
+			 * placeholders, admin notification address) and PRO listens on
+			 * 'mpwpb_send_mail' to send it -- but nothing anywhere in either
+			 * plugin ever fired that action, so the email was silently never
+			 * sent no matter how it was configured. This is the missing trigger.
+			 *
+			 * Called when the bookings are created and again on every later order
+			 * status transition. Which of those actually produce an email is the
+			 * mailer's decision, driven by the "Send Email on" status list --
+			 * this side deliberately does no filtering and no de-duplication, so
+			 * a status the admin ticked can never be swallowed here before the
+			 * mailer has looked at it.
+			 *
+			 * Works for both order backends: a WooCommerce order and the native
+			 * mpwpb_order used by Custom Payment / standalone mode.
+			 */
+			public static function send_booking_confirmation_mail($order_id): void {
+				$order_id = absint($order_id);
+				if (!$order_id) {
+					return;
+				}
+				do_action('mpwpb_send_mail', $order_id);
+			}
+			/**
+			 * Which order statuses this order has already been ticket-mailed for.
+			 *
+			 * Recorded PER STATUS, not as one all-or-nothing flag. "Send Email on"
+			 * (Settings > Email) is a list of up to four statuses, and the admin
+			 * ticking two of them means "mail the customer when the order reaches
+			 * either one" -- with a single boolean flag the first match consumed
+			 * it and every later status the admin had ticked was silently
+			 * skipped, so only one of the four could ever fire.
+			 *
+			 * Per-status still means never twice for the same status, so a
+			 * retried gateway callback, a re-saved order or a second page load
+			 * cannot duplicate an email.
+			 *
+			 * Stored through the order object for WooCommerce orders so it works
+			 * under HPOS, where order meta does not live in wp_postmeta.
+			 */
+			private static function get_ticket_mail_log($order_id): array {
+				$order = function_exists('wc_get_order') ? wc_get_order($order_id) : false;
+				$raw = $order
+					? $order->get_meta('_mpwpb_confirmation_mail_sent', true)
+					: get_post_meta($order_id, 'mpwpb_confirmation_mail_sent', true);
+				if (is_array($raw)) {
+					return array_values(array_filter($raw));
+				}
+				return $raw === '' || $raw === null ? [] : array_values(array_filter(array_map('trim', explode(',', (string) $raw))));
+			}
+			public static function ticket_mail_sent($order_id, $status = ''): bool {
+				$order_id = absint($order_id);
+				if (!$order_id) {
+					return true;
+				}
+				$sent = self::get_ticket_mail_log($order_id);
+				// 'yes' is the earlier all-or-nothing flag. Treat it as "already
+				// mailed, whatever the status" so an order mailed under the old
+				// behaviour is never mailed again after an update.
+				if (in_array('yes', $sent, true)) {
+					return true;
+				}
+				if ($status === '') {
+					return !empty($sent);
+				}
+				return in_array($status, $sent, true);
+			}
+			public static function mark_ticket_mail_sent($order_id, $status = ''): void {
+				$order_id = absint($order_id);
+				if (!$order_id) {
+					return;
+				}
+				$status = $status !== '' ? $status : 'yes';
+				$sent = self::get_ticket_mail_log($order_id);
+				if (in_array($status, $sent, true)) {
+					return;
+				}
+				$sent[] = $status;
+				$value = implode(',', $sent);
+				$order = function_exists('wc_get_order') ? wc_get_order($order_id) : false;
+				if ($order) {
+					$order->update_meta_data('_mpwpb_confirmation_mail_sent', $value);
+					$order->save();
+					return;
+				}
+				update_post_meta($order_id, 'mpwpb_confirmation_mail_sent', $value);
 			}
 			public function order_status_changed($order_id) {
 				$order = wc_get_order($order_id);
@@ -914,11 +1009,20 @@
 				// wasn't already created on an earlier status.
 				$this->maybe_create_bookings_for_order($order_id, $order);
 				$order_status = $order->get_status();
+				$has_booking = false;
 				foreach ($order->get_items() as $item_id => $item_values) {
 					$post_id = wc_get_order_item_meta($item_id, '_mpwpb_id');
 					if (get_post_type($post_id) == MPWPB_Function::get_cpt()) {
+						$has_booking = true;
 						$this->wc_order_status_change($order_status, $post_id, $order_id);
 					}
+				}
+				// The ticket email can be restricted to certain order statuses
+				// ("Send Email on", Settings > Email), so an order confirmed while
+				// still pending gets its ticket here, on the transition that finally
+				// reaches an allowed status. No-op once the mail has been sent.
+				if ($has_booking) {
+					self::send_booking_confirmation_mail($order_id);
 				}
 			}
 			//**************************//
