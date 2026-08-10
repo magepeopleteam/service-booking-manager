@@ -76,7 +76,13 @@
 					'public' 		=> true,
 					'labels' 		=> $labels,
 					'menu_icon' 	=> $icon,
-					'supports' 		=> ['title', 'editor', 'thumbnail'],
+					// 'excerpt' is what the static template's hero subtext under the
+					// service title is meant to come from. Without it registered there
+					// was no Excerpt field anywhere on the service edit screen, so
+					// get_the_excerpt() silently auto-generated the subtext by trimming
+					// the page content (ending in "[...]") -- text the admin could see
+					// on the front end but could not find, edit or remove anywhere.
+					'supports' 		=> ['title', 'editor', 'thumbnail', 'excerpt'],
 					'show_in_rest' 	=> true,
 					'capability_type' => 'post',
 					'publicly_queryable' => true,  // you should be able to query it

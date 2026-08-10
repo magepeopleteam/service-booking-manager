@@ -17,8 +17,23 @@
                 <div class="header-content">
                     <span class="mpwpb-hero-eyebrow"><i class="fas fa-store"></i> <?php echo esc_html(get_bloginfo('name')); ?></span>
                     <h2><?php the_title(); ?></h2>
-					<?php if (has_excerpt() || get_the_content()): ?>
-                    <p class="mpwpb-hero-subtext"><?php echo esc_html(get_the_excerpt()); ?></p>
+					<?php
+						/**
+						 * Hero subtext = the service's Excerpt, and only that.
+						 *
+						 * This used to fall back to get_the_excerpt() whenever the
+						 * editor had any content at all. With no excerpt written (and
+						 * until now no Excerpt field even registered on the CPT, see
+						 * MPWPB_CPT) WordPress auto-generated one by trimming the page
+						 * content to 55 words and appending "[...]" -- so the hero
+						 * showed a mangled slice of the page body that the admin could
+						 * not locate in any service setting, because it was never
+						 * stored anywhere. Now it prints only what was deliberately
+						 * written in the Excerpt box, and nothing when that is empty.
+						 */
+						$mpwpb_hero_subtext = has_excerpt($post_id) ? get_the_excerpt($post_id) : '';
+						if ($mpwpb_hero_subtext !== '') : ?>
+                    <p class="mpwpb-hero-subtext"><?php echo esc_html($mpwpb_hero_subtext); ?></p>
 					<?php endif; ?>
                     <!-- dispaly service static page reatings using this hook -->
 					<?php do_action('mpwpb_service_show_ratings'); ?>
