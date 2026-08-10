@@ -573,6 +573,17 @@
 								</div>
 								<div class="mpwpb-settings-row mpwpb-settings-row-top">
 									<div>
+										<strong><?php esc_html_e('Disable WooCommerce Customer Emails', 'service-booking-manager'); ?></strong>
+										<p class="description"><?php esc_html_e('Bookings are sold through a hidden WooCommerce product, so WooCommerce mails customers its standard "order processing / order complete" notifications, which read like shipping confirmations. Turn this on to stop those automatic emails for orders that only contain bookings — the booking confirmation email with the PDF ticket (Settings → Email) is sent instead. Admin "New order" notifications, manually sent invoices and customer notes are never affected.', 'service-booking-manager'); ?></p>
+									</div>
+									<label>
+										<input type="hidden" name="<?php echo esc_attr($option); ?>[wc_disable_customer_emails]" value="off"/>
+										<input type="checkbox" name="<?php echo esc_attr($option); ?>[wc_disable_customer_emails]" value="on" <?php checked(MPWPB_Global_Function::get_payment_setting('wc_disable_customer_emails', 'off'), 'on'); ?>/>
+										<?php esc_html_e('Do not send WooCommerce order emails to booking customers.', 'service-booking-manager'); ?>
+									</label>
+								</div>
+								<div class="mpwpb-settings-row mpwpb-settings-row-top">
+									<div>
 										<strong><?php esc_html_e('Confirm Booking Based on Payment Status', 'service-booking-manager'); ?></strong>
 										<p class="description"><?php esc_html_e('Select the order statuses that will trigger booking confirmation.', 'service-booking-manager'); ?></p>
 									</div>
