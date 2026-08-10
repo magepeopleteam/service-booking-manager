@@ -1,0 +1,103 @@
+<wpml-config>
+	<!--
+		WPML integration for Service Booking Manager.
+
+		Three separate things have to be declared before a booking page can be
+		fully translated, and WPML cannot guess any of them:
+
+		  1. custom-types  - makes each service translatable, so WPML offers a
+		                     "+" next to it and keeps the translations linked.
+		  2. taxonomies    - the same for service categories.
+		  3. admin-texts   - wording an admin typed into the plugin's own
+		                     settings screens. That lives in wp_options, not in
+		                     a post, so it is invisible to WPML until it is
+		                     listed here.
+
+		Strings that come from the plugin's code (buttons, labels, "Choose
+		Date", "Closed", ...) are NOT listed here. Those are gettext strings,
+		translated from languages/service-booking-manager.pot with WPML String
+		Translation's "Theme and plugins localization" or with Loco Translate.
+	-->
+
+	<custom-types>
+		<custom-type translate="1">mpwpb_item</custom-type>
+	</custom-types>
+
+	<taxonomies>
+		<taxonomy translate="1">mpwpb_category</taxonomy>
+	</taxonomies>
+
+	<custom-fields>
+		<!--
+			"copy" = one value shared by every language.
+
+			These are structural: dates, capacity, off days, slot length,
+			templates, the link to the hidden WooCommerce product. A translated
+			service has to book exactly the same slots against exactly the same
+			stock as its original – if these diverged per language, the Dutch
+			and English versions of one service would each hold their own
+			availability and the same seat could be sold twice.
+		-->
+		<custom-field action="copy">mpwpb_date_type</custom-field>
+		<custom-field action="copy">mpwpb_repeated_start_date</custom-field>
+		<custom-field action="copy">mpwpb_repeated_after</custom-field>
+		<custom-field action="copy">mpwpb_active_days</custom-field>
+		<custom-field action="copy">mpwpb_particular_dates</custom-field>
+		<custom-field action="copy">mpwpb_off_days</custom-field>
+		<custom-field action="copy">mpwpb_off_dates</custom-field>
+		<custom-field action="copy">mpwpb_default_start_time</custom-field>
+		<custom-field action="copy">mpwpb_default_end_time</custom-field>
+		<custom-field action="copy">mpwpb_time_slot_length</custom-field>
+		<custom-field action="copy">mpwpb_capacity_per_session</custom-field>
+		<custom-field action="copy">mpwpb_template</custom-field>
+		<custom-field action="copy">mpwpb_staff_member_add</custom-field>
+		<custom-field action="copy">mpwpb_selected_staff_ids</custom-field>
+		<custom-field action="copy">mpwpb_enable_waiting_list</custom-field>
+		<custom-field action="copy">mpwpb_max_waiting_list</custom-field>
+		<custom-field action="copy">mpwpb_enable_recurring</custom-field>
+		<custom-field action="copy">mpwpb_recurring_types</custom-field>
+		<custom-field action="copy">mpwpb_max_recurring_count</custom-field>
+		<custom-field action="copy">mpwpb_recurring_discount</custom-field>
+		<custom-field action="copy">mpwpb_extra_service_active</custom-field>
+		<custom-field action="copy">mpwpb_use_sub_category</custom-field>
+		<custom-field action="copy">mpwpb_show_category_status</custom-field>
+		<custom-field action="copy">mpwpb_display_slider</custom-field>
+		<custom-field action="copy">mpwpb_slider_images</custom-field>
+		<custom-field action="copy">link_wc_product</custom-field>
+		<custom-field action="copy">check_if_run_once</custom-field>
+
+		<!--
+			"translate" = the translator gets a field for it in WPML's editor.
+			These hold wording the customer actually reads. The service and
+			extra-service fields are arrays of rows; WPML exposes the text
+			inside them (the names) while the prices stay as entered.
+		-->
+		<custom-field action="translate">mpwpb_service</custom-field>
+		<custom-field action="translate">mpwpb_extra_service</custom-field>
+		<custom-field action="translate">mpwpb_category_service</custom-field>
+		<custom-field action="translate">mpwpb_sub_category_service</custom-field>
+		<custom-field action="translate">mpwpb_category_infos</custom-field>
+		<custom-field action="translate">mpwpb_shortcode_title</custom-field>
+		<custom-field action="translate">mpwpb_shortcode_sub_title</custom-field>
+		<custom-field action="translate">mpwpb_sub_category_text</custom-field>
+		<custom-field action="translate">mpwpb_faq</custom-field>
+		<custom-field action="translate">mpwpb_waiting_list_email_subject</custom-field>
+		<custom-field action="translate">mpwpb_waiting_list_email_body</custom-field>
+	</custom-fields>
+
+	<admin-texts>
+		<!--
+			Wording typed into Settings > General. Once listed, these appear
+			under WPML > String Translation with the context
+			"admin_texts_mpwpb_general_settings" and can be given a value per
+			language. Slugs and icons are deliberately not included: a slug is
+			a URL fragment, and WPML handles per-language slugs separately.
+		-->
+		<key name="mpwpb_general_settings">
+			<key name="label" />
+			<key name="category_label" />
+			<key name="organizer_label" />
+			<key name="category_text" />
+		</key>
+	</admin-texts>
+</wpml-config>
