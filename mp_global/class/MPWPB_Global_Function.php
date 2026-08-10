@@ -552,6 +552,34 @@
 			 * render_partial_payment_panel() and MPWPB_Partial_Payment::maybe_migrate_settings()
 			 * for the one-time migration off the old mpwpb_payment_method_settings keys.
 			 */
+			/**
+			 * The order statuses that count a booking as "booked" ("Seat Booked
+			 * Status", Settings > Global).
+			 *
+			 * Never returns an empty list. The raw option is a multicheck, and
+			 * saving Global Settings with none of its boxes ticked stores an
+			 * empty string -- which is a stored value, so get_settings() returns
+			 * it instead of the default, and every caller ended up with an empty
+			 * status list. That is not "count nothing", it is broken:
+			 *
+			 *  - MPWPB_Function_PRO::attendee_query() feeds the list to a
+			 *    meta_query 'IN' compare, and an empty IN builds "IN ()" -- a SQL
+			 *    syntax error, so the query returns nothing at all. The PRO Order
+			 *    List, Service Queue, calendar and (until the ticket PDF stopped
+			 *    using it) the customer's ticket all silently went empty.
+			 *  - MPWPB_Query::query_all_sold() loses its whole status filter and
+			 *    counts every booking regardless of status, so cancelled and
+			 *    failed orders keep holding seats.
+			 *
+			 * Falling back to the documented default (processing + completed) is
+			 * what an admin who never touched the setting already gets, so this
+			 * only ever repairs the broken state.
+			 */
+			public static function get_seat_booked_statuses(): array {
+				$statuses = self::get_settings('mpwpb_global_settings', 'set_book_status', array('processing', 'completed'));
+				$statuses = is_array($statuses) ? array_values(array_filter($statuses)) : array_values(array_filter((array) $statuses));
+				return !empty($statuses) ? $statuses : array('processing', 'completed');
+			}
 			public static function get_partial_payment_setting($key, $default = '') {
 				return self::get_settings('mpwpb_partial_payment_settings', $key, $default);
 			}
