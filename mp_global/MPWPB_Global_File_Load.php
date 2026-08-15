@@ -27,6 +27,98 @@
 				add_action('wp_head', array($this, 'add_frontend_head'), 5);
 			}
 			/**
+			 * Whether WooCommerce will own the WooCommerce helper functions in this
+			 * request, so the native fallbacks must not be declared.
+			 *
+			 * Covers three cases:
+			 *  1. WooCommerce is already loaded.
+			 *  2. WooCommerce is active but its files load after this hook.
+			 *  3. This very request is activating WooCommerce, which is when the
+			 *     fatal redeclare was actually happening -- activate_plugin()
+			 *     includes the plugin file after plugins_loaded has fired, and
+			 *     before active_plugins is updated.
+			 *
+			 * @return bool
+			 */
+			private function wc_owns_helpers() {
+				if (class_exists('WooCommerce', false) || function_exists('wc_price') || defined('WC_PLUGIN_FILE')) {
+					return true;
+				}
+				$active = (array) get_option('active_plugins', array());
+				if (is_multisite()) {
+					$active = array_merge($active, array_keys((array) get_site_option('active_sitewide_plugins', array())));
+				}
+				foreach ($active as $plugin_file) {
+					if (strpos((string) $plugin_file, 'woocommerce/') === 0) {
+						return true;
+					}
+				}
+				/*
+				 * Does this request name WooCommerce anywhere? The Plugins screen
+				 * posts "woocommerce/woocommerce.php" in plugin/checked[], WP-CLI
+				 * passes nothing, and setup wizards (the Bookingly theme's Guided
+				 * Setup, for one) post their own bare "woocommerce" key over
+				 * admin-ajax before calling activate_plugin(). Rather than chase
+				 * every parameter name, scan the request values. A false positive
+				 * only means the native fallbacks are skipped for one request.
+				 */
+				if ($this->request_mentions_woocommerce($_REQUEST)) {
+					return true;
+				}
+				/*
+				 * WooCommerce is installed but not active. Activating it -- from the
+				 * Plugins screen or through WP-CLI -- includes wc-core-functions.php
+				 * later in this same request, long after plugins_loaded, and it
+				 * declares these helpers unconditionally. Neither active_plugins nor
+				 * $_REQUEST identifies a WP-CLI activation, so in any request that is
+				 * able to load a plugin file we stay out of the way. Nothing on those
+				 * screens renders booking prices, so the fallbacks are not needed.
+				 */
+				if (!$this->woocommerce_installed()) {
+					return false;
+				}
+				if (defined('WP_CLI') && WP_CLI) {
+					return true;
+				}
+				global $pagenow;
+				if (is_admin() && in_array($pagenow, array('plugins.php', 'plugin-install.php', 'update.php'), true)) {
+					return true;
+				}
+				return false;
+			}
+			/**
+			 * Whether any request value refers to WooCommerce.
+			 *
+			 * @param mixed $value Request data, walked recursively.
+			 * @param int   $depth Current recursion depth.
+			 * @return bool
+			 */
+			private function request_mentions_woocommerce($value, $depth = 0) {
+				if ($depth > 3) {
+					return false;
+				}
+				if (is_array($value)) {
+					foreach ($value as $item) {
+						if ($this->request_mentions_woocommerce($item, $depth + 1)) {
+							return true;
+						}
+					}
+					return false;
+				}
+				if (!is_scalar($value)) {
+					return false;
+				}
+				return stripos((string) $value, 'woocommerce') !== false;
+			}
+			/**
+			 * Whether the WooCommerce plugin is present on disk, active or not.
+			 *
+			 * @return bool
+			 */
+			private function woocommerce_installed() {
+				return file_exists(WP_PLUGIN_DIR . '/woocommerce/woocommerce.php');
+			}
+			/**
 			 * Declares native fallbacks for the read-only WooCommerce helpers the
 			 * add-ons call directly, but ONLY for the ones WooCommerce hasn't
 			 * already defined (i.e. it's inactive). Each mirrors WooCommerce's own
@@ -35,8 +127,18 @@
 			 * instead of fataling in Custom Payment mode. Behaviour functions
 			 * (wc_create_order, checkout actions, etc.) are deliberately NOT stubbed
 			 * -- those only run in real WooCommerce flows.
+			 *
+			 * function_exists() alone is not enough. When WooCommerce is ACTIVATED,
+			 * plugins_loaded has already fired -- so these stubs are declared first --
+			 * and WordPress only then includes wc-core-functions.php, which declares
+			 * get_woocommerce_currency() and friends unconditionally. That is a fatal
+			 * redeclare. So bail out entirely whenever WooCommerce is going to own
+			 * these names in this request.
 			 */
 			public function define_wc_fallbacks() {
+				if ($this->wc_owns_helpers()) {
+					return;
+				}
 				if (!function_exists('wc_price')) {
 					function wc_price($price, $args = array()) {
 						return MPWPB_Global_Function::native_price_html($price);
