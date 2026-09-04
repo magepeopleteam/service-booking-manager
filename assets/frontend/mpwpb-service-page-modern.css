@@ -14,6 +14,14 @@
  * color a site has configured rather than hardcoding one.
  * Scoped under .mpwpb-static-template so the (separate, older)
  * .mpwpb-default-template layout is not affected.
+ *
+ * The sticky tab bar and sidebar below read --mpwpb-sticky-offset, via
+ * var(..., 0px), to learn how much space the active theme's own sticky site
+ * header occupies, so they don't stick underneath it. A theme with such a
+ * header sets this on :root (or higher); this file never redeclares it
+ * itself, so inheritance from the theme keeps working -- setting it here
+ * too, even to 0, would win over the theme's value on every element in this
+ * template regardless of what the theme declared.
  * ===================================================================== */
 
 .mpwpb-static-template{--mpwpb-sp-radius:14px;}
@@ -297,7 +305,7 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
  * -------------------------------------------------------------------- */
 .mpwpb-static-template .mpwpb-details-page-tab,
 .mpwpb-static-template nav.mpwpb-details-page-tab{
-	position:sticky;top:8px;z-index:0;background:#fff !important;border:1px solid #eef1f6;
+	position:sticky;top:calc(8px + var(--mpwpb-sticky-offset, 0px));z-index:0;background:#fff !important;border:1px solid #eef1f6;
 	border-radius:12px;box-shadow:0 1px 3px rgba(15,23,42,.06);padding:6px !important;margin-bottom:24px !important;
 }
 .mpwpb-static-template nav ul{gap:4px !important;}
@@ -327,7 +335,7 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
    gallery painted over the still-stuck sidebar. An explicit z-index always
    beats a z-index:auto sibling regardless of DOM order, so this fixes it. */
 @media (min-width:1024px){
-	.mpwpb-static-template .sidebar{position:sticky;top:8px;align-self:flex-start;z-index:5;}
+	.mpwpb-static-template .sidebar{position:sticky;top:calc(8px + var(--mpwpb-sticky-offset, 0px));align-self:flex-start;z-index:5;}
 }
 
 /* -------------------------------------------------------------------- *
