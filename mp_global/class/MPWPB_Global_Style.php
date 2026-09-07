@@ -32,10 +32,14 @@
 				$button_color    = MPWPB_Global_Function::get_style_settings( 'button_color', $alternate_color );
 				$button_bg       = MPWPB_Global_Function::get_style_settings( 'button_bg', '#ea8125' );
 				$section_bg      = MPWPB_Global_Function::get_style_settings( 'section_bg', '#FAFCFE' );
+				$template_width  = (int) MPWPB_Global_Function::get_style_settings( 'template_width', 1300 );
+				$template_gutter = (int) MPWPB_Global_Function::get_style_settings( 'template_gutter', 32 );
 				?>
 				<style>
 					:root {
 						--mpwpb_container_Width: 1320px;
+						--mpwpb_template_width: <?php echo esc_attr( $template_width ); ?>px;
+						--mpwpb_template_gutter: <?php echo esc_attr( $template_gutter ); ?>px;
 						--mpwpb_sidebarLeft: 280px;
 						--mpwpb_sidebar_right: 300px;
 						--mpwpb_main_section: calc(100% - 300px);

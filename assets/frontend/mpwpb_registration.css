@@ -951,9 +951,9 @@ div.registration_tab_item {
 }
 .mpwpb_registration > header .template-header {
   width: 100%;
-  max-width: 1440px;
+  max-width: var(--mpwpb_template_width, 1440px);
   margin: auto;
-  padding: 10vh 10px;
+  padding: 10vh var(--mpwpb_template_gutter, 10px);
 }
 .mpwpb_registration > header .template-header .header-content {
   z-index: 1;
@@ -1126,10 +1126,10 @@ div.registration_tab_item {
   padding: 10px 40px;
 }
 .mpwpb_registration main {
-  max-width: 1440px !important;
+  max-width: var(--mpwpb_template_width, 1440px) !important;
   width: 100%;
   margin: auto;
-  padding: 10px;
+  padding: 10px var(--mpwpb_template_gutter, 10px);
   flex-direction: column;
   display: flex;
 }

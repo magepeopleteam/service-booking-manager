@@ -239,6 +239,17 @@
                                 'no' => esc_html__('No', 'service-booking-manager')
                             )
                         ),
+						array(
+							'name' => 'layout',
+							'label' => esc_html__('Layout', 'service-booking-manager'),
+							'desc' => esc_html__('The single-service page layout used by default across the site. Static keeps the compact hero with a docked booking widget. Default shows the full step-by-step booking flow inline in the sidebar. An individual service can still override this from its own "Service template" setting.', 'service-booking-manager'),
+							'type' => 'select',
+							'default' => 'static.php',
+							'options' => array(
+								'static.php' => esc_html__('Static', 'service-booking-manager'),
+								'default.php' => esc_html__('Default', 'service-booking-manager'),
+							)
+						),
 					)),
 					'mpwpb_global_settings' => apply_filters('filter_mpwpb_global_settings', array(
 						array(
@@ -443,6 +454,24 @@
 						)
 					),
 					'mpwpb_style_settings' => apply_filters('filter_mpwpb_style_settings', array(
+						array(
+							'name' => 'template_width',
+							'label' => esc_html__('Template Width', 'service-booking-manager'),
+							'desc' => esc_html__('Max width, in pixels, of the single-service page content: the hero text, the tabs, and the booking sidebar. The hero background image itself always stays full width. Default is 1300.', 'service-booking-manager'),
+							'type' => 'number',
+							'default' => 1300,
+							'min' => 960,
+							'placeholder' => esc_html__('Ex: 1300', 'service-booking-manager'),
+						),
+						array(
+							'name' => 'template_gutter',
+							'label' => esc_html__('Template Side Padding', 'service-booking-manager'),
+							'desc' => esc_html__('Space, in pixels, between the edge of the Template Width box and its content (hero text, tabs, sidebar). Raise this to match your active theme\'s own side padding so the two line up -- Bookingly, for example, uses 32px. Default is 32.', 'service-booking-manager'),
+							'type' => 'number',
+							'default' => 32,
+							'min' => 0,
+							'placeholder' => esc_html__('Ex: 32', 'service-booking-manager'),
+						),
 						array(
 							'name' => 'theme_color',
 							'label' => esc_html__('Primary Color', 'service-booking-manager'),

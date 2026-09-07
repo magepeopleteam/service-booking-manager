@@ -603,7 +603,7 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
    avoids that flex math entirely; the same max-width/centering/padding as
    .mpwpb_registration main is repeated here so it still lines up visually. */
 .mpwpb-static-template .mpwpb-gallery-section{
-	max-width:1440px;width:100%;margin:28px auto 0;padding:0 10px;box-sizing:border-box;scroll-margin-top:80px;
+	max-width:var(--mpwpb_template_width, 1440px);width:100%;margin:28px auto 0;padding:0 var(--mpwpb_template_gutter, 10px);box-sizing:border-box;scroll-margin-top:80px;
 }
 .mpwpb-static-template .mpwpb-gallery-head{
 	display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px;
