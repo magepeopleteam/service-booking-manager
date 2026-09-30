@@ -3,7 +3,7 @@
 	 * Plugin Name: Appointment Booking Plugin for WooCommerce – All-in-One Service Manager
 	 * Plugin URI: http://mage-people.com
 	 * Description: A complete solution for Any kind of service booking.
-	 * Version: 1.4.0
+	 * Version: 1.4.1
 	 * Author: MagePeople Team
 	 * Author URI: http://www.mage-people.com/
 	 * Text Domain: service-booking-manager
@@ -13,6 +13,17 @@
 	 */
 	if (!defined('ABSPATH'))
 		die;
+
+	require_once __DIR__ . '/vendor/appneck/wordpress-sdk/appneck-wordpress-sdk/appneck-sdk.php';
+	appneck_sdk_load_latest();
+
+	$GLOBALS['my_plugin_sdk'] = \Appneck\Sdk\Sdk::bootstrap(
+		'pk_YEXYRSDXmlkmpDxXzjs9XsoHwtyEgAnn',  // your API key
+		'sk_rvKJ3tyofYzZsCOz7zqLYQ4JZSSQD61lAvPcM4YCqrXLb9lR', // your product secret
+		'https://appneck.com',                  // the Appneck server URL
+		__FILE__                                // so the SDK can hook activation/deactivation
+	);
+
 	if (!class_exists('MPWPB_Plugin')) {
 		class MPWPB_Plugin {
 			public function __construct() {
@@ -27,20 +38,11 @@
 					define('MPWPB_PLUGIN_URL', plugins_url() . '/' . plugin_basename(dirname(__FILE__)));
 				}
 				if (!defined('MPWPB_VERSION')) {
-					define('MPWPB_VERSION', '1.4.0');
+					define('MPWPB_VERSION', '1.4.1');
 				}
 				require_once MPWPB_PLUGIN_DIR . '/mp_global/MPWPB_Global_File_Load.php';
 				add_action('activated_plugin', array($this, 'activation_redirect'), 90, 1);
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Dependencies.php';
-				$this->appsero_init_tracker_service_booking_manager();
-			}
-			public function appsero_init_tracker_service_booking_manager() {
-				if ( ! class_exists( 'Appsero\Client' ) ) {
-					require_once __DIR__ . '/lib/appsero/src/Client.php';
-				}			
-				$client = new Appsero\Client( '969083cc-730a-49a5-ad81-e24ace3fbacf', 'Service Booking &amp; Scheduling Solution | All-in-one Booking Systems', __FILE__ );			
-				// Active insights
-				$client->insights()->init();
 			}
 			public function activation_redirect($plugin) {
 				if ($plugin == plugin_basename(__FILE__)) {
