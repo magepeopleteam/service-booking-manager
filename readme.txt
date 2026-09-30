@@ -4,7 +4,7 @@ Tags: appointment booking, booking calendar, service booking, online booking, wo
 Requires at least: 5.3
 Tested up to: 7.0
 Requires PHP: 7.0
-Stable tag: 1.4.0
+Stable tag: 1.4.2
 WC requires at least: 3.0
 WC tested up to: 10.9.1
 License: GPLv2 or later
@@ -180,7 +180,18 @@ Please report security issues through the official [Patchstack Vulnerability Dis
 4. Customer My Account dashboard with orders and booking management.
 5. Admin analytics, booking administration, and staff dashboard.
 
+== External Services ==
+
+= Appneck =
+
+This Plugin uses [Appneck](https://appneck.com) SDK to collect some telemetry data upon the user's confirmation to troubleshoot problems faster & make product improvements.
+Appneck SDK **does not gather any data by default.** The SDK only starts gathering basic telemetry data **when a user allows it via the admin notice**. We collect the data to ensure a great user experience for all our users. Integrating Appneck SDK **DOES NOT IMMEDIATELY** start gathering data, **without confirmation from users in any case.**
+Learn more about how [Appneck collects and uses this data](https://appneck.com/privacy-policy/).
+
 == Changelog ==
+
+= 1.4.2 =
+* New: Replaced the Appsero telemetry SDK with Appneck. It does not collect any data by default; it only starts after you confirm via the admin notice.
 
 = 1.4.0 =
 * Added Dynamic Time Slot Length: choose one of the presets or type any custom slot length in minutes, in both the modern and classic service editors.
