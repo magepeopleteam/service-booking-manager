@@ -189,6 +189,7 @@
 				if ($service_overview_status === 'on'):
 					?>
                     <section id="service-overview">
+                        <span class="mpwpb-overview-kicker"><?php esc_html_e('Overview', 'service-booking-manager'); ?></span>
                         <h2><?php esc_html_e('Service Overview', 'service-booking-manager'); ?></h2>
                         <div class="mpwpb-overview-content">
 							<?php
@@ -299,7 +300,9 @@
 				if ($faq_status == 'on'):
 					?>
                     <section id="service-faq">
+                        <span class="mpwpb-faq-kicker"><?php esc_html_e('Support', 'service-booking-manager'); ?></span>
                         <h2><?php esc_html_e('Service FAQ', 'service-booking-manager'); ?></h2>
+                        <p class="mpwpb-faq-subtitle"><?php esc_html_e("Quick answers about booking, what's included, and how to get ready for your visit.", 'service-booking-manager'); ?></p>
 						<?php
 							if (!empty($mpwpb_faq)) {
 								foreach ($mpwpb_faq as $value) {
@@ -329,6 +332,7 @@
 				if ($service_details_status === 'on'):
 					?>
                     <section id="service-details">
+                        <span class="mpwpb-details-kicker"><?php esc_html_e('Details', 'service-booking-manager'); ?></span>
                         <h2><?php esc_html_e('Service Details', 'service-booking-manager'); ?></h2>
 						<div class="mpwpb-service-details-content">
 							<?php
@@ -363,6 +367,7 @@
                 <section id="service-gallery" class="mpwpb-gallery-section">
                     <div class="mpwpb-gallery-head">
                         <div>
+                            <span class="mpwpb-gallery-kicker"><?php esc_html_e('Gallery', 'service-booking-manager'); ?></span>
                             <h2><?php esc_html_e('Our Past Work', 'service-booking-manager'); ?></h2>
                             <p class="mpwpb-gallery-sub"><?php esc_html_e('See the stunning results of our meticulous work.', 'service-booking-manager'); ?></p>
                         </div>
@@ -433,9 +438,27 @@
 				?>
                 <section id="service-reviews">
                     <div class="mpwpb-reviews-head">
-                        <h2><?php esc_html_e('Customer Reviews', 'service-booking-manager'); ?></h2>
+                        <div>
+                            <span class="mpwpb-reviews-kicker"><?php esc_html_e('Reviews', 'service-booking-manager'); ?></span>
+                            <h2><?php esc_html_e('Customer Reviews', 'service-booking-manager'); ?></h2>
+							<?php if (!empty($reviews)):
+								// Same meta MPWPB_Reviews_Admin::update_service_rating() keeps
+								// current on every approval/status change (and that the hero
+								// section's own rating display already reads) -- reused here
+								// rather than re-averaging $reviews, so this always matches.
+								$avg_rating = (float) get_post_meta($post_id, 'mpwpb_service_review_ratings', true);
+								$rating_text = get_post_meta($post_id, 'mpwpb_service_rating_text', true);
+								?>
+                            <div class="mpwpb-reviews-summary">
+                                <span class="mpwpb-reviews-summary-stars"><?php self::render_star_icons($avg_rating); ?></span>
+                                <span class="mpwpb-reviews-summary-num"><?php echo esc_html(number_format_i18n($avg_rating, 1)); ?></span>
+                                <span class="mpwpb-reviews-summary-count">&middot; <?php echo esc_html($rating_text ? sprintf(/* translators: %s: e.g. "(4 ratings)" */ __('Based on %s', 'service-booking-manager'), trim($rating_text, '()')) : ''); ?></span>
+                            </div>
+							<?php endif; ?>
+                        </div>
                         <button type="button" class="mpwpb-write-review-btn" data-target-popup="#mpwpb_write_review_popup">
-                            <i class="fas fa-pen"></i> <?php esc_html_e('Write a Review', 'service-booking-manager'); ?>
+                            <span class="mpwpb-write-review-icon"><i class="fas fa-pen" aria-hidden="true"></i></span>
+                            <?php esc_html_e('Write a Review', 'service-booking-manager'); ?>
                         </button>
                     </div>
 

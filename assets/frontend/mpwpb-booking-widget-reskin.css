@@ -343,6 +343,21 @@
 
 /* ---------- Date & time ---------- */
 
+/* div.mpwpb_date_time_area header (mpwpb_registration.css) ships a
+   leftover blue-tinted band behind both the "Choose Date" and "Choose
+   Time" headings -- clashes with the theme colour and was a big part
+   of why this step read as noisy/busy. Flatten it and give the two
+   headings their own rhythm instead of touching the same bar. */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_date_time_area header {
+	background: transparent !important;
+	padding: 0 !important;
+	margin: 0 0 12px 0 !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_date_time_area header:not(:first-child) {
+	margin-top: 20px !important;
+}
+
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_date_staff_select {
 	font-family: 'Sora', 'Segoe UI', sans-serif !important;
 	font-weight: 700 !important;
@@ -373,33 +388,49 @@
 	pointer-events: none;
 }
 
-.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_get_date {
+/* The 4-up date grid layout itself comes from .mpwpb-date-grid in
+   mpwpb-service-page-modern.css, whose selector carries one more class
+   than a bare .mpwpb_get_date -- so it out-specifies the plain rules
+   below unless we nest under .mpwpb-date-grid too. */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid {
+	gap: 8px !important;
+	margin-bottom: 4px !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid .mpwpb_get_date {
 	border-radius: 14px !important;
 	border: 1.5px solid #E2E6E4 !important;
 	background: #FFFFFF !important;
 	color: #15202B !important;
+	transition: border-color 0.15s ease;
 }
 
-.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_get_date_selected {
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid .mpwpb_get_date:hover {
+	border-color: var(--mpwpb_color_theme) !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid .mpwpb_get_date_selected {
 	background: var(--mpwpb_color_theme) !important;
 	border-color: var(--mpwpb_color_theme) !important;
 	color: #FFFFFF !important;
+	box-shadow: 0 6px 14px rgba(14, 85, 75, 0.22) !important;
 }
 
-.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_get_date_selected .mptrs_day_with_date {
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid .mpwpb_get_date_selected .mptrs_day_with_date {
 	color: #FFFFFF !important;
 }
 
 /* Closed/unbookable days -- .mpwpb_get_close_date (off days) and
    .mpwpb_get_date_passed (already elapsed) are two different real
    classes for the same muted, disabled-looking treatment. */
-.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_get_close_date,
-.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_get_date_passed {
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid .mpwpb_get_close_date,
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid .mpwpb_get_date_passed {
 	border-radius: 14px !important;
 	border: 1.5px solid #E2E6E4 !important;
-	background: #F3F5F4 !important;
+	background: #F8F9F8 !important;
 	color: #9AA3A0 !important;
 	cursor: not-allowed !important;
+	opacity: 1 !important;
 }
 
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_close_date,
@@ -410,23 +441,60 @@
 	color: #9AA3A0 !important;
 }
 
-.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-number {
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid .mpwpb-date-number {
 	font-family: 'Sora', 'Segoe UI', sans-serif !important;
 	font-weight: 700 !important;
+	font-size: 16px !important;
+	color: #15202B !important;
 }
 
-.mpwpb-static-template .sidebar .mpwpb_popup .mptrs_day_with_date {
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid .mptrs_day_with_date {
 	font-family: 'Work Sans', sans-serif !important;
 	font-weight: 600 !important;
+	font-size: 10.5px !important;
+	color: #5B6763 !important;
+}
+
+/* Time slots -- previously a ragged flex-wrap where every pill sized
+   itself to its own label ("10:00 am" vs "Booked" vs "12:00 pm"), so
+   rows never lined up and the block read as noisy. Giving every slot
+   (bookable or booked) the same flex-basis turns it into a tidy, even
+   grid without touching `display` -- mpwpb_registration.js toggles
+   each day's panel with an inline display:flex/none, and an
+   !important display:grid here would fight that and show every day
+   at once. */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_select_time_holder {
+	margin-top: 2px !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_time_display {
+	gap: 8px !important;
+	padding: 0 !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_time_btn,
+.mpwpb-static-template .sidebar .mpwpb_popup ._mpBtn.mActive.booked {
+	flex: 0 0 calc(33.333% - 6px) !important;
+	max-width: calc(33.333% - 6px) !important;
+	box-sizing: border-box !important;
+	margin: 0 !important;
+	padding: 10px 4px !important;
+	border-radius: 10px !important;
+	font-size: 12.5px !important;
+	font-weight: 600 !important;
+	font-family: 'Work Sans', sans-serif !important;
+	text-align: center !important;
+	line-height: 1.3 !important;
 }
 
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_time_btn {
-	border-radius: 12px !important;
 	border: 1.5px solid #E2E6E4 !important;
-	font-weight: 600 !important;
-	font-family: 'Work Sans', sans-serif !important;
 	background: #FFFFFF !important;
 	color: #15202B !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_time_btn:hover {
+	border-color: var(--mpwpb_color_theme) !important;
 }
 
 /* mpwpb_registration.js always adds/removes mpActive and
@@ -439,6 +507,18 @@
 	background: var(--mpwpb_color_theme) !important;
 	border-color: var(--mpwpb_color_theme) !important;
 	color: #FFFFFF !important;
+}
+
+/* Already-booked slots (plain ._mpBtn.mActive.booked, no
+   .mpwpb_time_btn class -- that's why it needed its own box-sizing
+   rule above) stay the same size as a real slot but visually quiet:
+   dashed outline, muted fill, so they read as "unavailable" instead
+   of competing with the bookable pills around them. */
+.mpwpb-static-template .sidebar .mpwpb_popup ._mpBtn.mActive.booked {
+	border: 1.5px dashed #E2E6E4 !important;
+	background: #F8F9F8 !important;
+	color: #AEB5B2 !important;
+	cursor: not-allowed !important;
 }
 
 /* ---------- Checkout buttons ---------- */
@@ -1219,25 +1299,55 @@
 
 .mpwpb-static-template .sidebar .mpwpb_popup .popupFooter {
 	border-top: 1px solid #E2E6E4 !important;
-	padding: 16px 22px !important;
+	padding: 18px 22px !important;
+	box-shadow: 0 -4px 16px rgba(20,32,27,0.05) !important;
+	position: relative;
+	z-index: 1;
 }
 
+/* "N services selected" as a small teal badge instead of plain bold
+   text sitting inline with the price -- the previous version read as
+   one flat line with no hierarchy between the count and the total. */
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-selected-label {
-	font-family: 'Sora', 'Segoe UI', sans-serif !important;
+	/* flex-basis:100% (its parent h3 is flex-wrap:wrap below) forces
+	   this onto its own line, since it's just a sibling of a loose
+	   "Total :" text node + the price span inside h3 -- no wrapper
+	   element exists to put the badge on a separate row otherwise. */
+	flex-basis: 100% !important;
+	display: inline-flex !important;
+	align-items: center !important;
+	width: fit-content !important;
+	padding: 4px 11px !important;
+	margin-bottom: 4px !important;
+	border-radius: 999px !important;
+	background: #E8F3F1 !important;
+	font-family: 'Work Sans', sans-serif !important;
+	font-size: 11px !important;
 	font-weight: 700 !important;
-	color: #15202B !important;
+	color: #146B5F !important;
 }
 
+/* h3's children are the badge span, a loose "Total :" text node, and
+   the price span -- flex-wrap lets the badge's flex-basis:100% push
+   it onto its own line while "Total :" and the price flow together
+   baseline-aligned on the line below, the usual cart-footer hierarchy
+   (small context line, big number) instead of one flat run of text. */
 .mpwpb-static-template .sidebar .mpwpb_popup .next_service_area h3,
 .mpwpb-static-template .sidebar .mpwpb_popup .next_date_area h4.mpwpb-total {
+	display: flex !important;
+	flex-wrap: wrap !important;
+	align-items: baseline !important;
+	gap: 2px 6px !important;
 	font-family: 'Work Sans', sans-serif !important;
 	font-weight: 500 !important;
-	font-size: 13px !important;
+	font-size: 12px !important;
 	color: #5B6763 !important;
 }
 
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_total_bill {
-	font-weight: 700 !important;
+	font-family: 'Sora', 'Segoe UI', sans-serif !important;
+	font-size: 20px !important;
+	font-weight: 800 !important;
 	color: #15202B !important;
 	white-space: nowrap !important;
 }
@@ -1246,18 +1356,58 @@
    Checkout". #mpwpb_date_time_next_btn_id keeps its existing dimmed
    (opacity:.5, flat theme-color bg) vs. .mpwpb-cta-ready (full
    opacity) states from mpwpb-service-page-modern.css untouched --
-   only shape/typography change here. */
+   only shape/typography/elevation change here. A plain flat pill read
+   as an afterthought at the end of a booking flow; the glow shadow and
+   larger touch target make it read as the confident final step it is. */
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_service_next,
 .mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_date_time_next_btn_id {
 	border-radius: 999px !important;
 	font-family: 'Work Sans', sans-serif !important;
 	font-weight: 700 !important;
-	font-size: 13px !important;
+	font-size: 14px !important;
+	padding: 15px 26px !important;
 	color: #FFFFFF !important;
+	display: inline-flex !important;
+	align-items: center !important;
+	gap: 8px !important;
+	flex-shrink: 0 !important;
+	margin-left: auto !important;
+	transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* mpwpb-service-page-modern.css sets .justifyBetween to flex-wrap:wrap
+   unconditionally -- harmless with the old single-line h3, but now
+   that the badge+total take two lines (see .mpwpb-tree-selected-label
+   above), the row ran out of width and wrapped the Continue/Proceed
+   button onto its own line below instead of keeping it pinned to the
+   right. nowrap plus the button's own margin-left:auto above keep it
+   on the same row, right-aligned, regardless of how tall the left
+   side gets. */
+.mpwpb-static-template .sidebar .mpwpb_popup .next_service_area .justifyBetween,
+.mpwpb-static-template .sidebar .mpwpb_popup .next_date_area .justifyBetween {
+	flex-wrap: nowrap !important;
+	align-items: center !important;
+}
+
+/* .justifyBetween's own justify-content:space-between (base plugin
+   CSS) would spread Back / Total / Proceed evenly across the row --
+   flex-start plus a real gap clusters Back and Total together on the
+   left instead, leaving the Proceed/Continue button's own
+   margin-left:auto (above) to do all the right-pinning work by
+   itself, matching the mockup's grouped-left / pinned-right layout. */
+.mpwpb-static-template .sidebar .mpwpb_popup .next_date_area .justifyBetween {
+	justify-content: flex-start !important;
+	gap: 16px !important;
 }
 
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_service_next {
 	background: var(--mpwpb_color_theme) !important;
+	box-shadow: 0 6px 18px rgba(14,85,75,0.32) !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_service_next:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 8px 22px rgba(14,85,75,0.4) !important;
 }
 
 /* Back buttons -- ghost style, consistent with every other "Back" in
@@ -1377,4 +1527,62 @@
 
 .mpwpb-static-template .sidebar .mpwpb_popup tr:has(.order-actions--heading) {
 	display: none !important;
+}
+
+/* The "Billing address" block (.woocommerce-customer-details, from
+   WC's stock checkout/thankyou.php) is pure redundancy inside the
+   drawer -- the customer just typed every one of those fields into
+   the same drawer's billing form moments earlier. Drawer-scoped only;
+   left intact on a standalone WC order-received page where it's the
+   only record of that info the customer still has on screen. */
+.mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-customer-details {
+	display: none !important;
+}
+
+/* Whole .woocommerce-order-details section (WC's stock order table +
+   subtotal/total/payment-method rows + the actions row, plus this
+   plugin's own "Manage Your Booking" block and its Cancel/Reschedule
+   modals) removed from the drawer's confirmation view entirely -- the
+   customer just finished this exact booking in this exact drawer, so
+   a full re-statement of it immediately after, with management
+   actions for a booking seconds old, is pure clutter there. The
+   narrower .mpwpb-wc-account-actions / h2 / order-actions--heading
+   rules above are now redundant under this (nothing left to show
+   inside a display:none section) but harmless to leave -- they're
+   still the right fix if this section is ever un-hidden to show a
+   trimmed-down version instead of being hidden outright. Drawer-scoped
+   only; a standalone WC order-received page is untouched. */
+.mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-order-details {
+	display: none !important;
+}
+
+/* The .mpwpb_style wrapper div around this one button is a plain block
+   (full width), so the button -- itself inline-flex, which doesn't
+   respond to margin:auto -- just sits flush left inside it. Centering
+   the wrapper's own content is the fix; :has() with a direct-child
+   combinator keeps this scoped to specifically that wrapper instance,
+   not every other .mpwpb_style div in the widget. */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_style:has(> ._themeButton_mB) {
+	display: flex !important;
+	justify-content: center !important;
+}
+
+/* "Download Ticket" button -- [class*="_themeButton"] (mp_global's
+   shared utility) currently just paints it theme-colored with a 2px
+   square border, unlike every pill/shadow button elsewhere in this
+   widget. */
+.mpwpb-static-template .sidebar .mpwpb_popup ._themeButton_mB {
+	display: inline-flex !important;
+	align-items: center !important;
+	gap: 8px !important;
+	padding: 13px 22px !important;
+	border-radius: 999px !important;
+	border: none !important;
+	background: var(--mpwpb_color_theme) !important;
+	color: #FFFFFF !important;
+	font-family: 'Work Sans', sans-serif !important;
+	font-weight: 700 !important;
+	font-size: 13px !important;
+	box-shadow: 0 4px 14px rgba(14,85,75,0.25) !important;
+	cursor: pointer;
 }

@@ -297,18 +297,19 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
  * -------------------------------------------------------------------- */
 .mpwpb-static-template .mpwpb-details-page-tab,
 .mpwpb-static-template nav.mpwpb-details-page-tab{
-	position:sticky;top:8px;z-index:0;background:#fff !important;border:1px solid #eef1f6;
-	border-radius:12px;box-shadow:0 1px 3px rgba(15,23,42,.06);padding:6px !important;margin-bottom:24px !important;
+	position:sticky;top:8px;z-index:0;background:#fff !important;border:none;
+	border-radius:999px;box-shadow:0 1px 3px rgba(20,32,27,.06);padding:5px !important;margin:0 32px 24px !important;
+	display:inline-flex !important;width:auto !important;
 }
 .mpwpb-static-template nav ul{gap:4px !important;}
-.mpwpb-static-template nav ul li{flex:1;font-size:13.5px !important;}
+.mpwpb-static-template nav ul li{flex:0 0 auto;font-family:'Sora','Segoe UI',sans-serif;font-size:13px !important;}
 .mpwpb-static-template nav ul li a{
-	border-radius:9px;padding:10px 14px !important;font-weight:600;color:#475569;transition:.15s;
+	display:inline-flex;align-items:center;border-radius:999px;padding:10px 18px !important;font-weight:600;color:#5B6763;transition:.15s;
 }
-.mpwpb-static-template nav ul li a:hover{background:#f8fafc;color:var(--mpwpb_color_theme);}
+.mpwpb-static-template nav ul li a:hover{background:#F3F5F4;color:#15202B;}
 .mpwpb-static-template nav ul li.active a,
 .mpwpb-static-template nav ul li a.mpwpb-tab-active{
-	background-color:var(--mpwpb_color_theme) !important;color:#fff !important;
+	background-color:var(--mpwpb_color_theme) !important;color:#fff !important;font-weight:700;
 }
 
 /* Sidebar sticks on scroll the same way the tab bar above does. Only at
@@ -337,22 +338,57 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
 .mpwpb-static-template section#service-faq,
 .mpwpb-static-template section#service-details,
 .mpwpb-static-template section#service-reviews{scroll-margin-top:80px;}
-.mpwpb-static-template section#service-overview > h2,
-.mpwpb-static-template section#service-faq > h2,
-.mpwpb-static-template section#service-details > h2,
-.mpwpb-static-template section#service-reviews .mpwpb-reviews-head > h2{
-	font-size:19px !important;font-weight:800;color:var(--mpwpb_color_theme) !important;border-bottom:0 !important;margin-bottom:10px !important;
+/* Every section in the content column -- Overview/FAQ/Details/Gallery/
+   Reviews -- shares the SAME outer box: a 56px/32px margin (replacing
+   the blanket 30px from .mpwpb_registration section,
+   mpwpb_registration.css; scoped to .main's direct section children so
+   the booking drawer is unaffected). That's the full story for
+   Overview/Details/Reviews, which stay on the plain ivory page
+   background per the Service Page Content Column design artifact.
+   FAQ and Gallery alternate with a mint panel INSTEAD -- same box,
+   same width as every other section (no bleeding wider; earlier
+   attempts tried to make the panel wider via negative margins
+   cancelling .main's own padding, which needed near-identical
+   selectors fighting for specificity and kept losing for one section
+   or another), just with its own background/border/radius and extra
+   internal padding layered on top so the panel reads as a frame
+   around its content rather than changing the section's actual size
+   or position. */
+.mpwpb-static-template .main{padding:0;box-sizing:border-box;}
+.mpwpb-static-template .main > section{margin:56px 32px !important;}
+.mpwpb-static-template .main > section#service-faq,
+.mpwpb-static-template .main > .mpwpb-gallery-section{
+	background:#F0F7F5;border:1px solid #E2EEEA;border-radius:28px;padding:48px 32px !important;
 }
-/* User-authored (WYSIWYG) overview content.
- * The shared `.mpwpb_style small/span/strong{display:flex}` utility
- * (mpwpb_plugin_global.css) is meant for the plugin's button/menu chrome
- * but leaks into this rich text, forcing bold labels and list items onto
- * their own lines. Keep authored inline formatting inline, and restore
- * normal list rendering. Scoped to .mpwpb-overview-content so the flex
- * utility still applies to the stats/hours markup below it. */
+/* Every section heading on this page is now overridden individually,
+   each next to its own section's rules below (kicker pill + 26px
+   dark-ink heading) -- Overview/FAQ/Details/Reviews all follow the
+   same pattern, so there's no shared heading rule left to keep here. */
+/* Overview kicker pill + section-specific heading, same pattern as the
+   FAQ section below -- the shared rule above still covers Details/
+   Reviews/the rest of this page's headings; only #service-overview's
+   own heading is bumped up and recoloured, by source order. */
+.mpwpb-static-template .mpwpb-overview-kicker{
+	display:inline-flex;align-items:center;padding:5px 12px;border-radius:999px;background:#E8F3F1;color:var(--mpwpb_color_theme);
+	font-family:'Sora','Segoe UI',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;
+}
+.mpwpb-static-template section#service-overview > h2{
+	font-size:26px !important;color:#15202B !important;margin-bottom:28px !important;
+}
+
+/* User-authored (WYSIWYG) overview content, restyled as a 2-up grid of
+ * cards (checkmark badge + bold label + description) matching the
+ * Service Overview design artifact. The shared `.mpwpb_style small/
+ * span/strong{display:flex}` utility (mpwpb_plugin_global.css) is meant
+ * for the plugin's button/menu chrome but leaks into this rich text --
+ * overridden below. This assumes the admin's authored content is a
+ * <ul><li><strong>Label</strong>description</li></ul> list (the actual
+ * shape saved for this service); a differently-shaped WYSIWYG block
+ * still renders (just without the badge-above-label split) since
+ * nothing here requires that shape.
+ */
 .mpwpb-static-template #service-overview .mpwpb-overview-content small,
 .mpwpb-static-template #service-overview .mpwpb-overview-content span,
-.mpwpb-static-template #service-overview .mpwpb-overview-content strong,
 .mpwpb-static-template #service-overview .mpwpb-overview-content b,
 .mpwpb-static-template #service-overview .mpwpb-overview-content em,
 .mpwpb-static-template #service-overview .mpwpb-overview-content i{
@@ -360,17 +396,41 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
 }
 .mpwpb-static-template #service-overview .mpwpb-overview-content ol,
 .mpwpb-static-template #service-overview .mpwpb-overview-content ul{
-	margin:10px 0 0 0 !important;
-	padding-left:22px !important;
+	display:grid !important;grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:14px !important;
+	margin:0 0 28px 0 !important;padding-left:0 !important;list-style:none !important;
 }
-.mpwpb-static-template #service-overview .mpwpb-overview-content ol{list-style:decimal outside !important;}
-.mpwpb-static-template #service-overview .mpwpb-overview-content ul{list-style:disc outside !important;}
 .mpwpb-static-template #service-overview .mpwpb-overview-content li{
-	display:list-item !important;
-	margin:0 0 6px !important;
+	display:block !important;
+	margin:0 !important;background:#fff;border:1px solid #ECECE6;border-radius:18px;box-shadow:0 1px 3px rgba(20,32,27,.05);padding:20px;
 }
-/* Service Details is also administrator-authored rich text. Keep its inline
-   formatting and list structure from being changed by shared UI utilities. */
+.mpwpb-static-template #service-overview .mpwpb-overview-content li::before{
+	content:"\2713";display:flex !important;align-items:center;justify-content:center;
+	width:34px;height:34px;border-radius:50%;background:var(--mpwpb_color_theme);color:#fff;
+	font-size:15px;font-weight:700;margin-bottom:12px;
+}
+.mpwpb-static-template #service-overview .mpwpb-overview-content li strong{
+	display:block !important;font-family:'Sora','Segoe UI',sans-serif;font-weight:700;font-size:14.5px;color:#15202B;margin-bottom:6px;
+}
+.mpwpb-static-template #service-overview .mpwpb-overview-content{
+	font-family:'Work Sans',sans-serif;font-size:13px;line-height:1.65;color:#5B6763;
+}
+/* Details kicker pill + heading, same pattern as Overview/FAQ/Gallery. */
+.mpwpb-static-template .mpwpb-details-kicker{
+	display:inline-flex;align-items:center;padding:5px 12px;border-radius:999px;background:#E8F3F1;color:var(--mpwpb_color_theme);
+	font-family:'Sora','Segoe UI',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;
+}
+.mpwpb-static-template section#service-details > h2{
+	font-size:26px !important;color:#15202B !important;margin-bottom:16px !important;
+}
+/* Service Details is also administrator-authored rich text -- could be a
+   plain paragraph or a list, so instead of assuming either shape it's
+   wrapped in one card (matching the other sections' card language)
+   rather than restructured. Keep its inline formatting and list
+   structure from being changed by shared UI utilities. */
+.mpwpb-static-template #service-details .mpwpb-service-details-content{
+	background:#fff;border:1px solid #ECECE6;border-radius:18px;box-shadow:0 1px 3px rgba(20,32,27,.05);padding:22px 24px;
+	font-family:'Work Sans',sans-serif;font-size:13.5px;line-height:1.75;color:#5B6763;
+}
 .mpwpb-static-template #service-details .mpwpb-service-details-content small,
 .mpwpb-static-template #service-details .mpwpb-service-details-content span,
 .mpwpb-static-template #service-details .mpwpb-service-details-content strong,
@@ -392,31 +452,66 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
 }
 #service-staff h2{font-size:16px !important;}
 
-/* Title + "Write a Review" trigger, same row, button pinned top-right. */
+/* Reviews kicker pill + heading (left block) with the "Write a Review"
+   button pinned top-right -- same header layout as the Gallery section. */
 .mpwpb-reviews-head{
-	display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 16px;
+	display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:0 0 22px;flex-wrap:wrap;
 }
+.mpwpb-reviews-kicker{
+	display:inline-flex;align-items:center;padding:5px 12px;border-radius:999px;background:#E8F3F1;color:var(--mpwpb_color_theme);
+	font-family:'Sora','Segoe UI',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;
+}
+.mpwpb-static-template section#service-reviews .mpwpb-reviews-head h2{
+	font-size:26px !important;color:#15202B !important;margin:0 0 10px !important;
+}
+/* Average-rating line under the heading -- reuses the same
+   mpwpb_service_review_ratings/_rating_text meta the hero section's own
+   rating display already reads (MPWPB_Reviews_Admin::update_service_rating()
+   keeps both current on every approval/status change), so it always
+   matches what's actually approved below. Hidden entirely when there
+   are no approved reviews yet (show_service_reviews() in
+   Frontend/MPWPB_Static_Template.php). */
+.mpwpb-reviews-summary{display:flex;align-items:center;gap:8px;}
+.mpwpb-reviews-summary-stars{display:inline-flex;gap:1px;color:#F0A93B;font-size:13px;}
+.mpwpb-reviews-summary-num{font-family:'Sora','Segoe UI',sans-serif;font-weight:700;font-size:13.5px;color:#15202B;}
+.mpwpb-reviews-summary-count{font-family:'Work Sans',sans-serif;font-size:13px;color:#5B6763;}
+/* mp_global/assets/mp_style/mpwpb_plugin_global.css has unscoped
+   .mpwpb_style button rules (display:flex+justify-content:center,
+   border-radius:var(--mpwpb_dbr), font-size/weight, a hover background
+   that swaps to var(--mpwpb_color_theme_cc)) that all out-specify a
+   plain single-class selector like this one (class+tag beats class
+   alone). !important throughout is required to actually win -- same
+   reason every button in the booking drawer reskin already needs it. */
 .mpwpb-write-review-btn{
-	flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;border:none;border-radius:999px;
-	background:var(--mpwpb_color_theme);color:#fff;font-size:12.5px;font-weight:700;
-	padding:9px 16px;cursor:pointer;transition:.15s;
+	flex:0 0 auto !important;display:inline-flex !important;align-items:center !important;justify-content:flex-start !important;
+	gap:9px !important;border:none !important;border-radius:999px !important;
+	background:var(--mpwpb_color_theme) !important;color:#fff !important;font-family:'Sora','Segoe UI',sans-serif !important;
+	font-size:13px !important;font-weight:700 !important;text-transform:none !important;
+	padding:12px 20px 12px 14px !important;cursor:pointer;box-shadow:0 6px 16px rgba(14,85,75,.25);transition:filter .15s;
 }
-.mpwpb-write-review-btn:hover{filter:brightness(.92);}
+.mpwpb-write-review-btn:hover,
+.mpwpb-write-review-btn:focus{
+	filter:brightness(.93);opacity:1 !important;background-color:var(--mpwpb_color_theme) !important;color:#fff !important;
+}
+.mpwpb-write-review-icon{
+	display:inline-flex !important;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50% !important;
+	background:rgba(255,255,255,.18);font-size:11px;
+}
 
 /* -------------------------------------------------------------------- *
  *  Reviews: approved-review list + the logged-in submission form
  * -------------------------------------------------------------------- */
 .mpwpb-reviews-list{display:flex;flex-direction:column;gap:14px;margin-bottom:24px;}
-.mpwpb-no-reviews{font-size:13.5px;color:#8892a4;}
-.mpwpb-review-item{border:1px solid #e5e9f0;border-radius:var(--mpwpb-sp-radius);background:#fff;padding:16px;}
-.mpwpb-review-item-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;}
+.mpwpb-no-reviews{font-family:'Work Sans',sans-serif;font-size:13.5px;color:#5B6763;}
+.mpwpb-review-item{border:1px solid #ECECE6;border-radius:18px;background:#fff;box-shadow:0 1px 3px rgba(20,32,27,.05);padding:20px 22px;}
+.mpwpb-review-item-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;}
 .mpwpb-review-stars{color:#fbbf24;font-size:13px;letter-spacing:1px;}
-.mpwpb-review-stars .far.fa-star{color:#e2e8f0;}
-.mpwpb-review-author{font-size:13.5px;font-weight:700;color:#1e293b;}
-.mpwpb-review-date{font-size:12px;color:#94a3b8;margin-left:auto;}
-.mpwpb-review-title{margin:0 0 4px;font-size:14px;font-weight:700;color:#1e293b;}
+.mpwpb-review-stars .far.fa-star{color:#E2E6E4;}
+.mpwpb-review-author{font-family:'Sora','Segoe UI',sans-serif;font-size:13.5px;font-weight:700;color:#15202B;}
+.mpwpb-review-date{font-family:'Work Sans',sans-serif;font-size:12px;color:#9AA3A0;margin-left:auto;}
+.mpwpb-review-title{margin:0 0 4px;font-family:'Sora','Segoe UI',sans-serif;font-size:14px;font-weight:700;color:#15202B;}
 .mpwpb-review-item h4.mpwpb-review-title{font-size:15px !important;}
-.mpwpb-review-content{margin:0;font-size:13.5px;color:#475569;line-height:1.6;}
+.mpwpb-review-content{margin:0;font-family:'Work Sans',sans-serif;font-size:13.5px;color:#5B6763;line-height:1.7;}
 
 .mpwpb-review-form-wrap{padding-top:2px;}
 .mpwpb-review-login-notice{font-size:13.5px;color:#64748b;}
@@ -495,15 +590,15 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
 .mpwpb-review-msg.error{color:#dc2626;}
 
 /* Stats cards */
-.mpwpb-overview-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0;}
+.mpwpb-overview-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:0 0 28px;}
 /* "Bookings completed" is omitted entirely (not just blanked) when there are
    no bookings yet -- the remaining two stats then split the row evenly. */
 .mpwpb-overview-stats.mpwpb-overview-stats--two{grid-template-columns:repeat(2,1fr);}
 .mpwpb-overview-stat{
-	text-align:center;padding:16px 10px;border:1px solid #e5e9f0;border-radius:var(--mpwpb-sp-radius);background:#E5EEFF;
+	text-align:center;padding:18px 14px;border:1px solid #E2EEEA;border-radius:16px;background:#F0F7F5;
 }
-.mpwpb-overview-stat-num{margin:0;font-size:20px;font-weight:800;color:var(--mpwpb_color_theme);}
-.mpwpb-overview-stat-label{margin:4px 0 0;font-size:11.5px;color:#8892a4;}
+.mpwpb-overview-stat-num{margin:0 0 2px;font-family:'Sora','Segoe UI',sans-serif;font-size:24px;font-weight:800;color:var(--mpwpb_color_theme);}
+.mpwpb-overview-stat-label{margin:0;font-family:'Work Sans',sans-serif;font-size:11.5px;font-weight:500;color:#5B6763;}
 
 .mpwpb-overview-subhead{font-size:14.5px;font-weight:700;color:#1e293b;margin:28px 0 12px;}
 
@@ -544,30 +639,73 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
 
 /* Hours */
 .mpwpb-hours-strip{
-	display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin-top:14px;
-	padding:13px 16px;border:1px solid #e5e9f0;border-radius:12px;background:#E5EEFF;
+	display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;margin-top:0;
+	padding:16px 20px;border:1px solid #ECECE6;border-radius:16px;background:#fff;box-shadow:0 1px 3px rgba(20,32,27,.05);
 }
-.mpwpb-hours-open{margin:0;display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:700;color:#334155;}
-.mpwpb-hours-open i{color:var(--mpwpb_color_theme);}
-.mpwpb-hours-time{margin:0;font-size:13px;color:#64748b;}
+.mpwpb-hours-open{margin:0;display:flex;align-items:center;gap:12px;font-family:'Work Sans',sans-serif;font-size:13px;font-weight:500;color:#15202B;}
+.mpwpb-hours-open i{
+	flex-shrink:0;width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;
+	border-radius:50%;background:#E8F3F1;color:var(--mpwpb_color_theme);font-size:13px;
+}
+.mpwpb-hours-time{
+	margin:0;display:inline-flex;align-items:center;padding:7px 14px;border-radius:999px;background:#E8F3F1;
+	font-family:'Sora','Segoe UI',sans-serif;font-size:12.5px;font-weight:700;color:var(--mpwpb_color_theme);white-space:nowrap;
+}
 
 /* -------------------------------------------------------------------- *
  *  FAQ — reused .mpwpb-serivice-faq / .faq-header / .faq-content markup
- *  and the existing slideToggle behavior, restyled as row cards with a
- *  circular +/- badge.
- * -------------------------------------------------------------------- */
+ *  and the existing slideToggle behavior (mpwpb_registration.js toggles
+ *  .fa-plus/.fa-minus on click -- used directly below as the open/closed
+ *  state hook instead of adding a new class), restyled as cards with a
+ *  pastel icon badge that fills solid on open and a soft shadow lift,
+ *  matching the Service FAQ design artifact. The kicker pill + larger
+ *  dark-ink heading + subtitle (new markup, show_service_faq() in
+ *  Frontend/MPWPB_Static_Template.php) are specific to this section --
+ *  every other section heading stays the shared smaller theme-colour
+ *  style below (same selector, same specificity, just later in the
+ *  file, so only #service-faq's own heading is overridden). */
+.mpwpb-static-template .mpwpb-faq-kicker{
+	display:inline-flex;align-items:center;padding:5px 12px;border-radius:999px;background:#E8F3F1;color:var(--mpwpb_color_theme);
+	font-family:'Sora','Segoe UI',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;
+}
+.mpwpb-static-template section#service-faq > h2{
+	font-size:26px !important;color:#15202B !important;margin-bottom:8px !important;
+}
+.mpwpb-static-template .mpwpb-faq-subtitle{
+	font-family:'Work Sans',sans-serif;font-size:13.5px;color:#5B6763;line-height:1.6;margin:0 0 20px;
+}
 .mpwpb-static-template .mpwpb-serivice-faq{
-	border:1px solid #e5e9f0;border-radius:12px;overflow:hidden;background:#fff;margin-bottom:10px;
+	border:1px solid #ECECE6;border-radius:20px;overflow:hidden;background:#fff;margin-bottom:16px;
+	box-shadow:0 1px 3px rgba(20,32,27,.06);transition:box-shadow .2s ease;
+}
+.mpwpb-static-template .mpwpb-serivice-faq:has(.faq-header i.fa-minus){
+	box-shadow:0 10px 24px rgba(20,32,27,.1);
 }
 .mpwpb-static-template .mpwpb-serivice-faq .faq-header{
-	display:flex;align-items:center;gap:12px;padding:15px 16px !important;margin:0 !important;font-size:13.5px;font-weight:700;color:#1e293b;
+	display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 24px !important;margin:0 !important;cursor:pointer;
+	font-family:'Sora','Segoe UI',sans-serif;font-size:16px;font-weight:700;color:#15202B;
 }
 .mpwpb-static-template .mpwpb-serivice-faq .faq-header i{
-	flex:0 0 auto;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;
-	border-radius:999px;background:var(--mpwpb_color_theme_88,rgba(0,0,0,.1));color:#fff;font-size:10px;margin:0 !important;
+	flex:0 0 auto;order:2;width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;
+	border-radius:999px;background:#F0F4F3;color:var(--mpwpb_color_theme);font-size:13px;margin:0 !important;
+	transition:background .2s ease,color .2s ease;
+}
+.mpwpb-static-template .mpwpb-serivice-faq .faq-header i.fa-minus{
+	background:var(--mpwpb_color_theme);color:#fff;
+}
+/* The header's icon markup comes BEFORE the title text node in the PHP
+   (<i>...</i> Title) -- `order` above visually moves the badge to the
+   end, after the text's own anonymous flex item, without touching the
+   template, matching the design's title-left/badge-right layout. */
+/* Font Awesome's plus/minus toggle (mpwpb_registration.js) only ever
+   swaps between a plus and a flat minus glyph; the design calls for an
+   actual close "x" once open, so the open state's icon content is
+   swapped at the font level instead of touching the toggle's classes. */
+.mpwpb-static-template .mpwpb-serivice-faq .faq-header i.fa-minus::before{
+	content:"\f00d";
 }
 .mpwpb-static-template .mpwpb-serivice-faq .faq-content{
-	padding:0 16px 16px 50px !important;font-size:13px;color:#64748b;line-height:1.6;
+	padding:0 24px 22px !important;font-family:'Work Sans',sans-serif;font-size:14px;color:#5B6763;line-height:1.75;
 }
 
 /* -------------------------------------------------------------------- *
@@ -586,32 +724,34 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
  *  (mp_global/assets/mp_style/mpwpb_plugin_global.css) — only the custom
  *  round prev/next buttons here are shown, same as the date carousel.
  * -------------------------------------------------------------------- */
-/* Now a sibling of <main> (moved there in static.php), not a flex child of
-   it -- <main> itself is the .main(60%)/.sidebar(40%) flex row (see
-   .mpwpb_registration main in mpwpb_registration.css), and putting this
-   inside that row as a 3rd item (even with flex-wrap) knocked .sidebar onto
-   its own line too, since .main + gap + .sidebar's hypothetical size already
-   slightly exceeds 100% before shrinking is applied. Sitting outside <main>
-   avoids that flex math entirely; the same max-width/centering/padding as
-   .mpwpb_registration main is repeated here so it still lines up visually. */
+/* A normal flex child of .main now (static.php renders it between Details
+   and Reviews, inside the same 70%-wide content column as every other
+   section) -- no special width/centering of its own needed any more. */
 .mpwpb-static-template .mpwpb-gallery-section{
-	max-width:1440px;width:100%;margin:28px auto 0;padding:0 10px;box-sizing:border-box;scroll-margin-top:80px;
+	scroll-margin-top:80px;
+}
+.mpwpb-static-template .mpwpb-gallery-kicker{
+	display:inline-flex;align-items:center;padding:5px 12px;border-radius:999px;background:#E8F3F1;color:var(--mpwpb_color_theme);
+	font-family:'Sora','Segoe UI',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;
 }
 .mpwpb-static-template .mpwpb-gallery-head{
-	display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px;
+	display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:22px;flex-wrap:wrap;
 }
 .mpwpb-static-template .mpwpb-gallery-section h2{
-	font-size:19px !important;font-weight:800;color:var(--mpwpb_color_theme) !important;border-bottom:0 !important;margin:0 !important;
+	font-size:26px !important;font-weight:800;color:#15202B !important;border-bottom:0 !important;margin:0 0 6px !important;
+	font-family:'Sora','Segoe UI',sans-serif;
 }
-.mpwpb-static-template .mpwpb-gallery-sub{margin:4px 0 0;font-size:13px;color:#64748b;}
-.mpwpb-static-template .mpwpb-gallery-nav{display:flex;align-items:center;gap:8px;flex:0 0 auto;padding-top:2px;}
+.mpwpb-static-template .mpwpb-gallery-sub{margin:0;font-family:'Work Sans',sans-serif;font-size:13.5px;color:#5B6763;}
+.mpwpb-static-template .mpwpb-gallery-nav{display:flex;align-items:center;gap:8px;flex:0 0 auto;}
 .mpwpb-static-template .mpwpb-gallery-nav .prev,
 .mpwpb-static-template .mpwpb-gallery-nav .next{
-	width:30px;height:30px;display:flex;align-items:center;justify-content:center;
-	border-radius:50%;border:1px solid #e5e9f0;color:var(--mpwpb_color_theme);font-size:12px;cursor:pointer;transition:.15s;
+	width:38px;height:38px;display:flex;align-items:center;justify-content:center;
+	border-radius:50%;border:none;font-size:13px;cursor:pointer;transition:background .15s,filter .15s;
 }
-.mpwpb-static-template .mpwpb-gallery-nav .prev:hover,
-.mpwpb-static-template .mpwpb-gallery-nav .next:hover{background:#F0FDFA;}
+.mpwpb-static-template .mpwpb-gallery-nav .prev{background:#F3F5F4;color:#15202B;}
+.mpwpb-static-template .mpwpb-gallery-nav .prev:hover{background:#E2E6E4;}
+.mpwpb-static-template .mpwpb-gallery-nav .next{background:var(--mpwpb_color_theme);color:#fff;}
+.mpwpb-static-template .mpwpb-gallery-nav .next:hover{filter:brightness(.92);}
 /* mpwpb-owl-carousel is a custom stand-in for the library's own
    ".owl-carousel" class (never added to the markup here, matching the
    existing .mpwpb_date_carousel widget in mpwpb_registration.css) — the
@@ -622,17 +762,30 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
 .mpwpb-static-template .mpwpb-gallery-section .mpwpb-owl-carousel .owl-stage{display:flex;}
 .mpwpb-static-template .mpwpb-gallery-section .mpwpb-owl-carousel .owl-item{display:flex;padding:0 6px;}
 .mpwpb-static-template .mpwpb-gallery-item{
-	position:relative;width:100%;border-radius:var(--mpwpb-sp-radius);overflow:hidden;aspect-ratio:4/3;
-	border:1px solid #e5e9f0;background:#f1f4f9;cursor:zoom-in;
+	position:relative;width:100%;border-radius:18px;overflow:hidden;aspect-ratio:4/3;
+	border:1px solid #E2EEEA;background:#fff;cursor:zoom-in;
 }
 .mpwpb-static-template .mpwpb-gallery-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s;}
 .mpwpb-gallery-item img:not(.mp_wp_editor img) {height: 100% !important; }
 .mpwpb-static-template .mpwpb-gallery-item:hover img{transform:scale(1.05);}
 .mpwpb-static-template .mpwpb-gallery-zoom{
-	position:absolute;top:8px;right:8px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;
-	border-radius:50%;background:rgba(15,23,42,.55);color:#fff;font-size:11px;opacity:0;transition:opacity .15s;
+	position:absolute;right:10px;bottom:10px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;
+	border-radius:50%;background:rgba(255,255,255,.92);color:var(--mpwpb_color_theme);font-size:12px;opacity:0;transition:opacity .15s;
 }
 .mpwpb-static-template .mpwpb-gallery-item:hover .mpwpb-gallery-zoom{opacity:1;}
+
+/* Owl's own dot pager -- only .owl-nav is hidden by the shared
+   .mpwpb_style rule (mpwpb_plugin_global.css), so .owl-dots already
+   renders, just unstyled; pill-shaped to match the gallery design. */
+.mpwpb-static-template .mpwpb-gallery-section .owl-dots{
+	display:flex;align-items:center;justify-content:center;gap:6px;margin-top:16px;
+}
+.mpwpb-static-template .mpwpb-gallery-section .owl-dot span{
+	display:block;width:6px;height:6px;border-radius:999px;background:#E2E6E4;transition:width .2s ease,background .2s ease;
+}
+.mpwpb-static-template .mpwpb-gallery-section .owl-dot.active span{
+	width:18px;background:var(--mpwpb_color_theme);
+}
 
 /* -------------------------------------------------------------------- *
  *  "Our Past Work" click-to-zoom lightbox — reuses the plugin's existing

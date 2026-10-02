@@ -167,7 +167,7 @@
 				wp_enqueue_style('mpwpb', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb.css', [], self::asset_version('/assets/frontend/mpwpb.css'));
 				wp_enqueue_script('mpwpb', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb.js', ['jquery'], self::asset_version('/assets/frontend/mpwpb.js'), true);
 				wp_enqueue_style('mpwpb_registration', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_registration.css', [], self::asset_version('/assets/frontend/mpwpb_registration.css'));
-				wp_enqueue_script('mpwpb_registration', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_registration.js', ['jquery'], MPWPB_VERSION);
+				wp_enqueue_script('mpwpb_registration', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_registration.js', ['jquery'], self::asset_version('/assets/frontend/mpwpb_registration.js'));
 				wp_enqueue_style('mpwpb_coupon', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-coupon.css', [], MPWPB_VERSION);
 				// Depends on mpwpb_registration (not just jquery) so the
 				// mpwpb_ajax object it localizes is guaranteed to already exist.

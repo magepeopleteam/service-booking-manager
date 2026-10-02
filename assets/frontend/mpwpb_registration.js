@@ -1068,8 +1068,31 @@ function mpwpb_price_calculation($this) {
             if (!orderId || !orderKey) {
                 return true;
             }
-            mpwpb_show_wc_confirmation($(this).closest('div.mpwpb_registration'), orderId, orderKey);
-            return false;
+            var $parent = $(this).closest('div.mpwpb_registration');
+
+            // Both WooCommerce's own submit() (assets/js/frontend/checkout.js)
+            // and this plugin's own submit.mpwpbInlineFallback handler read
+            // `result.redirect` and gate it behind this same event's return
+            // value: `triggerHandler(...) !== false`. Returning false used to
+            // be how this stopped a full-page navigation to result.redirect --
+            // but checkout.js *also* uses that same false to decide the AJAX
+            // response was invalid, so it fell into its
+            // `else { throw 'Invalid response'; }` branch purely because of
+            // OUR return value and called submit_error(), prepending a
+            // generic "An error occurred" .woocommerce-error notice on an
+            // order that had just succeeded.
+            //
+            // `result` is passed by reference, so rewriting result.redirect
+            // to the current URL plus a fragment and returning true (instead
+            // of false) lets both callers' `window.location = result.redirect`
+            // run normally -- a fragment-only change is a same-document
+            // navigation in every browser, so nothing actually reloads -- while
+            // skipping checkout.js's error branch entirely. No notice is ever
+            // inserted, so there is nothing to flash and nothing to clean up.
+            result.redirect = window.location.href.split('#')[0] + '#mpwpb-booking-confirmed';
+
+            mpwpb_show_wc_confirmation($parent, orderId, orderKey);
+            return true;
         });
     }
 
@@ -1223,7 +1246,7 @@ function mpwpb_price_calculation($this) {
             parent.data('mpwpbStep', 'confirmation');
             parent.find('.popupFooter').addClass('mpwpb-inline-checkout-footer-hidden');
             mpwpb_set_progress(parent, 'confirmation');
-            var cleanUrl = window.location.href.replace(/([?&])(mpwpb_inline_order|key)=[^&#]*/g, '$1').replace(/[?&]$/, '');
+            var cleanUrl = window.location.href.replace(/([?&])(mpwpb_inline_order|key)=[^&#]*/g, '$1').replace(/[?&]$/, '').replace(/#mpwpb-booking-confirmed$/, '');
             window.history.replaceState({}, document.title, cleanUrl);
 			$confirmation.find('h2, .woocommerce-order-overview').first().attr('tabindex', '-1').trigger('focus');
         }).always(function () {

@@ -52,6 +52,8 @@
 				<?php do_action('mpwpb_service_faq'); ?>
                 <!-- dispaly service Details section using this hook -->
 				<?php do_action('mpwpb_service_details'); ?>
+                <!-- dispaly service past work gallery section using this hook -->
+				<?php do_action('mpwpb_service_gallery'); ?>
                 <!-- dispaly service Reviews section using this hook -->
 				<?php do_action('mpwpb_service_reviews'); ?>
 
@@ -61,7 +63,5 @@
 	            <?php include(MPWPB_Function::template_path('registration/static_registration.php')); ?>
             </div>
         </main>
-        <!-- dispaly service past work gallery section using this hook -->
-		<?php do_action('mpwpb_service_gallery'); ?>
     </div>
 <?php
