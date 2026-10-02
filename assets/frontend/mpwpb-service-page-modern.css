@@ -326,9 +326,22 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
    .sidebar (position:sticky, z-index:auto) can lose to the carousel's own
    internally-positioned stage/items, which sit later in DOM order — so the
    gallery painted over the still-stuck sidebar. An explicit z-index always
-   beats a z-index:auto sibling regardless of DOM order, so this fixes it. */
+   beats a z-index:auto sibling regardless of DOM order, so this fixes it.
+   This z-index also matters for a completely different reason: .sidebar,
+   by becoming position:sticky + z-index here, establishes its own
+   stacking context -- so the booking popup nested inside it (.mpwpb_popup,
+   z-index:100000 in mpwpb-booking-widget-reskin.css) is only ever
+   compared at THIS z-index:5 level against anything outside .sidebar,
+   no matter how high the popup's own z-index is set; a z-index only has
+   meaning within its parent stacking context. The theme's own site
+   header (a sibling far up the tree, outside .sidebar entirely) was
+   outranking that whole stacking context and painting over the open
+   drawer's header/close button as a result. Matching the popup's own
+   convention (999999, one below WordPress's admin-bar-safe 100000 the
+   popup itself uses, high enough to beat any normal page content)
+   fixes it without touching the popup's own rule. */
 @media (min-width:1024px){
-	.mpwpb-static-template .sidebar{position:sticky;top:8px;align-self:flex-start;z-index:5;}
+	.mpwpb-static-template .sidebar{position:sticky;top:8px;align-self:flex-start;z-index:999999;}
 }
 
 /* -------------------------------------------------------------------- *
