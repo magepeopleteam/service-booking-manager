@@ -180,6 +180,19 @@
 				// pure reskin, loaded after mpwpb_registration so its overrides win.
 				wp_enqueue_style('mpwpb_service_page_modern', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-service-page-modern.css', ['mpwpb_registration'], self::asset_version('/assets/frontend/mpwpb-service-page-modern.css'));
 				wp_enqueue_script('mpwpb_service_page_modern', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-service-page-modern.js', ['jquery', 'mpwpb_registration'], MPWPB_VERSION, true);
+				// Static sidebar + popup booking widget redesign — pure reskin
+				// (typography, pill buttons/badges, card radius), loaded after
+				// both of the above so its overrides win over either. The font
+				// stylesheet has no local file to version, so it's registered
+				// with a plain null version (its own URL is already
+				// Google-cached/fingerprinted) and no deps, so it fetches in
+				// parallel with everything else instead of blocking on them.
+				wp_enqueue_style('mpwpb_booking_widget_reskin_fonts', 'https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Work+Sans:wght@400;500;600;700&display=swap', [], null);
+				wp_enqueue_style('mpwpb_booking_widget_reskin', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-booking-widget-reskin.css', ['mpwpb_registration', 'mpwpb_service_page_modern', 'mpwpb_booking_widget_reskin_fonts'], self::asset_version('/assets/frontend/mpwpb-booking-widget-reskin.css'));
+				// Reskin-only behavior (currently just the collapsed coupon
+				// box toggle) -- never selection/cart/checkout logic, which
+				// stays entirely in mpwpb_registration.js.
+				wp_enqueue_script('mpwpb_booking_widget_reskin', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-booking-widget-reskin.js', ['jquery'], self::asset_version('/assets/frontend/mpwpb-booking-widget-reskin.js'), true);
 				// "Our services" sidebar tree expand/collapse only — selecting a
 				// service still goes through mpwpb_registration.js unchanged.
 				wp_enqueue_script('mpwpb_service_tree', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-service-tree.js', ['jquery', 'mpwpb_registration'], MPWPB_VERSION, true);

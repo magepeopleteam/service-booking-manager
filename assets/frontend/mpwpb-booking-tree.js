@@ -377,6 +377,20 @@
 			$allServiceArea.prepend($tree);
 		}
 
+		// Pre-select the first service by default so the tree (and the
+		// sidebar tile it mirrors -- mpwpb-service-tree.js) never sits empty
+		// on load; the tap-to-add hint still explains how to change it.
+		// Skipped when a reorder link has its own services queued
+		// (mpwpb_registration.js's reorder-prefill, which runs on a delay
+		// after this and would otherwise end up stacked on top of this
+		// default) or when something is already selected, e.g. a sticky
+		// selection restored server-side after a validation error.
+		var reorderPending = typeof mpwpbReorderPrefill !== 'undefined' && mpwpbReorderPrefill &&
+			$.isArray(mpwpbReorderPrefill.service_keys) && mpwpbReorderPrefill.service_keys.length > 0;
+		if (!reorderPending && !$tree.find('.mpwpb_service_item.mpActive').length) {
+			$tree.find('.mpwpb_service_item').first().find('.mpwpb_service_button').first().trigger('click');
+		}
+
 		// Expand/collapse is handled by the existing document-delegated
 		// handler in mpwpb-service-tree.js (matches any .mpwpb-service-tree
 		// [data-tree-toggle], including this dynamically-built one) -- no

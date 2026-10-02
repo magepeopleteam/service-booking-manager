@@ -1,0 +1,1380 @@
+/**
+ * Visual reskin of the "static sidebar + popup" booking widget only
+ * (mpwpb-service-page-modern.css's own scope), matching the Service
+ * Booking Flow Redesign mockup: Sora/Work Sans typography, pill
+ * buttons/badges, card-radius rows, and the plugin's own
+ * --mpwpb_color_theme as the single accent (kept admin-configurable
+ * rather than hardcoded, since it already defaults close to the
+ * mockup's teal).
+ *
+ * Pure CSS override -- no markup, class, or JS behavior changes.
+ * Loaded after mpwpb_registration.css and mpwpb-service-page-modern.css
+ * (see inc/MPWPB_Dependencies.php), matching several of its rules'
+ * specificity/!important so overrides actually win rather than lose a
+ * tie on load order alone.
+ *
+ * The Sora/Work Sans Google Fonts stylesheet is loaded as its own
+ * wp_enqueue_style() call (inc/MPWPB_Dependencies.php), not a CSS
+ * @import here -- @import is render-blocking (the browser can't even
+ * start fetching it until this whole file is parsed) and more fragile
+ * under caching/minification plugins than a normal <link>.
+ */
+
+.mpwpb-static-template,
+.mpwpb-static-template .mpwpb_popup {
+	font-family: 'Work Sans', 'Segoe UI', sans-serif !important;
+	color: #15202B;
+}
+
+/* NOTE: price-bearing elements (.mpwpb-tree-price, the popup row's
+   price <h6>, ._textTheme_min_100) are deliberately NOT in this list.
+   Sora/Work Sans are Google Fonts with Latin/Cyrillic/Greek coverage
+   only -- this site's currency symbol isn't in either, so forcing one
+   of them onto price text made the browser substitute the wrong glyph
+   (rendered as a stray "ß"-like mark instead of the real symbol). Only
+   non-numeric heading text goes through the custom fonts; prices keep
+   the plugin's own font stack, which already covers it correctly. */
+.mpwpb-static-template .mpwpb-tree-header h4,
+.mpwpb-static-template .mpwpb_popup_header h5,
+.mpwpb-static-template .mpwpb-tree-service-name,
+.mpwpb-static-template .selection-header h3 {
+	font-family: 'Sora', 'Segoe UI', sans-serif !important;
+	font-weight: 700 !important;
+}
+
+/* ---------- Sidebar card ----------
+ * Scoped by #mpwpb_static_sidbar (the widget's own id), not just the
+ * .mpwpb-static-template class, so these outrank the long
+ * .mpwpb-static-template .sidebar .mpwpb_static … class chains
+ * mpwpb-service-page-modern.css uses for this same markup -- with
+ * !important on both sides, the higher-specificity selector wins the
+ * tie, and an id always beats a class chain of any length.
+ */
+
+#mpwpb_static_sidbar .mpwpb_static {
+	border-radius: 20px !important;
+	border: 1px solid #E2E6E4 !important;
+	box-shadow: 0 12px 28px rgba(21, 32, 27, 0.08) !important;
+	background: #FFFFFF !important;
+}
+
+#mpwpb_static_sidbar .mpwpb-tree-header {
+	/* The plugin's own rule paints this a solid --mpwpb_color_theme
+	   band for white-on-color text (mpwpb-service-page-modern.css);
+	   the mockup has no colored band here at all, just a plain header
+	   on the card's own white background -- so the background and
+	   radius/margin it added have to come off too, not just the text
+	   color, or the dark text below goes dark-on-dark. */
+	background: transparent !important;
+	border-radius: 0 !important;
+	margin: 0 !important;
+	padding: 22px 22px 16px !important;
+}
+
+#mpwpb_static_sidbar .mpwpb-tree-header h4 {
+	margin: 0 0 4px !important;
+	font-size: 18px !important;
+	line-height: 1.3 !important;
+	color: #15202B !important;
+	-webkit-text-fill-color: #15202B !important;
+}
+
+#mpwpb_static_sidbar .mpwpb-tree-header p {
+	margin: 0 !important;
+	color: #5B6763 !important;
+	font-size: 13px !important;
+	line-height: 1.5 !important;
+	font-weight: 400 !important;
+}
+
+#mpwpb_static_sidbar .mpwpb-service-tree {
+	/* mpwpb-service-page-modern.css's flat-list variant puts an 8px
+	   margin-bottom on every row ON TOP OF this container's own 6px
+	   flex gap (~14px total) -- the mockup's rows sit much tighter. */
+	gap: 4px !important;
+}
+
+#mpwpb_static_sidbar .mpwpb-tree-service,
+#mpwpb_static_sidbar .mpwpb_item_box {
+	/* .mpwpb_item_box (mpwpb_registration.css) and .mpwpb-tree-service
+	   (mpwpb-service-page-modern.css) are two classes on the SAME row
+	   element -- the first sets a full 1px solid #ebe5e5 border on all
+	   four sides, the second only ever reset border-bottom, so the
+	   other three sides were still showing through. One declaration
+	   covering both classes removes it everywhere at once. */
+	margin-bottom: 0 !important;
+	border: none !important;
+	border-radius: 12px !important;
+	padding: 14px 10px !important;
+	transition: background 0.15s ease;
+}
+
+#mpwpb_static_sidbar .mpwpb-tree-service:hover {
+	background: #F3F5F4 !important;
+}
+
+#mpwpb_static_sidbar .mpwpb-tree-service.mpActive {
+	background: #F0F6F4 !important;
+}
+
+#mpwpb_static_sidbar .mpwpb-tree-checkbox {
+	border: 1.5px solid #E2E6E4 !important;
+	background: #FFFFFF !important;
+	border-radius: 6px !important;
+}
+
+#mpwpb_static_sidbar .mpwpb-tree-service.mpActive .mpwpb-tree-checkbox {
+	background: var(--mpwpb_color_theme) !important;
+	border-color: var(--mpwpb_color_theme) !important;
+}
+
+#mpwpb_static_sidbar .mpwpb-tree-duration {
+	color: #5B6763 !important;
+	font-size: 12px !important;
+}
+
+#mpwpb_static_sidbar .mpwpb-tree-price {
+	color: #15202B !important;
+	font-size: 15px !important;
+}
+
+#mpwpb_static_sidbar .mpwpb-tree-cta-btn {
+	border-radius: 999px !important;
+	font-family: 'Work Sans', sans-serif !important;
+	font-weight: 700 !important;
+	padding: 15px 20px !important;
+	background: var(--mpwpb_color_theme) !important;
+	border: none !important;
+	color: #FFFFFF !important;
+}
+
+.mpwpb-static-template .mpwpb-tree-trust {
+	background: transparent !important;
+	border: none !important;
+	box-shadow: none !important;
+	padding: 4px 0 0 !important;
+}
+
+.mpwpb-static-template .mpwpb-tree-trust-item {
+	color: #5B6763 !important;
+	font-size: 12px !important;
+}
+
+/* ---------- Popup shell ----------
+ * Scoped by the same .mpwpb-static-template .sidebar .mpwpb_popup
+ * chain mpwpb-service-page-modern.css itself uses for this exact
+ * popup (line ~1093 there) -- a shorter chain loses specificity ties
+ * against it the same way the sidebar header did above.
+ */
+
+.mpwpb-static-template .sidebar .mpwpb_popup {
+	/* mp_global/assets/mp_style/mpwpb_plugin_global.css sets the shared
+	   div.mpwpb_popup base rule to z-index:9999 -- one digit lower than
+	   WordPress core's own #wpadminbar (z-index:99999), so the admin
+	   toolbar always paints over the top of this drawer when open,
+	   logged in. 100000 matches the convention this same plugin already
+	   uses elsewhere for "must sit above the admin bar" (.mpwpb-modal
+	   in mpwpb-service-page-modern.css). */
+	z-index: 100000 !important;
+}
+
+.mpwpb-static-template .mpwpb_popup_main_area {
+	border-radius: 20px !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_popup_header {
+	/* mpwpb_registration.css sets background-color:var(--mpwpb_color_theme)
+	   on .mpwpb_popup_header UNSCOPED (applies to every popup on the
+	   page) and nothing in this widget's own override resets it back
+	   -- same dark-text-on-color-band bug as the sidebar header, just
+	   not yet visible until the text color below is dark. */
+	background: #FFFFFF !important;
+	margin-top: 30px !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_popup_header h5 {
+	color: #15202B !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_popup_header p {
+	color: #5B6763 !important;
+	font-size: 13px !important;
+	opacity: 1 !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_popup_close {
+	background: #F3F5F4 !important;
+	border-radius: 50% !important;
+	width: 30px !important;
+	height: 30px !important;
+	color: #15202B !important;
+}
+
+/* ---------- 4-step progress ----------
+ * mpwpb-service-page-modern.css replaced the numbered-circle design
+ * with a thin filled track (only the active step's label shown,
+ * .mpwpb_cart_progress_circle/_arrow set to display:none, every other
+ * label display:none). The real markup has no separate circle/number
+ * element at all -- just .mpwpb_cart_progress_step > .mpwpb_cart_
+ * progress_label -- so the numbered circle and the dashed connector
+ * between steps are both built here purely from ::before/::after and
+ * a CSS counter, and every step's label is forced back to visible
+ * (undoing that display:none) rather than only the current one.
+ */
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_wrapper {
+	counter-reset: mpwpb-step;
+	align-items: flex-start !important;
+	gap: 0 !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_step {
+	counter-increment: mpwpb-step;
+	position: relative;
+	height: auto !important;
+	border-radius: 0 !important;
+	background: none !important;
+	opacity: 1 !important;
+	display: flex !important;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_step::before {
+	content: counter(mpwpb-step);
+	width: 30px;
+	height: 30px;
+	flex-shrink: 0;
+	border-radius: 50%;
+	border: 2px solid #E2E6E4;
+	background: #FFFFFF;
+	color: #9AA3A0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: 'Sora', 'Segoe UI', sans-serif;
+	font-weight: 700;
+	font-size: 13px;
+	position: relative;
+	z-index: 1;
+}
+
+/* Dashed connector, drawn from this step's circle center across the
+   full width to the next step's circle center -- z-index:0 keeps it
+   behind the (opaque, white-filled) circles on either end. */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_step:not(:last-child)::after {
+	content: '';
+	position: absolute;
+	top: 15px;
+	left: 50%;
+	width: 100%;
+	border-top: 2px dashed #E2E6E4;
+	z-index: 0;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_step.active::before,
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_step.is-done::before {
+	border-color: var(--mpwpb_color_theme) !important;
+	color: var(--mpwpb_color_theme) !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_step.is-done::before {
+	content: '\2713';
+	font-size: 15px;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_label {
+	display: block !important;
+	position: static !important;
+	margin: 0 !important;
+	font-family: 'Work Sans', sans-serif !important;
+	font-weight: 600 !important;
+	font-size: 11px !important;
+	color: #9AA3A0 !important;
+	white-space: nowrap;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_step.active .mpwpb_cart_progress_label,
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_step.is-done .mpwpb_cart_progress_label {
+	color: #15202B !important;
+	font-weight: 700 !important;
+}
+
+/* ---------- Service list inside the popup ---------- */
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row {
+	border-radius: 14px !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_service_item.mpActive {
+	background-color: rgba(0, 104, 95, 0.06) !important;
+	border-color: var(--mpwpb_color_theme) !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row .mpwpb_service_button.mActive {
+	background: var(--mpwpb_color_theme) !important;
+	border-color: var(--mpwpb_color_theme) !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_service_duration {
+	font-family: 'Work Sans', sans-serif !important;
+	color: #15202B !important;
+}
+
+/* Price text -- no custom font-family (see the note near the top of
+   this file): Work Sans doesn't cover this site's currency symbol,
+   which broke it into a stray glyph when forced here too. */
+.mpwpb-static-template .sidebar .mpwpb_popup ._textTheme_min_100 {
+	color: #15202B !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .service_decQty,
+.mpwpb-static-template .sidebar .mpwpb_popup .service_incQty {
+	background: #F3F5F4 !important;
+	color: #15202B !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .inputIncDec {
+	font-weight: 600 !important;
+	font-family: 'Work Sans', sans-serif !important;
+	color: #15202B !important;
+}
+
+/* ---------- Date & time ---------- */
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_date_staff_select {
+	font-family: 'Sora', 'Segoe UI', sans-serif !important;
+	font-weight: 700 !important;
+	font-size: 15px !important;
+	color: #15202B !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_carousel_area .prev,
+.mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_carousel_area .next {
+	background: #F3F5F4 !important;
+	border: none !important;
+	color: #15202B !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_carousel_area .prev:hover,
+.mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_carousel_area .next:hover {
+	background: #E2E6E4 !important;
+}
+
+/* mpDisabled is the real class the plugin adds/removes on .prev at the
+   start of the date range (templates/registration/static_registration.php,
+   initDateGridPagination() in mpwpb-booking-tree.js) -- without this the
+   disabled arrow looked identical to an active one. */
+.mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_carousel_area .mpDisabled {
+	background: #F3F5F4 !important;
+	color: #C7CCCA !important;
+	cursor: not-allowed !important;
+	pointer-events: none;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_get_date {
+	border-radius: 14px !important;
+	border: 1.5px solid #E2E6E4 !important;
+	background: #FFFFFF !important;
+	color: #15202B !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_get_date_selected {
+	background: var(--mpwpb_color_theme) !important;
+	border-color: var(--mpwpb_color_theme) !important;
+	color: #FFFFFF !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_get_date_selected .mptrs_day_with_date {
+	color: #FFFFFF !important;
+}
+
+/* Closed/unbookable days -- .mpwpb_get_close_date (off days) and
+   .mpwpb_get_date_passed (already elapsed) are two different real
+   classes for the same muted, disabled-looking treatment. */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_get_close_date,
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_get_date_passed {
+	border-radius: 14px !important;
+	border: 1.5px solid #E2E6E4 !important;
+	background: #F3F5F4 !important;
+	color: #9AA3A0 !important;
+	cursor: not-allowed !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_close_date,
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_date_passed_label {
+	font-family: 'Work Sans', sans-serif !important;
+	font-size: 9px !important;
+	font-weight: 600 !important;
+	color: #9AA3A0 !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-number {
+	font-family: 'Sora', 'Segoe UI', sans-serif !important;
+	font-weight: 700 !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mptrs_day_with_date {
+	font-family: 'Work Sans', sans-serif !important;
+	font-weight: 600 !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_time_btn {
+	border-radius: 12px !important;
+	border: 1.5px solid #E2E6E4 !important;
+	font-weight: 600 !important;
+	font-family: 'Work Sans', sans-serif !important;
+	background: #FFFFFF !important;
+	color: #15202B !important;
+}
+
+/* mpwpb_registration.js always adds/removes mpActive and
+   mpwpb_active_time together on .mpwpb_time_btn (never .mActive/
+   .active, which don't exist on this element at all -- that was this
+   rule's actual bug: it never matched anything, so selected time slots
+   had no visual state whatsoever). */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_time_btn.mpActive,
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_time_btn.mpwpb_active_time {
+	background: var(--mpwpb_color_theme) !important;
+	border-color: var(--mpwpb_color_theme) !important;
+	color: #FFFFFF !important;
+}
+
+/* ---------- Checkout buttons ---------- */
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpd_btn_proceed,
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_service_next {
+	border-radius: 999px !important;
+	font-family: 'Work Sans', sans-serif !important;
+	font-weight: 700 !important;
+	color: #FFFFFF !important;
+}
+
+/* ---------- Inline WooCommerce checkout form ----------
+ * mpwpb_load_wc_checkout_form() (mpwpb_registration.js) AJAX-fetches
+ * WooCommerce's own real form-checkout.php markup and injects it,
+ * unmodified, into .mpwpb-inline-wc-checkout-content inside the
+ * drawer -- raw WC stock styling (col2-set, form-row, input-text …),
+ * never touched by any reskin until now. Scoped to that container
+ * specifically so this never leaks onto WooCommerce's own standalone
+ * /checkout/ page or any other use of these very common WC classes
+ * elsewhere on the site.
+ */
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-wc-checkout-content {
+	font-family: 'Work Sans', sans-serif !important;
+	color: #15202B !important;
+	padding: 4px 2px 0 !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-wc-checkout-content .col2-set {
+	display: flex !important;
+	flex-direction: column !important;
+	gap: 28px !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-wc-checkout-content .col-1,
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-wc-checkout-content .col-2 {
+	width: 100% !important;
+	float: none !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-wc-checkout-content h3 {
+	margin: 0 0 14px !important;
+	font-family: 'Sora', 'Segoe UI', sans-serif !important;
+	font-size: 16px !important;
+	font-weight: 700 !important;
+	color: #15202B !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-wc-checkout-content .woocommerce-billing-fields__field-wrapper,
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-wc-checkout-content .woocommerce-additional-fields__field-wrapper {
+	display: flex !important;
+	flex-wrap: wrap !important;
+	gap: 14px !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-wc-checkout-content .form-row {
+	margin: 0 !important;
+	padding: 0 !important;
+	flex: 1 1 100%;
+}
+
+/* First/last-name style paired half-width rows -- any other field
+   WooCommerce or a payment-gateway extension marks the same way
+   (form-row-first/-last) gets the same side-by-side treatment. */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-wc-checkout-content .form-row-first,
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-wc-checkout-content .form-row-last {
+	flex: 1 1 calc(50% - 7px);
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-wc-checkout-content label {
+	display: block !important;
+	margin: 0 0 6px !important;
+	font-size: 12px !important;
+	font-weight: 600 !important;
+	color: #15202B !important;
+	/* The label's own content is just "First name" + &nbsp; + the
+	   required/optional <span> -- all inline, so this alone shouldn't
+	   wrap, but something upstream (theme form styling, most likely)
+	   was pushing the span onto its own line. nowrap on the label plus
+	   forcing the span back to inline below is the robust fix either
+	   way, since every label here really is one short line. */
+	white-space: nowrap !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-wc-checkout-content label .required,
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-wc-checkout-content label .optional {
+	display: inline !important;
+	white-space: nowrap !important;
+	vertical-align: baseline !important;
+	margin-left: 2px !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-wc-checkout-content label .required {
+	color: #B8542E !important;
+	text-decoration: none !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-wc-checkout-content label .optional {
+	color: #9AA3A0 !important;
+	font-weight: 400 !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-wc-checkout-content .woocommerce-input-wrapper {
+	display: block !important;
+	width: 100% !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-wc-checkout-content .input-text,
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-wc-checkout-content select,
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-wc-checkout-content textarea {
+	width: 100% !important;
+	box-sizing: border-box !important;
+	padding: 12px 14px !important;
+	border: 1.5px solid #E2E6E4 !important;
+	border-radius: 10px !important;
+	font-family: 'Work Sans', sans-serif !important;
+	font-size: 13px !important;
+	color: #15202B !important;
+	background: #FFFFFF !important;
+	box-shadow: none !important;
+	transition: border-color 0.15s ease;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-wc-checkout-content .input-text:focus,
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-wc-checkout-content select:focus,
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-wc-checkout-content textarea:focus {
+	outline: none !important;
+	border-color: var(--mpwpb_color_theme) !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-wc-checkout-content .woocommerce-invalid .input-text,
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-wc-checkout-content .woocommerce-invalid select {
+	border-color: #B8542E !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-wc-checkout-content textarea {
+	min-height: 72px !important;
+	resize: vertical !important;
+}
+
+/* Native <select> arrow -- appearance:none strips the OS default (which
+   ignores border-radius/padding on most platforms) in favour of one
+   plain chevron drawn with the same ink colour as everything else
+   here, with room reserved on the right so it never overlaps text. */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-wc-checkout-content select {
+	appearance: none !important;
+	-webkit-appearance: none !important;
+	padding-right: 36px !important;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2315202B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+	background-repeat: no-repeat !important;
+	background-position: right 12px center !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-wc-checkout-content noscript {
+	display: none !important;
+}
+
+/* ---------- Checkout step: stage shell, coupon, order review, payment ----------
+ * Frontend/MPWPB_Inline_WC_Checkout.php renders two stages (billing,
+ * then payment) into the same .mpwpb-inline-wc-checkout-content
+ * container already scoped above. Stage 2's #order_review is WC's own
+ * woocommerce_checkout_order_review output verbatim (cart table +
+ * ul.payment_methods + #place_order), not a custom plugin UI.
+ */
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-checkout-heading h3 {
+	margin: 0 0 4px !important;
+	font-family: 'Sora', 'Segoe UI', sans-serif !important;
+	font-size: 16px !important;
+	font-weight: 700 !important;
+	color: #15202B !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-checkout-heading p,
+.mpwpb-static-template .sidebar .mpwpb_popup #order_review_heading {
+	margin: 0 0 16px !important;
+	font-family: 'Work Sans', sans-serif !important;
+	font-size: 13px !important;
+	color: #5B6763 !important;
+	font-weight: 400 !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-checkout-notices .woocommerce-error {
+	list-style: none !important;
+	margin: 0 0 16px !important;
+	padding: 14px 16px !important;
+	border-radius: 12px !important;
+	background: #FBEFEA !important;
+	border: 1px solid #F0D9CE !important;
+	color: #B8542E !important;
+	font-size: 13px !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-stage-actions {
+	display: flex !important;
+	justify-content: space-between !important;
+	gap: 12px !important;
+	margin-top: 22px !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-back-to-booking {
+	padding: 13px 22px !important;
+	border-radius: 999px !important;
+	background: #FFFFFF !important;
+	color: #15202B !important;
+	border: 1.5px solid #E2E6E4 !important;
+	font-family: 'Work Sans', sans-serif !important;
+	font-weight: 700 !important;
+	font-size: 13px !important;
+}
+
+/* Unlike mpwpb-inline-back-to-booking (paired with Continue in
+   .mpwpb-inline-stage-actions' flex row on the billing stage), this
+   one sits alone, directly below #place_order with no wrapper of its
+   own -- a plain color/shape match left it sized by its text content
+   with no breathing room, crammed under the primary button. Block-
+   level, centered, full-width ghost treatment reads as the secondary
+   "go back" action it is. */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-back-to-billing {
+	display: block !important;
+	width: 100% !important;
+	box-sizing: border-box !important;
+	margin: 12px 0 0 !important;
+	padding: 13px !important;
+	border-radius: 999px !important;
+	background: #FFFFFF !important;
+	border: 1.5px solid #E2E6E4 !important;
+	color: #15202B !important;
+	font-family: 'Work Sans', sans-serif !important;
+	font-weight: 700 !important;
+	font-size: 13px !important;
+	text-align: center !important;
+	cursor: pointer !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-back-to-billing:hover {
+	background: #F3F5F4 !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-continue-payment {
+	padding: 13px 24px !important;
+	border-radius: 999px !important;
+	background: var(--mpwpb_color_theme) !important;
+	color: #FFFFFF !important;
+	border: none !important;
+	font-family: 'Work Sans', sans-serif !important;
+	font-weight: 700 !important;
+	font-size: 13px !important;
+}
+
+/* Coupon box -- collapsed to a plain text trigger by default (matching
+   WooCommerce's own cart-page "Have a coupon?" convention); the label
+   text itself ("Coupon code") doubles as that trigger since the real
+   markup has no separate prompt text to repurpose. Click-to-open needs
+   actual JS (mpwpb-booking-widget-reskin.js toggles .is-open on this
+   element), not something a pure CSS override can do alone -- see that
+   file for the delegated handler (this content loads via AJAX, so it
+   can't be bound directly at page load). */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-coupon {
+	margin-bottom: 20px !important;
+	border: 1.5px solid #E2E6E4 !important;
+	border-radius: 12px !important;
+	background: #FFFFFF !important;
+	padding: 12px 16px !important;
+	transition: background 0.15s ease;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-coupon.is-open {
+	background: #F3F5F4 !important;
+	padding: 14px 16px 16px !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-coupon label {
+	display: flex !important;
+	align-items: center !important;
+	gap: 6px !important;
+	margin: 0 !important;
+	font-size: 12px !important;
+	font-weight: 600 !important;
+	color: var(--mpwpb_color_theme) !important;
+	cursor: pointer !important;
+}
+
+/* Small plus/chevron cue that flips to a minus once open -- purely
+   decorative, state read off the same .is-open class as the panel. */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-coupon label::before {
+	content: '+';
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	background: var(--mpwpb_color_theme);
+	color: #FFFFFF;
+	font-size: 12px;
+	line-height: 1;
+	flex-shrink: 0;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-coupon.is-open label::before {
+	content: '\2212';
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-coupon > div {
+	display: none;
+	align-items: center !important;
+	flex-wrap: wrap !important;
+	gap: 10px !important;
+	margin-top: 12px !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-coupon.is-open > div {
+	display: flex !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-coupon input {
+	flex: 1 1 160px !important;
+	padding: 11px 14px !important;
+	border: 1.5px solid #E2E6E4 !important;
+	border-radius: 10px !important;
+	font-family: 'Work Sans', sans-serif !important;
+	font-size: 13px !important;
+	background: #FFFFFF !important;
+	box-sizing: border-box !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-apply-coupon {
+	flex-shrink: 0;
+	padding: 11px 18px !important;
+	border-radius: 999px !important;
+	border: none !important;
+	background: #15202B !important;
+	color: #FFFFFF !important;
+	font-family: 'Work Sans', sans-serif !important;
+	font-weight: 700 !important;
+	font-size: 12px !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-coupon-message {
+	display: block !important;
+	width: 100%;
+	margin-top: 10px !important;
+	font-size: 12px !important;
+	font-weight: 600 !important;
+}
+
+/* WooCommerce's own order-review table (cart recap + totals) */
+.mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-checkout-review-order-table {
+	width: 100% !important;
+	border-collapse: collapse !important;
+	margin: 0 0 20px !important;
+	font-family: 'Work Sans', sans-serif !important;
+	font-size: 13px !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-checkout-review-order-table th,
+.mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-checkout-review-order-table td {
+	padding: 10px 0 !important;
+	border: none !important;
+	border-bottom: 1px solid #E2E6E4 !important;
+	color: #15202B !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-checkout-review-order-table td:last-child,
+.mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-checkout-review-order-table th:last-child {
+	text-align: right !important;
+	white-space: nowrap !important;
+}
+
+/* "Product / Subtotal" column headers are redundant in a drawer this
+   narrow -- each line item already makes clear what it is. */
+.mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-checkout-review-order-table thead {
+	display: none !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-checkout-review-order-table .order-total td,
+.mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-checkout-review-order-table .order-total th {
+	border-bottom: none !important;
+	border-top: 1.5px solid #E2E6E4 !important;
+	font-family: 'Sora', 'Segoe UI', sans-serif !important;
+	font-weight: 700 !important;
+	font-size: 15px !important;
+}
+
+/* Payment method radio list */
+.mpwpb-static-template .sidebar .mpwpb_popup ul.payment_methods {
+	list-style: none !important;
+	margin: 0 0 16px !important;
+	padding: 0 !important;
+	display: flex !important;
+	flex-direction: column !important;
+	gap: 8px !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup li.wc_payment_method {
+	border: 1.5px solid #E2E6E4 !important;
+	border-radius: 12px !important;
+	padding: 13px 16px !important;
+	background: #FFFFFF !important;
+	list-style: none !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup li.wc_payment_method label {
+	margin: 0 !important;
+	font-family: 'Work Sans', sans-serif !important;
+	font-size: 13px !important;
+	font-weight: 600 !important;
+	color: #15202B !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup li.wc_payment_method input.input-radio {
+	accent-color: var(--mpwpb_color_theme) !important;
+	margin-right: 8px !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .payment_box {
+	margin-top: 12px !important;
+	padding: 14px !important;
+	background: #F3F5F4 !important;
+	border-radius: 10px !important;
+	font-family: 'Work Sans', sans-serif !important;
+	font-size: 13px !important;
+	color: #5B6763 !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .payment_box .input-text {
+	width: 100% !important;
+	box-sizing: border-box !important;
+	padding: 11px 13px !important;
+	border: 1.5px solid #E2E6E4 !important;
+	border-radius: 10px !important;
+	font-family: 'Work Sans', sans-serif !important;
+	font-size: 13px !important;
+	margin-top: 8px !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup #place_order {
+	width: 100% !important;
+	padding: 15px !important;
+	border-radius: 999px !important;
+	border: none !important;
+	background: var(--mpwpb_color_theme) !important;
+	color: #FFFFFF !important;
+	font-family: 'Work Sans', sans-serif !important;
+	font-weight: 700 !important;
+	font-size: 14px !important;
+	margin-top: 8px !important;
+}
+
+/* Loading / error / retry states */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-checkout-preparing {
+	padding: 40px 20px !important;
+	text-align: center !important;
+	color: #5B6763 !important;
+	font-size: 13px !important;
+	font-family: 'Work Sans', sans-serif !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-checkout-recovery {
+	padding: 24px 20px !important;
+	text-align: center !important;
+	border: 1.5px dashed #E2E6E4 !important;
+	border-radius: 14px !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-checkout-recovery .fa-wifi {
+	color: #9A6B1E !important;
+	font-size: 20px !important;
+	margin-bottom: 8px !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-checkout-recovery strong {
+	display: block !important;
+	font-family: 'Sora', sans-serif !important;
+	font-size: 14px !important;
+	margin-bottom: 4px !important;
+	color: #15202B !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-checkout-recovery p {
+	margin: 0 0 14px !important;
+	font-size: 13px !important;
+	color: #5B6763 !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-retry-checkout {
+	padding: 11px 20px !important;
+	border-radius: 999px !important;
+	border: none !important;
+	background: var(--mpwpb_color_theme) !important;
+	color: #FFFFFF !important;
+	font-family: 'Work Sans', sans-serif !important;
+	font-weight: 700 !important;
+	font-size: 13px !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-checkout-error {
+	padding: 14px 16px !important;
+	border-radius: 12px !important;
+	background: #FBEFEA !important;
+	border: 1px solid #F0D9CE !important;
+	color: #B8542E !important;
+	font-size: 13px !important;
+}
+
+/* ---------- Confirmation step ----------
+ * .mpwpb-inline-confirmation-summary is this plugin's own markup; the
+ * rest (.woocommerce-order, .woocommerce-order-overview, order-details
+ * table, .woocommerce-customer-details) is WooCommerce's stock
+ * checkout/thankyou.php output, scoped under .mpwpb-inline-confirmation
+ * so it never touches a standalone WC thank-you page elsewhere.
+ */
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-confirmation {
+	padding: 4px 2px 0 !important;
+	font-family: 'Work Sans', sans-serif !important;
+	color: #15202B !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-confirmation-summary {
+	text-align: center !important;
+	padding-bottom: 24px !important;
+	margin-bottom: 20px !important;
+	border-bottom: 1px solid #E2E6E4 !important;
+}
+
+/* CSS-only success badge above the heading -- the template has no icon
+   markup of its own, so this is drawn purely with ::before. */
+/* ---------- Order-review table: per-line "Booking Details" breakdown ----------
+ * Each cart line's dl.variation/dd > ul.cart_list (Service/Price/Date/
+ * Time pairs) is WooCommerce's generic cart-item-meta renderer fed by
+ * this plugin's own data -- h6 is the label, the following p>span is
+ * the value, with a couple of rows carrying a leading icon span (a
+ * sibling, not wrapped) and an always-empty <p></p> placeholder before
+ * the real one. No custom font-family anywhere in here on the price
+ * spans themselves (.woocommerce-Price-amount/-currencySymbol) -- the
+ * earlier sidebar price bug (a forced web font missing this site's
+ * currency glyph, rendering it as a stray "ß"-like mark) applies here
+ * identically if repeated.
+ */
+
+.mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-checkout-review-order-table .product-name {
+	font-family: 'Sora', 'Segoe UI', sans-serif !important;
+	font-weight: 700 !important;
+	font-size: 14px !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-checkout-review-order-table .product-quantity {
+	display: inline-block !important;
+	margin-left: 6px !important;
+	padding: 2px 9px !important;
+	border-radius: 999px !important;
+	background: #F3F5F4 !important;
+	color: #5B6763 !important;
+	font-family: 'Work Sans', sans-serif !important;
+	font-size: 11px !important;
+	font-weight: 600 !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup dl.variation {
+	margin: 10px 0 0 !important;
+	padding: 14px !important;
+	background: #F3F5F4 !important;
+	border-radius: 12px !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup dl.variation dt.variation-BookingDetails {
+	margin: 0 0 8px !important;
+	font-family: 'Work Sans', sans-serif !important;
+	font-size: 10px !important;
+	font-weight: 700 !important;
+	color: #9AA3A0 !important;
+	text-transform: uppercase !important;
+	letter-spacing: 0.06em !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup dl.variation dd.variation-BookingDetails {
+	margin: 0 !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup ul.cart_list {
+	list-style: none !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	display: flex !important;
+	flex-direction: column !important;
+	gap: 6px !important;
+}
+
+/* A fixed-column grid, not flex -- the Date/Time rows carry an extra
+   leading icon <span> that Service/Price rows don't, which (under
+   flex, gap-based layout) pushed their h6/p over by the icon's width
+   and left every row's value starting at a different x position. The
+   icon is dropped from the flow entirely (see .fa-calendar-alt/
+   .fa-clock below) so every row is a plain 2-column
+   [label][value] grid, always aligned the same regardless of which
+   row carries an icon in the markup. */
+.mpwpb-static-template .sidebar .mpwpb_popup ul.cart_list li {
+	display: grid !important;
+	grid-template-columns: 50px 1fr;
+	column-gap: 8px;
+	align-items: baseline;
+	font-family: 'Work Sans', sans-serif !important;
+	font-size: 12px !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup ul.cart_list li > p:empty {
+	display: none !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup ul.cart_list h6 {
+	grid-column: 1;
+	margin: 0 !important;
+	white-space: nowrap;
+	font-family: 'Work Sans', sans-serif !important;
+	font-size: 11px !important;
+	font-weight: 600 !important;
+	color: #5B6763 !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup ul.cart_list li > p {
+	grid-column: 2;
+	margin: 0 !important;
+	color: #15202B !important;
+	font-size: 12px !important;
+}
+
+/* Decorative only -- removed from the grid/flow entirely rather than
+   given a reserved column, so it can never shift a row's label/value
+   out of line with the rows that don't carry one. */
+.mpwpb-static-template .sidebar .mpwpb_popup ul.cart_list li .fa-calendar-alt,
+.mpwpb-static-template .sidebar .mpwpb_popup ul.cart_list li .fa-clock {
+	display: none !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-confirmation-summary::before {
+	content: '';
+	display: block;
+	width: 56px;
+	height: 56px;
+	margin: 0 auto 16px;
+	border-radius: 50%;
+	background: var(--mpwpb_color_theme);
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-confirmation-summary h2 {
+	margin: 0 0 12px !important;
+	font-family: 'Sora', 'Segoe UI', sans-serif !important;
+	font-size: 20px !important;
+	font-weight: 700 !important;
+	color: #15202B !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-confirmation-summary p {
+	margin: 4px 0 !important;
+	font-size: 13px !important;
+	color: #5B6763 !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-confirmation-summary p strong {
+	color: #15202B !important;
+	font-weight: 600 !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-order-overview {
+	list-style: none !important;
+	display: flex !important;
+	flex-wrap: wrap !important;
+	gap: 12px !important;
+	margin: 0 0 20px !important;
+	padding: 16px !important;
+	background: #F3F5F4 !important;
+	border-radius: 14px !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-order-overview li {
+	flex: 1 1 45%;
+	font-size: 11px !important;
+	color: #5B6763 !important;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-order-overview li strong {
+	display: block !important;
+	margin-top: 4px !important;
+	font-family: 'Sora', 'Segoe UI', sans-serif !important;
+	font-size: 14px !important;
+	font-weight: 700 !important;
+	color: #15202B !important;
+	text-transform: none;
+	letter-spacing: normal;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-order-details h2,
+.mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-customer-details h2 {
+	margin: 0 0 12px !important;
+	font-family: 'Sora', 'Segoe UI', sans-serif !important;
+	font-size: 14px !important;
+	font-weight: 700 !important;
+	color: #15202B !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-order-details .shop_table {
+	width: 100% !important;
+	border-collapse: collapse !important;
+	margin: 0 0 20px !important;
+	font-family: 'Work Sans', sans-serif !important;
+	font-size: 13px !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-order-details .shop_table th,
+.mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-order-details .shop_table td {
+	padding: 10px 0 !important;
+	border: none !important;
+	border-bottom: 1px solid #E2E6E4 !important;
+	color: #15202B !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-customer-details address {
+	font-style: normal !important;
+	padding: 14px 16px !important;
+	border: 1.5px solid #E2E6E4 !important;
+	border-radius: 12px !important;
+	font-size: 13px !important;
+	line-height: 1.7 !important;
+	color: #15202B !important;
+}
+
+/* ---------- Footer: selected-items summary + step navigation ----------
+ * .mpwpb-selected-summary / .popupFooter / .next_service_area /
+ * .next_date_area are all pre-existing, already well-structured in
+ * mpwpb-service-page-modern.css (flex layout, responsive stacking,
+ * the .mpwpb-cta-ready dimmed/solid states) -- this only re-skins
+ * color/typography/shape on top of that, it doesn't rebuild the
+ * layout. No font-family override anywhere on .mpwpb-selected-
+ * summary-price, .mpwpb_total_bill or any .woocommerce-Price-amount:
+ * these carry this site's currency symbol as plain text, and Sora
+ * doesn't include that glyph (the same bug the sidebar price and the
+ * order-review table hit earlier) -- they keep the Work Sans already
+ * inherited from the top-level .mpwpb_popup rule, which does.
+ */
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary {
+	border: 1.5px solid #E2E6E4 !important;
+	border-radius: 12px !important;
+	background: #F3F5F4 !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-row {
+	font-family: 'Work Sans', sans-serif !important;
+	color: #15202B !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-row + .mpwpb-selected-summary-row,
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-more-rows .mpwpb-selected-summary-row {
+	border-top: 1px solid #E2E6E4 !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-name em {
+	color: #9AA3A0 !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-price {
+	color: var(--mpwpb_color_theme) !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-more-btn {
+	font-family: 'Work Sans', sans-serif !important;
+	color: var(--mpwpb_color_theme) !important;
+	border-top-color: #E2E6E4 !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .popupFooter {
+	border-top: 1px solid #E2E6E4 !important;
+	padding: 16px 22px !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-selected-label {
+	font-family: 'Sora', 'Segoe UI', sans-serif !important;
+	font-weight: 700 !important;
+	color: #15202B !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .next_service_area h3,
+.mpwpb-static-template .sidebar .mpwpb_popup .next_date_area h4.mpwpb-total {
+	font-family: 'Work Sans', sans-serif !important;
+	font-weight: 500 !important;
+	font-size: 13px !important;
+	color: #5B6763 !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_total_bill {
+	font-weight: 700 !important;
+	color: #15202B !important;
+	white-space: nowrap !important;
+}
+
+/* Forward/primary buttons -- "Continue to schedule", "Proceed to
+   Checkout". #mpwpb_date_time_next_btn_id keeps its existing dimmed
+   (opacity:.5, flat theme-color bg) vs. .mpwpb-cta-ready (full
+   opacity) states from mpwpb-service-page-modern.css untouched --
+   only shape/typography change here. */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_service_next,
+.mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_date_time_next_btn_id {
+	border-radius: 999px !important;
+	font-family: 'Work Sans', sans-serif !important;
+	font-weight: 700 !important;
+	font-size: 13px !important;
+	color: #FFFFFF !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_service_next {
+	background: var(--mpwpb_color_theme) !important;
+}
+
+/* Back buttons -- ghost style, consistent with every other "Back" in
+   this widget (checkout stage actions, modal footers). */
+.mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_display_date_time,
+.mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_display_service_btn {
+	border-radius: 999px !important;
+	background: #FFFFFF !important;
+	border: 1.5px solid #E2E6E4 !important;
+	color: #15202B !important;
+	font-family: 'Work Sans', sans-serif !important;
+	font-weight: 700 !important;
+	font-size: 13px !important;
+}
+
+/* ---------- Undo a plugin-wide base-CSS bug, scoped to this drawer only ----------
+ * mp_global/assets/mp_style/mpwpb_plugin_global.css:309-310 (shared
+ * across the whole plugin, not something this reskin owns or can edit
+ * directly) forces display:flex onto every bare <small>/<span>/
+ * <strong> anywhere inside .mpwpb_style, plus .dInlineBlock/
+ * [class*="_dInlineBlock"] -- flex is block-level, so this turns every
+ * plain inline tag used for ordinary text (a currency symbol, a badge
+ * label, bold text inside a sentence) into its own block, breaking
+ * normal inline flow whichever side effect happens not to be masked
+ * by a more specific rule. the *InlineBlock classes very obviously
+ * mean inline-block, not flex -- this reads as a copy/paste bug in
+ * the original rule, not an intentional design choice.
+ * Bare-tag/attribute selectors have low specificity, so overriding
+ * them here (scoped to the drawer, not touched plugin-wide since other
+ * areas may have been built around/compensating for it) is a clean,
+ * low-risk fix rather than patching each individual symptom as it's
+ * found, the way the earlier .mpwpb_style small/em/span tag-level
+ * glyph and alignment issues elsewhere in this file were.
+ */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_style small,
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_style span,
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_style strong {
+	/* grid (like the original rule's flex) is block-level -- every bare
+	   span broke onto its own line, which is exactly what just broke
+	   the "( 10.00 ৳ x 1 ) = 10.00 ৳" price breakdown and the "40.00 ৳"
+	   totals into one fragment per line. inline is the only value that
+	   actually restores normal running text. */
+	display: inline !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_style .dInlineBlock,
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_style [class*="_dInlineBlock"] {
+	display: inline-block !important;
+}
+
+/* ---------- Payment list, privacy text, place-order block ---------- */
+
+.mpwpb-static-template .sidebar .mpwpb_popup .form-row.place-order {
+	margin: 18px 0 0 !important;
+	padding: 0 !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-terms-and-conditions-wrapper {
+	margin: 0 0 16px !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-privacy-policy-text p {
+	margin: 0 !important;
+	font-family: 'Work Sans', sans-serif !important;
+	font-size: 11px !important;
+	line-height: 1.6 !important;
+	color: #9AA3A0 !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-privacy-policy-text a {
+	color: var(--mpwpb_color_theme) !important;
+	text-decoration: underline !important;
+}
+
+/* A selected gateway row reads as a filled card even when its native
+   radio is hidden (single-method sites like Cash on delivery, where
+   WC hides the only option's input since there's nothing to choose
+   between) -- :has() support is broad enough by now that this is a
+   reasonable progressive enhancement, not a dependency. */
+.mpwpb-static-template .sidebar .mpwpb_popup li.wc_payment_method:has(input:checked) {
+	border-color: var(--mpwpb_color_theme) !important;
+	background: rgba(0, 104, 95, 0.05) !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .payment_box p {
+	margin: 0 !important;
+	font-family: 'Work Sans', sans-serif !important;
+	font-size: 12px !important;
+	line-height: 1.6 !important;
+}
+
+/* ---------- Remove booking-management actions from the drawer only ----------
+ * Frontend/MPWPB_Wc_Account_Order_Actions.php hooks
+ * render_booking_actions() onto WooCommerce's own
+ * woocommerce_order_details_after_order_table action -- that action
+ * fires on ANY order-details render, including
+ * wc_get_template('checkout/thankyou.php', ...), which is exactly what
+ * the Confirmation step reuses (Frontend/MPWPB_Inline_WC_Checkout.php
+ * render_confirmation()). So the "Manage Your Booking" heading, the
+ * Cancel/Reschedule/Reorder buttons (.mpwpb-wc-account-actions), and
+ * the equivalent Orders-list actions row (add_order_actions(), on
+ * woocommerce_my_account_my_orders_actions) all render inside the
+ * drawer too, immediately after the customer just booked -- premature
+ * there even though they're exactly right on the real My Account >
+ * Orders / View Order pages. Scoped to the drawer only so that real
+ * page is untouched; no markup/PHP change needed, this is pure
+ * display:none. h2 has no class of its own to target, so :has() with
+ * the next-sibling combinator picks out specifically the one
+ * immediately followed by .mpwpb-wc-account-actions. */
+.mpwpb-static-template .sidebar .mpwpb_popup h2:has(+ .mpwpb-wc-account-actions) {
+	display: none !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-wc-account-actions {
+	display: none !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup tr:has(.order-actions--heading) {
+	display: none !important;
+}
