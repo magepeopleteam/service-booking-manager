@@ -4,7 +4,7 @@ Tags: appointment booking, booking calendar, service booking, online booking, wo
 Requires at least: 5.3
 Tested up to: 7.0
 Requires PHP: 7.0
-Stable tag: 1.4.2
+Stable tag: 1.4.3
 WC requires at least: 3.0
 WC tested up to: 10.9.1
 License: GPLv2 or later
@@ -189,6 +189,9 @@ Appneck SDK **does not gather any data by default.** The SDK only starts gatheri
 Learn more about how [Appneck collects and uses this data](https://appneck.com/privacy-policy/).
 
 == Changelog ==
+
+= 1.4.3 =
+* New: Updated the bundled Appneck SDK to the latest version.
 
 = 1.4.2 =
 * New: Replaced the Appsero telemetry SDK with Appneck. It does not collect any data by default; it only starts after you confirm via the admin notice.
