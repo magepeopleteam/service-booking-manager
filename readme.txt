@@ -1,5 +1,5 @@
 === Appointment Booking Plugin for WooCommerce | Online Booking Calendar & Service Manager ===
-Contributors: aamahin, magepeopleteam
+Contributors: aamahin, magepeopleteam, raselsha
 Tags: appointment booking, booking calendar, service booking, online booking, woocommerce booking
 Requires at least: 5.3
 Tested up to: 7.0
