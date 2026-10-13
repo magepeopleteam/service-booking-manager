@@ -69,6 +69,26 @@
 	border-radius: 0 !important;
 	margin: 0 !important;
 	padding: 22px 22px 16px !important;
+	display: flex !important;
+	align-items: flex-start !important;
+	justify-content: space-between !important;
+	gap: 12px !important;
+}
+
+/* Icon tile + "N services" count pill (category_selection_static.php) --
+   same accent-tinted-tile language as the extra-features icons and the
+   footer's selected-summary badge, so this header reads as part of the
+   same redesigned widget instead of a leftover plain label. */
+#mpwpb_static_sidbar .mpwpb-tree-header-icon {
+	flex: 0 0 auto; width: 40px; height: 40px; border-radius: 12px;
+	display: flex; align-items: center; justify-content: center;
+	background: color-mix(in srgb, var(--mpwpb_color_theme) 10%, white);
+	color: var(--mpwpb_color_theme); font-size: 16px;
+}
+#mpwpb_static_sidbar .mpwpb-tree-header-text { flex: 1 1 auto; min-width: 0; }
+#mpwpb_static_sidbar .mpwpb-tree-header-count {
+	flex: 0 0 auto; font-size: 11px; font-weight: 700; color: #5B6763;
+	background: #F1F5F3; border-radius: 999px; padding: 5px 11px; white-space: nowrap;
 }
 
 #mpwpb_static_sidbar .mpwpb-tree-header h4 {
@@ -1319,50 +1339,21 @@
 	z-index: 1;
 }
 
-/* "N services selected" as a small teal badge instead of plain bold
-   text sitting inline with the price -- the previous version read as
-   one flat line with no hierarchy between the count and the total. */
-.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-selected-label {
-	/* flex-basis:100% (its parent h3 is flex-wrap:wrap below) forces
-	   this onto its own line, since it's just a sibling of a loose
-	   "Total :" text node + the price span inside h3 -- no wrapper
-	   element exists to put the badge on a separate row otherwise. */
-	flex-basis: 100% !important;
-	display: inline-flex !important;
-	align-items: center !important;
-	width: fit-content !important;
-	padding: 4px 11px !important;
-	margin-bottom: 4px !important;
-	border-radius: 999px !important;
-	background: #E8F3F1 !important;
-	font-family: 'Work Sans', sans-serif !important;
-	font-size: 11px !important;
-	font-weight: 700 !important;
-	color: #146B5F !important;
-}
-
-/* h3's children are the badge span, a loose "Total :" text node, and
-   the price span -- flex-wrap lets the badge's flex-basis:100% push
-   it onto its own line while "Total :" and the price flow together
-   baseline-aligned on the line below, the usual cart-footer hierarchy
-   (small context line, big number) instead of one flat run of text. */
-.mpwpb-static-template .sidebar .mpwpb_popup .next_service_area h3,
-.mpwpb-static-template .sidebar .mpwpb_popup .next_date_area h4.mpwpb-total {
-	display: flex !important;
-	flex-wrap: wrap !important;
-	align-items: baseline !important;
-	gap: 2px 6px !important;
-	font-family: 'Work Sans', sans-serif !important;
-	font-weight: 500 !important;
-	font-size: 12px !important;
-	color: #5B6763 !important;
-}
-
+/* "N service(s) selected" is hidden now (mpwpb-service-page-modern.css
+   .mpwpb-tree-selected-label{display:none !important}) -- that count moved
+   to the selected-summary card's own badge (.mpwpb-selected-summary-count)
+   above the footer, so h3 no longer carries a badge span + loose "Total :"
+   text node to lay out here (it's a stacked label/amount pair instead,
+   .mpwpb-footer-total-label + .mpwpb_total_bill, built by
+   relabelTotalAmounts() in mpwpb-booking-tree.js). The old badge-pill and
+   flex-wrap/baseline rules that used to live here fought that layout --
+   display:flex !important here beat modern.css's non-!important
+   flex-direction:column, so the stack never actually rendered, and the
+   badge kept forcing itself back visible over modern.css's display:none.
+   Typography for the label/amount is owned by modern.css's own
+   .mpwpb-footer-total-label/.mpwpb_total_bill rules now; only the
+   currency-glyph-safe font-family note below still applies. */
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_total_bill {
-	font-family: 'Sora', 'Segoe UI', sans-serif !important;
-	font-size: 20px !important;
-	font-weight: 800 !important;
-	color: #15202B !important;
 	white-space: nowrap !important;
 }
 
@@ -1389,16 +1380,15 @@
 	transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-/* mpwpb-service-page-modern.css sets .justifyBetween to flex-wrap:wrap
-   unconditionally -- harmless with the old single-line h3, but now
-   that the badge+total take two lines (see .mpwpb-tree-selected-label
-   above), the row ran out of width and wrapped the Continue/Proceed
-   button onto its own line below instead of keeping it pinned to the
-   right. nowrap plus the button's own margin-left:auto above keep it
-   on the same row, right-aligned, regardless of how tall the left
-   side gets. */
-.mpwpb-static-template .sidebar .mpwpb_popup .next_service_area .justifyBetween,
-.mpwpb-static-template .sidebar .mpwpb_popup .next_date_area .justifyBetween {
+/* Keeps Back/Total/Continue on one row for Popup Modal, where the 560-760px
+   drawer is wide enough -- explicitly excludes Inline mode (embedded in the
+   sidebar's own, often much narrower, column width): mpwpb-service-page-
+   modern.css has its own !important flex-wrap:wrap there specifically so
+   Back+Total can share a line and Continue/Checkout drop to their own
+   full-width line below when the card is too narrow for all three
+   (the bug this !important nowrap used to cause by always winning). */
+.mpwpb-static-template .sidebar .mpwpb_popup:not(.mpwpb-popup-inline) .next_service_area .justifyBetween,
+.mpwpb-static-template .sidebar .mpwpb_popup:not(.mpwpb-popup-inline) .next_date_area .justifyBetween {
 	flex-wrap: nowrap !important;
 	align-items: center !important;
 }

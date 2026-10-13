@@ -27,6 +27,18 @@
 .mpwpb-static-template.mpwpb_registration > header{
 	background-color:var(--mpwpb_color_theme);background-size:cover;background-position:center;position:relative;overflow:hidden;
 }
+/* Every content-column section starts 32px further in than <main>'s own
+   10px padding (.main > section{margin:20px 32px !important} below,
+   mpwpb_registration.css's main{padding:10px}) -- .template-header
+   (mpwpb_registration.css, shared with the default template) only ever
+   had that outer 10px, so the hero's title/eyebrow/rating started 32px
+   to the left of where Overview/FAQ/Details text starts right under it.
+   Matching that same 32px here, scoped to this template only, lines the
+   hero's left edge up with the content area instead of touching it in
+   the shared file. */
+.mpwpb-static-template.mpwpb_registration > header .template-header .header-content{
+	padding:0 32px;
+}
 
 /* -------------------------------------------------------------------- *
  * Inline WooCommerce checkout
@@ -39,9 +51,24 @@
 .mpwpb-static-template .mpwpb-inline-wc-checkout-form .woocommerce-error{
 	display:block;margin:0 0 14px !important;padding:12px 14px !important;border:1px solid #fecaca;border-radius:10px;background:#fef2f2;color:#991b1b;font-size:13px;
 }
-.mpwpb-static-template .mpwpb-inline-checkout-heading{margin:0 0 18px;padding-bottom:14px;border-bottom:1px solid #e5e7eb;}
+.mpwpb-static-template .mpwpb-inline-checkout-heading{
+	display:flex;align-items:flex-start;justify-content:space-between;gap:14px;
+	margin:10px 0 0px;padding-bottom:14px;border-bottom:1px solid #e5e7eb;
+}
+.mpwpb-static-template .mpwpb-inline-checkout-heading-icon{
+	flex:0 0 auto;width:40px;height:40px;border-radius:12px;
+	display:flex;align-items:center;justify-content:center;
+	background:color-mix(in srgb, var(--mpwpb_color_theme) 10%, white);color:var(--mpwpb_color_theme);font-size:16px;
+}
+.mpwpb-static-template .mpwpb-inline-checkout-heading-text{flex:1 1 auto;min-width:0;}
 .mpwpb-static-template .mpwpb-inline-checkout-heading h3{margin:0 0 4px !important;color:#0f172a;font-size:18px !important;font-weight:800;}
 .mpwpb-static-template .mpwpb-inline-checkout-heading p{margin:0 !important;color:#64748b;font-size:12.5px;}
+.mpwpb-static-template .mpwpb-inline-checkout-heading-badge{
+	flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;
+	font-size:11px;font-weight:700;color:var(--mpwpb_color_theme);
+	background:color-mix(in srgb, var(--mpwpb_color_theme) 10%, white);
+	border-radius:999px;padding:5px 11px;white-space:nowrap;
+}
 .mpwpb-static-template .mpwpb-inline-wc-checkout-form .col2-set,
 .mpwpb-static-template .mpwpb-inline-wc-checkout-form .col-1,
 .mpwpb-static-template .mpwpb-inline-wc-checkout-form .col-2{float:none !important;width:100% !important;margin:0 !important;}
@@ -645,7 +672,7 @@ p.mpwpb-overview-stat-label{margin-left:10px !important;}
 /* Category preview chips */
 .mpwpb-overview-categories{margin:0 0 28px;}
 .mpwpb-overview-subhead{margin:0 0 10px;font-family:'Work Sans',sans-serif;font-size:12.5px;font-weight:700;color:#1e293b;text-transform:uppercase;letter-spacing:.04em;}
-.mpwpb-overview-cat-row{display:flex;flex-wrap:wrap;gap:10px;}
+.mpwpb-overview-cat-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;}
 .mpwpb-overview-cat-chip{
 	display:flex;align-items:center;gap:9px;padding:9px 14px 9px 10px;border:1px solid #E2EEEA;border-radius:999px;background:#fff;
 }
@@ -1018,7 +1045,7 @@ span.mpwpb-tree-service-name{padding-left:5px;}
 /* Live "N selected · total", built entirely from the real relocated rows
    (mpwpb-service-tree.js:updateSidebarSummary) -- hidden until at least
    one service is selected. */
-.mpwpb-tree-summary{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px;padding:0 2px;font-size:12.5px;color:#94a3b8;}
+.mpwpb-tree-summary{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:10px 0 10px;padding:0 2px;font-size:12.5px;color:#94a3b8;}
 .mpwpb-tree-summary-total{font-size:14px;font-weight:800;color:#1e293b;}
 
 .mpwpb-tree-cta-footer{margin-top:20px;text-align:center;}
@@ -1518,14 +1545,20 @@ label.mpwpb-checkout-field{display:inline-block;}
 		padding-bottom:calc(env(safe-area-inset-bottom, 0px) + 14px) !important;
 	}
 
-	/* Service step: Total on its own line, Continue full-width below it. */
-	.mpwpb-static-template .sidebar .mpwpb_popup .next_service_area .justifyBetween{flex-wrap:wrap;}
-	.mpwpb-static-template .sidebar .mpwpb_popup .next_service_area h3{flex:1 1 100%;justify-content:flex-start;font-size:15px;}
+	/* Service step: Total on its own line, Continue full-width below it. A
+	   thin divider under the Total row (instead of them just floating in
+	   the same gap) keeps the small label/amount from reading as loose,
+	   disconnected text sitting above the button. */
+	.mpwpb-static-template .sidebar .mpwpb_popup .next_service_area .justifyBetween{flex-wrap:wrap;gap:14px;}
+	.mpwpb-static-template .sidebar .mpwpb_popup .next_service_area h3{
+		flex:1 1 100%;justify-content:flex-start;font-size:15px;
+		padding-bottom:12px;border-bottom:1px solid #eef1f4;
+	}
 	.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_service_next{flex:1 1 100%;min-height:48px;}
 
 	/* Date & Time step: Back + Total share the top line, Checkout full-width
 	   below. flex-wrap lets them reflow instead of overflowing the panel. */
-	.mpwpb-static-template .sidebar .mpwpb_popup .next_date_area .justifyBetween{flex-wrap:wrap;}
+	.mpwpb-static-template .sidebar .mpwpb_popup .next_date_area .justifyBetween{flex-wrap:wrap;gap:14px;}
 	.mpwpb-static-template .sidebar .mpwpb_popup .next_date_area h4.mpwpb-total{flex:1 1 auto;justify-content:flex-end;font-size:15px !important;}
 	.mpwpb-static-template .sidebar .mpwpb_popup .next_date_area #mpwpb_date_time_next_btn_id,
 	.mpwpb-static-template .sidebar .mpwpb_popup .next_date_area #mpwpb_show_hide_staff_member{
@@ -1550,7 +1583,7 @@ label.mpwpb-checkout-field{display:inline-block;}
 	position:static !important;margin:0 !important;
 	width:100% !important;max-width:none !important;min-width:0 !important;
 	top:auto !important;height:auto !important;max-height:none !important;
-	border-radius:16px !important;box-shadow:0 1px 3px rgba(20,32,27,.08) !important;
+	border-radius:16px !important;box-shadow:-8px 0 30px rgba(15, 23, 42, .18) !important;
 	animation:none !important;
 }
 
@@ -1565,6 +1598,30 @@ label.mpwpb-checkout-field{display:inline-block;}
 }
 .mpwpb-static-template .sidebar .mpwpb_popup.mpwpb-popup-inline .mpwpb_popup_body{
 	max-height:none !important;
+}
+
+/* Inline mode sits inside the sidebar column's own width, which can be much
+   narrower than the @media(max-width:640px) wrap rules above ever check --
+   those only fire at an actual small viewport, so a desktop-width viewport
+   with a narrow sidebar column never got them and the Checkout/Continue
+   button overflowed past the card's right edge. Same stack treatment as
+   that phone breakpoint (Total on its own line, CTA full-width below),
+   just unconditional here since inline's width constraint isn't tied to
+   the viewport at all. */
+.mpwpb-static-template .sidebar .mpwpb_popup.mpwpb-popup-inline .next_service_area .justifyBetween{flex-wrap:wrap;gap:14px;}
+/* A thin divider under the (now full-width) Total row keeps the small
+   label/amount from reading as loose, disconnected text floating above
+   the button -- matches the same ≤640px Popup Modal treatment above. */
+.mpwpb-static-template .sidebar .mpwpb_popup.mpwpb-popup-inline .next_service_area h3{
+	flex:1 1 100%;padding-bottom:12px;border-bottom:1px solid #eef1f4;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup.mpwpb-popup-inline .mpwpb_service_next{flex:1 1 100%;min-height:48px;}
+
+.mpwpb-static-template .sidebar .mpwpb_popup.mpwpb-popup-inline .next_date_area .justifyBetween{flex-wrap:wrap;gap:14px;}
+.mpwpb-static-template .sidebar .mpwpb_popup.mpwpb-popup-inline .next_date_area h4.mpwpb-total{flex:1 1 auto;}
+.mpwpb-static-template .sidebar .mpwpb_popup.mpwpb-popup-inline .next_date_area #mpwpb_date_time_next_btn_id,
+.mpwpb-static-template .sidebar .mpwpb_popup.mpwpb-popup-inline .next_date_area #mpwpb_show_hide_staff_member{
+	flex:1 1 100%;min-height:48px;
 }
 
 /* -------------------------------------------------------------------- *
@@ -1716,7 +1773,7 @@ label.mpwpb-checkout-field{display:inline-block;}
 .mpwpb-static-template .sidebar .mpwpb_popup .next_service_area .justifyBetween{flex-wrap:wrap;}
 .mpwpb-static-template .sidebar .mpwpb_popup .next_service_area h3,
 .mpwpb-static-template .sidebar .mpwpb_popup .next_date_area h4.mpwpb-total{
-	display:flex;flex-direction:column;align-items:flex-start;gap:1px;margin:0;
+	display:flex;flex-direction:row;align-items:center;gap:6px;margin:0;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .next_date_area h4.mpwpb-total{flex:1 1 auto;}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-footer-total-label{
