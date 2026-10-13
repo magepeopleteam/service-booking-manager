@@ -333,14 +333,14 @@
 
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_service_duration {
 	font-family: 'Work Sans', sans-serif !important;
-	color: #15202B !important;
+	color: #989ca1 !important;
 }
 
 /* Price text -- no custom font-family (see the note near the top of
    this file): Work Sans doesn't cover this site's currency symbol,
    which broke it into a stray glyph when forced here too. */
 .mpwpb-static-template .sidebar .mpwpb_popup ._textTheme_min_100 {
-	color: #15202B !important;
+	color: #95989a !important;
 }
 
 .mpwpb-static-template .sidebar .mpwpb_popup .service_decQty,

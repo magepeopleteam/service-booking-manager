@@ -33,6 +33,20 @@
     $mpwpb_general_settings = get_option( 'mpwpb_general_settings', [] );
     $is_sticky_on_scrolling = isset( $mpwpb_general_settings['booking_widget_sticky_on_scrolling'] ) ? $mpwpb_general_settings['booking_widget_sticky_on_scrolling'] : 'yes';
 
+    /**
+     * 'popup' (default, unchanged): the sidebar "Our services" preview tree
+     * + CTA open the booking flow in the .mpwpb_popup overlay below.
+     * 'inline': that preview tree/CTA is skipped entirely -- there's nothing
+     * to open, the form itself is already on the page -- and .mpwpb_popup
+     * is rendered pre-opened (server-side `in` class, same class the real
+     * open/close JS already toggles) with its overlay positioning/backdrop
+     * and close button turned off, so the SAME step flow (services -> date
+     * & time -> checkout, same JS/validation, nothing reimplemented) just
+     * sits in normal page flow instead of a dismissible modal.
+     */
+    $booking_display_mode = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_booking_display_mode', 'popup');
+    $is_inline_display = $booking_display_mode === 'inline';
+
 	/**
 	 * Rendered as a sibling AFTER .mpwpb_static_cateogry closes (not inside
 	 * category_selection_static.php) so it sits outside that wrapper's
@@ -82,6 +96,7 @@
 	}
 ?>
     <div class="mpwpb_static_theme">
+		<?php if (!$is_inline_display) { ?>
         <div class="mpwpb_static_area<?php echo $is_sticky_on_scrolling === 'yes' ? ' mpwpb-sticky-enabled' : ''; ?>">
             <input type="hidden" name="mpwpb_sticky_on_scrolling" id="mpwpb_sticky_on_scrolling" value="<?php echo esc_attr( $is_sticky_on_scrolling )?>">
             <?php if( $shortcode === 'yes' ){ ?>
@@ -102,12 +117,15 @@
                 <div class="mpwpb_mobile_booking" id="mpwpb_mobile_booking_mobile"><?php esc_html_e('Make Service Booking', 'service-booking-manager'); ?></div>
             <?php }?>
         </div>
-        <div class="mpwpb_popup mpwpb_style" data-popup="#mpwpb_static_popup">
+		<?php } ?>
+        <div class="mpwpb_popup mpwpb_style<?php echo $is_inline_display ? ' in mpwpb-popup-inline' : ''; ?>" data-popup="#mpwpb_static_popup">
             <div class="mpwpb_popup_main_area mpwpd_padding_bottom">
                 <div class="mpwpb_popup_header">
                     <h5><?php echo esc_html($title); ?></h5>
                     <p><?php echo esc_html($sub_title); ?></p>
+					<?php if (!$is_inline_display) { ?>
                     <span class="fas fa-times mpwpb_popup_close"></span>
+					<?php } ?>
                 </div>
                 <div class="mpwpb_popup_body" id="mpwpb_popup_body_id">
                     <div class="mpwpb-popup-content" style="flex-direction: column">
@@ -259,6 +277,25 @@
 					<?php include(MPWPB_Function::template_path('registration/next_service.php')); ?>
 					<?php include(MPWPB_Function::template_path('registration/next_date_time.php')); ?>
                 </div>
+				<?php if ($is_inline_display) {
+					// The real "Select Service & Confirm Booking" CTA + trust row
+					// normally lives OUTSIDE the popup (mpwpb_static_cta_footer(),
+					// skipped entirely in inline mode since there's nothing to
+					// open) -- only the trust copy is reusable here, since this
+					// step flow's own real Continue/Checkout buttons (above) are
+					// the actual CTA when embedded inline.
+				?>
+                <div class="mpwpb-tree-trust mpwpb-tree-trust--inline">
+                    <div class="mpwpb-tree-trust-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <span><?php esc_html_e('Secure Payment Protection', 'service-booking-manager'); ?></span>
+                    </div>
+                    <div class="mpwpb-tree-trust-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span><?php esc_html_e('Free Rescheduling up to 24h', 'service-booking-manager'); ?></span>
+                    </div>
+                </div>
+				<?php } ?>
                 <?php if( (is_array($all_category) && !empty($all_category)) ||
                     (is_array($all_sub_category) && !empty($all_sub_category))
                  ){?>

@@ -212,6 +212,17 @@
 				// service elements (untouched click handlers/hidden inputs)
 				// into a unified checkbox-tree — no new selection logic.
 				wp_enqueue_script('mpwpb_booking_tree', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-booking-tree.js', ['jquery', 'mpwpb_registration', 'mpwpb_service_tree'], self::asset_version('/assets/frontend/mpwpb-booking-tree.js'), true);
+				// "Tap to add" hint relocateService() adds next to each unselected
+				// row's qty-stepper slot, matching the sidebar preview tree's own
+				// mpwpb-tree-tap-hint copy (category_selection_static.php) -- that
+				// element doesn't exist to read the translated text off of in
+				// Inline display mode, where the sidebar is skipped entirely.
+				wp_localize_script('mpwpb_booking_tree', 'mpwpbBookingTreeI18n', array(
+					'tapToAddTxt' => esc_html__('Tap to add', 'service-booking-manager'),
+					'yourSelectionTxt' => esc_html__('Your selection', 'service-booking-manager'),
+					'totalLabelTxt' => esc_html__('Total', 'service-booking-manager'),
+					'addedTxt' => esc_html__('added', 'service-booking-manager'),
+				));
 				// Account-area presentation: WooCommerce's stock Orders table
 				// reskin plus the scoped Custom Payment dashboard cards/table.
 				// Loaded after mpwpb_registration so its overrides win.

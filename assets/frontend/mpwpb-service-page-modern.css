@@ -355,7 +355,7 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
    popup itself uses, high enough to beat any normal page content)
    fixes it without touching the popup's own rule. */
 @media (min-width:1024px){
-	.mpwpb-static-template .sidebar{position:sticky;top:8px;align-self:flex-start;z-index:999999;}
+	.mpwpb-static-template .sidebar{position:sticky;top:8px;align-self:flex-start;z-index:1;}
 }
 
 /* -------------------------------------------------------------------- *
@@ -1037,6 +1037,11 @@ span.mpwpb-tree-service-name{padding-left:5px;}
 }
 .mpwpb-tree-trust-item + .mpwpb-tree-trust-item{border-top:1px solid #e5e9f0;}
 .mpwpb-tree-trust-item i{flex:0 0 auto;width:16px;text-align:center;color:var(--mpwpb_color_theme);font-size:13px;}
+/* Inline display mode's copy of this row -- sits inside the (now
+   non-modal) popup card itself instead of in the sidebar wrapper that's
+   skipped entirely for this mode, so it needs its own side margin to
+   match the card's padding instead of the sidebar's. */
+.mpwpb-tree-trust--inline{margin:0 20px 20px;border:1px solid #e5e9f0;}
 
 /* No click action anymore -- description shows as a small CSS tooltip on
    hover instead (mpwpb-booking-tree.js sets data-tooltip to the text). */
@@ -1405,21 +1410,33 @@ label.mpwpb-checkout-field{display:inline-block;}
    exists (deliberately not on the Service step -- the tree above it
    already shows what's selected there, this would be pure duplication). */
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary{
-	display:none;flex:0 0 auto;margin:0 0 10px;border:1px solid #e5e9f0;border-radius:10px;
-	background:#E5EEFF;overflow:hidden;
+	display:none;flex:0 0 auto;margin:0 0 10px;border:1px solid #e7ecf0;border-radius:14px;
+	background:color-mix(in srgb, var(--mpwpb_color_theme) 6%, white);overflow:hidden;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-header{
+	display:flex;align-items:center;justify-content:space-between;padding:11px 14px 7px;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-title{
+	font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#64748b;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-count{
+	font-size:11px;font-weight:800;color:#fff;background:var(--mpwpb_color_theme);
+	border-radius:999px;padding:1px 8px;line-height:1.5;min-width:16px;text-align:center;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-row{
-	display:flex;align-items:center;justify-content:space-between;gap:10px;
-	padding:5px 14px;font-size:12.5px;color:#334155;
+	display:flex;align-items:center;gap:8px;
+	padding:7px 14px;font-size:12.5px;color:#334155;border-top:1px solid rgba(15,23,42,.06);
 }
-.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-row + .mpwpb-selected-summary-row{
-	border-top:1px solid #e5e9f0;
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-check{
+	width:16px;height:16px;border-radius:50%;background:var(--mpwpb_color_theme);
+	flex:0 0 auto;display:flex;align-items:center;justify-content:center;color:#fff;font-size:8px;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-name{
 	flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
-.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-name em{
-	font-style:normal;color:#94a3b8;font-weight:600;margin-left:4px;
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-qty{
+	flex:0 0 auto;font-size:10.5px;font-weight:700;color:#64748b;background:#eef2f6;
+	border-radius:999px;padding:1px 7px;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-price{
 	flex:0 0 auto;font-weight:700;color:var(--mpwpb_color_theme);white-space:nowrap;
@@ -1434,9 +1451,6 @@ label.mpwpb-checkout-field{display:inline-block;}
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-more-btn:hover{background:#f0fdfa;}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-more-btn i{font-size:10px;}
-.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-more-rows .mpwpb-selected-summary-row{
-	border-top:1px solid #e5e9f0;
-}
 
 .mpwpb-static-template .sidebar .mpwpb_popup .popupFooter{
 	flex:0 0 auto !important;background:#fff !important;
@@ -1519,6 +1533,40 @@ label.mpwpb-checkout-field{display:inline-block;}
 	}
 }
 
+/* Inline display mode (Admin/MPWPB_Settings.php:mpwpb_booking_display_mode,
+   templates/registration/static_registration.php) -- same popup markup,
+   same step-flow JS (nothing reimplemented), rendered server-side with the
+   `in` class already on it instead of waiting for a click. It just needs
+   to stop LOOKING like a fixed/docked drawer and sit in the sidebar
+   column's normal page flow as an embedded card instead -- placed after
+   every drawer/admin-bar/phone rule above (same or lower specificity) so
+   this reliably wins regardless of viewport or login state. */
+.mpwpb-static-template .sidebar .mpwpb_popup.mpwpb-popup-inline{
+	position:static !important;display:block !important;inset:auto !important;
+	background:transparent !important;z-index:auto !important;overflow:visible !important;
+	align-items:unset !important;justify-content:unset !important;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup.mpwpb-popup-inline .mpwpb_popup_main_area{
+	position:static !important;margin:0 !important;
+	width:100% !important;max-width:none !important;min-width:0 !important;
+	top:auto !important;height:auto !important;max-height:none !important;
+	border-radius:16px !important;box-shadow:0 1px 3px rgba(20,32,27,.08) !important;
+	animation:none !important;
+}
+
+/* Popup Modal display mode only (not Inline), and only once the service
+   list is short enough to stay single-column (.is-dense not present --
+   see initBookingTree() in mpwpb-booking-tree.js, >8 items) -- a narrower
+   760px drawer with a short list reads as mostly empty space, so it docks
+   at a slimmer 560px instead. A dense (>8 items) list keeps the wider
+   760px drawer from the base rule above so its 2-column grid has room. */
+.mpwpb-static-template .sidebar .mpwpb_popup:not(.mpwpb-popup-inline):not(:has(.mpwpb-booking-tree.is-dense)) .mpwpb_popup_main_area{
+	max-width:560px !important;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup.mpwpb-popup-inline .mpwpb_popup_body{
+	max-height:none !important;
+}
+
 /* -------------------------------------------------------------------- *
  *  Popup's inner picker -> unified checkbox-tree (mpwpb-booking-tree.js).
  *  The old two-stage category-card + flat-service-list markup is left
@@ -1537,15 +1585,23 @@ label.mpwpb-checkout-field{display:inline-block;}
 }
 
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-booking-tree{margin-top:14px;}
-/* The popup has real width to spare at desktop size (980px at the same
-   >=1024px breakpoint the popup itself already widens at, mpwpd_padding_
-   bottom's own ancestor rule above) -- lay its category cards out two per
-   row instead of one long stacked column like the narrow sidebar. */
+/* Two columns only once there's enough width AND enough services to
+   actually benefit from it -- .is-dense is added by initBookingTree()
+   (mpwpb-booking-tree.js) when more than 8 real services (counted across
+   every category combined, not per-category) are on this page; 8 or
+   fewer stays single-column even at this width, since splitting a short
+   list in two just makes it feel sparse/unbalanced rather than denser. */
 @media (min-width:1024px){
-	.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-booking-tree{
+	.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-booking-tree.is-dense{
 		display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start;
 	}
-	.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-booking-tree .mpwpb-tree-cat{margin-bottom:0;}
+	.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-booking-tree.is-dense .mpwpb-tree-cat{margin-bottom:0;}
+}
+/* Inline display mode always stays single column, same list style as the
+   default Popup Modal view -- no 2-column split regardless of item count
+   or viewport width, so it doesn't fight the sidebar column's own width. */
+.mpwpb-static-template .sidebar .mpwpb_popup.mpwpb-popup-inline .mpwpb-booking-tree{
+	display:block !important;
 }
 
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-quick-options{margin-top:10px;}
@@ -1560,9 +1616,8 @@ label.mpwpb-checkout-field{display:inline-block;}
    so this is a from-scratch look rather than an override. */
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row{
 	position:relative;display:flex !important;align-items:center;gap:10px;
-	margin:0 0 9px 5px;padding:10px 12px !important;border:1px dotted #4d5a99;border-radius:10px;background:#fff;
+	margin:0 0 9px 5px;padding:10px 12px !important;border:1px solid #e4e0e0;border-radius:10px;background:#fff;
 	box-shadow:none;
-	transition:.15s;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row:last-child{margin-bottom:0;}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row.mpActive{
@@ -1597,6 +1652,15 @@ label.mpwpb-checkout-field{display:inline-block;}
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row.mpActive .mpwpb_service_inc_dec_holder{
 	display:block !important;
+}
+/* "Tap to add" hint (relocateService() in mpwpb-booking-tree.js) -- same
+   toggle as the qty-stepper above, opposite state: visible while
+   unselected, hidden once the qty stepper takes its place. */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row .mpwpb-tree-tap-hint{
+	display:inline;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row.mpActive .mpwpb-tree-tap-hint{
+	display:none;
 }
 /* Rounded pill stepper (-  qty  +), overriding the base bordered/divided
    groupContent look for a compact, seamless capsule matching the mockup. */
@@ -1640,14 +1704,44 @@ label.mpwpb-checkout-field{display:inline-block;}
 	position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
 }
 
-/* Footer: "N selected" label + relabelled Continue button. */
+/* Footer: "N selected" label (superseded by the selected-summary card's own
+   count badge above -- see .mpwpb-selected-summary-count -- so hidden here
+   rather than removed from the DOM, since relabelContinueButton() still
+   needs somewhere to prepend it; the !important is required to beat the
+   inline display jQuery's .show()/.hide() sets on it in updateSelectedFooter())
+   + the stacked "Total" label/amount + relabelled Continue button. */
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-selected-label{
-	display:none;font-size:16px;font-weight:600;color:#64748b;margin-right:8px;
+	display:none !important;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .next_service_area .justifyBetween{flex-wrap:wrap;}
-.mpwpb-static-template .sidebar .mpwpb_popup .next_service_area h3{font-size:16px;display:flex;align-items:center;flex-wrap:wrap;}
+.mpwpb-static-template .sidebar .mpwpb_popup .next_service_area h3,
+.mpwpb-static-template .sidebar .mpwpb_popup .next_date_area h4.mpwpb-total{
+	display:flex;flex-direction:column;align-items:flex-start;gap:1px;margin:0;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .next_date_area h4.mpwpb-total{flex:1 1 auto;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-footer-total-label{
+	font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#94a3b8;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .next_service_area .mpwpb_total_bill,
+.mpwpb-static-template .sidebar .mpwpb_popup .next_date_area .mpwpb_total_bill{
+	font-size:19px;font-weight:800;
+}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_service_next{
 	background-color:var(--mpwpb_color_theme) !important;border-radius:999px !important;
+}
+
+/* Back buttons (Date & Time step) -- a muted ghost pill instead of the solid
+   theme-color fill the shared .mActive utility class (mp_global/mpwpb_plugin_global.css)
+   would otherwise give them, so they read as a secondary action next to the
+   accent-colored Continue/Checkout CTA. */
+.mpwpb-static-template .sidebar .mpwpb_popup .next_date_area #mpwpb_display_date_time,
+.mpwpb-static-template .sidebar .mpwpb_popup .next_date_area #mpwpb_display_service_btn{
+	background-color:#f1f5f9 !important;border-color:transparent !important;color:#0f172a !important;
+	border-radius:10px !important;font-weight:700;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .next_date_area #mpwpb_display_date_time:hover,
+.mpwpb-static-template .sidebar .mpwpb_popup .next_date_area #mpwpb_display_service_btn:hover{
+	background-color:#e6ebf0 !important;
 }
 
 /* Styling only -- visibility is driven entirely by mpwpb_registration.js's
@@ -1655,17 +1749,17 @@ label.mpwpb-checkout-field{display:inline-block;}
    selection enabled, this button must stay hidden in favor of "Next Staff
    Member" until the staff step is actually reached, so a blanket
    `display:flex !important` here would show Checkout too early and let
-   customers skip picking a staff member entirely). It's greyed out and
-   non-interactive-looking by default and only turns solid once a date/time
-   is actually selected (.mpwpb-cta-ready, toggled in mpwpb-booking-tree.js)
-   -- the real validation on click (its existing data-alert) is untouched
-   either way. */
+   customers skip picking a staff member entirely). It's a neutral grey pill
+   and non-interactive-looking by default and only turns solid accent once a
+   date/time is actually selected (.mpwpb-cta-ready, toggled in
+   mpwpb-booking-tree.js) -- the real validation on click (its existing
+   data-alert) is untouched either way. */
 .mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_date_time_next_btn_id{
-	border-radius:10px !important;
-	background-color:#00685f !important;opacity:.5;
+	border-radius:999px !important;
+	background-color:#cbd5e1 !important;color:#64748b !important;opacity:1;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_date_time_next_btn_id.mpwpb-cta-ready{
-	background-color:var(--mpwpb_color_theme) !important;opacity:1;
+	background-color:var(--mpwpb_color_theme) !important;color:#fff !important;opacity:1;
 }
 
 button._mpBtn.mActive.booked{
@@ -1740,27 +1834,49 @@ h4.alignCenter.mpwpb-total{font-size:16px !important;}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_area{
 	background:transparent !important;box-shadow:none !important;margin-top:16px !important;padding:0 !important;
 }
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-extra-summary-header{
+	display:flex;align-items:center;justify-content:space-between;gap:10px;
+}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_area > h5{
 	font-size:11px !important;font-weight:800;text-transform:uppercase;letter-spacing:.05em;
 	color:#94a3b8;margin:0 0 8px !important;
 }
+/* Live "N added · +<total>" chip, appended next to the h5 by
+   initExtraServiceSummary()/updateExtraServiceSummary() (mpwpb-booking-
+   tree.js) -- same running-subtotal idea as .mpwpb-selected-summary-count
+   above, scoped to just this section's own add-ons rather than the whole
+   booking. */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-extra-summary-chip{
+	display:none;flex:0 0 auto;font-size:11px;font-weight:700;color:var(--mpwpb_color_theme);
+	white-space:nowrap;margin-bottom:8px;
+}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item{
 	position:relative;display:flex !important;align-items:center;gap:10px;cursor:pointer;
-	background:#fff;border:1px solid #e1e2e5;border-radius:10px;
-	padding:10px 12px !important;margin:0 0 9px 5px;
+	background:#fff;border:1px solid #e1e2e5;border-radius:16px;
+	padding:12px 14px !important;margin:0 0 12px 5px;
 	box-shadow:0 1px 2px rgba(15,23,42,.04),0 4px 10px rgba(15,23,42,.06);
 	transition:.15s;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item:last-child{margin-bottom:0;}
+/* Accent bar down the left edge, shown only once the item is added --
+   same signal as the color wash below, just visible at a glance without
+   reading the checkbox/border color. */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item::before{
+	content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;
+	border-radius:0 3px 3px 0;background:transparent;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item.mpActive::before{
+	background:var(--mpwpb_color_theme);
+}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item.mpActive{
 	/* Same color override as .mpwpb-tree-service-row.mpActive above, and for
 	   the same reason: div.mpwpb_item_box.mpActive (mpwpb_registration.css)
 	   is a global unscoped rule this item also matches. */
-	border-color:#b6b9b9;background:#EFF4FF;color:#1e293b;
+	border-color:var(--mpwpb_color_theme);background:color-mix(in srgb, var(--mpwpb_color_theme) 6%, white);color:#1e293b;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item .alignCenter > .fas:first-child{
-	flex:0 0 auto;width:26px;height:26px;display:inline-flex !important;align-items:center;justify-content:center;
-	border-radius:50%;background:#F0FDFA;color:var(--mpwpb_color_theme) !important;font-size:11px;margin-right:0 !important;
+	flex:0 0 auto;width:40px;height:40px;display:inline-flex !important;align-items:center;justify-content:center;
+	border-radius:12px;background:color-mix(in srgb, var(--mpwpb_color_theme) 12%, white);color:var(--mpwpb_color_theme) !important;font-size:16px;margin-right:0 !important;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item h6{font-size:13px;margin:0;font-weight:600;}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item ._textTheme_min_100{

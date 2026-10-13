@@ -57,6 +57,13 @@ function mpwpb_price_calculation($this) {
     if (typeof updateSelectedSummary === 'function') {
         updateSelectedSummary(parent);
     }
+
+    // Static template's "Choose Extra Features" live added-count/total chip
+    // (#mpwpb_extra_service_area, defined in mpwpb-booking-tree.js) -- same
+    // single choke point and same guard as updateSelectedSummary() above.
+    if (typeof updateExtraServiceSummary === 'function') {
+        updateExtraServiceSummary(parent);
+    }
 }
 //Registration
 (function ($) {

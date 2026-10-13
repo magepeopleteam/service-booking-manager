@@ -1638,6 +1638,54 @@
 	}
 
 	/* ---------------------------------------------------------------- *
+	 *  Booking Widget Settings -- display mode (real off-screen <select>,
+	 *  saved through the normal post save like every other field on this
+	 *  screen) and theme color (a site-wide option, saved immediately via
+	 *  its own AJAX call -- ajax_save_theme_color() in
+	 *  MPWPB_Settings_Modern.php -- since it isn't this post's own data).
+	 * ---------------------------------------------------------------- */
+	$root.on('click', '[data-sme-display-mode-value]', function () {
+		var $btn = $(this);
+		var value = $btn.data('sme-display-mode-value');
+		$root.find('[data-sme-display-mode] .mpwpb-sme__bw-seg-btn').removeClass('is-active');
+		$btn.addClass('is-active');
+		$root.find('[data-sme-display-mode-real]').val(value).trigger('change');
+	});
+
+	function saveThemeColor(color, $swatch) {
+		if (!cfg.ajax) { return; }
+		$.post(cfg.ajax, {
+			action: 'mpwpb_save_theme_color',
+			nonce: cfg.nonce,
+			color: color
+		}).done(function (resp) {
+			if (resp && resp.success) {
+				$root.find('[data-sme-theme-swatches] .mpwpb-sme__bw-swatch').removeClass('is-active');
+				if ($swatch) { $swatch.addClass('is-active'); }
+				$root.find('.mpwpb-sme__bw-swatch--custom').css('background', color);
+				toast(cfg.themeColorSavedTxt || 'Theme color updated');
+			} else {
+				toast(cfg.themeColorErrorTxt || 'Could not save theme color');
+			}
+		}).fail(function () {
+			toast(cfg.themeColorErrorTxt || 'Could not save theme color');
+		});
+	}
+	$root.on('click', '[data-sme-theme-color]', function () {
+		saveThemeColor($(this).data('sme-theme-color'), $(this));
+	});
+	// Live-preview the custom swatch while dragging in the native picker;
+	// only save once the user actually commits a value (change), so picking
+	// a color doesn't fire an AJAX call per pixel of drag.
+	$root.on('input', '[data-sme-theme-color-custom]', function () {
+		$(this).closest('.mpwpb-sme__bw-swatch--custom').css('background', $(this).val());
+	});
+	$root.on('change', '[data-sme-theme-color-custom]', function () {
+		$root.find('[data-sme-theme-swatches] .mpwpb-sme__bw-swatch').not('.mpwpb-sme__bw-swatch--custom').removeClass('is-active');
+		saveThemeColor($(this).val(), null);
+	});
+
+	/* ---------------------------------------------------------------- *
 	 *  Featured image (WP post thumbnail) uploader in the preview rail
 	 * ---------------------------------------------------------------- */
 	function setHero(id, url) {

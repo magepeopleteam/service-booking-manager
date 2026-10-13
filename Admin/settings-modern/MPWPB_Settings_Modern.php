@@ -25,6 +25,7 @@
 				add_action('admin_enqueue_scripts', array($this, 'enqueue'), 90);
 				add_filter('admin_body_class', array($this, 'body_class'));
 				add_action('wp_ajax_mpwpb_set_service_edit_ui', array($this, 'ajax_set_ui'));
+				add_action('wp_ajax_mpwpb_save_theme_color', array($this, 'ajax_save_theme_color'));
 				add_action('wp_ajax_mpwpb_save_service_editor', array($this, 'ajax_save_service'));
 				add_action('save_post', array($this, 'save_feature_image'), 20);
 			}
@@ -507,6 +508,15 @@
 					$fp_extra_services = is_array($fp_extra_services) ? $fp_extra_services : array();
 					$fp_extra_active = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_extra_service_active', 'off') === 'on';
 
+					// This service's display mode (per-service, Admin/MPWPB_Settings.php
+					// save_settings()) and the site-wide theme color (shared across
+					// every service, Admin/MPWPB_Settings_Global.php's classic color
+					// picker, saved here via its own immediate AJAX call -- see
+					// ajax_save_theme_color() above) for the card right after this one.
+					$booking_display_mode = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_booking_display_mode', 'popup');
+					$current_theme_color = MPWPB_Global_Function::get_style_settings('theme_color', '#00685f');
+					$theme_color_swatches = array('#00685f', '#2451e0', '#d97706', '#be123c', '#7c3aed', '#0f172a');
+
 					/* Group services into category -> subcategory -> service,
 					 * same three meta keys/relationships MPWPB_Categories_
 					 * Services_Modern::get_payload() reads. A service with no
@@ -747,6 +757,54 @@
 						</div>
 					</div>
 
+					<?php
+					/**
+					 * Display mode is per-service (Admin/MPWPB_Settings.php's
+					 * save_settings(), same save_post flow every other field on
+					 * this screen already goes through -- a real off-screen
+					 * <select> drives it, nothing new to wire up). Theme color is
+					 * site-wide (mpwpb_style_settings['theme_color'], the SAME
+					 * field the classic Settings page's color picker saves) and
+					 * doesn't belong to this post at all, so it saves itself
+					 * immediately on click via ajax_save_theme_color() above
+					 * instead of waiting for Update/Publish.
+					 */
+					?>
+					<div class="mpwpb-sme__rail-card" data-sme-step-only="pricing availability advanced">
+						<div class="mpwpb-sme__feat-head"><?php esc_html_e('Booking Widget Settings', 'service-booking-manager'); ?></div>
+						<div class="mpwpb-sme__rail-field-list">
+
+							<div class="mpwpb-sme__field-slot">
+								<div class="mpwpb-sme__bw-label"><?php esc_html_e('Booking Form Display', 'service-booking-manager'); ?></div>
+								<div class="mpwpb-sme__bw-segmented" data-sme-display-mode>
+									<button type="button" class="mpwpb-sme__bw-seg-btn<?php echo $booking_display_mode !== 'inline' ? ' is-active' : ''; ?>" data-sme-display-mode-value="popup"><?php esc_html_e('Popup Modal', 'service-booking-manager'); ?></button>
+									<button type="button" class="mpwpb-sme__bw-seg-btn<?php echo $booking_display_mode === 'inline' ? ' is-active' : ''; ?>" data-sme-display-mode-value="inline"><?php esc_html_e('Inline Embedded', 'service-booking-manager'); ?></button>
+								</div>
+								<p class="mpwpb-sme__bw-hint"><?php esc_html_e('Popup opens the booking flow in an overlay. Inline embeds it directly on the page, no popup.', 'service-booking-manager'); ?></p>
+								<div class="mpwpb-sme__offscreen">
+									<select name="mpwpb_booking_display_mode" data-sme-display-mode-real>
+										<option value="popup" <?php selected($booking_display_mode, 'popup'); ?>><?php esc_html_e('Popup Modal', 'service-booking-manager'); ?></option>
+										<option value="inline" <?php selected($booking_display_mode, 'inline'); ?>><?php esc_html_e('Inline Embedded', 'service-booking-manager'); ?></option>
+									</select>
+								</div>
+							</div>
+
+							<div class="mpwpb-sme__field-slot">
+								<div class="mpwpb-sme__bw-label"><?php esc_html_e('Theme Color', 'service-booking-manager'); ?></div>
+								<div class="mpwpb-sme__bw-swatches" data-sme-theme-swatches>
+									<?php foreach ($theme_color_swatches as $swatch) : ?>
+										<button type="button" class="mpwpb-sme__bw-swatch<?php echo strtolower($swatch) === strtolower($current_theme_color) ? ' is-active' : ''; ?>" style="background:<?php echo esc_attr($swatch); ?>" data-sme-theme-color="<?php echo esc_attr($swatch); ?>" aria-label="<?php echo esc_attr($swatch); ?>"></button>
+									<?php endforeach; ?>
+									<label class="mpwpb-sme__bw-swatch mpwpb-sme__bw-swatch--custom" style="background:<?php echo esc_attr($current_theme_color); ?>" title="<?php esc_attr_e('Custom color', 'service-booking-manager'); ?>">
+										<input type="color" data-sme-theme-color-custom value="<?php echo esc_attr($current_theme_color); ?>" aria-label="<?php esc_attr_e('Custom color', 'service-booking-manager'); ?>">
+									</label>
+								</div>
+								<p class="mpwpb-sme__bw-hint"><?php esc_html_e('Applies site-wide to every service\'s booking widget, saved immediately.', 'service-booking-manager'); ?></p>
+							</div>
+
+						</div>
+					</div>
+
 					<div class="mpwpb-sme__rail-card mpwpb-sme__rail-card--loading" data-sme-step-only="general">
 						<?php $this->render_rail_card_skeleton('info'); ?>
 						<div class="mpwpb-sme__feat-head"><?php esc_html_e('General Info Summary', 'service-booking-manager'); ?></div>
@@ -970,6 +1028,33 @@
 			}
 
 			/**
+			 * Theme color (mpwpb_style_settings['theme_color'], consumed as
+			 * --mpwpb_color_theme by mp_global/class/MPWPB_Global_Style.php) is a
+			 * single site-wide option -- the SAME real field the classic Settings
+			 * page's color picker saves (Admin/MPWPB_Settings_Global.php), just
+			 * saved here through its own immediate AJAX call instead of a full
+			 * options.php form submit, since it applies to every service, not
+			 * just the one currently being edited. manage_options (not
+			 * edit_posts) matches the capability that classic Settings page
+			 * itself requires, since this changes a site-wide value.
+			 */
+			public function ajax_save_theme_color() {
+				check_ajax_referer('mpwpb_sme_ui', 'nonce');
+				if (!current_user_can('manage_options')) {
+					wp_send_json_error('forbidden');
+				}
+				$color = isset($_POST['color']) ? sanitize_hex_color(wp_unslash($_POST['color'])) : '';
+				if (!$color) {
+					wp_send_json_error('invalid_color');
+				}
+				$settings = get_option('mpwpb_style_settings', array());
+				$settings = is_array($settings) ? $settings : array();
+				$settings['theme_color'] = $color;
+				update_option('mpwpb_style_settings', $settings);
+				wp_send_json_success(array('color' => $color));
+			}
+
+			/**
 			 * Save the native post form without reloading the modern editor.
 			 *
 			 * edit_post() is the same WordPress core path used by post.php, so all
@@ -1070,6 +1155,8 @@
 						'savedTxt' => esc_html__('Saved', 'service-booking-manager'),
 						'savingTxt' => esc_html__('Saving…', 'service-booking-manager'),
 						'saveErrorTxt' => esc_html__('The service could not be saved. Please try again.', 'service-booking-manager'),
+						'themeColorSavedTxt' => esc_html__('Theme color updated', 'service-booking-manager'),
+						'themeColorErrorTxt' => esc_html__('Could not save theme color', 'service-booking-manager'),
 						'localReadyTxt' => esc_html__('Local autosave ready', 'service-booking-manager'),
 						'localSavingTxt' => esc_html__('Saving locally…', 'service-booking-manager'),
 						'localSavedTxt' => esc_html__('Draft saved locally', 'service-booking-manager'),

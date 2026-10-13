@@ -181,6 +181,11 @@
 					}
                     $service_multiple_category_check = isset($_POST['mpwpb_service_multiple_category_check']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_service_multiple_category_check'])) : 'off';
                     $multiple_service_select = isset($_POST['mpwpb_multiple_service_select']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_multiple_service_select'])) : 'off';
+                    // Whether this service's booking widget opens in the popup overlay
+                    // (default, unchanged behavior) or renders inline on the page --
+                    // read by templates/registration/static_registration.php.
+                    $booking_display_mode = (isset($_POST['mpwpb_booking_display_mode']) && sanitize_text_field(wp_unslash($_POST['mpwpb_booking_display_mode'])) === 'inline') ? 'inline' : 'popup';
+                    update_post_meta($post_id, 'mpwpb_booking_display_mode', $booking_display_mode);
                     update_post_meta($post_id, 'mpwpb_features_status', $service_features_status);
 					update_post_meta($post_id, 'mpwpb_service_overview_status', $service_overview_status);
 					update_post_meta($post_id, 'mpwpb_service_details_status', $service_details_status);
