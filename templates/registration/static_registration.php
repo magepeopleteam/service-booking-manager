@@ -46,6 +46,10 @@
 				return;
 			}
 			?>
+			<div class="mpwpb-tree-summary" data-tree-summary style="display:none">
+				<span data-tree-summary-count></span>
+				<span class="mpwpb-tree-summary-total" data-tree-summary-total></span>
+			</div>
 			<div class="mpwpb-tree-cta-footer">
 				<button type="button" class="mpwpb-tree-cta-btn" data-target-popup="#mpwpb_static_popup"><?php esc_html_e('Select Service & Confirm Booking', 'service-booking-manager'); ?></button>
 			</div>
@@ -245,10 +249,11 @@
                          (name, qty, price per row) so the user can confirm their
                          selection before continuing -- populated/updated entirely
                          client-side (updateSelectedSummary() in mpwpb-booking-
-                         tree.js). Hidden on the Service step (that step already
-                         shows the tree itself, so it'd be pure duplication) and
-                         whenever nothing is selected; shown on Date & Time and
-                         Checkout, truncated to 3 rows with a "view more" toggle
+                         tree.js). Shown on Service (above the Total/Continue row),
+                         Date & Time and Checkout alike once at least one item is
+                         selected (hidden only when nothing is selected, or on a
+                         native-checkout Checkout step that already shows its own
+                         recap), truncated to 3 rows with a "view more" toggle
                          once more than 3 are selected. -->
                     <div class="mpwpb-selected-summary" id="mpwpb_selected_summary"></div>
 					<?php include(MPWPB_Function::template_path('registration/next_service.php')); ?>

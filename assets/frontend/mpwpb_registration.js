@@ -714,6 +714,63 @@ function mpwpb_price_calculation($this) {
         mpwpb_set_progress(parent, 'checkout');
         if (typeof updateSelectedSummary === 'function') { updateSelectedSummary(parent); }
     }
+    // Clicking a step in the top progress bar jumps straight to it, by
+    // triggering the SAME real Back/Continue button that transition already
+    // goes through -- nothing about the actual step switch is reimplemented
+    // here, so every side effect (remove-button visibility, .mpActive/
+    // .mpDisabled toggles, the "select a service"/"pick a date" guard) stays
+    // identical to clicking that button directly.
+    //  - A step BEFORE the current one: always allowed (existing Back
+    //    buttons have no guard either) -- walks back one real step at a
+    //    time so a 2-step jump (e.g. Checkout -> Service) runs each hop's
+    //    own side effects, not just the end state.
+    //  - The step right after the current one: same as clicking Continue
+    //    (including its alert if nothing's selected/picked yet) -- but only
+    //    if that real button is actually visible, i.e. the visitor could
+    //    have clicked it themselves (it's hidden instead of a staff-step
+    //    button when this service has staff selection enabled, which this
+    //    deliberately doesn't try to route around).
+    //  - Anything further ahead, the current step itself, or Confirmation
+    //    (which only ever appears after a real booking submits): no-op.
+    var MPWPB_PROGRESS_STEP_ORDER = ['service', 'date_time', 'checkout', 'confirmation'];
+    $(document).on('click', 'div.mpwpb_registration .mpwpb_cart_progress_step', function () {
+        let parent = $(this).closest('div.mpwpb_registration');
+        let stepKey = this.id.replace('mpwpb_progress_', '');
+        let currentKey = parent.data('mpwpbStep') || 'service';
+        let targetIndex = $.inArray(stepKey, MPWPB_PROGRESS_STEP_ORDER);
+        let currentIndex = $.inArray(currentKey, MPWPB_PROGRESS_STEP_ORDER);
+        if (targetIndex === -1 || currentIndex === -1 || targetIndex === currentIndex) {
+            return;
+        }
+        if (targetIndex < currentIndex) {
+            let hopBack = function () {
+                let stepNow = parent.data('mpwpbStep') || 'service';
+                let $backBtn;
+                if (stepNow === 'checkout') {
+                    $backBtn = parent.find('[data-checkout-back-to-date]').first();
+                } else if (stepNow === 'date_time') {
+                    $backBtn = parent.find('.mpwpb_date_time_prev').first();
+                } else {
+                    return;
+                }
+                if (!$backBtn.length) {
+                    return;
+                }
+                $backBtn.trigger('click');
+                if ($.inArray(parent.data('mpwpbStep'), MPWPB_PROGRESS_STEP_ORDER) > targetIndex) {
+                    hopBack();
+                }
+            };
+            hopBack();
+        } else if (targetIndex === currentIndex + 1) {
+            let $nextBtn = currentKey === 'service'
+                ? parent.find('.mpwpb_service_next').first()
+                : (currentKey === 'date_time' ? parent.find('.mpwpb_date_time_next').first() : $());
+            if ($nextBtn.length && $nextBtn.is(':visible')) {
+                $nextBtn.trigger('click');
+            }
+        }
+    });
     //==========date============//
     $(document).on('change', 'div.mpwpb_registration [name="mpwpb_date"]', function () {
         let parent = $(this).closest('div.mpwpb_registration');

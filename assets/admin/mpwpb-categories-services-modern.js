@@ -331,6 +331,12 @@
 		renderSidebar();
 		renderHeader();
 		renderList();
+		// Lets the wizard shell's Frontend Preview rail card (mpwpb-service-
+		// edit-modern.js) mirror the current service list without polling or
+		// re-reading this module's private `state` — bubbles up to #mpwpb-sme.
+		// Categories/subCategories ride along too so the preview's own
+		// category tree stays in sync with adds/renames/deletes here.
+		$root.trigger('mpwpb:csm-services-changed', [state.services, state.categories, state.subCategories]);
 	}
 
 	/* ---------------------------------------------------------------- *

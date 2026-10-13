@@ -196,6 +196,18 @@
 				// "Our services" sidebar tree expand/collapse only — selecting a
 				// service still goes through mpwpb_registration.js unchanged.
 				wp_enqueue_script('mpwpb_service_tree', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-service-tree.js', ['jquery', 'mpwpb_registration'], MPWPB_VERSION, true);
+				// Live "N services selected · total" summary this file renders
+				// into the sidebar's CTA footer, reading the real relocated
+				// service rows' data-price + qty -- same real data the popup's
+				// own next_service.php "Total:" already shows, just mirrored
+				// onto the sidebar where no such summary existed before.
+				wp_localize_script('mpwpb_service_tree', 'mpwpbTreeI18n', array(
+					'oneServiceTxt' => esc_html__('1 service selected', 'service-booking-manager'),
+					'manyServicesTxt' => esc_html__('%d services selected', 'service-booking-manager'),
+					'currencySymbol' => MPWPB_Global_Function::is_wc_payment_mode()
+						? get_woocommerce_currency_symbol()
+						: MPWPB_Global_Function::native_currency_setting('symbol', '$'),
+				));
 				// Booking popup's inner picker: relocates the real category/
 				// service elements (untouched click handlers/hidden inputs)
 				// into a unified checkbox-tree — no new selection logic.

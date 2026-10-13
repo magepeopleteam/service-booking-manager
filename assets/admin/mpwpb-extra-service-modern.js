@@ -99,6 +99,10 @@
 	function render() {
 		renderHeader();
 		renderList();
+		// Lets the wizard shell's Frontend Preview rail card (mpwpb-service-
+		// edit-modern.js) mirror this list live, same pattern as
+		// mpwpb-categories-services-modern.js's 'mpwpb:csm-services-changed'.
+		$root.trigger('mpwpb:esm-items-changed', [state.items]);
 	}
 
 	/* ---------------------------------------------------------------- *

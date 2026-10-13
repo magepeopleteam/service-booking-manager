@@ -311,6 +311,20 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
 .mpwpb-static-template nav ul li a.mpwpb-tab-active{
 	background-color:var(--mpwpb_color_theme) !important;color:#fff !important;font-weight:700;
 }
+/* Only logged-in users see WordPress's fixed admin bar, so this sticky tab
+   bar's plain top:8px put it right underneath it once scrolled -- same fix
+   as the popup's .mpwpb_popup_main_area below (32px/46px mirror WP core's
+   own html{margin-top} values at the same 782px breakpoint). */
+.admin-bar .mpwpb-static-template .mpwpb-details-page-tab,
+.admin-bar .mpwpb-static-template nav.mpwpb-details-page-tab{
+	top:40px;
+}
+@media screen and (max-width:782px){
+	.admin-bar .mpwpb-static-template .mpwpb-details-page-tab,
+	.admin-bar .mpwpb-static-template nav.mpwpb-details-page-tab{
+		top:54px;
+	}
+}
 
 /* Sidebar sticks on scroll the same way the tab bar above does. Only at
    >=1024px, where .main/.sidebar actually sit side by side (see
@@ -368,7 +382,7 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
    around its content rather than changing the section's actual size
    or position. */
 .mpwpb-static-template .main{padding:0;box-sizing:border-box;}
-.mpwpb-static-template .main > section{margin:56px 32px !important;}
+.mpwpb-static-template .main > section{margin:20px 32px !important;}
 .mpwpb-static-template .main > section#service-faq,
 .mpwpb-static-template .main > .mpwpb-gallery-section{
 	background:#F0F7F5;border:1px solid #E2EEEA;border-radius:28px;padding:48px 32px !important;
@@ -386,8 +400,18 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
 	font-family:'Sora','Segoe UI',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;
 }
 .mpwpb-static-template section#service-overview > h2{
-	font-size:26px !important;color:#15202B !important;margin-bottom:28px !important;
+	font-size:26px !important;color:#15202B !important;margin-bottom:0 !important;
 }
+.mpwpb-static-template .mpwpb-overview-head{
+	display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:10px;
+}
+.mpwpb-static-template .mpwpb-overview-rating{
+	display:flex;align-items:center;gap:7px;padding:9px 14px;border:1px solid #ECECE6;border-radius:999px;background:#fff;
+	box-shadow:0 1px 3px rgba(20,32,27,.05);flex:0 0 auto;
+}
+.mpwpb-static-template .mpwpb-overview-rating-stars{display:inline-flex;gap:1px;color:#F0A93B;font-size:13px;}
+.mpwpb-static-template .mpwpb-overview-rating-num{font-family:'Sora','Segoe UI',sans-serif;font-weight:700;font-size:13.5px;color:#15202B;}
+.mpwpb-static-template .mpwpb-overview-rating-text{font-family:'Work Sans',sans-serif;font-size:12.5px;color:#5B6763;}
 
 /* User-authored (WYSIWYG) overview content, restyled as a 2-up grid of
  * cards (checkmark badge + bold label + description) matching the
@@ -603,15 +627,34 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
 .mpwpb-review-msg.error{color:#dc2626;}
 
 /* Stats cards */
-.mpwpb-overview-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:0 0 28px;}
+.mpwpb-overview-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:10px 0 15px;}
 /* "Bookings completed" is omitted entirely (not just blanked) when there are
    no bookings yet -- the remaining two stats then split the row evenly. */
 .mpwpb-overview-stats.mpwpb-overview-stats--two{grid-template-columns:repeat(2,1fr);}
 .mpwpb-overview-stat{
-	text-align:center;padding:18px 14px;border:1px solid #E2EEEA;border-radius:16px;background:#F0F7F5;
+	display:flex;align-items:center;gap:14px;padding:18px;border:1px solid #E2EEEA;border-radius:16px;background:#F0F7F5;
 }
-.mpwpb-overview-stat-num{margin:0 0 2px;font-family:'Sora','Segoe UI',sans-serif;font-size:24px;font-weight:800;color:var(--mpwpb_color_theme);}
+.mpwpb-overview-stat-icon{
+	flex:0 0 auto;width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;
+	border-radius:12px;background:#fff;color:var(--mpwpb_color_theme);font-size:16px;
+}
+.mpwpb-overview-stat-num{margin:0 0 1px;font-family:'Sora','Segoe UI',sans-serif;font-size:22px;font-weight:800;color:var(--mpwpb_color_theme);line-height:1.1;}
 .mpwpb-overview-stat-label{margin:0;font-family:'Work Sans',sans-serif;font-size:11.5px;font-weight:500;color:#5B6763;}
+p.mpwpb-overview-stat-label{margin-left:10px !important;}
+
+/* Category preview chips */
+.mpwpb-overview-categories{margin:0 0 28px;}
+.mpwpb-overview-subhead{margin:0 0 10px;font-family:'Work Sans',sans-serif;font-size:12.5px;font-weight:700;color:#1e293b;text-transform:uppercase;letter-spacing:.04em;}
+.mpwpb-overview-cat-row{display:flex;flex-wrap:wrap;gap:10px;}
+.mpwpb-overview-cat-chip{
+	display:flex;align-items:center;gap:9px;padding:9px 14px 9px 10px;border:1px solid #E2EEEA;border-radius:999px;background:#fff;
+}
+.mpwpb-overview-cat-chip-icon{
+	flex:0 0 auto;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;
+	border-radius:50%;background:#E8F3F1;color:var(--mpwpb_color_theme);font-size:12px;
+}
+.mpwpb-overview-cat-chip-name{font-family:'Work Sans',sans-serif;font-size:13px;font-weight:600;color:#15202B;}
+.mpwpb-overview-cat-chip-count{font-family:'Sora','Segoe UI',sans-serif;font-size:12px;font-weight:700;color:var(--mpwpb_color_theme);}
 
 .mpwpb-overview-subhead{font-size:14.5px;font-weight:700;color:#1e293b;margin:28px 0 12px;}
 
@@ -651,18 +694,36 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
 .mpwpb-guarantee-text{margin:3px 0 0;font-size:12.5px;color:rgba(255,255,255,.85);line-height:1.5;}
 
 /* Hours */
-.mpwpb-hours-strip{
-	display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;margin-top:0;
-	padding:16px 20px;border:1px solid #ECECE6;border-radius:16px;background:#fff;box-shadow:0 1px 3px rgba(20,32,27,.05);
+.mpwpb-hours-card{
+	padding:18px 20px;border:1px solid #ECECE6;border-radius:16px;background:#fff;box-shadow:0 1px 3px rgba(20,32,27,.05);
+	display:flex;flex-direction:column;gap:14px;
 }
+.mpwpb-hours-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;}
+.mpwpb-hours-status{margin:0;display:flex;align-items:center;gap:8px;font-family:'Sora','Segoe UI',sans-serif;font-size:13px;font-weight:700;color:#15202B;}
+.mpwpb-hours-status-dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto;background:#9ca3af;}
+.mpwpb-hours-status.is-open .mpwpb-hours-status-dot{background:#3fae6a;}
+.mpwpb-hours-status.is-closed .mpwpb-hours-status-dot{background:#cb5a5a;}
+.mpwpb-hours-time{
+	margin:0;display:inline-flex;align-items:center;padding:7px 14px;border-radius:999px;background:#E8F3F1;
+	font-family:'Sora','Segoe UI',sans-serif;font-size:12.5px;font-weight:700;color:var(--mpwpb_color_theme);white-space:nowrap;
+}
+.mpwpb-hours-week{display:flex;gap:8px;}
+.mpwpb-hours-day{
+	flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 0 9px;
+	border-radius:12px;border:1px solid #E2EEEA;background:#fff;
+}
+.mpwpb-hours-day-label{font-family:'Sora','Segoe UI',sans-serif;font-size:11px;font-weight:700;color:#15202B;}
+.mpwpb-hours-day-dot{width:6px;height:6px;border-radius:50%;background:var(--mpwpb_color_theme);}
+.mpwpb-hours-day.is-off{background:#FAFAF8;border-color:#EFEFE9;}
+.mpwpb-hours-day.is-off .mpwpb-hours-day-label{font-weight:500;color:#B0AEA5;}
+.mpwpb-hours-day.is-off .mpwpb-hours-day-dot{background:#D8D6CC;}
+.mpwpb-hours-day.is-today{background:var(--mpwpb_color_theme);border-color:var(--mpwpb_color_theme);}
+.mpwpb-hours-day.is-today .mpwpb-hours-day-label{color:#fff;}
+.mpwpb-hours-day.is-today .mpwpb-hours-day-dot{background:#fff;}
 .mpwpb-hours-open{margin:0;display:flex;align-items:center;gap:12px;font-family:'Work Sans',sans-serif;font-size:13px;font-weight:500;color:#15202B;}
 .mpwpb-hours-open i{
 	flex-shrink:0;width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;
 	border-radius:50%;background:#E8F3F1;color:var(--mpwpb_color_theme);font-size:13px;
-}
-.mpwpb-hours-time{
-	margin:0;display:inline-flex;align-items:center;padding:7px 14px;border-radius:999px;background:#E8F3F1;
-	font-family:'Sora','Segoe UI',sans-serif;font-size:12.5px;font-weight:700;color:var(--mpwpb_color_theme);white-space:nowrap;
 }
 
 /* -------------------------------------------------------------------- *
@@ -688,14 +749,14 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
 	font-family:'Work Sans',sans-serif;font-size:13.5px;color:#5B6763;line-height:1.6;margin:0 0 20px;
 }
 .mpwpb-static-template .mpwpb-serivice-faq{
-	border:1px solid #ECECE6;border-radius:20px;overflow:hidden;background:#fff;margin-bottom:16px;
+	border:1px solid #ECECE6;border-radius:20px;overflow:hidden;background:#fff;margin-top:15px;margin-bottom:16px;
 	box-shadow:0 1px 3px rgba(20,32,27,.06);transition:box-shadow .2s ease;
 }
 .mpwpb-static-template .mpwpb-serivice-faq:has(.faq-header i.fa-minus){
 	box-shadow:0 10px 24px rgba(20,32,27,.1);
 }
 .mpwpb-static-template .mpwpb-serivice-faq .faq-header{
-	display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 24px !important;margin:0 !important;cursor:pointer;
+	display:flex;align-items:center;justify-content:space-between;gap:16px;padding:15px 24px !important;margin:0 !important;cursor:pointer;
 	font-family:'Sora','Segoe UI',sans-serif;font-size:16px;font-weight:700;color:#15202B;
 }
 .mpwpb-static-template .mpwpb-serivice-faq .faq-header i{
@@ -865,6 +926,14 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
 .mpwpb-tree-row{
 	display:flex;align-items:center;gap:8px;padding:10px 8px;border-radius:9px;cursor:pointer;user-select:none;
 }
+/* Each top-level category is now its own bordered card (was just a
+   teal-tinted header row + a dotted hanging-indent line) -- clearer
+   separation once there's more than one or two categories. Sub-categories
+   keep their existing nested header + connector-line treatment below
+   unchanged, just inset inside this outer card now instead of the page. */
+.mpwpb-tree-cat{border:1px solid #E2EEEA;border-radius:14px;overflow:hidden;margin-bottom:10px;background:#fff;}
+.mpwpb-tree-cat:last-child{margin-bottom:0;}
+.mpwpb-tree-cat > .mpwpb-tree-cat-row{margin-top:0;border:0;border-radius:0;}
 .mpwpb-tree-cat-row{font-weight:700;color:#1e293b;background:#F0FDFA;border:1px solid #ede7e7;margin-top:5px;}
 .mpwpb-tree-cat-row:hover{background:#F0FDFA;}
 .mpwpb-tree-folder-icon{color:var(--mpwpb_color_theme);font-size:14px;flex:0 0 auto;}
@@ -879,18 +948,15 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
    the category row above via this border, rather than each row drawing its
    own disconnected stub, so it visibly connects back up to the category. */
 .mpwpb-tree-cat.is-open > .mpwpb-tree-children{
-	display:block;margin-left:15px;padding-left:14px;border-left:1px dotted #d5d7d7;
+	display:block;margin:0;padding:8px 12px 12px;border-left:0;
 }
 .mpwpb-tree-subcat.is-open > .mpwpb-tree-children{display:block;}
 
-.mpwpb-tree-subcat-row{position:relative;font-size:13px;font-weight:600;color:#334155;border:1px solid #ddd;margin-top:10px;margin-bottom:10px;padding:8px 20px 10px 10px;background:#F0FDFA;}
+/* No more ::before connector tick -- the category's own outer card border
+   (above) replaced the vertical guide line it used to point back to, so a
+   lone horizontal tick with nothing to connect to would look orphaned. */
+.mpwpb-tree-subcat-row{font-size:13px;font-weight:600;color:#334155;border:1px solid #ddd;margin-top:10px;margin-bottom:10px;padding:8px 20px 10px 10px;background:#F0FDFA;}
 .mpwpb-tree-subcat-row:hover{background:#d5f7ef;}
-/* Horizontal tick on the LEFT side of the row, reaching back to meet the
-   vertical guide line on .mpwpb-tree-children above (left:-14px == the
-   guide's own position, since that container's padding-left is 14px). */
-.mpwpb-tree-subcat-row::before{
-	content:"";position:absolute;left:-14px;top:50%;transform:translateY(-50%);width:14px;height:2px;background:#d5d7d7;
-}
 
 .mpwpb-tree-service{
 	/* Everything (checkbox, name, duration, price, tap-hint) now sits on a
@@ -949,6 +1015,12 @@ span.mpwpb-tree-service-name{padding-left:5px;}
    any individual service (data-target-popup is handled generically by
    mp_global/assets/mp_style/mpwpb_plugin_global.js, no dedicated JS needed
    here). */
+/* Live "N selected · total", built entirely from the real relocated rows
+   (mpwpb-service-tree.js:updateSidebarSummary) -- hidden until at least
+   one service is selected. */
+.mpwpb-tree-summary{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px;padding:0 2px;font-size:12.5px;color:#94a3b8;}
+.mpwpb-tree-summary-total{font-size:14px;font-weight:800;color:#1e293b;}
+
 .mpwpb-tree-cta-footer{margin-top:20px;text-align:center;}
 .mpwpb-tree-cta-btn{
 	display:block;width:100%;border:none;border-radius:15px !important;background:var(--mpwpb_color_theme);
@@ -1216,7 +1288,7 @@ label.mpwpb-checkout-field{display:inline-block;}
 	align-items:stretch !important;justify-content:flex-end !important;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_popup_main_area{
-	margin:0 !important;width:100% !important;max-width:560px !important;min-width:0 !important;
+	margin:0 !important;width:100% !important;max-width:760px !important;min-width:0 !important;
 	/* Dock the drawer to the full visible viewport height. 100dvh (dynamic
 	   viewport height) is preferred over 100vh so the docked footer/Continue
 	   button can never end up hidden behind a mobile browser's collapsing
@@ -1465,6 +1537,16 @@ label.mpwpb-checkout-field{display:inline-block;}
 }
 
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-booking-tree{margin-top:14px;}
+/* The popup has real width to spare at desktop size (980px at the same
+   >=1024px breakpoint the popup itself already widens at, mpwpd_padding_
+   bottom's own ancestor rule above) -- lay its category cards out two per
+   row instead of one long stacked column like the narrow sidebar. */
+@media (min-width:1024px){
+	.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-booking-tree{
+		display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start;
+	}
+	.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-booking-tree .mpwpb-tree-cat{margin-bottom:0;}
+}
 
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-quick-options{margin-top:10px;}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-quick-label{
@@ -1478,7 +1560,7 @@ label.mpwpb-checkout-field{display:inline-block;}
    so this is a from-scratch look rather than an override. */
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row{
 	position:relative;display:flex !important;align-items:center;gap:10px;
-	margin:0 0 9px 5px;padding:10px 12px !important;border:1px dotted #e1e2e5;border-radius:10px;background:#fff;
+	margin:0 0 9px 5px;padding:10px 12px !important;border:1px dotted #4d5a99;border-radius:10px;background:#fff;
 	box-shadow:none;
 	transition:.15s;
 }
@@ -1492,9 +1574,18 @@ label.mpwpb-checkout-field{display:inline-block;}
 	   this light background. */
 	border-color:#b6b9b9;background:#EFF4FF;color:#1e293b;
 }
-.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row > ._dFlex{width:100%;display:flex !important;align-items:center;gap:10px;cursor:pointer;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row > ._dFlex{width:100%;display:flex !important;align-items:center;gap:10px;cursor:pointer;min-width:0;}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row h6{font-size:13px;margin:0;font-weight:600;}
-.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row .quantity-box{gap:8px;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row .mpwpb_service_duration{white-space:nowrap;margin-right:10px;}
+/* The row ran out of horizontal room once duration (above) could no longer
+   wrap to absorb the squeeze -- without this, the qty stepper (flex-shrink:0
+   below) got pushed past the row's own right edge instead. This lets the
+   name/details/duration/price block shrink and, if still tight, wrap onto a
+   second line as a whole group, so the stepper always stays inside the card. */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row ._dFlex_justifyBetween_fullWidth{min-width:0;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row ._fdColumn_fullWidth{min-width:0;flex:1 1 auto;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row ._equalChild{flex-wrap:wrap;row-gap:4px;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row .quantity-box{gap:8px;flex-shrink:0;}
 /* The real button now sits at the front of the row (relocateService() in
    mpwpb-booking-tree.js), no longer a DOM sibling of the qty stepper --
    the real click handler's $this.siblings('.mpwpb_service_inc_dec_holder')

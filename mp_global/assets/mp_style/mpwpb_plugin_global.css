@@ -249,7 +249,7 @@
 @media only screen and (min-width: 10px) {
 	.mpwpb_style .mpBtn, .mpwpb_style [class*="_mpBtn"],
 	.mpwpb_style button { position: relative; font-size: var(--mpwpb_button_fs); font-weight: var(--mpwpb_fw-medium); line-height: 1; cursor: pointer; overflow: visible; border: none; -webkit-appearance: button; text-transform: capitalize; }
-	.mpwpb_style button[disabled] { cursor: not-allowed; opacity: 0.8; background-color: #DDD; }
+	.mpwpb_style button[disabled] { cursor: not-allowed; opacity: 0.8; background-color: #494a4b; }
 	.mpwpb_style button:hover, .mpwpb_style button:focus { text-decoration: none; opacity: 0.8; background-color: var(--mpwpb_color_theme_cc); color: #FFF; }
 	.mpwpb_style button:hover span, .mpwpb_style button:focus span { color: #FFF; }
 	.mpwpb_style .mpBtn, .mpwpb_style [class*="_mpBtn"] { padding: var(--mpwpb_dmp_xs) var(--mpwpb_dmp); color: var(--d_color); background-color: transparent; border: 1px solid var(--mpwpb_color_border); font-weight: var(--mpwpb_fw-thin);}

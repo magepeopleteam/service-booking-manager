@@ -202,9 +202,11 @@
 		// render_booking_recap()) -- this footer widget would just duplicate it
 		// there, so skip it for every native checkout (offline/Stripe/PayPal,
 		// Pro or free), not only the Pro "custom" mode. Still shown on Checkout
-		// for WooCommerce mode (no recap of its own) and on Date & Time either way.
+		// for WooCommerce mode (no recap of its own), and on Service/Date & Time
+		// either way -- now shown on Service too, above the Total/Continue row,
+		// once at least one item is selected.
 		var isNativeCheckoutStep = step === 'checkout' && typeof mpwpb_ajax !== 'undefined' && !mpwpb_ajax.is_wc_payment_mode;
-		if (!rowsList.length || step === 'service' || isNativeCheckoutStep) {
+		if (!rowsList.length || isNativeCheckoutStep) {
 			$container.empty().hide();
 			return;
 		}
@@ -643,6 +645,19 @@
 
 	$(document).on('change', 'div.mpwpb_registration [name="mpwpb_date"]', function () {
 		updateCheckoutReadyState($(this).closest('div.mpwpb_registration'));
+	});
+
+	// Safety net for the rare case this popup is opened (mpwpb_plugin_global.js)
+	// before the $(function(){...}) below has run -- initBookingTree() is
+	// idempotent (guarded by the .all_service_area's own mpwpbTreeInit data
+	// flag), so calling it again once document-ready does fire is a no-op.
+	// Scoped to initBookingTree only (not the extra-service/date-pagination
+	// inits below, which aren't guarded the same way) since that's the piece
+	// whose absence produces the reported blank services step.
+	$(document).on('mpwpb:popup-opened', function (e, $popup) {
+		$popup.find('div.mpwpb_registration').each(function () {
+			initBookingTree($(this));
+		});
 	});
 
 	$(function () {

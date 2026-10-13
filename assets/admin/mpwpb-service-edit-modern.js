@@ -99,6 +99,7 @@
 				}
 			}, 50);
 		}
+
 	}
 
 	$steps.on('click', function () {
@@ -113,6 +114,525 @@
 		} else {
 			submitForm();
 		}
+	});
+
+	/* ---------------------------------------------------------------- *
+	 *  Frontend Preview rail card (Pricing/Availability/Advanced) — a
+	 *  static mock built from the current Services & Pricing list, kept
+	 *  live without any network round trip: mpwpb-categories-services-
+	 *  modern.js fires 'mpwpb:csm-services-changed' (bubbling up from
+	 *  #mpwpb-csm) on every add/edit/delete/reorder in that list, and
+	 *  this just redraws the rows from the array it passes along.
+	 *
+	 *  Tapping a row's + sets its quantity and reveals a qty stepper, same
+	 *  as the real tree (mpwpb-booking-tree.js); once any quantity is set
+	 *  the CTA enables and advances this mock to a Date & Time step, the
+	 *  way the real popup's own step flow does — all still cosmetic only,
+	 *  nothing here is a real booking.
+	 * ---------------------------------------------------------------- */
+	var fpQty = {}; // service id -> quantity, preserved across re-renders by id
+	var fpServices = []; // latest services array, for the Checkout step's summary
+	var fpExtraQty = {}; // extra-service id -> quantity
+	var fpSelectedDate = ''; // display label of the picked date/time mock, for Checkout
+	var fpSelectedTime = '';
+
+	function fpQtyStepperHtml() {
+		return '<div class="mpwpb-sme__fp-qty">'
+			+ '<button type="button" class="mpwpb-sme__fp-qty-btn" data-sme-fp-qty-minus>−</button>'
+			+ '<span class="mpwpb-sme__fp-qty-val" data-sme-fp-qty-val></span>'
+			+ '<button type="button" class="mpwpb-sme__fp-qty-btn" data-sme-fp-qty-plus>+</button>'
+			+ '</div>';
+	}
+	function fpRenderRowSide($card, id) {
+		var qty = fpQty[id] || 0;
+		var $row = $card.find('[data-sme-fp-row="' + id + '"]');
+		var $side = $row.find('[data-sme-fp-row-side]');
+		$row.toggleClass('is-added', qty > 0);
+		if (qty > 0) {
+			if (!$side.find('[data-sme-fp-qty-val]').length) {
+				$side.html(fpQtyStepperHtml());
+			}
+			$side.find('[data-sme-fp-qty-val]').text(qty);
+		} else {
+			var name = $row.find('.mpwpb-sme__fp-row-name').text();
+			$side.html('<button type="button" class="mpwpb-sme__fp-row-add" data-sme-fp-add="' + id + '"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>');
+			$side.find('[data-sme-fp-add]').attr('aria-label', (cfg.previewAddTxt || 'Add') + ' ' + name);
+		}
+	}
+	function fpTotalQty() {
+		var total = 0;
+		Object.keys(fpQty).forEach(function (id) { total += fpQty[id] || 0; });
+		return total;
+	}
+	function fpUpdateCta($card) {
+		$card.find('[data-sme-fp-cta]').prop('disabled', fpTotalQty() === 0);
+	}
+	// Mirrors fpRenderRowSide for the extra-services list -- same
+	// +/qty-stepper markup, just keyed by data-sme-fp-extra-row/-add instead.
+	function fpRenderExtraRowSide($card, id) {
+		var qty = fpExtraQty[id] || 0;
+		var $row = $card.find('[data-sme-fp-extra-row="' + id + '"]');
+		var $side = $row.find('[data-sme-fp-row-side]');
+		$row.toggleClass('is-added', qty > 0);
+		if (qty > 0) {
+			if (!$side.find('[data-sme-fp-qty-val]').length) {
+				$side.html(fpQtyStepperHtml());
+			}
+			$side.find('[data-sme-fp-qty-val]').text(qty);
+		} else {
+			var name = $row.find('.mpwpb-sme__fp-row-name').text();
+			$side.html('<button type="button" class="mpwpb-sme__fp-row-add" data-sme-fp-extra-add="' + id + '"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>');
+			$side.find('[data-sme-fp-extra-add]').attr('aria-label', (cfg.previewAddTxt || 'Add') + ' ' + name);
+		}
+	}
+	// Live "X selected, Total Y" summary above the Services step's CTA --
+	// reuses fpSummaryRow (below), the same row builder the Checkout step
+	// uses for its own order summary. Includes extra-service selections too.
+	function fpUpdateServicesSummary($card) {
+		var $box = $card.find('[data-sme-fp-services-summary]');
+		$box.empty();
+		var total = 0;
+		var any = false;
+		fpServices.forEach(function (svc) {
+			var qty = fpQty[svc.id] || 0;
+			if (qty === 0) { return; }
+			any = true;
+			var price = parseFloat(svc.price) || 0;
+			total += price * qty;
+			var label = svc.name + (qty > 1 ? ' × ' + qty : '');
+			var val = (cfg.previewCurrency || '') + (price * qty).toFixed(2);
+			$box.append(fpSummaryRow(label, val));
+		});
+		$card.find('[data-sme-fp-extra-row]').each(function () {
+			var id = $(this).data('sme-fp-extra-row');
+			var qty = fpExtraQty[id] || 0;
+			if (qty === 0) { return; }
+			any = true;
+			var price = parseFloat($(this).find('[data-sme-fp-row-price]').attr('data-sme-fp-row-price')) || 0;
+			total += price * qty;
+			var label = $(this).find('.mpwpb-sme__fp-row-name').text() + (qty > 1 ? ' × ' + qty : '');
+			var val = (cfg.previewCurrency || '') + (price * qty).toFixed(2);
+			$box.append(fpSummaryRow(label, val));
+		});
+		if (any) {
+			$box.append(fpSummaryRow(cfg.previewTotalTxt || 'Total', (cfg.previewCurrency || '') + total.toFixed(2), true));
+		}
+		$box.toggle(any);
+	}
+	// Extra services are page-wide, not linked to any one regular service
+	// (see MPWPB_Settings_Modern.php's render comment) -- the list simply
+	// appears once ANY regular service is selected, and hides again if the
+	// last one is removed.
+	function fpUpdateExtrasVisibility($card) {
+		var $extras = $card.find('[data-sme-fp-extras]');
+		if (!$extras.length) { return; }
+		$extras.toggle($extras.find('[data-sme-fp-extra-row]').length > 0 && fpTotalQty() > 0);
+	}
+	function fpSetQty($card, id, qty) {
+		fpQty[id] = Math.max(0, qty);
+		if (fpQty[id] === 0) { delete fpQty[id]; }
+		fpRenderRowSide($card, id);
+		fpUpdateCta($card);
+		fpUpdateServicesSummary($card);
+		fpUpdateExtrasVisibility($card);
+	}
+	function fpSetExtraQty($card, id, qty) {
+		fpExtraQty[id] = Math.max(0, qty);
+		if (fpExtraQty[id] === 0) { delete fpExtraQty[id]; }
+		fpRenderExtraRowSide($card, id);
+		fpUpdateServicesSummary($card);
+	}
+
+	function buildPreviewRow(svc) {
+		var $row = $('<div class="mpwpb-sme__fp-row"></div>').attr('data-sme-fp-row', svc.id);
+		var $main = $('<div class="mpwpb-sme__fp-row-main"></div>').appendTo($row);
+		$('<div class="mpwpb-sme__fp-row-name"></div>').text(svc.name || '').appendTo($main);
+		var $meta = $('<div class="mpwpb-sme__fp-row-meta"></div>').appendTo($main);
+		$('<span class="mpwpb-sme__fp-row-dur"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><polyline points="12,7 12,12 15,14"></polyline></svg></span>')
+			.append(document.createTextNode(svc.duration ? String(svc.duration) : '—'))
+			.appendTo($meta);
+		$('<span class="mpwpb-sme__fp-row-price"></span>')
+			.text((cfg.previewCurrency || '') + (svc.price || '0'))
+			.appendTo($meta);
+		$('<div class="mpwpb-sme__fp-row-side"></div>').attr('data-sme-fp-row-side', '').appendTo($row);
+		return $row;
+	}
+	/* Groups the flat services array into category -> subcategory -> service,
+	   mirroring the PHP grouping in MPWPB_Settings_Modern.php exactly (same
+	   fallback: no/unknown category -> uncategorized, rendered flat). */
+	function groupPreviewServices(services, categories, subCategories) {
+		var catById = {};
+		categories.forEach(function (c) { catById[c.id] = c; });
+		var subById = {};
+		subCategories.forEach(function (s) { subById[s.id] = s; });
+
+		var directByCat = {};
+		var byCat = {}; // subId -> [svc,...]
+		var uncategorized = [];
+		services.forEach(function (svc) {
+			var catId = svc.parentCat || '';
+			var subId = svc.subCat || '';
+			if (!catId || !catById[catId]) {
+				uncategorized.push(svc);
+			} else if (subId && subById[subId] && String(subById[subId].catId) === String(catId)) {
+				// subId alone isn't enough -- it's also the default/empty
+				// value for "no subcategory", so a subId that belongs to a
+				// DIFFERENT category must not misfile this service into it;
+				// it belongs directly under its own catId instead.
+				(byCat[subId] = byCat[subId] || []).push(svc);
+			} else {
+				(directByCat[catId] = directByCat[catId] || []).push(svc);
+			}
+		});
+		var subsByCat = {};
+		subCategories.forEach(function (s) {
+			if (s.catId && catById[s.catId]) {
+				(subsByCat[s.catId] = subsByCat[s.catId] || []).push(s);
+			}
+		});
+
+		var groups = categories.map(function (cat) {
+			var direct = directByCat[cat.id] || [];
+			var subs = (subsByCat[cat.id] || [])
+				.map(function (sub) { return { id: sub.id, name: sub.name, services: byCat[sub.id] || [] }; })
+				.filter(function (sub) { return sub.services.length > 0; });
+			var count = direct.length;
+			subs.forEach(function (sub) { count += sub.services.length; });
+			return { id: cat.id, name: cat.name, direct: direct, subs: subs, count: count };
+		}).filter(function (g) { return g.count > 0; });
+
+		return { groups: groups, uncategorized: uncategorized };
+	}
+	function fpChevronSvg() {
+		return '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="mpwpb-sme__fp-group-chev"><polyline points="18,15 12,9 6,15"></polyline></svg>';
+	}
+	function buildPreviewSubgroup(sub) {
+		var $sub = $('<div class="mpwpb-sme__fp-subgroup"></div>').attr('data-sme-fp-group', sub.id);
+		var $head = $(
+			'<button type="button" class="mpwpb-sme__fp-subgroup-head" data-sme-fp-group-toggle>' +
+				'<span class="mpwpb-sme__fp-group-icon" aria-hidden="true"><span class="dashicons dashicons-admin-generic"></span></span>' +
+				'<span class="mpwpb-sme__fp-group-name"></span>' +
+				'<span class="mpwpb-sme__fp-group-count"></span>' +
+				fpChevronSvg() +
+			'</button>'
+		).appendTo($sub);
+		$head.find('.mpwpb-sme__fp-group-name').text(sub.name || '');
+		$head.find('.mpwpb-sme__fp-group-count').text(sub.services.length);
+		var $body = $('<div class="mpwpb-sme__fp-subgroup-body"></div>').attr('data-sme-fp-group-body', '').appendTo($sub);
+		sub.services.forEach(function (svc) { $body.append(buildPreviewRow(svc)); });
+		return $sub;
+	}
+	function buildPreviewGroup(group) {
+		var $group = $('<div class="mpwpb-sme__fp-group"></div>').attr('data-sme-fp-group', group.id);
+		var $head = $(
+			'<button type="button" class="mpwpb-sme__fp-group-head" data-sme-fp-group-toggle>' +
+				'<span class="mpwpb-sme__fp-group-icon" aria-hidden="true"><span class="dashicons dashicons-category"></span></span>' +
+				'<span class="mpwpb-sme__fp-group-name"></span>' +
+				'<span class="mpwpb-sme__fp-group-count"></span>' +
+				fpChevronSvg() +
+			'</button>'
+		).appendTo($group);
+		$head.find('.mpwpb-sme__fp-group-name').text(group.name || '');
+		$head.find('.mpwpb-sme__fp-group-count').text(group.count);
+		var $body = $('<div class="mpwpb-sme__fp-group-body"></div>').attr('data-sme-fp-group-body', '').appendTo($group);
+		group.direct.forEach(function (svc) { $body.append(buildPreviewRow(svc)); });
+		group.subs.forEach(function (sub) { $body.append(buildPreviewSubgroup(sub)); });
+		return $group;
+	}
+	function renderPreviewList(services, categories, subCategories) {
+		var $card = $root.find('.mpwpb-sme__preview-card');
+		if (!$card.length) { return; }
+		services = services || [];
+		fpServices = services;
+		var ids = {};
+		var $rows = $card.find('[data-sme-fp-rows]');
+		$rows.empty();
+		var grouped = groupPreviewServices(services, categories || [], subCategories || []);
+		grouped.groups.forEach(function (group) { $rows.append(buildPreviewGroup(group)); });
+		grouped.uncategorized.forEach(function (svc) { $rows.append(buildPreviewRow(svc)); });
+		services.forEach(function (svc) {
+			ids[svc.id] = true;
+			fpRenderRowSide($card, svc.id);
+		});
+		// Drop quantities for services that were removed from the list.
+		Object.keys(fpQty).forEach(function (id) {
+			if (!ids[id]) { delete fpQty[id]; }
+		});
+		var hasServices = services.length > 0;
+		$rows.toggle(hasServices);
+		$card.find('[data-sme-fp-empty]').toggle(!hasServices);
+		$card.find('[data-sme-fp-cta]').toggle(hasServices);
+		$card.find('[data-sme-fp-trust]').toggle(hasServices);
+		fpUpdateCta($card);
+		fpUpdateServicesSummary($card);
+		fpUpdateExtrasVisibility($card);
+	}
+	function buildPreviewExtraRow(item) {
+		var $row = $('<div class="mpwpb-sme__fp-row"></div>').attr('data-sme-fp-extra-row', item.id);
+		var $main = $('<div class="mpwpb-sme__fp-row-main"></div>').appendTo($row);
+		$('<div class="mpwpb-sme__fp-row-name"></div>').text(item.name || '').appendTo($main);
+		var $meta = $('<div class="mpwpb-sme__fp-row-meta"></div>').appendTo($main);
+		$('<span class="mpwpb-sme__fp-row-price"></span>')
+			.attr('data-sme-fp-row-price', item.price || '0')
+			.text((cfg.previewCurrency || '') + (item.price || '0'))
+			.appendTo($meta);
+		$('<div class="mpwpb-sme__fp-row-side"></div>').attr('data-sme-fp-row-side', '').appendTo($row);
+		return $row;
+	}
+	// Rebuilds the extra-services list when it's edited live in the Pricing
+	// step, same pattern as renderPreviewList for regular services. The
+	// whole block only exists in the DOM if "Enable Extra Service" was on at
+	// page load (see MPWPB_Settings_Modern.php) -- editing items live can't
+	// make the block appear from nothing, only refresh what's already there.
+	function renderPreviewExtras(items) {
+		var $card = $root.find('.mpwpb-sme__preview-card');
+		var $block = $card.find('[data-sme-fp-extras]');
+		if (!$block.length) { return; }
+		items = items || [];
+		var ids = {};
+		var $rows = $block.find('[data-sme-fp-extra-rows]');
+		$rows.empty();
+		items.forEach(function (item) {
+			ids[item.id] = true;
+			$rows.append(buildPreviewExtraRow(item));
+			fpRenderExtraRowSide($card, item.id);
+		});
+		Object.keys(fpExtraQty).forEach(function (id) {
+			if (!ids[id]) { delete fpExtraQty[id]; }
+		});
+		fpUpdateExtrasVisibility($card);
+		fpUpdateServicesSummary($card);
+	}
+	$root.on('click', '[data-sme-fp-group-toggle]', function () {
+		$(this).closest('.mpwpb-sme__fp-group, .mpwpb-sme__fp-subgroup').toggleClass('is-collapsed');
+	});
+
+	$root.on('click', '[data-sme-fp-add]', function () {
+		var $card = $(this).closest('.mpwpb-sme__preview-card');
+		fpSetQty($card, $(this).data('sme-fp-add'), 1);
+	});
+	$root.on('click', '[data-sme-fp-extra-add]', function () {
+		var $card = $(this).closest('.mpwpb-sme__preview-card');
+		fpSetExtraQty($card, $(this).data('sme-fp-extra-add'), 1);
+	});
+	$root.on('click', '[data-sme-fp-qty-plus]', function () {
+		var $card = $(this).closest('.mpwpb-sme__preview-card');
+		var $extraRow = $(this).closest('[data-sme-fp-extra-row]');
+		if ($extraRow.length) {
+			var exId = $extraRow.data('sme-fp-extra-row');
+			fpSetExtraQty($card, exId, (fpExtraQty[exId] || 0) + 1);
+			return;
+		}
+		var id = $(this).closest('[data-sme-fp-row]').data('sme-fp-row');
+		fpSetQty($card, id, (fpQty[id] || 0) + 1);
+	});
+	$root.on('click', '[data-sme-fp-qty-minus]', function () {
+		var $card = $(this).closest('.mpwpb-sme__preview-card');
+		var $extraRow = $(this).closest('[data-sme-fp-extra-row]');
+		if ($extraRow.length) {
+			var exId = $extraRow.data('sme-fp-extra-row');
+			fpSetExtraQty($card, exId, (fpExtraQty[exId] || 0) - 1);
+			return;
+		}
+		var id = $(this).closest('[data-sme-fp-row]').data('sme-fp-row');
+		fpSetQty($card, id, (fpQty[id] || 0) - 1);
+	});
+
+	/* ---------------------------------------------------------------- *
+	 *  Step 2: Date & Time — built once on first visit, lazily, since
+	 *  "Today"/"Tomorrow" need the real current date and there's nothing
+	 *  else server-side worth pre-rendering for a cosmetic-only step.
+	 * ---------------------------------------------------------------- */
+	var FP_TIME_SLOTS = ['10:00 am', '11:00 am', '12:00 pm', '3:00 pm', '4:00 pm', '5:00 pm'];
+	var FP_WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+	var fpDateOffset = 0; // days forward from today the visible 6-day window starts
+	function fpBuildDateStrip() {
+		var $wrap = $('<div class="mpwpb-sme__fp-dates-wrap"></div>');
+		var $head = $('<div class="mpwpb-sme__fp-dates-head"></div>').appendTo($wrap);
+		$('<span class="mpwpb-sme__fp-section-lab"></span>').text(cfg.previewDateLabelTxt || 'Date').appendTo($head);
+		$('<button type="button" class="mpwpb-sme__fp-dates-next"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9,6 15,12 9,18"></polyline></svg></button>')
+			.attr('aria-label', cfg.previewMoreDatesTxt || 'See more dates')
+			.on('click', function () {
+				fpDateOffset += 6;
+				fpSelectedDate = '';
+				var $step = $wrap.closest('.mpwpb-sme__fp-step--datetime');
+				$wrap.replaceWith(fpBuildDateStrip());
+				fpUpdateDatetimeCta($step);
+			})
+			.appendTo($head);
+
+		var $strip = $('<div class="mpwpb-sme__fp-dates"></div>').appendTo($wrap);
+		for (var i = 0; i < 6; i++) {
+			var dayNum = fpDateOffset + i;
+			var d = new Date();
+			d.setDate(d.getDate() + dayNum);
+			var label = dayNum === 0 ? (cfg.previewTodayTxt || 'Today') : dayNum === 1 ? (cfg.previewTomorrowTxt || 'Tomorrow') : FP_WEEKDAYS[d.getDay()];
+			var $btn = $('<button type="button" class="mpwpb-sme__fp-date' + (dayNum === 0 ? ' is-selected' : '') + '"></button>')
+				.attr('aria-label', label + ' ' + d.getDate());
+			// Only "Tomorrow" skips the visible label -- Today and the weekday
+			// abbreviations (Wed/Thu/…) still show theirs. aria-label is set
+			// for every card regardless, so Tomorrow keeps its context for
+			// screen readers even without the on-card text. Past the first
+			// page (fpDateOffset > 0), dayNum is never 0 or 1, so every card
+			// on later pages is a plain weekday label.
+			if (dayNum !== 1) {
+				$btn.append($('<span class="mpwpb-sme__fp-date-lab"></span>').text(label));
+			}
+			$btn.append($('<strong class="mpwpb-sme__fp-date-num"></strong>').text(d.getDate())).appendTo($strip);
+			if (dayNum === 0) { fpSelectedDate = label + ' ' + d.getDate(); } // "Today" starts pre-selected
+		}
+		$strip.on('click', 'button', function () {
+			$strip.find('button').removeClass('is-selected');
+			$(this).addClass('is-selected');
+			fpSelectedDate = $(this).attr('aria-label');
+			fpUpdateDatetimeCta($strip.closest('.mpwpb-sme__fp-step--datetime'));
+		});
+		return $wrap;
+	}
+	function fpBuildTimeGrid() {
+		var $grid = $('<div class="mpwpb-sme__fp-times"></div>');
+		FP_TIME_SLOTS.forEach(function (slot) {
+			$('<button type="button" class="mpwpb-sme__fp-time"></button>').text(slot).appendTo($grid);
+		});
+		$grid.on('click', 'button', function () {
+			$grid.find('button').removeClass('is-selected');
+			$(this).addClass('is-selected');
+			fpSelectedTime = $(this).text();
+			fpUpdateDatetimeCta($grid.closest('.mpwpb-sme__fp-step--datetime'));
+		});
+		return $grid;
+	}
+	function fpUpdateDatetimeCta($step) {
+		var hasDate = $step.find('.mpwpb-sme__fp-date.is-selected').length > 0;
+		var hasTime = $step.find('.mpwpb-sme__fp-time.is-selected').length > 0;
+		$step.find('[data-sme-fp-dt-cta]').prop('disabled', !(hasDate && hasTime));
+	}
+	function fpBuildDatetimeStep($step) {
+		$('<div class="mpwpb-sme__fp-heading"></div>').text(cfg.previewStep2HeadingTxt || 'Choose date & time').appendTo($step);
+		$('<p class="mpwpb-sme__fp-sub"></p>').text(cfg.previewStep2SubTxt || '').appendTo($step);
+		$step.append(fpBuildDateStrip()); // the "Date" label + carousel-next icon are built inside the wrap now
+		$('<div class="mpwpb-sme__fp-section-lab"></div>').text(cfg.previewTimeLabelTxt || 'Time').appendTo($step);
+		$step.append(fpBuildTimeGrid());
+		// Same mount point attribute as the Services step's summary --
+		// fpUpdateServicesSummary() already updates every element matching
+		// it inside the card, so this one just rides along automatically.
+		$('<div class="mpwpb-sme__fp-summary" data-sme-fp-services-summary style="display:none"></div>').appendTo($step);
+		$('<button type="button" class="mpwpb-sme__fp-cta" data-sme-fp-dt-cta disabled></button>')
+			.text(cfg.previewContinueTxt || 'Continue to Checkout')
+			.appendTo($step);
+		// This step is only built once (lazily, on first visit) and reused
+		// after that, so populate it immediately with whatever was already
+		// selected on the Services step before the user ever got here.
+		fpUpdateServicesSummary($step.closest('.mpwpb-sme__preview-card'));
+	}
+	/* ---------------------------------------------------------------- *
+	 *  Step 3: Checkout — an order summary built from the live qty
+	 *  selections (fpQty/fpServices) plus whatever date/time was picked
+	 *  in step 2. Rebuilt fresh on every visit (unlike step 2, which is
+	 *  only built once) since the selection can change between visits.
+	 * ---------------------------------------------------------------- */
+	function fpSummaryRow(label, val, isTotal) {
+		return $('<div class="mpwpb-sme__fp-summary-row' + (isTotal ? ' mpwpb-sme__fp-summary-row--total' : '') + '"></div>')
+			.append($('<span class="mpwpb-sme__fp-summary-row-label"></span>').text(label))
+			.append($('<span class="mpwpb-sme__fp-summary-row-val"></span>').text(val));
+	}
+	function fpBuildCheckoutStep($step) {
+		$step.empty();
+		$('<div class="mpwpb-sme__fp-heading"></div>').text(cfg.previewCheckoutHeadingTxt || 'Review & confirm').appendTo($step);
+		$('<p class="mpwpb-sme__fp-sub"></p>').text(cfg.previewCheckoutSubTxt || '').appendTo($step);
+
+		var $summary = $('<div class="mpwpb-sme__fp-summary"></div>').appendTo($step);
+		var total = 0;
+		fpServices.forEach(function (svc) {
+			var qty = fpQty[svc.id] || 0;
+			if (qty === 0) { return; }
+			var price = parseFloat(svc.price) || 0;
+			total += price * qty;
+			var label = svc.name + (qty > 1 ? ' × ' + qty : '');
+			var val = (cfg.previewCurrency || '') + (price * qty).toFixed(2);
+			$summary.append(fpSummaryRow(label, val));
+		});
+		// Extra services aren't tracked in a parallel data array like
+		// fpServices -- read straight off the Services step's rows (same
+		// source fpUpdateServicesSummary uses) since they're still in the
+		// DOM regardless of which step is currently shown.
+		$root.find('[data-sme-fp-extra-row]').each(function () {
+			var id = $(this).data('sme-fp-extra-row');
+			var qty = fpExtraQty[id] || 0;
+			if (qty === 0) { return; }
+			var price = parseFloat($(this).find('[data-sme-fp-row-price]').attr('data-sme-fp-row-price')) || 0;
+			total += price * qty;
+			var label = $(this).find('.mpwpb-sme__fp-row-name').text() + (qty > 1 ? ' × ' + qty : '');
+			var val = (cfg.previewCurrency || '') + (price * qty).toFixed(2);
+			$summary.append(fpSummaryRow(label, val));
+		});
+		$summary.append(fpSummaryRow(cfg.previewDateTimeLabelTxt || 'Date & Time', fpSelectedDate + (fpSelectedTime ? ', ' + fpSelectedTime : '')));
+		$summary.append(fpSummaryRow(cfg.previewTotalTxt || 'Total', (cfg.previewCurrency || '') + total.toFixed(2), true));
+
+		$('<button type="button" class="mpwpb-sme__fp-cta" data-sme-fp-confirm></button>')
+			.text(cfg.previewConfirmTxt || 'Confirm Booking')
+			.appendTo($step);
+	}
+	function fpUpdateSteps($mock, name) {
+		var order = ['services', 'datetime', 'checkout'];
+		var idx = order.indexOf(name);
+		$mock.find('[data-sme-fp-steps-item]').each(function () {
+			var i = order.indexOf($(this).data('sme-fp-steps-item'));
+			$(this).toggleClass('is-active', i === idx).toggleClass('is-done', i < idx);
+		});
+	}
+	// One shared Back button lives in the card footer (left of "Open full
+	// preview") rather than one per step, so it needs to know where "back"
+	// goes from wherever the mock currently is.
+	var fpCurrentStep = 'services';
+	var FP_PREV_STEP = { datetime: 'services', checkout: 'datetime' };
+	function fpGoToStep($mock, name) {
+		var $services = $mock.find('[data-sme-fp-step="services"]');
+		var $datetime = $mock.find('[data-sme-fp-step="datetime"]');
+		var $checkout = $mock.find('[data-sme-fp-step="checkout"]');
+		if (name === 'datetime' && !$datetime.children().length) {
+			fpBuildDatetimeStep($datetime);
+		}
+		if (name === 'checkout') {
+			fpBuildCheckoutStep($checkout); // always fresh: selections can change between visits
+		}
+		$services.toggleClass('is-active', name === 'services').prop('hidden', name !== 'services');
+		$datetime.toggleClass('is-active', name === 'datetime').prop('hidden', name !== 'datetime');
+		$checkout.toggleClass('is-active', name === 'checkout').prop('hidden', name !== 'checkout');
+		fpUpdateSteps($mock, name);
+		fpCurrentStep = name;
+		$mock.closest('.mpwpb-sme__preview-card').find('[data-sme-fp-footer-back]').prop('hidden', name === 'services');
+	}
+	$root.on('click', '[data-sme-fp-cta]', function (e) {
+		e.preventDefault();
+		if ($(this).prop('disabled')) { return; }
+		fpGoToStep($(this).closest('.mpwpb-sme__fp-mock'), 'datetime');
+	});
+	$root.on('click', '[data-sme-fp-dt-cta]', function (e) {
+		e.preventDefault();
+		if ($(this).prop('disabled')) { return; }
+		fpGoToStep($(this).closest('.mpwpb-sme__fp-mock'), 'checkout');
+	});
+	$root.on('click', '[data-sme-fp-confirm]', function (e) {
+		e.preventDefault();
+		toast(cfg.previewOnlyTxt || 'Preview only — real bookings continue on the live page.');
+	});
+	$root.on('click', '[data-sme-fp-footer-back]', function () {
+		var $mock = $(this).closest('.mpwpb-sme__preview-card').find('[data-sme-fp-mock]');
+		fpGoToStep($mock, FP_PREV_STEP[fpCurrentStep] || 'services');
+	});
+
+	// Delegated from $root (always present at bind time) rather than bound
+	// directly to #mpwpb-csm, which mpwpb-categories-services-modern.js
+	// creates its content for after this file has already run.
+	$root.on('mpwpb:csm-services-changed', '#mpwpb-csm', function (e, services, categories, subCategories) {
+		renderPreviewList(services, categories, subCategories);
+	});
+	// Same delegation reasoning as above, for mpwpb-extra-service-modern.js's
+	// own list (#mpwpb-esm) -- keeps the preview's extra-services list in
+	// sync with live add/edit/delete there too.
+	$root.on('mpwpb:esm-items-changed', '#mpwpb-esm', function (e, items) {
+		renderPreviewExtras(items);
 	});
 
 	/* ---------------------------------------------------------------- *
@@ -1336,6 +1856,31 @@
 			event.preventDefault();
 			return 'The changes you made will be lost if you navigate away from this page.';
 		}
+	});
+
+	/* ---------------------------------------------------------------- *
+	 *  Keeps the sticky rail's (Frontend Preview card etc.) stuck
+	 *  position in sync with the sticky stepper bar's REAL rendered
+	 *  height -- the step number+label can wrap to two lines at some
+	 *  widths, so a hardcoded `top` risked the rail sticking too high
+	 *  and rendering under the stepper (which sits at a higher z-index)
+	 *  instead of cleanly below it.
+	 * ---------------------------------------------------------------- */
+	function syncRailStickyTop() {
+		var $stepper = $('.mpwpb-sme__stepper');
+		var $rail = $('.mpwpb-sme__rail');
+		if (!$stepper.length || !$rail.length) {
+			return;
+		}
+		var stepperTop = parseFloat($stepper.css('top')) || 0;
+		var gap = 16;
+		$rail.css('top', (stepperTop + $stepper.outerHeight() + gap) + 'px');
+	}
+	syncRailStickyTop();
+	var railStickyResizeTimer = null;
+	$(window).on('resize.mpwpb-sme-rail-top', function () {
+		clearTimeout(railStickyResizeTimer);
+		railStickyResizeTimer = setTimeout(syncRailStickyTop, 150);
 	});
 
 })(jQuery);

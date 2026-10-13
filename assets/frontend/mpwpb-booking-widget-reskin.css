@@ -284,6 +284,20 @@
 	font-size: 15px;
 }
 
+/* Clickable to jump back to an already-visited step, or forward to the
+   step right after the current one (assets/frontend/mpwpb_registration.js
+   click handler) -- Confirmation only ever appears after a real booking is
+   submitted, so it's never a jump target. */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_step:not(#mpwpb_progress_confirmation){
+	cursor: pointer;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_step.is-done:hover::before{
+	background: var(--mpwpb_color_theme) !important;color: #fff !important;
+}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_step.is-done:hover .mpwpb_cart_progress_label{
+	color: var(--mpwpb_color_theme) !important;
+}
+
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_cart_progress_label {
 	display: block !important;
 	position: static !important;

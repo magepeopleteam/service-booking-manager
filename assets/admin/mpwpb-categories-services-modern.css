@@ -31,14 +31,14 @@
 /* ---------------------------------------------------------------- *
  *  Sidebar
  * ---------------------------------------------------------------- */
-.mpwpb-csm__sidebar{width:320px;flex:0 0 320px;}
+.mpwpb-csm__sidebar{width:280px;flex:0 0 280px;}
 .mpwpb-csm__sidebar-inner{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);padding:10px;}
 
 .mpwpb-csm__side-row{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border-radius:10px;border:0;background:transparent;font-size:13px;color:var(--ink-2);cursor:pointer;text-align:left;margin-bottom:4px;transition:.15s;}
 .mpwpb-csm__side-row:hover{background:var(--band);}
 .mpwpb-csm__side-row.is-active{
-	background:linear-gradient(135deg,var(--brand),var(--brand-600));
-	color:#fff;padding:14px;box-shadow:0 6px 16px var(--brand-ring);
+	background:var(--brand);
+	color:#fff;box-shadow:0 2px 6px var(--brand-ring);
 }
 .mpwpb-csm__side-row .dashicons{font-size:15px;width:15px;height:15px;color:var(--muted);}
 .mpwpb-csm__side-row.is-active .dashicons{color:#fff;font-size:18px;width:18px;height:18px;}
@@ -122,30 +122,36 @@ button.mpwpb-csm__add-sub-btn {
  *  Main
  * ---------------------------------------------------------------- */
 .mpwpb-csm__main{flex:1;min-width:0;}
-.mpwpb-csm__header{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;}
-.mpwpb-csm__crumbs{display:flex;align-items:center;gap:6px;flex:1;min-width:0;font-size:13.5px;}
+.mpwpb-csm__header{display:flex;flex-wrap:nowrap;align-items:center;gap:10px;margin-bottom:16px;}
+/* flex:1 + min-width:0 lets this shrink toward zero when the row is tight
+   (search box + two buttons leave little room); without its own overflow
+   rule, the crumb text/badge then spilled past the shrunk box and painted
+   underneath the search input instead of clipping or wrapping away. The
+   header no longer wraps to a second line -- crumbs and the search box
+   shrink first (each down to their own min-width floor) so the two
+   action buttons never lose their fixed size or get pushed off-row. */
+.mpwpb-csm__crumbs{display:flex;align-items:center;gap:6px;flex:1 1 120px;min-width:60px;overflow:hidden;font-size:13.5px;}
 .mpwpb-csm__crumb{border:0;background:transparent;padding:3px 6px;border-radius:6px;font-size:13.5px;color:var(--muted);cursor:pointer;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .mpwpb-csm__crumb:hover{background:var(--band);}
 .mpwpb-csm__crumb.is-last{color:var(--ink);font-weight:700;}
 .mpwpb-csm__crumb-sep{color:var(--muted);font-size:13px;}
-.mpwpb-csm__count-badge{border-radius:999px;background:var(--band);color:var(--ink-2);font-size:11px;font-weight:600;padding:2px 9px;}
+.mpwpb-csm__count-badge{flex:0 0 auto;border-radius:999px;background:var(--band);color:var(--ink-2);font-size:11px;font-weight:600;padding:2px 9px;}
 
-.mpwpb-csm__search{position:relative;}
-.mpwpb-csm__search .dashicons{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:14px;width:14px;height:14px;color:var(--muted);pointer-events:none;}
-.mpwpb-csm__search input{width:220px;border:1px solid var(--line);border-radius:9px;background:var(--surface);padding:7px 10px 7px 30px;font-size:13px;color:var(--ink);}
+.mpwpb-csm__search{position:relative;flex:0 1 200px;min-width:120px;}
+.mpwpb-csm__search .dashicons{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:14px;width:14px;height:14px;color:var(--muted);pointer-events:none;}
 /* mpwpb-service-edit-modern.css's generic form-control rule
    (.mpwpb-sme.mpwpb_style input[type=text]{padding:10px 15px}) has higher
    specificity (2 classes + a type+attribute selector) than a plain
    .mpwpb-csm__search input rule, so it silently won the padding and pushed
    the search icon and typed text on top of each other. !important forces
    this one to actually win instead of just being dead code. */
-.mpwpb-csm__search input{padding:10px 40px !important;}
+.mpwpb-csm__search input{width:100%;border:1px solid var(--line);border-radius:9px;background:var(--surface);font-size:13px;color:var(--ink);padding:7px 10px 7px 32px !important;}
 .mpwpb-csm__search input:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-ring);}
 
-.mpwpb-csm__add-btn{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:9px;background:var(--brand);color:#fff;font-size:13px;font-weight:600;padding:8px 14px;cursor:pointer;white-space:nowrap;}
+.mpwpb-csm__add-btn{display:inline-flex;align-items:center;gap:6px;flex:0 0 auto;border:0;border-radius:9px;background:var(--brand);color:#fff;font-size:13px;font-weight:600;padding:8px 14px;cursor:pointer;white-space:nowrap;box-shadow:0 2px 6px var(--brand-ring);}
 .mpwpb-csm__add-btn:hover{filter:brightness(1.06);}
 .mpwpb-csm__add-btn .dashicons{font-size:15px;width:15px;height:15px;}
-.mpwpb-csm__add-btn.mpwpb-csm__add-btn--outline{background:#fff;border:1px solid var(--line);color:var(--ink-2);}
+.mpwpb-csm__add-btn.mpwpb-csm__add-btn--outline{background:#fff;border:1px solid var(--line);color:var(--ink-2);box-shadow:none;}
 .mpwpb-csm__add-btn.mpwpb-csm__add-btn--outline:hover{background:var(--band);filter:none;}
 .mpwpb-csm__add-btn.mpwpb-csm__add-btn--outline .dashicons{color:var(--brand);}
 
@@ -200,10 +206,11 @@ button.mpwpb-csm__add-sub-btn {
 
 /* List */
 .mpwpb-csm__list{display:flex;flex-direction:column;gap:8px;}
-.mpwpb-csm__row{display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);padding:12px 14px;}
+.mpwpb-csm__row{display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);padding:12px 14px;transition:border-color .15s,box-shadow .15s;}
+.mpwpb-csm__row:hover{border-color:var(--brand-ring);box-shadow:0 4px 14px rgba(15,23,42,.08);}
 .mpwpb-csm__row:hover{box-shadow:var(--shadow-sm);}
-.mpwpb-csm__row-icon.mpwpb-csm__row-icon{display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;flex:0 0 auto;}
-.mpwpb-csm__row-icon .dashicons.dashicons{display:flex;font-size:18px;width:18px;height:18px;color:inherit;}
+.mpwpb-csm__row-icon.mpwpb-csm__row-icon{display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;flex:0 0 auto;}
+.mpwpb-csm__row-icon .dashicons.dashicons{display:flex;font-size:20px;width:20px;height:20px;color:inherit;}
 .mpwpb-csm__row-main{flex:1;min-width:0;}
 .mpwpb-csm__row-top{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;}
 .mpwpb-csm__row-name{font-size:13.5px;font-weight:700;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:260px;}

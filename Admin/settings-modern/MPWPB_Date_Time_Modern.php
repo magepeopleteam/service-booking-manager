@@ -9,12 +9,15 @@
 	 * (MPWPB_Date_Time_Settings::date_time_settings) is untouched and still
 	 * used as-is in Classic mode.
 	 *
-	 * Two of the classic class's methods are reused directly (via a
-	 * reflection instance, so its constructor's AJAX hooks aren't
-	 * re-registered):
-	 *  - time_slot_tr() for each weekly schedule row, so the start/end/break
-	 *    time <select> cascade (and its data-day-name AJAX wiring) is 100%
-	 *    identical to Classic.
+	 * "Weekly hours" toggle-row redesign: time_slot_tr() still renders each
+	 * real <tr> (same 5 <td>s, same <select> field names, same data-day-name
+	 * AJAX cascade) completely unchanged — assets/admin/mpwpb-datetime-modern.css
+	 * turns the <table> into flexed row-cards purely visually, and
+	 * assets/admin/mpwpb-datetime-modern.js injects a per-row toggle switch
+	 * that forwards clicks to the real (still-present, just visually hidden)
+	 * "Weekly Off-days" checkboxes in #mpwpb-dtm-offdays, rather than
+	 * reimplementing that aggregation logic. Three other reused classic
+	 * methods:
 	 *  - particular_date_item() (static) for each "Particular Dates" /
 	 *    "Special Dates & Holidays" row, so the existing add/remove/sort/
 	 *    datepicker JS (mp_add_item, mpwpb_item_remove, mpwpb_sortable_button,
@@ -73,25 +76,83 @@
 				$open_days_count = count($days) - count($off_day_keys);
 				$off_day_lists = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_off_dates', array());
 				$off_day_lists = is_array($off_day_lists) ? $off_day_lists : array();
+
+				$slot_presets = MPWPB_Function::slot_length_presets();
+				$slot_is_custom = $time_slot !== '' && !array_key_exists((int) $time_slot, $slot_presets);
 				?>
 				<div class="mpwpb-dtm mpwpb_settings_date_time" id="mpwpb-dtm" data-tabs="#mpwpb_settings_date_time">
 
+					<div class="mpwpb-dtm__header">
+						<h2><?php esc_html_e('Availability', 'service-booking-manager'); ?></h2>
+						<p><?php esc_html_e('Turn days on or off, set the hours, done.', 'service-booking-manager'); ?></p>
+					</div>
+
 					<div class="mpwpb-dtm__grid">
+						<div class="mpwpb-dtm__col mpwpb-dtm__col--main">
+
+							<div class="mpwpb-dtm__card">
+								<div class="mpwpb-dtm__card-head">
+									<div>
+										<h3><?php esc_html_e('Weekly hours', 'service-booking-manager'); ?></h3>
+										<p data-dtm-open-sub><?php echo esc_html(sprintf(_n('%d day open', '%d days open', $open_days_count, 'service-booking-manager'), $open_days_count)); ?></p>
+									</div>
+									<button type="button" class="mpwpb-dtm__copy-btn" data-dtm-copy-monday><?php esc_html_e('Copy Monday to all days', 'service-booking-manager'); ?></button>
+								</div>
+								<div class="mpwpb-dtm__card-body mpwpb-dtm__table-wrap">
+									<table class="mpwpb-dtm__table mpwpb-dtm__table--rows">
+										<tbody>
+										<?php
+										$classic->time_slot_tr($post_id, 'default');
+										foreach ($days as $key => $day) {
+											$classic->time_slot_tr($post_id, $key, in_array($key, $off_day_keys, true));
+										}
+										?>
+										</tbody>
+									</table>
+								</div>
+							</div>
+
+							<?php
+							/* Real off-day checkboxes/hidden field, UNCHANGED (same groupCheckBox
+							 * aggregation the save handler and existing JS already expect) --
+							 * just visually hidden off-screen (not display:none, so any logic
+							 * that cares about visibility still works). The per-row toggle
+							 * switches assets/admin/mpwpb-datetime-modern.js injects into the
+							 * table above forward their clicks here, so this stays the single
+							 * source of truth for mpwpb_off_days. */
+							?>
+							<div class="mpwpb-dtm__offscreen">
+								<div class="groupCheckBox mpwpb-dtm__offdays" id="mpwpb-dtm-offdays">
+									<input type="hidden" name="mpwpb_off_days" value="<?php echo esc_attr($off_days); ?>"/>
+									<?php foreach ($days as $key => $day) : ?>
+										<label class="customCheckboxLabel mpwpb-dtm__pill" data-dtm-offday-pill title="<?php echo esc_attr($day); ?>">
+											<input type="checkbox" <?php echo in_array($key, $off_day_keys, true) ? 'checked' : ''; ?> data-checked="<?php echo esc_attr($key); ?>"/>
+											<span class="customCheckbox mpwpb-dtm__pill-txt"><?php echo esc_html(mb_substr($day, 0, 3)); ?></span>
+										</label>
+									<?php endforeach; ?>
+								</div>
+							</div>
+
+						</div>
+
 						<div class="mpwpb-dtm__col mpwpb-dtm__col--side">
 
 							<div class="mpwpb-dtm__card">
 								<div class="mpwpb-dtm__card-head">
-									<span class="dashicons dashicons-admin-generic"></span>
-									<div><h3><?php esc_html_e('General Configuration', 'service-booking-manager'); ?></h3></div>
+									<div><h3><?php esc_html_e('Booking rules', 'service-booking-manager'); ?></h3></div>
 								</div>
 								<div class="mpwpb-dtm__card-body">
+
 									<div class="mpwpb-dtm__field">
-										<label class="mpwpb-dtm__field-label"><?php esc_html_e('Date Type', 'service-booking-manager'); ?> <span class="textRequired">&nbsp;*</span></label>
-										<select class="formControl" name="mpwpb_date_type" data-collapse-target required>
-											<option disabled selected><?php esc_html_e('Please select ...', 'service-booking-manager'); ?></option>
+										<label class="mpwpb-dtm__field-label"><?php esc_html_e('Schedule type', 'service-booking-manager'); ?></label>
+										<select class="formControl mpwpb-dtm__sr-select" name="mpwpb_date_type" data-collapse-target required>
 											<option value="particular" data-option-target="#mp_particular" <?php selected($date_type, 'particular'); ?>><?php esc_html_e('Particular', 'service-booking-manager'); ?></option>
 											<option value="repeated" data-option-target="#mp_repeated" <?php selected($date_type, 'repeated'); ?>><?php esc_html_e('Repeated', 'service-booking-manager'); ?></option>
 										</select>
+										<div class="mpwpb-dtm__segmented" data-dtm-schedule-type>
+											<button type="button" class="mpwpb-dtm__segmented-btn<?php echo $date_type === 'repeated' ? ' is-active' : ''; ?>" data-dtm-schedule-value="repeated"><?php esc_html_e('Every Day', 'service-booking-manager'); ?></button>
+											<button type="button" class="mpwpb-dtm__segmented-btn<?php echo $date_type === 'particular' ? ' is-active' : ''; ?>" data-dtm-schedule-value="particular"><?php esc_html_e('Specific dates', 'service-booking-manager'); ?></button>
+										</div>
 									</div>
 
 									<div class="mpwpb-dtm__field mpwpb-dtm__collapse<?php echo $date_type === 'particular' ? ' mActive' : ''; ?>" data-collapse="#mp_particular">
@@ -119,27 +180,28 @@
 									<input type="hidden" name="mpwpb_repeated_after" value="<?php echo esc_attr($repeated_after); ?>"/>
 
 									<div class="mpwpb-dtm__field mpwpb-dtm__collapse<?php echo $date_type === 'repeated' ? ' mActive' : ''; ?>" data-collapse="#mp_repeated">
-										<label class="mpwpb-dtm__field-label"><?php esc_html_e('Max Advanced Booking (Days)', 'service-booking-manager'); ?> <span class="textRequired">&nbsp;*</span></label>
-										<input type="text" class="formControl mpwpb_number_validation" name="mpwpb_active_days" value="<?php echo esc_attr($active_days); ?>"/>
+										<label class="mpwpb-dtm__field-label"><?php esc_html_e('Book up to', 'service-booking-manager'); ?> <span class="textRequired">&nbsp;*</span></label>
+										<div class="mpwpb-dtm__suffix-field">
+											<input type="text" class="formControl mpwpb_number_validation" name="mpwpb_active_days" value="<?php echo esc_attr($active_days); ?>"/>
+											<span><?php esc_html_e('days ahead', 'service-booking-manager'); ?></span>
+										</div>
 									</div>
 
-									<?php
-										// Presets + free "Custom" value. Any minute value is valid
-										// (get_time_slot()/get_slot_length() clamp only to >= 1), so a
-										// saved length that isn't one of the presets must still show
-										// correctly instead of rendering as an empty select.
-										$slot_presets = MPWPB_Function::slot_length_presets();
-										$slot_is_custom = $time_slot !== '' && !array_key_exists((int) $time_slot, $slot_presets);
-									?>
 									<div class="mpwpb-dtm__field">
-										<label class="mpwpb-dtm__field-label"><?php esc_html_e('Time Slot Length', 'service-booking-manager'); ?> <span class="textRequired">&nbsp;*</span></label>
-										<select class="formControl mpwpb-slot-length-select" name="mpwpb_time_slot_length">
+										<label class="mpwpb-dtm__field-label"><?php esc_html_e('Each slot lasts', 'service-booking-manager'); ?> <span class="textRequired">&nbsp;*</span></label>
+										<select class="formControl mpwpb-dtm__sr-select mpwpb-slot-length-select" name="mpwpb_time_slot_length">
 											<option value="" <?php selected($time_slot, ''); ?> disabled><?php esc_html_e('Select time slot Length', 'service-booking-manager'); ?></option>
 											<?php foreach ($slot_presets as $preset_value => $preset_label) { ?>
 												<option value="<?php echo esc_attr($preset_value); ?>" <?php selected((int) $time_slot, $preset_value); ?>><?php echo esc_html($preset_label); ?></option>
 											<?php } ?>
 											<option value="custom" <?php selected($slot_is_custom, true); ?>><?php esc_html_e('Custom…', 'service-booking-manager'); ?></option>
 										</select>
+										<div class="mpwpb-dtm__pillgroup" data-dtm-slot-pills>
+											<?php foreach ($slot_presets as $preset_value => $preset_label) : ?>
+												<button type="button" class="mpwpb-dtm__pillgroup-btn<?php echo ((int) $time_slot === $preset_value) ? ' is-active' : ''; ?>" data-dtm-slot-value="<?php echo esc_attr($preset_value); ?>"><?php echo esc_html($preset_label); ?></button>
+											<?php endforeach; ?>
+											<button type="button" class="mpwpb-dtm__pillgroup-btn mpwpb-dtm__pillgroup-btn--dashed<?php echo $slot_is_custom ? ' is-active' : ''; ?>" data-dtm-slot-value="custom"><?php esc_html_e('Custom…', 'service-booking-manager'); ?></button>
+										</div>
 										<div class="mpwpb-dtm__slot-custom" style="<?php echo $slot_is_custom ? '' : 'display:none;'; ?>">
 											<input type="number" class="formControl mpwpb-slot-length-custom" name="mpwpb_time_slot_length_custom" min="1" step="1"
 											       value="<?php echo esc_attr($slot_is_custom ? (int) $time_slot : ''); ?>"
@@ -149,96 +211,58 @@
 									</div>
 
 									<div class="mpwpb-dtm__field">
-										<label class="mpwpb-dtm__field-label"><?php esc_html_e('Capacity per Session', 'service-booking-manager'); ?> <span class="textRequired">&nbsp;*</span></label>
-										<input class="formControl" name="mpwpb_capacity_per_session" type="number" value="<?php echo esc_attr($capacity); ?>" placeholder="Ex. 25"/>
+										<label class="mpwpb-dtm__field-label"><?php esc_html_e('People per slot', 'service-booking-manager'); ?> <span class="textRequired">&nbsp;*</span></label>
+										<div class="mpwpb-dtm__stepper">
+											<button type="button" class="mpwpb-dtm__stepper-btn" data-dtm-capacity-minus aria-label="<?php esc_attr_e('Decrease capacity', 'service-booking-manager'); ?>">&minus;</button>
+											<input class="formControl" name="mpwpb_capacity_per_session" type="number" value="<?php echo esc_attr($capacity); ?>" min="1"/>
+											<button type="button" class="mpwpb-dtm__stepper-btn" data-dtm-capacity-plus aria-label="<?php esc_attr_e('Increase capacity', 'service-booking-manager'); ?>">+</button>
+										</div>
 									</div>
+
 								</div>
 							</div>
 
-							<div class="mpwpb-dtm__card">
-								<div class="mpwpb-dtm__card-head">
-									<span class="dashicons dashicons-editor-break"></span>
-									<div><h3><?php esc_html_e('Weekly Off-days', 'service-booking-manager'); ?></h3></div>
-								</div>
-								<div class="mpwpb-dtm__card-body">
-									<p class="mpwpb-dtm__hint"><?php esc_html_e('Select the days the operation is closed.', 'service-booking-manager'); ?></p>
-									<div class="groupCheckBox mpwpb-dtm__offdays" id="mpwpb-dtm-offdays">
-										<input type="hidden" name="mpwpb_off_days" value="<?php echo esc_attr($off_days); ?>"/>
-										<?php foreach ($days as $key => $day) : ?>
-											<label class="customCheckboxLabel mpwpb-dtm__pill" data-dtm-offday-pill title="<?php echo esc_attr($day); ?>">
-												<input type="checkbox" <?php echo in_array($key, $off_day_keys, true) ? 'checked' : ''; ?> data-checked="<?php echo esc_attr($key); ?>"/>
-												<span class="customCheckbox mpwpb-dtm__pill-txt"><?php echo esc_html(mb_substr($day, 0, 3)); ?></span>
-											</label>
-										<?php endforeach; ?>
-									</div>
-								</div>
+							<div class="mpwpb-dtm__preview" data-dtm-preview>
+								<div class="mpwpb-dtm__preview-eyebrow"><?php esc_html_e('Customers will see', 'service-booking-manager'); ?></div>
+								<div class="mpwpb-dtm__preview-sub" data-dtm-preview-sub>&nbsp;</div>
+								<div class="mpwpb-dtm__preview-slots" data-dtm-preview-slots></div>
 							</div>
 
-						</div>
-
-						<div class="mpwpb-dtm__col mpwpb-dtm__col--main">
-							<div class="mpwpb-dtm__card">
-								<div class="mpwpb-dtm__card-head">
-									<span class="dashicons dashicons-clock"></span>
-									<div>
-										<h3><?php esc_html_e('Weekly Schedule', 'service-booking-manager'); ?></h3>
-										<p><?php esc_html_e('Configure standard operating hours for each day.', 'service-booking-manager'); ?></p>
-									</div>
-									<span class="mpwpb-dtm__badge" data-dtm-open-badge><?php echo esc_html(sprintf(__('%1$d / %2$d Days Open', 'service-booking-manager'), $open_days_count, count($days))); ?></span>
-								</div>
-								<div class="mpwpb-dtm__card-body mpwpb-dtm__table-wrap">
-									<table class="mpwpb-dtm__table">
-										<thead>
-										<tr>
-											<th style="text-align:left;"><?php esc_html_e('Day', 'service-booking-manager'); ?></th>
-											<th><?php esc_html_e('Start Time', 'service-booking-manager'); ?></th>
-											<th><?php esc_html_e('End Time', 'service-booking-manager'); ?></th>
-											<th><?php esc_html_e('Break (Start)', 'service-booking-manager'); ?></th>
-											<th><?php esc_html_e('Break (End)', 'service-booking-manager'); ?></th>
-										</tr>
-										</thead>
-										<tbody>
-										<?php
-										$classic->time_slot_tr($post_id, 'default');
-										foreach ($days as $key => $day) {
-											$classic->time_slot_tr($post_id, $key, in_array($key, $off_day_keys, true));
-										}
-										?>
-										</tbody>
-									</table>
-								</div>
-							</div>
 						</div>
 					</div>
 
+					<?php
+					$off_dates_json = wp_json_encode(array_values(array_filter($off_day_lists)));
+					?>
 					<div class="mpwpb-dtm__card mpwpb-dtm__card--full">
 						<div class="mp_settings_area mpwpb-dtm__special-area">
 							<div class="mpwpb-dtm__card-head">
-								<span class="dashicons dashicons-calendar-alt"></span>
 								<div>
 									<h3><?php esc_html_e('Special Dates & Holidays', 'service-booking-manager'); ?></h3>
-									<p><?php esc_html_e('Add specific dates where the standard schedule does not apply.', 'service-booking-manager'); ?></p>
+									<p><?php esc_html_e('Click a date to mark it closed.', 'service-booking-manager'); ?></p>
 								</div>
-								<?php MPWPB_Custom_Layout::add_new_button(esc_html__('Add Special Date', 'service-booking-manager'), 'mp_add_item', 'mpwpb-dtm__add-btn', 'dashicons dashicons-plus-alt2'); ?>
+								<span class="mpwpb-dtm__badge" data-dtm-off-cal-summary></span>
 							</div>
 							<div class="mpwpb-dtm__card-body">
-								<div class="mp_item_insert mp_sortable_area mpwpb-dtm__date-grid">
-									<?php
-									$has_off_dates = false;
-									foreach ($off_day_lists as $off_day) {
-										if ($off_day) {
-											$has_off_dates = true;
-											$this->date_card('mpwpb_off_dates[]', $off_day, esc_html__('Operation: Closed', 'service-booking-manager'));
-										}
-									}
-									?>
-								</div>
-								<p class="mpwpb-dtm__empty" style="<?php echo $has_off_dates ? 'display:none' : ''; ?>"><?php esc_html_e('No special dates added yet.', 'service-booking-manager'); ?></p>
-								<div class="mpwpb_hidden_content" style="display:none">
-									<div class="mpwpb_hidden_item">
-										<?php $this->date_card('mpwpb_off_dates[]', '', esc_html__('Operation: Closed', 'service-booking-manager')); ?>
+								<?php
+								/* The calendar itself (nav, month label, day grid) is built
+								 * entirely by mpwpb-datetime-modern.js -- data-dtm-off-dates
+								 * seeds it with whatever was already saved (same Y-m-d
+								 * strings the old repeater stored), and every click
+								 * add/removes one real <input type="hidden"
+								 * name="mpwpb_off_dates[]"> in data-dtm-off-dates-fields, so
+								 * the save handler's expected field (one hidden input per
+								 * date, same name, unchanged since Classic) never had to
+								 * change -- only how those values get populated. */
+								?>
+								<div class="mpwpb-dtm__special-grid">
+									<div class="mpwpb-dtm__calendar" data-dtm-off-calendar data-dtm-off-dates="<?php echo esc_attr($off_dates_json); ?>"></div>
+									<div class="mpwpb-dtm__off-list-col">
+										<div class="mpwpb-dtm__off-list-label"><?php esc_html_e('Closed dates', 'service-booking-manager'); ?></div>
+										<div class="mpwpb-dtm__off-list" data-dtm-off-list></div>
 									</div>
 								</div>
+								<div class="mpwpb-dtm__offscreen" data-dtm-off-dates-fields></div>
 							</div>
 						</div>
 					</div>

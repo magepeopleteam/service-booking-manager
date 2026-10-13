@@ -81,6 +81,23 @@
 		return;
 	}
 
+	// The tab bar's sticky `top` has a CSS fallback for WordPress's admin
+	// bar (32px desktop / 46px <=782px, logged-in users only), but that's a
+	// guess at its real height -- measuring #wpadminbar directly here is
+	// exact regardless of theme/plugin customization, and the inline style
+	// this sets always wins over the CSS fallback.
+	var tabNavResizeTimer = null;
+	function syncTabNavTop() {
+		var $adminBar = $('#wpadminbar');
+		var extra = ($adminBar.length && $adminBar.is(':visible')) ? $adminBar.outerHeight() : 0;
+		$tabNav.css('top', (8 + extra) + 'px');
+	}
+	syncTabNavTop();
+	$(window).on('resize.mpwpb-tabnav-top', function () {
+		clearTimeout(tabNavResizeTimer);
+		tabNavResizeTimer = setTimeout(syncTabNavTop, 150);
+	});
+
 	var $links = $tabNav.find('a[href^="#"]');
 	var sections = [];
 	$links.each(function () {
