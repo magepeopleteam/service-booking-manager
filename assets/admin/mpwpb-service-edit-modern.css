@@ -383,6 +383,20 @@ body.mpwpb-sme-active #postdivrich{display:none;}
 .mpwpb-sme__preview-sub{margin:2px 0 0;font-size:12px;color:var(--muted);}
 
 .mpwpb-sme__fp-mock{margin:14px 16px 0;padding:16px;border:1px solid var(--line);border-radius:12px;background:#fff;}
+/* The preview mirrors the customer-facing widget, so inside it the editor's
+   own --brand palette is re-pointed at the site's Theme Color (--fp-theme,
+   set inline from the saved option and updated live by
+   mpwpb-service-edit-modern.js when a swatch is picked). Every preview
+   element already reads --brand/--brand-600/--brand-ring, so this one
+   remap recolours all of them; the rest of the editor keeps its own colours.
+   --brand-ring stays a light tint, never the deep theme colour itself. */
+.mpwpb-sme__fp-mock{--brand:var(--fp-theme,#00685f);}
+@supports (color: color-mix(in srgb, red 50%, white)){
+	.mpwpb-sme__fp-mock{
+		--brand-600:color-mix(in srgb, var(--fp-theme,#00685f) 85%, #000);
+		--brand-ring:color-mix(in srgb, var(--fp-theme,#00685f) 14%, #fff);
+	}
+}
 /* .mpwpb_style button {text-transform:capitalize} (mpwpb_plugin_global.css) is
    a class+element rule, same specificity bucket as a bare class selector here
    and beats it on source order either way -- "10:00 am" was rendering as

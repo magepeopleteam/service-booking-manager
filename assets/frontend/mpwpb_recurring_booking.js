@@ -139,6 +139,9 @@
                 mpwpb_loaderRemove($holder);
                 $holder.html( response.html );
                 $holder.data('mpwpbStaffCount', response.count || 0);
+                // A new list arrives with "Any Staff" pre-selected -- clear any
+                // staff picked for the previous time slot so the two agree.
+                $("#mpwpb_staff_member_booking").val('');
                 // Staff-enabled service (the staff step is only rendered for
                 // those, date_time_select.php): the Date & Time step offers
                 // ONLY "Next Staff Member" -- "Proceed to Checkout" belongs to

@@ -1656,8 +1656,8 @@ function mpwpb_price_calculation($this) {
     });
 
     $(document).on('click', '.mpwp_select_staff_card', function () {
-        $('.mpwp_select_staff_card').removeClass('selected');
-        $(this).addClass('selected');
+        $('.mpwp_select_staff_card').removeClass('selected').attr('aria-pressed', 'false');
+        $(this).addClass('selected').attr('aria-pressed', 'true');
         let staffId = $(this).find('.mpwpb_selected_staff').val();
 
         $("#mpwpb_staff_member_booking").val( staffId );

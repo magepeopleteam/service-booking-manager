@@ -16,6 +16,32 @@
  * .mpwpb-default-template layout is not affected.
  * ===================================================================== */
 
+/* Theme tints -- soft pastel shades derived from the configurable theme
+   colour (--mpwpb_color_theme, printed on :root by MPWPB_Global_Style), so
+   category rows, alternating section panels, chips and icon circles follow
+   whatever colour is picked instead of staying the default teal. Always a
+   small share of the theme colour mixed into white, so even a dark/deep
+   theme colour gives light backgrounds. The hex values are the original
+   teal shades, kept as the fallback for browsers without color-mix(). */
+:root{
+	--mpwpb-tint-bg:#F0F7F5;
+	--mpwpb-tint-soft:#F0FDFA;
+	--mpwpb-tint:#E8F3F1;
+	--mpwpb-tint-border:#E2EEEA;
+	--mpwpb-tint-line:#A7F3D0;
+	--mpwpb-shade:#0F766E;
+}
+@supports (color: color-mix(in srgb, red 50%, white)){
+	:root{
+		--mpwpb-tint-bg:color-mix(in srgb, var(--mpwpb_color_theme) 4%, #fff);
+		--mpwpb-tint-soft:color-mix(in srgb, var(--mpwpb_color_theme) 7%, #fff);
+		--mpwpb-tint:color-mix(in srgb, var(--mpwpb_color_theme) 12%, #fff);
+		--mpwpb-tint-border:color-mix(in srgb, var(--mpwpb_color_theme) 16%, #fff);
+		--mpwpb-tint-line:color-mix(in srgb, var(--mpwpb_color_theme) 30%, #fff);
+		--mpwpb-shade:color-mix(in srgb, var(--mpwpb_color_theme) 85%, #000);
+	}
+}
+
 .mpwpb-static-template{--mpwpb-sp-radius:14px;}
 .mpwpb-static-template *,
 .mpwpb-static-template *::before,
@@ -123,12 +149,12 @@
 .mpwpb-static-template .mpwpb-inline-confirmation .woocommerce-order-overview li{margin:0 !important;padding:11px;border:1px solid #e2e8f0;border-radius:9px;background:#f8fafc;list-style:none !important;font-size:11px;}
 .mpwpb-static-template .mpwpb-inline-confirmation table{width:100%;font-size:12px;}
 .mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-inline-confirmation-summary{
-	margin:0 0 18px;padding:18px;border:1px solid #a7f3d0;border-radius:14px;background:linear-gradient(135deg,#ecfdf5,#f0fdfa);box-shadow:0 8px 24px rgba(5,150,105,.08);
+	margin:0 0 18px;padding:18px;border:1px solid var(--mpwpb-tint-line);border-radius:14px;background:linear-gradient(135deg,var(--mpwpb-tint-bg),var(--mpwpb-tint-soft));box-shadow:0 8px 24px rgba(5,150,105,.08);
 }
 .mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-inline-confirmation-summary::before{
 	content:'\2713';display:grid;width:42px;height:42px;margin-bottom:12px;place-items:center;border-radius:50%;background:#059669;color:#fff;font-size:23px;font-weight:800;box-shadow:0 7px 18px rgba(5,150,105,.24);
 }
-.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-inline-confirmation-summary h2{margin:0 0 8px !important;color:#065f46 !important;font-size:20px !important;line-height:1.25;}
+.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-inline-confirmation-summary h2{margin:0 0 8px !important;color:var(--mpwpb-shade) !important;font-size:20px !important;line-height:1.25;}
 .mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-inline-confirmation-summary p{margin:3px 0 !important;color:#475569;font-size:12.5px;}
 .mpwpb-static-template .mpwpb-inline-confirmation > .woocommerce-order > p.woocommerce-notice{margin:0 0 14px !important;padding:12px 14px;border-radius:10px;background:#f8fafc;color:#334155;font-size:13px;}
 .mpwpb-static-template .mpwpb-inline-confirmation .woocommerce-order-details,
@@ -153,7 +179,7 @@
 .mpwpb-static-template .mpwpb-inline-confirmation a.order-actions-button{
 	display:inline-flex !important;min-height:38px;margin:0 !important;padding:9px 13px !important;align-items:center;border:1px solid #cbd5e1 !important;border-radius:9px !important;background:#fff !important;color:#334155 !important;font-size:12px !important;font-weight:700 !important;line-height:1.2;text-decoration:none !important;box-shadow:none !important;
 }
-.mpwpb-static-template .mpwpb-inline-confirmation a.order-actions-button:hover{border-color:#99f6e4 !important;background:#f0fdfa !important;color:#0f766e !important;}
+.mpwpb-static-template .mpwpb-inline-confirmation a.order-actions-button:hover{border-color:var(--mpwpb-tint-line) !important;background:var(--mpwpb-tint-soft) !important;color:var(--mpwpb-shade) !important;}
 .mpwpb-static-template .mpwpb-inline-confirmation a.order-actions-button.mpwpb_cancel{border-color:#fecdd3 !important;background:#fff1f2 !important;color:#be123c !important;}
 .mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-wc-account-actions{
 	dis:grid;grid-template-columns:1fr 1fr;gap:9px;margin:0 0 18px;padding:16px;border:1px solid #dbe4ee;border-radius:14px;background:linear-gradient(180deg,#f8fafc,#fff);box-shadow:0 6px 18px rgba(15,23,42,.05);
@@ -161,7 +187,7 @@
 .mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-wc-account-actions .mpwpb-btn{
 	dis:inline-flex;min-height:42px;margin:0 !important;padding:10px 12px;align-items:center;justify-content:center;border:1px solid #cbd5e1;border-radius:10px;background:#fff;color:#334155;font-size:12px;font-weight:750;line-height:1.25;text-align:center;text-decoration:none;cursor:pointer;
 }
-.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-wc-account-actions .mpwpb-reschedule-btn{border-color:#99f6e4;background:#f0fdfa;color:#0f766e;}
+.mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-wc-account-actions .mpwpb-reschedule-btn{border-color:var(--mpwpb-tint-line);background:var(--mpwpb-tint-soft);color:var(--mpwpb-shade);}
 .mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-wc-account-actions .mpwpb-cancel-btn{border-color:#fecdd3;background:#fff1f2;color:#be123c;}
 .mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-wc-account-actions .mpwpb-reorder-btn{border-color:#bfdbfe;background:#eff6ff;color:#1d4ed8;}
 .mpwpb-static-template .mpwpb-inline-confirmation .woocommerce-customer-details address{padding:14px;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;color:#475569;font-size:12.5px;font-style:normal;line-height:1.65;}
@@ -210,8 +236,8 @@
 }
 .mpwpb-static-template.mpwpb_registration > header ul.features li i{
 	display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;flex:0 0 auto;
-	border-radius:999px;border:1.5px solid rgba(45,212,191,.6);background:rgba(45,212,191,.12);
-	font-size:11px;margin-right:0 !important;color:#2dd4bf;
+	border-radius:999px;border:1.5px solid #fff;background:rgba(45,212,191,.12);
+	font-size:11px;margin-right:0 !important;color:#fff;
 }
 .mpwpb-static-template.mpwpb_registration > header .view_more{
 	font-size:13px;font-weight:700;text-decoration:underline;text-underline-offset:3px;opacity:.9;cursor:pointer;
@@ -417,7 +443,7 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
 .mpwpb-static-template .main > section{margin:20px 32px !important;}
 .mpwpb-static-template .main > section#service-faq,
 .mpwpb-static-template .main > .mpwpb-gallery-section{
-	background:#F0F7F5;border:1px solid #E2EEEA;border-radius:28px;padding:48px 32px !important;
+	background:var(--mpwpb-tint-bg);border:1px solid var(--mpwpb-tint-border);border-radius:28px;padding:48px 32px !important;
 }
 /* Every section heading on this page is now overridden individually,
    each next to its own section's rules below (kicker pill + 26px
@@ -428,7 +454,7 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
    Reviews/the rest of this page's headings; only #service-overview's
    own heading is bumped up and recoloured, by source order. */
 .mpwpb-static-template .mpwpb-overview-kicker{
-	display:inline-flex;align-items:center;padding:5px 12px;border-radius:999px;background:#E8F3F1;color:var(--mpwpb_color_theme);
+	display:inline-flex;align-items:center;padding:5px 12px;border-radius:999px;background:var(--mpwpb-tint);color:var(--mpwpb_color_theme);
 	font-family:'Sora','Segoe UI',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;
 }
 .mpwpb-static-template section#service-overview > h2{
@@ -485,7 +511,7 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
 }
 /* Details kicker pill + heading, same pattern as Overview/FAQ/Gallery. */
 .mpwpb-static-template .mpwpb-details-kicker{
-	display:inline-flex;align-items:center;padding:5px 12px;border-radius:999px;background:#E8F3F1;color:var(--mpwpb_color_theme);
+	display:inline-flex;align-items:center;padding:5px 12px;border-radius:999px;background:var(--mpwpb-tint);color:var(--mpwpb_color_theme);
 	font-family:'Sora','Segoe UI',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;
 }
 .mpwpb-static-template section#service-details > h2{
@@ -527,7 +553,7 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
 	display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:0 0 22px;flex-wrap:wrap;
 }
 .mpwpb-reviews-kicker{
-	display:inline-flex;align-items:center;padding:5px 12px;border-radius:999px;background:#E8F3F1;color:var(--mpwpb_color_theme);
+	display:inline-flex;align-items:center;padding:5px 12px;border-radius:999px;background:var(--mpwpb-tint);color:var(--mpwpb_color_theme);
 	font-family:'Sora','Segoe UI',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;
 }
 .mpwpb-static-template section#service-reviews .mpwpb-reviews-head h2{
@@ -664,7 +690,7 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
    no bookings yet -- the remaining two stats then split the row evenly. */
 .mpwpb-overview-stats.mpwpb-overview-stats--two{grid-template-columns:repeat(2,1fr);}
 .mpwpb-overview-stat{
-	display:flex;align-items:center;gap:14px;padding:18px;border:1px solid #E2EEEA;border-radius:16px;background:#F0F7F5;
+	display:flex;align-items:center;gap:14px;padding:18px;border:1px solid var(--mpwpb-tint-border);border-radius:16px;background:var(--mpwpb-tint-bg);
 }
 .mpwpb-overview-stat-icon{
 	flex:0 0 auto;width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;
@@ -679,11 +705,11 @@ p.mpwpb-overview-stat-label{margin-left:10px !important;}
 .mpwpb-overview-subhead{margin:0 0 10px;font-family:'Work Sans',sans-serif;font-size:12.5px;font-weight:700;color:#1e293b;text-transform:uppercase;letter-spacing:.04em;}
 .mpwpb-overview-cat-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;}
 .mpwpb-overview-cat-chip{
-	display:flex;align-items:center;gap:9px;padding:9px 14px 9px 10px;border:1px solid #E2EEEA;border-radius:999px;background:#fff;
+	display:flex;align-items:center;gap:9px;padding:9px 14px 9px 10px;border:1px solid var(--mpwpb-tint-border);border-radius:999px;background:#fff;
 }
 .mpwpb-overview-cat-chip-icon{
 	flex:0 0 auto;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;
-	border-radius:50%;background:#E8F3F1;color:var(--mpwpb_color_theme);font-size:12px;
+	border-radius:50%;background:var(--mpwpb-tint);color:var(--mpwpb_color_theme);font-size:12px;
 }
 .mpwpb-overview-cat-chip-name{font-family:'Work Sans',sans-serif;font-size:13px;font-weight:600;color:#15202B;}
 .mpwpb-overview-cat-chip-count{font-family:'Sora','Segoe UI',sans-serif;font-size:12px;font-weight:700;color:var(--mpwpb_color_theme);}
@@ -736,13 +762,13 @@ p.mpwpb-overview-stat-label{margin-left:10px !important;}
 .mpwpb-hours-status.is-open .mpwpb-hours-status-dot{background:#3fae6a;}
 .mpwpb-hours-status.is-closed .mpwpb-hours-status-dot{background:#cb5a5a;}
 .mpwpb-hours-time{
-	margin:0;display:inline-flex;align-items:center;padding:7px 14px;border-radius:999px;background:#E8F3F1;
+	margin:0;display:inline-flex;align-items:center;padding:7px 14px;border-radius:999px;background:var(--mpwpb-tint);
 	font-family:'Sora','Segoe UI',sans-serif;font-size:12.5px;font-weight:700;color:var(--mpwpb_color_theme);white-space:nowrap;
 }
 .mpwpb-hours-week{display:flex;gap:8px;}
 .mpwpb-hours-day{
 	flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 0 9px;
-	border-radius:12px;border:1px solid #E2EEEA;background:#fff;
+	border-radius:12px;border:1px solid var(--mpwpb-tint-border);background:#fff;
 }
 .mpwpb-hours-day-label{font-family:'Sora','Segoe UI',sans-serif;font-size:11px;font-weight:700;color:#15202B;}
 .mpwpb-hours-day-dot{width:6px;height:6px;border-radius:50%;background:var(--mpwpb_color_theme);}
@@ -755,7 +781,7 @@ p.mpwpb-overview-stat-label{margin-left:10px !important;}
 .mpwpb-hours-open{margin:0;display:flex;align-items:center;gap:12px;font-family:'Work Sans',sans-serif;font-size:13px;font-weight:500;color:#15202B;}
 .mpwpb-hours-open i{
 	flex-shrink:0;width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;
-	border-radius:50%;background:#E8F3F1;color:var(--mpwpb_color_theme);font-size:13px;
+	border-radius:50%;background:var(--mpwpb-tint);color:var(--mpwpb_color_theme);font-size:13px;
 }
 
 /* -------------------------------------------------------------------- *
@@ -771,7 +797,7 @@ p.mpwpb-overview-stat-label{margin-left:10px !important;}
  *  style below (same selector, same specificity, just later in the
  *  file, so only #service-faq's own heading is overridden). */
 .mpwpb-static-template .mpwpb-faq-kicker{
-	display:inline-flex;align-items:center;padding:5px 12px;border-radius:999px;background:#E8F3F1;color:var(--mpwpb_color_theme);
+	display:inline-flex;align-items:center;padding:5px 12px;border-radius:999px;background:var(--mpwpb-tint);color:var(--mpwpb_color_theme);
 	font-family:'Sora','Segoe UI',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;
 }
 .mpwpb-static-template section#service-faq > h2{
@@ -837,7 +863,7 @@ p.mpwpb-overview-stat-label{margin-left:10px !important;}
 	scroll-margin-top:80px;
 }
 .mpwpb-static-template .mpwpb-gallery-kicker{
-	display:inline-flex;align-items:center;padding:5px 12px;border-radius:999px;background:#E8F3F1;color:var(--mpwpb_color_theme);
+	display:inline-flex;align-items:center;padding:5px 12px;border-radius:999px;background:var(--mpwpb-tint);color:var(--mpwpb_color_theme);
 	font-family:'Sora','Segoe UI',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;
 }
 .mpwpb-static-template .mpwpb-gallery-head{
@@ -869,7 +895,7 @@ p.mpwpb-overview-stat-label{margin-left:10px !important;}
 .mpwpb-static-template .mpwpb-gallery-section .mpwpb-owl-carousel .owl-item{display:flex;padding:0 6px;}
 .mpwpb-static-template .mpwpb-gallery-item{
 	position:relative;width:100%;border-radius:18px;overflow:hidden;aspect-ratio:4/3;
-	border:1px solid #E2EEEA;background:#fff;cursor:zoom-in;
+	border:1px solid var(--mpwpb-tint-border);background:#fff;cursor:zoom-in;
 }
 .mpwpb-static-template .mpwpb-gallery-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s;}
 .mpwpb-gallery-item img:not(.mp_wp_editor img) {height: 100% !important; }
@@ -963,11 +989,11 @@ p.mpwpb-overview-stat-label{margin-left:10px !important;}
    separation once there's more than one or two categories. Sub-categories
    keep their existing nested header + connector-line treatment below
    unchanged, just inset inside this outer card now instead of the page. */
-.mpwpb-tree-cat{border:1px solid #E2EEEA;border-radius:14px;overflow:hidden;margin-bottom:10px;background:#fff;}
+.mpwpb-tree-cat{border:1px solid var(--mpwpb-tint-border);border-radius:14px;overflow:hidden;margin-bottom:10px;background:#fff;}
 .mpwpb-tree-cat:last-child{margin-bottom:0;}
 .mpwpb-tree-cat > .mpwpb-tree-cat-row{margin-top:0;border:0;border-radius:0;}
-.mpwpb-tree-cat-row{font-weight:700;color:#1e293b;background:#F0FDFA;border:1px solid #ede7e7;margin-top:5px;}
-.mpwpb-tree-cat-row:hover{background:#F0FDFA;}
+.mpwpb-tree-cat-row{font-weight:700;color:#1e293b;background:var(--mpwpb-tint-soft);border:1px solid #ede7e7;margin-top:5px;}
+.mpwpb-tree-cat-row:hover{background:var(--mpwpb-tint-soft);}
 .mpwpb-tree-folder-icon{color:var(--mpwpb_color_theme);font-size:14px;flex:0 0 auto;}
 .mpwpb-tree-name{flex:1;min-width:0;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .mpwpb-tree-count{flex:0 0 auto;font-size:11px;color:#94a3b8;font-weight:600;}
@@ -987,7 +1013,7 @@ p.mpwpb-overview-stat-label{margin-left:10px !important;}
 /* No more ::before connector tick -- the category's own outer card border
    (above) replaced the vertical guide line it used to point back to, so a
    lone horizontal tick with nothing to connect to would look orphaned. */
-.mpwpb-tree-subcat-row{font-size:13px;font-weight:600;color:#334155;border:1px solid #ddd;margin-top:10px;margin-bottom:10px;padding:8px 20px 10px 10px;background:#F0FDFA;}
+.mpwpb-tree-subcat-row{font-size:13px;font-weight:600;color:#334155;border:1px solid #ddd;margin-top:10px;margin-bottom:10px;padding:8px 20px 10px 10px;background:var(--mpwpb-tint-soft);}
 .mpwpb-tree-subcat-row:hover{background:#d5f7ef;}
 
 .mpwpb-tree-service{
@@ -1165,7 +1191,7 @@ span.mpwpb-tree-service-name{padding-left:5px;}
 }
 .mpwpb-checkout-recurring-row{display:flex;align-items:center;justify-content:space-between;font-size:12.5px;color:#64748b;}
 .mpwpb-checkout-recurring-row span:last-child{font-variant-numeric:tabular-nums;}
-.mpwpb-checkout-recurring-discount{color:#0d9488;}
+.mpwpb-checkout-recurring-discount{color:var(--mpwpb-shade);}
 .mpwpb-checkout-total{
 	display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid #e5e9f0;
 	font-size:14px;font-weight:700;color:#1e293b;
@@ -1488,7 +1514,7 @@ label.mpwpb-checkout-field{display:inline-block;}
 	padding:9px 14px;font-size:12px;font-weight:700;color:var(--mpwpb_color_theme);text-align:left;
 	border-top:1px solid #e5e9f0;
 }
-.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-more-btn:hover{background:#f0fdfa;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-more-btn:hover{background:var(--mpwpb-tint-soft);}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-selected-summary-more-btn i{font-size:10px;}
 
 .mpwpb-static-template .sidebar .mpwpb_popup .popupFooter{
@@ -1696,7 +1722,7 @@ label.mpwpb-checkout-field{display:inline-block;}
 	   also pick up (they still carry the base .mpwpb_item_box class) and would
 	   otherwise inherit onto the name text, making it nearly invisible against
 	   this light background. */
-	border-color:#b6b9b9;background:#EFF4FF;color:#1e293b;
+	border-color:#b6b9b9;background:var(--mpwpb-tint-soft);color:#1e293b;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row > ._dFlex{width:100%;display:flex !important;align-items:center;gap:10px;cursor:pointer;min-width:0;}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-tree-service-row h6{font-size:13px;margin:0;font-weight:600;}
@@ -1858,7 +1884,7 @@ h4.alignCenter.mpwpb-total{font-size:16px !important;}
 	border-radius:50%;border:1px solid #e5e9f0;color:var(--mpwpb_color_theme);font-size:11px;cursor:pointer;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_carousel_area .prev:hover,
-.mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_carousel_area .next:hover{background:#F0FDFA;}
+.mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_carousel_area .next:hover{background:var(--mpwpb-tint-soft);}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-date-grid{
 	display:flex !important;flex-wrap:wrap;gap:8px;
 }
@@ -1977,7 +2003,7 @@ h4.alignCenter.mpwpb-total{font-size:16px !important;}
 	border-radius:50% !important;background:transparent !important;color:var(--mpwpb_color_theme) !important;
 	font-size:9px;cursor:pointer;
 }
-.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item .addonGroupContent:hover{background:#F0FDFA !important;}
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item .addonGroupContent:hover{background:var(--mpwpb-tint-soft) !important;}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item .qtyIncDec label{margin:0 !important;}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_extra_service_item .inputIncDec{
 	width:24px !important;height:20px;border:0 !important;background:transparent !important;
@@ -2070,13 +2096,13 @@ div.mpwpb_popup[data-popup="#mpwpb_static_popup"] .mpwpb-reorder-notice-message{
 }
 .mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-recurring-account__header{
 	display:grid;grid-template-columns:minmax(0,1fr) 38px;align-items:center;gap:12px;
-	padding:20px 18px;background:linear-gradient(135deg,#f0fdfa 0%,#f8fafc 100%);
+	padding:20px 18px;background:linear-gradient(135deg,var(--mpwpb-tint-soft) 0%,#f8fafc 100%);
 }
 .mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-recurring-account__header::before{
 	background:var(--mpwpb_color_theme);
 }
 .mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-recurring-account__eyebrow{
-	background:#f0fdfa;color:var(--mpwpb_color_theme);
+	background:var(--mpwpb-tint-soft);color:var(--mpwpb_color_theme);
 }
 .mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-recurring-account__count{
 	display:grid !important;place-items:center !important;align-self:center;
@@ -2097,7 +2123,7 @@ div.mpwpb_popup[data-popup="#mpwpb_static_popup"] .mpwpb-reorder-notice-message{
 .mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-recurring-occurrence__number{
 	display:grid !important;grid-column:1;grid-row:1 / span 2;place-items:center !important;
 	align-self:center;box-sizing:border-box;width:32px;height:32px;min-width:32px;margin:0;padding:0;
-	border:1px solid var(--mpwpb_color_theme);border-radius:9px;background:#f0fdfa;
+	border:1px solid var(--mpwpb_color_theme);border-radius:9px;background:var(--mpwpb-tint-soft);
 	color:var(--mpwpb_color_theme);font-size:12px;line-height:1;text-align:center;
 }
 .mpwpb-static-template .mpwpb-inline-confirmation .mpwpb-recurring-occurrence > div:not(.mpwpb-recurring-occurrence__actions){
@@ -2136,14 +2162,14 @@ div.mpwpb_popup[data-popup="#mpwpb_static_popup"] .mpwpb-reorder-notice-message{
 .mpwpb-static-template .mpwpb_order_proceed_area .mpwpb-checkout-recovery{
 	display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:12px;align-items:center;
 	margin:18px;padding:16px;border:1px solid #bae6e1;border-radius:12px;
-	background:linear-gradient(135deg,#f0fdfa,#f8fafc);color:#334155;
+	background:linear-gradient(135deg,var(--mpwpb-tint-soft),#f8fafc);color:#334155;
 }
 .mpwpb-static-template .mpwpb_order_proceed_area .mpwpb-checkout-recovery > .fas{
 	display:grid !important;width:38px;height:38px;place-items:center;border-radius:10px;
 	background:var(--mpwpb_color_theme);color:#fff;font-size:14px;
 }
 .mpwpb-static-template .mpwpb_order_proceed_area .mpwpb-checkout-recovery strong{
-	display:block;color:#0f766e;font-size:13px;line-height:1.35;
+	display:block;color:var(--mpwpb-shade);font-size:13px;line-height:1.35;
 }
 .mpwpb-static-template .mpwpb_order_proceed_area .mpwpb-checkout-recovery p{
 	margin:3px 0 0 !important;color:#64748b;font-size:11.5px;line-height:1.45;
@@ -2229,4 +2255,62 @@ div.mpwpb_popup[data-popup="#mpwpb_static_popup"] .mpwpb-reorder-notice-message{
 .mpwpb-static-template .mpwpb_no_staff_notice{
 	margin:6px 0 0;padding:12px 14px;border:1px solid #fde68a;border-radius:10px;
 	background:#fffbeb;color:#92400e;font-size:13px;font-weight:600;line-height:1.5;
+}
+
+/* -------------------------------------------------------------------- *
+ *  Staff step -- selectable staff cards (markup: render_staff_cards() in
+ *  Frontend/MPWPB_Staff_Booking.php; selection: the .mpwp_select_staff_card
+ *  click handler in mpwpb_registration.js toggles .selected). Two-column
+ *  card grid with avatar / name / status / tick, selected state in the
+ *  Theme Color with a pale tint background (--mpwpb-tint-* defined at the
+ *  top of this file), replacing the old strip of bare avatars with a fixed
+ *  green ring. !important where mpwpb_registration.css's unscoped staff
+ *  rules or the plugin-wide button/span rules would otherwise win.
+ * -------------------------------------------------------------------- */
+.mpwpb-static-template .mpwpb_staff_step_summary{
+	background:var(--mpwpb-tint-bg) !important;border:1px solid var(--mpwpb-tint-border) !important;border-radius:12px !important;
+}
+.mpwpb-static-template .mpwpb_staff_step_summary_row i{color:var(--mpwpb_color_theme) !important;}
+.mpwpb-static-template .mpwp_select_staff_grid{
+	display:grid !important;grid-template-columns:repeat(2, minmax(0, 1fr));gap:12px !important;
+	overflow:visible !important;padding:2px 0 6px !important;
+}
+.mpwpb-static-template .mpwp_select_staff_card{
+	display:flex !important;align-items:center;gap:12px;width:auto !important;min-width:0;margin:0 !important;
+	padding:14px !important;border:1.5px solid #E2E6E4 !important;border-radius:14px !important;
+	background:#fff !important;color:#15202B !important;text-align:left !important;cursor:pointer;
+	box-shadow:0 1px 2px rgba(15,23,42,.04) !important;transition:border-color .15s, background-color .15s, box-shadow .15s;
+	font:inherit !important;line-height:1.3 !important;text-transform:none !important;
+}
+.mpwpb-static-template .mpwp_select_staff_card:hover{border-color:var(--mpwpb-tint-line) !important;}
+.mpwpb-static-template .mpwp_select_staff_card:focus-visible{outline:2px solid var(--mpwpb_color_theme);outline-offset:2px;}
+.mpwpb-static-template .mpwp_select_staff_card.selected{
+	border-color:var(--mpwpb_color_theme) !important;background:var(--mpwpb-tint-soft) !important;
+	box-shadow:0 0 0 3px var(--mpwpb-tint) !important;
+}
+.mpwpb-static-template .mpwp_select_staff_avatar{
+	flex:0 0 auto;width:44px !important;height:44px !important;margin:0 !important;border-radius:50% !important;
+	border:0 !important;object-fit:cover;display:flex !important;align-items:center;justify-content:center;
+	background:var(--mpwpb-tint) !important;color:var(--mpwpb_color_theme);
+}
+.mpwpb-static-template .mpwp_select_staff_avatar--initial{
+	font-family:'Sora','Segoe UI',sans-serif;font-weight:700;font-size:17px;
+}
+.mpwpb-static-template .mpwp_select_staff_text{
+	flex:1 1 auto;min-width:0;display:flex !important;flex-direction:column;gap:2px;
+}
+.mpwpb-static-template .mpwp_select_staff_name{
+	display:block !important;font-size:14px !important;font-weight:700 !important;color:#15202B !important;
+	white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.mpwpb-static-template .mpwp_select_staff_meta{display:block !important;font-size:12px;font-weight:500;color:#5B6763;}
+.mpwpb-static-template .mpwp_select_staff_radio{
+	flex:0 0 auto;width:20px;height:20px;border-radius:50%;display:flex !important;align-items:center;justify-content:center;
+	border:2px solid #CBD0D6;background:#fff;color:transparent;
+}
+.mpwpb-static-template .mpwp_select_staff_card.selected .mpwp_select_staff_radio{
+	border-color:var(--mpwpb_color_theme);background:var(--mpwpb_color_theme);color:#fff;
+}
+@media (max-width:420px){
+	.mpwpb-static-template .mpwp_select_staff_grid{grid-template-columns:minmax(0, 1fr);}
 }

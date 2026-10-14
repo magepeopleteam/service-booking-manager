@@ -603,7 +603,7 @@
 							</div>
 						</div>
 
-						<div class="mpwpb-sme__fp-mock" data-sme-fp-mock>
+						<div class="mpwpb-sme__fp-mock" data-sme-fp-mock style="--fp-theme:<?php echo esc_attr($current_theme_color); ?>">
 							<div class="mpwpb-sme__fp-steps" data-sme-fp-steps>
 								<div class="mpwpb-sme__fp-steps-item is-active" data-sme-fp-steps-item="services">
 									<span class="mpwpb-sme__fp-steps-dot">1</span><?php esc_html_e('Services', 'service-booking-manager'); ?>

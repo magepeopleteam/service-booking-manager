@@ -1672,6 +1672,7 @@
 					$custom.addClass('is-active');
 				}
 				$custom.find('[data-sme-theme-color-custom]').val(color);
+				setPreviewThemeColor(color);
 				toast(cfg.themeColorSavedTxt || 'Theme color updated');
 			} else {
 				toast(cfg.themeColorErrorTxt || 'Could not save theme color');
@@ -1690,8 +1691,16 @@
 		$custom.addClass('has-color');
 		if ($custom[0]) { $custom[0].style.setProperty('--swatch', color); }
 	}
+	// Frontend Preview follows the Theme Color (--fp-theme, read by
+	// .mpwpb-sme__fp-mock in mpwpb-service-edit-modern.css).
+	function setPreviewThemeColor(color) {
+		$root.find('[data-sme-fp-mock]').each(function () {
+			this.style.setProperty('--fp-theme', color);
+		});
+	}
 	$root.on('input', '[data-sme-theme-color-custom]', function () {
 		setCustomSwatchColor($(this).closest('.mpwpb-sme__bw-swatch--custom'), $(this).val());
+		setPreviewThemeColor($(this).val());
 	});
 	$root.on('change', '[data-sme-theme-color-custom]', function () {
 		$root.find('[data-sme-theme-swatches] .mpwpb-sme__bw-swatch').not('.mpwpb-sme__bw-swatch--custom').removeClass('is-active');

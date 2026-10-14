@@ -133,8 +133,12 @@
 	background: #F3F5F4 !important;
 }
 
+/* Pale version of the theme colour (theme-tint variables defined in
+   mpwpb-service-page-modern.css) instead of a fixed light teal, so the
+   selected row matches the category rows whatever Theme Color is set. */
 #mpwpb_static_sidbar .mpwpb-tree-service.mpActive {
-	background: #F0F6F4 !important;
+	background: var(--mpwpb-tint-soft, #F0F6F4) !important;
+	border-color: var(--mpwpb-tint-line, #A7F3D0) !important;
 }
 
 #mpwpb_static_sidbar .mpwpb-tree-checkbox {

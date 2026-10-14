@@ -353,51 +353,66 @@ if (!class_exists('MPWPB_Staff_Booking')) {
                             }
                         }
                     }
-                    if ( !empty( $available_staff ) ) {
-                        $html = '<div class="mpwp_select_staff_grid">
-                            <div class="mpwp_select_staff_card">
-                                <input type="hidden" class="mpwpb_selected_staff" name="mpwpb_selected_staff_id[]" value="">
-                                <div class="mpwp_select_staff_avatar">👥</div>
-                                <div class="mpwp_select_staff_name">Any Staff</div>
-                            </div>
-                        ';
-                        foreach ($available_staff as $staff) {
-                            $image_id = get_user_meta($staff->ID, 'mpwpb_custom_profile_image', true);
-
-                            $image_url = esc_url(wp_get_attachment_url($image_id));
-                            if( empty( $image_url ) ){
-                                $image_url = MPWPB_PLUGIN_URL.'/mp_global/assets/images/staff_fallback.webp';
-                            }
-                            $html .=
-                                '<div class="mpwp_select_staff_card">
-                                <input type="hidden" class="mpwpb_selected_staff" name="mpwpb_selected_staff_id[]" value="' . esc_attr($staff->ID) . '">
-                                <img class="mpwp_select_staff_avatar" src="' . esc_url($image_url) . '" alt="' . esc_attr($staff->user_nicename) . '">
-                                <div class="mpwp_select_staff_name">' . esc_html($staff->display_name) . '</div>
-                            </div>';
-
-                        }
-                        $html .= '</div>';
-
-                        $response['html'] = $html;
-                        $response['count'] = count($available_staff);
-                    } else {
-                        $html = '<div class="mpwp_select_staff_grid">
-                                <div class="mpwp_select_staff_card">
-                                    <input type="hidden" class="mpwpb_selected_staff" name="mpwpb_selected_staff_id[]" value="">
-                                    <div class="mpwp_select_staff_avatar">👥</div>
-                                    <div class="mpwp_select_staff_name">Any Staff</div>
-                                </div>
-                            </div>';
-                        $response['html'] = $html;
-                        $response['count'] = 1;
-                    }
+                    $response['html'] = self::render_staff_cards($available_staff, $date_time);
+                    $response['count'] = !empty($available_staff) ? count($available_staff) : 1;
                 }
             }
 
             wp_send_json( $response ); // return JSON and end execution
         }
 
+        /**
+         * Staff step cards: "Any Staff" first (pre-selected -- an empty
+         * mpwpb_staff_member_booking already means "any"), then each free staff
+         * member with their photo, or their initial when they have none.
+         * Every card keeps .mpwp_select_staff_card + its hidden
+         * .mpwpb_selected_staff input, which mpwpb_registration.js's click
+         * handler reads.
+         */
+        private static function render_staff_cards($available_staff, $date_time) {
+            $time_label = '';
+            if ($date_time && strtotime($date_time)) {
+                $time_label = date_i18n(get_option('time_format'), strtotime($date_time));
+            }
+            $check_icon = '<span class="mpwp_select_staff_radio" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 4.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
 
+            $html = '<div class="mpwp_select_staff_grid">';
+            $html .= '<button type="button" class="mpwp_select_staff_card selected" aria-pressed="true">'
+                . '<input type="hidden" class="mpwpb_selected_staff" name="mpwpb_selected_staff_id[]" value="">'
+                . '<span class="mpwp_select_staff_avatar mpwp_select_staff_avatar--any" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.2" stroke="currentColor" stroke-width="2"/><path d="M3.5 19c.6-3 2.8-5 5.5-5s4.9 2 5.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="17" cy="9" r="2.6" stroke="currentColor" stroke-width="2"/><path d="M16 14.2c2.4.2 4 1.9 4.5 4.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>'
+                . '<span class="mpwp_select_staff_text">'
+                . '<span class="mpwp_select_staff_name">' . esc_html__('Any Staff', 'service-booking-manager') . '</span>'
+                . '<span class="mpwp_select_staff_meta">' . esc_html__('First available', 'service-booking-manager') . '</span>'
+                . '</span>'
+                . $check_icon
+                . '</button>';
+
+            foreach ((array) $available_staff as $staff) {
+                $image_id = get_user_meta($staff->ID, 'mpwpb_custom_profile_image', true);
+                $image_url = $image_id ? wp_get_attachment_image_url($image_id, 'thumbnail') : '';
+                if ($image_url) {
+                    $avatar = '<img class="mpwp_select_staff_avatar" src="' . esc_url($image_url) . '" alt="">';
+                } else {
+                    $initial = function_exists('mb_substr') ? mb_strtoupper(mb_substr($staff->display_name, 0, 1)) : strtoupper(substr($staff->display_name, 0, 1));
+                    $avatar = '<span class="mpwp_select_staff_avatar mpwp_select_staff_avatar--initial" aria-hidden="true">' . esc_html($initial) . '</span>';
+                }
+                $meta = $time_label
+                    /* translators: %s: booked time, e.g. 4:00 pm */
+                    ? sprintf(esc_html__('Available at %s', 'service-booking-manager'), esc_html($time_label))
+                    : esc_html__('Available', 'service-booking-manager');
+                $html .= '<button type="button" class="mpwp_select_staff_card" aria-pressed="false">'
+                    . '<input type="hidden" class="mpwpb_selected_staff" name="mpwpb_selected_staff_id[]" value="' . esc_attr($staff->ID) . '">'
+                    . $avatar
+                    . '<span class="mpwp_select_staff_text">'
+                    . '<span class="mpwp_select_staff_name">' . esc_html($staff->display_name) . '</span>'
+                    . '<span class="mpwp_select_staff_meta">' . $meta . '</span>'
+                    . '</span>'
+                    . $check_icon
+                    . '</button>';
+            }
+            $html .= '</div>';
+            return $html;
+        }
     }
 
     new MPWPB_Staff_Booking();
