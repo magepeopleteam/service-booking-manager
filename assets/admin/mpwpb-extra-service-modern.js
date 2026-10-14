@@ -99,6 +99,10 @@
 	function render() {
 		renderHeader();
 		renderList();
+		// Lets the wizard shell's Frontend Preview rail card (mpwpb-service-
+		// edit-modern.js) mirror this list live, same pattern as
+		// mpwpb-categories-services-modern.js's 'mpwpb:csm-services-changed'.
+		$root.trigger('mpwpb:esm-items-changed', [state.items]);
 	}
 
 	/* ---------------------------------------------------------------- *
@@ -106,9 +110,11 @@
 	 * ---------------------------------------------------------------- */
 	$root.html(
 		'<div class="mpwpb-csm__header">' +
-		'<div class="mpwpb-csm__crumbs"><span class="mpwpb-csm__crumb is-last">' + esc(t.addService) + '</span>' +
+		'<div class="mpwpb-csm__crumbs"><span class="mpwpb-csm__header-icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3.5" y="3.5" width="17" height="17" rx="3" stroke="currentColor" stroke-width="2"/><path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>' +
+		'<span class="mpwpb-csm__crumb is-last">' + esc(t.addService) + '</span>' +
 		'<span class="mpwpb-csm__count-badge" data-esm-part="count"></span></div>' +
-		'<div class="mpwpb-csm__search"><span class="dashicons dashicons-search"></span><input type="text" data-esm-search placeholder="' + esc(t.searchPlaceholder) + '"/></div>' +
+		'<div class="mpwpb-csm__search"><span class="dashicons dashicons-search"></span><input type="text" data-esm-search placeholder="' + esc(t.searchPlaceholder) + '"/>' +
+		'<button type="button" class="mpwpb-csm__search-clear" data-esm-search-clear aria-label="Clear search" hidden><svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button></div>' +
 		'<button type="button" class="mpwpb-csm__add-btn" data-esm-add><span class="dashicons dashicons-plus-alt2"></span>' + esc(t.addService) + '</button>' +
 		'</div>' +
 		'<div data-esm-part="list"></div>'
@@ -117,7 +123,11 @@
 
 	$root.on('input', '[data-esm-search]', function () {
 		state.query = $(this).val();
+		$(this).siblings('[data-esm-search-clear]').prop('hidden', !state.query);
 		render();
+	});
+	$root.on('click', '[data-esm-search-clear]', function () {
+		$(this).siblings('[data-esm-search]').val('').trigger('input').trigger('focus');
 	});
 
 	/* ---------------------------------------------------------------- *

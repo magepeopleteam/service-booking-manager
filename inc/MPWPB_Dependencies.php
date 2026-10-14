@@ -140,6 +140,16 @@
 					'ajax_url' => admin_url('admin-ajax.php'),
 					'nonce'    => wp_create_nonce('mpwpb_admin_nonce'),
 					'loadingTxt'    => __('Loading...','service-booking-manager'),
+					'staffValidation' => array(
+						'usernameRequired' => __('Username is required.', 'service-booking-manager'),
+						'usernameShort'    => __('Username must be at least 3 characters.', 'service-booking-manager'),
+						'usernameTaken'    => __('This username is already taken.', 'service-booking-manager'),
+						'passwordRequired' => __('Password is required.', 'service-booking-manager'),
+						'passwordShort'    => __('Password must be at least 8 characters.', 'service-booking-manager'),
+						'emailRequired'    => __('Email is required.', 'service-booking-manager'),
+						'emailInvalid'     => __('Please enter a valid email address.', 'service-booking-manager'),
+						'emailTaken'       => __('This email is already used by another account.', 'service-booking-manager'),
+						'checkFailed'      => __('Could not verify the username/email right now. Please try again.', 'service-booking-manager'),					),
 				));
 				do_action('add_mpwpb_admin_script');
 			}
@@ -167,7 +177,7 @@
 				wp_enqueue_style('mpwpb', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb.css', [], self::asset_version('/assets/frontend/mpwpb.css'));
 				wp_enqueue_script('mpwpb', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb.js', ['jquery'], self::asset_version('/assets/frontend/mpwpb.js'), true);
 				wp_enqueue_style('mpwpb_registration', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_registration.css', [], self::asset_version('/assets/frontend/mpwpb_registration.css'));
-				wp_enqueue_script('mpwpb_registration', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_registration.js', ['jquery'], MPWPB_VERSION);
+				wp_enqueue_script('mpwpb_registration', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_registration.js', ['jquery'], self::asset_version('/assets/frontend/mpwpb_registration.js'));
 				wp_enqueue_style('mpwpb_coupon', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-coupon.css', [], MPWPB_VERSION);
 				// Depends on mpwpb_registration (not just jquery) so the
 				// mpwpb_ajax object it localizes is guaranteed to already exist.
@@ -180,13 +190,49 @@
 				// pure reskin, loaded after mpwpb_registration so its overrides win.
 				wp_enqueue_style('mpwpb_service_page_modern', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-service-page-modern.css', ['mpwpb_registration'], self::asset_version('/assets/frontend/mpwpb-service-page-modern.css'));
 				wp_enqueue_script('mpwpb_service_page_modern', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-service-page-modern.js', ['jquery', 'mpwpb_registration'], MPWPB_VERSION, true);
+				// Static sidebar + popup booking widget redesign — pure reskin
+				// (typography, pill buttons/badges, card radius), loaded after
+				// both of the above so its overrides win over either. The font
+				// stylesheet has no local file to version, so it's registered
+				// with a plain null version (its own URL is already
+				// Google-cached/fingerprinted) and no deps, so it fetches in
+				// parallel with everything else instead of blocking on them.
+				wp_enqueue_style('mpwpb_booking_widget_reskin_fonts', 'https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Work+Sans:wght@400;500;600;700&display=swap', [], null);
+				wp_enqueue_style('mpwpb_booking_widget_reskin', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-booking-widget-reskin.css', ['mpwpb_registration', 'mpwpb_service_page_modern', 'mpwpb_booking_widget_reskin_fonts'], self::asset_version('/assets/frontend/mpwpb-booking-widget-reskin.css'));
+				// Reskin-only behavior (currently just the collapsed coupon
+				// box toggle) -- never selection/cart/checkout logic, which
+				// stays entirely in mpwpb_registration.js.
+				wp_enqueue_script('mpwpb_booking_widget_reskin', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-booking-widget-reskin.js', ['jquery'], self::asset_version('/assets/frontend/mpwpb-booking-widget-reskin.js'), true);
 				// "Our services" sidebar tree expand/collapse only — selecting a
 				// service still goes through mpwpb_registration.js unchanged.
 				wp_enqueue_script('mpwpb_service_tree', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-service-tree.js', ['jquery', 'mpwpb_registration'], MPWPB_VERSION, true);
+				// Live "N services selected · total" summary this file renders
+				// into the sidebar's CTA footer, reading the real relocated
+				// service rows' data-price + qty -- same real data the popup's
+				// own next_service.php "Total:" already shows, just mirrored
+				// onto the sidebar where no such summary existed before.
+				wp_localize_script('mpwpb_service_tree', 'mpwpbTreeI18n', array(
+					'oneServiceTxt' => esc_html__('1 service selected', 'service-booking-manager'),
+					'manyServicesTxt' => esc_html__('%d services selected', 'service-booking-manager'),
+					'currencySymbol' => MPWPB_Global_Function::is_wc_payment_mode()
+						? get_woocommerce_currency_symbol()
+						: MPWPB_Global_Function::native_currency_setting('symbol', '$'),
+				));
 				// Booking popup's inner picker: relocates the real category/
 				// service elements (untouched click handlers/hidden inputs)
 				// into a unified checkbox-tree — no new selection logic.
 				wp_enqueue_script('mpwpb_booking_tree', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-booking-tree.js', ['jquery', 'mpwpb_registration', 'mpwpb_service_tree'], self::asset_version('/assets/frontend/mpwpb-booking-tree.js'), true);
+				// "Tap to add" hint relocateService() adds next to each unselected
+				// row's qty-stepper slot, matching the sidebar preview tree's own
+				// mpwpb-tree-tap-hint copy (category_selection_static.php) -- that
+				// element doesn't exist to read the translated text off of in
+				// Inline display mode, where the sidebar is skipped entirely.
+				wp_localize_script('mpwpb_booking_tree', 'mpwpbBookingTreeI18n', array(
+					'tapToAddTxt' => esc_html__('Tap to add', 'service-booking-manager'),
+					'yourSelectionTxt' => esc_html__('Your selection', 'service-booking-manager'),
+					'totalLabelTxt' => esc_html__('Total', 'service-booking-manager'),
+					'addedTxt' => esc_html__('added', 'service-booking-manager'),
+				));
 				// Account-area presentation: WooCommerce's stock Orders table
 				// reskin plus the scoped Custom Payment dashboard cards/table.
 				// Loaded after mpwpb_registration so its overrides win.

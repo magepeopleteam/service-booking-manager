@@ -25,6 +25,7 @@
 				add_action('admin_enqueue_scripts', array($this, 'enqueue'), 90);
 				add_filter('admin_body_class', array($this, 'body_class'));
 				add_action('wp_ajax_mpwpb_set_service_edit_ui', array($this, 'ajax_set_ui'));
+				add_action('wp_ajax_mpwpb_save_theme_color', array($this, 'ajax_save_theme_color'));
 				add_action('wp_ajax_mpwpb_save_service_editor', array($this, 'ajax_save_service'));
 				add_action('save_post', array($this, 'save_feature_image'), 20);
 			}
@@ -364,7 +365,7 @@
 				$hero = $thumb_id ? wp_get_attachment_image_url($thumb_id, 'medium') : '';
 				?>
 				<aside class="mpwpb-sme__rail">
-					<div class="mpwpb-sme__rail-card mpwpb-sme__feat-card mpwpb-sme__rail-card--loading">
+					<div class="mpwpb-sme__rail-card mpwpb-sme__feat-card mpwpb-sme__rail-card--loading" data-sme-step-only="general">
 						<?php $this->render_rail_card_skeleton('featured'); ?>
 						<div class="mpwpb-sme__feat-head"><?php esc_html_e('Featured Image', 'service-booking-manager'); ?></div>
 						<div class="mpwpb-sme__feat-preview">
@@ -430,7 +431,7 @@
 						$mpwpb_pm_gateway_names = array_values(MPWPB_Native_Checkout::get_enabled_gateways());
 					}
 					?>
-					<div class="mpwpb-sme__rail-card mpwpb-sme__rail-card--loading">
+					<div class="mpwpb-sme__rail-card mpwpb-sme__rail-card--loading" data-sme-step-only="general">
 						<?php $this->render_rail_card_skeleton('info'); ?>
 						<div class="mpwpb-sme__feat-head"><?php esc_html_e('Payment Method', 'service-booking-manager'); ?></div>
 						<div class="mpwpb-sme__rail-info-list">
@@ -463,7 +464,7 @@
 					 * first, untouched), so mpwpb_template still submits exactly
 					 * once. */
 					?>
-					<div class="mpwpb-sme__rail-card mpwpb-sme__rail-card--loading">
+					<div class="mpwpb-sme__rail-card mpwpb-sme__rail-card--loading" data-sme-step-only="general">
 						<?php $this->render_rail_card_skeleton('info'); ?>
 						<div class="mpwpb-sme__feat-head"><?php esc_html_e('Shortcode &amp; Template', 'service-booking-manager'); ?></div>
 						<div class="mpwpb-sme__rail-field-list">
@@ -472,7 +473,349 @@
 						</div>
 					</div>
 
-					<div class="mpwpb-sme__rail-card mpwpb-sme__rail-card--loading" data-sme-step-only="availability pricing advanced">
+					<?php
+					/**
+					 * Mocked, not iframed: a real iframe of the live preview URL
+					 * pulled in the full theme + every frontend asset the booking
+					 * widget depends on (see mpwpb-categories-services-modern.js's
+					 * own header comment on the parallel Services & Pricing UI for
+					 * the same "reuse the data, not the page" reasoning) and still
+					 * needed client-side surgery to isolate just the form. This
+					 * renders a lightweight static mock from the same service data
+					 * instead, then mpwpb-service-edit-modern.js keeps it live by
+					 * listening for the 'mpwpb:csm-services-changed' event
+					 * mpwpb-categories-services-modern.js fires on every add/edit/
+					 * delete in the Services & Pricing list -- no network round trip.
+					 */
+					$fp_services = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
+					$fp_services = is_array($fp_services) ? $fp_services : array();
+					// Keys left as-is (not array_values()'d): these are the same
+					// stable per-service ids MPWPB_Categories_Services_Modern::
+					// get_payload() exposes as `id`, so data-sme-fp-add="<id>"
+					// here still matches after a live update swaps the rows.
+					$fp_currency = MPWPB_Global_Function::is_wc_payment_mode()
+						? get_woocommerce_currency_symbol()
+						: MPWPB_Global_Function::native_currency_setting('symbol', '$');
+					$preview_url = get_preview_post_link($post_id);
+
+					/* Extra services are page-wide (no per-service link in the
+					 * real data model -- see mpwpb_extra_service's save/read
+					 * sites), so "has extra service option" just means: this
+					 * booking page has the switch on AND at least one extra
+					 * configured. The preview shows the list once ANY regular
+					 * service is picked, not tied to which one. */
+					$fp_extra_services = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', array());
+					$fp_extra_services = is_array($fp_extra_services) ? $fp_extra_services : array();
+					$fp_extra_active = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_extra_service_active', 'off') === 'on';
+
+					// This service's display mode (per-service, Admin/MPWPB_Settings.php
+					// save_settings()) and the site-wide theme color (shared across
+					// every service, Admin/MPWPB_Settings_Global.php's classic color
+					// picker, saved here via its own immediate AJAX call -- see
+					// ajax_save_theme_color() above) for the card right after this one.
+					$booking_display_mode = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_booking_display_mode', 'popup');
+					$current_theme_color = MPWPB_Global_Function::get_style_settings('theme_color', '#00685f');
+					$theme_color_swatches = array('#00685f', '#2451e0', '#d97706', '#be123c', '#7c3aed', '#0f172a');
+
+					/* Group services into category -> subcategory -> service,
+					 * same three meta keys/relationships MPWPB_Categories_
+					 * Services_Modern::get_payload() reads. A service with no
+					 * (or an unknown) category falls back to $fp_uncategorized
+					 * and renders as a plain row exactly like before this
+					 * grouping existed -- so an installation with no
+					 * categories at all still looks and behaves unchanged. */
+					$fp_categories = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_category_service', array());
+					$fp_categories = is_array($fp_categories) ? $fp_categories : array();
+					$fp_sub_categories = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_sub_category_service', array());
+					$fp_sub_categories = is_array($fp_sub_categories) ? $fp_sub_categories : array();
+
+					$fp_services_by_cat = array();
+					$fp_services_by_sub = array();
+					$fp_uncategorized = array();
+					foreach ($fp_services as $fp_sid => $fp_svc) {
+						$fp_parent_cat = (isset($fp_svc['parent_cat']) && $fp_svc['parent_cat'] !== '') ? (string) $fp_svc['parent_cat'] : '';
+						$fp_sub_cat = (isset($fp_svc['sub_cat']) && $fp_svc['sub_cat'] !== '') ? (string) $fp_svc['sub_cat'] : '';
+						if ($fp_parent_cat === '' || !isset($fp_categories[$fp_parent_cat])) {
+							$fp_uncategorized[] = $fp_sid;
+						} elseif (
+							$fp_sub_cat !== ''
+							&& isset($fp_sub_categories[$fp_sub_cat]['cat_id'])
+							&& (string) $fp_sub_categories[$fp_sub_cat]['cat_id'] === $fp_parent_cat
+						) {
+							// A saved sub_cat id isn't enough on its own -- it's
+							// also the default/empty value for "no subcategory",
+							// so e.g. sub_cat=0 on a service whose parent_cat
+							// ISN'T subcategory 0's own parent must NOT be
+							// treated as a real subcategory assignment (it would
+							// silently misfile the service under some other
+							// category's subcategory of the same id instead of
+							// directly under its own, correct parent_cat).
+							$fp_services_by_sub[$fp_sub_cat][] = $fp_sid;
+						} else {
+							$fp_services_by_cat[$fp_parent_cat][] = $fp_sid;
+						}
+					}
+					$fp_subs_by_cat = array();
+					foreach ($fp_sub_categories as $fp_subid => $fp_sub) {
+						$fp_sub_cat_id = isset($fp_sub['cat_id']) ? (string) $fp_sub['cat_id'] : '';
+						if ($fp_sub_cat_id !== '' && isset($fp_categories[$fp_sub_cat_id])) {
+							$fp_subs_by_cat[$fp_sub_cat_id][] = (string) $fp_subid;
+						}
+					}
+
+					/** Renders one service row -- unchanged markup, now called from inside a group as well as flat. */
+					$fp_render_row = function ($fp_id, $fp_svc) use ($fp_currency) {
+						$fp_name = isset($fp_svc['name']) ? $fp_svc['name'] : '';
+						$fp_price = isset($fp_svc['price']) ? $fp_svc['price'] : '0';
+						$fp_duration = (isset($fp_svc['duration']) && $fp_svc['duration'] !== '') ? $fp_svc['duration'] : '—';
+						?>
+						<div class="mpwpb-sme__fp-row" data-sme-fp-row="<?php echo esc_attr($fp_id); ?>">
+							<div class="mpwpb-sme__fp-row-main">
+								<div class="mpwpb-sme__fp-row-name"><?php echo esc_html($fp_name); ?></div>
+								<div class="mpwpb-sme__fp-row-meta">
+									<span class="mpwpb-sme__fp-row-dur">
+										<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><polyline points="12,7 12,12 15,14"></polyline></svg>
+										<?php echo esc_html($fp_duration); ?>
+									</span>
+									<span class="mpwpb-sme__fp-row-price" data-sme-fp-row-price="<?php echo esc_attr($fp_price); ?>"><?php echo esc_html($fp_currency . $fp_price); ?></span>
+								</div>
+							</div>
+							<div class="mpwpb-sme__fp-row-side" data-sme-fp-row-side>
+								<button type="button" class="mpwpb-sme__fp-row-add" data-sme-fp-add="<?php echo esc_attr($fp_id); ?>" aria-label="<?php echo esc_attr(sprintf(__('Add %s', 'service-booking-manager'), $fp_name)); ?>">
+									<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+								</button>
+							</div>
+						</div>
+						<?php
+					};
+					$fp_chevron_svg = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="mpwpb-sme__fp-group-chev"><polyline points="18,15 12,9 6,15"></polyline></svg>';
+					?>
+					<div class="mpwpb-sme__rail-card mpwpb-sme__preview-card" data-sme-step-only="pricing availability advanced">
+						<div class="mpwpb-sme__preview-head">
+							<div class="mpwpb-sme__preview-head-main">
+								<span class="mpwpb-sme__preview-icon" aria-hidden="true">
+									<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"></rect><line x1="8" y1="20" x2="16" y2="20"></line><line x1="12" y1="16" x2="12" y2="20"></line></svg>
+								</span>
+								<div class="mpwpb-sme__preview-head-text">
+									<div class="mpwpb-sme__feat-head"><?php esc_html_e('Frontend Preview', 'service-booking-manager'); ?></div>
+									<p class="mpwpb-sme__preview-sub"><?php esc_html_e('Mirrors the booking form customers will see.', 'service-booking-manager'); ?></p>
+								</div>
+							</div>
+						</div>
+
+						<div class="mpwpb-sme__fp-mock" data-sme-fp-mock style="--fp-theme:<?php echo esc_attr($current_theme_color); ?>">
+							<div class="mpwpb-sme__fp-steps" data-sme-fp-steps>
+								<div class="mpwpb-sme__fp-steps-item is-active" data-sme-fp-steps-item="services">
+									<span class="mpwpb-sme__fp-steps-dot">1</span><?php esc_html_e('Services', 'service-booking-manager'); ?>
+								</div>
+								<div class="mpwpb-sme__fp-steps-sep"></div>
+								<div class="mpwpb-sme__fp-steps-item" data-sme-fp-steps-item="datetime">
+									<span class="mpwpb-sme__fp-steps-dot">2</span><?php esc_html_e('Date & Time', 'service-booking-manager'); ?>
+								</div>
+								<div class="mpwpb-sme__fp-steps-sep"></div>
+								<div class="mpwpb-sme__fp-steps-item" data-sme-fp-steps-item="checkout">
+									<span class="mpwpb-sme__fp-steps-dot">3</span><?php esc_html_e('Checkout', 'service-booking-manager'); ?>
+								</div>
+							</div>
+
+							<div class="mpwpb-sme__fp-step mpwpb-sme__fp-step--services is-active" data-sme-fp-step="services">
+								<div class="mpwpb-sme__fp-heading"><?php esc_html_e('Our services', 'service-booking-manager'); ?></div>
+								<p class="mpwpb-sme__fp-sub"><?php esc_html_e('Tap a service to start booking. You can add more inside.', 'service-booking-manager'); ?></p>
+
+								<div class="mpwpb-sme__fp-rows" data-sme-fp-rows<?php echo empty($fp_services) ? ' style="display:none"' : ''; ?>>
+									<?php foreach ($fp_categories as $fp_cat_id => $fp_cat) :
+										$fp_cat_id = (string) $fp_cat_id;
+										$fp_direct_ids = isset($fp_services_by_cat[$fp_cat_id]) ? $fp_services_by_cat[$fp_cat_id] : array();
+										$fp_sub_ids = isset($fp_subs_by_cat[$fp_cat_id]) ? $fp_subs_by_cat[$fp_cat_id] : array();
+										$fp_cat_count = count($fp_direct_ids);
+										foreach ($fp_sub_ids as $fp_sub_id) {
+											$fp_cat_count += isset($fp_services_by_sub[$fp_sub_id]) ? count($fp_services_by_sub[$fp_sub_id]) : 0;
+										}
+										if ($fp_cat_count === 0) {
+											continue; // nothing in this category (or its subcategories) to preview
+										}
+										?>
+										<div class="mpwpb-sme__fp-group" data-sme-fp-group="<?php echo esc_attr($fp_cat_id); ?>">
+											<button type="button" class="mpwpb-sme__fp-group-head" data-sme-fp-group-toggle>
+												<span class="mpwpb-sme__fp-group-icon" aria-hidden="true"><span class="dashicons dashicons-category"></span></span>
+												<span class="mpwpb-sme__fp-group-name"><?php echo esc_html(isset($fp_cat['name']) ? $fp_cat['name'] : ''); ?></span>
+												<span class="mpwpb-sme__fp-group-count"><?php echo (int) $fp_cat_count; ?></span>
+												<?php echo $fp_chevron_svg; ?>
+											</button>
+											<div class="mpwpb-sme__fp-group-body" data-sme-fp-group-body>
+												<?php
+												foreach ($fp_direct_ids as $fp_id) {
+													if (isset($fp_services[$fp_id])) {
+														$fp_render_row($fp_id, $fp_services[$fp_id]);
+													}
+												}
+												foreach ($fp_sub_ids as $fp_sub_id) {
+													$fp_sub_svc_ids = isset($fp_services_by_sub[$fp_sub_id]) ? $fp_services_by_sub[$fp_sub_id] : array();
+													if (empty($fp_sub_svc_ids)) {
+														continue;
+													}
+													?>
+													<div class="mpwpb-sme__fp-subgroup" data-sme-fp-group="<?php echo esc_attr($fp_sub_id); ?>">
+														<button type="button" class="mpwpb-sme__fp-subgroup-head" data-sme-fp-group-toggle>
+															<span class="mpwpb-sme__fp-group-icon" aria-hidden="true"><span class="dashicons dashicons-admin-generic"></span></span>
+															<span class="mpwpb-sme__fp-group-name"><?php echo esc_html(isset($fp_sub_categories[$fp_sub_id]['name']) ? $fp_sub_categories[$fp_sub_id]['name'] : ''); ?></span>
+															<span class="mpwpb-sme__fp-group-count"><?php echo (int) count($fp_sub_svc_ids); ?></span>
+															<?php echo $fp_chevron_svg; ?>
+														</button>
+														<div class="mpwpb-sme__fp-subgroup-body" data-sme-fp-group-body>
+															<?php
+															foreach ($fp_sub_svc_ids as $fp_id) {
+																if (isset($fp_services[$fp_id])) {
+																	$fp_render_row($fp_id, $fp_services[$fp_id]);
+																}
+															}
+															?>
+														</div>
+													</div>
+													<?php
+												}
+												?>
+											</div>
+										</div>
+									<?php endforeach; ?>
+									<?php
+									foreach ($fp_uncategorized as $fp_id) {
+										if (isset($fp_services[$fp_id])) {
+											$fp_render_row($fp_id, $fp_services[$fp_id]);
+										}
+									}
+									?>
+								</div>
+
+								<p class="mpwpb-sme__fp-empty" data-sme-fp-empty<?php echo empty($fp_services) ? '' : ' style="display:none"'; ?>><?php esc_html_e('Add a service in Services & Pricing to see it appear here.', 'service-booking-manager'); ?></p>
+
+								<?php if ($fp_extra_active && !empty($fp_extra_services)) : ?>
+									<div class="mpwpb-sme__fp-extras" data-sme-fp-extras style="display:none">
+										<div class="mpwpb-sme__fp-extras-label"><?php esc_html_e('Extra services', 'service-booking-manager'); ?></div>
+										<div data-sme-fp-extra-rows>
+											<?php foreach ($fp_extra_services as $fp_ex_id => $fp_ex) :
+												$fp_ex_name = isset($fp_ex['name']) ? $fp_ex['name'] : '';
+												$fp_ex_price = isset($fp_ex['price']) ? $fp_ex['price'] : '0';
+												?>
+												<div class="mpwpb-sme__fp-row" data-sme-fp-extra-row="<?php echo esc_attr($fp_ex_id); ?>">
+													<div class="mpwpb-sme__fp-row-main">
+														<div class="mpwpb-sme__fp-row-name"><?php echo esc_html($fp_ex_name); ?></div>
+														<div class="mpwpb-sme__fp-row-meta">
+															<span class="mpwpb-sme__fp-row-price" data-sme-fp-row-price="<?php echo esc_attr($fp_ex_price); ?>"><?php echo esc_html($fp_currency . $fp_ex_price); ?></span>
+														</div>
+													</div>
+													<div class="mpwpb-sme__fp-row-side" data-sme-fp-row-side>
+														<button type="button" class="mpwpb-sme__fp-row-add" data-sme-fp-extra-add="<?php echo esc_attr($fp_ex_id); ?>" aria-label="<?php echo esc_attr(sprintf(__('Add %s', 'service-booking-manager'), $fp_ex_name)); ?>">
+															<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+														</button>
+													</div>
+												</div>
+											<?php endforeach; ?>
+										</div>
+									</div>
+								<?php endif; ?>
+
+								<?php
+								/* Built/updated entirely by JS (fpUpdateServicesSummary) as qty
+								 * changes -- empty + hidden until at least one service is added. */
+								?>
+								<div class="mpwpb-sme__fp-summary" data-sme-fp-services-summary style="display:none"></div>
+
+								<?php /* Both labels are rendered; CSS shows one from the button's own
+								 * :disabled state, which fpUpdateCta() already toggles. */ ?>
+								<button type="button" class="mpwpb-sme__fp-cta" data-sme-fp-cta disabled<?php echo empty($fp_services) ? ' style="display:none"' : ''; ?>>
+									<span class="mpwpb-sme__fp-cta-label mpwpb-sme__fp-cta-label--ready"><?php esc_html_e('Continue to schedule', 'service-booking-manager'); ?>
+										<svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+									<span class="mpwpb-sme__fp-cta-label mpwpb-sme__fp-cta-label--idle">
+										<svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" stroke-width="2.2"/><path d="M8 11V8a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+										<?php esc_html_e('Select a service to continue', 'service-booking-manager'); ?></span>
+								</button>
+
+								<div class="mpwpb-sme__fp-trust" data-sme-fp-trust<?php echo empty($fp_services) ? ' style="display:none"' : ''; ?>>
+									<span class="mpwpb-sme__fp-trust-item">
+										<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6l7-3z"></path></svg>
+										<?php esc_html_e('Secure Payment Protection', 'service-booking-manager'); ?>
+									</span>
+									<span class="mpwpb-sme__fp-trust-item">
+										<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><line x1="3" y1="10" x2="21" y2="10"></line><line x1="8" y1="3" x2="8" y2="7"></line><line x1="16" y1="3" x2="16" y2="7"></line></svg>
+										<?php esc_html_e('Free Rescheduling up to 24h', 'service-booking-manager'); ?>
+									</span>
+								</div>
+							</div>
+
+							<?php
+							/* Steps 2 (Date & Time) and 3 (Checkout) are built entirely
+							 * by JS — "Today"/"Tomorrow" need the real current date and
+							 * the order summary needs the live qty selections, so
+							 * there's nothing server-side worth pre-rendering for either. */
+							?>
+							<div class="mpwpb-sme__fp-step mpwpb-sme__fp-step--datetime" data-sme-fp-step="datetime" hidden></div>
+							<div class="mpwpb-sme__fp-step mpwpb-sme__fp-step--checkout" data-sme-fp-step="checkout" hidden></div>
+						</div>
+
+						<div class="mpwpb-sme__feat-acts">
+							<button type="button" class="mpwpb-sme__fp-back" data-sme-fp-footer-back hidden>
+								<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>
+								<?php esc_html_e('Back', 'service-booking-manager'); ?>
+							</button>
+							<a class="mpwpb-sme__feat-link mpwpb-sme__preview-open" href="<?php echo esc_url($preview_url); ?>" target="wp-preview-<?php echo esc_attr($post_id); ?>">
+								<?php esc_html_e('Open full preview', 'service-booking-manager'); ?>
+								<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6"></path><path d="M20 4L10 14"></path><path d="M8 5H5a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-3"></path></svg>
+							</a>
+						</div>
+					</div>
+
+					<?php
+					/**
+					 * Display mode is per-service (Admin/MPWPB_Settings.php's
+					 * save_settings(), same save_post flow every other field on
+					 * this screen already goes through -- a real off-screen
+					 * <select> drives it, nothing new to wire up). Theme color is
+					 * site-wide (mpwpb_style_settings['theme_color'], the SAME
+					 * field the classic Settings page's color picker saves) and
+					 * doesn't belong to this post at all, so it saves itself
+					 * immediately on click via ajax_save_theme_color() above
+					 * instead of waiting for Update/Publish.
+					 */
+					?>
+					<div class="mpwpb-sme__rail-card" data-sme-step-only="pricing availability advanced">
+						<div class="mpwpb-sme__feat-head"><?php esc_html_e('Booking Widget Settings', 'service-booking-manager'); ?></div>
+						<div class="mpwpb-sme__rail-field-list">
+
+							<div class="mpwpb-sme__field-slot">
+								<div class="mpwpb-sme__bw-label"><?php esc_html_e('Booking Form Display', 'service-booking-manager'); ?></div>
+								<div class="mpwpb-sme__bw-segmented" data-sme-display-mode>
+									<button type="button" class="mpwpb-sme__bw-seg-btn<?php echo $booking_display_mode !== 'inline' ? ' is-active' : ''; ?>" data-sme-display-mode-value="popup"><?php esc_html_e('Popup Modal', 'service-booking-manager'); ?></button>
+									<button type="button" class="mpwpb-sme__bw-seg-btn<?php echo $booking_display_mode === 'inline' ? ' is-active' : ''; ?>" data-sme-display-mode-value="inline"><?php esc_html_e('Inline Embedded', 'service-booking-manager'); ?></button>
+								</div>
+								<p class="mpwpb-sme__bw-hint"><?php esc_html_e('Popup opens the booking flow in an overlay. Inline embeds it directly on the page, no popup.', 'service-booking-manager'); ?></p>
+								<div class="mpwpb-sme__offscreen">
+									<select name="mpwpb_booking_display_mode" data-sme-display-mode-real>
+										<option value="popup" <?php selected($booking_display_mode, 'popup'); ?>><?php esc_html_e('Popup Modal', 'service-booking-manager'); ?></option>
+										<option value="inline" <?php selected($booking_display_mode, 'inline'); ?>><?php esc_html_e('Inline Embedded', 'service-booking-manager'); ?></option>
+									</select>
+								</div>
+							</div>
+
+							<div class="mpwpb-sme__field-slot">
+								<div class="mpwpb-sme__bw-label"><?php esc_html_e('Theme Color', 'service-booking-manager'); ?></div>
+								<div class="mpwpb-sme__bw-swatches" data-sme-theme-swatches>
+									<?php foreach ($theme_color_swatches as $swatch) : ?>
+										<button type="button" class="mpwpb-sme__bw-swatch<?php echo strtolower($swatch) === strtolower($current_theme_color) ? ' is-active' : ''; ?>" style="background:<?php echo esc_attr($swatch); ?>" data-sme-theme-color="<?php echo esc_attr($swatch); ?>" aria-label="<?php echo esc_attr($swatch); ?>"></button>
+									<?php endforeach; ?>
+									<?php $is_custom_theme_color = !in_array(strtolower($current_theme_color), array_map('strtolower', $theme_color_swatches), true); ?>
+									<label class="mpwpb-sme__bw-swatch mpwpb-sme__bw-swatch--custom<?php echo $is_custom_theme_color ? ' is-active has-color' : ''; ?>"<?php echo $is_custom_theme_color ? ' style="--swatch:' . esc_attr($current_theme_color) . '"' : ''; ?> title="<?php esc_attr_e('Custom color', 'service-booking-manager'); ?>">
+										<span class="mpwpb-sme__bw-swatch-plus" aria-hidden="true">+</span>
+										<input type="color" data-sme-theme-color-custom value="<?php echo esc_attr($current_theme_color); ?>" aria-label="<?php esc_attr_e('Custom color', 'service-booking-manager'); ?>">
+									</label>
+								</div>
+								<p class="mpwpb-sme__bw-hint"><?php esc_html_e('Applies site-wide to every service\'s booking widget, saved immediately.', 'service-booking-manager'); ?></p>
+							</div>
+
+						</div>
+					</div>
+
+					<div class="mpwpb-sme__rail-card mpwpb-sme__rail-card--loading" data-sme-step-only="general">
 						<?php $this->render_rail_card_skeleton('info'); ?>
 						<div class="mpwpb-sme__feat-head"><?php esc_html_e('General Info Summary', 'service-booking-manager'); ?></div>
 						<div class="mpwpb-sme__rail-info-list">
@@ -512,31 +855,6 @@
 						</div>
 					</div>
 
-					<?php
-					$services = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service', array());
-					$total_services = is_array($services) ? count($services) : 0;
-					$extra_services = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_extra_service', array());
-					$total_extra_services = is_array($extra_services) ? count($extra_services) : 0;
-					$extra_service_on = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_extra_service_active') === 'on';
-					?>
-					<div class="mpwpb-sme__rail-card mpwpb-sme__rail-card--loading" data-sme-step-only="availability advanced">
-						<?php $this->render_rail_card_skeleton('info'); ?>
-						<div class="mpwpb-sme__feat-head"><?php esc_html_e('Pricing Summary', 'service-booking-manager'); ?></div>
-						<div class="mpwpb-sme__rail-info-list">
-							<div class="mpwpb-sme__rail-info-row">
-								<span><?php esc_html_e('Services', 'service-booking-manager'); ?></span>
-								<strong><?php echo esc_html($total_services); ?></strong>
-							</div>
-							<div class="mpwpb-sme__rail-info-row">
-								<span><?php esc_html_e('Extra Services', 'service-booking-manager'); ?></span>
-								<strong><?php echo esc_html($total_extra_services); ?></strong>
-							</div>
-							<div class="mpwpb-sme__rail-info-row">
-								<span><?php esc_html_e('Extra Service Enabled', 'service-booking-manager'); ?></span>
-								<span class="mpwpb-sme__rail-pill<?php echo $extra_service_on ? ' is-on' : ' is-off'; ?>"><?php echo $extra_service_on ? esc_html__('On', 'service-booking-manager') : esc_html__('Off', 'service-booking-manager'); ?></span>
-							</div>
-						</div>
-					</div>
 				</aside>
 				<?php
 			}
@@ -720,6 +1038,33 @@
 			}
 
 			/**
+			 * Theme color (mpwpb_style_settings['theme_color'], consumed as
+			 * --mpwpb_color_theme by mp_global/class/MPWPB_Global_Style.php) is a
+			 * single site-wide option -- the SAME real field the classic Settings
+			 * page's color picker saves (Admin/MPWPB_Settings_Global.php), just
+			 * saved here through its own immediate AJAX call instead of a full
+			 * options.php form submit, since it applies to every service, not
+			 * just the one currently being edited. manage_options (not
+			 * edit_posts) matches the capability that classic Settings page
+			 * itself requires, since this changes a site-wide value.
+			 */
+			public function ajax_save_theme_color() {
+				check_ajax_referer('mpwpb_sme_ui', 'nonce');
+				if (!current_user_can('manage_options')) {
+					wp_send_json_error('forbidden');
+				}
+				$color = isset($_POST['color']) ? sanitize_hex_color(wp_unslash($_POST['color'])) : '';
+				if (!$color) {
+					wp_send_json_error('invalid_color');
+				}
+				$settings = get_option('mpwpb_style_settings', array());
+				$settings = is_array($settings) ? $settings : array();
+				$settings['theme_color'] = $color;
+				update_option('mpwpb_style_settings', $settings);
+				wp_send_json_success(array('color' => $color));
+			}
+
+			/**
 			 * Save the native post form without reloading the modern editor.
 			 *
 			 * edit_post() is the same WordPress core path used by post.php, so all
@@ -820,6 +1165,8 @@
 						'savedTxt' => esc_html__('Saved', 'service-booking-manager'),
 						'savingTxt' => esc_html__('Saving…', 'service-booking-manager'),
 						'saveErrorTxt' => esc_html__('The service could not be saved. Please try again.', 'service-booking-manager'),
+						'themeColorSavedTxt' => esc_html__('Theme color updated', 'service-booking-manager'),
+						'themeColorErrorTxt' => esc_html__('Could not save theme color', 'service-booking-manager'),
 						'localReadyTxt' => esc_html__('Local autosave ready', 'service-booking-manager'),
 						'localSavingTxt' => esc_html__('Saving locally…', 'service-booking-manager'),
 						'localSavedTxt' => esc_html__('Draft saved locally', 'service-booking-manager'),
@@ -827,6 +1174,27 @@
 						'localUnavailableTxt' => esc_html__('Local autosave unavailable', 'service-booking-manager'),
 						'nextTxt' => esc_html__('Next Step', 'service-booking-manager'),
 						'updateTxt' => esc_html__('Update', 'service-booking-manager'),
+						'previewCurrency' => MPWPB_Global_Function::is_wc_payment_mode()
+							? get_woocommerce_currency_symbol()
+							: MPWPB_Global_Function::native_currency_setting('symbol', '$'),
+						'previewAddTxt' => esc_html__('Add', 'service-booking-manager'),
+						'previewNoServicesTxt' => esc_html__('Add a service in Services & Pricing to see it appear here.', 'service-booking-manager'),
+						'previewStep2HeadingTxt' => esc_html__('Choose date & time', 'service-booking-manager'),
+						'previewStep2SubTxt' => esc_html__('Customers pick a slot here, then continue to checkout.', 'service-booking-manager'),
+						'previewTodayTxt' => esc_html__('Today', 'service-booking-manager'),
+						'previewTomorrowTxt' => esc_html__('Tomorrow', 'service-booking-manager'),
+						'previewContinueTxt' => esc_html__('Continue to Checkout', 'service-booking-manager'),
+						'previewOnlyTxt' => esc_html__('Preview only — real bookings continue on the live page.', 'service-booking-manager'),
+						'previewCheckoutHeadingTxt' => esc_html__('Review & confirm', 'service-booking-manager'),
+						'previewCheckoutSubTxt' => esc_html__('Customers enter their contact details here before confirming.', 'service-booking-manager'),
+						'previewDateTimeLabelTxt' => esc_html__('Date & Time', 'service-booking-manager'),
+						'previewDateLabelTxt' => esc_html__('Date', 'service-booking-manager'),
+						'previewTimeLabelTxt' => esc_html__('Time', 'service-booking-manager'),
+						'previewMoreDatesTxt' => esc_html__('See more dates', 'service-booking-manager'),
+						'previewTotalTxt' => esc_html__('Total', 'service-booking-manager'),
+						'previewConfirmTxt' => esc_html__('Confirm Booking', 'service-booking-manager'),
+						'previewStep1Label' => esc_html__('Services', 'service-booking-manager'),
+						'previewStep2Label' => esc_html__('Date & Time', 'service-booking-manager'),
 						'hhWindowTitle' => esc_html__('Time Window', 'service-booking-manager'),
 						'hhWindowSub' => esc_html__('Choose when the special price applies.', 'service-booking-manager'),
 						'hhOfferTitle' => esc_html__('Discount Offer', 'service-booking-manager'),
@@ -888,7 +1256,23 @@
 					wp_enqueue_style('mpwpb-datetime-modern', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb-datetime-modern.css', array('mpwpb-service-edit-modern'), $this->asset_ver('/assets/admin/mpwpb-datetime-modern.css'));
 					wp_enqueue_script('mpwpb-datetime-modern', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb-datetime-modern.js', array('jquery'), $this->asset_ver('/assets/admin/mpwpb-datetime-modern.js'), true);
 					wp_localize_script('mpwpb-datetime-modern', 'mpwpbDtm', array(
-						'daysOpenLabel' => esc_html__('Days Open', 'service-booking-manager'),
+						'dayOpenLabel' => esc_html__('day open', 'service-booking-manager'),
+						'daysOpenLabel2' => esc_html__('days open', 'service-booking-manager'),
+						'mondayTxt' => esc_html__('Monday', 'service-booking-manager'),
+						'mondayClosedTxt' => esc_html__('Monday is closed', 'service-booking-manager'),
+						'noSlotsTxt' => esc_html__('No slots available', 'service-booking-manager'),
+						'slotsOfTxt' => esc_html__('slots of', 'service-booking-manager'),
+						'addBreakTxt' => esc_html__('+ Add break', 'service-booking-manager'),
+						'editBreakTxt' => esc_html__('Edit break', 'service-booking-manager'),
+						'removeBreakTxt' => esc_html__('Remove break', 'service-booking-manager'),
+						'specialDateLabel' => esc_html__('date', 'service-booking-manager'),
+						'specialDatesLabel' => esc_html__('dates', 'service-booking-manager'),
+						'weeklyClosedTxt' => esc_html__('Closed every week', 'service-booking-manager'),
+						'legendCustomTxt' => esc_html__('Closed (custom)', 'service-booking-manager'),
+						'legendWeeklyTxt' => esc_html__('Closed weekly', 'service-booking-manager'),
+						'legendTodayTxt' => esc_html__('Today', 'service-booking-manager'),
+						'offListEmptyTxt' => esc_html__('No dates marked closed yet.', 'service-booking-manager'),
+						'removeDateTxt' => esc_html__('Remove', 'service-booking-manager'),
 					));
 
 					// FAQ (Advanced step). Pure CSS reskin of the classic accordion —

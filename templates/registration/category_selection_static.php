@@ -75,8 +75,12 @@
 
 	if (sizeof($all_category) > 0 || sizeof($all_services) > 0) { ?>
 		<div class="mpwpb-tree-header">
-			<h4><?php esc_html_e('Our services', 'service-booking-manager'); ?></h4>
-			<p><?php esc_html_e('Tap a service to start booking. You can add more inside.', 'service-booking-manager'); ?></p>
+			<span class="mpwpb-tree-header-icon"><i class="fas fa-th"></i></span>
+			<div class="mpwpb-tree-header-text">
+				<h4><?php esc_html_e('Our services', 'service-booking-manager'); ?></h4>
+				<p><?php esc_html_e('Tap a service to start booking. You can add more inside.', 'service-booking-manager'); ?></p>
+			</div>
+			<span class="mpwpb-tree-header-count"><?php echo esc_html(sizeof($all_services)); ?> <?php esc_html_e('services', 'service-booking-manager'); ?></span>
 		</div>
 	<?php }
 

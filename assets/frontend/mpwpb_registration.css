@@ -1725,8 +1725,6 @@ button.mpwpb_service_button.mActive:hover{
     background: #fff !important;
     box-shadow: 0 0px 5px #ddd;
 }
-.mpwpb-popup-content{ padding: 10px; }
-
 #service-overview h1,#service-overview h2,#service-overview h3,#service-overview h4,#service-overview h5,#service-overview h6{
   margin: 10px 0;
   margin-top: 20px;

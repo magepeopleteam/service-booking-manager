@@ -1033,8 +1033,17 @@ function mpwpb_pagination_page_management(parent, pagination_page, total_item) {
     "use strict";
     $(document).on('click', '.mpwpb_style [data-target-popup]', function () {
         let target = $(this).attr('data-active-popup', '').data('target-popup');
+        let $popup = $('[data-popup="' + target + '"]');
         $('body').addClass('noScroll').find('[data-popup="' + target + '"]').addClass('in').promise().done(function () {
             mpwpb_load_bg_image();
+            // The booking tree (assets/frontend/mpwpb-booking-tree.js) normally
+            // builds itself once on document-ready, well before any click is
+            // possible -- but on a slow page load a user can open this popup
+            // before that ready callback has run, leaving the services step
+            // blank inside a body that's still forced to min-height:40vh
+            // (mpwpb_registration.css). This event lets that file build it
+            // immediately if it hasn't already (its own init is idempotent).
+            $(document).trigger('mpwpb:popup-opened', [$popup]);
             return true;
         });
     });

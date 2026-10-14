@@ -7,27 +7,47 @@
  * scoped under .mpwpb-dtm. Relies on --brand/--line/--ink/--muted custom
  * properties defined on the .mpwpb-sme shell root (mpwpb-service-edit-
  * modern.css), which always wraps this section.
+ *
+ * "Weekly hours" toggle-row list: time_slot_tr() (Admin/settings/
+ * Date_Time.php) still renders a real <table><tr><td> structure with the
+ * exact same <select> field names/AJAX cascade as Classic -- this file
+ * turns it into a flexed row-list purely visually (tr/td get display:flex/
+ * block), so none of that PHP had to change. The real "Weekly Off-days"
+ * checkboxes also render unchanged, just moved off-screen (.mpwpb-dtm__
+ * offscreen) -- mpwpb-datetime-modern.js injects a per-row toggle switch
+ * that forwards clicks to them, so the existing groupCheckBox aggregation
+ * (-> mpwpb_off_days) never had to be touched either.
  * ===================================================================== */
 
 .mpwpb-dtm *,
 .mpwpb-dtm *::before,
 .mpwpb-dtm *::after{box-sizing:border-box;}
 
+.mpwpb-dtm__header{margin-bottom:20px;}
+.mpwpb-dtm__header h2{margin:0;font-size:20px;font-weight:800;color:var(--ink,#0f172a);}
+.mpwpb-dtm__header p{margin:4px 0 0;font-size:13px;color:var(--muted,#94a3b8);}
+
 .mpwpb-dtm__grid{display:flex;align-items:flex-start;gap:20px;}
-.mpwpb-dtm__col--side{flex:0 0 320px;display:flex;flex-direction:column;gap:20px;min-width:0;}
-.mpwpb-dtm__col--main{flex:1;min-width:0;}
+/* Special Dates & Holidays — a sibling of .mpwpb-dtm__grid, not a child of
+   either column, so it spans the full width of both. */
+.mpwpb-dtm__card--full{margin-top:20px;}
+.mpwpb-dtm__col--main{flex:1;min-width:0;display:flex;flex-direction:column;gap:20px;}
+.mpwpb-dtm__col--side{flex:0 0 340px;display:flex;flex-direction:column;gap:20px;min-width:0;}
 
 .mpwpb-dtm__card{background:var(--surface,#fff);border:1px solid var(--line,#e4e9f0);border-radius:var(--radius,14px);overflow:hidden;}
-.mpwpb-dtm__card--full{margin-top:20px;}
 
-.mpwpb-dtm__card-head{display:flex;align-items:flex-start;gap:10px;padding:16px 18px;border-bottom:1px solid var(--line,#e4e9f0);}
-.mpwpb-dtm__card-head > .dashicons{color:var(--brand,#2451e0);font-size:19px;width:19px;height:19px;margin-top:2px;flex:0 0 auto;}
+.mpwpb-dtm__card-head{display:flex;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid var(--line,#e4e9f0);}
+.mpwpb-dtm__card-head > .dashicons{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:9px;background:var(--brand-soft,#eaf0ff);color:var(--brand,#2451e0);font-size:17px;flex:0 0 auto;}
 .mpwpb-dtm__card-head > div{flex:1;min-width:0;}
 .mpwpb-dtm__card-head h3{font-size:14.5px;font-weight:700;color:var(--ink,#0f172a);}
 .mpwpb-dtm__card-head p{margin:3px 0 0;font-size:12px;color:var(--muted,#94a3b8);}
 .mpwpb_settings_date_time .mpwpb-dtm__card-head h3{font-size:15px !important;}
 
 .mpwpb-dtm__badge{flex:0 0 auto;background:var(--brand-soft,#eaf0ff);color:var(--brand,#2451e0);font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:999px;white-space:nowrap;}
+
+.mpwpb-dtm__copy-btn{flex:0 0 auto;padding:8px 14px;border:1px solid var(--brand,#2451e0);border-radius:999px;background:var(--brand-soft,#eaf0ff);color:var(--brand-600,#1d3fb8);font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.15s;}
+button.mpwpb-dtm__copy-btn{font-size:13px !important;}
+.mpwpb-dtm__copy-btn:hover{filter:brightness(.97);}
 
 .mpwpb-dtm .mpwpb-dtm__add-btn.mpwpb-dtm__add-btn{
 	flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;
@@ -47,61 +67,126 @@
 
 .mpwpb-dtm__hint{margin:0 0 12px;font-size:12px;color:var(--muted,#94a3b8);}
 
+/* Real <select>s this card's own buttons/segmented-control drive (Schedule
+   type, Time Slot Length) stay in the DOM -- accessibly hidden, not
+   display:none, so the existing change-driven JS (data-collapse-target
+   cascade, the slot-length custom-input reveal) keeps working exactly as
+   before; the buttons just set .val() + .trigger('change') on them. */
+.mpwpb-dtm__sr-select{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+.mpwpb-dtm__offscreen{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+
+.mpwpb-dtm__segmented{display:inline-flex;padding:3px;background:var(--inset,#f8fafc);border-radius:10px;gap:2px;width:100%;}
+.mpwpb-dtm__segmented-btn{flex:1;padding:8px 10px;border:0;background:transparent;border-radius:8px;font-size:12.5px;font-weight:600;color:var(--ink-2,#475569);cursor:pointer;transition:.15s;white-space:nowrap;}
+.mpwpb-dtm__segmented-btn.is-active{background:var(--brand,#2451e0);color:#fff;box-shadow:0 1px 2px rgba(15,23,42,.08);}
+
+.mpwpb-dtm__pillgroup{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px;}
+.mpwpb-dtm__pillgroup-btn{padding:8px 14px;border:1.5px solid var(--line,#e4e9f0);border-radius:999px;background:#fff;color:var(--ink-2,#475569);font-size:12.5px;font-weight:700;cursor:pointer;transition:.15s;white-space:nowrap;}
+button.mpwpb-dtm__pillgroup-btn{border:1px solid #a6a1a1;}
+.mpwpb-dtm__pillgroup-btn.is-active{background:var(--brand,#2451e0);border-color:var(--brand,#2451e0);color:#fff;}
+.mpwpb-dtm__pillgroup-btn--dashed{border-style:dashed;color:var(--muted,#94a3b8);}
+.mpwpb-dtm__pillgroup-btn--dashed.is-active{border-style:solid;color:#fff;}
+
+.mpwpb-dtm__suffix-field{display:flex;align-items:center;gap:8px;}
+.mpwpb-dtm__suffix-field input.formControl{width:72px;flex:0 0 auto;}
+.mpwpb-dtm input.formControl.mpwpb_number_validation{width:50% !important;}
+.mpwpb-dtm__suffix-field span{font-size:12.5px;color:var(--muted,#94a3b8);font-weight:600;}
+
+.mpwpb-dtm__stepper{display:inline-flex;align-items:center;gap:12px;width:25%;}
+.mpwpb-dtm__stepper-btn{width:30px;height:30px;border-radius:50%;border:1px solid var(--line,#e4e9f0);background:#fff;color:var(--ink,#0f172a);font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;padding:0;transition:.15s;}
+.mpwpb-dtm__stepper-btn:hover{border-color:var(--brand,#2451e0);color:var(--brand,#2451e0);}
+.mpwpb-dtm__stepper input.formControl{width:25%;text-align:center;flex:0 0 auto;-moz-appearance:textfield;}
+.mpwpb-dtm__stepper input.formControl::-webkit-outer-spin-button,
+.mpwpb-dtm__stepper input.formControl::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+
 /* Time Slot Length -> "Custom…" reveals a free minutes input, toggled in
    mpwpb_admin.js. Deliberately no display rule here: visibility is owned by
    the inline style JS sets, and a class-level display would fight it. */
-.mpwpb-dtm__slot-custom{margin-top:8px;}
+.mpwpb-dtm__slot-custom{margin-top:10px;}
 .mpwpb-dtm__slot-custom .mpwpb-slot-length-custom{width:100%;}
 .mpwpb-dtm__slot-custom .mpwpb-dtm__hint{margin:6px 0 0;}
 
 /* -------------------------------------------------------------------- *
- *  Weekly off-day pills — reuses .groupCheckBox/.customCheckboxLabel so
- *  the shared click handler (mpwpb_plugin_global.js) keeps recomputing
- *  the mpwpb_off_days hidden field; only the visual is overridden here,
- *  replacing the legacy checkbox-square look with a pill toggle.
+ *  "Customers will see" live slot preview (dark card)
  * -------------------------------------------------------------------- */
-.mpwpb-dtm .groupCheckBox.mpwpb-dtm__offdays{display:flex;flex-wrap:wrap;gap:8px;}
-.mpwpb-dtm .customCheckboxLabel.mpwpb-dtm__pill{width:auto !important;padding:0 !important;margin:0 !important;}
-.mpwpb-dtm .customCheckboxLabel.mpwpb-dtm__pill .customCheckbox.mpwpb-dtm__pill-txt{
-	padding:8px 14px !important;min-width:44px;display:inline-flex;align-items:center;justify-content:center;
-	border-radius:999px;border:1.5px solid var(--line,#e4e9f0);background:#fff;color:var(--ink-2,#475569);
-	font-size:12.5px;font-weight:700;text-transform:capitalize;white-space:nowrap !important;transition:.15s;
-}
-.mpwpb-dtm .customCheckboxLabel.mpwpb-dtm__pill .customCheckbox.mpwpb-dtm__pill-txt::before,
-.mpwpb-dtm .customCheckboxLabel.mpwpb-dtm__pill .customCheckbox.mpwpb-dtm__pill-txt::after{display:none !important;}
-.mpwpb-dtm .customCheckboxLabel.mpwpb-dtm__pill input:checked ~ .customCheckbox.mpwpb-dtm__pill-txt{
-	background:var(--brand,#2451e0);border-color:var(--brand,#2451e0);color:#fff;
-}
+.mpwpb-dtm__preview{background:var(--ink,#0f172a);border-radius:var(--radius,14px);padding:18px;color:#fff;}
+.mpwpb-dtm__preview-eyebrow{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#93a5c9;margin-bottom:8px;}
+.mpwpb-dtm__preview-sub{font-size:13.5px;font-weight:700;margin-bottom:12px;}
+.mpwpb-dtm__preview-slots{display:flex;flex-wrap:wrap;gap:8px;}
+.mpwpb-dtm__preview-slot{padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.12);font-size:12px;font-weight:600;white-space:nowrap;}
+.mpwpb-dtm__preview-empty{font-size:12px;color:#93a5c9;}
 
 /* -------------------------------------------------------------------- *
- *  Weekly schedule table
+ *  Weekly hours — real <table> from time_slot_tr(), flexed into a row
+ *  list purely visually (DOM/field names untouched).
  * -------------------------------------------------------------------- */
-.mpwpb-dtm__table-wrap{overflow-x:auto;}
 div.mpwpb_style .mpwpb-dtm__table-wrap label{margin-bottom:0 !important;}
-div.mpwpb_style .mpwpb-dtm__table-wrap select{padding:7px 15px !important;}
-.mpwpb-dtm__table{width:100%;border-collapse:collapse;font-size:13px;}
-.mpwpb-dtm__table th{text-align:center;padding:0 12px 10px;font-size:11px;font-weight:700;color:var(--muted,#94a3b8);text-transform:normal;letter-spacing:.03em;border-bottom:1px solid var(--line,#e4e9f0);white-space:nowrap;}
-.mpwpb-dtm__table th:first-child{text-align:left;}
-.mpwpb-dtm__table td{padding:10px 12px;border-bottom:1px solid var(--line,#eef1f6);vertical-align:middle;}
-.mpwpb-dtm__table tbody tr:last-child td{border-bottom:0;}
-.mpwpb-dtm__table td:first-child{text-transform:capitalize;font-weight:600;color:var(--ink-2,#475569);white-space:nowrap;}
-.mpwpb-dtm__table tbody tr:first-child td:first-child{color:var(--brand,#2451e0);font-weight:700;}
-.mpwpb-dtm__table select.formControl{min-width:112px;}
+div.mpwpb_style .mpwpb-dtm__table-wrap select{padding:7px 10px !important;}
+.mpwpb-dtm__table--rows{width:100%;border-collapse:separate;font-size:13px;}
+.mpwpb-dtm__table--rows tbody{display:flex;flex-direction:column;}
+.mpwpb-dtm__table--rows tr{display:flex;align-items:center;gap:0px;padding:12px 4px;border-bottom:1px solid var(--line,#eef1f6);}
+.mpwpb-dtm__table--rows tbody tr:last-child{border-bottom:0;}
+.mpwpb-dtm__table--rows td{display:block;padding:0;border:0;vertical-align:middle;}
+/* .mpwpb_style table th/td { border: 1px solid ... } (mpwpb_plugin_global.
+   css:1020) out-specifies the plain rule above (2 classes+2 elements beats
+   its 1 class+2 elements) and was the real source of the border -- same
+   fix already used for this exact global rule elsewhere (mpwpb-service-
+   edit-modern.css:563-564), scoped here to just this card. */
+.mpwpb_style .mpwpb-dtm__card table th,
+.mpwpb_style .mpwpb-dtm__card table td{border:none;}
+.mpwpb-dtm__table--rows select.formControl{width:100%;min-width:0;}
 
-.mpwpb-dtm__table tr.mpwpb-dtm-row-off td.mpwpb_start_time,
-.mpwpb-dtm__table tr.mpwpb-dtm-row-off td.mpwpb_end_time,
-.mpwpb-dtm__table tr.mpwpb-dtm-row-off td.mpwpb_start_break_time,
-.mpwpb-dtm__table tr.mpwpb-dtm-row-off td.mpwpb_end_break_time{position:relative;}
-.mpwpb-dtm__table tr.mpwpb-dtm-row-off td.mpwpb_start_time label,
-.mpwpb-dtm__table tr.mpwpb-dtm-row-off td.mpwpb_end_time label,
-.mpwpb-dtm__table tr.mpwpb-dtm-row-off td.mpwpb_start_break_time label,
-.mpwpb-dtm__table tr.mpwpb-dtm-row-off td.mpwpb_end_break_time label{visibility:hidden;}
-.mpwpb-dtm__table tr.mpwpb-dtm-row-off td.mpwpb_start_time::after,
-.mpwpb-dtm__table tr.mpwpb-dtm-row-off td.mpwpb_end_time::after,
-.mpwpb-dtm__table tr.mpwpb-dtm-row-off td.mpwpb_start_break_time::after,
-.mpwpb-dtm__table tr.mpwpb-dtm-row-off td.mpwpb_end_break_time::after{
-	content:"Closed";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-	color:var(--muted,#94a3b8);font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+.mpwpb-dtm__table--rows td:first-child{flex:0 0 146px;display:flex;align-items:center;gap:10px;text-transform:capitalize;font-weight:600;color:var(--ink-2,#475569);white-space:nowrap;}
+.mpwpb-dtm__table--rows td.mpwpb_start_time{flex:0 0 104px;}
+.mpwpb-dtm__table--rows td.mpwpb_end_time{flex:0 0 104px;position:relative;padding-left:20px;}
+.mpwpb-dtm__table--rows td.mpwpb_end_time::before{content:"to";position:absolute;left:-5px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--muted,#94a3b8);font-weight:600;}
+/* The real break <select>s stay 108px each (unchanged) but are hidden by
+   default -- mpwpb-datetime-modern.js injects a single compact
+   .mpwpb-dtm__break-slot in their place ("+ Add break" / a pill once set),
+   which is what actually keeps the row narrow enough to never need the
+   horizontal scrollbar .mpwpb-dtm__table-wrap falls back to. */
+.mpwpb-dtm__table--rows td.mpwpb_start_break_time,
+.mpwpb-dtm__table--rows td.mpwpb_end_break_time{flex:0 0 108px;}
+.mpwpb-dtm__table--rows td.mpwpb_start_break_time select,
+.mpwpb-dtm__table--rows td.mpwpb_end_break_time select{font-size:12px;color:var(--muted,#94a3b8);}
+.mpwpb-dtm__table--rows td.mpwpb-dtm__break-slot{flex:0 0 auto;max-width:150px;}
+.mpwpb-dtm__break-add{padding:0;border:0;background:none;color:var(--brand,#2451e0);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;}
+.mpwpb-dtm__break-add:hover{text-decoration:underline;}
+.mpwpb-dtm__break-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 8px 4px 10px;border:1px solid var(--line,#e4e9f0);border-radius:999px;background:var(--inset,#f8fafc);color:var(--ink-2,#475569);font-size:13px !important;font-weight:600;letter-spacing:.01em;line-height:1.4;cursor:pointer;white-space:nowrap;transition:.15s;}
+.mpwpb-dtm__break-pill:hover{border-color:#fca5a5;background:#fef2f2;color:#dc2626;}
+.mpwpb-dtm__break-pill span{display:inline-flex;align-items:center;justify-content:center;width:13px;height:13px;border-radius:50%;background:rgba(15,23,42,.08);font-size:10px;line-height:1;color:inherit;}
+.mpwpb-dtm__break-pill:hover span{background:rgba(220,38,38,.12);}
+.mpwpb-dtm__table--rows tr.mpwpb-dtm-row-off .mpwpb-dtm__break-slot{visibility:hidden;}
+
+/* Per-row toggle switch — injected by JS (one real checkbox each, not
+   submitted directly: its only job is forwarding clicks to the real,
+   off-screen "Weekly Off-days" checkbox for the same day, which is what
+   actually feeds mpwpb_off_days). */
+.mpwpb-dtm__row-toggle{position:relative;display:inline-flex;align-items:center;width:34px;height:20px;flex:0 0 auto;cursor:pointer;}
+.mpwpb-dtm__row-toggle input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer;}
+.mpwpb-dtm__row-toggle-track{position:absolute;inset:0;background:var(--line,#e4e9f0);border-radius:999px;transition:.15s;pointer-events:none;}
+.mpwpb-dtm__row-toggle-track::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(15,23,42,.25);transition:.15s;}
+.mpwpb-dtm__row-toggle input:checked ~ .mpwpb-dtm__row-toggle-track{background:var(--brand,#2451e0);}
+.mpwpb-dtm__row-toggle input:checked ~ .mpwpb-dtm__row-toggle-track::after{transform:translateX(14px);}
+
+/* Default row: time_slot_tr($post_id, 'default') is always the first
+   tbody row and the only one with no data-day-name cell (so it never
+   gets a toggle injected either) -- tinted so it reads as the baseline
+   template row other days fall back to when left on "Default". */
+.mpwpb-dtm__table--rows tbody tr:first-child{background:var(--brand-soft,#eaf0ff);margin:0 -4px;padding:12px 8px;border-radius:10px;border-bottom:0;}
+.mpwpb-dtm__table--rows tbody tr:first-child td:first-child{color:var(--brand,#2451e0);font-weight:700;}
+
+/* Closed (off) rows: the real start/end/break <select>s stay in the DOM
+   (still submit normally) but go visibility:hidden -- not display:none,
+   which would collapse the row's width and shift every other row -- with
+   a plain "Closed" label painted over the first time slot instead. */
+.mpwpb-dtm__table--rows tr.mpwpb-dtm-row-off td:first-child{color:var(--muted,#94a3b8);}
+.mpwpb-dtm__table--rows tr.mpwpb-dtm-row-off .mpwpb_start_time,
+.mpwpb-dtm__table--rows tr.mpwpb-dtm-row-off .mpwpb_end_time,
+.mpwpb-dtm__table--rows tr.mpwpb-dtm-row-off .mpwpb_start_break_time,
+.mpwpb-dtm__table--rows tr.mpwpb-dtm-row-off .mpwpb_end_break_time{visibility:hidden;position:relative;}
+.mpwpb-dtm__table--rows tr.mpwpb-dtm-row-off .mpwpb_start_time::after{
+	content:"Closed";visibility:visible;position:absolute;left:0;top:50%;transform:translateY(-50%);
+	color:var(--muted,#94a3b8);font-size:12.5px;font-weight:600;
 }
 
 /* -------------------------------------------------------------------- *
@@ -146,7 +231,51 @@ p.mpwpb-dtm__date-card-sub{text-align:right;}
 
 .mpwpb-dtm__empty{margin:0;padding:20px 0;text-align:center;font-size:12.5px;color:var(--muted,#94a3b8);}
 
+/* -------------------------------------------------------------------- *
+ *  Special Dates & Holidays — inline multi-select calendar
+ * -------------------------------------------------------------------- */
+.mpwpb-dtm__calendar{max-width:420px;}
+.mpwpb-dtm__cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.mpwpb-dtm__cal-nav{width:30px;height:30px;border-radius:50%;border:1px solid var(--line,#e4e9f0);background:#fff;color:var(--ink-2,#475569);font-size:16px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:.15s;}
+.mpwpb-dtm__cal-nav:hover{border-color:var(--brand,#2451e0);color:var(--brand,#2451e0);}
+.mpwpb-dtm__cal-label{font-size:14px;font-weight:700;color:var(--ink,#0f172a);}
+.mpwpb-dtm__cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;}
+.mpwpb-dtm__cal-dow{text-align:center;font-size:10.5px;font-weight:700;color:var(--muted,#94a3b8);text-transform:uppercase;letter-spacing:.03em;padding-bottom:6px;}
+.mpwpb-dtm__cal-day{aspect-ratio:1;border-radius:9px;border:1px solid transparent;background:transparent;color:var(--ink,#0f172a);font-size:13px;font-weight:600;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center;}
+.mpwpb-dtm__cal-day:hover{border-color:var(--brand,#2451e0);}
+.mpwpb-dtm__cal-day.is-off{background:#fef2f2;border-color:#fca5a5;color:#dc2626;font-weight:700;}
+.mpwpb-dtm__cal-day.is-week-off{background:var(--inset,#f8fafc);border-color:transparent;color:var(--muted,#94a3b8);cursor:not-allowed;}
+.mpwpb-dtm__cal-day.is-week-off:hover{border-color:transparent;}
+.mpwpb-dtm__cal-day.is-week-off.is-off{background:#fef2f2;border-color:#fca5a5;color:#dc2626;}
+.mpwpb-dtm__cal-day.is-today{border-color:var(--brand,#2451e0);border-width:1.5px;color:var(--brand,#2451e0);font-weight:800;box-shadow:0 0 0 3px var(--brand-soft,#eaf0ff);}
+.mpwpb-dtm__cal-day.is-today.is-off{color:#dc2626;}
+
+/* Legend -- explains the is-off (custom) vs is-week-off (regularly closed)
+   colors and marks the today ring, none of which was self-evident before. */
+.mpwpb-dtm__cal-legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line,#e4e9f0);}
+.mpwpb-dtm__cal-legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ink-2,#475569);}
+.mpwpb-dtm__cal-legend-swatch{width:9px;height:9px;border-radius:3px;border:1px solid var(--line,#e4e9f0);flex:0 0 auto;}
+.mpwpb-dtm__cal-legend-swatch.is-off{background:#fef2f2;border-color:#fca5a5;}
+.mpwpb-dtm__cal-legend-swatch.is-week-off{background:var(--inset,#f8fafc);}
+.mpwpb-dtm__cal-legend-swatch.is-today{border-color:var(--brand,#2451e0);border-width:1.5px;}
+
+/* Calendar + a synced list of the selected dates side by side, so an
+   admin doesn't have to scan months of red cells to know what's closed. */
+.mpwpb-dtm__special-grid{display:flex;align-items:flex-start;gap:28px;flex-wrap:wrap;}
+.mpwpb-dtm__special-grid .mpwpb-dtm__calendar{flex:0 0 auto;max-width:360px;}
+.mpwpb-dtm__off-list-col{flex:1;min-width:220px;}
+.mpwpb-dtm__off-list-label{font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted,#94a3b8);margin-bottom:10px;}
+.mpwpb-dtm__off-list{display:flex;flex-direction:column;gap:7px;max-height:360px;overflow-y:auto;}
+.mpwpb-dtm__off-list-item{display:flex;align-items:center;gap:10px;padding:9px 10px 9px 9px;border:1px solid var(--line,#e4e9f0);border-radius:10px;background:var(--inset,#f8fafc);font-size:12.5px;font-weight:600;color:var(--ink-2,#475569);}
+.mpwpb-dtm__off-list-icon{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:#fef2f2;color:#dc2626;display:flex;align-items:center;justify-content:center;}
+.mpwpb-dtm__off-list-text{flex:1;}
+.mpwpb-dtm__off-list-remove{display:flex;align-items:center;justify-content:center;width:24px;height:24px;border:0;border-radius:50%;background:transparent;color:var(--muted,#94a3b8);cursor:pointer;flex:0 0 auto;padding:0;transition:.15s;}
+.mpwpb-dtm__off-list-remove:hover{background:#fee2e2;color:#dc2626;}
+.mpwpb-dtm__off-list-empty{margin:0;padding:10px 0;font-size:12.5px;color:var(--muted,#94a3b8);}
+
 @media (max-width:900px){
 	.mpwpb-dtm__grid{flex-direction:column;}
 	.mpwpb-dtm__col--side{flex:1 1 auto;width:100%;}
+	.mpwpb-dtm__table--rows tr{flex-wrap:wrap;}
+	.mpwpb-dtm__table--rows td:first-child{flex:1 1 100%;}
 }

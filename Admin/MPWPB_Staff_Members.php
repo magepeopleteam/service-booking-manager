@@ -17,6 +17,20 @@ if (!class_exists('MPWPB_Staff_Members')) {
             add_action('wp_ajax_get_mpwpb_staff_start_break_time', array($this, 'get_mpwpb_staff_start_break_time'));
             /***/
             add_action('wp_ajax_get_mpwpb_staff_end_break_time', array($this, 'get_mpwpb_staff_end_break_time'));
+            add_action('wp_ajax_mpwpb_check_staff_availability', array($this, 'check_staff_availability'));
+        }
+        /** Pre-submit check for the Add Staff form: is this username/email already registered? */
+        public function check_staff_availability() {
+            check_ajax_referer('mpwpb_admin_nonce', 'nonce');
+            if (!current_user_can('create_users')) {
+                wp_send_json_error(array('message' => 'forbidden'), 403);
+            }
+            $login = isset($_POST['user_login']) ? sanitize_user(wp_unslash($_POST['user_login'])) : '';
+            $email = isset($_POST['user_email']) ? sanitize_email(wp_unslash($_POST['user_email'])) : '';
+            wp_send_json_success(array(
+                'username_taken' => $login !== '' && (bool) username_exists($login),
+                'email_taken' => $email !== '' && (bool) email_exists($email),
+            ));
         }
         private function ensure_staff_manage_permission(): bool {
             if (!current_user_can('create_users')) {
@@ -70,9 +84,14 @@ if (!class_exists('MPWPB_Staff_Members')) {
             <?php
         }
         public function mpwpb_staff_service() {
-            $this->save_staff();
+            $save_result = $this->save_staff();
             ?>
             <div class="wrap">
+                <?php if (is_array($save_result) && !empty($save_result['message'])) { ?>
+                    <div class="notice notice-<?php echo $save_result['type'] === 'success' ? 'success' : 'error'; ?> is-dismissible">
+                        <p><?php echo esc_html($save_result['message']); ?></p>
+                    </div>
+                <?php } ?>
                 <div class="mpwpb_style mpwpb_staff_page">
                     <div class="_dLayout_dShadow_1">
                         <div class="mpwpb_staff_tabs">
@@ -191,7 +210,7 @@ if (!class_exists('MPWPB_Staff_Members')) {
                 $approve_holiday_modify = get_user_meta( $user_id, 'mpwpb_staff_modify_holiday', true);
                 //echo '<pre>'; print_r($user_info); echo '</pre>';
                 ?>
-                <form action="" method="post">
+                <form action="" method="post" class="mpwpb_staff_form" novalidate>
                     <?php wp_nonce_field('mpwpb_add_staff_nonce', 'mpwpb_add_staff_nonce'); ?>
                     <input type="hidden" id="mpwpb_user_id" name="mpwpb_user_id" value="<?php echo esc_attr($user_id); ?>"/>
                     <div class="mpRow">
@@ -652,16 +671,41 @@ if (!class_exists('MPWPB_Staff_Members')) {
             if (!isset($_POST['mpwpb_add_staff_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['mpwpb_add_staff_nonce'])), 'mpwpb_add_staff_nonce')) {
                 return;
             }
-            $user_id = isset($_POST['mpwpb_user']) ? absint(wp_unslash($_POST['mpwpb_user'])) : '';
+            $user_id = isset($_POST['mpwpb_user']) ? absint(wp_unslash($_POST['mpwpb_user'])) : 0;
+            $is_new_user = false;
             if (!$user_id) {
                 $user_name = isset($_POST['mpwpb_user_name']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_user_name'])) : '';
                 $user_pass = isset($_POST['mpwpb_user_password']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_user_password'])) : '';
                 $user_email = isset($_POST['mpwpb_user_mail']) ? sanitize_email(wp_unslash($_POST['mpwpb_user_mail'])) : '';
+                // Same rules the form checks in the browser (mpwpb_admin.js),
+                // repeated here so they hold even if that check is bypassed.
+                if ($user_name !== '' && strlen($user_name) < 3) {
+                    return array('type' => 'error', 'message' => __('Username must be at least 3 characters.', 'service-booking-manager'));
+                }
+                if ($user_pass !== '' && strlen($user_pass) < 8) {
+                    return array('type' => 'error', 'message' => __('Password must be at least 8 characters.', 'service-booking-manager'));
+                }
+                if (isset($_POST['mpwpb_user_mail']) && $_POST['mpwpb_user_mail'] !== '' && !is_email($user_email)) {
+                    return array('type' => 'error', 'message' => __('Please enter a valid email address.', 'service-booking-manager'));
+                }
                 if ($user_name && $user_pass && $user_email) {
-                    $user_id = wp_create_user($user_name, $user_pass, $user_email);
-                    if (!$user_id || is_wp_error($user_id)) {
-                        echo 'sorry user not create';
+                    $created = wp_create_user($user_name, $user_pass, $user_email);
+                    // A failed create returns a WP_Error object, which is still
+                    // truthy -- carried on into wp_update_user(), (int) cast it to
+                    // 1 and turned user #1 (the site admin) into a staff member.
+                    if (is_wp_error($created) || !$created) {
+                        return array(
+                            'type' => 'error',
+                            'message' => is_wp_error($created) ? wp_strip_all_tags($created->get_error_message()) : __('Staff user could not be created.', 'service-booking-manager'),
+                        );
                     }
+                    $user_id = (int) $created;
+                    $is_new_user = true;
+                } else {
+                    return array(
+                        'type' => 'error',
+                        'message' => __('Username, password and email are required to add a new staff member.', 'service-booking-manager'),
+                    );
                 }
             }
             if ($user_id) {
@@ -672,9 +716,17 @@ if (!class_exists('MPWPB_Staff_Members')) {
                     'ID' => $user_id,
                     'first_name' => $first_name,
                     'last_name' => $last_name,
-                    'role' => 'mpwpb_staff',
                 );
                 wp_update_user($userinfo);
+                // New accounts become staff outright; an existing user picked from
+                // the list gains the staff role on top of what they already have,
+                // so making someone staff never strips an admin/manager role.
+                $staff_user = new WP_User($user_id);
+                if ($is_new_user) {
+                    $staff_user->set_role('mpwpb_staff');
+                } elseif (!in_array('mpwpb_staff', (array) $staff_user->roles, true)) {
+                    $staff_user->add_role('mpwpb_staff');
+                }
                 $date_type = isset($_POST['mpwpb_date_type']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_date_type'])) : 'repeated';
                 update_user_meta($user_id, 'date_type', $date_type);
                 update_user_meta($user_id, 'mpwpb_staff_modify_holiday', $modify_holiday);
@@ -717,7 +769,19 @@ if (!class_exists('MPWPB_Staff_Members')) {
                 update_user_meta($user_id, 'mpwpb_off_dates', $_off_dates);
 
                 $this->save_custom_user_profile_image( $user_id );
+
+                $staff_user = get_userdata($user_id);
+                $staff_label = $staff_user ? $staff_user->display_name : '';
+                return array(
+                    'type' => 'success',
+                    'message' => $is_new_user
+                        /* translators: %s: staff member display name */
+                        ? sprintf(__('Staff member "%s" added.', 'service-booking-manager'), $staff_label)
+                        /* translators: %s: staff member display name */
+                        : sprintf(__('Staff member "%s" updated.', 'service-booking-manager'), $staff_label),
+                );
             }
+            return null;
         }
         public function save_schedule($user_id, $day) {
             if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {

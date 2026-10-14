@@ -229,10 +229,11 @@ button.mpwpb-sme__btn.mpwpb-sme__btn--primary.mpwpb-sme__split-caret{border-radi
 body.mpwpb-sme-active #postdivrich{display:none;}
 
 /* Body = main column + sticky preview rail */
-.mpwpb-sme__body{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:24px;align-items:start;}
+.mpwpb-sme__body{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:24px;align-items:start;}
 .mpwpb-sme__main{min-width:0;}
-.mpwpb-sme__rail{position:sticky;top:84px;z-index:5;display:flex;flex-direction:column;gap:18px;}
+.mpwpb-sme__rail{position:sticky;top:100px;z-index:5;display:flex;flex-direction:column;gap:18px;}
 .mpwpb-sme__rail-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;}
+.mpwpb-sme__rail-card.mpwpb-sme__preview-card{border:5px solid var(--line);}
 
 /* Featured Image card — title, big preview, text-link actions. */
 .mpwpb-sme__feat-head{padding:16px 16px 0;font-size:15px;font-weight:800;color:var(--ink);}
@@ -317,10 +318,247 @@ body.mpwpb-sme-active #postdivrich{display:none;}
 }
 .mpwpb-sme__rail-field-list select[name="mpwpb_template"]:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-ring);}
 
+/* Visually hidden but still focusable/submittable -- the real field a
+   visual control (segmented buttons, swatches) below drives via
+   .val()+trigger('change'), same convention as the Date & Time panel's
+   .mpwpb-dtm__offscreen. */
+.mpwpb-sme__offscreen{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+
+/* Booking Widget Settings card -- display mode + theme color */
+.mpwpb-sme__bw-label{font-size:11px;font-weight:700;color:var(--ink-2);text-transform:uppercase;letter-spacing:.03em;margin-bottom:7px;}
+.mpwpb-sme__bw-hint{margin:7px 0 0;font-size:11px;line-height:1.5;color:var(--muted);}
+.mpwpb-sme__bw-segmented{display:flex;border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px;background:var(--inset);}
+.mpwpb-sme__bw-seg-btn{
+	flex:1;border:0;border-radius:8px;background:transparent;color:var(--ink-2);
+	font-size:12px;font-weight:600;padding:8px 6px;cursor:pointer;transition:.15s;
+}
+.mpwpb-sme__bw-seg-btn:hover{color:var(--ink);}
+.mpwpb-sme__bw-seg-btn.is-active{background:#fff;color:var(--brand);box-shadow:0 1px 3px rgba(15,23,42,.1);}
+.mpwpb-sme__bw-swatches{display:flex;flex-wrap:wrap;align-items:center;gap:8px;}
+.mpwpb-sme__bw-swatch{
+	position:relative;box-sizing:border-box;flex:0 0 26px;width:26px;height:26px;margin:0;border-radius:50%;border:2px solid transparent;
+	padding:0;cursor:pointer;box-shadow:0 0 0 1px var(--line);transition:.15s;vertical-align:middle;
+}
+.mpwpb-sme__bw-swatch:hover{transform:scale(1.08);}
+.mpwpb-sme__bw-swatch.is-active{border-color:#fff;box-shadow:0 0 0 2px var(--brand);}
+.mpwpb-sme__bw-swatch.is-active::after{
+	content:"\f00c";font-family:"Font Awesome 5 Free";font-weight:900;font-size:9px;color:#fff;
+	position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-shadow:0 0 2px rgba(0,0,0,.5);
+}
+/* Custom colour -- same 26px circle as the presets (a <label>, so the
+   generic label styling it would otherwise pick up -- display, padding,
+   margin, line-height -- is pinned back here). Idle: a colour-wheel ring
+   with a "+" so it reads as "pick your own". With a custom colour active
+   (.has-color): filled with that colour plus the same ring/check as a
+   selected preset. */
+.mpwpb-sme__bw-swatch--custom{
+	display:inline-flex !important;align-items:center;justify-content:center;
+	width:26px !important;height:26px !important;margin:0 !important;padding:0 !important;
+	line-height:1 !important;overflow:hidden;
+	background:conic-gradient(#ef4444,#f59e0b,#eab308,#22c55e,#06b6d4,#3b82f6,#8b5cf6,#ec4899,#ef4444);
+}
+.mpwpb-sme__bw-swatch--custom.has-color{background:var(--swatch,#00685f);}
+.mpwpb-sme__bw-swatch-plus{
+	display:flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;
+	background:#fff;color:#334155;font-size:12px;font-weight:700;line-height:1;pointer-events:none;
+}
+.mpwpb-sme__bw-swatch--custom.has-color .mpwpb-sme__bw-swatch-plus{display:none;}
+.mpwpb-sme__bw-swatch--custom input[type="color"]{
+	position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;border:0;opacity:0;cursor:pointer;
+}
+
+/* Frontend Preview rail card (Pricing/Availability/Advanced steps only) —
+   a static mock built from the service's own data (name/price/duration per
+   row in Services & Pricing), not an iframe of the live page: the real page
+   needs the whole theme plus every booking-widget asset, and still needs
+   client-side surgery to isolate just the form. mpwpb-service-edit-modern.js
+   keeps these rows live by listening for 'mpwpb:csm-services-changed',
+   which mpwpb-categories-services-modern.js fires on every add/edit/delete
+   in the Services & Pricing list -- no network round trip either way. */
+.mpwpb-sme__preview-head{display:flex;align-items:flex-start;gap:10px;padding:16px 16px 0;}
+.mpwpb-sme__preview-head-main{display:flex;gap:10px;align-items:flex-start;min-width:0;}
+.mpwpb-sme__preview-head .mpwpb-sme__feat-head{padding:0;}
+.mpwpb-sme__preview-icon{width:30px;height:30px;border-radius:8px;background:var(--brand-ring);color:var(--brand);display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+.mpwpb-sme__preview-head-text{min-width:0;flex:1 1 auto;}
+.mpwpb-sme__preview-sub{margin:2px 0 0;font-size:12px;color:var(--muted);}
+
+.mpwpb-sme__fp-mock{margin:14px 16px 0;padding:16px;border:1px solid var(--line);border-radius:12px;background:#fff;}
+/* The preview mirrors the customer-facing widget, so inside it the editor's
+   own --brand palette is re-pointed at the site's Theme Color (--fp-theme,
+   set inline from the saved option and updated live by
+   mpwpb-service-edit-modern.js when a swatch is picked). Every preview
+   element already reads --brand/--brand-600/--brand-ring, so this one
+   remap recolours all of them; the rest of the editor keeps its own colours.
+   --brand-ring stays a light tint, never the deep theme colour itself. */
+.mpwpb-sme__fp-mock{--brand:var(--fp-theme,#00685f);}
+@supports (color: color-mix(in srgb, red 50%, white)){
+	.mpwpb-sme__fp-mock{
+		--brand-600:color-mix(in srgb, var(--fp-theme,#00685f) 85%, #000);
+		--brand-ring:color-mix(in srgb, var(--fp-theme,#00685f) 14%, #fff);
+	}
+}
+/* .mpwpb_style button {text-transform:capitalize} (mpwpb_plugin_global.css) is
+   a class+element rule, same specificity bucket as a bare class selector here
+   and beats it on source order either way -- "10:00 am" was rendering as
+   "10:00 Am", "Continue to Checkout" as "Continue To Checkout". !important is
+   the honest fix for overriding that global reset, not a shortcut. */
+.mpwpb-sme__fp-mock button{text-transform:none !important;}
+.mpwpb-sme__fp-heading{font-size:14px;font-weight:800;color:var(--ink);letter-spacing:-.01em;}
+.mpwpb-sme__fp-sub{margin:4px 0 16px;font-size:12px;color:var(--muted);line-height:1.5;}
+.mpwpb-sme__fp-empty{margin:0;padding:18px 4px;text-align:center;font-size:12px;color:var(--muted);}
+
+/* Progress — "1 Services · 2 Date & Time · 3 Checkout" */
+.mpwpb-sme__fp-steps{display:flex;align-items:center;gap:6px;margin-bottom:14px;}
+.mpwpb-sme__fp-steps-item{display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;color:var(--muted);}
+.mpwpb-sme__fp-steps-dot{width:18px;height:18px;border-radius:50%;background:var(--inset);color:var(--muted);display:flex;align-items:center;justify-content:center;font-size:10px;flex:0 0 auto;}
+.mpwpb-sme__fp-steps-item.is-active{color:var(--brand);}
+.mpwpb-sme__fp-steps-item.is-active .mpwpb-sme__fp-steps-dot{background:var(--brand);color:#fff;}
+.mpwpb-sme__fp-steps-item.is-done .mpwpb-sme__fp-steps-dot{background:var(--brand-ring);color:var(--brand);}
+.mpwpb-sme__fp-steps-sep{flex:1 1 auto;height:1px;background:var(--band-line);margin:0 2px;}
+
+.mpwpb-sme__fp-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--band-line);transition:background-color .15s;}
+.mpwpb-sme__fp-row:last-child{border-bottom:0;}
+.mpwpb-sme__fp-row.is-added{background:var(--brand-ring);margin:0 -8px;padding:9px 8px;border-radius:8px;border-bottom-color:transparent;}
+.mpwpb-sme__fp-row-main{min-width:0;}
+.mpwpb-sme__fp-row-name{font-size:13.5px;font-weight:600;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mpwpb-sme__fp-row-meta{display:flex;align-items:center;gap:8px;margin-top:3px;}
+.mpwpb-sme__fp-row-dur{display:inline-flex;align-items:center;gap:3px;font-size:11px;color:var(--muted);white-space:nowrap;}
+.mpwpb-sme__fp-row-price{font-size:12px;font-weight:700;color:var(--ink);white-space:nowrap;}
+.mpwpb-sme__fp-row-side{flex:0 0 auto;}
+.mpwpb-sme__fp-row-add{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--brand);background:#fff;color:var(--brand);display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;transition:background-color .15s,transform .1s;}
+.mpwpb-sme__fp-row-add:hover{background:var(--brand-ring);}
+.mpwpb-sme__fp-row-add:active{transform:scale(.92);}
+
+/* Category -> subcategory -> service tree, shown only when a service
+   actually has a category (an uncategorized service still renders as a
+   plain .mpwpb-sme__fp-row outside any group, same as before this tree
+   existed). */
+.mpwpb-sme__fp-group{margin-bottom:8px;}
+.mpwpb-sme__fp-group-head,.mpwpb-sme__fp-subgroup-head{display:flex;align-items:center;gap:8px;width:100%;border:0;border-radius:9px;padding:8px 10px;cursor:pointer;text-align:left;}
+.mpwpb-sme__fp-group-head{background:var(--brand-ring);}
+.mpwpb-sme__fp-subgroup-head{background:var(--inset);padding:6px 9px;}
+.mpwpb-sme__fp-group-icon{display:flex;align-items:center;justify-content:center;flex:0 0 auto;color:var(--brand);}
+.mpwpb-sme__fp-group-icon .dashicons{font-size:15px;width:15px;height:15px;}
+.mpwpb-sme__fp-subgroup-head .mpwpb-sme__fp-group-icon{color:var(--ink-2);}
+.mpwpb-sme__fp-subgroup-head .mpwpb-sme__fp-group-icon .dashicons{font-size:13px;width:13px;height:13px;}
+.mpwpb-sme__fp-group-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:700;color:var(--ink);}
+.mpwpb-sme__fp-subgroup-head .mpwpb-sme__fp-group-name{font-size:12px;font-weight:600;}
+.mpwpb-sme__fp-group-count{flex:0 0 auto;font-size:11px;font-weight:700;color:var(--muted);}
+.mpwpb-sme__fp-group-chev{flex:0 0 auto;color:var(--muted);transition:transform .15s;}
+.mpwpb-sme__fp-group.is-collapsed>.mpwpb-sme__fp-group-head .mpwpb-sme__fp-group-chev,
+.mpwpb-sme__fp-subgroup.is-collapsed>.mpwpb-sme__fp-subgroup-head .mpwpb-sme__fp-group-chev{transform:rotate(-90deg);}
+.mpwpb-sme__fp-group-body{padding:2px 0 4px 6px;}
+.mpwpb-sme__fp-group.is-collapsed>.mpwpb-sme__fp-group-body{display:none;}
+.mpwpb-sme__fp-subgroup{position:relative;margin:4px 0 4px 8px;padding-left:12px;}
+.mpwpb-sme__fp-subgroup::before{content:"";position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--line);}
+.mpwpb-sme__fp-subgroup-body{padding:2px 0 2px 6px;}
+.mpwpb-sme__fp-subgroup.is-collapsed .mpwpb-sme__fp-subgroup-body{display:none;}
+.mpwpb-sme__fp-group-body .mpwpb-sme__fp-row,.mpwpb-sme__fp-subgroup-body .mpwpb-sme__fp-row{padding-left:4px;margin-bottom:2px;}
+
+/* Extra services -- page-wide add-ons, shown once any regular service is
+   picked (see fpUpdateExtrasVisibility in mpwpb-service-edit-modern.js);
+   sits directly above the summary box so it reads as "before you continue". */
+.mpwpb-sme__fp-extras{margin:4px 0 14px;padding-top:10px;border-top:1px dashed var(--band-line);}
+.mpwpb-sme__fp-extras-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;}
+
+.mpwpb-sme__fp-qty{display:flex;align-items:center;gap:8px;}
+.mpwpb-sme__fp-qty-btn{width:22px;height:22px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--ink);display:flex;align-items:center;justify-content:center;padding:0;font-size:13px;line-height:1;cursor:pointer;}
+.mpwpb-sme__fp-qty-btn:hover{border-color:var(--brand);color:var(--brand);}
+.mpwpb-sme__fp-qty-val{min-width:14px;text-align:center;font-size:13px;font-weight:700;color:var(--ink);}
+
+/* Preview CTAs (Services / Date & Time / Confirm) -- the booking form's pill
+   in the Theme Color (--brand is remapped to it inside .mpwpb-sme__fp-mock).
+   Doubled class so mp_global's `.mpwpb_style button:hover/:focus` (theme fill,
+   opacity .8, white span text) can't override either state. */
+.mpwpb-sme__fp-cta.mpwpb-sme__fp-cta{
+	display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:46px;padding:0 18px;
+	border:0;border-radius:999px;background:var(--brand);color:#fff;font-size:13.5px;font-weight:700;line-height:1;
+	cursor:pointer;opacity:1;text-transform:none;
+	box-shadow:0 6px 16px color-mix(in srgb, var(--brand) 28%, transparent);
+	transition:background-color .15s, box-shadow .15s;
+}
+.mpwpb-sme__fp-cta.mpwpb-sme__fp-cta:hover:not(:disabled),
+.mpwpb-sme__fp-cta.mpwpb-sme__fp-cta:focus:not(:disabled){background:var(--brand-600, var(--brand));color:#fff;opacity:1;}
+.mpwpb-sme__fp-cta.mpwpb-sme__fp-cta:disabled,
+.mpwpb-sme__fp-cta.mpwpb-sme__fp-cta:disabled:hover,
+.mpwpb-sme__fp-cta.mpwpb-sme__fp-cta:disabled:focus{background:#eef1f5;color:#94a3b8;box-shadow:none;cursor:not-allowed;opacity:1;}
+.mpwpb-sme__fp-cta.mpwpb-sme__fp-cta:disabled span{color:#94a3b8;}
+/* Services-step button: ready label vs "Select a service" label, picked
+   purely from :disabled (fpUpdateCta() toggles it as quantities change). */
+.mpwpb-sme__fp-cta-label.mpwpb-sme__fp-cta-label{display:inline-flex;align-items:center;gap:8px;}
+.mpwpb-sme__fp-cta:disabled .mpwpb-sme__fp-cta-label--ready.mpwpb-sme__fp-cta-label--ready,
+.mpwpb-sme__fp-cta:not(:disabled) .mpwpb-sme__fp-cta-label--idle.mpwpb-sme__fp-cta-label--idle{display:none;}
+/* Only the Services step's CTA needs its own top margin -- nothing before
+   it (the rows list / empty state) carries a bottom margin of its own. The
+   Date & Time and Checkout steps' CTAs sit right after elements that already
+   supply that spacing (.mpwpb-sme__fp-times, .mpwpb-sme__fp-summary), so a
+   shared margin-top here was stacking with theirs and doubling the gap. */
+[data-sme-fp-cta]{margin-top:12px;}
+.mpwpb-sme__fp-trust{display:flex;gap:14px;margin-top:10px;flex-wrap:wrap;}
+.mpwpb-sme__fp-trust-item{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;color:var(--muted);}
+
+.mpwpb-sme__fp-back{display:inline-flex;align-items:center;gap:4px;padding:0;border:0;background:none;font-size:12px;font-weight:700;color:var(--ink-2);cursor:pointer;}
+.mpwpb-sme__fp-back:hover{color:var(--brand);}
+.mpwpb-sme__preview-card .mpwpb-sme__feat-acts{justify-content:flex-start;}
+.mpwpb-sme__preview-open{margin-left:auto;}
+
+.mpwpb-sme__fp-section-lab{font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin:0 0 9px;}
+/* Light-bordered box around the date picker, with a small "next" carousel
+   arrow top-right -- mirrors the real frontend widget's own date carousel
+   (prev/next chevrons in templates/themes/static.php's #mpwpb_carousel_area)
+   rather than inventing a new affordance. Functional: it pages the visible
+   6-day window forward (fpDateOffset in mpwpb-service-edit-modern.js),
+   not just decorative. */
+.mpwpb-sme__fp-dates-wrap{margin-bottom:20px;}
+.mpwpb-sme__fp-dates-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;}
+.mpwpb-sme__fp-dates-head .mpwpb-sme__fp-section-lab{margin:0;}
+.mpwpb-sme__fp-dates-next{display:flex;align-items:center;justify-content:center;width:22px;height:22px;border:1px solid var(--line);border-radius:50%;background:#fff;color:var(--ink-2);padding:0;cursor:pointer;transition:border-color .15s,color .15s;}
+.mpwpb-sme__fp-dates-next:hover{border-color:var(--brand);color:var(--brand);}
+/* An even grid rather than a horizontal-scroll strip: at the rail's 400px
+   width all 6 days fit with real breathing room, so a strip only added an
+   (often invisible) scrollbar and cramped-looking gaps for no reason. Time
+   slots use the same card treatment (not mismatched pills) so the two
+   pickers read as one consistent system. */
+.mpwpb-sme__fp-dates{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;}
+/* Most cards show a label (Today/Wed/Thu/…) above the number, except
+   Tomorrow (number only) -- justify-content:center keeps that one-line
+   card vertically centered against its 2-line siblings' equal grid-row
+   height, instead of sitting top-aligned. */
+.mpwpb-sme__fp-date{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:12px 0;border:1px solid var(--line);border-radius:12px;background:var(--inset);cursor:pointer;box-shadow:0 1px 2px rgba(15,23,42,.04);transition:border-color .15s,background-color .15s,box-shadow .15s;}
+.mpwpb-sme__fp-date:hover{border-color:var(--brand);box-shadow:0 1px 4px rgba(15,23,42,.08);}
+.mpwpb-sme__fp-date-lab{font-size:9.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);}
+.mpwpb-sme__fp-date-num{font-size:16px;font-weight:700;color:var(--ink);}
+.mpwpb-sme__fp-date.is-selected{border-color:var(--brand);background:var(--brand);box-shadow:0 2px 6px var(--brand-ring);}
+.mpwpb-sme__fp-date.is-selected .mpwpb-sme__fp-date-lab,.mpwpb-sme__fp-date.is-selected .mpwpb-sme__fp-date-num{color:#fff;}
+.mpwpb-sme__fp-times{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
+.mpwpb-sme__fp-time{padding:10px;border:1px solid #eded !important;border-radius:12px;background:#fff;font-size:12.5px;font-weight:700;color:var(--ink);text-align:center;cursor:pointer;box-shadow:0 1px 2px rgba(15,23,42,.04);transition:border-color .15s,background-color .15s,color .15s,box-shadow .15s;}
+.mpwpb-sme__fp-time:hover{border-color:var(--brand);box-shadow:0 1px 4px rgba(15,23,42,.08);}
+.mpwpb-sme__fp-time.is-selected{border-color:var(--brand);background:var(--brand);color:#fff;box-shadow:0 2px 6px var(--brand-ring);}
+
+/* Checkout step — order summary */
+.mpwpb-sme__fp-summary{display:flex;flex-direction:column;gap:0;margin-bottom:10px;border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+.mpwpb-sme__fp-summary-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 12px;border-bottom:1px solid var(--band-line);background:#fff;}
+.mpwpb-sme__fp-summary-row:last-child{border-bottom:0;}
+.mpwpb-sme__fp-summary-row-label{font-size:12.5px;color:var(--ink-2);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mpwpb-sme__fp-summary-row-val{font-size:12.5px;font-weight:700;color:var(--ink);white-space:nowrap;flex:0 0 auto;}
+.mpwpb-sme__fp-summary-row--total{background:var(--inset);}
+.mpwpb-sme__fp-summary-row--total .mpwpb-sme__fp-summary-row-label{font-weight:700;color:var(--ink);}
+.mpwpb-sme__fp-summary-row--total .mpwpb-sme__fp-summary-row-val{font-size:14px;color:var(--brand);}
+
+.mpwpb-sme__preview-card .mpwpb-sme__feat-link{display:inline-flex;align-items:center;gap:6px;}
+.mpwpb-sme__preview-open{color:var(--ink-2);}
+
 @media(max-width:1100px){
 	.mpwpb-sme__body{grid-template-columns:1fr;}
 	.mpwpb-sme__rail{position:static;flex-direction:row;flex-wrap:wrap;}
 	.mpwpb-sme__rail-card{flex:1 1 240px;}
+	/* The rail (Frontend Preview etc.) drops out of sticky positioning at
+	   this width, but the stepper bar above it didn't -- it stayed pinned
+	   to the top of the viewport while the now-static rail content
+	   scrolled underneath/behind it. No `top` offset on the rail can fix
+	   that (a static element ignores `top`); the stepper has to stop
+	   being sticky too so everything scrolls together. */
+	.mpwpb-sme__stepper{position:static;top:auto;}
 }
 
 /* Sticky bottom navbar. Explicit low z-index: position:sticky always

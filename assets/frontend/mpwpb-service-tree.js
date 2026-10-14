@@ -58,6 +58,40 @@
 		});
 	}
 
+	// Live "N services selected · total" summary in the sidebar's CTA footer,
+	// reading the same real relocated rows (data-price + the real qty input)
+	// syncLeaf already reads from -- never a count/total kept separately, so
+	// it can't drift from the real selection state.
+	function updateSidebarSummary() {
+		var $summary = $('[data-tree-summary]');
+		if (!$summary.length) {
+			return;
+		}
+		var i18n = window.mpwpbTreeI18n || {};
+		var count = 0;
+		var total = 0;
+		$('.mpwpb-tree-service-row.mpActive').each(function () {
+			var $row = $(this);
+			var price = parseFloat($row.attr('data-price')) || 0;
+			var qty = parseInt($row.find('input[name="mpwpb_service_qtt[]"]').val(), 10);
+			if (!(qty > 0)) {
+				qty = 1;
+			}
+			count++;
+			total += price * qty;
+		});
+		if (count === 0) {
+			$summary.hide();
+			return;
+		}
+		var countLabel = count === 1
+			? (i18n.oneServiceTxt || '1 service selected')
+			: (i18n.manyServicesTxt || '%d services selected').replace('%d', count);
+		$summary.find('[data-tree-summary-count]').text(countLabel);
+		$summary.find('[data-tree-summary-total]').text((i18n.currencySymbol || '') + total.toFixed(2));
+		$summary.show();
+	}
+
 	$(document).on('click', '.mpwpb-tree-service [data-tree-checkbox]', function (e) {
 		e.stopPropagation();
 		var $leaf = $(this).closest('.mpwpb-tree-service');
@@ -69,8 +103,10 @@
 	// triggered from this sidebar or from inside the popup itself).
 	$(document).on('click', '.mpwpb_service_button, .service_incQty, .service_decQty', function () {
 		syncAllLeaves();
+		updateSidebarSummary();
 	});
 
 	syncAllLeaves();
+	updateSidebarSummary();
 
 })(jQuery);

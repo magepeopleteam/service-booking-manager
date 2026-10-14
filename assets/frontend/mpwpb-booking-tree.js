@@ -31,6 +31,20 @@
 			$flex.prepend($btn);
 		}
 
+		// Same "Tap to add" hint the sidebar preview tree's own unselected
+		// rows show (category_selection_static.php's .mpwpb-tree-tap-hint) --
+		// missing here until now, since this row's real markup never had
+		// one. Visibility is driven entirely by CSS off this row's own
+		// .mpActive class (mpwpb-service-page-modern.css), same mechanism
+		// already toggling the qty-stepper next to it -- no JS state to
+		// keep in sync.
+		var $qtyBox = $item.find('.quantity-box').first();
+		if ($qtyBox.length && !$qtyBox.find('.mpwpb-tree-tap-hint').length) {
+			$('<span class="mpwpb-tree-tap-hint"></span>')
+				.text((window.mpwpbBookingTreeI18n && mpwpbBookingTreeI18n.tapToAddTxt) || 'Tap to add')
+				.appendTo($qtyBox);
+		}
+
 		// "View Details" used to expand its description inline via the
 		// generic [data-collapse-target] mechanism (mp_global/assets/
 		// mp_style/mpwpb_plugin_global.js) -- inside this compact row that
@@ -155,10 +169,14 @@
 		var qty = parseInt($item.find('.inputIncDec').first().val(), 10) || 1;
 		var price = $item.find('._textTheme_min_100').first().html() || '';
 		return '<div class="mpwpb-selected-summary-row">' +
-			'<span class="mpwpb-selected-summary-name">' + escapeForSummary(name) +
-			' <em>x ' + qty + '</em>' + '</span>' +
+			'<span class="mpwpb-selected-summary-check"><i class="fas fa-check"></i></span>' +
+			'<span class="mpwpb-selected-summary-name">' + escapeForSummary(name) + '</span>' +
+			'<span class="mpwpb-selected-summary-qty">&times;' + qty + '</span>' +
 			'<span class="mpwpb-selected-summary-price">' + price + '</span>' +
 			'</div>';
+	}
+	function mpwpb_summary_title_text() {
+		return (window.mpwpbBookingTreeI18n && mpwpbBookingTreeI18n.yourSelectionTxt) || 'Your selection';
 	}
 	// Only 3 rows show by default -- beyond that the list can run long
 	// enough to push the actual Continue/Checkout button out of view,
@@ -202,19 +220,21 @@
 		// render_booking_recap()) -- this footer widget would just duplicate it
 		// there, so skip it for every native checkout (offline/Stripe/PayPal,
 		// Pro or free), not only the Pro "custom" mode. Still shown on Checkout
-		// for WooCommerce mode (no recap of its own) and on Date & Time either way.
+		// for WooCommerce mode (no recap of its own), and on Service/Date & Time
+		// either way -- now shown on Service too, above the Total/Continue row,
+		// once at least one item is selected.
 		var isNativeCheckoutStep = step === 'checkout' && typeof mpwpb_ajax !== 'undefined' && !mpwpb_ajax.is_wc_payment_mode;
-		if (!rowsList.length || step === 'service' || isNativeCheckoutStep) {
+		if (!rowsList.length || isNativeCheckoutStep) {
 			$container.empty().hide();
 			return;
 		}
 
 		var visibleLimit = 3;
 		var wasExpanded = $container.find('.mpwpb-selected-summary-more').hasClass('is-open');
-		var html = rowsList.slice(0, visibleLimit).join('');
+		var itemsHtml = rowsList.slice(0, visibleLimit).join('');
 		var hiddenCount = rowsList.length - visibleLimit;
 		if (hiddenCount > 0) {
-			html += '<div class="mpwpb-selected-summary-more' + (wasExpanded ? ' is-open' : '') + '">' +
+			itemsHtml += '<div class="mpwpb-selected-summary-more' + (wasExpanded ? ' is-open' : '') + '">' +
 				'<button type="button" class="mpwpb-selected-summary-more-btn" data-remaining="' + hiddenCount + '">' +
 				(wasExpanded ? mpwpb_summary_less_text() : mpwpb_summary_more_text(hiddenCount)) +
 				'</button>' +
@@ -223,7 +243,11 @@
 				'</div>' +
 				'</div>';
 		}
-		$container.html(html).show();
+		var headerHtml = '<div class="mpwpb-selected-summary-header">' +
+			'<span class="mpwpb-selected-summary-title">' + mpwpb_summary_title_text() + '</span>' +
+			'<span class="mpwpb-selected-summary-count">' + rowsList.length + '</span>' +
+			'</div>';
+		$container.html(headerHtml + '<div class="mpwpb-selected-summary-items">' + itemsHtml + '</div>').show();
 	};
 	function mpwpb_summary_more_text(count) {
 		return 'View ' + count + ' more <i class="fas fa-chevron-down"></i>';
@@ -256,6 +280,32 @@
 		if ($h3.length && !$h3.find('.mpwpb-tree-selected-label').length) {
 			$h3.prepend('<span class="mpwpb-tree-selected-label"></span>');
 		}
+	}
+
+	// Splits the shared "Total : <amount>" markup (next_service.php,
+	// next_date_time.php -- same templates the default template uses
+	// unmodified) into a small uppercase "Total" label stacked above the
+	// bold amount, matching the redesigned footer. Done here once on init
+	// (like relabelContinueButton above) rather than in those shared PHP
+	// templates, so the default template's inline "Total : <amount>" text
+	// is untouched.
+	function relabelTotalAmounts($registration) {
+		var totalTxt = (window.mpwpbBookingTreeI18n && mpwpbBookingTreeI18n.totalLabelTxt) || 'Total';
+		$registration.find('.next_service_area h3.alignCenter, .next_date_area h4.mpwpb-total').each(function () {
+			var $h = $(this);
+			if ($h.data('mpwpbTotalRelabelled')) {
+				return;
+			}
+			$h.data('mpwpbTotalRelabelled', true);
+			var $amount = $h.find('.mpwpb_total_bill').first();
+			if (!$amount.length) {
+				return;
+			}
+			$h.contents().filter(function () {
+				return this.nodeType === 3;
+			}).remove();
+			$amount.before('<span class="mpwpb-footer-total-label">' + escapeForSummary(totalTxt) + '</span>');
+		});
 	}
 
 	function initBookingTree($registration) {
@@ -377,13 +427,35 @@
 			$allServiceArea.prepend($tree);
 		}
 
+		// Pre-select the first service by default so the tree (and the
+		// sidebar tile it mirrors -- mpwpb-service-tree.js) never sits empty
+		// on load; the tap-to-add hint still explains how to change it.
+		// Skipped when a reorder link has its own services queued
+		// (mpwpb_registration.js's reorder-prefill, which runs on a delay
+		// after this and would otherwise end up stacked on top of this
+		// default) or when something is already selected, e.g. a sticky
+		// selection restored server-side after a validation error.
+		var reorderPending = typeof mpwpbReorderPrefill !== 'undefined' && mpwpbReorderPrefill &&
+			$.isArray(mpwpbReorderPrefill.service_keys) && mpwpbReorderPrefill.service_keys.length > 0;
+		if (!reorderPending && !$tree.find('.mpwpb_service_item.mpActive').length) {
+			$tree.find('.mpwpb_service_item').first().find('.mpwpb_service_button').first().trigger('click');
+		}
+
 		// Expand/collapse is handled by the existing document-delegated
 		// handler in mpwpb-service-tree.js (matches any .mpwpb-service-tree
 		// [data-tree-toggle], including this dynamically-built one) -- no
 		// separate handler needed here, and adding one would double-toggle.
 
 		relabelContinueButton($registration);
+		relabelTotalAmounts($registration);
 		updateAllCounts($tree);
+		// Two-column layout (assets/frontend/mpwpb-service-page-modern.css,
+		// .mpwpb-booking-tree.is-dense, gated separately there on viewport
+		// width too) only once there are enough services to actually benefit
+		// from splitting -- counted across every category combined, not
+		// per-category, so e.g. two 5-service categories (10 total) still
+		// qualifies even though neither one alone would.
+		$tree.toggleClass('is-dense', $tree.find('.mpwpb-tree-service-row').length > 8);
 		updateSelectedFooter($registration);
 	}
 
@@ -476,6 +548,53 @@
 			relocateExtraServiceButton($(this));
 		});
 	}
+
+	// Live "N added · +<total>" chip next to the section's own "Choose Extra
+	// Features (Optional)" heading (extra_services.php, shared with the
+	// default template -- left untouched; only this chip is appended next to
+	// it, same as relabelContinueButton()/relabelTotalAmounts() do for the
+	// shared next_service.php/next_date_time.php markup). Wrapping the real
+	// h5 rather than replacing it keeps its translated text intact.
+	function initExtraServiceSummary($registration) {
+		var $area = $registration.find('.mpwpb_extra_service_area').first();
+		var $h5 = $area.find('> h5').first();
+		if (!$h5.length || $h5.data('mpwpbSummaryInit')) {
+			return;
+		}
+		$h5.data('mpwpbSummaryInit', true);
+		$h5.wrap('<div class="mpwpb-extra-summary-header"></div>');
+		$h5.after('<span class="mpwpb-extra-summary-chip"></span>');
+	}
+
+	window.updateExtraServiceSummary = function ($registration) {
+		var $chip = $registration.find('.mpwpb-extra-summary-chip');
+		if (!$chip.length) {
+			return;
+		}
+		var count = 0;
+		var total = 0;
+		var currency = '';
+		$registration.find('.mpwpb_extra_service_item').each(function () {
+			var $item = $(this);
+			if (!$item.find('[name="mpwpb_extra_service_type[]"]').val()) {
+				return;
+			}
+			count++;
+			var $qtyInput = $item.find('.inputIncDec').first();
+			var qty = parseInt($qtyInput.val(), 10) || 1;
+			var price = parseFloat($qtyInput.data('price')) || 0;
+			total += qty * price;
+			if (!currency) {
+				currency = $item.find('.woocommerce-Price-currencySymbol').first().text();
+			}
+		});
+		if (!count) {
+			$chip.text('').hide();
+			return;
+		}
+		var addedTxt = (window.mpwpbBookingTreeI18n && mpwpbBookingTreeI18n.addedTxt) || 'added';
+		$chip.text(count + ' ' + addedTxt + ' · +' + total.toFixed(2) + currency).show();
+	};
 
 	// .mpwpb_extra_service_item never got an "active" class of its own from
 	// any existing handler -- only its button does (.mActive, via the
@@ -631,11 +750,26 @@
 		updateCheckoutReadyState($(this).closest('div.mpwpb_registration'));
 	});
 
+	// Safety net for the rare case this popup is opened (mpwpb_plugin_global.js)
+	// before the $(function(){...}) below has run -- initBookingTree() is
+	// idempotent (guarded by the .all_service_area's own mpwpbTreeInit data
+	// flag), so calling it again once document-ready does fire is a no-op.
+	// Scoped to initBookingTree only (not the extra-service/date-pagination
+	// inits below, which aren't guarded the same way) since that's the piece
+	// whose absence produces the reported blank services step.
+	$(document).on('mpwpb:popup-opened', function (e, $popup) {
+		$popup.find('div.mpwpb_registration').each(function () {
+			initBookingTree($(this));
+		});
+	});
+
 	$(function () {
 		$('div.mpwpb_registration').each(function () {
 			initBookingTree($(this));
 			initExtraServiceDetails($(this));
 			initExtraServiceLayout($(this));
+			initExtraServiceSummary($(this));
+			updateExtraServiceSummary($(this));
 			initDateGridPagination($(this));
 			initDateCalendarPagination($(this));
 			updateCheckoutReadyState($(this));
