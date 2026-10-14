@@ -73,9 +73,20 @@ if (!class_exists('MPWPB_Staff_Booking')) {
 
 
         public static function mpwpb_is_repeated_date( $start_date, $repeat_every_days, $check_date ) {
-            // Convert to DateTime objects
+            // No start date set = no restriction. `new DateTime('')` means "right
+            // now" (time included), so an empty start used to make today's own
+            // midnight-based date count as "before start" and every staff member
+            // without a start date was unavailable for the rest of the day.
+            if (empty($start_date)) {
+                return true;
+            }
+            $repeat_every_days = max(1, (int) $repeat_every_days);
+            // Compare calendar dates only -- a time-of-day on either side would
+            // otherwise shift the result for the same day.
             $start = new DateTime($start_date);
             $check = new DateTime($check_date);
+            $start->setTime(0, 0, 0);
+            $check->setTime(0, 0, 0);
 
             // If check date is before start date, it's false
             if ($check < $start) {
@@ -152,9 +163,14 @@ if (!class_exists('MPWPB_Staff_Booking')) {
             // 2. Handle "particular" travel type
             if ($travel_type === 'particular') {
                 $particular_dates = get_user_meta($staff_id, 'mpwpb_particular_dates', false); // Use `false` to get all values
-                $flat_dates = !empty($particular_dates) ? call_user_func_array('array_merge', $particular_dates) : [];
+                $flat_dates = !empty($particular_dates) ? array_values(array_filter(call_user_func_array('array_merge', $particular_dates))) : [];
 
-                return in_array($check_date, $flat_dates);
+                // Dates listed = only those dates. None listed = no date
+                // restriction (handled below with the off days/dates checks),
+                // same rule as an empty "repeat from" start date.
+                if (!empty($flat_dates)) {
+                    return in_array($check_date, $flat_dates);
+                }
             }
 
             // 3. Handle "repeated" travel type
@@ -185,7 +201,17 @@ if (!class_exists('MPWPB_Staff_Booking')) {
                 }
             }
 
-            // 4. If no condition matched
+            // 4. No usable schedule (no type set, or a One-time Schedule with no
+            // dates): no date restriction -- available unless today is one of
+            // their off dates/off days.
+            if ($travel_type !== 'repeated') {
+                $check_day = strtolower(date('l', strtotime($check_date)));
+                $get_off_dates = get_user_meta($staff_id, 'mpwpb_off_dates', false);
+                $off_dates = !empty($get_off_dates) ? call_user_func_array('array_merge', $get_off_dates) : [];
+                $get_off_days = get_user_meta($staff_id, 'mpwpb_off_days', true);
+                $off_days_arr = !empty($get_off_days) ? array_map('strtolower', array_map('trim', explode(',', $get_off_days))) : [];
+                return !in_array($check_date, $off_dates) && !in_array($check_day, $off_days_arr);
+            }
             return false;
         }
 

@@ -38,8 +38,11 @@ if (!class_exists('MPWPB_Recurring_Booking')) {
 					return;
 				}
 
-                wp_enqueue_script('mpwpb-recurring-booking', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_recurring_booking.js', array('jquery'),  true);
-                wp_enqueue_style('mpwpb-recurring-booking', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_recurring_booking.css', array(), true);
+                // Real file-time versions: `true` here was landing in the $ver
+                // slot, so these always loaded as ?ver=1 and browsers kept
+                // serving stale copies after every change.
+                wp_enqueue_script('mpwpb-recurring-booking', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_recurring_booking.js', array('jquery'), MPWPB_Dependencies::asset_version('/assets/frontend/mpwpb_recurring_booking.js'), true);
+                wp_enqueue_style('mpwpb-recurring-booking', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_recurring_booking.css', array(), MPWPB_Dependencies::asset_version('/assets/frontend/mpwpb_recurring_booking.css'));
 
                 // Pass post ID to JavaScript
                 wp_localize_script('mpwpb-recurring-booking', 'mpwpb_recurring_data', array(

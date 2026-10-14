@@ -222,7 +222,9 @@
                     </div>
 
                     <input type="hidden" class="mpwpb_staff_member_booking" name="mpwpb_staff_member_booking" id="mpwpb_staff_member_booking" value="">
-                    <div class="mpwpb_staff_member_booking" id="mpwpb_staff_member_holder"></div>
+                    <div class="mpwpb_staff_member_booking" id="mpwpb_staff_member_holder"
+                         data-no-staff-text="<?php esc_attr_e('No staff member is available for this time. Please choose another time slot.', 'service-booking-manager'); ?>"
+                         data-load-error-text="<?php esc_attr_e('Staff availability could not be loaded. Please choose the time slot again.', 'service-booking-manager'); ?>"></div>
                 </div>
             </div>
         </div>

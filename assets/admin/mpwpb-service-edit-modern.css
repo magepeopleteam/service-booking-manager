@@ -336,8 +336,8 @@ body.mpwpb-sme-active #postdivrich{display:none;}
 .mpwpb-sme__bw-seg-btn.is-active{background:#fff;color:var(--brand);box-shadow:0 1px 3px rgba(15,23,42,.1);}
 .mpwpb-sme__bw-swatches{display:flex;flex-wrap:wrap;align-items:center;gap:8px;}
 .mpwpb-sme__bw-swatch{
-	position:relative;width:26px;height:26px;border-radius:50%;border:2px solid transparent;
-	padding:0;cursor:pointer;box-shadow:0 0 0 1px var(--line);transition:.15s;
+	position:relative;box-sizing:border-box;flex:0 0 26px;width:26px;height:26px;margin:0;border-radius:50%;border:2px solid transparent;
+	padding:0;cursor:pointer;box-shadow:0 0 0 1px var(--line);transition:.15s;vertical-align:middle;
 }
 .mpwpb-sme__bw-swatch:hover{transform:scale(1.08);}
 .mpwpb-sme__bw-swatch.is-active{border-color:#fff;box-shadow:0 0 0 2px var(--brand);}
@@ -345,9 +345,26 @@ body.mpwpb-sme-active #postdivrich{display:none;}
 	content:"\f00c";font-family:"Font Awesome 5 Free";font-weight:900;font-size:9px;color:#fff;
 	position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-shadow:0 0 2px rgba(0,0,0,.5);
 }
-.mpwpb-sme__bw-swatch--custom{display:flex;align-items:center;justify-content:center;overflow:hidden;}
+/* Custom colour -- same 26px circle as the presets (a <label>, so the
+   generic label styling it would otherwise pick up -- display, padding,
+   margin, line-height -- is pinned back here). Idle: a colour-wheel ring
+   with a "+" so it reads as "pick your own". With a custom colour active
+   (.has-color): filled with that colour plus the same ring/check as a
+   selected preset. */
+.mpwpb-sme__bw-swatch--custom{
+	display:inline-flex !important;align-items:center;justify-content:center;
+	width:26px !important;height:26px !important;margin:0 !important;padding:0 !important;
+	line-height:1 !important;overflow:hidden;
+	background:conic-gradient(#ef4444,#f59e0b,#eab308,#22c55e,#06b6d4,#3b82f6,#8b5cf6,#ec4899,#ef4444);
+}
+.mpwpb-sme__bw-swatch--custom.has-color{background:var(--swatch,#00685f);}
+.mpwpb-sme__bw-swatch-plus{
+	display:flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;
+	background:#fff;color:#334155;font-size:12px;font-weight:700;line-height:1;pointer-events:none;
+}
+.mpwpb-sme__bw-swatch--custom.has-color .mpwpb-sme__bw-swatch-plus{display:none;}
 .mpwpb-sme__bw-swatch--custom input[type="color"]{
-	opacity:0;width:100%;height:100%;cursor:pointer;padding:0;border:0;
+	position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;border:0;opacity:0;cursor:pointer;
 }
 
 /* Frontend Preview rail card (Pricing/Availability/Advanced steps only) —

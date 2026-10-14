@@ -1595,7 +1595,14 @@ function mpwpb_price_calculation($this) {
         $staffBtn.prop('disabled', true).addClass('mpwpb-cta-loading')
             .html('<i class="fas fa-spinner fa-spin _mR_xs"></i> ' + (mpwpb_ajax.processing_text || 'Please wait...'));
 
-        $("#mpwpb_date_time_next_btn_id").fadeIn();
+        // Checkout only once there's actually a staff member to pick for this
+        // slot -- with none free the step shows its "choose another time"
+        // notice instead (set in mpwpb_recurring_booking.js).
+        if (($("#mpwpb_staff_member_holder").data('mpwpbStaffCount') || 0) > 0) {
+            $("#mpwpb_date_time_next_btn_id").fadeIn();
+        } else {
+            $("#mpwpb_date_time_next_btn_id").hide();
+        }
         mpwpb_set_progress($(this).closest('div.mpwpb_registration'), 'staff');
         $("#mpwpb_datetime_holder").hide();
         $("#mpwpb_staff_member_booking_area").fadeIn();

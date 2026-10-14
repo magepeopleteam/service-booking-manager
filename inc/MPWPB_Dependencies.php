@@ -140,6 +140,16 @@
 					'ajax_url' => admin_url('admin-ajax.php'),
 					'nonce'    => wp_create_nonce('mpwpb_admin_nonce'),
 					'loadingTxt'    => __('Loading...','service-booking-manager'),
+					'staffValidation' => array(
+						'usernameRequired' => __('Username is required.', 'service-booking-manager'),
+						'usernameShort'    => __('Username must be at least 3 characters.', 'service-booking-manager'),
+						'usernameTaken'    => __('This username is already taken.', 'service-booking-manager'),
+						'passwordRequired' => __('Password is required.', 'service-booking-manager'),
+						'passwordShort'    => __('Password must be at least 8 characters.', 'service-booking-manager'),
+						'emailRequired'    => __('Email is required.', 'service-booking-manager'),
+						'emailInvalid'     => __('Please enter a valid email address.', 'service-booking-manager'),
+						'emailTaken'       => __('This email is already used by another account.', 'service-booking-manager'),
+						'checkFailed'      => __('Could not verify the username/email right now. Please try again.', 'service-booking-manager'),					),
 				));
 				do_action('add_mpwpb_admin_script');
 			}

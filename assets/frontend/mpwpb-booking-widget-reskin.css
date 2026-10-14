@@ -1461,19 +1461,46 @@
    as an afterthought at the end of a booking flow; the glow shadow and
    larger touch target make it read as the confident final step it is. */
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_service_next,
-.mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_date_time_next_btn_id {
+.mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_date_time_next_btn_id,
+.mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_show_hide_staff_member {
 	border-radius: 999px !important;
 	font-family: 'Work Sans', sans-serif !important;
 	font-weight: 700 !important;
 	font-size: 14px !important;
 	padding: 15px 26px !important;
-	color: #FFFFFF !important;
-	display: inline-flex !important;
 	align-items: center !important;
+	justify-content: center !important;
 	gap: 8px !important;
 	flex-shrink: 0 !important;
+	white-space: nowrap !important;
 	margin-left: auto !important;
 	transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* display:inline-flex only on a button JS is actually showing. A blanket
+   `display:inline-flex !important` (as this rule used to have) beats the
+   inline display:none jQuery's .hide() sets, so "Proceed to Checkout" could
+   never be hidden -- it sat next to "Next Staff Member" on the Date & Time
+   step of every staff-enabled service. */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_service_next,
+.mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_date_time_next_btn_id:not([style*="display: none"]):not([style*="display:none"]),
+.mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_show_hide_staff_member:not([style*="display: none"]):not([style*="display:none"]) {
+	display: inline-flex !important;
+}
+
+/* Text colour for the always-solid CTAs only -- Proceed to Checkout's own
+   grey "not ready" / solid "ready" colours come from mpwpb-service-page-
+   modern.css (#mpwpb_date_time_next_btn_id / .mpwpb-cta-ready) and a forced
+   white here was turning its not-ready state into white-on-light-grey. */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb_service_next,
+.mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_show_hide_staff_member {
+	color: #FFFFFF !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup #mpwpb_show_hide_staff_member {
+	background: var(--mpwpb_color_theme) !important;
+	border-color: var(--mpwpb_color_theme) !important;
+	box-shadow: 0 6px 18px rgba(14,85,75,0.32) !important;
 }
 
 /* Keeps Back/Total/Continue on one row for Popup Modal, where the 560-760px

@@ -795,7 +795,9 @@
 									<?php foreach ($theme_color_swatches as $swatch) : ?>
 										<button type="button" class="mpwpb-sme__bw-swatch<?php echo strtolower($swatch) === strtolower($current_theme_color) ? ' is-active' : ''; ?>" style="background:<?php echo esc_attr($swatch); ?>" data-sme-theme-color="<?php echo esc_attr($swatch); ?>" aria-label="<?php echo esc_attr($swatch); ?>"></button>
 									<?php endforeach; ?>
-									<label class="mpwpb-sme__bw-swatch mpwpb-sme__bw-swatch--custom" style="background:<?php echo esc_attr($current_theme_color); ?>" title="<?php esc_attr_e('Custom color', 'service-booking-manager'); ?>">
+									<?php $is_custom_theme_color = !in_array(strtolower($current_theme_color), array_map('strtolower', $theme_color_swatches), true); ?>
+									<label class="mpwpb-sme__bw-swatch mpwpb-sme__bw-swatch--custom<?php echo $is_custom_theme_color ? ' is-active has-color' : ''; ?>"<?php echo $is_custom_theme_color ? ' style="--swatch:' . esc_attr($current_theme_color) . '"' : ''; ?> title="<?php esc_attr_e('Custom color', 'service-booking-manager'); ?>">
+										<span class="mpwpb-sme__bw-swatch-plus" aria-hidden="true">+</span>
 										<input type="color" data-sme-theme-color-custom value="<?php echo esc_attr($current_theme_color); ?>" aria-label="<?php esc_attr_e('Custom color', 'service-booking-manager'); ?>">
 									</label>
 								</div>

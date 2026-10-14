@@ -81,13 +81,26 @@
 
         let date_time = $(this).attr('data-date').trim();
         let data_radio_check = $(this).attr('data-radio-check').trim();
-        let dateObj = new Date(date_time);
-        let year = dateObj.getFullYear();
-        let month = String(dateObj.getMonth() + 1).padStart(2, '0'); // Months are 0-based
-        let day = String(dateObj.getDate()).padStart(2, '0');
-
-        let formattedDate = `${year}-${month}-${day}`;
-        let hours24 = dateObj.getHours() + (dateObj.getMinutes() / 60);
+        // Date/time for the staff lookup come from data-radio-check
+        // ("2026-10-14 10:00"), not data-date: data-date is display text and
+        // now carries the slot's end time too ("October 14, 2026 10:00 am -
+        // 11:00 am"), which new Date() rejects as Invalid Date -- the request
+        // then sent "NaN-NaN-NaN"/NaN, no staff ever matched, and the staff
+        // step was skipped for every staff-enabled service.
+        let formattedDate = '';
+        let hours24 = NaN;
+        let slotMatch = data_radio_check.match(/^(\d{4}-\d{2}-\d{2})\s+(\d{1,2}):(\d{2})/);
+        if (slotMatch) {
+            formattedDate = slotMatch[1];
+            hours24 = parseInt(slotMatch[2], 10) + (parseInt(slotMatch[3], 10) / 60);
+        } else {
+            let dateObj = new Date(date_time.split(' - ')[0]);
+            let year = dateObj.getFullYear();
+            let month = String(dateObj.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+            let day = String(dateObj.getDate()).padStart(2, '0');
+            formattedDate = `${year}-${month}-${day}`;
+            hours24 = dateObj.getHours() + (dateObj.getMinutes() / 60);
+        }
 
         let ajaxUrl = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.ajax_url : mpwpb_ajax.ajax_url;
         let nonce = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.nonce : mpwpb_ajax.nonce;
@@ -122,8 +135,26 @@
                 mpwpb_loader($("#mpwpb_staff_member_holder"));
             },
             success: function(response) {
-                mpwpb_loaderRemove($("#mpwpb_staff_member_holder"));
-                $("#mpwpb_staff_member_holder").html( response.html );
+                var $holder = $("#mpwpb_staff_member_holder");
+                mpwpb_loaderRemove($holder);
+                $holder.html( response.html );
+                $holder.data('mpwpbStaffCount', response.count || 0);
+                // Staff-enabled service (the staff step is only rendered for
+                // those, date_time_select.php): the Date & Time step offers
+                // ONLY "Next Staff Member" -- "Proceed to Checkout" belongs to
+                // the staff step. No free staff for this slot is reported on
+                // that step instead of silently skipping it.
+                if ($('#mpwpb_staff_member_booking_area').length) {
+                    if (!response.count) {
+                        $holder.html($('<p class="mpwpb_no_staff_notice"></p>').text($holder.attr('data-no-staff-text') || 'No staff member is available for this time. Please choose another time slot.'));
+                    }
+                    $('#mpwpb_progress_checkout').removeClass('active');
+                    $("#mpwpb_progress_staff").fadeIn();
+                    $("#mpwpb_date_time_next_btn_id").hide();
+                    $("#mpwpb_show_hide_staff_member").fadeIn();
+                    $("#mpwpb_staff_arrow").fadeIn();
+                    return;
+                }
                 if( response.count < 1 ){
                     $("#mpwpb_progress_staff").fadeOut();
                     $("#mpwpb_progress_checkout").addClass('active');
@@ -146,11 +177,18 @@
             error: function(xhr, status, error) {
                 console.error('AJAX error:', status, error);
                 parent.find('#mpwpb_recurring_dates_list').html('<li>Error: ' + error + '</li>');
-                mpwpb_loaderRemove($("#mpwpb_staff_member_holder"));
+                var $holder = $("#mpwpb_staff_member_holder");
+                mpwpb_loaderRemove($holder);
                 // Neither button was left visible going into this request --
-                // fall back to "Proceed to Checkout" on failure so the
-                // customer always has a way to continue rather than being
-                // stuck with no visible next step at all.
+                // always leave the customer a way forward: the staff step for
+                // staff-enabled services (where the failure is explained),
+                // otherwise straight to checkout.
+                if ($('#mpwpb_staff_member_booking_area').length) {
+                    $holder.data('mpwpbStaffCount', 0).html($('<p class="mpwpb_no_staff_notice"></p>').text($holder.attr('data-load-error-text') || 'Staff availability could not be loaded. Please choose the time slot again.'));
+                    $("#mpwpb_date_time_next_btn_id").hide();
+                    $("#mpwpb_show_hide_staff_member").fadeIn();
+                    return;
+                }
                 $("#mpwpb_show_hide_staff_member").hide();
                 $("#mpwpb_date_time_next_btn_id").fadeIn();
             }

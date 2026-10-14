@@ -1660,9 +1660,18 @@
 			color: color
 		}).done(function (resp) {
 			if (resp && resp.success) {
+				var $custom = $root.find('.mpwpb-sme__bw-swatch--custom');
 				$root.find('[data-sme-theme-swatches] .mpwpb-sme__bw-swatch').removeClass('is-active');
-				if ($swatch) { $swatch.addClass('is-active'); }
-				$root.find('.mpwpb-sme__bw-swatch--custom').css('background', color);
+				if ($swatch) {
+					// A preset won -- the custom swatch goes back to its idle
+					// colour-wheel "+" look.
+					$swatch.addClass('is-active');
+					$custom.removeClass('has-color');
+				} else {
+					setCustomSwatchColor($custom, color);
+					$custom.addClass('is-active');
+				}
+				$custom.find('[data-sme-theme-color-custom]').val(color);
 				toast(cfg.themeColorSavedTxt || 'Theme color updated');
 			} else {
 				toast(cfg.themeColorErrorTxt || 'Could not save theme color');
@@ -1677,8 +1686,12 @@
 	// Live-preview the custom swatch while dragging in the native picker;
 	// only save once the user actually commits a value (change), so picking
 	// a color doesn't fire an AJAX call per pixel of drag.
+	function setCustomSwatchColor($custom, color) {
+		$custom.addClass('has-color');
+		if ($custom[0]) { $custom[0].style.setProperty('--swatch', color); }
+	}
 	$root.on('input', '[data-sme-theme-color-custom]', function () {
-		$(this).closest('.mpwpb-sme__bw-swatch--custom').css('background', $(this).val());
+		setCustomSwatchColor($(this).closest('.mpwpb-sme__bw-swatch--custom'), $(this).val());
 	});
 	$root.on('change', '[data-sme-theme-color-custom]', function () {
 		$root.find('[data-sme-theme-swatches] .mpwpb-sme__bw-swatch').not('.mpwpb-sme__bw-swatch--custom').removeClass('is-active');

@@ -401,3 +401,18 @@
 }
 .mpwpb_staff_page .mpwpb_staff_page-num.active{background:var(--brand);color:#fff;font-weight:600;}
 
+
+/* Add/Edit Staff form validation (mpwpb_admin.js) */
+.mpwpb_staff_form .mpwpb_field_invalid {
+	border-color: #dc2626 !important;
+	box-shadow: 0 0 0 2px rgba(220, 38, 38, .12) !important;
+}
+.mpwpb_staff_form .mpwpb_field_error {
+	display: block !important;
+	width: 100%;
+	margin-top: 5px;
+	color: #b91c1c;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 1.4;
+}
