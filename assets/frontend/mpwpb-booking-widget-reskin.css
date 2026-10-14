@@ -1154,7 +1154,7 @@
    row carries an icon in the markup. */
 .mpwpb-static-template .sidebar .mpwpb_popup ul.cart_list li {
 	display: grid !important;
-	grid-template-columns: 50px 1fr;
+	grid-template-columns: 64px 1fr;
 	column-gap: 8px;
 	align-items: baseline;
 	font-family: 'Work Sans', sans-serif !important;
@@ -1190,6 +1190,78 @@
 	display: none !important;
 }
 
+/* ---------- Order review: theme/WooCommerce framing that doesn't fit a drawer ----------
+ * Astra boxes "Your order" with a 2px open-bottom border + 1.5em padding
+ * (form #order_review_heading) and gives #order_review 2em side padding
+ * plus side/bottom borders -- meant for the full-width checkout page's
+ * two-column layout, it just reads as a stray empty frame here. */
+.mpwpb-static-template .sidebar .mpwpb_popup #order_review_heading {
+	float: none !important;
+	width: auto !important;
+	border: 0 !important;
+	padding: 0 !important;
+	margin: 6px 0 10px !important;
+	font-family: 'Work Sans', sans-serif !important;
+	font-size: 11px !important;
+	font-weight: 800 !important;
+	letter-spacing: 0.06em !important;
+	text-transform: uppercase !important;
+	color: #5B6763 !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup #order_review {
+	float: none !important;
+	width: 100% !important;
+	border: 0 !important;
+	padding: 0 !important;
+}
+
+/* Price cells sit at the top of their row, next to the product name,
+   instead of floating halfway down a tall Booking Details box. */
+.mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-checkout-review-order-table td {
+	vertical-align: top !important;
+}
+
+/* mp_global's plugin-wide `.mpwpb_style span { display:flex }` turns
+   every price's currency-symbol span into its own block, so "900.00"
+   and its symbol stacked on two lines. The earlier drawer-wide undo
+   above only reaches a NESTED .mpwpb_style, and this table isn't in one
+   (the popup carries .mpwpb_style on itself), so it never applied here. */
+.mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-checkout-review-order-table span,
+.mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-checkout-review-order-table bdi {
+	display: inline !important;
+}
+
+/* Astra/WooCommerce float the "Booking Details" dt left, so every row
+   in the dd beside it got pushed right by the label's width (the big
+   empty gutter in front of Service/Price/Date/Time). Stacked instead:
+   label on top, rows full-width below. */
+.mpwpb-static-template .sidebar .mpwpb_popup dl.variation dt {
+	float: none !important;
+	display: block !important;
+	margin-right: 0 !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup dl.variation dd {
+	float: none !important;
+	display: block !important;
+	padding: 0 !important;
+}
+
+.mpwpb-static-template .sidebar .mpwpb_popup dl.variation dd p:empty {
+	display: none !important;
+}
+
+/* show_cart_item() (Frontend/MPWPB_Woocommerce.php) wraps the rows in
+   .dLayout_xs, which mp_global paints as its own white bordered card --
+   a second box nested inside the grey Booking Details panel. */
+.mpwpb-static-template .sidebar .mpwpb_popup dl.variation .dLayout_xs {
+	margin: 0 !important;
+	padding: 0 !important;
+	border: 0 !important;
+	background: transparent !important;
+}
+
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-confirmation-summary::before {
 	content: '';
 	display: block;
@@ -1217,9 +1289,24 @@
 	color: #5B6763 !important;
 }
 
+/* inline: mp_global's plugin-wide `.mpwpb_style strong { display:flex }`
+   made the label a block of its own -- "Order status:" stuck to the left
+   edge with its value centered on the line below it, instead of one
+   centered "Order status: Processing" line. */
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-confirmation-summary p strong {
+	display: inline !important;
 	color: #15202B !important;
 	font-weight: 600 !important;
+}
+
+/* Same plugin-wide `span { display:flex }` that split the checkout table's
+   prices: the order overview's Total and the order-details table put the
+   currency symbol on its own line under the amount. */
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-confirmation .woocommerce-Price-amount,
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-confirmation .woocommerce-Price-amount span,
+.mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-inline-confirmation .woocommerce-Price-amount bdi {
+	display: inline !important;
+	white-space: nowrap !important;
 }
 
 .mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-order-overview {
@@ -1231,6 +1318,15 @@
 	padding: 16px !important;
 	background: #F3F5F4 !important;
 	border-radius: 14px !important;
+}
+
+/* WooCommerce's clearfix (ul.order_details::before/::after, content:" ")
+   becomes two empty flex items here -- each still claims a 12px gap, which
+   shifted the first row right and squeezed the last box narrower. */
+.mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-order-overview::before,
+.mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-order-overview::after {
+	content: none !important;
+	display: none !important;
 }
 
 .mpwpb-static-template .sidebar .mpwpb_popup .woocommerce-order-overview li {

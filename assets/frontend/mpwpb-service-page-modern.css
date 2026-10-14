@@ -383,6 +383,11 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
    fixes it without touching the popup's own rule. */
 @media (min-width:1024px){
 	.mpwpb-static-template .sidebar{position:sticky;top:8px;align-self:flex-start;z-index:1;}
+	/* Only while the Popup Modal drawer is actually open: everything inside
+	   .sidebar is stacked at .sidebar's own z-index against the rest of the
+	   page, so at z-index:1 the theme's site header painted over the open
+	   drawer's title. Raised just for that state -- closed, it stays at 1. */
+	.mpwpb-static-template .sidebar:has(.mpwpb_popup.in:not(.mpwpb-popup-inline)){z-index:999999;}
 }
 
 /* -------------------------------------------------------------------- *
@@ -1335,6 +1340,13 @@ label.mpwpb-checkout-field{display:inline-block;}
 	height:100vh !important;height:100dvh !important;
 	max-height:100vh !important;max-height:100dvh !important;border-radius:0 !important;
 	box-shadow:-8px 0 30px rgba(15,23,42,.18) !important;
+	/* Base CSS lays this column out with justify-content:space-between. While
+	   the footer is visible its margin-top:auto soaks up the spare height, so
+	   that never showed -- but on the Checkout/Confirmation steps the footer
+	   is hidden (.mpwpb-inline-checkout-footer-hidden), leaving just header +
+	   body, and space-between then pushed the body to the bottom: a big empty
+	   block between the header and the step indicator. */
+	justify-content:flex-start !important;
 }
 /* Only logged-in users see WordPress's fixed admin bar (front-end visitors
    never do), so offset the drawer below it just for them -- otherwise the
