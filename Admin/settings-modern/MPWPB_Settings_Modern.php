@@ -721,7 +721,15 @@
 								?>
 								<div class="mpwpb-sme__fp-summary" data-sme-fp-services-summary style="display:none"></div>
 
-								<button type="button" class="mpwpb-sme__fp-cta" data-sme-fp-cta disabled<?php echo empty($fp_services) ? ' style="display:none"' : ''; ?>><?php esc_html_e('Select Service & Confirm Booking', 'service-booking-manager'); ?></button>
+								<?php /* Both labels are rendered; CSS shows one from the button's own
+								 * :disabled state, which fpUpdateCta() already toggles. */ ?>
+								<button type="button" class="mpwpb-sme__fp-cta" data-sme-fp-cta disabled<?php echo empty($fp_services) ? ' style="display:none"' : ''; ?>>
+									<span class="mpwpb-sme__fp-cta-label mpwpb-sme__fp-cta-label--ready"><?php esc_html_e('Continue to schedule', 'service-booking-manager'); ?>
+										<svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+									<span class="mpwpb-sme__fp-cta-label mpwpb-sme__fp-cta-label--idle">
+										<svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" stroke-width="2.2"/><path d="M8 11V8a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+										<?php esc_html_e('Select a service to continue', 'service-booking-manager'); ?></span>
+								</button>
 
 								<div class="mpwpb-sme__fp-trust" data-sme-fp-trust<?php echo empty($fp_services) ? ' style="display:none"' : ''; ?>>
 									<span class="mpwpb-sme__fp-trust-item">
