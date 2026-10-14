@@ -455,6 +455,7 @@
 			.on('click', function () {
 				fpDateOffset += 6;
 				fpSelectedDate = '';
+				fpSelectedDay = null;
 				var $step = $wrap.closest('.mpwpb-sme__fp-step--datetime');
 				$wrap.replaceWith(fpBuildDateStrip());
 				fpUpdateDatetimeCta($step);
@@ -468,7 +469,8 @@
 			d.setDate(d.getDate() + dayNum);
 			var label = dayNum === 0 ? (cfg.previewTodayTxt || 'Today') : dayNum === 1 ? (cfg.previewTomorrowTxt || 'Tomorrow') : FP_WEEKDAYS[d.getDay()];
 			var $btn = $('<button type="button" class="mpwpb-sme__fp-date' + (dayNum === 0 ? ' is-selected' : '') + '"></button>')
-				.attr('aria-label', label + ' ' + d.getDate());
+				.attr('aria-label', label + ' ' + d.getDate())
+				.attr('data-fp-day', dayNum);
 			// Only "Tomorrow" skips the visible label -- Today and the weekday
 			// abbreviations (Wed/Thu/…) still show theirs. aria-label is set
 			// for every card regardless, so Tomorrow keeps its context for
@@ -479,13 +481,15 @@
 				$btn.append($('<span class="mpwpb-sme__fp-date-lab"></span>').text(label));
 			}
 			$btn.append($('<strong class="mpwpb-sme__fp-date-num"></strong>').text(d.getDate())).appendTo($strip);
-			if (dayNum === 0) { fpSelectedDate = label + ' ' + d.getDate(); } // "Today" starts pre-selected
+			if (dayNum === 0) { fpSelectedDate = label + ' ' + d.getDate(); fpSelectedDay = 0; } // "Today" starts pre-selected
 		}
 		$strip.on('click', 'button', function () {
 			$strip.find('button').removeClass('is-selected');
 			$(this).addClass('is-selected');
 			fpSelectedDate = $(this).attr('aria-label');
+			fpSelectedDay = parseInt($(this).attr('data-fp-day'), 10) || 0;
 			fpUpdateDatetimeCta($strip.closest('.mpwpb-sme__fp-step--datetime'));
+			fpRenderRecur($strip.closest('.mpwpb-sme__fp-step--datetime'));
 		});
 		return $wrap;
 	}
@@ -499,6 +503,7 @@
 			$(this).addClass('is-selected');
 			fpSelectedTime = $(this).text();
 			fpUpdateDatetimeCta($grid.closest('.mpwpb-sme__fp-step--datetime'));
+			fpRenderRecur($grid.closest('.mpwpb-sme__fp-step--datetime'));
 		});
 		return $grid;
 	}
@@ -513,6 +518,9 @@
 		$step.append(fpBuildDateStrip()); // the "Date" label + carousel-next icon are built inside the wrap now
 		$('<div class="mpwpb-sme__fp-section-lab"></div>').text(cfg.previewTimeLabelTxt || 'Time').appendTo($step);
 		$step.append(fpBuildTimeGrid());
+		// Recurring block -- only filled while "Enable Recurring Bookings" is
+		// on (fpRenderRecur re-reads the live settings on every call).
+		$('<div class="mpwpb-sme__fp-recur" data-sme-fp-recur hidden></div>').appendTo($step);
 		// Same mount point attribute as the Services step's summary --
 		// fpUpdateServicesSummary() already updates every element matching
 		// it inside the card, so this one just rides along automatically.
@@ -520,6 +528,8 @@
 		$('<button type="button" class="mpwpb-sme__fp-cta" data-sme-fp-dt-cta disabled></button>')
 			.text(cfg.previewContinueTxt || 'Continue to Checkout')
 			.appendTo($step);
+		fpRenderRecur($step);
+		fpSyncDatetimeCtaLabel($step);
 		// This step is only built once (lazily, on first visit) and reused
 		// after that, so populate it immediately with whatever was already
 		// selected on the Services step before the user ever got here.
@@ -567,14 +577,31 @@
 			$summary.append(fpSummaryRow(label, val));
 		});
 		$summary.append(fpSummaryRow(cfg.previewDateTimeLabelTxt || 'Date & Time', fpSelectedDate + (fpSelectedTime ? ', ' + fpSelectedTime : '')));
+		if (fpStaffOn()) {
+			$summary.append(fpSummaryRow(cfg.previewStaffLabelTxt || 'Staff', fpSelectedStaff || (cfg.previewAnyStaffTxt || 'Any Staff')));
+		}
+		var recur = fpRecurSettings();
+		if (recur.enabled && fpRecur.on && fpRecur.type) {
+			var types = cfg.previewRecurTypes || {};
+			$summary.append(fpSummaryRow(cfg.previewRecurLabelTxt || 'Recurring', (types[fpRecur.type] || fpRecur.type) + ' × ' + fpRecur.count));
+			total = total * fpRecur.count;
+			if (recur.discount > 0) {
+				var cut = total * recur.discount / 100;
+				total -= cut;
+				$summary.append(fpSummaryRow((cfg.previewRecurDiscountTxt || 'Recurring discount') + ' (' + recur.discount + '%)', '−' + (cfg.previewCurrency || '') + cut.toFixed(2)));
+			}
+		}
 		$summary.append(fpSummaryRow(cfg.previewTotalTxt || 'Total', (cfg.previewCurrency || '') + total.toFixed(2), true));
 
 		$('<button type="button" class="mpwpb-sme__fp-cta" data-sme-fp-confirm></button>')
 			.text(cfg.previewConfirmTxt || 'Confirm Booking')
 			.appendTo($step);
 	}
+	function fpStepOrder() {
+		return fpStaffOn() ? ['services', 'datetime', 'staff', 'checkout'] : ['services', 'datetime', 'checkout'];
+	}
 	function fpUpdateSteps($mock, name) {
-		var order = ['services', 'datetime', 'checkout'];
+		var order = fpStepOrder();
 		var idx = order.indexOf(name);
 		$mock.find('[data-sme-fp-steps-item]').each(function () {
 			var i = order.indexOf($(this).data('sme-fp-steps-item'));
@@ -585,19 +612,24 @@
 	// preview") rather than one per step, so it needs to know where "back"
 	// goes from wherever the mock currently is.
 	var fpCurrentStep = 'services';
-	var FP_PREV_STEP = { datetime: 'services', checkout: 'datetime' };
 	function fpGoToStep($mock, name) {
 		var $services = $mock.find('[data-sme-fp-step="services"]');
 		var $datetime = $mock.find('[data-sme-fp-step="datetime"]');
+		var $staff = $mock.find('[data-sme-fp-step="staff"]');
 		var $checkout = $mock.find('[data-sme-fp-step="checkout"]');
+		if (name === 'staff' && !fpStaffOn()) { name = 'checkout'; }
 		if (name === 'datetime' && !$datetime.children().length) {
 			fpBuildDatetimeStep($datetime);
+		}
+		if (name === 'staff') {
+			fpBuildStaffStep($staff); // always fresh: the staff selection is edited live
 		}
 		if (name === 'checkout') {
 			fpBuildCheckoutStep($checkout); // always fresh: selections can change between visits
 		}
 		$services.toggleClass('is-active', name === 'services').prop('hidden', name !== 'services');
 		$datetime.toggleClass('is-active', name === 'datetime').prop('hidden', name !== 'datetime');
+		$staff.toggleClass('is-active', name === 'staff').prop('hidden', name !== 'staff');
 		$checkout.toggleClass('is-active', name === 'checkout').prop('hidden', name !== 'checkout');
 		fpUpdateSteps($mock, name);
 		fpCurrentStep = name;
@@ -611,6 +643,10 @@
 	$root.on('click', '[data-sme-fp-dt-cta]', function (e) {
 		e.preventDefault();
 		if ($(this).prop('disabled')) { return; }
+		fpGoToStep($(this).closest('.mpwpb-sme__fp-mock'), fpStaffOn() ? 'staff' : 'checkout');
+	});
+	$root.on('click', '[data-sme-fp-staff-cta]', function (e) {
+		e.preventDefault();
 		fpGoToStep($(this).closest('.mpwpb-sme__fp-mock'), 'checkout');
 	});
 	$root.on('click', '[data-sme-fp-confirm]', function (e) {
@@ -619,8 +655,196 @@
 	});
 	$root.on('click', '[data-sme-fp-footer-back]', function () {
 		var $mock = $(this).closest('.mpwpb-sme__preview-card').find('[data-sme-fp-mock]');
-		fpGoToStep($mock, FP_PREV_STEP[fpCurrentStep] || 'services');
+		var order = fpStepOrder();
+		var idx = order.indexOf(fpCurrentStep);
+		fpGoToStep($mock, idx > 0 ? order[idx - 1] : 'services');
 	});
+
+	/* ---------------------------------------------------------------- *
+	 *  Staff + Recurring in the preview -- both read the live (unsaved)
+	 *  settings on this screen, so toggling "Staff Member" / "Enable
+	 *  Recurring Bookings", picking staff tiles or changing the recurring
+	 *  types/limits/discount updates the mock straight away.
+	 * ---------------------------------------------------------------- */
+	function fpStaffOn() {
+		return $root.find('input[name="mpwpb_staff_member_add"]').is(':checked');
+	}
+	function fpRecurSettings() {
+		var types = [];
+		$root.find('input[name="mpwpb_recurring_types[]"]:checked').each(function () { types.push(this.value); });
+		var max = parseInt($root.find('input[name="mpwpb_max_recurring_count"]').val(), 10) || 26;
+		return {
+			enabled: $root.find('input[name="mpwpb_enable_recurring"]').is(':checked') && types.length > 0,
+			types: types,
+			max: Math.max(2, Math.min(52, max)),
+			discount: Math.max(0, Math.min(100, parseInt($root.find('input[name="mpwpb_recurring_discount"]').val(), 10) || 0))
+		};
+	}
+	function fpStaffList() {
+		var list = [];
+		$root.find('.mpwpb-staff-tile.is-selected').each(function () {
+			list.push({ name: $(this).find('.mpwpb-staff-tile-name').text(), avatar: $(this).find('.mpwpb-staff-tile-avatar').attr('src') || '' });
+		});
+		return list;
+	}
+	var fpSelectedStaff = ''; // '' = Any Staff
+	var fpRecur = { on: false, type: '', count: 2 };
+	var fpSelectedDay = 0; // days from today of the picked date card
+
+	// Show/hide the "Staff" progress item and renumber the dots.
+	function fpSyncSteps($mock) {
+		$mock.find('[data-sme-fp-staff-only]').prop('hidden', !fpStaffOn());
+		fpStepOrder().forEach(function (name, i) {
+			$mock.find('[data-sme-fp-steps-item="' + name + '"] .mpwpb-sme__fp-steps-dot').text(i + 1);
+		});
+		fpUpdateSteps($mock, fpCurrentStep);
+	}
+	function fpSyncDatetimeCtaLabel($step) {
+		$step.find('[data-sme-fp-dt-cta]').text(fpStaffOn() ? (cfg.previewNextStaffTxt || 'Next: Staff Member') : (cfg.previewContinueTxt || 'Continue to Checkout'));
+	}
+
+	var FP_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+	function fpRecurDates() {
+		var out = [];
+		for (var i = 0; i < fpRecur.count; i++) {
+			var d = new Date();
+			d.setHours(0, 0, 0, 0);
+			d.setDate(d.getDate() + (fpSelectedDay || 0));
+			if (fpRecur.type === 'daily') { d.setDate(d.getDate() + i); }
+			else if (fpRecur.type === 'weekly') { d.setDate(d.getDate() + 7 * i); }
+			else if (fpRecur.type === 'bi-weekly') { d.setDate(d.getDate() + 14 * i); }
+			else { d.setMonth(d.getMonth() + i); }
+			out.push(d);
+		}
+		return out;
+	}
+	function fpFmtDate(d, withYear) {
+		return FP_MONTHS[d.getMonth()] + ' ' + d.getDate() + (withYear ? ', ' + d.getFullYear() : '');
+	}
+	function fpRenderRecur($step) {
+		var $box = $step.find('[data-sme-fp-recur]');
+		if (!$box.length) { return; }
+		var s = fpRecurSettings();
+		$box.empty().prop('hidden', !s.enabled);
+		if (!s.enabled) { return; }
+		if (s.types.indexOf(fpRecur.type) === -1) { fpRecur.type = s.types[0]; }
+		fpRecur.count = Math.max(2, Math.min(s.max, fpRecur.count));
+		var labels = cfg.previewRecurTypes || {};
+
+		var $head = $('<div class="mpwpb-sme__fp-recur-head"></div>').appendTo($box);
+		$('<span class="mpwpb-sme__fp-recur-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l3 3-3 3"></path><path d="M4 11V9a4 4 0 0 1 4-4h12"></path><path d="M7 22l-3-3 3-3"></path><path d="M20 13v2a4 4 0 0 1-4 4H4"></path></svg></span>').appendTo($head);
+		var $txt = $('<div class="mpwpb-sme__fp-recur-text"></div>').appendTo($head);
+		$('<strong></strong>').text(cfg.previewRecurTitleTxt || 'Recurring booking').appendTo($txt);
+		$('<span></span>').text(cfg.previewRecurSubTxt || '').appendTo($txt);
+		$('<button type="button" role="switch" class="mpwpb-sme__fp-switch" data-sme-fp-recur-toggle></button>')
+			.attr('aria-checked', fpRecur.on ? 'true' : 'false')
+			.attr('aria-label', cfg.previewRecurTitleTxt || 'Recurring booking')
+			.toggleClass('is-on', fpRecur.on)
+			.appendTo($head);
+		if (!fpRecur.on) { return; }
+
+		var $body = $('<div class="mpwpb-sme__fp-recur-body"></div>').appendTo($box);
+		var $chips = $('<div class="mpwpb-sme__fp-recur-chips" role="radiogroup"></div>').appendTo($body);
+		s.types.forEach(function (t) {
+			$('<button type="button" role="radio" class="mpwpb-sme__fp-recur-chip"></button>')
+				.attr('data-sme-fp-recur-type', t)
+				.attr('aria-checked', t === fpRecur.type ? 'true' : 'false')
+				.toggleClass('is-active', t === fpRecur.type)
+				.text(labels[t] || t)
+				.appendTo($chips);
+		});
+
+		var $count = $('<div class="mpwpb-sme__fp-recur-count"></div>').appendTo($body);
+		$('<span class="mpwpb-sme__fp-recur-count-text"></span>').text(cfg.previewRecurCountTxt || 'Number of occurrences').appendTo($count);
+		var $stepper = $('<span class="mpwpb-sme__fp-recur-stepper"></span>').appendTo($count);
+		$('<button type="button" class="mpwpb-sme__fp-recur-step" data-sme-fp-recur-step="-1" aria-label="-">−</button>').prop('disabled', fpRecur.count <= 2).appendTo($stepper);
+		$('<span class="mpwpb-sme__fp-recur-val"></span>').text(fpRecur.count).appendTo($stepper);
+		$('<button type="button" class="mpwpb-sme__fp-recur-step mpwpb-sme__fp-recur-step--plus" data-sme-fp-recur-step="1" aria-label="+">+</button>').prop('disabled', fpRecur.count >= s.max).appendTo($stepper);
+
+		var dates = fpRecurDates();
+		var $list = $('<div class="mpwpb-sme__fp-recur-dates"></div>').appendTo($body);
+		var $lhead = $('<div class="mpwpb-sme__fp-recur-dates-head"></div>').appendTo($list);
+		$('<strong></strong>').text(dates.length + ' ' + (cfg.previewRecurBookingsTxt || 'bookings')).appendTo($lhead);
+		$('<span></span>').text(fpFmtDate(dates[0]) + ' – ' + fpFmtDate(dates[dates.length - 1], true)).appendTo($lhead);
+		var $rows = $('<div class="mpwpb-sme__fp-recur-rows"></div>').appendTo($list);
+		dates.forEach(function (d, i) {
+			var $r = $('<div class="mpwpb-sme__fp-recur-row"></div>').appendTo($rows);
+			$('<span class="mpwpb-sme__fp-recur-num"></span>').text(i + 1).appendTo($r);
+			$('<span class="mpwpb-sme__fp-recur-date"></span>').text(FP_WEEKDAYS[d.getDay()] + ', ' + fpFmtDate(d, true) + (fpSelectedTime ? ' · ' + fpSelectedTime : '')).appendTo($r);
+		});
+		if (s.discount > 0) {
+			$('<div class="mpwpb-sme__fp-recur-discount"></div>').text(s.discount + '% ' + (cfg.previewRecurDiscountTxt || 'Recurring discount').toLowerCase()).appendTo($body);
+		}
+	}
+	$root.on('click', '[data-sme-fp-recur-toggle]', function () {
+		fpRecur.on = !fpRecur.on;
+		fpRenderRecur($(this).closest('.mpwpb-sme__fp-step--datetime'));
+	});
+	$root.on('click', '[data-sme-fp-recur-type]', function () {
+		fpRecur.type = String($(this).attr('data-sme-fp-recur-type'));
+		fpRenderRecur($(this).closest('.mpwpb-sme__fp-step--datetime'));
+	});
+	$root.on('click', '[data-sme-fp-recur-step]', function () {
+		if ($(this).prop('disabled')) { return; }
+		fpRecur.count += parseInt($(this).attr('data-sme-fp-recur-step'), 10) || 0;
+		fpRenderRecur($(this).closest('.mpwpb-sme__fp-step--datetime'));
+	});
+
+	function fpBuildStaffStep($step) {
+		$step.empty();
+		$('<div class="mpwpb-sme__fp-heading"></div>').text(cfg.previewStaffHeadingTxt || 'Choose a staff member').appendTo($step);
+		$('<p class="mpwpb-sme__fp-sub"></p>').text(cfg.previewStaffSubTxt || '').appendTo($step);
+		var list = fpStaffList();
+		if (fpSelectedStaff && !list.some(function (p) { return p.name === fpSelectedStaff; })) { fpSelectedStaff = ''; }
+		var $grid = $('<div class="mpwpb-sme__fp-staff"></div>').appendTo($step);
+		var people = [{ name: '', label: cfg.previewAnyStaffTxt || 'Any Staff', avatar: '' }].concat(list.map(function (p) {
+			return { name: p.name, label: p.name, avatar: p.avatar };
+		}));
+		people.forEach(function (p) {
+			var $card = $('<button type="button" class="mpwpb-sme__fp-staff-card"></button>')
+				.attr('data-sme-fp-staff', p.name)
+				.toggleClass('is-selected', p.name === fpSelectedStaff)
+				.appendTo($grid);
+			var $av = $('<span class="mpwpb-sme__fp-staff-avatar" aria-hidden="true"></span>').appendTo($card);
+			if (p.avatar) {
+				$('<img alt="">').attr('src', p.avatar).appendTo($av);
+			} else {
+				$av.html('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"></path><circle cx="10" cy="7" r="4"></circle><path d="M21 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>');
+			}
+			$('<span class="mpwpb-sme__fp-staff-name"></span>').text(p.label).appendTo($card);
+		});
+		if (!list.length) {
+			$('<p class="mpwpb-sme__fp-staff-note"></p>').text(cfg.previewNoStaffTxt || 'No staff selected yet.').appendTo($step);
+		}
+		$('<button type="button" class="mpwpb-sme__fp-cta" data-sme-fp-staff-cta></button>')
+			.text(cfg.previewContinueTxt || 'Continue to Checkout')
+			.appendTo($step);
+	}
+	$root.on('click', '[data-sme-fp-staff]', function () {
+		fpSelectedStaff = String($(this).attr('data-sme-fp-staff') || '');
+		$(this).addClass('is-selected').siblings().removeClass('is-selected');
+	});
+
+	// Live: re-sync the mock whenever the staff / recurring settings change.
+	function fpOnSettingsChange() {
+		var $mock = $root.find('[data-sme-fp-mock]');
+		if (!$mock.length) { return; }
+		if (fpCurrentStep === 'staff' && !fpStaffOn()) {
+			fpGoToStep($mock, 'datetime');
+		}
+		fpSyncSteps($mock);
+		var $dt = $mock.find('[data-sme-fp-step="datetime"]');
+		if ($dt.children().length) {
+			fpRenderRecur($dt);
+			fpSyncDatetimeCtaLabel($dt);
+		}
+		if (fpCurrentStep === 'staff') { fpBuildStaffStep($mock.find('[data-sme-fp-step="staff"]')); }
+		if (fpCurrentStep === 'checkout') { fpBuildCheckoutStep($mock.find('[data-sme-fp-step="checkout"]')); }
+	}
+	$root.on('change input', 'input[name="mpwpb_staff_member_add"], input[name="mpwpb_enable_recurring"], input[name="mpwpb_recurring_types[]"], input[name="mpwpb_max_recurring_count"], input[name="mpwpb_recurring_discount"], #mpwpb_staff_selector', fpOnSettingsChange);
+	// Staff tiles toggle .is-selected in their own click handler -- read it after that ran.
+	$root.on('click', '.mpwpb-staff-tile', function () { setTimeout(fpOnSettingsChange, 0); });
+	fpSyncSteps($root.find('[data-sme-fp-mock]'));
 
 	// Delegated from $root (always present at bind time) rather than bound
 	// directly to #mpwpb-csm, which mpwpb-categories-services-modern.js

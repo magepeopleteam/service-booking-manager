@@ -44,7 +44,13 @@
 		var label = openCount === 1
 			? ((window.mpwpbDtm && mpwpbDtm.dayOpenLabel) || 'day open')
 			: ((window.mpwpbDtm && mpwpbDtm.daysOpenLabel2) || 'days open');
-		$root.find('[data-dtm-open-sub]').text(openCount + ' ' + label);
+		var text = openCount + ' ' + label;
+		var ds = parseFloat($root.find('[name="mpwpb_default_start_time"]').val());
+		var de = parseFloat($root.find('[name="mpwpb_default_end_time"]').val());
+		if (!isNaN(ds) && !isNaN(de)) {
+			text += ' · ' + ((window.mpwpbDtm && mpwpbDtm.usuallyTxt) || 'usually') + ' ' + formatClock(Math.round(ds * 60)) + ' – ' + formatClock(Math.round(de * 60));
+		}
+		$root.find('[data-dtm-open-sub]').text(text);
 	}
 
 	function injectRowToggles() {
@@ -126,6 +132,15 @@
 		$slot.hide();
 		$tr.find('select[name$="_start_break_time"]').trigger('focus');
 	}
+	function inheritedBreak($tr) {
+		var day = $tr.find('[data-day-name]').data('day-name');
+		if (!day || day === 'default') {
+			return '';
+		}
+		var $ds = $root.find('select[name="mpwpb_default_start_break_time"]');
+		var $de = $root.find('select[name="mpwpb_default_end_break_time"]');
+		return ($ds.val() && $de.val()) ? formatBreakRange($ds, $de) : '';
+	}
 	function renderBreakSlot($slot, $tr) {
 		var $startSel = $tr.find('select[name$="_start_break_time"]');
 		var $endSel = $tr.find('select[name$="_end_break_time"]');
@@ -143,6 +158,16 @@
 				.attr('aria-label', (window.mpwpbDtm && mpwpbDtm.editBreakTxt) || 'Edit break')
 				.append(document.createTextNode(formatBreakRange($startSel, $endSel) + ' '))
 				.append($remove)
+				.on('click', function () {
+					openBreakEditing($(this).closest('tr'));
+				})
+				.appendTo($slot);
+		} else if (inheritedBreak($tr)) {
+			// Empty day break = the default row's break applies (MPWPB_Function::get_time_slot()).
+			$('<button type="button" class="mpwpb-dtm__break-inherit"></button>')
+				.attr('title', (window.mpwpbDtm && mpwpbDtm.defaultBreakTxt) || 'Default break')
+				.append($('<small></small>').text((window.mpwpbDtm && mpwpbDtm.defaultBreakTxt) || 'Default break'))
+				.append(document.createTextNode(inheritedBreak($tr)))
 				.on('click', function () {
 					openBreakEditing($(this).closest('tr'));
 				})
@@ -571,9 +596,243 @@
 		syncOffDateFields();
 	}
 
+	/* ---------------------------------------------------------------- *
+	 *  Booking rules card: days-ahead counter + presets, capacity hint,
+	 *  "no dates" warning and the one-line "Customers see:" summary.
+	 *  Every control still writes the real field (mpwpb_active_days,
+	 *  mpwpb_capacity_per_session, the off-screen selects) and fires
+	 *  change, so saving and the existing cascade are unchanged.
+	 * ---------------------------------------------------------------- */
+	var $rules = $root.find('[data-dtm-rules]');
+	function fmt(tpl, value) {
+		return String(tpl || '').replace('%d', value).replace('%s', value);
+	}
+	function activeDaysInput() {
+		return $rules.find('input[name="mpwpb_active_days"]');
+	}
+	function syncRules() {
+		if (!$rules.length) {
+			return;
+		}
+		var mode = $rules.find('select[name="mpwpb_date_type"]').val();
+		$rules.find('[data-dtm-schedule-value]').each(function () {
+			var on = String($(this).data('dtm-schedule-value')) === mode;
+			$(this).toggleClass('is-active', on).attr('aria-checked', on ? 'true' : 'false');
+		});
+
+		var days = parseInt(activeDaysInput().val(), 10) || 0;
+		$rules.find('[data-dtm-days-preset]').each(function () {
+			$(this).toggleClass('is-active', parseInt($(this).data('dtm-days-preset'), 10) === days);
+		});
+		$rules.find('[data-dtm-days-step="-1"]').prop('disabled', days <= 1);
+
+		var $pills = $rules.find('[data-dtm-slot-pills] .mpwpb-dtm__pillgroup-btn');
+		$pills.each(function () {
+			$(this).attr('aria-pressed', $(this).hasClass('is-active') ? 'true' : 'false');
+		});
+
+		var cap = parseInt($rules.find('input[name="mpwpb_capacity_per_session"]').val(), 10) || 1;
+		var $capHint = $rules.find('[data-dtm-capacity-hint]');
+		$capHint.text(cap <= 1 ? $capHint.attr('data-one') : fmt($capHint.attr('data-many'), cap));
+		$rules.find('[data-dtm-capacity-minus]').prop('disabled', cap <= 1);
+
+		var dateCount = $rules.find('[data-collapse="#mp_particular"] .mp_item_insert input[name="mpwpb_particular_dates[]"]').filter(function () {
+			return !!this.value;
+		}).length;
+		var cardCount = $rules.find('[data-collapse="#mp_particular"] .mp_item_insert > *').length;
+		$rules.find('[data-dtm-no-dates]').toggle(mode === 'particular' && cardCount === 0);
+
+		var $sum = $rules.find('[data-dtm-rules-summary]');
+		var slotVal = $rules.find('.mpwpb-slot-length-select').val();
+		var slotLabel = slotVal === 'custom'
+			? ((parseInt($rules.find('.mpwpb-slot-length-custom').val(), 10) || 0) + ' min')
+			: $.trim($rules.find('.mpwpb-slot-length-select option:selected').text());
+		var when = mode === 'particular'
+			? (dateCount === 0 ? $sum.attr('data-dates-none') : (dateCount === 1 ? $sum.attr('data-dates-one') : fmt($sum.attr('data-dates-many'), dateCount)))
+			: fmt($sum.attr('data-every'), days);
+		var who = cap <= 1 ? $sum.attr('data-cap-one') : fmt($sum.attr('data-cap-many'), cap);
+		var parts = [];
+		if (slotVal && (slotVal !== 'custom' || parseInt($rules.find('.mpwpb-slot-length-custom').val(), 10) > 0)) {
+			parts.push(fmt($sum.attr('data-slots'), slotLabel));
+		}
+		parts.push(when, who);
+		var text = parts.join(', ');
+		$sum.find('[data-dtm-rules-summary-text]').empty()
+			.append($('<strong></strong>').text($sum.attr('data-label') + ' '))
+			.append(document.createTextNode(text.charAt(0).toUpperCase() + text.slice(1) + '.'));
+	}
+	$rules.on('click', '[data-dtm-days-step]', function () {
+		var $input = activeDaysInput();
+		var next = Math.max(1, Math.min(365, (parseInt($input.val(), 10) || 0) + parseInt($(this).data('dtm-days-step'), 10)));
+		$input.val(next).trigger('change');
+		syncRules();
+	});
+	$rules.on('click', '[data-dtm-days-preset]', function () {
+		activeDaysInput().val($(this).data('dtm-days-preset')).trigger('change');
+		syncRules();
+	});
+	$rules.on('input change', 'input, select', function () {
+		syncRules();
+	});
+	$rules.on('click', '[data-dtm-schedule-value], [data-dtm-slot-value], [data-dtm-capacity-minus], [data-dtm-capacity-plus], .mp_add_item, .mpwpb_item_remove', function () {
+		setTimeout(syncRules, 0);
+	});
+
+	/* ---------------------------------------------------------------- *
+	 *  Weekly hours rows: name + "Default/Custom hours" sub-label, the
+	 *  default range as text with "Change" (a day whose own start/end are
+	 *  empty uses the default row -- MPWPB_Function::get_time_slot()), a
+	 *  reset-to-default button once customised, and a timeline bar. The
+	 *  real <select>s keep submitting; they are re-queried every time
+	 *  because mpwpb_admin.js swaps them over AJAX.
+	 * ---------------------------------------------------------------- */
+	function dtmTxt(key, fallback) {
+		return (window.mpwpbDtm && mpwpbDtm[key]) || fallback;
+	}
+	function hoursVal($tr, field) {
+		var v = $tr.find('select[name$="_' + field + '"]').val();
+		return (v === '' || v === null || v === undefined) ? null : parseFloat(v);
+	}
+	function decorateHourRows() {
+		$root.find('.mpwpb-dtm__table--rows tbody tr').each(function () {
+			var $tr = $(this);
+			if ($tr.data('dtm-decorated')) {
+				return;
+			}
+			$tr.data('dtm-decorated', true);
+			var $first = $tr.children('td').first();
+			var isDefault = !$tr.find('[data-day-name]').length || $tr.find('[data-day-name]').data('day-name') === 'default';
+			var name = $.trim($first.contents().filter(function () { return this.nodeType === 3; }).text());
+			$first.contents().filter(function () { return this.nodeType === 3; }).remove();
+			var $label = $('<span class="mpwpb-dtm__day-label"></span>')
+				.append($('<strong></strong>').text(isDefault ? dtmTxt('defaultHoursTxt', 'Default hours') : name))
+				.append($('<small data-dtm-day-sub></small>').text(isDefault ? dtmTxt('defaultHoursSubTxt', 'Used by every open day') : ''));
+			$first.append($label);
+			$tr.toggleClass('mpwpb-dtm__row--default', isDefault);
+
+			var $endTd = $tr.find('td.mpwpb_end_time');
+			if (!isDefault) {
+				$('<td class="mpwpb-dtm__day-default"></td>')
+					.append('<span class="mpwpb-dtm__day-range" data-dtm-day-range></span>')
+					.append($('<button type="button" class="mpwpb-dtm__day-change" data-dtm-day-change></button>').text(dtmTxt('changeTxt', 'Change')))
+					.insertBefore($tr.find('td.mpwpb_start_time'));
+				$('<td class="mpwpb-dtm__day-reset"></td>')
+					.append($('<button type="button" data-dtm-day-reset><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>')
+						.attr({ 'aria-label': dtmTxt('useDefaultTxt', 'Use default hours'), title: dtmTxt('useDefaultTxt', 'Use default hours') }))
+					.insertAfter($endTd);
+			}
+			$('<td class="mpwpb-dtm__bar-cell" aria-hidden="true"><span class="mpwpb-dtm__bar"><i class="mpwpb-dtm__bar-fill"></i><i class="mpwpb-dtm__bar-break"></i></span></td>')
+				.insertAfter($tr.find('td.mpwpb-dtm__day-reset').length ? $tr.find('td.mpwpb-dtm__day-reset') : $endTd);
+		});
+	}
+	function syncHours() {
+		var $rows = $root.find('.mpwpb-dtm__table--rows tbody tr');
+		var $def = $rows.filter('.mpwpb-dtm__row--default');
+		var defStart = hoursVal($def, 'start_time'), defEnd = hoursVal($def, 'end_time');
+		var defBs = hoursVal($def, 'start_break_time'), defBe = hoursVal($def, 'end_break_time');
+		var rows = [];
+		var lo = 6, hi = 22;
+		$rows.each(function () {
+			var $tr = $(this);
+			var isDefault = $tr.hasClass('mpwpb-dtm__row--default');
+			var ownStart = hoursVal($tr, 'start_time'), ownEnd = hoursVal($tr, 'end_time');
+			var usesDefault = !isDefault && ownStart === null && ownEnd === null && !$tr.data('dtm-editing');
+			var start = ownStart !== null ? ownStart : defStart;
+			var end = ownEnd !== null ? ownEnd : defEnd;
+			var bs = hoursVal($tr, 'start_break_time'), be = hoursVal($tr, 'end_break_time');
+			if (bs === null && be === null && !isDefault) { bs = defBs; be = defBe; }
+			if (start !== null) { lo = Math.min(lo, Math.floor(start)); }
+			if (end !== null) { hi = Math.max(hi, Math.ceil(end)); }
+			rows.push({ $tr: $tr, isDefault: isDefault, usesDefault: usesDefault, off: $tr.hasClass('mpwpb-dtm-row-off'), start: start, end: end, bs: bs, be: be });
+		});
+		var span = Math.max(1, hi - lo);
+		function pct(v) { return (Math.max(0, Math.min(span, v - lo)) / span * 100) + '%'; }
+		rows.forEach(function (r) {
+			var $tr = r.$tr;
+			$tr.toggleClass('mpwpb-dtm__row--uses-default', r.usesDefault && !r.off)
+				.toggleClass('mpwpb-dtm__row--custom', !r.isDefault && !r.usesDefault && !r.off);
+			if (!r.isDefault) {
+				$tr.find('[data-dtm-day-sub]').text(r.off ? dtmTxt('notBookableTxt', 'Not bookable') : (r.usesDefault ? dtmTxt('defaultHoursTxt', 'Default hours') : dtmTxt('customHoursTxt', 'Custom hours')));
+				var $range = $tr.find('[data-dtm-day-range]');
+				if (r.off) {
+					$range.empty().append($('<span class="mpwpb-dtm__closed-chip"></span>').text(dtmTxt('closedTxt', 'Closed')));
+				} else if (r.start !== null && r.end !== null) {
+					$range.text(formatClock(Math.round(r.start * 60)) + ' – ' + formatClock(Math.round(r.end * 60)));
+				}
+			}
+			var $fill = $tr.find('.mpwpb-dtm__bar-fill'), $brk = $tr.find('.mpwpb-dtm__bar-break');
+			if (r.off || r.start === null || r.end === null || r.end <= r.start) {
+				$fill.css({ left: 0, width: 0 });
+				$brk.css({ left: 0, width: 0 });
+				return;
+			}
+			$fill.css({ left: pct(r.start), width: ((Math.min(r.end, hi) - Math.max(r.start, lo)) / span * 100) + '%' });
+			if (r.bs !== null && r.be !== null && r.be > r.bs && r.bs >= r.start && r.be <= r.end) {
+				$brk.css({ left: pct(r.bs), width: ((r.be - r.bs) / span * 100) + '%' });
+			} else {
+				$brk.css({ left: 0, width: 0 });
+			}
+		});
+		var $scale = $root.find('[data-dtm-scale]').empty();
+		[lo, lo + span / 3, lo + span * 2 / 3, hi].forEach(function (h) {
+			var hh = Math.round(h);
+			$('<span></span>').text(hh % 12 === 0 ? (hh === 12 ? '12 PM' : '12 AM') : (hh % 12) + (hh < 12 ? ' AM' : ' PM')).appendTo($scale);
+		});
+		updateOpenSub();
+	}
+	var syncHoursTimer = null;
+	function scheduleSyncHours() {
+		clearTimeout(syncHoursTimer);
+		syncHoursTimer = setTimeout(function () {
+			$root.find('.mpwpb-dtm__table--rows tbody tr').each(function () {
+				syncBreakSlot($(this));
+			});
+			syncHours();
+		}, 30);
+	}
+	$root.on('click', '[data-dtm-day-change]', function () {
+		var $tr = $(this).closest('tr');
+		$tr.data('dtm-editing', true);
+		syncHours();
+		$tr.find('select[name$="_start_time"]').first().trigger('focus');
+	});
+	$root.on('click', '[data-dtm-day-reset]', function () {
+		var $tr = $(this).closest('tr');
+		$tr.data('dtm-editing', false);
+		$tr.find('select[name$="_end_time"]').not('[name$="_break_time"]').val('');
+		$tr.find('select[name$="_start_time"]').not('[name$="_break_time"]').val('').trigger('change');
+		// The start change rebuilds the end <select> over AJAX; clear it again once it lands.
+		var tries = 0;
+		var timer = setInterval(function () {
+			var $end = $tr.find('select[name$="_end_time"]').not('[name$="_break_time"]');
+			if ($end.val() !== '' && $end.find('option[value=""]').length) {
+				$end.val('').trigger('change');
+			}
+			if (++tries > 20) {
+				clearInterval(timer);
+			}
+			scheduleSyncHours();
+		}, 150);
+	});
+	$root.on('change', '.mpwpb-dtm__table--rows select, .mpwpb-dtm__row-toggle input', scheduleSyncHours);
+	$root.on('click', '[data-dtm-copy-monday]', function () {
+		var mondayCustom = $root.find('[data-day-name="monday"]').closest('tr').data('dtm-editing');
+		$root.find('.mpwpb-dtm__table--rows tbody tr').not('.mpwpb-dtm__row--default').data('dtm-editing', !!mondayCustom);
+		scheduleSyncHours();
+	});
+	if (window.MutationObserver) {
+		// Only the cells whose <select> mpwpb_admin.js swaps -- never the ones this file redraws.
+		$root.find('.mpwpb-dtm__table--rows tbody td.mpwpb_start_time, .mpwpb-dtm__table--rows tbody td.mpwpb_end_time, .mpwpb-dtm__table--rows tbody td.mpwpb_start_break_time, .mpwpb-dtm__table--rows tbody td.mpwpb_end_break_time').each(function () {
+			new MutationObserver(scheduleSyncHours).observe(this, { childList: true });
+		});
+	}
+
 	injectRowToggles();
 	injectBreakControls();
+	decorateHourRows();
+	syncHours();
 	updateOpenSub();
 	renderPreview();
 	initOffCalendar();
+	syncRules();
 })(jQuery);

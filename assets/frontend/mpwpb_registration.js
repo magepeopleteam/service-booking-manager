@@ -1606,6 +1606,11 @@ function mpwpb_price_calculation($this) {
         mpwpb_set_progress($(this).closest('div.mpwpb_registration'), 'staff');
         $("#mpwpb_datetime_holder").hide();
         $("#mpwpb_staff_member_booking_area").fadeIn();
+        // Re-check staff against the final set of dates (recurring
+        // occurrences included) -- only staff free for all of them are listed.
+        if (typeof window.mpwpbRefreshStaff === 'function') {
+            window.mpwpbRefreshStaff(parentGuard);
+        }
 
         $("#mpwpb_display_service_btn").hide();
         $("#mpwpb_display_date_time").fadeIn();

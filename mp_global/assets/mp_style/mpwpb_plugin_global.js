@@ -249,31 +249,8 @@ function mpwpb_load_date_picker_edit_curring_date(  off_days, off_dates ) {
 
                 let formattedDate = `${year}-${month}-${day}`;
 
-                let dateOnly = formattedDate;
-                let ajaxUrl = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.ajax_url : mpwpb_ajax_url;
-                let nonce = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.nonce : mpwpb_ajax.nonce;
-                let postId = mpwpb_recurring_data.post_id;
-
-                jQuery.ajax({
-                    type: 'POST',
-                    url: ajaxUrl,
-                    data: {
-                        action: 'mpwpb_get_filtered_time_by_date',
-                        post_id: postId,
-                        dates: dateOnly,
-                        nonce: nonce
-                    },
-                    success: function(response) {
-                        if (response.success && response.data && response.data.dates) {
-                            jQuery("#mpwpb_recurring_time_holedr").html(response.data.dates );
-                        } else {
-                            console.error('AJAX Data Loading error:');
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('AJAX error:', status, error);
-                    }
-                });
+                // Time slots for the new date are reloaded by mpwpb_recurring_booking.js's
+                // change listener on #mpwpb_date_edit_recurring.
                 // alert( formattedDate );
                 jQuery("#mpwpb_date_edit_recurring").val(formattedDate).trigger('change');
             }

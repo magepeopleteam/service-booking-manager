@@ -612,6 +612,11 @@
 								<div class="mpwpb-sme__fp-steps-item" data-sme-fp-steps-item="datetime">
 									<span class="mpwpb-sme__fp-steps-dot">2</span><?php esc_html_e('Date & Time', 'service-booking-manager'); ?>
 								</div>
+								<?php // Only shown while "Staff Member" is switched on (fpSyncSteps() in mpwpb-service-edit-modern.js renumbers the dots). ?>
+								<div class="mpwpb-sme__fp-steps-sep" data-sme-fp-staff-only hidden></div>
+								<div class="mpwpb-sme__fp-steps-item" data-sme-fp-steps-item="staff" data-sme-fp-staff-only hidden>
+									<span class="mpwpb-sme__fp-steps-dot">3</span><?php esc_html_e('Staff', 'service-booking-manager'); ?>
+								</div>
 								<div class="mpwpb-sme__fp-steps-sep"></div>
 								<div class="mpwpb-sme__fp-steps-item" data-sme-fp-steps-item="checkout">
 									<span class="mpwpb-sme__fp-steps-dot">3</span><?php esc_html_e('Checkout', 'service-booking-manager'); ?>
@@ -750,6 +755,7 @@
 							 * there's nothing server-side worth pre-rendering for either. */
 							?>
 							<div class="mpwpb-sme__fp-step mpwpb-sme__fp-step--datetime" data-sme-fp-step="datetime" hidden></div>
+							<div class="mpwpb-sme__fp-step mpwpb-sme__fp-step--staff" data-sme-fp-step="staff" hidden></div>
 							<div class="mpwpb-sme__fp-step mpwpb-sme__fp-step--checkout" data-sme-fp-step="checkout" hidden></div>
 						</div>
 
@@ -1193,6 +1199,24 @@
 						'previewMoreDatesTxt' => esc_html__('See more dates', 'service-booking-manager'),
 						'previewTotalTxt' => esc_html__('Total', 'service-booking-manager'),
 						'previewConfirmTxt' => esc_html__('Confirm Booking', 'service-booking-manager'),
+						'previewNextStaffTxt' => esc_html__('Next: Staff Member', 'service-booking-manager'),
+						'previewStaffHeadingTxt' => esc_html__('Choose a staff member', 'service-booking-manager'),
+						'previewStaffSubTxt' => esc_html__('Customers pick who they want, or let you assign anyone free.', 'service-booking-manager'),
+						'previewAnyStaffTxt' => esc_html__('Any Staff', 'service-booking-manager'),
+						'previewNoStaffTxt' => esc_html__('No staff selected yet. Pick staff in Staff Member settings.', 'service-booking-manager'),
+						'previewStaffLabelTxt' => esc_html__('Staff', 'service-booking-manager'),
+						'previewRecurTitleTxt' => esc_html__('Recurring booking', 'service-booking-manager'),
+						'previewRecurSubTxt' => esc_html__('Book this same time again on a regular schedule.', 'service-booking-manager'),
+						'previewRecurCountTxt' => esc_html__('Number of occurrences', 'service-booking-manager'),
+						'previewRecurBookingsTxt' => esc_html__('bookings', 'service-booking-manager'),
+						'previewRecurLabelTxt' => esc_html__('Recurring', 'service-booking-manager'),
+						'previewRecurDiscountTxt' => esc_html__('Recurring discount', 'service-booking-manager'),
+						'previewRecurTypes' => array(
+							'daily' => esc_html__('Daily', 'service-booking-manager'),
+							'weekly' => esc_html__('Weekly', 'service-booking-manager'),
+							'bi-weekly' => esc_html__('Bi-weekly', 'service-booking-manager'),
+							'monthly' => esc_html__('Monthly', 'service-booking-manager'),
+						),
 						'previewStep1Label' => esc_html__('Services', 'service-booking-manager'),
 						'previewStep2Label' => esc_html__('Date & Time', 'service-booking-manager'),
 						'hhWindowTitle' => esc_html__('Time Window', 'service-booking-manager'),
@@ -1273,6 +1297,16 @@
 						'legendTodayTxt' => esc_html__('Today', 'service-booking-manager'),
 						'offListEmptyTxt' => esc_html__('No dates marked closed yet.', 'service-booking-manager'),
 						'removeDateTxt' => esc_html__('Remove', 'service-booking-manager'),
+						'usuallyTxt' => esc_html__('usually', 'service-booking-manager'),
+						'defaultHoursTxt' => esc_html__('Default hours', 'service-booking-manager'),
+						'defaultHoursSubTxt' => esc_html__('Used by every open day', 'service-booking-manager'),
+						'customHoursTxt' => esc_html__('Custom hours', 'service-booking-manager'),
+						'notBookableTxt' => esc_html__('Not bookable', 'service-booking-manager'),
+						'closedTxt' => esc_html__('Closed', 'service-booking-manager'),
+						'changeTxt' => esc_html__('Change', 'service-booking-manager'),
+						'useDefaultTxt' => esc_html__('Use default hours', 'service-booking-manager'),
+						'defaultBreakTxt' => esc_html__('Default break', 'service-booking-manager'),
+						'noBreakTxt' => esc_html__('No break', 'service-booking-manager'),
 					));
 
 					// FAQ (Advanced step). Pure CSS reskin of the classic accordion —

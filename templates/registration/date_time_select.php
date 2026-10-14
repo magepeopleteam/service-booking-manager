@@ -50,28 +50,40 @@
     <input type="hidden" class="mpwpb_off_dates_data" id="mpwpb_off_dates_data" value="<?php echo esc_attr( $off_dates_recurring );?>">
 </div>
 <!-- Popup Wrapper -->
-<div class="mpwpb_edit_recurring_datetime_popup" style="display:none;">
+<div class="mpwpb_edit_recurring_datetime_popup" style="display:none;"
+     data-loading-text="<?php esc_attr_e('Loading times…', 'service-booking-manager'); ?>"
+     data-no-slots-text="<?php esc_attr_e('No times available on this date.', 'service-booking-manager'); ?>"
+     data-required-text="<?php esc_attr_e('Please select both date and time.', 'service-booking-manager'); ?>"
+     data-duplicate-text="<?php esc_attr_e('This date and time is already in your list.', 'service-booking-manager'); ?>">
     <div class="mpwpb_edit_recurring_datetime_overlay"></div>
-    <div class="mpwpb_edit_recurring_datetime_modal">
-        <h3>Select Time</h3>
+    <div class="mpwpb_edit_recurring_datetime_modal" role="dialog" aria-modal="true" aria-labelledby="mpwpb_edit_recurring_title">
+        <header class="mpwpb_edit_recurring_head">
+            <span class="mpwpb_edit_recurring_head_icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg></span>
+            <div class="mpwpb_edit_recurring_head_text">
+                <h3 id="mpwpb_edit_recurring_title"><?php esc_html_e('Change date & time', 'service-booking-manager'); ?></h3>
+                <span><?php esc_html_e('Pick a new slot for this occurrence.', 'service-booking-manager'); ?></span>
+            </div>
+            <button type="button" class="mpwpb_edit_recurring_datetime_close mpwpb_edit_recurring_x" aria-label="<?php esc_attr_e('Close', 'service-booking-manager'); ?>"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </header>
+        <div class="mpwpb_edit_recurring_datetime_input_wrap">
+            <label class="mpwpb_edit_recurring_label" for="date_type_edit_recurring"><?php esc_html_e('Date', 'service-booking-manager'); ?></label>
+            <div class="mpwpb_edit_recurring_date_field">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>
+                <input type="text" id="date_type_edit_recurring" class="formControl date_type_edit_recurring" value="" readonly placeholder="<?php esc_attr_e('Select a date', 'service-booking-manager'); ?>"/>
+            </div>
+            <input type="hidden" id="mpwpb_date_edit_recurring" class="mpwpb_date_edit_recurring" value=""/>
+        </div>
+        <div class="mpwpb_edit_recurring_label"><?php esc_html_e('Time', 'service-booking-manager'); ?></div>
         <div class="mpwpb_edit_recurring_datetime_timeslot_wrap" id="mpwpb_edit_recurring_datetime_timeslot_wrap">
             <input type="hidden" id="mpwpb_get_selected_time" value="">
             <div class="mpwpb_recurring_time_holedr" id="mpwpb_recurring_time_holedr">
-                <div class="mpwpb_recurring_loader">Loading...</div>
+                <div class="mpwpb_recurring_loader"><?php esc_html_e('Loading times…', 'service-booking-manager'); ?></div>
             </div>
-
-            <!-- Add more as needed -->
-        </div>
-        <div class="mpwpb_edit_recurring_datetime_input_wrap">
-            <h3>Selecte Date</h3>
-            <input type="text" id="date_type_edit_recurring" class="formControl date_type_edit_recurring" value=""/>
-            <input type="hidden" id="mpwpb_date_edit_recurring" class="mpwpb_date_edit_recurring" value=""/>
         </div>
         <div class="mpwpb_edit_date_btn_holder">
-            <button class="mpwpb_recurring_datetime_set" id="mpwpb_recurring_datetime_set" data-recurringli-id="">Set</button>
-            <button class="mpwpb_edit_recurring_datetime_close">Close</button>
+            <button type="button" class="mpwpb_edit_recurring_datetime_close"><?php esc_html_e('Cancel', 'service-booking-manager'); ?></button>
+            <button type="button" class="mpwpb_recurring_datetime_set" id="mpwpb_recurring_datetime_set" data-recurringli-id=""><?php esc_html_e('Save changes', 'service-booking-manager'); ?></button>
         </div>
-
     </div>
 </div>
 
@@ -120,18 +132,25 @@
                 if ($enable_recurring === 'yes') { ?>
                         <div class="_dShadow_7_mB_xs mpwpb_recurring_booking_area" id="mpwpb_recurring_booking_area" style="display: none;">
                             <div class="mpwpb_recurring_booking">
-                                <header class="_dFlex_alignCenter_justifyBetween">
-                                    <h3><?php esc_html_e('Recurring Booking Options', 'service-booking-manager'); ?></h3>
+                                <?php /* Redesigned recurring block. The real fields the booking
+                                 * script reads (enable checkbox, type <select>, count input,
+                                 * hidden count, discount, dates list) are all still here --
+                                 * the switch, type chips and stepper only drive them
+                                 * (mpwpb_recurring_booking.js, syncRecurringUi()). */ ?>
+                                <header class="mpwpb_recurring_head">
+                                    <span class="mpwpb_recurring_head_icon" aria-hidden="true">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M17 2l3 3-3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 11V9a4 4 0 0 1 4-4h12M7 22l-3-3 3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 13v2a4 4 0 0 1-4 4H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    </span>
+                                    <span class="mpwpb_recurring_head_text">
+                                        <h3><?php esc_html_e('Recurring booking', 'service-booking-manager'); ?></h3>
+                                        <span class="mpwpb_recurring_head_sub"><?php esc_html_e('Book this same time again on a regular schedule.', 'service-booking-manager'); ?></span>
+                                    </span>
+                                    <label class="mpwpb_recurring_switch" title="<?php esc_attr_e('Enable Recurring Booking', 'service-booking-manager'); ?>">
+                                        <input type="checkbox" name="mpwpb_enable_recurring_booking" id="mpwpb_enable_recurring_booking" role="switch" aria-label="<?php esc_attr_e('Enable Recurring Booking', 'service-booking-manager'); ?>">
+                                        <span class="mpwpb_recurring_switch_track" aria-hidden="true"></span>
+                                    </label>
                                 </header>
                                 <div class="mpwpb_recurring_options">
-                                    <div class="mpwpb_recurring_toggle">
-                                        <label class="switch">
-                                            <input type="checkbox" name="mpwpb_enable_recurring_booking" id="mpwpb_enable_recurring_booking">
-                                            <span class="slider round"></span>
-                                        </label>
-                                        <label for="mpwpb_enable_recurring_booking"><?php esc_html_e('Enable Recurring Booking', 'service-booking-manager'); ?></label>
-                                    </div>
-
                                     <div class="mpwpb_recurring_settings" style="display: none;">
                                         <div class="mpwpb_weekday_selector" id="mpwpb_weekday_selector" style="display: none">
                                             <label><input type="checkbox" name="recurring_days[]" value="sun"> <?php esc_html_e('Sunday', 'service-booking-manager'); ?></label>
@@ -143,8 +162,9 @@
                                             <label><input type="checkbox" name="recurring_days[]" value="sat"> <?php esc_html_e('Saturday', 'service-booking-manager'); ?></label>
                                         </div>
                                         <div class="mpwpb_recurring_type">
-                                            <label><?php esc_html_e('Recurring Type', 'service-booking-manager'); ?></label>
-                                            <select name="mpwpb_recurring_type" id="mpwpb_recurring_type">
+                                            <span class="mpwpb_recurring_label"><?php esc_html_e('Repeats', 'service-booking-manager'); ?></span>
+                                            <div class="mpwpb_recurring_type_chips" role="radiogroup" aria-label="<?php esc_attr_e('Recurring Type', 'service-booking-manager'); ?>"></div>
+                                            <select name="mpwpb_recurring_type" id="mpwpb_recurring_type" class="mpwpb_recurring_type_select" aria-hidden="true" tabindex="-1">
                                                 <option value=""><?php esc_html_e('Select Recurring Type', 'service-booking-manager'); ?></option>
                                                 <?php foreach ($recurring_types as $type) {
                                                     $label = '';
@@ -169,10 +189,18 @@
                                         </div>
 
                                         <div class="mpwpb_recurring_count">
-                                            <label><?php esc_html_e('Number of Occurrences', 'service-booking-manager'); ?></label>
-                                            <input type="number" name="mpwpb_recurring_count" id="mpwpb_recurring_count" min="2" max="<?php echo esc_attr($max_recurring_count); ?>" value="2">
+                                            <span class="mpwpb_recurring_count_text">
+                                                <span class="mpwpb_recurring_count_title"><?php esc_html_e('Number of occurrences', 'service-booking-manager'); ?></span>
+                                                <span class="mpwpb_recurring_count_hint"><?php
+                                                    /* translators: %d: maximum number of recurring occurrences */
+                                                    echo esc_html(sprintf(__('Between 2 and %d', 'service-booking-manager'), (int) $max_recurring_count)); ?></span>
+                                            </span>
+                                            <span class="mpwpb_recurring_stepper">
+                                                <button type="button" class="mpwpb_recurring_step" data-recurring-step="-1" aria-label="<?php esc_attr_e('Fewer occurrences', 'service-booking-manager'); ?>"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button>
+                                                <input type="number" name="mpwpb_recurring_count" id="mpwpb_recurring_count" min="2" max="<?php echo esc_attr($max_recurring_count); ?>" value="2" aria-label="<?php esc_attr_e('Number of occurrences', 'service-booking-manager'); ?>">
+                                                <button type="button" class="mpwpb_recurring_step mpwpb_recurring_step--plus" data-recurring-step="1" aria-label="<?php esc_attr_e('More occurrences', 'service-booking-manager'); ?>"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M12 5v14" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button>
+                                            </span>
                                             <input type="hidden" name="mpwpb_recurring_count_hidden" id="mpwpb_recurring_count_hidden" min="2" max="<?php echo esc_attr($max_recurring_count); ?>" value="2">
-                                            <p class="description"><?php esc_html_e('Maximum allowed:', 'service-booking-manager'); ?> <?php echo esc_html($max_recurring_count); ?></p>
                                         </div>
 
                                         <?php if ($recurring_discount > 0) { ?>
@@ -181,8 +209,14 @@
                                             </div>
                                         <?php } ?>
 
-                                        <div class="mpwpb_recurring_dates" style="display: none;">
-                                            <h4><?php esc_html_e('Recurring Dates', 'service-booking-manager'); ?></h4>
+                                        <div class="mpwpb_recurring_dates" style="display: none;"
+                                             data-count-label="<?php
+                                                /* translators: %d: number of recurring bookings */
+                                                echo esc_attr__('%d bookings', 'service-booking-manager'); ?>">
+                                            <h4 class="mpwpb_recurring_dates_head">
+                                                <span class="mpwpb_recurring_dates_count"><?php esc_html_e('Recurring Dates', 'service-booking-manager'); ?></span>
+                                                <span class="mpwpb_recurring_dates_range"></span>
+                                            </h4>
                                             <ul id="mpwpb_recurring_dates_list"></ul>
                                         </div>
                                     </div>

@@ -33,6 +33,10 @@ if (!class_exists('MPWPB_Staff_Booking')) {
         }
 
         public function mpwpb_is_staff_booked_order( $staff_term_id, $datetime ) {
+            return self::staff_has_order_at( $staff_term_id, $datetime );
+        }
+
+        public static function staff_has_order_at( $staff_term_id, $datetime ) {
             // Only existence is ever checked (!empty($bookings)) -- this used
             // to fetch every matching booking as full WP_Post objects with no
             // row limit (posts_per_page => -1) and compute found_rows on top,
@@ -98,6 +102,35 @@ if (!class_exists('MPWPB_Staff_Booking')) {
 
             $aa = ($diff_days % $repeat_every_days === 0);
             return  $aa;
+        }
+
+        /** "2026-10-20 16:30, 2026-10-27 16:30" -> normalized "Y-m-d H:i" list (invalid parts dropped). */
+        public static function parse_datetimes($value) {
+            $out = array();
+            foreach (explode(',', (string) $value) as $part) {
+                if (preg_match('/^\s*(\d{4}-\d{2}-\d{2})[ T](\d{2}):(\d{2})/', $part, $m)) {
+                    $out[] = $m[1] . ' ' . $m[2] . ':' . $m[3];
+                }
+            }
+            return array_values(array_unique($out));
+        }
+
+        /**
+         * Free for every given "Y-m-d H:i": on schedule that day, inside working
+         * hours / outside the break, and not already booked at that time. The
+         * first two are exactly MPWPB_Woocommerce::validate_staff()'s checks.
+         */
+        public static function is_staff_free($staff_id, array $datetimes) {
+            foreach ($datetimes as $datetime) {
+                $date = substr($datetime, 0, 10);
+                $time = (string) ((int) substr($datetime, 11, 2) + ((int) substr($datetime, 14, 2) / 60));
+                if (!self::get_date_check($staff_id, $date, $time)
+                    || !self::mpwpb_is_staff_available_time($staff_id, $time, $date)
+                    || self::staff_has_order_at($staff_id, $datetime)) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         public function mpwpb_is_staff_booked( $staff_id, $date, $time ) {
@@ -318,6 +351,15 @@ if (!class_exists('MPWPB_Staff_Booking')) {
             $date       = isset($_POST['staff_date']) ? sanitize_text_field(wp_unslash($_POST['staff_date'])) : '';
             $time       = isset($_POST['staff_time']) ? sanitize_text_field($_POST['staff_time']) : '';
             $date_time  = isset($_POST['date_time']) ? sanitize_text_field($_POST['date_time']) : '';
+            // Every booking datetime ("Y-m-d H:i", comma separated) -- the
+            // first slot plus each recurring occurrence. Staff are listed only
+            // when free for ALL of them, the same rule add-to-cart enforces
+            // (MPWPB_Woocommerce::validate_staff), so a listed staff member can
+            // never be rejected with "The selected staff member is not available."
+            $all_dates = isset($_POST['dates']) ? self::parse_datetimes(sanitize_text_field(wp_unslash($_POST['dates']))) : array();
+            if (!$all_dates) {
+                $all_dates = self::parse_datetimes($date_time);
+            }
 
             $response = [
                 'html' => '',
@@ -343,13 +385,12 @@ if (!class_exists('MPWPB_Staff_Booking')) {
                         ]);
 
                         foreach ($all_staffs as $staff_data) {
-                            $staff_id = $staff_data->ID;
-                            if ($this->mpwpb_is_staff_booked($staff_id, $date, $time)) {
-                                if (!$this->mpwpb_is_staff_booked_order($staff_id, $date_time)) {
-                                    if (self::mpwpb_is_staff_available_time($staff_id, $time, $date_time)) {
-                                        $available_staff[] = $staff_data;
-                                    }
-                                }
+                            if ($all_dates ? self::is_staff_free($staff_data->ID, $all_dates) : (
+                                $this->mpwpb_is_staff_booked($staff_data->ID, $date, $time)
+                                && !$this->mpwpb_is_staff_booked_order($staff_data->ID, $date_time)
+                                && self::mpwpb_is_staff_available_time($staff_data->ID, $time, $date_time)
+                            )) {
+                                $available_staff[] = $staff_data;
                             }
                         }
                     }
