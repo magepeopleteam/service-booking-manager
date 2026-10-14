@@ -4,7 +4,7 @@ Tags: appointment booking, booking calendar, service booking, online booking, wo
 Requires at least: 5.3
 Tested up to: 7.0
 Requires PHP: 7.0
-Stable tag: 1.4.4
+Stable tag: 1.4.5
 WC requires at least: 3.0
 WC tested up to: 10.9.1
 License: GPLv2 or later
