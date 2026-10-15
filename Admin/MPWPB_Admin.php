@@ -21,6 +21,7 @@
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Help_Guide.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Taxonomy.php';
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Dummy_Import.php';
+				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Onboarding.php';
 				if (MPWPB_Global_Function::is_wc_payment_mode()) {
 					require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Hidden_Product.php';
 				}
@@ -89,9 +90,6 @@
 				// appends after every other item above (Service List/Coupons/
 				// Status/Reviews/Staff Members/Settings/Analytics), landing last.
 				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Pro_Locked_Menus.php';
-				// Modern "Upgrade to Pro" admin notice -- self-gates to Pro-inactive
-				// and only renders on this plugin's own screens.
-				require_once MPWPB_PLUGIN_DIR . '/Admin/MPWPB_Pro_Upsell_Notice.php';
 			}
 			public function flush_rewrite() {
 				flush_rewrite_rules();

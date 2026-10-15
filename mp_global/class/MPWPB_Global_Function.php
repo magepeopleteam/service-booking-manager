@@ -503,10 +503,7 @@
 			}
 			/** Public pricing page every "PRO" lock in the free plugin links to. */
 			public static function pro_upgrade_url(): string {
-				$url = class_exists('MPWPB_Pro_Upsell_Notice')
-					? MPWPB_Pro_Upsell_Notice::PRO_URL
-					: 'https://mage-people.com/product/service-booking-plugin-wpbookingly/#pricing';
-				return apply_filters('mpwpb_pro_upgrade_url', $url);
+				return apply_filters('mpwpb_pro_upgrade_url', 'https://mage-people.com/product/service-booking-plugin-wpbookingly/#pricing');
 			}
 			/**
 			 * Custom Payment (the built-in, non-WooCommerce checkout) is a FREE

@@ -134,6 +134,16 @@
 		$tmp.remove();
 	}
 
-	// On load the first listed service is open.
+	// On load the first listed service is open -- or the one named in the URL
+	// (?mpwpb_service=ID, e.g. right after the setup wizard created it).
+	var wanted = (window.location.search.match(/[?&]mpwpb_service=(\d+)/) || [])[1];
+	if (wanted && $root.find('[data-sv-item="' + wanted + '"]').length) {
+		current = wanted;
+	}
 	filter();
+	if (wanted && current === wanted) {
+		select(wanted);
+		var item = $root.find('[data-sv-item="' + wanted + '"]')[0];
+		if (item && item.scrollIntoView) { item.scrollIntoView({ block: 'nearest' }); }
+	}
 })(jQuery);

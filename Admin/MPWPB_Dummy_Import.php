@@ -45,6 +45,12 @@
 				if (self::is_already_imported()) {
 					return false;
 				}
+				// Once the setup wizard has been shown, demo import is its
+				// choice to make -- never start importing on its own after
+				// "Skip & Explore" (the Status page button still works).
+				if (get_option('mpwpb_onboarding_status')) {
+					return false;
+				}
 				$dismissed = get_option('mpwpb_dummy_import_dismissed');
 				if ($dismissed == 'yes') {
 					return false;
@@ -439,7 +445,7 @@
 			 * @param array $hours    ['start','end','break_start','break_end'] for the default day.
 			 * @param array $per_day  day key => ['start','end'] overrides (e.g. a shorter Saturday).
 			 */
-			private static function dummy_schedule(int $slot, int $capacity, array $hours, string $off_days, array $per_day = array()): array {
+			public static function dummy_schedule(int $slot, int $capacity, array $hours, string $off_days, array $per_day = array()): array {
 				$meta = array(
 					'mpwpb_date_type' => 'repeated',
 					'mpwpb_repeated_start_date' => current_time('Y-m-d'),
@@ -470,7 +476,7 @@
 			 * editor saves. $cat / $sub are indexes into the category and
 			 * sub-category lists ('' = none).
 			 */
-			private static function dummy_service(string $name, $price, string $duration, string $details, string $icon, $cat = '', $sub = ''): array {
+			public static function dummy_service(string $name, $price, string $duration, string $details, string $icon, $cat = '', $sub = ''): array {
 				return array(
 					'name' => $name,
 					'price' => $price,
@@ -871,12 +877,28 @@
 			 */
 			private static function import_dummy_reviews(int $post_id, array $reviews) {
 				global $wpdb;
-				$table = $wpdb->prefix . 'mpwpb_reviews';
-				if (empty($reviews) || $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) !== $table) {
+				if (empty($reviews)) {
 					return;
 				}
-				$total = 0;
+				// The Customer reviews fields (rating, scale, "(N ratings)") are
+				// always filled from the sample reviews, even if the rows below
+				// cannot be written.
 				$count = count($reviews);
+				$total = array_sum(array_map(function ($r) { return (int) $r[1]; }, $reviews));
+				update_post_meta($post_id, 'mpwpb_service_review_ratings', number_format($total / $count, 1));
+				update_post_meta($post_id, 'mpwpb_service_rating_scale', 'Out of 5');
+				/* translators: %d: number of ratings */
+				update_post_meta($post_id, 'mpwpb_service_rating_text', sprintf(__('(%d ratings)', 'service-booking-manager'), $count));
+
+				// On a fresh install the reviews table only exists once the Reviews
+				// admin page has been opened, so create it here rather than skip.
+				if (class_exists('MPWPB_Business_Templates_Import')) {
+					MPWPB_Business_Templates_Import::ensure_reviews_table();
+				}
+				$table = $wpdb->prefix . 'mpwpb_reviews';
+				if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) !== $table) {
+					return;
+				}
 				foreach ($reviews as $i => $review) {
 					list($name, $rating, $title, $content) = $review;
 					$wpdb->insert($table, array(
@@ -890,12 +912,7 @@
 						// Spread over the last few weeks, oldest first.
 						'date_created' => gmdate('Y-m-d H:i:s', time() - ($count - $i) * 9 * DAY_IN_SECONDS),
 					));
-					$total += (int) $rating;
 				}
-				update_post_meta($post_id, 'mpwpb_service_review_ratings', number_format($total / $count, 1));
-				update_post_meta($post_id, 'mpwpb_service_rating_scale', 'Out of 5');
-				/* translators: %d: number of ratings */
-				update_post_meta($post_id, 'mpwpb_service_rating_text', sprintf(__('(%d ratings)', 'service-booking-manager'), $count));
 			}
 			public static function insert_media($file_path) {
 				$attachment = self::does_attachment_exist(basename($file_path));

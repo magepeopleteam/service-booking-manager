@@ -13,7 +13,11 @@
 			const AJAX_ACTION = 'mpwpb_import_business_template';
 			const NONCE_ACTION = 'mpwpb_admin_nonce';
 
+			/** The one hooked instance, so the onboarding wizard can reuse the picker data. */
+			public static $instance = null;
+
 			public function __construct() {
+				self::$instance = $this;
 				add_action('admin_enqueue_scripts', [$this, 'enqueue_assets']);
 				add_action('wp_ajax_' . self::AJAX_ACTION, [$this, 'ajax_import_business_template']);
 			}
@@ -76,7 +80,7 @@
 			}
 
 			/** Industry groups for the picker list (the registry itself has none). */
-			private function picker_groups(): array {
+			public function picker_groups(): array {
 				return [
 					__('Automotive', 'service-booking-manager') => ['car_wash', 'auto_repair', 'car_rental'],
 					__('Beauty & wellness', 'service-booking-manager') => ['hair_salon', 'spa_massage', 'nail_salon'],
@@ -144,7 +148,7 @@
 			 * Data sent to the browser for the picker list and its preview pane:
 			 * what the template will create (never the import itself).
 			 */
-			private function picker_payload(): array {
+			public function picker_payload(): array {
 				$registry = mpwpb_business_templates_registry();
 				$group_of = [];
 				foreach ($this->picker_groups() as $group => $keys) {
@@ -448,7 +452,7 @@
 
 			private function seed_reviews(int $post_id, array $reviews): void {
 				global $wpdb;
-				$this->ensure_reviews_table();
+				self::ensure_reviews_table();
 				$table_name = $wpdb->prefix . 'mpwpb_reviews';
 
 				foreach ($reviews as $review) {
@@ -477,7 +481,8 @@
 			 * fires. Kept as a cheap, idempotent safety net (SHOW TABLES LIKE
 			 * guard, same as the original) rather than a hard dependency.
 			 */
-			private function ensure_reviews_table(): void {
+			/** Creates wp_mpwpb_reviews if missing; also used by the demo importer. */
+			public static function ensure_reviews_table(): void {
 				global $wpdb;
 				$table_name = $wpdb->prefix . 'mpwpb_reviews';
 				if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") == $table_name) {

@@ -55,7 +55,17 @@
 						));
 					}
 					flush_rewrite_rules();
-					wp_safe_redirect(admin_url('edit.php?post_type=mpwpb_item&page=mpwpb_service_list'));
+					// Bulk activation (several plugins at once) stays on the Plugins screen.
+					if (isset($_GET['activate-multi']) || (defined('WP_CLI') && WP_CLI)) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- core flag, read only.
+						return;
+					}
+					// First activation: the onboarding wizard. After it has been
+					// finished or skipped once, go straight to the services list.
+					$onboarding = class_exists('MPWPB_Onboarding') && MPWPB_Onboarding::is_pending() && current_user_can('manage_options');
+					if ($onboarding) {
+						MPWPB_Onboarding::mark_shown();
+					}
+					wp_safe_redirect($onboarding ? MPWPB_Onboarding::url() : admin_url('edit.php?post_type=mpwpb_item&page=mpwpb_service_list'));
 					exit;
 				}
 			}
