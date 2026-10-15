@@ -2177,4 +2177,84 @@
 		railStickyResizeTimer = setTimeout(syncRailStickyTop, 150);
 	});
 
+	/* ---------------------------------------------------------------- *
+	 *  Gallery images card: thumbnail grid with the add button as the
+	 *  last tile (a large "Add photos" area while empty), photo count,
+	 *  drag to reorder, and an "off" note. The classic markup/handlers
+	 *  (mpwpb_admin_settings.js: .add_multi_image / .mpwpb_remove_multi_image
+	 *  and the hidden comma-separated mpwpb_slider_images) are untouched;
+	 *  reordering rewrites that hidden value in the new order.
+	 * ---------------------------------------------------------------- */
+	(function modernizeGallery() {
+		var $card = $root.find('.mpwpb-sme__gallery-card');
+		var $body = $card.find('.mpwpb-sme__gallery-body');
+		var $area = $body.find('.mpwpb_multi_image_area');
+		if (!$area.length) { return; }
+		var $grid = $area.find('.mpwpb_multi_image');
+		var $btn = $area.find('.add_multi_image');
+		var $foot = $('<div class="mpwpb-sme__gallery-foot"><span data-sme-gallery-count></span><span class="mpwpb-sme__gallery-reorder"></span></div>');
+		$foot.find('.mpwpb-sme__gallery-reorder').text($body.attr('data-reorder') || 'Drag to reorder');
+		$area.append($foot);
+		var syncing = false;
+
+		function writeOrder() {
+			var ids = $grid.children('.mpwpb_multi_image_item').map(function () { return $(this).attr('data-image-id'); }).get()
+				.filter(function (id) { return !!id; });
+			$area.find('.mpwpb_multi_image_value').val(ids.join(','));
+		}
+		function sync() {
+			if (syncing) { return; }
+			syncing = true;
+			var count = $grid.children('.mpwpb_multi_image_item').length;
+			var empty = count === 0;
+			$area.toggleClass('is-empty', empty);
+			$btn.empty().attr('aria-label', $body.attr('data-add-title') || 'Add photos');
+			if (empty) {
+				$btn.append('<span class="mpwpb-sme__gallery-add-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></span>')
+					.append($('<strong></strong>').text($body.attr('data-add-title') || 'Add photos'))
+					.append($('<small></small>').text($body.attr('data-add-hint') || ''));
+				if ($btn.next()[0] !== $foot[0]) { $btn.insertBefore($foot); }
+			} else {
+				$btn.append('<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>')
+					.append($('<span></span>').text($body.attr('data-add-tile') || 'Add'));
+				// Always the last tile, also after a newly added photo (only moved when
+				// it isn't already last, so the observer below doesn't loop).
+				if ($grid.children().last()[0] !== $btn[0]) { $grid.append($btn); }
+			}
+			$grid.children('.mpwpb_multi_image_item').find('.mpwpb_remove_multi_image')
+				.attr({ role: 'button', tabindex: '0', 'aria-label': $body.attr('data-remove') || 'Remove photo' });
+			var label = count === 1 ? ($body.attr('data-one') || '1 photo') : String($body.attr('data-many') || '%d photos').replace('%d', count);
+			$foot.find('[data-sme-gallery-count]').text(label);
+			$foot.toggle(!empty);
+			$foot.find('.mpwpb-sme__gallery-reorder').toggle(count > 1);
+			syncing = false;
+		}
+		if ($.fn.sortable) {
+			$grid.sortable({
+				items: '> .mpwpb_multi_image_item',
+				tolerance: 'pointer',
+				placeholder: 'mpwpb-sme__gallery-placeholder',
+				forcePlaceholderSize: true,
+				update: function () { writeOrder(); sync(); }
+			});
+		}
+		// Keyboard users can remove too (the remove icon is a span).
+		$grid.on('keydown', '.mpwpb_remove_multi_image', function (e) {
+			if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $(this).trigger('click'); }
+		});
+		if (window.MutationObserver) {
+			new MutationObserver(function () { setTimeout(sync, 0); }).observe($grid[0], { childList: true });
+		}
+		var $toggle = $card.find('input[name="mpwpb_display_slider"]');
+		function syncToggle() {
+			var on = $toggle.is(':checked');
+			var $sub = $card.find('[data-sme-gallery-sub]');
+			$sub.text(on ? $sub.attr('data-on') : $sub.attr('data-off'));
+			$card.find('[data-sme-gallery-off]').prop('hidden', on);
+		}
+		$toggle.on('change', syncToggle);
+		sync();
+		syncToggle();
+	})();
+
 })(jQuery);

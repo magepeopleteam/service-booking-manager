@@ -403,15 +403,26 @@
 					<div class="mpwpb-sme__rail-card mpwpb-sme__gallery-card mpwpb-sme__rail-card--loading" data-sme-step-only="general">
 						<?php $this->render_rail_card_skeleton('featured'); ?>
 						<div class="mpwpb-sme__gallery-head">
+							<span class="mpwpb-sme__gallery-icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="14" height="14" rx="2"/><path d="M21 8v11a2 2 0 0 1-2 2H8"/><circle cx="8.5" cy="10" r="1.5"/><path d="M17 15l-3.5-3.5L6 19"/></svg></span>
 							<div class="mpwpb-sme__gallery-head-text">
-								<div class="mpwpb-sme__feat-head"><?php esc_html_e('Gallery Images', 'service-booking-manager'); ?></div>
-								<p class="mpwpb-sme__gallery-sub"><?php esc_html_e('Additional photos.', 'service-booking-manager'); ?></p>
+								<div class="mpwpb-sme__feat-head"><?php esc_html_e('Gallery images', 'service-booking-manager'); ?></div>
+								<p class="mpwpb-sme__gallery-sub" data-sme-gallery-sub
+								   data-on="<?php esc_attr_e('Shown as a slider on the service page', 'service-booking-manager'); ?>"
+								   data-off="<?php esc_attr_e('Slider off', 'service-booking-manager'); ?>"><?php echo $gallery_checked ? esc_html__('Shown as a slider on the service page', 'service-booking-manager') : esc_html__('Slider off', 'service-booking-manager'); ?></p>
 							</div>
 							<?php MPWPB_Custom_Layout::switch_button('mpwpb_display_slider', $gallery_checked); ?>
 						</div>
-						<div class="mpwpb-sme__gallery-body <?php echo esc_attr($gallery_active_class); ?>" data-collapse="#mpwpb_display_slider">
+						<div class="mpwpb-sme__gallery-body <?php echo esc_attr($gallery_active_class); ?>" data-collapse="#mpwpb_display_slider"
+						     data-add-tile="<?php esc_attr_e('Add', 'service-booking-manager'); ?>"
+						     data-add-title="<?php esc_attr_e('Add photos', 'service-booking-manager'); ?>"
+						     data-add-hint="<?php esc_attr_e('Choose from the Media Library. Pick several at once.', 'service-booking-manager'); ?>"
+						     data-one="<?php esc_attr_e('1 photo', 'service-booking-manager'); ?>"
+						     data-many="<?php /* translators: %d: number of photos */ esc_attr_e('%d photos', 'service-booking-manager'); ?>"
+						     data-reorder="<?php esc_attr_e('Drag to reorder', 'service-booking-manager'); ?>"
+						     data-remove="<?php esc_attr_e('Remove photo', 'service-booking-manager'); ?>">
 							<?php do_action('mpwpb_add_multi_image', 'mpwpb_slider_images', $gallery_image_ids); ?>
 						</div>
+						<p class="mpwpb-sme__gallery-off" data-sme-gallery-off<?php echo $gallery_checked ? ' hidden' : ''; ?>><?php esc_html_e('The photo slider is hidden on the service page. Your photos are kept; switch it on to show them again.', 'service-booking-manager'); ?></p>
 					</div>
 
 					<?php
