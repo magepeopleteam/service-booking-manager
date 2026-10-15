@@ -187,26 +187,35 @@
 				$service_overview_status = get_post_meta($post_id, 'mpwpb_service_overview_status', true);
 				$service_overview_content = get_post_meta($post_id, 'mpwpb_service_overview_content', true);
 				if ($service_overview_status === 'on'):
+					// Right-hand "At a glance" card: rating, stats, opening hours.
+					ob_start();
+					$this->show_overview_rating($post_id);
+					$this->show_overview_stats($post_id);
+					$this->show_hours($post_id);
+					$glance = trim(ob_get_clean());
 					?>
-                    <section id="service-overview">
-                        <div class="mpwpb-overview-head">
-                            <div>
+                    <section id="service-overview" class="mpwpb-ov<?php echo $glance === '' ? ' mpwpb-ov--single' : ''; ?>">
+                        <div class="mpwpb-ov__story">
+                            <div class="mpwpb-overview-head">
                                 <span class="mpwpb-overview-kicker"><?php esc_html_e('Overview', 'service-booking-manager'); ?></span>
                                 <h2><?php esc_html_e('Service Overview', 'service-booking-manager'); ?></h2>
                             </div>
-							<?php $this->show_overview_rating($post_id); ?>
+                            <div class="mpwpb-overview-content">
+								<?php
+									// Content is sanitized on save according to the author's capability
+									// (see MPWPB_Settings::sanitize_rich_content), mirroring core post_content.
+									// Re-running wp_kses_post() here would strip admin-authored <style>/CSS.
+									echo do_shortcode($service_overview_content); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								?>
+                            </div>
+							<?php $this->show_overview_categories($post_id); ?>
                         </div>
-                        <div class="mpwpb-overview-content">
-							<?php
-								// Content is sanitized on save according to the author's capability
-								// (see MPWPB_Settings::sanitize_rich_content), mirroring core post_content.
-								// Re-running wp_kses_post() here would strip admin-authored <style>/CSS.
-								echo do_shortcode($service_overview_content); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-							?>
-                        </div>
-						<?php $this->show_overview_stats($post_id); ?>
-						<?php $this->show_overview_categories($post_id); ?>
-						<?php $this->show_hours($post_id); ?>
+						<?php if ($glance !== ''): ?>
+                        <aside class="mpwpb-ov__glance" aria-label="<?php esc_attr_e('At a glance', 'service-booking-manager'); ?>">
+                            <p class="mpwpb-ov__glance-title"><?php esc_html_e('At a glance', 'service-booking-manager'); ?></p>
+							<?php echo $glance; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built from escaped helpers above ?>
+                        </aside>
+						<?php endif; ?>
                     </section>
 				<?php
 				endif;
@@ -214,9 +223,9 @@
 
 			/**
 			 * Same rating meta the hero section's show_ratings() already
-			 * reads -- repeated here, smaller, as a trust reinforcement for
-			 * readers scrolling past the hero. Omitted entirely when there's
-			 * no rating yet (same guard as show_ratings()).
+			 * reads -- shown large at the top of the "At a glance" card.
+			 * Omitted entirely when there's no rating yet (same guard as
+			 * show_ratings()).
 			 */
 			private function show_overview_rating($post_id) {
 				$rating = (float) get_post_meta($post_id, 'mpwpb_service_review_ratings', true);
@@ -225,11 +234,13 @@
 				}
 				$rating_text = get_post_meta($post_id, 'mpwpb_service_rating_text', true);
 				?>
-                <div class="mpwpb-overview-rating">
-                    <span class="mpwpb-overview-rating-stars"><?php self::render_star_icons($rating); ?></span>
-                    <strong class="mpwpb-overview-rating-num"><?php echo esc_html(number_format_i18n($rating, 1)); ?></strong>
+                <div class="mpwpb-ov__rating">
+                    <div class="mpwpb-ov__rating-row">
+                        <strong class="mpwpb-ov__rating-num"><?php echo esc_html(number_format_i18n($rating, 1)); ?></strong>
+                        <span class="mpwpb-ov__rating-stars" role="img" aria-label="<?php echo esc_attr(sprintf(/* translators: %s: rating */ __('Rated %s out of 5', 'service-booking-manager'), number_format_i18n($rating, 1))); ?>"><?php self::render_star_icons($rating); ?></span>
+                    </div>
 					<?php if ($rating_text): ?>
-                        <span class="mpwpb-overview-rating-text"><?php echo esc_html($rating_text); ?></span>
+                        <p class="mpwpb-ov__rating-text"><?php echo esc_html($rating_text); ?></p>
 					<?php endif; ?>
                 </div>
 				<?php
@@ -262,7 +273,7 @@
 				}
 				?>
                 <div class="mpwpb-overview-categories">
-                    <p class="mpwpb-overview-subhead"><?php esc_html_e('What we offer', 'service-booking-manager'); ?></p>
+                    <h3 class="mpwpb-overview-subhead"><?php esc_html_e('What we offer', 'service-booking-manager'); ?></h3>
                     <div class="mpwpb-overview-cat-row">
 						<?php foreach ($categories as $cat_id => $cat):
 							$cat_id = (string) $cat_id;
@@ -275,7 +286,7 @@
                             <div class="mpwpb-overview-cat-chip">
                                 <span class="mpwpb-overview-cat-chip-icon" aria-hidden="true"><i class="<?php echo esc_attr($icon); ?>"></i></span>
                                 <span class="mpwpb-overview-cat-chip-name"><?php echo esc_html(isset($cat['name']) ? $cat['name'] : ''); ?></span>
-                                <span class="mpwpb-overview-cat-chip-count"><?php echo (int) $count; ?></span>
+                                <span class="mpwpb-overview-cat-chip-count"><?php echo esc_html(sprintf(/* translators: %d: number of services */ _n('%d service', '%d services', $count, 'service-booking-manager'), $count)); ?></span>
                             </div>
 						<?php endforeach; ?>
                     </div>
@@ -304,44 +315,32 @@
 				// (confirmed against live posts) lives in 'mpwpb_service', the
 				// same flat array the booking widget itself reads from.
 				$service_count = count(MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service', array()));
-				// Only a real, non-zero count is worth a card -- an empty "—"
-				// placeholder next to two real numbers reads as broken rather
-				// than honest, so this card is dropped entirely instead, and
-				// the remaining two split the row 50/50 (mpwpb-overview-stats--two).
-				$show_bookings_stat = $booking_count > 0;
 				?>
-                <div class="mpwpb-overview-stats<?php echo $show_bookings_stat ? '' : ' mpwpb-overview-stats--two'; ?>">
-					<?php if ($show_bookings_stat): ?>
-                    <div class="mpwpb-overview-stat">
-                        <span class="mpwpb-overview-stat-icon" aria-hidden="true"><i class="fas fa-calendar-check"></i></span>
-                        <span>
-                            <p class="mpwpb-overview-stat-num"><?php echo esc_html(number_format_i18n($booking_count) . '+'); ?></p>
-                            <p class="mpwpb-overview-stat-label"><?php esc_html_e('Bookings completed', 'service-booking-manager'); ?></p>
-                        </span>
+                <dl class="mpwpb-ov__stats">
+					<?php if ($booking_count > 0): // A zero count reads as broken, so the row is left out instead. ?>
+                    <div class="mpwpb-ov__stat">
+                        <dt><?php esc_html_e('Bookings completed', 'service-booking-manager'); ?></dt>
+                        <dd><?php echo esc_html(number_format_i18n($booking_count) . '+'); ?></dd>
                     </div>
 					<?php endif; ?>
-                    <div class="mpwpb-overview-stat">
-                        <span class="mpwpb-overview-stat-icon" aria-hidden="true"><i class="fas fa-clock"></i></span>
-                        <span>
-                            <p class="mpwpb-overview-stat-num"><?php echo esc_html($time_slot_length > 0 ? MPWPB_Function::format_slot_duration($time_slot_length) : '—'); ?></p>
-                            <p class="mpwpb-overview-stat-label"><?php esc_html_e('Typical slot length', 'service-booking-manager'); ?></p>
-                        </span>
+                    <div class="mpwpb-ov__stat">
+                        <dt><?php esc_html_e('Typical slot length', 'service-booking-manager'); ?></dt>
+                        <dd><?php echo esc_html($time_slot_length > 0 ? MPWPB_Function::format_slot_duration($time_slot_length) : '—'); ?></dd>
                     </div>
-                    <div class="mpwpb-overview-stat">
-                        <span class="mpwpb-overview-stat-icon" aria-hidden="true"><i class="fas fa-th-large"></i></span>
-                        <span>
-                            <p class="mpwpb-overview-stat-num"><?php echo esc_html($service_count); ?></p>
-                            <p class="mpwpb-overview-stat-label"><?php esc_html_e('Services offered', 'service-booking-manager'); ?></p>
-                        </span>
+                    <div class="mpwpb-ov__stat">
+                        <dt><?php esc_html_e('Services offered', 'service-booking-manager'); ?></dt>
+                        <dd><?php echo esc_html($service_count); ?></dd>
                     </div>
-                </div>
+                </dl>
 				<?php
 			}
 
 			/**
-			 * Real configured hours (per-day start/end times + off days),
-			 * simplified to the default schedule + a list of closed days
-			 * rather than a full day-by-day breakdown.
+			 * Real configured hours: each day's own start/end when set
+			 * (mpwpb_<day>_start_time / _end_time), else the default
+			 * schedule, with off days shown as Closed. "Open now" and the
+			 * next opening/closing time are computed against the site's
+			 * current time.
 			 */
 			private function show_hours($post_id) {
 				$default_start = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_default_start_time', '');
@@ -352,47 +351,77 @@
 				$off_days = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_off_days', '');
 				$off_day_keys = array_filter(explode(',', (string) $off_days));
 				$days = MPWPB_Global_Function::week_day();
-				$open_days = array();
+				$hours = array();
 				foreach ($days as $key => $day) {
-					if (!in_array($key, $off_day_keys, true)) {
-						$open_days[] = $day;
+					if (in_array($key, $off_day_keys, true)) {
+						$hours[$key] = null;
+						continue;
 					}
+					$start = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_' . $key . '_start_time', '');
+					$end = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_' . $key . '_end_time', '');
+					$hours[$key] = ($start !== '' && $end !== '') ? array((float) $start, (float) $end) : array((float) $default_start, (float) $default_end);
 				}
+				$open_keys = array_keys(array_filter($hours));
 
-				// "Open now" -- real, computed against the site's current time,
-				// not a decorative badge: today's day-of-week (ISO 1=Monday..
-				// 7=Sunday maps 1:1 onto week_day()'s key order) checked
-				// against the off-days list, and the current hour checked
-				// against the default start/end window.
+				// Today's day-of-week (ISO 1=Monday..7=Sunday maps 1:1 onto
+				// week_day()'s key order) and the current hour.
 				$day_keys = array_keys($days);
 				$iso_dow = (int) current_time('N');
-				$today_key = isset($day_keys[$iso_dow - 1]) ? $day_keys[$iso_dow - 1] : '';
-				$is_open_day = $today_key !== '' && !in_array($today_key, $off_day_keys, true);
+				$today_index = $iso_dow - 1;
+				$today_key = isset($day_keys[$today_index]) ? $day_keys[$today_index] : '';
 				$now_hour = (float) current_time('H') + ((float) current_time('i') / 60);
-				$is_open_now = $is_open_day && $now_hour >= (float) $default_start && $now_hour < (float) $default_end;
+				$today_hours = ($today_key !== '' && !empty($hours[$today_key])) ? $hours[$today_key] : null;
+				$is_open_now = $today_hours && $now_hour >= $today_hours[0] && $now_hour < $today_hours[1];
+
+				$next_text = '';
+				if ($is_open_now) {
+					/* translators: %s: closing time */
+					$next_text = sprintf(__('Closes %s', 'service-booking-manager'), $this->format_hour($today_hours[1]));
+				} elseif ($today_hours && $now_hour < $today_hours[0]) {
+					/* translators: %s: opening time */
+					$next_text = sprintf(__('Opens %s', 'service-booking-manager'), $this->format_hour($today_hours[0]));
+				} elseif (!empty($open_keys)) {
+					for ($i = 1; $i <= 7; $i++) {
+						$key = $day_keys[($today_index + $i) % 7];
+						if (!empty($hours[$key])) {
+							$next_text = $i === 1
+								/* translators: %s: opening time */
+								? sprintf(__('Opens tomorrow %s', 'service-booking-manager'), $this->format_hour($hours[$key][0]))
+								/* translators: 1: day name, 2: opening time */
+								: sprintf(__('Opens %1$s %2$s', 'service-booking-manager'), $days[$key], $this->format_hour($hours[$key][0]));
+							break;
+						}
+					}
+				}
 				?>
-                <div class="mpwpb-hours-card">
-                    <div class="mpwpb-hours-top">
+                <div class="mpwpb-ov__hours">
+                    <div class="mpwpb-ov__hours-top">
                         <p class="mpwpb-hours-status<?php echo $is_open_now ? ' is-open' : ' is-closed'; ?>">
                             <span class="mpwpb-hours-status-dot" aria-hidden="true"></span>
 							<?php echo $is_open_now
 								? esc_html__('Open now', 'service-booking-manager')
 								: esc_html__('Closed now', 'service-booking-manager'); ?>
                         </p>
-                        <p class="mpwpb-hours-time"><?php echo esc_html($this->format_hour($default_start) . ' – ' . $this->format_hour($default_end)); ?></p>
+						<?php if ($next_text !== ''): ?>
+                            <span class="mpwpb-ov__hours-next"><?php echo esc_html($next_text); ?></span>
+						<?php endif; ?>
                     </div>
-					<?php if (!empty($open_days)): ?>
-                    <div class="mpwpb-hours-week">
+					<?php if (!empty($open_keys)): ?>
+                    <table class="mpwpb-ov__hours-table">
+                        <caption class="mpwpb-ov__sr"><?php esc_html_e('Opening hours', 'service-booking-manager'); ?></caption>
+                        <tbody>
 						<?php foreach ($days as $key => $day):
-							$is_off = in_array($key, $off_day_keys, true);
-							$short = function_exists('mb_substr') ? mb_substr($day, 0, 3) : substr($day, 0, 3);
+							$is_today = $key === $today_key;
 							?>
-                            <div class="mpwpb-hours-day<?php echo $is_off ? ' is-off' : ''; ?><?php echo $key === $today_key ? ' is-today' : ''; ?>">
-                                <span class="mpwpb-hours-day-label"><?php echo esc_html($short); ?></span>
-                                <span class="mpwpb-hours-day-dot" aria-hidden="true"></span>
-                            </div>
+                            <tr class="<?php echo esc_attr(trim(($hours[$key] ? '' : 'is-off') . ($is_today ? ' is-today' : ''))); ?>">
+                                <th scope="row"><?php echo esc_html($day); ?><?php if ($is_today): ?> <span class="mpwpb-ov__today"><?php esc_html_e('(today)', 'service-booking-manager'); ?></span><?php endif; ?></th>
+                                <td><?php echo $hours[$key]
+									? esc_html($this->format_hour($hours[$key][0]) . ' – ' . $this->format_hour($hours[$key][1]))
+									: esc_html__('Closed', 'service-booking-manager'); ?></td>
+                            </tr>
 						<?php endforeach; ?>
-                    </div>
+                        </tbody>
+                    </table>
 					<?php else: ?>
                     <p class="mpwpb-hours-open">
                         <i class="fas fa-clock"></i> <?php esc_html_e('By appointment', 'service-booking-manager'); ?>

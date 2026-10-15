@@ -2343,3 +2343,106 @@ div.mpwpb_popup[data-popup="#mpwpb_static_popup"] .mpwpb-reorder-notice-message{
 	.mpwpb-static-template .mpwp_select_staff_card{flex-direction:column;align-items:flex-start !important;gap:8px;padding:12px 30px 12px 12px !important;}
 	.mpwpb-static-template .mpwp_select_staff_text{width:100%;}
 }
+
+/* -------------------------------------------------------------------- *
+ *  Service Overview — "Story + at-a-glance card": the write-up and
+ *  categories on the left, rating / stats / opening hours in a card on
+ *  the right. Stacks to one column on narrow screens.
+ * -------------------------------------------------------------------- */
+.mpwpb-static-template section#service-overview.mpwpb-ov{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:24px;align-items:start;}
+.mpwpb-static-template section#service-overview.mpwpb-ov--single{grid-template-columns:minmax(0,1fr);}
+.mpwpb-static-template .mpwpb-ov__story{
+	display:flex;flex-direction:column;gap:22px;padding:30px 32px;background:#fff;border:1px solid #ECECE6;border-radius:18px;box-shadow:0 1px 3px rgba(20,32,27,.05);min-width:0;
+}
+.mpwpb-static-template .mpwpb-ov .mpwpb-overview-head{display:block;margin:0;}
+.mpwpb-static-template .mpwpb-ov .mpwpb-overview-head h2{margin:0 !important;font-size:26px !important;color:#15202B !important;}
+.mpwpb-static-template #service-overview.mpwpb-ov .mpwpb-overview-content{font-size:15.5px;line-height:1.65;color:#41504B;}
+.mpwpb-static-template #service-overview.mpwpb-ov .mpwpb-overview-content p{margin:0 0 14px;}
+.mpwpb-static-template #service-overview.mpwpb-ov .mpwpb-overview-content > :last-child{margin-bottom:0 !important;}
+.mpwpb-static-template #service-overview.mpwpb-ov .mpwpb-overview-content strong{color:#15202B;}
+/* Numbered list → vertical timeline of numbered steps. */
+.mpwpb-static-template #service-overview.mpwpb-ov .mpwpb-overview-content ol{
+	display:flex !important;flex-direction:column;gap:0 !important;margin:0 0 4px !important;padding:0 !important;list-style:none !important;counter-reset:mpwpb-ov-step;
+}
+.mpwpb-static-template #service-overview.mpwpb-ov .mpwpb-overview-content ol > li{
+	position:relative;display:block !important;margin:0 !important;padding:4px 0 18px 42px !important;
+	background:none;border:0;border-radius:0;box-shadow:none;counter-increment:mpwpb-ov-step;font-size:15px;color:#15202B;
+}
+.mpwpb-static-template #service-overview.mpwpb-ov .mpwpb-overview-content ol > li:last-child{padding-bottom:0 !important;}
+.mpwpb-static-template #service-overview.mpwpb-ov .mpwpb-overview-content ol > li::before{
+	content:counter(mpwpb-ov-step);position:absolute;left:0;top:0;display:flex !important;align-items:center;justify-content:center;
+	width:28px;height:28px;margin:0;border-radius:50%;background:var(--mpwpb_color_theme);color:#fff;font-family:'Sora','Segoe UI',sans-serif;font-size:12.5px;font-weight:700;
+}
+.mpwpb-static-template #service-overview.mpwpb-ov .mpwpb-overview-content ol > li:not(:last-child)::after{
+	content:"";position:absolute;left:13px;top:30px;bottom:0;width:2px;background:#ECECE6;
+}
+/* Bulleted list → simple tick list. */
+.mpwpb-static-template #service-overview.mpwpb-ov .mpwpb-overview-content ul{
+	display:flex !important;flex-direction:column;gap:8px !important;margin:0 0 4px !important;padding:0 !important;list-style:none !important;
+}
+.mpwpb-static-template #service-overview.mpwpb-ov .mpwpb-overview-content ul > li{
+	position:relative;display:block !important;margin:0 !important;padding:0 0 0 28px !important;background:none;border:0;border-radius:0;box-shadow:none;
+}
+.mpwpb-static-template #service-overview.mpwpb-ov .mpwpb-overview-content ul > li::before{
+	content:"\2713";position:absolute;left:0;top:2px;display:flex !important;align-items:center;justify-content:center;width:18px;height:18px;margin:0;
+	border-radius:50%;background:var(--mpwpb-tint);color:var(--mpwpb_color_theme);font-size:11px;font-weight:700;
+}
+/* What we offer → two-up category cards. */
+.mpwpb-static-template .mpwpb-ov .mpwpb-overview-categories{margin:0;}
+.mpwpb-static-template .mpwpb-ov h3.mpwpb-overview-subhead{margin:0 0 12px !important;font-family:'Sora','Segoe UI',sans-serif;font-size:14px !important;font-weight:700;color:#15202B;text-transform:none;letter-spacing:0;}
+.mpwpb-static-template .mpwpb-ov .mpwpb-overview-cat-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0;}
+.mpwpb-static-template .mpwpb-ov .mpwpb-overview-cat-chip{gap:12px;padding:14px 16px;border:1px solid #ECECE6;border-radius:12px;background:#fff;min-width:0;}
+.mpwpb-static-template .mpwpb-ov .mpwpb-overview-cat-chip-icon{width:36px;height:36px;border-radius:10px;font-size:15px;}
+.mpwpb-static-template .mpwpb-ov .mpwpb-overview-cat-chip-name{flex:1 1 auto;min-width:0;font-size:14.5px;}
+.mpwpb-static-template .mpwpb-ov .mpwpb-overview-cat-chip-count{flex:0 0 auto;font-family:'Work Sans',sans-serif;font-size:13px;font-weight:500;color:#5B6763;}
+
+/* At a glance card */
+.mpwpb-static-template .mpwpb-ov__glance{background:#fff;border:1px solid #ECECE6;border-radius:18px;box-shadow:0 1px 3px rgba(20,32,27,.05);overflow:hidden;}
+.mpwpb-static-template .mpwpb-ov__glance-title{margin:0;padding:22px 22px 0;font-family:'Work Sans',sans-serif;font-size:12.5px;font-weight:700;color:#5B6763;}
+.mpwpb-static-template .mpwpb-ov__rating{padding:8px 22px 18px;border-bottom:1px solid #ECECE6;}
+.mpwpb-static-template .mpwpb-ov__rating-row{display:flex;align-items:baseline;gap:10px;}
+.mpwpb-static-template .mpwpb-ov__rating-num{font-family:'Sora','Segoe UI',sans-serif;font-size:40px;line-height:1;font-weight:700;color:#15202B;}
+.mpwpb-static-template .mpwpb-ov__rating-stars{display:inline-flex !important;gap:2px;color:#F0A93B;font-size:15px;}
+.mpwpb-static-template .mpwpb-ov__rating-text{margin:6px 0 0;font-family:'Work Sans',sans-serif;font-size:13px;color:#5B6763;}
+.mpwpb-static-template .mpwpb-ov__stats{margin:0;padding:6px 22px;}
+.mpwpb-static-template .mpwpb-ov__stat{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #F3F3EE;}
+.mpwpb-static-template .mpwpb-ov__stat:last-child{border-bottom:0;}
+.mpwpb-static-template .mpwpb-ov__stat dt{margin:0;font-family:'Work Sans',sans-serif;font-size:13.5px;font-weight:400;color:#5B6763;}
+.mpwpb-static-template .mpwpb-ov__stat dd{margin:0;font-family:'Sora','Segoe UI',sans-serif;font-size:14px;font-weight:700;color:#15202B;}
+.mpwpb-static-template .mpwpb-ov__hours{padding:18px 22px 22px;background:var(--mpwpb-tint-bg,#F7FAF9);border-top:1px solid #ECECE6;}
+.mpwpb-static-template .mpwpb-ov__hours-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.mpwpb-static-template .mpwpb-ov .mpwpb-hours-status{font-size:13.5px;}
+.mpwpb-static-template .mpwpb-ov .mpwpb-hours-status.is-closed{color:#B42318;}
+.mpwpb-static-template .mpwpb-ov .mpwpb-hours-status.is-open{color:#1E7A45;}
+.mpwpb-static-template .mpwpb-ov__hours-next{font-family:'Work Sans',sans-serif;font-size:12.5px;color:#5B6763;}
+.mpwpb-static-template .mpwpb-ov__hours-table{width:100%;margin:12px 0 0;border-collapse:separate;border-spacing:0;font-family:'Work Sans',sans-serif;font-size:13px;}
+.mpwpb-static-template .mpwpb-ov__hours-table th,
+.mpwpb-static-template .mpwpb-ov__hours-table td{padding:6px 8px;border:0;background:transparent;font-weight:400;color:#15202B;}
+.mpwpb-static-template .mpwpb-ov__hours-table th{text-align:left;}
+.mpwpb-static-template .mpwpb-ov__hours-table td{text-align:right;white-space:nowrap;}
+.mpwpb-static-template .mpwpb-ov__hours-table tr.is-off td{color:#8A938F;}
+.mpwpb-static-template .mpwpb-ov__hours-table tr.is-today th,
+.mpwpb-static-template .mpwpb-ov__hours-table tr.is-today td{background:#fff;font-weight:700;}
+.mpwpb-static-template .mpwpb-ov__hours-table tr.is-today th{border-radius:8px 0 0 8px;}
+.mpwpb-static-template .mpwpb-ov__hours-table tr.is-today td{border-radius:0 8px 8px 0;}
+.mpwpb-static-template .mpwpb-ov__today{display:inline !important;font-weight:500;color:#5B6763;}
+.mpwpb-static-template .mpwpb-ov .mpwpb-hours-open{margin-top:12px;}
+.mpwpb-static-template .mpwpb-ov__sr{position:absolute !important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+@media(max-width:900px){
+	.mpwpb-static-template section#service-overview.mpwpb-ov{grid-template-columns:minmax(0,1fr);}
+}
+@media(max-width:560px){
+	.mpwpb-static-template .mpwpb-ov__story{padding:22px 18px;}
+	.mpwpb-static-template .mpwpb-ov .mpwpb-overview-cat-row{grid-template-columns:minmax(0,1fr);}
+}
+/* Overrides for theme/global rules that leak into the overview card. */
+.mpwpb-static-template .mpwpb-ov p.mpwpb-ov__glance-title{padding:22px 22px 0 !important;}
+.mpwpb-static-template .mpwpb-ov .mpwpb-overview-head h2{border:0 !important;padding:0 !important;}
+.mpwpb-static-template #service-overview.mpwpb-ov .mpwpb-overview-content p strong{display:inline !important;}
+.mpwpb-static-template .mpwpb-ov .mpwpb-overview-cat-chip-name{flex:1 1 auto !important;}
+.mpwpb-static-template .mpwpb-ov .mpwpb-overview-cat-chip-count{margin-left:auto;padding-left:8px;white-space:nowrap;}
+.mpwpb-static-template .mpwpb-ov__hours-table th{white-space:nowrap;}
+.mpwpb-static-template .mpwpb-ov__today{font-size:12px;}
+.mpwpb-static-template .mpwpb-ov table.mpwpb-ov__hours-table{border:0 !important;table-layout:auto;}
+.mpwpb-static-template .mpwpb-ov .mpwpb-ov__hours-table th,
+.mpwpb-static-template .mpwpb-ov .mpwpb-ov__hours-table td{padding:6px 6px !important;border:0 !important;font-size:12.5px;}
