@@ -158,6 +158,24 @@ if (!class_exists('MPWPB_Help_Guide_Content')) {
 						self::field(__('Cancel / reschedule', 'service-booking-manager'), __('Customer actions are allowed only when status and lead-time rules permit them.', 'service-booking-manager')),
 						self::field(__('Waiting list', 'service-booking-manager'), __('The codebase contains waiting-list settings, but the current service-settings tab is not exposed; do not rely on it until a reachable control is provided.', 'service-booking-manager')),
 					), array('url_key' => 'settings', 'keywords' => 'customer dashboard cancel reschedule waiting list multiple sticky checkout')),
+					self::topic('free-service-list-shortcode', __('Show all services on a page', 'service-booking-manager'), __('List every published service as cards or rows, with search, sort, and a Grid/List switch.', 'service-booking-manager'), __('Any page or post: add a Shortcode block containing [mpwpb-service-list]', 'service-booking-manager'), array(
+						self::field(__('[mpwpb-service-list]', 'service-booking-manager'), __('Shows every published service with its photo, rating, tagline, number of options, lowest price ("From …"), and a Book now button that opens the service page.', 'service-booking-manager'), __('Visitors can switch between Grid and List; their choice is remembered in their browser.', 'service-booking-manager')),
+						self::field(__('view="grid" or view="list"', 'service-booking-manager'), __('The layout a first-time visitor sees. Default: grid.', 'service-booking-manager')),
+						self::field(__('columns="3"', 'service-booking-manager'), __('Cards per row in grid view on wide screens: 2, 3, or 4. Default: 3. Tablets show up to 2 and phones 1.', 'service-booking-manager')),
+						self::field(__('limit="6"', 'service-booking-manager'), __('How many services to show. Default: -1 (all).', 'service-booking-manager')),
+						self::field(__('search="no"', 'service-booking-manager'), __('Hides the search box and sort menu. Default: yes (shown when there is more than one service).', 'service-booking-manager')),
+						self::field(__('title="Popular services"', 'service-booking-manager'), __('The heading above the list. Default: "Our services". Use title="" to hide it.', 'service-booking-manager')),
+					), array(
+						'steps' => array(
+							__('Open the page where the list should appear (for example your home page) in the editor.', 'service-booking-manager'),
+							__('Add a Shortcode block and enter [mpwpb-service-list].', 'service-booking-manager'),
+							__('Optionally add settings, for example [mpwpb-service-list view="list" columns="4" limit="6" title="Popular services"].', 'service-booking-manager'),
+							__('Update the page and view it to check the cards.', 'service-booking-manager'),
+						),
+						'note' => __('Each card uses the service\'s featured image, shortcode subtitle, review rating, and the lowest price among its services, so fill those in for the best-looking list. Buttons use the Theme Color.', 'service-booking-manager'),
+						'url_key' => 'pages',
+						'keywords' => 'shortcode service list grid list view directory catalog all services home page mpwpb-service-list',
+					)),
 				)),
 
 				self::section('free-payments', __('Payments & Checkout', 'service-booking-manager'), __('Choose a checkout route and understand payment-related settings.', 'service-booking-manager'), 'payment', array(

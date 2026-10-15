@@ -203,6 +203,22 @@
 				// box toggle) -- never selection/cart/checkout logic, which
 				// stays entirely in mpwpb_registration.js.
 				wp_enqueue_script('mpwpb_booking_widget_reskin', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-booking-widget-reskin.js', ['jquery'], self::asset_version('/assets/frontend/mpwpb-booking-widget-reskin.js'), true);
+				// Copy for the checkout payment block (decoratePayment() in that file).
+				wp_localize_script('mpwpb_booking_widget_reskin', 'mpwpbPay', array(
+					'eyebrow' => __('Payment', 'service-booking-manager'),
+					'heading' => __('How would you like to pay?', 'service-booking-manager'),
+					'totalLabel' => __('Total to pay', 'service-booking-manager'),
+					'trustSecure' => __('Secure checkout', 'service-booking-manager'),
+					'trustReschedule' => __('Free rescheduling up to 24h', 'service-booking-manager'),
+					'placeOrder' => __('Place order', 'service-booking-manager'),
+					'tags' => array(
+						'cod' => __('Pay at your appointment', 'service-booking-manager'),
+						'bacs' => __('Booking confirmed once paid', 'service-booking-manager'),
+						'cheque' => __('Pay by cheque', 'service-booking-manager'),
+						'paypal' => __('Pay with your PayPal account', 'service-booking-manager'),
+						'card' => __('Credit or debit card', 'service-booking-manager'),
+					),
+				));
 				// "Our services" sidebar tree expand/collapse only — selecting a
 				// service still goes through mpwpb_registration.js unchanged.
 				wp_enqueue_script('mpwpb_service_tree', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-service-tree.js', ['jquery', 'mpwpb_registration'], MPWPB_VERSION, true);

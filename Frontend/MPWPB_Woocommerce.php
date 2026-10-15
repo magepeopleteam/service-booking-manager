@@ -1080,36 +1080,39 @@
                                             <h6><?php esc_html_e('Time', 'service-booking-manager'); ?>&nbsp;:&nbsp;</h6>
                                             <span><?php echo esc_html(MPWPB_Global_Function::date_format( $days, 'time')); ?></span>
                                         </li>
-                                    </ul>
-                                </div>
-                        <?php
+                                    <?php
+                                }
                             }
-                        }
-                        if (sizeof($extra_service) > 0) { ?>
-                        <div class="dLayout_xs">
-                            <h5 class="mB_xs"><?php esc_html_e('Extra Services', 'service-booking-manager'); ?></h5>
-							<?php foreach ($extra_service as $service) { ?>
-                                <div class="divider"></div>
-                                <div class="dFlex">
-                                    <h6><?php esc_html_e('Services Name', 'service-booking-manager'); ?>&nbsp;:&nbsp;</h6>
-                                    <span><?php echo esc_html($service['ex_name']); ?>
-									</span>
-                                </div>
-                                <div class="dFlex">
-                                    <h6><?php esc_html_e('Price', 'service-booking-manager'); ?>&nbsp;:&nbsp;</h6>
-                                    <span><?php echo wp_kses_post(' ( ' . MPWPB_Global_Function::wc_price($post_id, $service['ex_price']) . ' x ' . $service['ex_qty'] . ' ) = ' . MPWPB_Global_Function::wc_price($post_id, ($service['ex_price'] * $service['ex_qty']))); ?></span>
-                                </div>
-							<?php } ?>
-                        </div>
-					<?php }
-                        $staff_name = $cart_item['mpwpb_staff_name'];
-                        if( $staff_name ){
-                        ?>
-                        <div class="dLayout_xs">
-                            <h5 class="mB_xs"><?php esc_html_e('Selected Staff', 'service-booking-manager'); ?></h5>
-                            <span><?php echo esc_html( $staff_name ); ?>
-                        </div>
-					<?php }
+                            // Extra services and the chosen staff member are rows of the
+                            // same list (they used to be separate blocks with a large
+                            // heading and an unclosed <span>).
+                            foreach ($extra_service as $service) {
+                                ?>
+                                        <li>
+                                            <h6><?php esc_html_e('Extra service', 'service-booking-manager'); ?>&nbsp;:&nbsp;</h6>
+                                            <span><?php echo esc_html($service['ex_name']); ?></span>
+                                        </li>
+                                        <li>
+                                            <h6><?php esc_html_e('Price', 'service-booking-manager'); ?>&nbsp;:&nbsp;</h6>
+                                            <span><?php echo wp_kses_post(' ( ' . MPWPB_Global_Function::wc_price($post_id, $service['ex_price']) . ' x ' . $service['ex_qty'] . ' ) = ' . MPWPB_Global_Function::wc_price($post_id, ($service['ex_price'] * $service['ex_qty']))); ?></span>
+                                        </li>
+                                <?php
+                            }
+                            $staff_name = isset($cart_item['mpwpb_staff_name']) ? $cart_item['mpwpb_staff_name'] : '';
+                            if ($staff_name) {
+                                ?>
+                                        <li>
+                                            <h6><?php esc_html_e('Staff', 'service-booking-manager'); ?>&nbsp;:&nbsp;</h6>
+                                            <span><?php echo esc_html($staff_name); ?></span>
+                                        </li>
+                                <?php
+                            }
+                            // Closed once, after every row: closing inside the date loop
+                            // left each recurring date after the first outside the list.
+                            ?>
+                        </ul>
+                    </div>
+                        <?php
                         do_action('mpwpb_after_cart_item_display', $cart_item, $post_id);
                     ?>
                 </div>

@@ -1715,3 +1715,65 @@
 	box-shadow: 0 4px 14px rgba(14,85,75,0.25) !important;
 	cursor: pointer;
 }
+
+/* ---------- Checkout payment block (decoratePayment() in the reskin JS) ----------
+ * Heading, payment-method cards, total, "Place order · total", trust line.
+ * Scoped to #payment.mpwpb-pay2 so it outranks the older rules above. */
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2{
+	--pay-theme:var(--mpwpb_color_theme,#0f172a);
+	border:0 !important;background:transparent !important;padding:0 !important;margin:18px 0 0 !important;font-family:'Work Sans',sans-serif !important;
+}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 .mpwpb-pay2__head{display:flex;flex-direction:column;gap:4px;margin:0 0 14px;}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 .mpwpb-pay2__eyebrow{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#64748b;}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 .mpwpb-pay2__title{font-size:16px;font-weight:700;color:#0f172a;}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 ul.payment_methods{display:flex !important;flex-direction:column !important;gap:10px !important;margin:0 !important;padding:0 !important;border:0 !important;list-style:none !important;}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 li.wc_payment_method{
+	position:relative;margin:0 !important;padding:0 !important;border:1.5px solid #e2e8f0 !important;border-radius:12px !important;
+	background:#fff !important;list-style:none !important;overflow:hidden;transition:border-color .15s,background-color .15s;
+}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 li.wc_payment_method.is-selected{border-color:var(--pay-theme) !important;background:color-mix(in srgb, var(--pay-theme) 5%, #fff) !important;}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 li.wc_payment_method > input.input-radio{position:absolute !important;opacity:0 !important;width:1px !important;height:1px !important;margin:0 !important;pointer-events:none;}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 li.wc_payment_method > label{
+	display:flex !important;align-items:center !important;gap:12px !important;margin:0 !important;padding:14px !important;
+	cursor:pointer;font-size:14px !important;font-weight:700 !important;color:#0f172a !important;
+}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 li.wc_payment_method > label::before,
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 li.wc_payment_method > label::after{display:none !important;content:none !important;}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 .mpwpb-pay2__radio{flex:0 0 auto;display:flex !important;align-items:center;justify-content:center;width:18px;height:18px;box-sizing:border-box;border-radius:50%;border:1.5px solid #cbd5e1;background:#fff;}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 li.is-selected .mpwpb-pay2__radio{border-color:var(--pay-theme);}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 li.is-selected .mpwpb-pay2__radio::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--pay-theme);}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 li.wc_payment_method > input:focus-visible + label .mpwpb-pay2__radio{box-shadow:0 0 0 3px color-mix(in srgb, var(--pay-theme) 25%, transparent);}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 .mpwpb-pay2__icon{flex:0 0 auto;display:flex !important;align-items:center;justify-content:center;width:34px;height:34px;border-radius:9px;background:#f1f5f9;color:#334155;}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 .mpwpb-pay2__text{flex:1 1 auto;min-width:0;display:flex !important;flex-direction:column;gap:1px;}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 .mpwpb-pay2__name{display:flex !important;align-items:center;flex-wrap:wrap;gap:6px;font-size:14px;font-weight:700;color:#0f172a;}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 .mpwpb-pay2__name img{max-height:20px;width:auto;margin:0 !important;}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 .mpwpb-pay2__tag{display:block !important;font-size:12px;font-weight:500;color:#64748b;}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 .payment_box{
+	margin:0 14px 14px 44px !important;padding:10px 12px !important;border:1px solid #e2e8f0 !important;border-radius:9px !important;
+	background:#fff !important;font-size:12.5px !important;line-height:1.5 !important;color:#334155 !important;
+}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 .payment_box::before{display:none !important;content:none !important;}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 .payment_box p{margin:0 !important;font-size:12.5px !important;line-height:1.5 !important;color:#334155 !important;}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 .form-row.place-order{margin:18px 0 0 !important;padding:0 !important;background:transparent !important;border:0 !important;}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 .mpwpb-pay2__total{display:flex !important;align-items:baseline;justify-content:space-between;gap:10px;padding:14px 0 0;border-top:1px solid #eef2f6;}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 .mpwpb-pay2__total span{font-size:13px;color:#475569;}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 .mpwpb-pay2__total strong{font-size:20px;font-weight:700;color:#0f172a;}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 #place_order{
+	display:flex !important;align-items:center;justify-content:center;gap:8px;float:none !important;width:100% !important;height:50px;
+	margin:12px 0 0 !important;padding:0 16px !important;border:0 !important;border-radius:12px !important;
+	background:var(--pay-theme) !important;color:#fff !important;font-size:15px !important;font-weight:700 !important;text-transform:none !important;opacity:1 !important;
+}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 #place_order::before{
+	content:"";flex:0 0 auto;width:16px;height:16px;background:currentColor;
+	-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='5' y='11' width='14' height='9' rx='2'/%3E%3Cpath d='M8 11V8a4 4 0 0 1 8 0v3'/%3E%3C/svg%3E") center/contain no-repeat;
+	mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='5' y='11' width='14' height='9' rx='2'/%3E%3Cpath d='M8 11V8a4 4 0 0 1 8 0v3'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 #place_order:hover,
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 #place_order:focus-visible{filter:brightness(1.12);}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 .mpwpb-pay2__trust{display:flex !important;justify-content:center;gap:8px;margin-top:10px;font-size:11px;color:#64748b;}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 .mpwpb-pay2__trust span{display:inline !important;}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 .woocommerce-terms-and-conditions-wrapper.is-moved{margin:16px 0 0 !important;}
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 .woocommerce-privacy-policy-text p{font-size:11.5px !important;line-height:1.55 !important;color:#64748b !important;}
+/* An older rule gives .payment_box width:100%, which with the side margins
+   pushed it past the card's right edge. */
+.mpwpb-inline-wc-checkout-content #payment.mpwpb-pay2 .payment_box{width:auto !important;max-width:none !important;box-sizing:border-box !important;}

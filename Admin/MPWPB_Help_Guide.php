@@ -67,6 +67,7 @@ if (!class_exists('MPWPB_Help_Guide')) {
 				'gdpr_tools'     => admin_url('edit.php?post_type=mpwpb_item&page=mpwpb_gdpr_tools'),
 				'audit_logs'     => admin_url('edit.php?post_type=mpwpb_item&page=mpwpb_audit_logs'),
 				'profile'        => admin_url('profile.php'),
+				'pages'          => admin_url('edit.php?post_type=page'),
 			);
 		}
 
