@@ -404,7 +404,13 @@
 						update_post_meta($post_id, $meta_key, $data);
 					}
 				}
+				if (!empty($dummy_data['reviews']) && is_array($dummy_data['reviews'])) {
+					self::import_dummy_reviews((int) $post_id, $dummy_data['reviews']);
+				}
 				$image = MPWPB_PLUGIN_DIR . '/assets/images/dummy-image-' . $key . '.png';
+				if (!file_exists($image)) {
+					$image = MPWPB_PLUGIN_DIR . '/assets/images/dummy-image-' . $key . '.jpg';
+				}
 				if (file_exists($image)) {
 					$image_attached = self::insert_media($image);
 					if (is_array($image_attached) && !empty($image_attached['id'])) {
@@ -425,467 +431,471 @@
 					update_option('mpwpb_dummy_already_inserted', 'yes');
 				}
 			}
+			/**
+			 * Shared booking-calendar meta for one dummy service: a rolling
+			 * "repeated" calendar starting today, the default day plus any
+			 * per-day overrides, and the off days.
+			 *
+			 * @param array $hours    ['start','end','break_start','break_end'] for the default day.
+			 * @param array $per_day  day key => ['start','end'] overrides (e.g. a shorter Saturday).
+			 */
+			private static function dummy_schedule(int $slot, int $capacity, array $hours, string $off_days, array $per_day = array()): array {
+				$meta = array(
+					'mpwpb_date_type' => 'repeated',
+					'mpwpb_repeated_start_date' => current_time('Y-m-d'),
+					'mpwpb_repeated_after' => 1,
+					'mpwpb_active_days' => 60,
+					'mpwpb_particular_dates' => array(),
+					'mpwpb_time_slot_length' => (string) $slot,
+					'mpwpb_capacity_per_session' => (string) $capacity,
+					'mpwpb_default_start_time' => (string) $hours[0],
+					'mpwpb_default_end_time' => (string) $hours[1],
+					'mpwpb_default_start_break_time' => isset($hours[2]) ? (string) $hours[2] : '',
+					'mpwpb_default_end_break_time' => isset($hours[3]) ? (string) $hours[3] : '',
+					'mpwpb_off_days' => $off_days,
+					'mpwpb_off_dates' => array(),
+				);
+				foreach (array_keys(MPWPB_Global_Function::week_day()) as $day) {
+					$own = isset($per_day[$day]) ? $per_day[$day] : array();
+					$meta['mpwpb_' . $day . '_start_time'] = isset($own[0]) ? (string) $own[0] : '';
+					$meta['mpwpb_' . $day . '_end_time'] = isset($own[1]) ? (string) $own[1] : '';
+					$meta['mpwpb_' . $day . '_start_break_time'] = isset($own[2]) ? (string) $own[2] : '';
+					$meta['mpwpb_' . $day . '_end_break_time'] = isset($own[3]) ? (string) $own[3] : '';
+				}
+				return $meta;
+			}
+
+			/**
+			 * One bookable service row in the shape the Services & Pricing
+			 * editor saves. $cat / $sub are indexes into the category and
+			 * sub-category lists ('' = none).
+			 */
+			private static function dummy_service(string $name, $price, string $duration, string $details, string $icon, $cat = '', $sub = ''): array {
+				return array(
+					'name' => $name,
+					'price' => $price,
+					'service_unit' => '',
+					'duration' => $duration,
+					'details' => $details,
+					'icon' => $icon,
+					'image' => '',
+					'show_cat_status' => $cat === '' ? 'off' : 'on',
+					'parent_cat' => $cat === '' ? '' : (string) $cat,
+					'sub_cat' => $sub === '' ? '' : (string) $sub,
+				);
+			}
+
+			/** One optional add-on; qty is the most a customer can add to one booking. */
+			private static function dummy_extra(string $name, $price, string $details, string $icon, int $qty = 1): array {
+				return array('name' => $name, 'price' => $price, 'qty' => $qty, 'details' => $details, 'icon' => $icon, 'image' => '');
+			}
+
 			public function dummy_data(): array {
+				$common = array(
+					'mpwpb_template' => 'static.php',
+					'mpwpb_service_details_active' => 'on',
+					'mpwpb_service_duration_active' => 'on',
+					'mpwpb_service_multiple_category_check' => 'on',
+					'mpwpb_multiple_service_select' => 'on',
+					'mpwpb_group_extra_service_active' => 'off',
+					'mpwpb_extra_service_active' => 'on',
+					// No gallery photos ship with the demo, so the slider stays off
+					// rather than rendering an empty frame.
+					'mpwpb_display_slider' => 'off',
+					'mpwpb_slider_images' => array(),
+					'mpwpb_faq_active' => 'on',
+					'mpwpb_features_status' => 'on',
+					'mpwpb_service_overview_status' => 'on',
+					'mpwpb_service_details_status' => 'on',
+				);
 				return [
 					'taxonomy' => [],
 					'custom_post' => [
 						'mpwpb_item' => [
+							// Image: dummy-image-0.png (salon chair).
 							0 => [
-								'name' => 'Hair Cut Salon Booking',
-								'post_data' => [
-									'mpwpb_shortcode_title' => 'Hair Cut Service',
-									'mpwpb_shortcode_sub_title' => 'Cut your hair beautifully with affordable price',
-									'mpwpb_template' => 'static.php',
-									'mpwpb_time_slot_length' => '60',
-									'mpwpb_capacity_per_session' => '1',
-									'mpwpb_default_start_time' => '10',
-									'mpwpb_default_end_time' => '16',
-									'mpwpb_default_start_break_time' => '13',
-									'mpwpb_default_end_break_time' => '15',
-									'mpwpb_monday_start_time' => '',
-									'mpwpb_monday_end_time' => '',
-									'mpwpb_monday_start_break_time' => '',
-									'mpwpb_monday_end_break_time' => '',
-									'mpwpb_tuesday_start_time' => '',
-									'mpwpb_tuesday_end_time' => '',
-									'mpwpb_tuesday_start_break_time' => '',
-									'mpwpb_tuesday_end_break_time' => '',
-									'mpwpb_wednesday_start_time' => '',
-									'mpwpb_wednesday_end_time' => '',
-									'mpwpb_wednesday_start_break_time' => '',
-									'mpwpb_wednesday_end_break_time' => '',
-									'mpwpb_thursday_start_time' => '',
-									'mpwpb_thursday_end_time' => '',
-									'mpwpb_thursday_start_break_time' => '',
-									'mpwpb_thursday_end_break_time' => '',
-									'mpwpb_off_days' => 'saturday,sunday',
-									'mpwpb_off_dates' => [],
-									'mpwpb_service_type' => 'car_wash',
-									'mpwpb_service_details_active' => 'on',
-									'mpwpb_service_duration_active' => 'on',
+								'name' => 'Luxe Hair Studio',
+								'post_data' => array_merge($common, self::dummy_schedule(30, 2, array(9, 19, 13, 14), 'monday', array('saturday' => array(9, 17), 'sunday' => array(10, 16))), [
+									'mpwpb_shortcode_title' => 'Hair Salon',
+									'mpwpb_shortcode_sub_title' => 'Cuts, colour and styling by experienced stylists',
 									'mpwpb_category_text' => 'Category',
 									'mpwpb_sub_category_text' => 'Sub-Category',
 									'mpwpb_service_text' => 'Service',
-									'mpwpb_category_service' => [],
-									'mpwpb_sub_category_service'=>[],
-									'mpwpb_service'=>[
-										[
-											'name' => 'Fade Haircut',
-											'price' => '10',
-											'details' => 'Shampooing can strip your hair of all its natural oils, leaving it dry and brittle. Pre-pooing acts as a base or protective barrier against over-cleansing',
-											'duration' => '60m',
-											'icon' => '',
-											'image' => '',
-											'show_cat_status' => 'on',
-											'parent_cat' => '',
-											'sub_cat' => '',
-										],
-										[
-											'name' => 'Taper Haircut',
-											'price' => '15',
-											'details' => 'Shampooing can strip your hair of all its natural oils, leaving it dry and brittle. Pre-pooing acts as a base or protective barrier against over-cleansing',
-											'duration' => '60m',
-											'icon' => '',
-											'image' => '',
-											'show_cat_status' => 'on',
-											'parent_cat' =>'',
-											'sub_cat' => '',
-										],
-										[
-											'name' => 'Buzz Cut',
-											'price' => '20',
-											'details' => 'Shampooing can strip your hair of all its natural oils, leaving it dry and brittle. Pre-pooing acts as a base or protective barrier against over-cleansing',
-											'duration' => '60m',
-											'icon' => '',
-											'image' => '',
-											'show_cat_status' => 'on',
-											'parent_cat' => '',
-											'sub_cat' => '',
-										],
-										[
-											'name' => 'Crew Cut',
-											'price' => '30',
-											'details' => 'Shampooing can strip your hair of all its natural oils, leaving it dry and brittle. Pre-pooing acts as a base or protective barrier against over-cleansing',
-											'duration' => '60m',
-											'icon' => '',
-											'image' => '',
-											'show_cat_status' => 'on',
-											'parent_cat' => '',
-											'sub_cat' => '',
-										]
+									'mpwpb_category_service' => [
+										['name' => 'Haircuts', 'icon' => 'fas fa-cut', 'image' => ''],
+										['name' => 'Colour', 'icon' => 'fas fa-palette', 'image' => ''],
+										['name' => 'Styling & Treatments', 'icon' => 'fas fa-magic', 'image' => ''],
 									],
-									'mpwpb_extra_service_active' => 'on',
-									'mpwpb_service_multiple_category_check' => 'on',
-									'mpwpb_multiple_service_select' => 'on',
-									'mpwpb_group_extra_service_active' => 'off',
+									'mpwpb_sub_category_service' => [],
+									'mpwpb_service' => [
+										self::dummy_service("Women's Cut & Blow-Dry", 55, '1h', 'Consultation, wash, precision cut and a smooth blow-dry finish.', 'fas fa-cut', 0),
+										self::dummy_service("Men's Haircut", 30, '30min', 'Scissor or clipper cut, styled to finish. Includes a hot-towel neck shave.', 'fas fa-cut', 0),
+										self::dummy_service("Kids' Haircut (under 12)", 20, '30min', 'A quick, friendly cut for children under 12.', 'fas fa-child', 0),
+										self::dummy_service('Beard Trim & Shape', 15, '15min', 'Beard trimmed, shaped and lined up with a hot towel finish.', 'fas fa-user', 0),
+										self::dummy_service('Root Touch-Up', 65, '1h 15m', 'Single-colour application to refresh up to 3 cm of regrowth.', 'fas fa-palette', 1),
+										self::dummy_service('Full Highlights', 120, '2h', 'Foil highlights through the whole head, toner and blow-dry included.', 'fas fa-palette', 1),
+										self::dummy_service('Balayage', 160, '2h 30m', 'Hand-painted, natural-looking colour with toner and style.', 'fas fa-paint-brush', 1),
+										self::dummy_service('Blow-Dry & Style', 35, '45min', 'Wash and a smooth, bouncy or curled blow-dry for any occasion.', 'fas fa-wind', 2),
+										self::dummy_service('Keratin Smoothing Treatment', 180, '2h 30m', 'Cuts frizz and drying time for up to 3 months.', 'fas fa-magic', 2),
+									],
 									'mpwpb_extra_service' => [
-										[
-											'name' => 'Pre Hair Wash',
-											'qty' => '10',
-											'price' => '10',
-											'details' => 'A pre-shampoo treatment (also referred to as a pre-poo) is exactly what it says on the tin, a treatment that is applied to the hair before jumping into the shower to give your hair a good suds and rinse.',
-											'icon' => '',
-											'image' => ''
-										],
-										[
-											'name' => 'After Hair Wash',
-											'qty' => '15',
-											'price' => '15',
-											'details' => 'A pre-shampoo treatment (also referred to as a pre-poo) is exactly what it says on the tin, a treatment that is applied to the hair before jumping into the shower to give your hair a good suds and rinse.',
-											'icon' => '',
-											'image' => ''
-										],
-										[
-											'name' => 'Face Wash',
-											'qty' => '45',
-											'price' => '45',
-											'details' => 'A pre-shampoo treatment (also referred to as a pre-poo) is exactly what it says on the tin, a treatment that is applied to the hair before jumping into the shower to give your hair a good suds and rinse.',
-											'icon' => '',
-											'image' => ''
-										]
+										self::dummy_extra('Deep Conditioning Mask', 15, 'Intensive moisture treatment for dry or coloured hair.', 'fas fa-tint'),
+										self::dummy_extra('Scalp Massage', 10, 'Relaxing 10-minute scalp massage during your wash.', 'fas fa-spa'),
+										self::dummy_extra('Gloss Toner', 25, 'Adds shine and refreshes the tone of coloured hair.', 'fas fa-star'),
 									],
-									'mpwpb_display_slider' => 'on',
-									'mpwpb_slider_images' => [0 => ''],
-									'mpwpb_faq_active' => 'on',
+									// Regulars can rebook the same cut on a repeating schedule.
+									'mpwpb_enable_recurring' => 'yes',
+									'mpwpb_recurring_types' => ['weekly', 'bi-weekly', 'monthly'],
+									'mpwpb_max_recurring_count' => 12,
+									'mpwpb_recurring_discount' => 0,
+									'mpwpb_features' => ['Senior & Junior Stylists', 'Professional Salon Colour Brands', 'Free Colour Consultation', 'Open Until 7 PM on Weekdays'],
 									'mpwpb_faq' => [
-										['title' => 'What services can I book?', 'content' => '<p>You can book a variety of services, including haircuts, coloring, styling, manicures, pedicures, facials, and massages.</p>'],
-										['title' => 'Is the booking system easy to use?', 'content' => '<p>Yes, our online booking system is user-friendly, allowing you to navigate and schedule appointments effortlessly.</p>'],
-										['title' => 'Can I choose my stylist?', 'content' => '<ul><li><p>Yes, you can select your preferred stylist based on their expertise and availability.</p></li></ul>'],
-										['title' => 'What if I need to cancel or reschedule my appointment?', 'content' => '<ul><li><p>You can easily cancel or reschedule your appointment online, ideally 24 hours in advance.</p></li></ul>']
+										['title' => 'Do I need a patch test before colouring?', 'content' => '<p>Yes. If you are new to us or have not had colour with us in the last 6 months, please pop in for a free patch test at least 48 hours before your appointment.</p>'],
+										['title' => 'Can I choose my stylist?', 'content' => '<p>Yes. Pick your preferred stylist when you book, or choose any available stylist for the earliest slot.</p>'],
+										['title' => 'How early should I arrive?', 'content' => '<p>Please arrive 5 minutes before your appointment. If you are more than 15 minutes late we may need to shorten or reschedule your service.</p>'],
+										['title' => 'What is your cancellation policy?', 'content' => '<p>You can cancel or reschedule free of charge up to 24 hours before your appointment.</p>'],
 									],
-									'mpwpb_features_status' => 'on',
-									'mpwpb_features' => ["Wide Range of Courses", "General Health Checkups", "What types of repair services can I book?", "Wide Range of Courses", "Wide Range of Courses"],
-									'mpwpb_service_overview_status' => 'on',
-									'mpwpb_service_overview_content' => '<ol><li><strong>Select Service</strong>: Choose from our extensive list of salon services.</li><li><strong>Choose Date and Time</strong>: Pick a date and time that works best for you.</li><li><strong>Select Stylist</strong>: If desired, select your preferred stylist based on their availability and expertise.</li><li><strong>Confirm Appointment</strong>: Review your booking details and confirm your appointment.</li><li><strong>Receive Confirmation</strong>: Get an email or text confirmation with your appointment details.</li></ol>With our <strong>Salon Booking</strong> system, experiencing top-notch beauty and wellness services is just a few clicks away. Enjoy a seamless appointment process and a relaxing salon experience tailored to your needs!',
-									'mpwpb_service_details_status' => 'on',
-									'mpwpb_service_details_content' => '<strong>Salon Booking</strong> is a streamlined and user-friendly system designed to enhance your salon experience by making it easy to schedule appointments for a wide range of beauty and wellness services. Whether you need a haircut, manicure, facial, or massage, our platform simplifies the booking process, allowing you to secure your desired time and service with just a few clicks.',
-									'mpwpb_service_review_ratings' => '4.8',
-									'mpwpb_service_rating_scale' => 'out of 5',
-									'mpwpb_service_rating_text' => 'total 200 review',
-									'_thumbnail_id' => '597',
+									'mpwpb_service_overview_content' => '<p><strong>Luxe Hair Studio</strong> is a friendly neighbourhood salon for cuts, colour and styling, with experienced stylists for every hair type.</p><ol><li>Choose your service and stylist.</li><li>Pick a date and time that suits you.</li><li>Add a treatment if you would like one.</li><li>Confirm, and we will see you in the chair.</li></ol>',
+									'mpwpb_service_details_content' => '<p>Every appointment starts with a short consultation so your stylist understands the look you want and how you style your hair at home.</p><p><strong>What is included</strong></p><ul><li>Consultation and wash with professional products</li><li>Cut or colour by a qualified stylist</li><li>Finishing style and aftercare advice</li></ul><p><strong>Before colour appointments</strong></p><p>New colour clients need a quick patch test at least 48 hours beforehand. It is free and takes five minutes.</p>',
+									'mpwpb_service_rating_scale' => 'Out of 5',
+								]),
+								'reviews' => [
+									['Olivia Bennett', 5, 'Stylist really listened', 'Showed a reference photo and got exactly the cut I wanted. Booking online saved me from the usual phone tag.'],
+									['Marcus Johnson', 5, 'Quick, clean, professional', 'In and out in under 40 minutes with a great fade. The salon was clean and the stylist was easy to talk to.'],
+									['Chloe Dubois', 4, 'Nice result, small wait', 'Appointment started about 15 minutes late but the haircut itself was worth it. Will book again.'],
+									['Ethan Walsh', 5, "Best cut I've had locally", 'Found my new regular spot. The online booking calendar showed real availability, no back-and-forth needed.'],
 								],
 							],
+							// Image: dummy-image-1.png (foam car wash).
 							1 => [
-								'name' => 'Car Wash',
-								'post_data' => [
-									'mpwpb_shortcode_title' => 'Car Wash Service',
-									'mpwpb_shortcode_sub_title' => 'Wash your car easily with affordable price',
-									'mpwpb_template' => 'static.php',
-									'mpwpb_service_start_date' => '2023-03-01',
-									'mpwpb_time_slot_length' => '60',
-									'mpwpb_capacity_per_session' => '1',
-									'mpwpb_default_start_time' => '10',
-									'mpwpb_default_end_time' => '16',
-									'mpwpb_default_start_break_time' => '13',
-									'mpwpb_default_end_break_time' => '15',
-									'mpwpb_monday_start_time' => '',
-									'mpwpb_monday_end_time' => '',
-									'mpwpb_monday_start_break_time' => '',
-									'mpwpb_monday_end_break_time' => '',
-									'mpwpb_tuesday_start_time' => '',
-									'mpwpb_tuesday_end_time' => '',
-									'mpwpb_tuesday_start_break_time' => '',
-									'mpwpb_tuesday_end_break_time' => '',
-									'mpwpb_wednesday_start_time' => '',
-									'mpwpb_wednesday_end_time' => '',
-									'mpwpb_wednesday_start_break_time' => '',
-									'mpwpb_wednesday_end_break_time' => '',
-									'mpwpb_thursday_start_time' => '',
-									'mpwpb_thursday_end_time' => '',
-									'mpwpb_thursday_start_break_time' => '',
-									'mpwpb_thursday_end_break_time' => '',
-									'mpwpb_off_days' => 'saturday,sunday',
-									'mpwpb_off_dates' => [],
-									'mpwpb_service_details_active' => 'on',
-									'mpwpb_service_duration_active' => 'on',
-									'mpwpb_category_text' => 'Wash Type',
-									'mpwpb_sub_category_text' => 'Car Type',
+								'name' => 'Sparkle Car Wash & Detailing',
+								'post_data' => array_merge($common, self::dummy_schedule(30, 3, array(8, 18), '', array('sunday' => array(10, 16))), [
+									'mpwpb_shortcode_title' => 'Car Wash & Detailing',
+									'mpwpb_shortcode_sub_title' => 'Hand washes and full detailing, booked in minutes',
+									'mpwpb_category_text' => 'Package',
+									'mpwpb_sub_category_text' => 'Vehicle size',
 									'mpwpb_service_text' => 'Service',
 									'mpwpb_category_service' => [
-										['name' => 'Car Wash Polish', 'icon' => '', 'image' => ''],
-										['name' => 'Car Detailing', 'icon' => '', 'image' => ''],
+										['name' => 'Wash Packages', 'icon' => 'fas fa-soap', 'image' => ''],
+										['name' => 'Detailing', 'icon' => 'fas fa-spray-can', 'image' => ''],
 									],
-									'mpwpb_sub_category_service'=>[
-										['name' => 'Car Type SUV', 'icon' => 'fas fa-dog', 'image' => '', 'cat_id'=> 0],
-										['name' => 'Car Type Zeep', 'icon' => 'fas fa-dragon', 'image' => '', 'cat_id'=> 0],
-										['name' => 'Car Type Sedan', 'icon' => 'fas fa-truck-monster', 'image' => '', 'cat_id'=> 0],
-										['name' => 'Car Type Sedan', 'icon' => 'fas fa-otter', 'image' => '', 'cat_id'=> 1],
+									'mpwpb_sub_category_service' => [
+										['name' => 'Sedan / Hatchback', 'icon' => 'fas fa-car', 'image' => '', 'cat_id' => 0],
+										['name' => 'SUV / Crossover', 'icon' => 'fas fa-car-side', 'image' => '', 'cat_id' => 0],
 									],
-									'mpwpb_service'=>[
-										['name' => 'Hand Wash', 'price' => 450, 'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.', 'duration' => '1h 30m', 'icon' => 'fas fa-frog', 'image' => '', 'show_cat_status' => 'on', 'parent_cat' => 0, 'sub_cat' => 0],
-										['name' => 'Exterior Handwax', 'price' => 200, 'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.', 'duration' => '1 Hour', 'icon' => 'fas fa-paw', 'image' => '', 'show_cat_status' => 'on', 'parent_cat' => 0, 'sub_cat' => 0],
-										['name' => 'Hand Wash Wax', 'price' => 650, 'details' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.', 'duration' => '1h 30m', 'icon' => 'fas fa-dragon', 'image' => '', 'show_cat_status' => 'on', 'parent_cat' => 0, 'sub_cat' => 0],
-										['name' => 'Hand Wash', 'price' => 450, 'details' => 'Lorem Ipsum is simply dummy text.', 'duration' => '', 'icon' => 'fas fa-spider', 'image' => '', 'show_cat_status' => 'on', 'parent_cat' => 0, 'sub_cat' => 1],
-										['name' => 'Exterior Handwax', 'price' => 600, 'details' => 'Lorem Ipsum is simply dummy text.', 'duration' => '', 'icon' => 'fas fa-crow', 'image' => '', 'show_cat_status' => 'on', 'parent_cat' => 0, 'sub_cat' => 1],
-										['name' => 'Hand Wash Wax', 'price' => 500, 'details' => 'Lorem Ipsum is simply dummy text.', 'duration' => '', 'icon' => 'fas fa-dog', 'image' => '', 'show_cat_status' => 'on', 'parent_cat' => 0, 'sub_cat' => 1],
-										['name' => 'Standard Interior', 'price' => '750', 'details' => 'Lorem Ipsum is simply dummy text.', 'duration' => '1h 30m', 'icon' => 'fas fa-taxi', 'image' => '', 'show_cat_status' => 'on', 'parent_cat' => 1, 'sub_cat' => 0],
-										['name' => 'Premium Interior', 'price' => '600', 'details' => 'Lorem Ipsum is simply dummy text.', 'duration' => '1h 30m', 'icon' => 'fas fa-church', 'image' => '', 'show_cat_status' => 'on', 'parent_cat' => 1, 'sub_cat' => 0],
-										['name' => 'Complete Detail', 'price' => '500', 'details' => 'Lorem Ipsum is simply dummy text.', 'duration' => '1h 30m', 'icon' => 'fas fa-place-of-worship', 'image' => '', 'show_cat_status' => 'on', 'parent_cat' => 1, 'sub_cat' => 0],
+									'mpwpb_service' => [
+										self::dummy_service('Express Exterior Wash', 15, '30min', 'Pre-rinse, foam wash, hand dry and wheel clean.', 'fas fa-soap', 0, 0),
+										self::dummy_service('Full Hand Wash (In & Out)', 35, '45min', 'Exterior hand wash plus vacuum, windows and dashboard wipe-down.', 'fas fa-hand-sparkles', 0, 0),
+										self::dummy_service('Wash & Wax', 60, '1h 15m', 'Full hand wash finished with a protective carnauba wax.', 'fas fa-star', 0, 0),
+										self::dummy_service('Express Exterior Wash', 20, '30min', 'Pre-rinse, foam wash, hand dry and wheel clean.', 'fas fa-soap', 0, 1),
+										self::dummy_service('Full Hand Wash (In & Out)', 45, '1h', 'Exterior hand wash plus vacuum, windows and dashboard wipe-down.', 'fas fa-hand-sparkles', 0, 1),
+										self::dummy_service('Wash & Wax', 75, '1h 30m', 'Full hand wash finished with a protective carnauba wax.', 'fas fa-star', 0, 1),
+										self::dummy_service('Interior Deep Clean', 120, '2h', 'Shampoo seats and carpets, steam vents and condition leather.', 'fas fa-couch', 1),
+										self::dummy_service('Full Detail (Inside & Out)', 220, '4h', 'Clay bar, machine polish, sealant and a complete interior deep clean.', 'fas fa-spray-can', 1),
+										self::dummy_service('Headlight Restoration', 50, '45min', 'Sand, polish and UV-seal cloudy headlights.', 'fas fa-lightbulb', 1),
 									],
-									'mpwpb_extra_service_active' => 'on',
-									'mpwpb_service_multiple_category_check' => 'on',
-									'mpwpb_multiple_service_select' => 'on',
-									'mpwpb_group_extra_service_active' => 'off',
 									'mpwpb_extra_service' => [
-										['name' => 'Tyre Pressure Checking', 'qty' => 10, 'price' => 10, 'details' => 'A gentle but detailed hand wash procedure.', 'icon' => 'fas fa-tractor', 'image' => ''],
-										['name' => 'Tyre Changing', 'qty' => 5, 'price' => 5, 'details' => 'A gentle but detailed hand wash procedure.', 'icon' => 'fas fa-torii-gate', 'image' => ''],
-										['name' => 'Odor Removal', 'qty' => 10, 'price' => 10, 'details' => 'A gentle but detailed hand wash procedure.', 'icon' => 'fas fa-user-secret', 'image' => ''],
+										self::dummy_extra('Tyre Shine', 8, 'Long-lasting dressing for a deep black tyre finish.', 'fas fa-circle'),
+										self::dummy_extra('Odour Removal', 25, 'Ozone treatment to remove smoke, pet and food odours.', 'fas fa-wind'),
+										self::dummy_extra('Pet Hair Removal', 30, 'Extra time and tools to lift embedded pet hair.', 'fas fa-paw'),
+										self::dummy_extra('Engine Bay Clean', 35, 'Degrease and dress the engine bay.', 'fas fa-cogs'),
 									],
-									'mpwpb_display_slider' => 'on',
-									'mpwpb_slider_images' => [0 => ''],
-									'mpwpb_faq_active' => 'on',
+									'mpwpb_features' => ['Hand Wash Only, No Brushes', 'Eco-Friendly, pH-Neutral Products', 'Open 7 Days', 'Covered Waiting Lounge with Wi-Fi'],
 									'mpwpb_faq' => [
-										['title' => 'What types of car wash services do you offer?', 'content' => ''],
-										['title' => 'Do I need an appointment for a car wash?', 'content' => ''],
-										['title' => 'How long does a car wash take?', 'content' => ''],
-										['title' => 'Do you offer mobile car wash services?', 'content' => ''],
-										['title' => "What's the difference between a regular wash and detailing?", 'content' => ''],
+										['title' => 'Which wash package should I choose?', 'content' => '<p>The Express Exterior Wash is ideal for a regular clean. Choose the Full Hand Wash if the inside needs attention too, and Wash &amp; Wax for extra shine and protection.</p>'],
+										['title' => 'How long will my car take?', 'content' => '<p>Each service shows its time when you book. Washes take 30 to 90 minutes and full details take around 4 hours.</p>'],
+										['title' => 'Can I wait while you wash my car?', 'content' => '<p>Yes. Our covered lounge has seating, Wi-Fi and coffee. For full details we recommend dropping the car off.</p>'],
+										['title' => 'What if it rains after my wash?', 'content' => '<p>Book again within 48 hours and we will give the outside a free rinse and dry.</p>'],
 									],
-									'mpwpb_features_status' => 'on',
-									'mpwpb_features' => ["Hand Wash Expertise", "Eco-Friendly Cleaning Products", "Mobile Car Wash Convenience", "Full Detailing Services"],
-									'mpwpb_service_overview_status' => 'on',
-									'mpwpb_service_overview_content' => 'Our car wash service is dedicated to providing top-tier care for your vehicle, offering a wide range of cleaning options to suit all needs.',
-									'mpwpb_service_details_status' => 'on',
-									'mpwpb_service_details_content' => '<strong>Why Choose Us?</strong><ul><li><strong>Eco-Friendly Products:</strong> We use biodegradable, non-toxic cleaning agents.</li><li><strong>Experienced Staff:</strong> Our skilled technicians are trained to handle all types of vehicles with care and precision.</li><li><strong>State-of-the-Art Equipment:</strong> We use modern tools and techniques.</li></ul>',
-									'mpwpb_service_review_ratings' => '4.5',
-									'mpwpb_service_rating_scale' => 'out of 5',
-									'mpwpb_service_rating_text' => '2888 total customer reviews',
-									'_thumbnail_id' => '1431',
+									'mpwpb_service_overview_content' => '<p><strong>Sparkle Car Wash &amp; Detailing</strong> gives your car a careful hand wash or a full showroom detail, with prices set by package and vehicle size.</p><ol><li>Choose a wash package or detailing service.</li><li>Pick your vehicle size.</li><li>Choose a time to drop off.</li><li>Add extras, confirm, and drive away sparkling.</li></ol>',
+									'mpwpb_service_details_content' => '<p>Every car is washed by hand using the two-bucket method and soft microfibre mitts, so there are no automatic brushes to scratch your paint.</p><p><strong>Why drivers choose us</strong></p><ul><li><strong>Eco-friendly products:</strong> biodegradable, pH-neutral shampoos and water recycling.</li><li><strong>Trained team:</strong> every washer completes our paint-safe training.</li><li><strong>Clear pricing:</strong> the price you book is the price you pay.</li></ul>',
+									'mpwpb_service_rating_scale' => 'Out of 5',
+								]),
+								'reviews' => [
+									['Hannah Price', 5, 'Car looks brand new', 'Booked the full wash package online and the car came out spotless, inside and out. Staff were quick and courteous.'],
+									['Carlos Mendes', 5, 'Easy booking, great value', 'Was able to pick a slot that fit around my work schedule. Price was fair for the quality of the job.'],
+									['Natalie Brooks', 4, 'Good wash, busy on weekends', 'Quality of the wash was great, just had to wait a bit longer than expected on a Saturday. Would book on a weekday next time.'],
+									['Samuel Afolabi', 5, 'Friendly team, thorough job', "They paid attention to detail I didn't expect from a quick wash, got the wheels and interior mats really clean."],
 								],
 							],
+							// Image: dummy-image-2.png (mechanic under the bonnet).
 							2 => [
-								'name' => 'Repair service Booking Online',
-								'post_data' => [
-									'mpwpb_shortcode_title' => 'Vehicle Repair Service',
-									'mpwpb_shortcode_sub_title' => 'Repair your vehicle easily with affordable price',
-									'mpwpb_template' => 'static.php',
-									'mpwpb_service_start_date' => '2023-02-01',
-									'mpwpb_time_slot_length' => '60',
-									'mpwpb_capacity_per_session' => '1',
-									'mpwpb_default_start_time' => '10',
-									'mpwpb_default_end_time' => '18',
-									'mpwpb_default_start_break_time' => '13',
-									'mpwpb_default_end_break_time' => '15',
-									'mpwpb_off_days' => 'saturday,sunday',
-									'mpwpb_off_dates' => [],
-									'mpwpb_service_details_active' => 'on',
-									'mpwpb_service_duration_active' => 'on',
-									'mpwpb_category_text' => 'Service Type',
+								'name' => 'AutoCare Service & Repair Centre',
+								'post_data' => array_merge($common, self::dummy_schedule(60, 3, array(8, 17, 12, 13), 'sunday', array('saturday' => array(9, 13))), [
+									'mpwpb_shortcode_title' => 'Car Service & Repair',
+									'mpwpb_shortcode_sub_title' => 'Servicing, repairs and diagnostics with upfront prices',
+									'mpwpb_category_text' => 'Service type',
 									'mpwpb_sub_category_text' => 'Sub-Category',
-									'mpwpb_service_text' => 'Service Details',
+									'mpwpb_service_text' => 'Service',
 									'mpwpb_category_service' => [
-										['name' => 'Car Maintenance', 'icon' => '', 'image' => ''],
-										['name' => 'Car Repair', 'icon' => '', 'image' => ''],
+										['name' => 'Maintenance', 'icon' => 'fas fa-oil-can', 'image' => ''],
+										['name' => 'Repairs', 'icon' => 'fas fa-wrench', 'image' => ''],
+										['name' => 'Diagnostics', 'icon' => 'fas fa-laptop-medical', 'image' => ''],
 									],
-									'mpwpb_sub_category_service'=>[],
-									'mpwpb_service'=>[
-										['name' => 'Auto Maintenance Services', 'price' => '500', 'details' => 'Lorem Ipsum is simply dummy text.', 'duration' => '1 hour', 'icon' => 'fas fa-air-freshener', 'image' => '', 'show_cat_status' => 'on', 'parent_cat' => 0, 'sub_cat' => ''],
-										['name' => 'Oil Filter Change', 'price' => '300', 'details' => 'Lorem Ipsum is simply dummy text.', 'duration' => '1 hour', 'icon' => 'fas fa-tape', 'image' => '', 'show_cat_status' => 'on', 'parent_cat' => 0, 'sub_cat' => ''],
-										['name' => 'Engine Performance', 'price' => '300', 'details' => 'Lorem Ipsum is simply dummy text.', 'duration' => '30m', 'icon' => 'fas fa-truck-monster', 'image' => '', 'show_cat_status' => 'on', 'parent_cat' => 0, 'sub_cat' => ''],
-										['name' => 'Brake Repair Pads Rotors', 'price' => '200', 'details' => 'Lorem Ipsum is simply dummy text.', 'duration' => '30m', 'icon' => '', 'image' => '', 'show_cat_status' => 'on', 'parent_cat' => 1, 'sub_cat' => ''],
-										['name' => 'Air Conditioning Services', 'price' => '100', 'details' => 'Lorem Ipsum is simply dummy text.', 'duration' => '30m', 'icon' => '', 'image' => '', 'show_cat_status' => 'on', 'parent_cat' => 1, 'sub_cat' => ''],
-										['name' => 'Body Repair Painting', 'price' => '30', 'details' => 'Lorem Ipsum is simply dummy text.', 'duration' => '30m', 'icon' => '', 'image' => '', 'show_cat_status' => 'on', 'parent_cat' => 1, 'sub_cat' => ''],
+									'mpwpb_sub_category_service' => [],
+									'mpwpb_service' => [
+										self::dummy_service('Oil & Filter Change', 60, '45min', 'Up to 5 litres of manufacturer-grade oil and a new oil filter.', 'fas fa-oil-can', 0),
+										self::dummy_service('Interim Service', 120, '1h 30m', 'Oil and filter change plus a 30-point safety check.', 'fas fa-clipboard-check', 0),
+										self::dummy_service('Full Service', 220, '3h', 'Oil, air, fuel and cabin filters, plus a 60-point inspection.', 'fas fa-tools', 0),
+										self::dummy_service('Tyre Rotation & Balance', 50, '45min', 'Rotate all four tyres and balance the wheels.', 'fas fa-circle-notch', 0),
+										self::dummy_service('Front Brake Pads Replacement', 150, '1h 30m', 'New front pads fitted, discs checked and the brakes road-tested.', 'fas fa-compact-disc', 1),
+										self::dummy_service('Battery Replacement', 140, '30min', 'Battery test, new battery fitted and old battery recycled.', 'fas fa-car-battery', 1),
+										self::dummy_service('Air Conditioning Re-Gas', 90, '1h', 'Leak check, refrigerant top-up and cabin temperature test.', 'fas fa-snowflake', 1),
+										self::dummy_service('Engine Diagnostic Scan', 70, '45min', 'Read and explain fault codes, with a written repair quote.', 'fas fa-laptop-medical', 2),
 									],
-									'mpwpb_extra_service_active' => 'on',
-									'mpwpb_service_multiple_category_check' => 'on',
-									'mpwpb_multiple_service_select' => 'on',
-									'mpwpb_group_extra_service_active' => 'off',
 									'mpwpb_extra_service' => [
-										['name' => 'Driver Seating Chair', 'qty' => '200', 'price' => '200', 'details' => 'Lorem Ipsum is simply dummy text.', 'icon' => 'fas fa-ship', 'image' => ''],
-										['name' => 'Lunch box for driver', 'qty' => '300', 'price' => '300', 'details' => 'Lorem Ipsum is simply dummy text.', 'icon' => 'fas fa-hamburger', 'image' => ''],
+										self::dummy_extra('Courtesy Car (per day)', 35, 'Keep moving while we work on your car.', 'fas fa-car'),
+										self::dummy_extra('Collection & Delivery', 20, 'We collect your car and bring it back within 10 miles.', 'fas fa-truck'),
+										self::dummy_extra('Wiper Blades (pair)', 25, 'New front wiper blades fitted.', 'fas fa-water'),
+										self::dummy_extra('Cabin Air Filter', 30, 'Fresh pollen filter for cleaner air inside the car.', 'fas fa-filter'),
 									],
-									'mpwpb_display_slider' => 'on',
-									'mpwpb_slider_images' => [0 => ''],
-									'mpwpb_faq_active' => 'on',
+									'mpwpb_features' => ['Certified Technicians', 'Manufacturer-Approved Parts', '12-Month Parts & Labour Warranty', 'Free Written Quote Before Any Work'],
 									'mpwpb_faq' => [
-										['title' => 'What types of repair services can I book?', 'content' => '<p>We offer a wide range of repair services, including appliance repairs, electronics troubleshooting, plumbing fixes, HVAC servicing, and automotive repairs.</p>'],
-										['title' => 'How do I book a repair service?', 'content' => '<p>Booking a repair service is simple! Just visit our website, select the type of service you need, choose your preferred date and time.</p>'],
-										['title' => 'Is there a fee for booking an appointment?', 'content' => '<p>There is no fee for booking an appointment. You will only be charged for the service provided once the repair is completed.</p>'],
-										['title' => 'Can I reschedule or cancel my appointment?', 'content' => '<p>Yes, you can reschedule or cancel your appointment through our online booking system. Please do so at least 24 hours in advance.</p>'],
+										['title' => 'Will servicing here affect my manufacturer warranty?', 'content' => '<p>No. We follow the manufacturer service schedule and use approved parts, and we stamp your service book.</p>'],
+										['title' => 'What if you find another problem?', 'content' => '<p>We never do extra work without asking. We call you with a written quote and only go ahead once you approve it.</p>'],
+										['title' => 'Can I wait for my car?', 'content' => '<p>Yes, for jobs under 90 minutes. For longer work, add a courtesy car or our collection and delivery service.</p>'],
+										['title' => 'Is the work guaranteed?', 'content' => '<p>Yes. All repairs come with a 12-month parts and labour warranty.</p>'],
 									],
-									'mpwpb_features_status' => 'on',
-									'mpwpb_features' => ['Wide Range of Courses', 'General Health Checkups', 'What types of repair services can I book?', 'General Health Checkups'],
-									'mpwpb_service_overview_status' => 'on',
-									'mpwpb_service_overview_content' => 'Experience hassle-free repair services with our <strong>Repair Service Booking</strong> system.',
-									'mpwpb_service_details_status' => 'on',
-									'mpwpb_service_details_content' => '<ol><li><strong>Select Service</strong>: Choose the type of repair service you need.</li><li><strong>Schedule Appointment</strong>: Pick a date and time that works for you.</li><li><strong>Provide Details</strong>: Share relevant information about the repair issue.</li><li><strong>Confirmation</strong>: Receive a confirmation of your appointment via email or text.</li></ol>',
-									'mpwpb_service_review_ratings' => '4.5',
-									'mpwpb_service_rating_scale' => 'out of 5',
-									'mpwpb_service_rating_text' => '2888 total customer reviews',
-									'_thumbnail_id' => '261',
+									'mpwpb_service_overview_content' => '<p><strong>AutoCare Service &amp; Repair Centre</strong> keeps your car safe and road-legal with fixed-price servicing, repairs and diagnostics.</p><ol><li>Choose the service your car needs.</li><li>Pick a drop-off time.</li><li>Add a courtesy car or collection if needed.</li><li>Confirm, and we will text you when it is ready.</li></ol>',
+									'mpwpb_service_details_content' => '<p>Our workshop has three service bays and certified technicians who work on all major makes and models.</p><p><strong>How it works</strong></p><ul><li><strong>Fixed prices:</strong> the price you book covers parts and labour for the listed work.</li><li><strong>No surprises:</strong> if we spot anything else, we send photos and a quote first.</li><li><strong>Warranty:</strong> every repair is covered for 12 months.</li></ul>',
+									'mpwpb_service_rating_scale' => 'Out of 5',
+								]),
+								'reviews' => [
+									['Linda Martinez', 5, 'Ready the same afternoon', 'Dropped the car off in the morning for a full service and it was ready by 3 PM. They explained everything they had checked.'],
+									['Robert Kim', 5, 'Transparent pricing, no surprises', "Quoted a price upfront before the work and that's exactly what I paid. Appreciated not getting any last-minute add-on charges."],
+									['Grace Osei', 4, 'Good service, slight delay', 'The repair itself was done well, though the car was ready about an hour later than promised. They kept me updated by text throughout.'],
+									['Daniel Novak', 5, 'Convenient booking, great result', 'The online calendar made it simple to find a next-day slot for my brakes. They have been perfect since.'],
 								],
 							],
+							// Image: dummy-image-3.png (online guitar lesson).
 							3 => [
-								'name' => 'Music Learning Online',
-								'post_data' => [
-									'mpwpb_shortcode_title' => 'Musical Service',
-									'mpwpb_shortcode_sub_title' => 'Find your musical instructor easily with affordable price.',
-									'mpwpb_template' => 'static.php',
-									'mpwpb_service_start_date' => '2023-02-01',
-									'mpwpb_time_slot_length' => '60',
-									'mpwpb_capacity_per_session' => '1',
-									'mpwpb_default_start_time' => '10',
-									'mpwpb_default_end_time' => '18',
-									'mpwpb_default_start_break_time' => '13',
-									'mpwpb_default_end_break_time' => '15',
-									'mpwpb_off_days' => 'saturday,sunday',
-									'mpwpb_off_dates' => [],
-									'mpwpb_service_details_active' => 'on',
-									'mpwpb_service_duration_active' => 'on',
-									'mpwpb_category_text' => 'Category',
+								'name' => 'Harmony Online Music Lessons',
+								'post_data' => array_merge($common, self::dummy_schedule(30, 3, array(14, 21), 'sunday', array('saturday' => array(10, 16))), [
+									'mpwpb_shortcode_title' => 'Online Music Lessons',
+									'mpwpb_shortcode_sub_title' => 'Live one-to-one lessons with professional teachers',
+									'mpwpb_category_text' => 'Instrument',
 									'mpwpb_sub_category_text' => 'Sub-Category',
-									'mpwpb_service_text' => 'Service',
-									'mpwpb_category_service' => [],
-									'mpwpb_sub_category_service'=>[],
-									'mpwpb_service'=>[
-										['name' => 'Classical Class (3 Months)', 'price' => '10', 'details' => 'derived from the Latin word classics', 'duration' => '30m', 'icon' => '', 'image' => '', 'show_cat_status' => 'off', 'parent_cat' => '', 'sub_cat' => ''],
-										['name' => 'Jazz Classes (2 Months)', 'price' => '15', 'details' => 'Classical music, strictly defined', 'duration' => '30m', 'icon' => '', 'image' => '', 'show_cat_status' => 'off', 'parent_cat' => '', 'sub_cat' => ''],
-										['name' => 'Classical Private Tutor', 'price' => '20', 'details' => 'derived from the Latin word classics', 'duration' => '30m', 'icon' => '', 'image' => '', 'show_cat_status' => 'off', 'parent_cat' => '', 'sub_cat' => ''],
-										['name' => 'Pop Songs Classes', 'price' => '30', 'details' => 'Classical music, strictly defined', 'duration' => '30m', 'icon' => '', 'image' => '', 'show_cat_status' => 'off', 'parent_cat' => '', 'sub_cat' => ''],
-										['name' => 'Rock Music Piano Class', 'price' => '40', 'details' => 'derived from the Latin word classics', 'duration' => '30m', 'icon' => '', 'image' => '', 'show_cat_status' => 'off', 'parent_cat' => '', 'sub_cat' => ''],
-										['name' => 'Classical Advance Class', 'price' => '78', 'details' => 'Classical music, strictly defined', 'duration' => '30m', 'icon' => '', 'image' => '', 'show_cat_status' => 'off', 'parent_cat' => '', 'sub_cat' => ''],
-									],
-									'mpwpb_extra_service_active' => 'off',
-									'mpwpb_service_multiple_category_check' => 'on',
-									'mpwpb_multiple_service_select' => 'on',
-									'mpwpb_group_extra_service_active' => 'off',
-									'mpwpb_extra_service' => [],
-									'mpwpb_display_slider' => 'on',
-									'mpwpb_slider_images' => [0 => ''],
-									'mpwpb_faq_active' => 'on',
-									'mpwpb_faq' => [
-										['title' => 'What instruments can I learn on the platform?', 'content' => '<p>We offer a variety of instrument courses, including piano, guitar, drums, violin, flute, saxophone, and more.</p>'],
-										['title' => 'Is Music Learning Online suitable for beginners?', 'content' => '<p>Absolutely! We have beginner-friendly courses for each instrument.</p>'],
-										['title' => 'Do I need any prior musical knowledge to join?', 'content' => '<p>No prior experience is necessary.</p>'],
-										['title' => 'How do I access the lessons?', 'content' => '<p>All lessons are available online, so you can access them anytime.</p>'],
-									],
-									'mpwpb_features_status' => 'on',
-									'mpwpb_features' => ['Wide Range of Courses', 'Expert Instructors', 'Flexible, Self-Paced Learning', 'Interactive Tools', 'Progress Tracking'],
-									'mpwpb_service_overview_status' => 'on',
-									'mpwpb_service_overview_content' => '<strong>Music Learning Online</strong> is a dynamic and user-friendly platform designed to help learners of all levels develop their musical skills from anywhere in the world.',
-									'mpwpb_service_details_status' => 'on',
-									'mpwpb_service_details_content' => 'Discover the joy of learning music from the comfort of your home with <strong>Music Learning Online</strong>.',
-									'mpwpb_service_review_ratings' => '4.5',
-									'mpwpb_service_rating_scale' => 'out of 5',
-									'mpwpb_service_rating_text' => '2888 total customer reviews',
-									'_thumbnail_id' => '261',
-								],
-							],
-							4 => [
-								'name' => 'Medical & Dental',
-								'post_data' => [
-									'mpwpb_shortcode_title' => 'Medical & Dental Service',
-									'mpwpb_shortcode_sub_title' => 'Choose your medical and dental services easily with affordable price.',
-									'mpwpb_template' => 'static.php',
-									'mpwpb_service_start_date' => '2023-02-01',
-									'mpwpb_time_slot_length' => '60',
-									'mpwpb_capacity_per_session' => '1',
-									'mpwpb_default_start_time' => '10',
-									'mpwpb_default_end_time' => '18',
-									'mpwpb_default_start_break_time' => '13',
-									'mpwpb_default_end_break_time' => '15',
-									'mpwpb_off_days' => 'saturday,sunday',
-									'mpwpb_off_dates' => [],
-									'mpwpb_service_details_active' => 'on',
-									'mpwpb_service_duration_active' => 'on',
-									'mpwpb_category_text' => 'Category',
-									'mpwpb_sub_category_text' => 'Sub-Category',
-									'mpwpb_service_text' => 'Service',
-									'mpwpb_category_service' => [],
-									'mpwpb_sub_category_service'=>[],
-									'mpwpb_service'=>[
-										['name' => 'Fever', 'price' => '10', 'details' => 'Nisl tempus, sollicitudin amet.', 'duration' => '30m', 'icon' => '', 'image' => '', 'show_cat_status' => 'off', 'parent_cat' =>'', 'sub_cat' => ''],
-										['name' => 'Dry Cough', 'price' => '30', 'details' => 'Nisl tempus, metus, sollicitudin amet.', 'duration' => '30m', 'icon' => '', 'image' => '', 'show_cat_status' => 'off', 'parent_cat' =>'', 'sub_cat' => ''],
-										['name' => 'Shortness of Breath', 'price' => '10', 'details' => 'Nisl tempus, metus, sollicitudin amet.', 'duration' => '30m', 'icon' => '', 'image' => '', 'show_cat_status' => 'off', 'parent_cat' =>'', 'sub_cat' => ''],
-										['name' => 'Aches and Pains', 'price' => '20', 'details' => 'Nisl tempus, metus, sollicitudin amet.', 'duration' => '30m', 'icon' => '', 'image' => '', 'show_cat_status' => 'off', 'parent_cat' =>'', 'sub_cat' => ''],
-										['name' => 'Sore Throat', 'price' => '30', 'details' => 'Nisl tempus, metus, sollicitudin amet.', 'duration' => '30m', 'icon' => '', 'image' => '', 'show_cat_status' => 'off', 'parent_cat' =>'', 'sub_cat' => ''],
-										['name' => 'Sleep Apnea', 'price' => '50', 'details' => 'Nisl tempus, metus, sollicitudin amet.', 'duration' => '60m', 'icon' => '', 'image' => '', 'show_cat_status' => 'off', 'parent_cat' =>'', 'sub_cat' => ''],
-									],
-									'mpwpb_extra_service_active' => 'off',
-									'mpwpb_service_multiple_category_check' => 'on',
-									'mpwpb_multiple_service_select' => 'on',
-									'mpwpb_group_extra_service_active' => 'off',
-									'mpwpb_extra_service' => [],
-									'mpwpb_display_slider' => 'on',
-									'mpwpb_slider_images' => [0 => ''],
-									'mpwpb_faq_active' => 'on',
-									'mpwpb_faq' => [
-										['title' => 'What types of medical services are available?', 'content' => '<p>Medical services include primary care, emergency services, specialty care, preventive care, diagnostic services, surgical services, rehabilitation, mental health services.</p>'],
-										['title' => 'How do I choose a primary care provider?', 'content' => '<p>When selecting a primary care provider, consider factors such as location, insurance coverage, provider specialties, availability, and personal recommendations.</p>'],
-									],
-									'mpwpb_features_status' => 'on',
-									'mpwpb_features' => ['Wide Range of Courses', 'Expert Instructors', 'Flexible, Self-Paced Learning', 'Interactive Tools', 'Progress Tracking'],
-									'mpwpb_service_overview_status' => 'on',
-									'mpwpb_service_overview_content' => '<ul><li><strong>Comprehensive Care</strong>: Medical services cover a broad spectrum of health needs.</li><li><strong>Access to Expertise</strong>: Patients receive specialized care from qualified professionals.</li></ul>',
-									'mpwpb_service_details_status' => 'on',
-									'mpwpb_service_details_content' => 'Medical services are essential for maintaining health, preventing illness, and providing treatment and support for various medical conditions.',
-									'mpwpb_service_review_ratings' => '4.5',
-									'mpwpb_service_rating_scale' => 'out of 5',
-									'mpwpb_service_rating_text' => '2888 total customer reviews',
-									'_thumbnail_id' => '1450',
-								],
-							],
-							5 => [
-								'name' => 'Rent Your Dream Car for Single Day long tour',
-								'post_data' => [
-									'mpwpb_shortcode_title' => 'Rent-A-Car Service',
-									'mpwpb_shortcode_sub_title' => 'Rent your dream car easily with affordable price',
-									'mpwpb_template' => 'static.php',
-									'mpwpb_service_start_date' => '2023-02-01',
-									'mpwpb_time_slot_length' => '60',
-									'mpwpb_capacity_per_session' => '1',
-									'mpwpb_default_start_time' => '10',
-									'mpwpb_default_end_time' => '18',
-									'mpwpb_default_start_break_time' => '13',
-									'mpwpb_default_end_break_time' => '15',
-									'mpwpb_off_days' => 'saturday,sunday',
-									'mpwpb_off_dates' => [],
-									'mpwpb_service_details_active' => 'on',
-									'mpwpb_service_duration_active' => 'on',
-									'mpwpb_category_text' => 'Car Type',
-									'mpwpb_sub_category_text' => 'Sub-Category',
-									'mpwpb_service_text' => 'Service',
+									'mpwpb_service_text' => 'Lesson',
 									'mpwpb_category_service' => [
-										['name' => 'Economy Car', 'icon' => '', 'image' => ''],
-										['name' => 'Standard Car', 'icon' => '', 'image' => ''],
-										['name' => 'SUV Car', 'icon' => '', 'image' => ''],
+										['name' => 'Guitar', 'icon' => 'fas fa-guitar', 'image' => ''],
+										['name' => 'Piano & Keyboard', 'icon' => 'fas fa-music', 'image' => ''],
+										['name' => 'Singing', 'icon' => 'fas fa-microphone', 'image' => ''],
 									],
-									'mpwpb_sub_category_service'=>[],
-									'mpwpb_service'=>[
-										['name' => 'Casinos', 'price' => '10', 'details' => '', 'duration' => '30m', 'icon' => '', 'image' => '', 'show_cat_status' => 'on', 'parent_cat' => 0, 'sub_cat' => ''],
-										['name' => 'Birthdays', 'price' => '20', 'details' => '', 'duration' => '30m', 'icon' => '', 'image' => '', 'show_cat_status' => 'on', 'parent_cat' => 0, 'sub_cat' => ''],
-										['name' => 'Airport Transfer', 'price' => '20', 'details' => '', 'duration' => '30m', 'icon' => '', 'image' => '', 'show_cat_status' => 'on', 'parent_cat' => 0, 'sub_cat' => ''],
-										['name' => 'Weddings', 'price' => '30', 'details' => '', 'duration' => '30m', 'icon' => '', 'image' => '', 'show_cat_status' => 'on', 'parent_cat' => 1, 'sub_cat' => ''],
-										['name' => 'Night Parties Long Drive', 'price' => '30', 'details' => '', 'duration' => '30m', 'icon' => '', 'image' => '', 'show_cat_status' => 'on', 'parent_cat' => 2, 'sub_cat' => ''],
+									'mpwpb_sub_category_service' => [],
+									'mpwpb_service' => [
+										self::dummy_service('Trial Lesson', 15, '20min', 'Meet your teacher, set goals and try a short lesson.', 'fas fa-play-circle', 0),
+										self::dummy_service('Beginner Guitar Lesson', 30, '30min', 'Chords, strumming and your first songs on acoustic or electric.', 'fas fa-guitar', 0),
+										self::dummy_service('Intermediate Guitar Lesson', 45, '45min', 'Scales, lead technique and music theory for improving players.', 'fas fa-guitar', 0),
+										self::dummy_service('Beginner Piano Lesson', 30, '30min', 'Reading music, hand position and simple pieces.', 'fas fa-music', 1),
+										self::dummy_service('Piano Grade Exam Preparation', 50, '45min', 'Pieces, scales and aural practice for graded exams.', 'fas fa-award', 1),
+										self::dummy_service('Singing Lesson', 35, '30min', 'Breathing, pitch and confidence for all voice types.', 'fas fa-microphone', 2),
 									],
-									'mpwpb_extra_service_active' => 'off',
-									'mpwpb_service_multiple_category_check' => 'on',
-									'mpwpb_multiple_service_select' => 'on',
-									'mpwpb_group_extra_service_active' => 'off',
-									'mpwpb_extra_service' => [],
-									'mpwpb_display_slider' => 'on',
-									'mpwpb_slider_images' => [0 => ''],
-									'mpwpb_faq_active' => 'on',
+									'mpwpb_extra_service' => [
+										self::dummy_extra('Lesson Recording', 5, 'A video recording of your lesson to practise with.', 'fas fa-video'),
+										self::dummy_extra('Personal Practice Plan', 10, 'A written weekly practice plan from your teacher.', 'fas fa-clipboard-list'),
+										self::dummy_extra('Sheet Music Pack', 12, 'Printable sheet music and backing tracks for your level.', 'fas fa-file-audio'),
+									],
+									'mpwpb_features' => ['Qualified, Experienced Teachers', 'Live One-to-One Video Lessons', 'Lessons for Ages 7 to Adult', 'Exam & Performance Preparation'],
 									'mpwpb_faq' => [
-										['title' => 'What types of cars are available for rent?', 'content' => '<p>We offer a wide range of luxury vehicles, including high-performance sports cars, sleek sedans, and premium SUVs.</p>'],
-										['title' => 'How long can I rent a car for a day tour?', 'content' => '<p>Our day tour rentals are typically available for a 24-hour period.</p>'],
-										['title' => 'Do I need a special license to rent a luxury car?', 'content' => '<p>No, a standard driver\'s license is typically sufficient.</p>'],
+										['title' => 'What do I need for an online lesson?', 'content' => '<p>Your instrument, a laptop or tablet with a camera, and a stable internet connection. We send the video link by email after you book.</p>'],
+										['title' => 'Do you teach children?', 'content' => '<p>Yes. We teach students from age 7. For children under 12, a parent should be nearby for the first lesson.</p>'],
+										['title' => 'Can I keep the same teacher?', 'content' => '<p>Yes. Choose your teacher when you book, and keep booking with them every week.</p>'],
+										['title' => 'What if I miss a lesson?', 'content' => '<p>Reschedule for free up to 12 hours before your lesson. Lessons missed without notice cannot be refunded.</p>'],
 									],
-									'mpwpb_features_status' => 'on',
-									'mpwpb_features' => ["Exclusive Luxury Fleet", "Flexible Itinerary", "24-Hour Rental Period", "Hassle-Free Booking", "Insurance and Safety Coverage"],
-									'mpwpb_service_overview_status' => 'on',
-									'mpwpb_service_overview_content' => 'Transform your day trip into an extraordinary adventure with our exclusive <strong>Rent Your Dream Car for Day Tour</strong> service.',
-									'mpwpb_service_details_status' => 'on',
-									'mpwpb_service_details_content' => 'Our <strong>Rent Your Dream Car for Day Tour</strong> service is perfect for anyone looking to elevate their travel experience.',
-									'mpwpb_service_review_ratings' => '4.5',
-									'mpwpb_service_rating_scale' => 'out of 5',
-									'mpwpb_service_rating_text' => '2888 total customer reviews',
-									'_thumbnail_id' => '1450',
+									'mpwpb_service_overview_content' => '<p><strong>Harmony Online Music Lessons</strong> brings a professional teacher into your home for live, one-to-one lessons on guitar, piano and voice.</p><ol><li>Choose your instrument and lesson length.</li><li>Pick a time after school or work.</li><li>Add a recording or practice plan.</li><li>Join your lesson from the link we email you.</li></ol>',
+									'mpwpb_service_details_content' => '<p>All of our teachers are professional musicians with teaching qualifications and at least five years of experience.</p><p><strong>What to expect</strong></p><ul><li>A lesson plan built around the music you want to play</li><li>Progress notes after every lesson</li><li>Optional preparation for graded exams and performances</li></ul>',
+									'mpwpb_service_rating_scale' => 'Out of 5',
+								]),
+								'reviews' => [
+									['Emily Chambers', 5, 'My daughter loves her lessons', 'The instructor is patient and really knows how to keep a 9-year-old engaged. Scheduling online sessions around school hours has been effortless.'],
+									['Jonas Weber', 5, 'Flexible and genuinely effective', "I've tried other online music platforms before, but the structured progress tracking here actually kept me practicing consistently. Highly recommend."],
+									['Aisha Rahman', 4, 'Solid instructor, minor tech hiccups', 'Lesson content and teaching quality are great. Had one session with audio lag, but support resolved it quickly for the next class.'],
+									['Tom Richardson', 5, 'Worth every session', 'Booking a slot takes two minutes and the instructor always comes prepared. My guitar skills have improved more in two months than a year of self-teaching.'],
 								],
-							]
-						]
-					]
+							],
+							// Image: dummy-image-4.png (clinician with patient).
+							4 => [
+								'name' => 'CityCare Medical & Dental Clinic',
+								'post_data' => array_merge($common, self::dummy_schedule(15, 2, array(8, 18, 13, 14), 'sunday', array('saturday' => array(9, 13))), [
+									'mpwpb_shortcode_title' => 'Medical & Dental Clinic',
+									'mpwpb_shortcode_sub_title' => 'GP appointments and dental care under one roof',
+									'mpwpb_category_text' => 'Department',
+									'mpwpb_sub_category_text' => 'Sub-Category',
+									'mpwpb_service_text' => 'Appointment',
+									'mpwpb_category_service' => [
+										['name' => 'General Medicine', 'icon' => 'fas fa-stethoscope', 'image' => ''],
+										['name' => 'Dental', 'icon' => 'fas fa-tooth', 'image' => ''],
+									],
+									'mpwpb_sub_category_service' => [],
+									'mpwpb_service' => [
+										self::dummy_service('GP Consultation', 60, '15min', 'A same-week appointment with one of our family doctors.', 'fas fa-stethoscope', 0),
+										self::dummy_service('Annual Health Check', 150, '1h', 'Blood pressure, BMI, blood tests and a full review with a doctor.', 'fas fa-heartbeat', 0),
+										self::dummy_service('Vaccination Appointment', 35, '15min', 'Flu, travel and routine vaccinations given by a nurse.', 'fas fa-syringe', 0),
+										self::dummy_service('Dental Check-Up & Clean', 90, '45min', 'Examination, scale and polish, and oral health advice.', 'fas fa-tooth', 1),
+										self::dummy_service('Tooth-Coloured Filling', 120, '45min', 'Natural-looking composite filling for one tooth.', 'fas fa-tooth', 1),
+										self::dummy_service('Teeth Whitening', 250, '1h', 'In-chair whitening for a brighter smile in one visit.', 'fas fa-smile', 1),
+									],
+									'mpwpb_extra_service' => [
+										self::dummy_extra('Blood Test Panel', 45, 'Full blood count, cholesterol and blood sugar.', 'fas fa-vial'),
+										self::dummy_extra('Dental X-Rays', 40, 'Two bitewing X-rays to check between the teeth.', 'fas fa-x-ray'),
+										self::dummy_extra('Fluoride Varnish', 20, 'Strengthens enamel and helps prevent decay.', 'fas fa-shield-alt'),
+									],
+									// Booking form shown on the page itself, and repeat check-ups.
+									'mpwpb_booking_display_mode' => 'inline',
+									'mpwpb_enable_recurring' => 'yes',
+									'mpwpb_recurring_types' => ['weekly', 'monthly'],
+									'mpwpb_max_recurring_count' => 12,
+									'mpwpb_recurring_discount' => 0,
+									'mpwpb_features' => ['Same-Week Appointments', 'Family Doctors & Dentists', 'On-Site Blood Tests', 'Wheelchair-Accessible Clinic'],
+									'mpwpb_faq' => [
+										['title' => 'Do I need to register before booking?', 'content' => '<p>No. Book online as a new patient and complete a short health form when you arrive.</p>'],
+										['title' => 'What should I bring?', 'content' => '<p>Please bring photo ID, a list of any medicines you take, and your insurance details if you have them.</p>'],
+										['title' => 'Can I book medical and dental on the same day?', 'content' => '<p>Yes. Add both services to one booking and we will schedule them back to back.</p>'],
+										['title' => 'What if I need to cancel?', 'content' => '<p>Please cancel at least 24 hours ahead so we can offer the slot to another patient.</p>'],
+									],
+									'mpwpb_service_overview_content' => '<p><strong>CityCare Medical &amp; Dental Clinic</strong> offers family doctor and dental appointments in one place, with same-week availability.</p><ol><li>Choose a medical or dental appointment.</li><li>Pick a date and time.</li><li>Add tests or X-rays if you need them.</li><li>Confirm, and we will send a reminder the day before.</li></ol>',
+									'mpwpb_service_details_content' => '<p>Our team of doctors, nurses and dentists looks after patients of all ages, from routine check-ups to ongoing care.</p><p><strong>Before your visit</strong></p><ul><li>Arrive 10 minutes early to complete your health form.</li><li>For blood tests, please fast for 8 hours beforehand.</li><li>Let us know if you need step-free access or an interpreter.</li></ul>',
+									'mpwpb_service_rating_scale' => 'Out of 5',
+								]),
+								'reviews' => [
+									['Sarah Jenkins', 5, 'Fast, caring, and thorough', 'Booked a same-week appointment and the whole visit was smooth. The doctor took time to explain everything and the dental checkup was included without any extra hassle.'],
+									['Michael Torres', 5, 'Great staff, no long wait', 'I was in and out faster than I expected. Staff were friendly and the online booking made it easy to pick a time that worked for me.'],
+									['Priya Nair', 4, 'Good experience overall', 'Appointment ran a little behind schedule but the care itself was excellent. The doctor was knowledgeable and answered all my questions patiently.'],
+									['David Okafor', 5, 'Dental and general checkup in one visit', "Didn't expect to get my dental checkup done the same day as my regular visit. Saved me a second trip. Will be booking here again."],
+								],
+							],
+							// Image: dummy-image-5.png (SUV).
+							5 => [
+								'name' => 'DriveAway Car Rental',
+								'post_data' => array_merge($common, self::dummy_schedule(60, 4, array(8, 18), '', array('sunday' => array(9, 13))), [
+									'mpwpb_shortcode_title' => 'Car Rental',
+									'mpwpb_shortcode_sub_title' => 'Clean, fully insured cars for a day trip or a weekend',
+									'mpwpb_category_text' => 'Car class',
+									'mpwpb_sub_category_text' => 'Sub-Category',
+									'mpwpb_service_text' => 'Rental',
+									'mpwpb_category_service' => [
+										['name' => 'Economy', 'icon' => 'fas fa-car', 'image' => ''],
+										['name' => 'Saloon', 'icon' => 'fas fa-car-side', 'image' => ''],
+										['name' => 'SUV', 'icon' => 'fas fa-shuttle-van', 'image' => ''],
+									],
+									'mpwpb_sub_category_service' => [],
+									'mpwpb_service' => [
+										self::dummy_service('Economy, Half Day (6 hours)', 45, '6h', 'Compact 5-door car, ideal for city errands. 150 km included.', 'fas fa-car', 0),
+										self::dummy_service('Economy, Full Day (24 hours)', 70, '24h', 'Compact 5-door car with 300 km included.', 'fas fa-car', 0),
+										self::dummy_service('Saloon, Full Day (24 hours)', 95, '24h', 'Comfortable mid-size saloon with 300 km included.', 'fas fa-car-side', 1),
+										self::dummy_service('SUV, Full Day (24 hours)', 130, '24h', '7-seat SUV with plenty of luggage space and 300 km included.', 'fas fa-shuttle-van', 2),
+										self::dummy_service('SUV Day Tour with Driver', 220, '10h', 'A professional driver and SUV for up to 10 hours of sightseeing.', 'fas fa-route', 2),
+									],
+									'mpwpb_extra_service' => [
+										self::dummy_extra('Child Seat', 8, 'Rear-facing or forward-facing seat, fitted for you.', 'fas fa-baby', 2),
+										self::dummy_extra('Additional Driver', 15, 'Add a second named driver to the rental.', 'fas fa-user-plus'),
+										self::dummy_extra('Zero-Excess Insurance', 25, 'Reduce your damage excess to zero.', 'fas fa-shield-alt'),
+										self::dummy_extra('Sat Nav', 6, 'Portable GPS with up-to-date maps.', 'fas fa-map-marked-alt'),
+									],
+									'mpwpb_features' => ['Fully Insured, Late-Model Cars', 'Free Cancellation up to 48 Hours', 'Full-to-Full Fuel Policy', '24/7 Roadside Assistance'],
+									'mpwpb_faq' => [
+										['title' => 'What do I need to rent a car?', 'content' => '<p>A full driving licence held for at least one year, a credit or debit card in the main driver\'s name, and photo ID. Drivers must be 21 or older.</p>'],
+										['title' => 'Is there a deposit?', 'content' => '<p>Yes. We hold a refundable deposit on your card at pick-up and release it when the car is returned undamaged.</p>'],
+										['title' => 'What is the fuel policy?', 'content' => '<p>Full to full: you pick the car up with a full tank and return it full.</p>'],
+										['title' => 'What if I drive more than the included distance?', 'content' => '<p>Extra distance is charged per kilometre, shown on your agreement at pick-up.</p>'],
+									],
+									'mpwpb_service_overview_content' => '<p><strong>DriveAway Car Rental</strong> has clean, fully insured economy cars, saloons and SUVs ready for a day out, a weekend away or a guided tour.</p><ol><li>Choose a car class and rental length.</li><li>Pick your pick-up date and time.</li><li>Add a child seat, extra driver or insurance.</li><li>Confirm and collect your keys.</li></ol>',
+									'mpwpb_service_details_content' => '<p>Every car is under three years old, cleaned and safety-checked before each rental, and comes with roadside assistance.</p><p><strong>Included with every rental</strong></p><ul><li>Third-party insurance and breakdown cover</li><li>Included kilometres, shown on each rental</li><li>Free cancellation up to 48 hours before pick-up</li></ul>',
+									'mpwpb_service_rating_scale' => 'Out of 5',
+								]),
+								'reviews' => [
+									['Isabella Rossi', 5, 'Car was spotless and full tank', 'Picked up the car right on schedule, it was clean and ready to go. Made our day trip so much easier than public transport.'],
+									['Benjamin Carter', 5, 'Smooth pickup and return', 'The booking process was clear about pricing and deposit upfront. No surprises at pickup, and return was quick too.'],
+									['Fatima Zahra', 4, 'Great car, paperwork took a while', 'The car itself was excellent and well maintained. Just took a bit longer than expected to finish the rental paperwork at pickup.'],
+									['Noah Campbell', 5, 'Perfect for our weekend trip', 'Comfortable ride, great mileage, and the online booking let us lock in the exact date we needed weeks in advance.'],
+								],
+							],
+							// Image: dummy-image-6.jpg (chiropractic adjustment; Unsplash, free licence).
+							6 => [
+								'name' => 'Align Chiropractic Clinic',
+								'post_data' => array_merge($common, self::dummy_schedule(30, 2, array(9, 18, 12, 13), 'sunday', array('saturday' => array(9, 13))), [
+									'mpwpb_shortcode_title' => 'Chiropractic Clinic',
+									'mpwpb_shortcode_sub_title' => 'Spinal health and pain relief, booked online',
+									'mpwpb_category_text' => 'Category',
+									'mpwpb_sub_category_text' => 'Sub-Category',
+									'mpwpb_service_text' => 'Treatment',
+									'mpwpb_category_service' => [
+										['name' => 'Consultations', 'icon' => 'fas fa-comments', 'image' => ''],
+										['name' => 'Adjustments & Therapy', 'icon' => 'fas fa-user-md', 'image' => ''],
+									],
+									'mpwpb_sub_category_service' => [],
+									'mpwpb_service' => [
+										self::dummy_service('New Patient Consultation', 95, '45min', 'Full history, posture assessment and a personal treatment plan.', 'fas fa-comments', 0),
+										self::dummy_service('Follow-Up Adjustment', 55, '20min', 'Quick follow-up spinal adjustment for existing patients.', 'fas fa-user-md', 0),
+										self::dummy_service('Spinal Adjustment', 65, '30min', 'Hands-on spinal adjustment to relieve pain and improve alignment.', 'fas fa-user-md', 1),
+										self::dummy_service('Therapeutic Massage Add-On Session', 60, '30min', 'Muscle-relaxing massage paired with your adjustment.', 'fas fa-hand-sparkles', 1),
+										self::dummy_service('Posture & Mobility Assessment', 80, '45min', 'Detailed posture and mobility screening with recommendations.', 'fas fa-walking', 1),
+									],
+									'mpwpb_extra_service' => [
+										self::dummy_extra('Heat Therapy', 10, 'Heat pack applied before or after your adjustment.', 'fas fa-fire'),
+										self::dummy_extra('Cold Laser Therapy', 30, 'Low-level laser therapy to reduce inflammation.', 'fas fa-first-aid'),
+										self::dummy_extra('Take-Home Posture Brace', 35, 'Supportive brace to reinforce posture between visits.', 'fas fa-user-md'),
+									],
+									'mpwpb_features' => ['Licensed Chiropractors', 'Personalized Treatment Plans', 'Same-Week Appointments', 'Family-Friendly Clinic'],
+									'mpwpb_faq' => [
+										['title' => 'Is chiropractic treatment safe?', 'content' => '<p>Yes, all adjustments are performed by licensed chiropractors using safe, proven techniques.</p>'],
+										['title' => 'How many visits will I need?', 'content' => '<p>Your chiropractor will recommend a plan based on your condition during your first visit.</p>'],
+										['title' => 'Do you treat children?', 'content' => '<p>Yes, we welcome patients of all ages with age-appropriate techniques.</p>'],
+										['title' => 'Is there a discount for ongoing care?', 'content' => '<p>Yes. Book a weekly recurring appointment and get 10% off every visit.</p>'],
+									],
+									'mpwpb_service_overview_content' => '<p><strong>Align Chiropractic Clinic</strong> helps patients of all ages find lasting relief from pain and stiffness.</p><ol><li>Book a consultation or adjustment.</li><li>Pick a date and time.</li><li>Add any therapy extras.</li><li>Confirm and start feeling better.</li></ol>',
+									'mpwpb_service_details_content' => '<p>Our chiropractors use evidence-based techniques tailored to each patient, with ongoing care plans for lasting results.</p><p><strong>Your first visit</strong></p><ul><li>A full health and injury history</li><li>Posture, movement and spinal assessment</li><li>A clear treatment plan and your first adjustment if suitable</li></ul><p><strong>What to wear</strong></p><p>Comfortable, loose clothing you can move in easily.</p>',
+									// Weekly care plans: recurring bookings with a 10% discount.
+									'mpwpb_enable_recurring' => 'yes',
+									'mpwpb_recurring_types' => ['weekly'],
+									'mpwpb_max_recurring_count' => 20,
+									'mpwpb_recurring_discount' => 10,
+									'mpwpb_service_rating_scale' => 'Out of 5',
+								]),
+								'reviews' => [
+									['Oscar L.', 5, 'No more back pain', 'After years of back pain, my chiropractor finally got me real relief.'],
+									['Bianca M.', 5, 'Great with kids', 'They were wonderful adjusting my daughter after her sports injury.'],
+									['Leo N.', 4, 'Solid results', 'Noticeable improvement in my posture after a month of visits.'],
+									['Ingrid P.', 5, 'Friendly and professional', 'The whole team makes every visit easy and comfortable.'],
+								],
+							],
+						],
+					],
 				];
+			}
+
+			/**
+			 * Approved sample reviews for an imported service, plus the
+			 * rating meta the Reviews admin would compute from them, so the
+			 * star rating, "(N ratings)" text and Reviews tab all agree.
+			 */
+			private static function import_dummy_reviews(int $post_id, array $reviews) {
+				global $wpdb;
+				$table = $wpdb->prefix . 'mpwpb_reviews';
+				if (empty($reviews) || $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) !== $table) {
+					return;
+				}
+				$total = 0;
+				$count = count($reviews);
+				foreach ($reviews as $i => $review) {
+					list($name, $rating, $title, $content) = $review;
+					$wpdb->insert($table, array(
+						'service_id' => $post_id,
+						'user_id' => 0,
+						'user_name' => $name,
+						'rating' => (int) $rating,
+						'title' => $title,
+						'content' => $content,
+						'status' => 'approved',
+						// Spread over the last few weeks, oldest first.
+						'date_created' => gmdate('Y-m-d H:i:s', time() - ($count - $i) * 9 * DAY_IN_SECONDS),
+					));
+					$total += (int) $rating;
+				}
+				update_post_meta($post_id, 'mpwpb_service_review_ratings', number_format($total / $count, 1));
+				update_post_meta($post_id, 'mpwpb_service_rating_scale', 'Out of 5');
+				/* translators: %d: number of ratings */
+				update_post_meta($post_id, 'mpwpb_service_rating_text', sprintf(__('(%d ratings)', 'service-booking-manager'), $count));
 			}
 			public static function insert_media($file_path) {
 				$attachment = self::does_attachment_exist(basename($file_path));
