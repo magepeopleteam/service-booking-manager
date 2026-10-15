@@ -1617,3 +1617,45 @@ p.mpwpb-sme__bw-tip {
 .mpwpb-sme .mpwpb-dtm .mpwpb-dtm__card-head{background:#e7f0fd !important;border-bottom-color:var(--band-line) !important;}
 .mpwpb-sme .mpwpb-dtm .mpwpb-dtm__card-head{border-radius:0;}
 p.mpwpb-sme__gallery-off{padding:10px !important;background:#fff;}
+
+/* Header with the step indicator merged in (one row): back arrow, title,
+   steps centred, actions on the right. Below 1200px the steps get their
+   own row under the title. */
+.mpwpb-sme .mpwpb-sme__topbar{display:grid;grid-template-columns:auto minmax(140px,300px) 1fr auto;grid-template-areas:"back title steps acts";gap:10px 16px;padding:12px 24px;}
+.mpwpb-sme .mpwpb-sme__back{grid-area:back;justify-content:center;width:36px;height:36px;padding:0;}
+.mpwpb-sme .mpwpb-sme__back .dashicons{font-size:20px;width:20px;height:20px;}
+.mpwpb-sme.mpwpb_style .mpwpb-sme__topbar input.mpwpb-sme__ttl-input{
+	grid-area:title;justify-self:stretch;width:100%;min-width:0;text-align:left;
+	font-size:17px;font-weight:700;letter-spacing:0;text-transform:none;text-overflow:ellipsis;
+}
+.mpwpb-sme .mpwpb-sme__acts{grid-area:acts;}
+.mpwpb-sme.mpwpb_style .mpwpb-sme__topbar input.mpwpb-sme__ttl-input:not(:focus){border-color:transparent !important;}
+.mpwpb-sme .mpwpb-sme__topbar .mpwpb-sme__stepper{
+	grid-area:steps;justify-self:center;position:static;top:auto;z-index:auto;
+	display:flex;align-items:center;justify-content:center;gap:0;margin:0;padding:0;
+	background:none;border:0;box-shadow:none;min-width:0;
+}
+.mpwpb-sme .mpwpb-sme__topbar .mpwpb-sme__step{flex-direction:row;align-items:center;gap:8px;padding:6px 4px;border-radius:8px;}
+.mpwpb-sme .mpwpb-sme__topbar .mpwpb-sme__step:focus-visible{outline:2px solid var(--brand);outline-offset:2px;}
+.mpwpb-sme .mpwpb-sme__topbar .mpwpb-sme__num{width:28px;height:28px;font-size:13px;background:#fff;border:1.5px solid #d1d5db;color:#6b7280;box-shadow:none;}
+.mpwpb-sme .mpwpb-sme__topbar .mpwpb-sme__lab{margin:0;font-size:14.5px;font-weight:500;color:#6b7280;white-space:nowrap;}
+.mpwpb-sme .mpwpb-sme__topbar .mpwpb-sme__step.done .mpwpb-sme__num{background:var(--brand-soft);border-color:var(--brand);color:var(--brand);}
+.mpwpb-sme .mpwpb-sme__topbar .mpwpb-sme__step.done .mpwpb-sme__lab{color:#374151;}
+.mpwpb-sme .mpwpb-sme__topbar .mpwpb-sme__step.active .mpwpb-sme__num{background:var(--brand);border-color:var(--brand);color:#fff;box-shadow:none;}
+.mpwpb-sme .mpwpb-sme__topbar .mpwpb-sme__step.active .mpwpb-sme__lab{color:#111827;font-weight:600;}
+.mpwpb-sme .mpwpb-sme__topbar .mpwpb-sme__conn{flex:0 0 40px;height:1.5px;margin:0 10px;background:#d1d5db;}
+.mpwpb-sme .mpwpb-sme__topbar .mpwpb-sme__conn.done{background:var(--brand);}
+/* Keep the right side compact so everything fits on one row. */
+@media(max-width:1500px){
+	.mpwpb-sme .mpwpb-sme__acts .mpwpb-sme__local-save{width:34px;padding:0;justify-content:center;}
+	.mpwpb-sme .mpwpb-sme__acts .mpwpb-sme__local-save [data-sme-local-save-text]{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+	.mpwpb-sme .mpwpb-sme__topbar .mpwpb-sme__conn{flex-basis:24px;margin:0 6px;}
+}
+@media(max-width:1200px){
+	.mpwpb-sme .mpwpb-sme__topbar{grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"back title acts" "steps steps steps";}
+	.mpwpb-sme .mpwpb-sme__topbar .mpwpb-sme__stepper{justify-self:stretch;padding-top:10px;border-top:1px solid var(--line);overflow-x:auto;}
+}
+@media(max-width:760px){
+	.mpwpb-sme .mpwpb-sme__topbar .mpwpb-sme__step:not(.active) .mpwpb-sme__lab{display:none;}
+	.mpwpb-sme .mpwpb-sme__topbar{padding:10px 14px;}
+}

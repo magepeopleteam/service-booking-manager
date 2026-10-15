@@ -3118,7 +3118,8 @@
 	 *  instead of cleanly below it.
 	 * ---------------------------------------------------------------- */
 	function syncRailStickyTop() {
-		var $stepper = $('.mpwpb-sme__stepper');
+		// The steps now live inside the sticky header, so measure the header.
+		var $stepper = $('.mpwpb-sme__topbar');
 		var $rail = $('.mpwpb-sme__rail');
 		if (!$stepper.length || !$rail.length) {
 			return;

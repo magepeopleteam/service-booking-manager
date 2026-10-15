@@ -233,11 +233,22 @@
 				<div class="mpwpb-sme mpwpb_style" id="mpwpb-sme" data-total="<?php echo esc_attr($total); ?>" data-step="general">
 
 					<header class="mpwpb-sme__topbar">
-						<a class="mpwpb-sme__back" href="<?php echo esc_url($list_url); ?>">
-							<span class="dashicons dashicons-arrow-left-alt2"></span>
-							<?php echo esc_html(sprintf(__('Back to %s', 'service-booking-manager'), MPWPB_Function::get_name())); ?>
+						<a class="mpwpb-sme__back" href="<?php echo esc_url($list_url); ?>" title="<?php echo esc_attr(sprintf(__('Back to %s', 'service-booking-manager'), MPWPB_Function::get_name())); ?>">
+							<span class="dashicons dashicons-arrow-left-alt2" aria-hidden="true"></span>
+							<span class="screen-reader-text"><?php echo esc_html(sprintf(__('Back to %s', 'service-booking-manager'), MPWPB_Function::get_name())); ?></span>
 						</a>
 						<input type="text" class="mpwpb-sme__ttl mpwpb-sme__ttl-input" id="mpwpb-sme-title" value="<?php echo esc_attr($service_title); ?>" placeholder="<?php esc_attr_e('Service name', 'service-booking-manager'); ?>" aria-label="<?php esc_attr_e('Service name', 'service-booking-manager'); ?>"/>
+						<nav class="mpwpb-sme__stepper" aria-label="<?php esc_attr_e('Editor steps', 'service-booking-manager'); ?>">
+							<?php foreach ($steps as $i => $step) : ?>
+								<?php if ($i > 0) : ?>
+									<div class="mpwpb-sme__conn" data-sme-conn="<?php echo esc_attr($i); ?>"></div>
+								<?php endif; ?>
+								<div class="mpwpb-sme__step<?php echo $i === 0 ? ' active' : ''; ?>" data-sme-go="<?php echo esc_attr($step['id']); ?>" data-sme-index="<?php echo esc_attr($i); ?>">
+									<div class="mpwpb-sme__num"><?php echo esc_html($i + 1); ?></div>
+									<div class="mpwpb-sme__lab"><?php echo esc_html($step['label']); ?></div>
+								</div>
+							<?php endforeach; ?>
+						</nav>
 						<div class="mpwpb-sme__acts">
 							<?php
 							// Same "Published"/"Update" vs "Draft"/"Publish" split WordPress's own
@@ -270,18 +281,6 @@
 							</div>
 						</div>
 					</header>
-
-					<div class="mpwpb-sme__stepper">
-						<?php foreach ($steps as $i => $step) : ?>
-							<?php if ($i > 0) : ?>
-								<div class="mpwpb-sme__conn" data-sme-conn="<?php echo esc_attr($i); ?>"></div>
-							<?php endif; ?>
-							<div class="mpwpb-sme__step<?php echo $i === 0 ? ' active' : ''; ?>" data-sme-go="<?php echo esc_attr($step['id']); ?>" data-sme-index="<?php echo esc_attr($i); ?>">
-								<div class="mpwpb-sme__num"><?php echo esc_html($i + 1); ?></div>
-								<div class="mpwpb-sme__lab"><?php echo esc_html($step['label']); ?></div>
-							</div>
-						<?php endforeach; ?>
-					</div>
 
 					<?php if (!MPWPB_Global_Function::has_functional_payment_method()) : ?>
 						<div class="mpwpb-sme__payment-notice">
