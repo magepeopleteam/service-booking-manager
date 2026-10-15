@@ -2167,3 +2167,11 @@ span.mptrs_day_with_date {
 }
 
 .mpwpb_get_date_selected.mpwpb_get_date span.mptrs_day_with_date{color: aliceblue !important;}
+
+/* Guided booking flow: brief highlight on the part brought into view. */
+@keyframes mpwpb-guide-pulse{
+  0%{box-shadow:0 0 0 0 color-mix(in srgb, var(--mpwpb_color_theme, #00685f) 45%, transparent);}
+  100%{box-shadow:0 0 0 12px transparent;}
+}
+.mpwpb-guide-pulse{animation:mpwpb-guide-pulse 1.2s ease-out 1;border-radius:12px;}
+@media (prefers-reduced-motion: reduce){.mpwpb-guide-pulse{animation:none;}}

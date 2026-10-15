@@ -1709,3 +1709,111 @@ function mpwpb_price_calculation($this) {
     });
 
 }(jQuery));
+
+/* ---------------------------------------------------------------- *
+ *  Guided booking flow: after each real customer choice, bring the next
+ *  thing to do into view -- date -> time slots -> recurring booking (when
+ *  this service offers it) -> recurring options, or the Next button when
+ *  there's nothing more to set. Works inside the popup (its own scroll
+ *  box) and inline on the page. Only reacts to genuine clicks, so the
+ *  default date the page pre-selects never moves anything.
+ * ---------------------------------------------------------------- */
+(function ($) {
+    "use strict";
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // The nearest scrollable panel (the popup's body), preferring one that
+    // currently overflows. Inside a fixed popup the page itself is never
+    // scrolled -- it sits behind the overlay.
+    function scrollBoxOf(el) {
+        var first = null;
+        for (var n = el.parentElement; n && n !== document.body; n = n.parentElement) {
+            var cs = window.getComputedStyle(n);
+            if (cs.overflowY === 'auto' || cs.overflowY === 'scroll') {
+                if (n.scrollHeight > n.clientHeight + 1) { return n; }
+                first = first || n;
+            }
+            // Reached the fixed popup without a scroll panel around the target
+            // (e.g. the footer's Next button): nothing to scroll.
+            if (cs.position === 'fixed') { return first || false; }
+        }
+        return first;
+    }
+    // Scroll now, then once more after the popup's footer / sections have
+    // finished animating (they can resize the scroll panel underneath us).
+    function guideTo($target) {
+        var el = $target && $target.filter(':visible')[0];
+        if (!el) { return; }
+        alignTo(el);
+        setTimeout(function () { alignTo(el); }, 480);
+        setTimeout(function () { alignTo(el); }, 1100);
+        if (!reduceMotion) {
+            $target.removeClass('mpwpb-guide-pulse');
+            void el.offsetWidth;
+            $target.addClass('mpwpb-guide-pulse');
+            setTimeout(function () { $target.removeClass('mpwpb-guide-pulse'); }, 1300);
+        }
+    }
+    function alignTo(el) {
+        if (!$(el).is(':visible')) { return; }
+        var box = scrollBoxOf(el);
+        if (box === false) { return; }
+        var r = el.getBoundingClientRect();
+        var top = box ? box.getBoundingClientRect().top : 0;
+        var gap = 16;
+        // Bring the next section up to the top of the booking area (the
+        // popup's sticky total bar would otherwise cover the bottom of it).
+        var delta = r.top - top - gap;
+        if (Math.abs(delta) > 4) {
+            if (box) {
+                box.scrollTo({ top: box.scrollTop + delta, behavior: reduceMotion ? 'auto' : 'smooth' });
+            } else {
+                window.scrollTo({ top: window.pageYOffset + delta - 60, behavior: reduceMotion ? 'auto' : 'smooth' });
+            }
+        }
+    }
+    function isReal(e) {
+        return !!(e && e.originalEvent && e.originalEvent.isTrusted !== false);
+    }
+
+    // 1) Date picked -> the time slots for that date.
+    $(document).on('click', 'div.mpwpb_registration .mpwpb_get_date', function (e) {
+        if (!isReal(e)) { return; }
+        var $reg = $(this).closest('div.mpwpb_registration');
+        setTimeout(function () {
+            guideTo($reg.find('.mpwpb_select_time_holder').prev('header'));
+        }, 120);
+    });
+
+    // 2) Time picked -> recurring booking if offered, else the Next button.
+    $(document).on('click', 'div.mpwpb_registration .mpwpb_date_time_area .to-book', function (e) {
+        if (!isReal(e)) { return; }
+        var $reg = $(this).closest('div.mpwpb_registration');
+        function step(retry) {
+            var $recur = $reg.find('#mpwpb_recurring_booking_area');
+            if ($recur.length && $recur.is(':visible')) {
+                guideTo($recur);
+                return;
+            }
+            // The footer's next action: "Next Staff Member" when staff choice
+            // is on, otherwise "Proceed to Checkout". It can appear a moment
+            // later (after the staff list loads), so look once more.
+            var $next = $reg.find('#mpwpb_show_hide_staff_member, .mpwpb_date_time_next').filter(':visible').first();
+            if ($next.length) {
+                guideTo($next);
+            } else if (retry) {
+                setTimeout(function () { step(false); }, 700);
+            }
+        }
+        setTimeout(function () { step(true); }, 260);
+    });
+
+    // 3) Recurring switched on -> its options (repeat type, occurrences).
+    $(document).on('change', 'div.mpwpb_registration #mpwpb_enable_recurring_booking', function (e) {
+        if (!this.checked || !isReal(e)) { return; }
+        var $reg = $(this).closest('div.mpwpb_registration');
+        setTimeout(function () {
+            guideTo($reg.find('.mpwpb_recurring_settings'));
+        }, 380);
+    });
+}(jQuery));
