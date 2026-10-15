@@ -120,7 +120,25 @@
 				wp_enqueue_style('mpwpb_admin', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_admin.css', [], MPWPB_VERSION);
 				wp_enqueue_style('admin_style', MPWPB_PLUGIN_URL . '/assets/admin/admin_style.css', [], MPWPB_VERSION);
                 wp_enqueue_style('mpwpb_service_list', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_service_list.css', [], MPWPB_VERSION);
-                wp_enqueue_style('mpwpb_staff_member', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_staff_member.css', [], MPWPB_VERSION);
+                // Services page list + detail panel; the script no-ops on other screens.
+                $mpwpb_sv_css = MPWPB_PLUGIN_DIR . '/assets/admin/mpwpb-service-manage.css';
+                $mpwpb_sv_js = MPWPB_PLUGIN_DIR . '/assets/admin/mpwpb-service-manage.js';
+                wp_enqueue_style('mpwpb_service_manage', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb-service-manage.css', ['mpwpb_service_list'], file_exists($mpwpb_sv_css) ? (string) filemtime($mpwpb_sv_css) : MPWPB_VERSION);
+                wp_enqueue_script('mpwpb_service_manage', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb-service-manage.js', ['jquery'], file_exists($mpwpb_sv_js) ? (string) filemtime($mpwpb_sv_js) : MPWPB_VERSION, true);
+                wp_localize_script('mpwpb_service_manage', 'mpwpbServiceManage', array(
+                    'copy'   => __('Copy', 'service-booking-manager'),
+                    'copied' => __('Copied', 'service-booking-manager'),
+                    'addTitle'      => __('Add a service', 'service-booking-manager'),
+                    'addIntro'      => __('How would you like to start?', 'service-booking-manager'),
+                    'fromTemplate'  => __('Start from a template', 'service-booking-manager'),
+                    'fromTemplateSub' => __('Pick a business type and get services, prices, hours, staff and FAQs filled in. Everything stays editable.', 'service-booking-manager'),
+                    'fromScratch'   => __('Add service from scratch', 'service-booking-manager'),
+                    'fromScratchSub' => __('Open an empty service and set it up step by step yourself.', 'service-booking-manager'),
+                    'close'         => __('Close', 'service-booking-manager'),
+                    'templatesUrl'  => admin_url('edit.php?post_type=mpwpb_item&page=mpwpb_service_list&mpwpb_templates=1'),
+                ));
+                $mpwpb_staff_css = MPWPB_PLUGIN_DIR . '/assets/admin/mpwpb_staff_member.css';
+                wp_enqueue_style('mpwpb_staff_member', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_staff_member.css', [], file_exists($mpwpb_staff_css) ? (string) filemtime($mpwpb_staff_css) : MPWPB_VERSION);
                 wp_enqueue_style('mpwpb_analytics_dashboard', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_analytics_dashboard.css', [], MPWPB_VERSION);
 				// Versioned by file mtime, not MPWPB_VERSION: this file changes between
 				// releases, and with a static version browsers kept serving a stale copy,
@@ -131,10 +149,14 @@
 				wp_enqueue_script('mpwpb_admin', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_admin.js', ['jquery'], $mpwpb_admin_js_ver, true);
 				// Staff Management page reskin — live off-day/schedule-row sync only;
 				// no-ops (returns early) on any other admin screen.
-				wp_enqueue_script('mpwpb_staff_management_modern', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb-staff-management-modern.js', ['jquery'], MPWPB_VERSION, true);
+				$mpwpb_staff_js = MPWPB_PLUGIN_DIR . '/assets/admin/mpwpb-staff-management-modern.js';
+				wp_enqueue_script('mpwpb_staff_management_modern', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb-staff-management-modern.js', ['jquery', 'mpwpb_admin'], file_exists($mpwpb_staff_js) ? (string) filemtime($mpwpb_staff_js) : MPWPB_VERSION, true);
 				wp_localize_script('mpwpb_staff_management_modern', 'mpwpbStaffScheduleI18n', array(
-					'active' => __('ACTIVE', 'service-booking-manager'),
-					'off'    => __('OFF', 'service-booking-manager'),
+					'usual'    => __('Usual hours', 'service-booking-manager'),
+					'breakTxt' => __('break', 'service-booking-manager'),
+					'dayOff'   => __('Day off', 'service-booking-manager'),
+					'custom'   => __('Set different hours', 'service-booking-manager'),
+					'useUsual' => __('Use usual hours', 'service-booking-manager'),
 				));
 				wp_localize_script('mpwpb_admin', 'mpwpb_admin_ajax', array(
 					'ajax_url' => admin_url('admin-ajax.php'),

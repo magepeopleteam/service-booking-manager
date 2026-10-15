@@ -558,3 +558,8 @@ button.mpwpb-csm__chip {
 	#mpwpb-csm .mpwpb-csm__row-main{flex-basis:calc(100% - 60px);}
 	#mpwpb-csm .mpwpb-csm__row-nums{flex:1 1 auto;flex-direction:row;align-items:center;justify-content:flex-start;gap:12px;padding-left:54px;}
 }
+
+/* Clearer section borders on Services & Pricing. */
+.mpwpb-csm .mpwpb-csm__sidebar-inner,
+#mpwpb-csm .mpwpb-csm__list{border-color:#cbd5e1;box-shadow:0 1px 2px rgba(15,23,42,.05);}
+.mpwpb-csm .mpwpb-csm__row{border-color:#d5dde8;}

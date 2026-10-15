@@ -499,3 +499,10 @@ p.mpwpb-dtm__date-card-sub{text-align:right;}
 }
 .mpwpb-dtm__hours .mpwpb-dtm__table--rows td.mpwpb-dtm__day-reset{grid-column:4;grid-row:2;margin-top:7px;align-self:center;}
 .mpwpb-dtm__hours .mpwpb-dtm__day-reset button{width:24px;height:24px;}
+
+/* Selected schedule type / slot length must read as selected at a glance. */
+.mpwpb-dtm__rules .mpwpb-dtm__segmented-btn.mpwpb-dtm__segmented-btn.is-active{background:var(--brand,#2451e0);color:#fff;box-shadow:0 1px 3px rgba(15,23,42,.18);}
+.mpwpb-dtm__rules .mpwpb-dtm__segmented-btn.mpwpb-dtm__segmented-btn.is-active svg{color:#fff;stroke:#fff;}
+/* Clearer section borders: Weekly hours, Booking rules, Special Dates & Holidays. */
+.mpwpb-dtm .mpwpb-dtm__card{border-color:#cbd5e1;box-shadow:0 1px 2px rgba(15,23,42,.05);}
+.mpwpb-dtm .mpwpb-dtm__card-head{border-bottom-color:#e2e8f0;}

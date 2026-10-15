@@ -60,8 +60,12 @@
 					return;
 				}
 
-				$date_type = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_date_type', 'repeated');
+				// New services start on "Every day" with a 1 hour slot until the admin picks otherwise.
+				$date_type = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_date_type', 'repeated') ?: 'repeated';
 				$time_slot = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_time_slot_length');
+				if ($time_slot === '' || $time_slot === null || $time_slot === false) {
+					$time_slot = 60;
+				}
 				$capacity = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_capacity_per_session', 1);
 				$repeated_start_date = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_repeated_start_date');
 				$hidden_repeated_start_date = $repeated_start_date ? date_i18n('Y-m-d', strtotime($repeated_start_date)) : date_i18n('Y-m-d', strtotime(current_time('Y-m-d')));
