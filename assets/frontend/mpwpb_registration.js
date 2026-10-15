@@ -1660,6 +1660,16 @@ function mpwpb_price_calculation($this) {
         }
     });
 
+    // "Load more" under a day's time slots: reveal the rest (rendered hidden
+    // as .mpwpb_slot_more by MPWPB_Details_Layout::display_booking_time()).
+    $(document).on('click', '.mpwpb_time_load_more', function () {
+        let $btn = $(this);
+        let $day = $btn.closest('.mpwpb_time_display');
+        $day.addClass('mpwpb_slots_expanded');
+        $btn.attr('aria-expanded', 'true').hide();
+        $day.find('.mpwpb_slot_more').first().trigger('focus');
+    });
+
     $(document).on('click', '.mpwp_select_staff_card', function () {
         $('.mpwp_select_staff_card').removeClass('selected').attr('aria-pressed', 'false');
         $(this).addClass('selected').attr('aria-pressed', 'true');

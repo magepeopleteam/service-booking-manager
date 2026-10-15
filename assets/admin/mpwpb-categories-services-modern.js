@@ -280,40 +280,70 @@
 		} else {
 			crumbs += '<span class="mpwpb-csm__crumb is-last">' + esc(headerLabel()) + '</span>';
 		}
-		crumbs += '<span class="mpwpb-csm__count-badge">' + visibleServices().length + '</span>';
+		var shown = visibleServices();
+		crumbs += '<span class="mpwpb-csm__count-badge">' + shown.length + '</span>';
+		if (state.selected !== 'all') {
+			crumbs += '<button type="button" class="mpwpb-csm__clear-filter" data-csm-select="all">' + esc(t.clearFilter || 'Clear filter')
+				+ '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></svg></button>';
+		}
+
 		$root.find('[data-csm-part="crumbs"]').html(crumbs);
 	}
 
+	var CHEV = '<svg class="mpwpb-csm__path-sep" width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+	var ICON = {
+		edit: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
+		dup: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>',
+		bin: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>',
+		clock: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+		plus: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>'
+	};
+	function hasDuration(svc) {
+		return $.trim(String(svc.duration || '')) !== '';
+	}
 	function rowHtml(svc) {
+		var name = svc.name || '';
+		if (state.confirmDelete === svc.id) {
+			return '<div class="mpwpb-csm__row is-confirming" data-csm-row="' + esc(svc.id) + '" role="alertdialog" aria-label="' + esc(t.deleteServiceTitle || 'Delete service?') + '">'
+				+ '<span class="mpwpb-csm__confirm-icon" aria-hidden="true">' + ICON.bin + '</span>'
+				+ '<span class="mpwpb-csm__confirm-text"><strong>' + esc(String(t.deleteServiceInline || 'Delete “%s”?').replace('%s', name)) + '</strong> ' + esc(t.deleteServiceNote || '') + '</span>'
+				+ '<button type="button" class="mpwpb-csm__confirm-btn" data-csm-delete-cancel>' + esc(t.cancel || 'Cancel') + '</button>'
+				+ '<button type="button" class="mpwpb-csm__confirm-btn is-danger" data-csm-delete-confirm="' + esc(svc.id) + '">' + esc(t['delete'] || 'Delete') + '</button>'
+				+ '</div>';
+		}
 		var path = pathOfService(svc);
-		var chips;
+		var crumbs;
 		if (path.length) {
-			chips = path.map(function (p, i) {
+			crumbs = path.map(function (p, i) {
 				var key = i === 0 ? catKey(p.id) : subKey(p.id);
-				return (i > 0 ? '<span class="mpwpb-csm__chip-sep dashicons dashicons-arrow-right-alt2"></span>' : '')
-					+ '<button type="button" class="mpwpb-csm__chip" data-csm-select="' + esc(key) + '">' + esc(p.name) + '</button>';
+				return (i > 0 ? CHEV : '') + '<button type="button" class="mpwpb-csm__path" data-csm-select="' + esc(key) + '" title="' + esc(t.showCategory || '') + '">' + esc(p.name) + '</button>';
 			}).join('');
 		} else {
-			chips = '<button type="button" class="mpwpb-csm__chip mpwpb-csm__chip--none" data-csm-select="none">' + esc(t.noCategory) + '</button>';
+			crumbs = '<button type="button" class="mpwpb-csm__path is-none" data-csm-select="none">' + esc(t.noCategory) + '</button>';
 		}
 		// Keyed by the service's own (stable, never-reused) array-index id
 		// rather than its position in the current (possibly filtered/
 		// searched) list, so a given service always keeps the same swatch.
 		var sw = svcSwatch(parseInt(svc.id, 10) || 0);
-		return '<div class="mpwpb-csm__row" data-csm-row="' + esc(svc.id) + '">'
+		var price = svc.price === '' || svc.price === null || svc.price === undefined ? '—' : (cfg.currencySymbol || '') + ' ' + svc.price;
+		var dur = hasDuration(svc)
+			? '<span class="mpwpb-csm__row-dur">' + ICON.clock + esc(fmtDur(svc.duration)) + '</span>'
+			: '<button type="button" class="mpwpb-csm__add-dur" data-csm-edit="' + esc(svc.id) + '">' + ICON.plus + esc(t.addDuration || 'Add duration') + '</button>';
+		return '<div class="mpwpb-csm__row' + (state.flash === svc.id ? ' is-new' : '') + '" data-csm-row="' + esc(svc.id) + '">'
 			+ '<span class="mpwpb-csm__row-icon" style="background:' + sw.bg + ';color:' + sw.fg + '"><span class="dashicons ' + sw.icon + '"></span></span>'
 			+ '<div class="mpwpb-csm__row-main">'
-			+ '<div class="mpwpb-csm__row-top"><span class="mpwpb-csm__row-name">' + esc(svc.name) + '</span>' + chips + '</div>'
-			+ (svc.desc ? '<p class="mpwpb-csm__row-desc">' + esc(svc.desc) + '</p>' : '')
+			+ '<button type="button" class="mpwpb-csm__row-name" data-csm-edit="' + esc(svc.id) + '">' + esc(name) + '</button>'
+			+ '<div class="mpwpb-csm__row-meta">' + crumbs
+			+ (svc.desc ? '<span class="mpwpb-csm__row-dot" aria-hidden="true">·</span><span class="mpwpb-csm__row-desc">' + esc(svc.desc) + '</span>' : '')
+			+ '</div>'
 			+ '</div>'
 			+ '<div class="mpwpb-csm__row-nums">'
-			+ '<span class="mpwpb-csm__row-price">' + esc(svc.price) + '</span>'
-			+ '<span class="mpwpb-csm__row-dur"><span class="dashicons dashicons-clock"></span>' + esc(fmtDur(svc.duration)) + '</span>'
+			+ '<span class="mpwpb-csm__row-price">' + esc(price) + '</span>' + dur
 			+ '</div>'
 			+ '<div class="mpwpb-csm__row-acts">'
-			+ '<button type="button" class="mpwpb-csm__icon-btn" title="Duplicate" data-csm-duplicate="' + esc(svc.id) + '"><span class="dashicons dashicons-admin-page"></span></button>'
-			+ '<button type="button" class="mpwpb-csm__icon-btn" title="Edit" data-csm-edit="' + esc(svc.id) + '"><span class="dashicons dashicons-edit"></span></button>'
-			+ '<button type="button" class="mpwpb-csm__icon-btn is-danger" title="Delete" data-csm-delete-svc="' + esc(svc.id) + '"><span class="dashicons dashicons-trash"></span></button>'
+			+ '<button type="button" class="mpwpb-csm__icon-btn" aria-label="' + esc((t.editTxt || 'Edit') + ' ' + name) + '" title="' + esc(t.editTxt || 'Edit') + '" data-csm-edit="' + esc(svc.id) + '">' + ICON.edit + '</button>'
+			+ '<button type="button" class="mpwpb-csm__icon-btn" aria-label="' + esc((t.duplicateTxt || 'Duplicate') + ' ' + name) + '" title="' + esc(t.duplicateTxt || 'Duplicate') + '" data-csm-duplicate="' + esc(svc.id) + '">' + ICON.dup + '</button>'
+			+ '<button type="button" class="mpwpb-csm__icon-btn is-danger" aria-label="' + esc((t['delete'] || 'Delete') + ' ' + name) + '" title="' + esc(t['delete'] || 'Delete') + '" data-csm-delete-svc="' + esc(svc.id) + '">' + ICON.bin + '</button>'
 			+ '</div>'
 			+ '</div>';
 	}
@@ -327,7 +357,9 @@
 				+ '<p class="mpwpb-csm__empty-sub">' + esc(state.query ? t.tryDifferentSearch : t.addServiceHint) + '</p>'
 				+ '</div>';
 		} else {
-			html = '<div class="mpwpb-csm__list">' + list.map(rowHtml).join('') + '</div>';
+			var missing = list.filter(function (s) { return !hasDuration(s); }).length;
+			html = (missing ? '<p class="mpwpb-csm__missing-dur">' + ICON.clock + '<span>' + esc(missing === 1 ? (t.missingOne || '1 service has no duration') : String(t.missingMany || '%d services have no duration').replace('%d', missing)) + '</span></p>' : '')
+				+ '<div class="mpwpb-csm__list">' + list.map(rowHtml).join('') + '</div>';
 		}
 		$root.find('[data-csm-part="list"]').html(html);
 	}
@@ -569,8 +601,30 @@
 		var isSub = $(this).data('csm-is-sub') == '1';
 		openConfirmDelete(isSub ? 'subcategory' : 'category', $(this).data('csm-delete-cat').toString());
 	});
+	// Services are confirmed inside their own row (categories keep the modal,
+	// since their message needs more room).
 	$root.on('click', '[data-csm-delete-svc]', function () {
-		openConfirmDelete('service', $(this).data('csm-delete-svc').toString());
+		state.confirmDelete = $(this).data('csm-delete-svc').toString();
+		renderList();
+		$root.find('[data-csm-delete-cancel]').trigger('focus');
+	});
+	$root.on('click', '[data-csm-delete-cancel]', function () {
+		var id = state.confirmDelete;
+		state.confirmDelete = null;
+		renderList();
+		$root.find('[data-csm-row="' + id + '"] [data-csm-delete-svc]').trigger('focus');
+	});
+	$root.on('click', '[data-csm-delete-confirm]', function () {
+		var id = $(this).data('csm-delete-confirm').toString();
+		var $btns = $(this).closest('.mpwpb-csm__row').find('button').prop('disabled', true);
+		post('mpwpb_service_delete_item', { service_postID: cfg.postId, itemId: id }, function () {
+			state.services = state.services.filter(function (s) { return s.id !== id; });
+			state.confirmDelete = null;
+			render();
+		}, function () { $btns.prop('disabled', false); });
+	});
+	$root.on('keydown', '.mpwpb-csm__row.is-confirming', function (e) {
+		if (e.key === 'Escape') { $(this).find('[data-csm-delete-cancel]').trigger('click'); }
 	});
 
 	/* ---------------------------------------------------------------- *
@@ -808,8 +862,16 @@
 			data.service_sub_cat = svc.subCat || '';
 		}
 		post('mpwpb_save_service', data, function () {
-			state.services.push($.extend({}, svc, { id: nextId(state.services), name: svc.name + ' (copy)' }));
+			var copy = $.extend({}, svc, { id: nextId(state.services), name: svc.name + ' (copy)' });
+			state.services.push(copy);
+			// Briefly highlight the copy and bring it into view.
+			state.flash = copy.id;
 			render();
+			var $new = $root.find('[data-csm-row="' + copy.id + '"]');
+			if ($new.length && $new[0].scrollIntoView) { $new[0].scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
+			setTimeout(function () {
+				if (state.flash === copy.id) { state.flash = null; $root.find('[data-csm-row="' + copy.id + '"]').removeClass('is-new'); }
+			}, 1800);
 		});
 	});
 
@@ -968,16 +1030,38 @@
 				+ '</span>'
 				+ '<span class="mpwpb-csm__tpl-item-meta">'
 				+ '<span class="mpwpb-csm__tpl-item-price">' + esc(cfg.currencySymbol || '$') + esc(item.price) + '</span>'
-				+ '<span class="mpwpb-csm__tpl-item-dur">' + esc(item.duration) + '</span>'
+				+ '<span class="mpwpb-csm__tpl-item-dur"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>' + esc(item.duration) + '</span>'
 				+ '</span>'
 				+ '</label>';
 		}).join('');
 		var catNote = def.category
-			? '<p class="mpwpb-csm__tpl-cat-note"><span class="dashicons dashicons-category"></span>Added services will be grouped under a new "' + esc(def.category) + '" category.</p>'
+			? '<p class="mpwpb-csm__tpl-cat-note"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Added services go into a new <strong>' + esc(def.category) + '</strong> category.</span></p>'
 			: '';
 		return catNote
-			+ '<label class="mpwpb-csm__tpl-selectall"><input type="checkbox" data-tpl-select-all' + (checkedCount === items.length && items.length ? ' checked' : '') + '/>Select all (' + items.length + ')</label>'
+			+ '<div class="mpwpb-csm__tpl-selectbar">'
+			+ '<label class="mpwpb-csm__tpl-selectall"><input type="checkbox" data-tpl-select-all' + (checkedCount === items.length && items.length ? ' checked' : '') + '/>Select all</label>'
+			+ '<span class="mpwpb-csm__tpl-selected-count">' + checkedCount + ' of ' + items.length + ' selected</span>'
+			+ '</div>'
 			+ '<div class="mpwpb-csm__tpl-item-list">' + rows + '</div>';
+	}
+
+	// "Adds ৳ 75 worth of services · 1h 15min total" for the picked items.
+	function templateSelectionSummary() {
+		var items = (TEMPLATES[tpl.type] || {}).items || [];
+		var total = 0, mins = 0, count = 0;
+		items.forEach(function (item, i) {
+			if (!tpl.checked[i]) { return; }
+			count++;
+			total += parseFloat(String(item.price).replace(/[^0-9.]/g, '')) || 0;
+			var d = String(item.duration || '');
+			var h = d.match(/(\d+(?:\.\d+)?)\s*h/i), m = d.match(/(\d+)\s*m/i);
+			mins += (h ? parseFloat(h[1]) * 60 : 0) + (m ? parseInt(m[1], 10) : 0);
+		});
+		if (!count) { return 'Nothing selected yet'; }
+		var hh = Math.floor(mins / 60), mm = Math.round(mins % 60);
+		var dur = (hh ? hh + 'h' : '') + (hh && mm ? ' ' : '') + (mm ? mm + 'min' : '');
+		var money = (cfg.currencySymbol || '$') + (Math.round(total * 100) / 100);
+		return 'Adds ' + money + ' worth of services' + (dur ? ' · ' + dur + ' total' : '');
 	}
 
 	function renderTemplateModal() {
@@ -986,15 +1070,19 @@
 			? ('<span class="mpwpb-csm__tpl-head-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1.1 2h5c.1-.8.5-1.5 1.1-2A6 6 0 0 0 12 3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>'
 				+ '<span class="mpwpb-csm__tpl-head-text"><span class="mpwpb-csm__modal-title">Start from a template</span>'
 				+ '<span class="mpwpb-csm__tpl-head-sub">Pick a business type to see ready-made services you can add in one click, then adjust the name, price, or duration as needed.</span></span>')
-			: ('<button type="button" class="mpwpb-csm__tpl-back" data-tpl-back><span class="dashicons dashicons-arrow-left-alt2"></span></button>'
-				+ '<span class="mpwpb-csm__modal-title">' + esc(tpl.type) + '</span>');
+			: ('<button type="button" class="mpwpb-csm__tpl-back" data-tpl-back aria-label="Back to templates"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>'
+				+ '<span class="mpwpb-csm__tpl-head-icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18"/></svg></span>'
+				+ '<span class="mpwpb-csm__tpl-head-text"><span class="mpwpb-csm__modal-title">' + esc(tpl.type) + '</span>'
+				+ '<span class="mpwpb-csm__tpl-head-sub">Pick the services to add. You can edit prices and times after.</span></span>');
 		var body = onTypePanel ? templateCategoryListHtml() : templateItemListHtml();
 		var toolbar = onTypePanel && Object.keys(TEMPLATES).length ? templateToolbarHtml() : '';
 		var checkedCount = onTypePanel ? 0 : Object.keys(tpl.checked).filter(function (i) { return tpl.checked[i]; }).length;
 		var foot = onTypePanel ? '' :
-			('<div class="mpwpb-csm__modal-foot">'
+			('<div class="mpwpb-csm__modal-foot mpwpb-csm__tpl-foot">'
+				+ '<span class="mpwpb-csm__tpl-summary">' + esc(templateSelectionSummary()) + '</span>'
 				+ '<button type="button" class="mpwpb-csm__modal-btn" data-csm-modal-close>Cancel</button>'
-				+ '<button type="button" class="mpwpb-csm__modal-btn mpwpb-csm__modal-btn--primary" data-tpl-add' + (checkedCount ? '' : ' disabled') + '>Add Selected (' + checkedCount + ')</button>'
+				+ '<button type="button" class="mpwpb-csm__modal-btn mpwpb-csm__modal-btn--primary" data-tpl-add' + (checkedCount ? '' : ' disabled') + '>'
+				+ (checkedCount ? 'Add ' + checkedCount + (checkedCount === 1 ? ' service' : ' services') : 'Add services') + '</button>'
 				+ '</div>');
 		var $ov = openModal(
 			'<div class="mpwpb-csm__modal-head' + (onTypePanel ? ' mpwpb-csm__tpl-head' : '') + '">' + head
@@ -1002,8 +1090,11 @@
 			+ toolbar
 			+ '<div class="mpwpb-csm__modal-body mpwpb-csm__tpl-body' + (onTypePanel ? ' mpwpb-csm__tpl-body--types' : '') + '">' + body + '</div>'
 			+ foot,
-			'mpwpb-csm__modal--wide'
+			'mpwpb-csm__modal--wide' + (onTypePanel ? '' : ' mpwpb-csm__modal--tpl-items')
 		);
+		// "Select all" shows a dash while only some services are picked.
+		var tplItems = onTypePanel ? [] : ((TEMPLATES[tpl.type] || {}).items || []);
+		$ov.find('[data-tpl-select-all]').prop('indeterminate', checkedCount > 0 && checkedCount < tplItems.length);
 		if (onTypePanel) {
 			applyTemplateFilter($ov);
 			$ov.find('[data-tpl-search]').on('input', function () {

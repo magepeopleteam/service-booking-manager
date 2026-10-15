@@ -118,12 +118,10 @@
 #mpwpb_static_sidbar .mpwpb_item_box {
 	/* .mpwpb_item_box (mpwpb_registration.css) and .mpwpb-tree-service
 	   (mpwpb-service-page-modern.css) are two classes on the SAME row
-	   element -- the first sets a full 1px solid #ebe5e5 border on all
-	   four sides, the second only ever reset border-bottom, so the
-	   other three sides were still showing through. One declaration
-	   covering both classes removes it everywhere at once. */
+	   element, each with its own border -- one declaration covering both
+	   classes keeps a single consistent border on all four sides. */
 	margin-bottom: 0 !important;
-	border: none !important;
+	border: 1px solid #ece9e9 !important;
 	border-radius: 12px !important;
 	padding: 14px 10px !important;
 	transition: background 0.15s ease;

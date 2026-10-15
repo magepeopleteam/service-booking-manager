@@ -7,7 +7,7 @@
 
 #mpwpb-bt-root,
 .mpwpb-bt__overlay {
-	--brand: #2451e0;
+	--brand: var(--mpwpb_color_theme, #2451e0);
 	--brand-600: #1d3fb8;
 	--brand-soft: #eaf0ff;
 	--ink: #0f172a;

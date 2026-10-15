@@ -155,8 +155,9 @@
 			$side.find('[data-sme-fp-qty-val]').text(qty);
 		} else {
 			var name = $row.find('.mpwpb-sme__fp-row-name').text();
-			$side.html('<button type="button" class="mpwpb-sme__fp-row-add" data-sme-fp-add="' + id + '"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>');
+			$side.html('<button type="button" class="mpwpb-sme__fp-row-add" data-sme-fp-add="' + id + '"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg><span></span></button>');
 			$side.find('[data-sme-fp-add]').attr('aria-label', (cfg.previewAddTxt || 'Add') + ' ' + name);
+			$side.find('[data-sme-fp-add] span').text(cfg.previewAddLabel || 'Add');
 		}
 	}
 	function fpTotalQty() {
@@ -181,8 +182,9 @@
 			$side.find('[data-sme-fp-qty-val]').text(qty);
 		} else {
 			var name = $row.find('.mpwpb-sme__fp-row-name').text();
-			$side.html('<button type="button" class="mpwpb-sme__fp-row-add" data-sme-fp-extra-add="' + id + '"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>');
+			$side.html('<button type="button" class="mpwpb-sme__fp-row-add" data-sme-fp-extra-add="' + id + '"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg><span></span></button>');
 			$side.find('[data-sme-fp-extra-add]').attr('aria-label', (cfg.previewAddTxt || 'Add') + ' ' + name);
+			$side.find('[data-sme-fp-extra-add] span').text(cfg.previewAddLabel || 'Add');
 		}
 	}
 	// Live "X selected, Total Y" summary above the Services step's CTA --
@@ -218,6 +220,24 @@
 			$box.append(fpSummaryRow(cfg.previewTotalTxt || 'Total', (cfg.previewCurrency || '') + total.toFixed(2), true));
 		}
 		$box.toggle(any);
+		// Services step bar: "N services selected" + running total.
+		var count = fpTotalQty();
+		$card.find('[data-sme-fp-bar-count]').text(count === 0 ? (cfg.previewNothingTxt || 'Nothing selected yet')
+			: (count === 1 ? (cfg.previewOneSelected || '1 service selected') : String(cfg.previewManySelected || '%d services selected').replace('%d', count)));
+		$card.find('[data-sme-fp-bar-total]').text(any ? (cfg.previewCurrency || '') + total.toFixed(2) : '');
+		$card.find('[data-sme-fp-bar]').toggleClass('is-ready', count > 0);
+	}
+	// "2 added" on each category / subcategory head that holds picked rows.
+	function fpUpdateGroupBadges($card) {
+		$card.find('.mpwpb-sme__fp-group-head, .mpwpb-sme__fp-subgroup-head').each(function () {
+			var $head = $(this);
+			var n = $head.next('[data-sme-fp-group-body]').find('.mpwpb-sme__fp-row.is-added').length;
+			var $badge = $head.find('.mpwpb-sme__fp-group-added');
+			if (!$badge.length) {
+				$badge = $('<span class="mpwpb-sme__fp-group-added"></span>').insertBefore($head.find('.mpwpb-sme__fp-group-count'));
+			}
+			$badge.text(String(cfg.previewGroupAdded || '%d added').replace('%d', n)).toggle(n > 0);
+		});
 	}
 	// Extra services are page-wide, not linked to any one regular service
 	// (see MPWPB_Settings_Modern.php's render comment) -- the list simply
@@ -226,7 +246,8 @@
 	function fpUpdateExtrasVisibility($card) {
 		var $extras = $card.find('[data-sme-fp-extras]');
 		if (!$extras.length) { return; }
-		$extras.toggle($extras.find('[data-sme-fp-extra-row]').length > 0 && fpTotalQty() > 0);
+		var active = $root.find('input[name="mpwpb_extra_service_active"]').is(':checked');
+		$extras.toggle(active && $extras.find('[data-sme-fp-extra-row]').length > 0 && fpTotalQty() > 0);
 	}
 	function fpSetQty($card, id, qty) {
 		fpQty[id] = Math.max(0, qty);
@@ -235,6 +256,7 @@
 		fpUpdateCta($card);
 		fpUpdateServicesSummary($card);
 		fpUpdateExtrasVisibility($card);
+		fpUpdateGroupBadges($card);
 	}
 	function fpSetExtraQty($card, id, qty) {
 		fpExtraQty[id] = Math.max(0, qty);
@@ -248,8 +270,10 @@
 		var $main = $('<div class="mpwpb-sme__fp-row-main"></div>').appendTo($row);
 		$('<div class="mpwpb-sme__fp-row-name"></div>').text(svc.name || '').appendTo($main);
 		var $meta = $('<div class="mpwpb-sme__fp-row-meta"></div>').appendTo($main);
+		var hasDur = $.trim(String(svc.duration || '')) !== '';
 		$('<span class="mpwpb-sme__fp-row-dur"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><polyline points="12,7 12,12 15,14"></polyline></svg></span>')
-			.append(document.createTextNode(svc.duration ? String(svc.duration) : '—'))
+			.toggleClass('is-missing', !hasDur)
+			.append(document.createTextNode(hasDur ? String(svc.duration) : (cfg.previewNoDurationTxt || 'No duration set')))
 			.appendTo($meta);
 		$('<span class="mpwpb-sme__fp-row-price"></span>')
 			.text((cfg.previewCurrency || '') + (svc.price || '0'))
@@ -363,9 +387,11 @@
 		$card.find('[data-sme-fp-empty]').toggle(!hasServices);
 		$card.find('[data-sme-fp-cta]').toggle(hasServices);
 		$card.find('[data-sme-fp-trust]').toggle(hasServices);
+		$card.find('[data-sme-fp-bar]').toggle(hasServices);
 		fpUpdateCta($card);
 		fpUpdateServicesSummary($card);
 		fpUpdateExtrasVisibility($card);
+		fpUpdateGroupBadges($card);
 	}
 	function buildPreviewExtraRow(item) {
 		var $row = $('<div class="mpwpb-sme__fp-row"></div>').attr('data-sme-fp-extra-row', item.id);
@@ -403,6 +429,19 @@
 		fpUpdateExtrasVisibility($card);
 		fpUpdateServicesSummary($card);
 	}
+	// Extra Service switch: show/hide the preview's add-ons live, and drop
+	// any picked add-ons from the preview total once it's switched off.
+	$root.on('change', 'input[name="mpwpb_extra_service_active"]', function () {
+		var $card = $root.find('.mpwpb-sme__preview-card');
+		if (!this.checked) {
+			Object.keys(fpExtraQty).forEach(function (id) {
+				delete fpExtraQty[id];
+				fpRenderExtraRowSide($card, id);
+			});
+			fpUpdateServicesSummary($card);
+		}
+		fpUpdateExtrasVisibility($card);
+	});
 	$root.on('click', '[data-sme-fp-group-toggle]', function () {
 		$(this).closest('.mpwpb-sme__fp-group, .mpwpb-sme__fp-subgroup').toggleClass('is-collapsed');
 	});
@@ -1449,12 +1488,106 @@
 	})();
 
 	/* ---------------------------------------------------------------- *
+	 *  Service details card: live character counts (name / tagline) and
+	 *  the overview "Show on page" switch (real mpwpb_service_overview_
+	 *  status checkbox) hiding the editor behind a short note.
+	 * ---------------------------------------------------------------- */
+	(function serviceDetailsCard() {
+		var $card = $root.find('.mpwpb-sme__details');
+		if (!$card.length) {
+			return;
+		}
+		$card.find('textarea[name="mpwpb_shortcode_sub_title"]').attr({ id: 'mpwpb_shortcode_sub_title', rows: 2 });
+		$card.find('[data-sme-count-for]').each(function () {
+			var $count = $(this);
+			var $field = $card.find($count.attr('data-sme-count-for'));
+			var max = parseInt($count.attr('data-max'), 10) || 0;
+			if (!$field.length) {
+				$count.remove();
+				return;
+			}
+			function update() {
+				var n = String($field.val() || '').length;
+				$count.text(n + ' / ' + max).toggleClass('is-over', max > 0 && n > max);
+			}
+			$field.on('input', update);
+			update();
+		});
+		var $toggle = $card.find('[data-sme-overview-toggle]');
+		function syncOverview() {
+			var on = $toggle.is(':checked');
+			$card.find('[data-sme-overview-slot]').toggle(on);
+			$card.find('[data-sme-overview-off]').prop('hidden', on);
+		}
+		$toggle.on('change', syncOverview);
+		syncOverview();
+	})();
+
+	/* ---------------------------------------------------------------- *
 	 *  Relocate a reused section's own on/off switch (e.g. Extra Service's
 	 *  real "mpwpb_extra_service_active" checkbox) up into the card header,
 	 *  next to the title — moving the real .roundSwitchLabel node (not a
 	 *  copy), so the checkbox is still submitted exactly once regardless
 	 *  of where in the DOM it visually sits.
 	 * ---------------------------------------------------------------- */
+	/* ---------------------------------------------------------------- *
+	 *  The shared collapse script slideToggles a switch's panel on every
+	 *  click of its .roundSwitch span without looking at the checkbox, so a
+	 *  click on the rest of the label (or a fast double click) leaves the
+	 *  switch "off" with its panel open, or the reverse. Once that toggle
+	 *  animation has finished, settle each panel to its checkbox state.
+	 * ---------------------------------------------------------------- */
+	(function keepSwitchPanelsInSync() {
+		function settle(input) {
+			var target = $(input).siblings('[data-collapse-target]').data('collapse-target');
+			if (!target) { return; }
+			var on = input.checked;
+			$root.find('[data-collapse="' + target + '"]').each(function () {
+				var $p = $(this);
+				$p.stop(true, true);
+				$p.toggleClass('mActive', on);
+				// Judge by the panel's own display: on a step that isn't showing,
+				// :visible is false for every panel, open or not.
+				if (($p.css('display') !== 'none') === on) { return; }
+				if (!$p.parent().is(':visible')) {
+					$p.css('display', on ? 'block' : 'none');
+				} else if (on) {
+					$p.slideDown(200);
+				} else {
+					$p.slideUp(200);
+				}
+			});
+		}
+		$root.on('change.mpwpb-sme-switch', '.roundSwitchLabel input[type="checkbox"]', function () {
+			var input = this;
+			setTimeout(function () { settle(input); }, 300);
+		});
+		$root.on('click.mpwpb-sme-switch', '.roundSwitchLabel', function () {
+			var input = $(this).find('input[type="checkbox"]')[0];
+			if (input) { setTimeout(function () { settle(input); }, 300); }
+		});
+	})();
+
+	/* ---------------------------------------------------------------- *
+	 *  Extra Service card: its switch had no effect on the card itself.
+	 *  Hide the list and show a short note while it's off (the list is
+	 *  kept and still saved), same as the other switch cards.
+	 * ---------------------------------------------------------------- */
+	(function extraServiceOffState() {
+		var $card = $root.find('[data-sme-section="MPWPB_Extra_Service_Modern"]');
+		var $list = $card.find('#mpwpb-esm');
+		var $toggle = $card.find('input[name="mpwpb_extra_service_active"]');
+		if (!$list.length || !$toggle.length) { return; }
+		var $off = $('<p class="mpwpb-sme__extra-off"></p>').text(cfg.extraOffNote || 'Extra services are off.').insertAfter($list);
+		function sync() {
+			var on = $toggle.is(':checked');
+			$list.toggle(on);
+			$off.prop('hidden', on);
+		}
+		$toggle.on('change.mpwpb-sme-extra', sync);
+		sync();
+	})();
+
 	(function relocateHeaderToggles() {
 		var sectionsWithHeaderToggle = {
 			'MPWPB_Extra_Service_Modern': 'mpwpb_extra_service_active',
@@ -1503,6 +1636,46 @@
 	})();
 
 	/* ---------------------------------------------------------------- *
+	 *  Full description card (MPWPB_Service_Details): icon, a "Show on
+	 *  page" label beside the header switch (the real mpwpb_service_
+	 *  details_status checkbox, already in the header), the classic
+	 *  leftover headings removed, and a note while it's switched off.
+	 *  The editor is the real WP editor -- only its frame is restyled.
+	 * ---------------------------------------------------------------- */
+	(function fullDescriptionCard() {
+		var $card = $root.find('[data-sme-section="MPWPB_Service_Details"]');
+		if (!$card.length) {
+			return;
+		}
+		$card.addClass('mpwpb-sme__desc-card');
+		$card.find('.tabsItem > header').remove();
+		// The leftover section.section headings stay: the first ("Service Features")
+		// is already hidden by CSS, and the "Service Review" one is the anchor the
+		// review-fields relocation below uses to find its fields.
+		var $head = $card.find('.mpwpb-sme__postfields-header').first();
+		if (!$head.find('.mpwpb-sme__desc-icon').length) {
+			$head.prepend('<span class="mpwpb-sme__desc-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 10h16M4 14h10M4 18h7"/></svg></span>');
+		}
+		var $toggle = $card.find('input[name="mpwpb_service_details_status"]');
+		var $actions = $card.find('[data-sme-header-actions]').first();
+		if ($toggle.length && !$actions.find('.mpwpb-sme__desc-switch-label').length) {
+			$actions.prepend($('<span class="mpwpb-sme__desc-switch-label"></span>').text(cfg.showOnPageTxt || 'Show on page'));
+			$toggle.attr('aria-label', cfg.showOnPageTxt || 'Show on page');
+		}
+		var $note = $('<p class="mpwpb-sme__desc-off"></p>')
+			.text(cfg.descriptionOffTxt || 'The full description is hidden on the service page. Your text is kept; switch it on to show it again.');
+		// In the card body, outside .tabsItem (other cleanup re-parents/strips that area).
+		$card.find('.mpwpb-sme__postfields-body').first().append($note);
+		function sync() {
+			$note.prop('hidden', !$toggle.length || $toggle.is(':checked'));
+		}
+		$toggle.on('change', sync);
+		// The shared .roundSwitch handler flips the checkbox without a change event.
+		$toggle.closest('.roundSwitchLabel').on('click', function () { setTimeout(sync, 0); });
+		sync();
+	})();
+
+	/* ---------------------------------------------------------------- *
 	 *  The classic "Enable FAQ Section" row (label text + the toggle just
 	 *  relocated to the FAQ card header above) would otherwise be left
 	 *  behind as an empty leftover line. Only removed once confirmed empty
@@ -1518,6 +1691,163 @@
 		if ($toggleRow.length && !$toggleRow.find('input[type="checkbox"]').length) {
 			$toggleRow.remove();
 		}
+	})();
+
+	/* ---------------------------------------------------------------- *
+	 *  FAQ card: numbered question rows (drag handle, expandable answer,
+	 *  edit/delete buttons), a list head with the count and "Add question",
+	 *  an empty state, and a clearer Add/Edit dialog with a required
+	 *  question. Every add/update/delete/sort still goes through
+	 *  mpwpb_admin.js's AJAX handlers, which re-render .mpwpb-faq-items
+	 *  with the classic fragment -- decorate() re-runs on each re-render.
+	 * ---------------------------------------------------------------- */
+	(function modernizeFaq() {
+		var $card = $root.find('[data-sme-section="MPWPB_Faq_Settings"]');
+		var $section = $card.find('.mpwpb-faq-section');
+		var $list = $section.find('.mpwpb-faq-items');
+		if (!$list.length || $card.data('sme-faq')) { return; }
+		$card.data('sme-faq', true).addClass('mpwpb-sme__faq-card');
+		var t = function (key, fallback) { return cfg[key] || fallback; };
+		var svg = {
+			grip: '<svg width="12" height="16" viewBox="0 0 12 16" fill="currentColor" aria-hidden="true"><circle cx="3" cy="3" r="1.4"/><circle cx="9" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="9" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="9" cy="13" r="1.4"/></svg>',
+			chev: '<svg class="mpwpb-faq2__chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>',
+			edit: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
+			bin: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>',
+			plus: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>'
+		};
+
+		var $head = $card.find('.mpwpb-sme__postfields-header').first();
+		if (!$head.find('.mpwpb-sme__faq-icon').length) {
+			$head.prepend('<span class="mpwpb-sme__faq-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6"/><path d="M12 17h.01"/></svg></span>');
+		}
+
+		// List head: title, count + hint, and the real "Add" button (it keeps
+		// its data-modal / .mpwpb-faq-item-new hooks).
+		var $listHead = $('<div class="mpwpb-faq2__head"><div><div class="mpwpb-faq2__title"></div><div class="mpwpb-faq2__sub"></div></div></div>');
+		$listHead.find('.mpwpb-faq2__title').text(t('faqListTitle', 'Questions'));
+		var $addBtn = $section.find('button.mpwpb-faq-item-new').first();
+		$addBtn.empty().append(svg.plus).append($('<span></span>').text(t('faqAddTxt', 'Add question'))).appendTo($listHead);
+		$section.prepend($listHead);
+		var $empty = $('<div class="mpwpb-faq2__empty"><strong></strong><span></span></div>');
+		$empty.find('strong').text(t('faqEmptyTitle', 'No questions yet'));
+		$empty.find('span').text(t('faqEmptyText', ''));
+		$list.after($empty);
+
+		var $toggle = $card.find('input[name="mpwpb_faq_active"]');
+		var $off = $('<p class="mpwpb-faq2__off"></p>').text(t('faqOffNote', '')).insertAfter($section);
+		function syncOn() { $off.prop('hidden', $toggle.is(':checked')); }
+		$toggle.on('change.mpwpb-sme-faq', syncOn);
+		syncOn();
+
+		var decorating = false;
+		function decorate() {
+			if (decorating) { return; }
+			decorating = true;
+			var $rows = $list.children('.mpwpb-faq-item');
+			$rows.each(function (i) {
+				var $row = $(this);
+				if (!$row.data('sme-faq-row')) {
+					$row.data('sme-faq-row', true).addClass('mpwpb-faq2__item');
+					var id = $row.attr('data-id');
+					var $h = $row.children('.faq-header');
+					var $c = $row.children('.faq-content');
+					var title = $.trim($h.find('p').first().text());
+					var answerId = 'mpwpb-faq-answer-' + id;
+					// Expanding is handled here, not by the shared collapse script.
+					$h.removeAttr('data-collapse-target');
+					$c.removeAttr('data-collapse').removeClass('mActive').attr('id', answerId).hide();
+					var $bar = $('<div class="mpwpb-faq2__bar"></div>');
+					$('<span class="mpwpb-faq2__handle"></span>').attr('title', t('faqDragTxt', 'Drag to reorder')).html(svg.grip).appendTo($bar);
+					$('<span class="mpwpb-faq2__num" aria-hidden="true"></span>').appendTo($bar);
+					var $open = $('<button type="button" class="mpwpb-faq2__toggle" aria-expanded="false"></button>').attr('aria-controls', answerId);
+					$('<span class="mpwpb-faq2__q" data-faq-title></span>').text(title).appendTo($open);
+					$open.append(svg.chev).appendTo($bar);
+					$('<button type="button" class="mpwpb-faq2__icon mpwpb-faq-item-edit" data-modal="mpwpb-faq-item-new"></button>').attr('aria-label', t('faqEditTxt', 'Edit question')).html(svg.edit).appendTo($bar);
+					$('<button type="button" class="mpwpb-faq2__icon mpwpb-faq2__icon--danger mpwpb-faq-item-delete"></button>').attr('aria-label', t('faqDeleteTxt', 'Delete question')).html(svg.bin).appendTo($bar);
+					$h.empty().append($bar);
+				}
+				$row.find('.mpwpb-faq2__num').text(i + 1);
+			});
+			var n = $rows.length;
+			$listHead.find('.mpwpb-faq2__sub').text((n === 1 ? t('faqCountOne', '1 question') : String(t('faqCountMany', '%d questions')).replace('%d', n)) + (n > 1 ? ' · ' + t('faqDragHint', '') : ''));
+			$list.toggle(n > 0);
+			$empty.toggle(n === 0);
+			decorating = false;
+		}
+		decorate();
+		if (window.MutationObserver) {
+			new MutationObserver(decorate).observe($list[0], { childList: true });
+		}
+		$list.on('click', '.mpwpb-faq2__toggle', function () {
+			var $row = $(this).closest('.mpwpb-faq-item');
+			var open = !$row.hasClass('is-open');
+			$row.toggleClass('is-open', open);
+			$(this).attr('aria-expanded', open ? 'true' : 'false');
+			$row.children('.faq-content').stop(true, true)[open ? 'slideDown' : 'slideUp'](150);
+		});
+		// Drag only from the handle, so the row's buttons stay clickable.
+		function sortHandle() {
+			if ($list.hasClass('ui-sortable')) {
+				$list.sortable('option', 'handle', '.mpwpb-faq2__handle');
+				return true;
+			}
+			return false;
+		}
+		if (!sortHandle()) { $(window).on('load', sortHandle); }
+
+		// Add / Edit dialog.
+		var $modal = $card.find('[data-modal-target="mpwpb-faq-item-new"]');
+		if (!$modal.length) { return; }
+		$modal.addClass('mpwpb-faq2-modal');
+		var $dialog = $modal.find('.mpwpb-modal-content').first().attr({ role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'mpwpb-faq-modal-title' });
+		var $h3 = $modal.find('.title h3').first().attr('id', 'mpwpb-faq-modal-title');
+		$('<p class="mpwpb-faq2__modal-sub"></p>').text(t('faqModalSub', '')).insertAfter($h3);
+		$modal.find('.mpwpb-modal-close').attr({ role: 'button', tabindex: '0', 'aria-label': t('faqCancelTxt', 'Cancel') });
+		var $title = $modal.find('input[name="mpwpb_faq_title"]').attr({ id: 'mpwpb-faq-q', placeholder: t('faqQuestionPh', ''), autocomplete: 'off' });
+		var $labels = $modal.find('.content > label');
+		// Retitle the two classic labels (their first text node only; the
+		// hidden inputs inside the first one stay where they are).
+		function relabel($label, text, forId) {
+			$label.contents().filter(function () { return this.nodeType === 3 && $.trim(this.nodeValue); }).first().replaceWith($('<span class="mpwpb-faq2__label"></span>').text(text));
+			if (forId) { $label.attr('for', forId); }
+		}
+		relabel($labels.eq(0), t('faqQuestionLabel', 'Question'), 'mpwpb-faq-q');
+		relabel($labels.eq(1), t('faqAnswerLabel', 'Answer'));
+		var $qErr = $('<p class="mpwpb-faq2__error" role="alert"></p>').text(t('faqQuestionError', '')).hide().insertAfter($title);
+		$modal.find('#mpwpb_faq_save').text(t('faqSaveAnother', 'Save & add another')).removeClass('button-primary');
+		$modal.find('#mpwpb_faq_save_close').text(t('faqSaveTxt', 'Save question'));
+		$modal.find('#mpwpb_faq_update').text(t('faqSaveChanges', 'Save changes'));
+		var $foot = $('<div class="mpwpb-faq2__foot"></div>');
+		$('<button type="button" class="mpwpb-faq2__cancel"></button>').text(t('faqCancelTxt', 'Cancel')).appendTo($foot);
+		$foot.append($modal.find('.mpwpb_faq_save_buttons'), $modal.find('.mpwpb_faq_update_buttons'));
+		$dialog.append($foot);
+		$modal.find('#mpwpb-faq-msg').insertBefore($foot);
+
+		function setMode(isEdit) {
+			$h3.text(isEdit ? t('faqModalEdit', 'Edit question') : t('faqModalAdd', 'Add question'));
+			$title.removeClass('is-error');
+			$qErr.hide();
+			setTimeout(function () { $title.trigger('focus'); }, 50);
+		}
+		$(document).on('click.mpwpb-sme-faq', '.mpwpb-faq-item-new', function () { setMode(false); });
+		$(document).on('click.mpwpb-sme-faq', '.mpwpb-faq-item-edit', function () { setMode(true); });
+		// Runs before mpwpb_admin.js's document-level save handlers: block an
+		// empty question there.
+		$modal.on('click', '#mpwpb_faq_save, #mpwpb_faq_save_close, #mpwpb_faq_update', function (e) {
+			if ($.trim($title.val())) { return; }
+			e.preventDefault();
+			e.stopPropagation();
+			$title.addClass('is-error').trigger('focus');
+			$qErr.show();
+		});
+		$title.on('input', function () {
+			if ($.trim($title.val())) { $title.removeClass('is-error'); $qErr.hide(); }
+		});
+		$modal.on('click', '.mpwpb-faq2__cancel', function () { $modal.removeClass('open'); });
+		$modal.on('keydown', function (e) {
+			if (e.key === 'Escape') { $modal.removeClass('open'); }
+			if (e.key === 'Enter' && $(e.target).is('.mpwpb-modal-close')) { $modal.removeClass('open'); }
+		});
 	})();
 
 	/* ---------------------------------------------------------------- *
@@ -1554,67 +1884,156 @@
 	})();
 
 	/* ---------------------------------------------------------------- *
-	 *  Happy Hours rule builder. Move the four original classic labels into
-	 *  two modern groups, keeping every real input/name intact. The summary
-	 *  below updates immediately as the rule changes.
+	 *  Happy Hours card: time-window steppers with a 24h bar, a
+	 *  Percentage / Fixed amount switch, value presets and a plain-language
+	 *  "Customers see" line. The real start/end/type/value inputs are moved
+	 *  in (never copied), so the classic save handler reads them as before.
 	 * ---------------------------------------------------------------- */
 	(function modernizeHappyHours() {
 		var $card = $root.find('[data-sme-section="MPWPB_Happy_Hours_Settings"]');
 		var $row = $card.find('#mpwpb_happy_hours_row');
-		var $fields = $row.children('label.label');
-		if (!$row.length || $fields.length < 4 || $row.data('sme-modernized')) {
-			return;
-		}
-		$row.data('sme-modernized', true).addClass('mpwpb-hh');
+		var $start = $row.find('[name="mpwpb_happy_hours_start_time"]');
+		var $end = $row.find('[name="mpwpb_happy_hours_end_time"]');
+		var $type = $row.find('[name="mpwpb_happy_hours_discount_type"]');
+		var $value = $row.find('[name="mpwpb_happy_hours_discount_value"]');
+		if (!$row.length || !$start.length || !$end.length || !$type.length || !$value.length || $row.data('sme-modernized')) { return; }
+		$row.data('sme-modernized', true).addClass('mpwpb-hh2');
+		$card.addClass('mpwpb-sme__hh-card');
+		var t = function (key, fallback) { return cfg[key] || fallback; };
+		var fmt = function (tpl) { var args = [].slice.call(arguments, 1); return String(tpl).replace(/%(\d)\$s/g, function (m, n) { return args[n - 1]; }).replace(/%s/, args[0]); };
+		var cur = cfg.hhCurrencySymbol || '';
 
-		function group(icon, title, subtitle, modifier) {
-			return $('<div class="mpwpb-hh__group ' + modifier + '">' +
-				'<div class="mpwpb-hh__group-head">' +
-					'<span class="dashicons ' + icon + ' mpwpb-hh__group-icon" aria-hidden="true"></span>' +
-					'<div><h4></h4><p></p></div>' +
-				'</div>' +
-				'<div class="mpwpb-hh__fields"></div>' +
-			'</div>')
-				.find('h4').text(title).end()
-				.find('.mpwpb-hh__group-head p').text(subtitle).end();
+		var $head = $card.find('.mpwpb-sme__postfields-header').first();
+		if (!$head.find('.mpwpb-sme__hh-icon').length) {
+			$head.prepend('<span class="mpwpb-sme__hh-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>');
 		}
 
-		var $layout = $('<div class="mpwpb-hh__layout"></div>');
-		var $windowGroup = group('dashicons-clock', cfg.hhWindowTitle || 'Time Window', cfg.hhWindowSub || 'Choose when the special price applies.', 'mpwpb-hh__group--window');
-		var $offerGroup = group('dashicons-tickets-alt', cfg.hhOfferTitle || 'Discount Offer', cfg.hhOfferSub || 'Set the discount customers receive.', 'mpwpb-hh__group--offer');
+		// Time window: -/+ 30 min steppers around the real <input type="time">.
+		function stepper($input, id, label) {
+			var $f = $('<div class="mpwpb-hh2__field"></div>');
+			$('<label class="mpwpb-hh2__label"></label>').attr('for', id).text(label).appendTo($f);
+			var $c = $('<div class="mpwpb-hh2__stepper"></div>').appendTo($f);
+			$('<button type="button" data-hh-step="-30">−</button>').attr('aria-label', label + ': ' + t('hhEarlierTxt', '30 minutes earlier')).appendTo($c);
+			$input.attr('id', id).removeAttr('style').appendTo($c);
+			$('<button type="button" data-hh-step="30">+</button>').attr('aria-label', label + ': ' + t('hhLaterTxt', '30 minutes later')).appendTo($c);
+			return $f;
+		}
+		var $win = $('<div class="mpwpb-hh2__box"></div>');
+		var $winHead = $('<div class="mpwpb-hh2__box-head"><div><div class="mpwpb-hh2__title"></div><div class="mpwpb-hh2__sub"></div></div><span class="mpwpb-hh2__len" data-hh-len></span></div>').appendTo($win);
+		$winHead.find('.mpwpb-hh2__title').text(t('hhWindowTitle', 'Time window'));
+		$winHead.find('.mpwpb-hh2__sub').text(t('hhWindowSub', ''));
+		var $startField = stepper($start, 'mpwpb-hh-start', t('hhStartLabel', 'Starts at'));
+		var $endField = stepper($end, 'mpwpb-hh-end', t('hhEndLabel', 'Ends at'));
+		$('<div class="mpwpb-hh2__times"></div>').append($startField, $endField).appendTo($win);
+		var $bar = $('<div class="mpwpb-hh2__bar" aria-hidden="true"><span class="mpwpb-hh2__bar-fill"></span></div>').appendTo($win);
+		var am = t('hhAmTxt', 'AM'), pm = t('hhPmTxt', 'PM');
+		$('<div class="mpwpb-hh2__ticks" aria-hidden="true"></div>')
+			.append($('<span></span>').text('12 ' + am), $('<span></span>').text('6 ' + am), $('<span></span>').text('12 ' + pm), $('<span></span>').text('6 ' + pm), $('<span></span>').text('12 ' + am))
+			.appendTo($win);
+		var $rangeErr = $('<p class="mpwpb-hh2__error" role="alert"></p>').text(t('hhRangeError', '')).appendTo($win);
 
-		$fields.eq(0).addClass('mpwpb-hh__field mpwpb-hh__field--start').appendTo($windowGroup.find('.mpwpb-hh__fields'));
-		$fields.eq(1).addClass('mpwpb-hh__field mpwpb-hh__field--end').appendTo($windowGroup.find('.mpwpb-hh__fields'));
-		$fields.eq(2).addClass('mpwpb-hh__field mpwpb-hh__field--type').appendTo($offerGroup.find('.mpwpb-hh__fields'));
-		$fields.eq(3).addClass('mpwpb-hh__field mpwpb-hh__field--value').appendTo($offerGroup.find('.mpwpb-hh__fields'));
+		// Discount: segmented switch drives the real (hidden) select.
+		var $offer = $('<div class="mpwpb-hh2__box"></div>');
+		$('<div class="mpwpb-hh2__title"></div>').text(t('hhOfferTitle', 'Discount')).appendTo($offer);
+		$('<div class="mpwpb-hh2__sub"></div>').text(t('hhOfferSub', '')).appendTo($offer);
+		var $offerRow = $('<div class="mpwpb-hh2__offer"></div>').appendTo($offer);
+		var $seg = $('<div class="mpwpb-hh2__seg" role="radiogroup"></div>').attr('aria-label', t('hhTypeLabel', 'Discount type')).appendTo($offerRow);
+		$('<button type="button" role="radio" data-hh-type="percent"></button>').text(t('hhPercentTxt', 'Percentage')).appendTo($seg);
+		$('<button type="button" role="radio" data-hh-type="fixed"></button>').text(t('hhFixedTxt', 'Fixed amount')).appendTo($seg);
+		$type.addClass('mpwpb-hh2__type-select').removeAttr('style').attr('tabindex', '-1').attr('aria-hidden', 'true').appendTo($seg);
+		var $valBox = $('<div class="mpwpb-hh2__value"></div>').appendTo($offerRow);
+		var $prefix = $('<span class="mpwpb-hh2__affix" aria-hidden="true"></span>').text(cur).appendTo($valBox);
+		$value.attr('id', 'mpwpb-hh-value').attr('aria-label', t('hhValueLabel', 'Discount value')).removeAttr('style').appendTo($valBox);
+		var $suffix = $('<span class="mpwpb-hh2__affix" aria-hidden="true">%</span>').appendTo($valBox);
+		var $presets = $('<div class="mpwpb-hh2__presets"></div>').appendTo($offerRow);
+		var $valErr = $('<p class="mpwpb-hh2__error" role="alert"></p>').appendTo($offer);
 
-		var $valueControl = $offerGroup.find('.mpwpb-hh__field--value > div').last().addClass('mpwpb-hh__value-control');
-		var $suffix = $('<span class="mpwpb-hh__value-suffix" aria-hidden="true"></span>').appendTo($valueControl);
-		var $preview = $('<div class="mpwpb-hh__preview">' +
-			'<span class="dashicons dashicons-megaphone mpwpb-hh__preview-icon" aria-hidden="true"></span>' +
-			'<div class="mpwpb-hh__preview-copy"><span class="mpwpb-hh__preview-label"></span><strong><span data-hh-preview-value></span> <span class="mpwpb-hh__preview-discount"></span> &middot; <span data-hh-preview-time></span></strong></div>' +
-			'<span class="mpwpb-hh__preview-badge"></span>' +
-		'</div>');
-		$preview.find('.mpwpb-hh__preview-label').text(cfg.hhRuleLabel || 'Active pricing rule');
-		$preview.find('.mpwpb-hh__preview-discount').text(cfg.hhDiscountTxt || 'discount');
-		$preview.find('.mpwpb-hh__preview-badge').text(cfg.hhAutomaticTxt || 'Automatic');
-		$layout.append($windowGroup, $offerGroup);
-		$row.append($layout, $preview);
+		var $summary = $('<div class="mpwpb-hh2__summary"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg><div><strong></strong> <span data-hh-summary></span></div></div>');
+		$summary.find('strong').text(t('hhSeeLabel', 'Customers see:'));
 
-		function updateRulePreview() {
-			var start = $row.find('[name="mpwpb_happy_hours_start_time"]').val() || '--:--';
-			var end = $row.find('[name="mpwpb_happy_hours_end_time"]').val() || '--:--';
-			var type = $row.find('[name="mpwpb_happy_hours_discount_type"]').val();
-			var value = $row.find('[name="mpwpb_happy_hours_discount_value"]').val() || '0';
-			var suffix = type === 'percent' ? '%' : (cfg.hhCurrencySymbol || '');
-			$valueControl.toggleClass('is-prefix', type === 'fixed' && !!cfg.hhCurrencySymbol);
-			$suffix.text(suffix).toggle(!!suffix);
-			$preview.find('[data-hh-preview-value]').text(type === 'fixed' && cfg.hhCurrencySymbol ? cfg.hhCurrencySymbol + value : value + (type === 'percent' ? '%' : ''));
-			$preview.find('[data-hh-preview-time]').text(start + ' – ' + end);
+		// Everything left in the row is classic label chrome: replace it.
+		$row.children().remove();
+		$row.append($win, $offer, $summary);
+
+		var $toggle = $card.find('[name="mpwpb_happy_hours_enabled"]');
+		var $off = $('<p class="mpwpb-hh2__off"></p>').insertAfter($row);
+		function syncOn() {
+			var on = $toggle.is(':checked');
+			$off.text($toggle.is(':disabled') ? t('hhProNote', '') : t('hhOffNote', '')).prop('hidden', on);
+			$row.attr('aria-hidden', on ? 'false' : 'true');
+		}
+		$toggle.on('change.mpwpb-sme-hh', syncOn);
+		$toggle.closest('.roundSwitchLabel').on('click.mpwpb-sme-hh', function () { setTimeout(syncOn, 0); });
+		syncOn();
+
+		function toMin(v) {
+			var m = /^(\d{1,2}):(\d{2})/.exec(v || '');
+			return m ? Math.min(1439, parseInt(m[1], 10) * 60 + parseInt(m[2], 10)) : null;
+		}
+		function toVal(min) { var h = Math.floor(min / 60), m = min % 60; return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m; }
+		function label(min) {
+			var h = Math.floor(min / 60), m = min % 60;
+			return (h % 12 || 12) + ':' + (m < 10 ? '0' : '') + m + ' ' + (h < 12 ? am : pm);
+		}
+		function money(v) { return cur ? cur + v : String(v); }
+
+		var lastType = null;
+		function update() {
+			var s = toMin($start.val()), e = toMin($end.val());
+			var badRange = s === null || e === null || e <= s;
+			var len = badRange ? 0 : e - s;
+			var lenTxt = len >= 60 ? (Math.round(len / 6) / 10) + ' ' + t('hhHoursUnit', 'h') : len + ' ' + t('hhMinsUnit', 'min');
+			$win.find('[data-hh-len]').text(badRange ? t('hhWindowInvalid', 'Invalid window') : fmt(t('hhWindowLen', '%s window'), lenTxt)).toggleClass('is-error', badRange);
+			$endField.toggleClass('is-error', badRange);
+			$rangeErr.toggle(badRange);
+			$bar.find('.mpwpb-hh2__bar-fill').css({ left: (s || 0) / 1440 * 100 + '%', width: len / 1440 * 100 + '%' });
+
+			var type = $type.val() === 'fixed' ? 'fixed' : 'percent';
+			$seg.find('[data-hh-type]').each(function () {
+				var on = $(this).attr('data-hh-type') === type;
+				$(this).toggleClass('is-active', on).attr('aria-checked', on ? 'true' : 'false');
+			});
+			$prefix.toggle(type === 'fixed' && !!cur);
+			$valBox.toggleClass('is-prefix', type === 'fixed' && !!cur);
+			$suffix.toggle(type === 'percent');
+			if (type !== lastType) {
+				lastType = type;
+				$presets.empty();
+				(type === 'percent' ? [10, 15, 20, 25] : [5, 10, 15, 20]).forEach(function (v) {
+					$('<button type="button" class="mpwpb-hh2__preset"></button>').attr('data-hh-preset', v)
+						.text(type === 'percent' ? v + '%' : money(v)).appendTo($presets);
+				});
+			}
+			var raw = $.trim($value.val()), v = parseFloat(raw);
+			$presets.find('[data-hh-preset]').each(function () { $(this).toggleClass('is-active', parseFloat($(this).attr('data-hh-preset')) === v); });
+			var valErr = (isNaN(v) || v <= 0) ? t('hhValueEmpty', '') : (type === 'percent' && v > 100 ? t('hhValueOver', '') : '');
+			$valBox.toggleClass('is-error', !!valErr);
+			$valErr.text(valErr).toggle(!!valErr);
+
+			var amount = type === 'percent' ? v + '%' : money(v);
+			$summary.find('[data-hh-summary]').text(badRange || valErr
+				? t('hhSummaryInvalid', '')
+				: fmt(t('hhSummary', ''), label(s), label(e), fmt(t('hhOffTxt', '%s off'), amount)));
 		}
 
-		$row.on('input change', 'input, select', updateRulePreview);
-		updateRulePreview();
+		$win.on('click', '[data-hh-step]', function () {
+			var $in = $(this).closest('.mpwpb-hh2__stepper').find('input');
+			var m = toMin($in.val()), step = parseInt($(this).attr('data-hh-step'), 10);
+			if (m === null) { m = $in.is($start) ? 840 : 960; }
+			// Snap to the 30-minute grid; the last step up lands on 23:59.
+			m = step > 0 ? Math.min(1439, Math.floor(m / 30) * 30 + 30) : Math.max(0, Math.ceil(m / 30) * 30 - 30);
+			$in.val(toVal(m)).trigger('change');
+		});
+		$seg.on('click', '[data-hh-type]', function () {
+			var type = $(this).attr('data-hh-type');
+			if ($type.val() === type) { return; }
+			$type.val(type).trigger('change');
+		});
+		$presets.on('click', '[data-hh-preset]', function () {
+			$value.val($(this).attr('data-hh-preset')).trigger('change');
+		});
+		$row.on('input change', 'input, select', update);
+		update();
 	})();
 
 	/* ---------------------------------------------------------------- *
@@ -1656,78 +2075,268 @@
 	(function modernizeRecurringBooking() {
 		var $card = $root.find('[data-sme-section="MPWPB_Recurring_Booking_Settings"]');
 		var $tab = $card.find('.tabsItem').first();
-		var $sections = $tab.children('section').not('.section');
-		if (!$tab.length || $sections.length < 3 || $tab.data('sme-modernized')) { return; }
+		var $types = $tab.find('input[name="mpwpb_recurring_types[]"]');
+		var $max = $tab.find('input[name="mpwpb_max_recurring_count"]');
+		var $disc = $tab.find('input[name="mpwpb_recurring_discount"]');
+		if (!$tab.length || !$types.length || !$max.length || !$disc.length || $tab.data('sme-modernized')) { return; }
 		$tab.data('sme-modernized', true).addClass('mpwpb-recur');
+		$card.addClass('mpwpb-sme__recur-card');
+		var t = function (key, fallback) { return cfg[key] || fallback; };
+		var fmt = function (tpl) { var args = [].slice.call(arguments, 1); return String(tpl).replace(/%(\d)\$[sd]/g, function (m, n) { return args[n - 1]; }).replace(/%[sd]/, args[0]).replace('%%', '%'); };
 
-		var $pattern = $('<div class="mpwpb-recur__group mpwpb-recur__group--pattern"><div class="mpwpb-recur__head"><span class="dashicons dashicons-update" aria-hidden="true"></span><div><h4></h4><p></p></div></div><div class="mpwpb-recur__pattern-body"></div></div>');
-		var $limits = $('<div class="mpwpb-recur__group mpwpb-recur__group--limits"><div class="mpwpb-recur__head"><span class="dashicons dashicons-chart-bar" aria-hidden="true"></span><div><h4></h4><p></p></div></div><div class="mpwpb-recur__limit-fields"></div></div>');
-		$pattern.find('h4').text(cfg.recurPatternTitle || 'Repeat Pattern');
-		$pattern.find('.mpwpb-recur__head p').text(cfg.recurPatternSub || 'Choose the recurrence options customers can use.');
-		$limits.find('h4').text(cfg.recurLimitsTitle || 'Limits & Incentive');
-		$limits.find('.mpwpb-recur__head p').text(cfg.recurLimitsSub || 'Control the maximum series length and optional discount.');
+		var $head = $card.find('.mpwpb-sme__postfields-header').first();
+		if (!$head.find('.mpwpb-sme__recur-icon').length) {
+			$head.prepend('<span class="mpwpb-sme__recur-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l3 3-3 3"/><path d="M4 11V9a4 4 0 0 1 4-4h12"/><path d="M7 22l-3-3 3-3"/><path d="M20 13v2a4 4 0 0 1-4 4H4"/></svg></span>');
+		}
 
-		$sections.eq(0).addClass('mpwpb-recur__patterns').appendTo($pattern.find('.mpwpb-recur__pattern-body'));
-		$sections.eq(1).addClass('mpwpb-recur__field mpwpb-recur__field--count').appendTo($limits.find('.mpwpb-recur__limit-fields'));
-		$sections.eq(2).addClass('mpwpb-recur__field mpwpb-recur__field--discount').appendTo($limits.find('.mpwpb-recur__limit-fields'));
-		$limits.find('[name="mpwpb_recurring_discount"]').wrap('<div class="mpwpb-recur__discount-control"></div>').after('<span aria-hidden="true">%</span>');
+		// Repeat options: one tile per real mpwpb_recurring_types[] checkbox.
+		var meta = {
+			'daily': ['1d', t('recurHintDaily', 'Same time every day')],
+			'weekly': ['7d', t('recurHintWeekly', 'Same weekday each week')],
+			'bi-weekly': ['14d', t('recurHintBiweekly', 'Every other week')],
+			'monthly': ['1m', t('recurHintMonthly', 'Same date each month')]
+		};
+		var $optHead = $('<div class="mpwpb-recur2__row-head"><div><div class="mpwpb-recur2__title"></div><div class="mpwpb-recur2__sub"></div></div><span class="mpwpb-recur2__count" data-recur-on-count></span></div>');
+		$optHead.find('.mpwpb-recur2__title').text(t('recurOptionsTitle', 'Repeat options'));
+		$optHead.find('.mpwpb-recur2__sub').text(t('recurOptionsSub', ''));
+		var $tiles = $('<div class="mpwpb-recur2__tiles"></div>');
+		$types.each(function () {
+			var $in = $(this);
+			var name = $.trim($in.next('.customCheckbox').text()) || $in.val();
+			var m = meta[$in.val()] || ['', ''];
+			var $tile = $('<label class="mpwpb-recur2__tile"></label>');
+			$tile.append($('<span class="mpwpb-recur2__badge" aria-hidden="true"></span>').text(m[0]))
+				.append($('<span class="mpwpb-recur2__name"></span>').text(name))
+				.append($('<span class="mpwpb-recur2__hint"></span>').text(m[1]))
+				.append('<span class="mpwpb-recur2__check" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>');
+			$tile.prepend($in.addClass('mpwpb-recur2__input'));
+			$tiles.append($tile);
+		});
+		var $warn = $('<p class="mpwpb-recur2__warn" role="alert"></p>').text(t('recurOptionsNone', ''));
+		var $options = $('<div class="mpwpb-recur2__block"></div>').append($optHead, $tiles, $warn);
 
-		var $layout = $('<div class="mpwpb-recur__layout"></div>').append($pattern, $limits);
-		var $summary = $('<div class="mpwpb-recur__summary"><span class="dashicons dashicons-calendar-alt" aria-hidden="true"></span><div><small></small><strong><span data-recur-pattern></span> &middot; <span data-recur-count></span> &middot; <span data-recur-discount></span></strong></div></div>');
-		$summary.find('small').text(cfg.recurRuleLabel || 'Booking series');
+		// Maximum bookings: -/+ counter around the real number input (2..52).
+		var $maxBox = $('<div class="mpwpb-recur2__box"></div>');
+		$('<label class="mpwpb-recur2__title" for="mpwpb-recur-max"></label>').text(t('recurMaxTitle', 'Maximum bookings in a series')).appendTo($maxBox);
+		$('<div class="mpwpb-recur2__sub"></div>').text(t('recurMaxSub', 'Between 2 and 52.')).appendTo($maxBox);
+		var $maxRow = $('<div class="mpwpb-recur2__inline"></div>').appendTo($maxBox);
+		var $counter = $('<div class="mpwpb-recur2__counter"></div>').appendTo($maxRow);
+		$('<button type="button" data-recur-max-step="-1">−</button>').attr('aria-label', t('recurFewerTxt', 'Fewer')).appendTo($counter);
+		$max.attr('id', 'mpwpb-recur-max').appendTo($counter);
+		$('<button type="button" data-recur-max-step="1">+</button>').attr('aria-label', t('recurMoreTxt', 'More')).appendTo($counter);
+		$('<span class="mpwpb-recur2__unit"></span>').text(t('recurMaxUnit', 'bookings')).appendTo($maxRow);
+
+		// Series discount: the real % input plus None / 5 / 10 / 15 presets.
+		var $discBox = $('<div class="mpwpb-recur2__box"></div>');
+		$('<label class="mpwpb-recur2__title" for="mpwpb-recur-disc"></label>').text(t('recurDiscTitle', 'Series discount')).appendTo($discBox);
+		$('<div class="mpwpb-recur2__sub"></div>').text(t('recurDiscSub', '')).appendTo($discBox);
+		var $discRow = $('<div class="mpwpb-recur2__inline mpwpb-recur2__inline--wrap"></div>').appendTo($discBox);
+		var $pct = $('<div class="mpwpb-recur2__pct"></div>').appendTo($discRow);
+		$disc.attr('id', 'mpwpb-recur-disc').appendTo($pct);
+		$pct.append('<span aria-hidden="true">%</span>');
+		[0, 5, 10, 15].forEach(function (v) {
+			$('<button type="button" class="mpwpb-recur2__preset"></button>').attr('data-recur-disc', v)
+				.text(v === 0 ? t('recurDiscNone', 'None') : v + '%').appendTo($discRow);
+		});
+		var $limits = $('<div class="mpwpb-recur2__boxes"></div>').append($maxBox, $discBox);
+
+		var $summary = $('<div class="mpwpb-recur2__summary"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg><div><strong></strong> <span data-recur-summary></span></div></div>');
+		$summary.find('strong').text(t('recurSeeLabel', 'Customers see:'));
+
 		var $toggle = $card.find('[name="mpwpb_enable_recurring"]');
 		var isEnabled = $toggle.is(':checked');
-		var $body = $('<div class="mpwpb-recur__body" data-collapse="#mpwpb_enable_recurring"></div>')
+		var $body = $('<div class="mpwpb-recur__body mpwpb-recur2" data-collapse="#mpwpb_enable_recurring"></div>')
 			.toggleClass('mActive', isEnabled)
 			.css('display', isEnabled ? 'block' : 'none')
 			.attr('aria-hidden', isEnabled ? 'false' : 'true')
-			.append($layout, $summary);
-		$tab.append($body);
-		$toggle.on('change.mpwpb-sme-recurring', function () {
-			var enabled = $(this).is(':checked');
+			.append($options, $limits, $summary);
+		var $off = $('<p class="mpwpb-recur2__off"></p>').text(t('recurOffTxt', 'Recurring booking is off.')).prop('hidden', isEnabled);
+		// Everything left in the tab is classic chrome (headers, empty label rows): replace it.
+		$tab.children().remove();
+		$tab.append($body, $off);
+		function syncOn() {
+			var enabled = $toggle.is(':checked');
 			$body.attr('aria-hidden', enabled ? 'false' : 'true');
-		});
-
-		function updateRecurringSummary() {
-			var patterns = [];
-			$tab.find('[name="mpwpb_recurring_types[]"]:checked').each(function () {
-				patterns.push($(this).next('.customCheckbox').text());
-			});
-			var count = $tab.find('[name="mpwpb_max_recurring_count"]').val() || '0';
-			var discount = $tab.find('[name="mpwpb_recurring_discount"]').val() || '0';
-			$summary.find('[data-recur-pattern]').text(patterns.join(', ') || cfg.recurNoneTxt || 'Select a repeat pattern');
-			$summary.find('[data-recur-count]').text(count + ' ' + (cfg.recurOccurrencesTxt || 'occurrences maximum'));
-			$summary.find('[data-recur-discount]').text(discount + '% ' + (cfg.recurDiscountTxt || 'recurring discount'));
+			$off.prop('hidden', enabled);
 		}
-		$tab.on('input change', 'input', updateRecurringSummary);
-		updateRecurringSummary();
+		$toggle.on('change.mpwpb-sme-recurring', syncOn);
+		$toggle.closest('.roundSwitchLabel').on('click.mpwpb-sme-recurring', function () { setTimeout(syncOn, 0); });
+
+		function clampInput($in, lo, hi) {
+			var v = parseInt($in.val(), 10);
+			if (isNaN(v)) { v = lo; }
+			v = Math.max(lo, Math.min(hi, v));
+			if (String(v) !== String($in.val())) { $in.val(v); }
+			return v;
+		}
+		function update() {
+			var picked = [];
+			$types.each(function () {
+				var on = this.checked;
+				$(this).closest('.mpwpb-recur2__tile').toggleClass('is-on', on);
+				if (on) { picked.push($.trim($(this).siblings('.mpwpb-recur2__name').text()).toLowerCase()); }
+			});
+			$optHead.find('[data-recur-on-count]').text(fmt(t('recurOptionsOn', '%1$d of %2$d on'), picked.length, $types.length)).toggleClass('is-none', !picked.length);
+			$warn.toggle(!picked.length);
+			var max = parseInt($max.val(), 10) || 2;
+			var disc = parseInt($disc.val(), 10) || 0;
+			$counter.find('[data-recur-max-step="-1"]').prop('disabled', max <= 2);
+			$counter.find('[data-recur-max-step="1"]').prop('disabled', max >= 52);
+			$discRow.find('[data-recur-disc]').each(function () {
+				$(this).toggleClass('is-active', parseInt($(this).attr('data-recur-disc'), 10) === disc);
+			});
+			var text;
+			if (!picked.length) {
+				text = t('recurSeeNone', 'no repeat options yet');
+			} else {
+				var list = picked.length > 1 ? picked.slice(0, -1).join(', ') + ' ' + t('recurOr', 'or') + ' ' + picked[picked.length - 1] : picked[0];
+				text = fmt(t('recurSeeText', 'repeat %1$s, up to %2$d bookings'), list, max) + (disc > 0 ? fmt(t('recurSeeDiscount', ', with %d%% off the series'), disc) : '');
+			}
+			$summary.find('[data-recur-summary]').text(text + '.');
+		}
+		$counter.on('click', '[data-recur-max-step]', function () {
+			var v = (parseInt($max.val(), 10) || 2) + parseInt($(this).attr('data-recur-max-step'), 10);
+			$max.val(Math.max(2, Math.min(52, v))).trigger('change');
+		});
+		$discRow.on('click', '[data-recur-disc]', function () {
+			$disc.val($(this).attr('data-recur-disc')).trigger('change');
+		});
+		$max.on('blur', function () { clampInput($max, 2, 52); update(); });
+		$disc.on('blur', function () { clampInput($disc, 0, 100); update(); });
+		$tab.on('input change', 'input', update);
+		update();
 	})();
 
 	/* ---------------------------------------------------------------- *
-	 *  Tax Settings — modern two-field configuration with a live class/rate
-	 *  summary, using the original select and number input.
+	 *  Tax card: class tiles (driving the real, hidden select), the real
+	 *  rate input with a shared-rate note, and a plain-language "Customers
+	 *  see" line. With WooCommerce a class has ONE rate, so picking a class
+	 *  loads that class's current rate (data-tax-info from Tax_Settings).
 	 * ---------------------------------------------------------------- */
 	(function modernizeTaxSettings() {
 		var $card = $root.find('[data-sme-section="Tax_Settings"]');
 		var $row = $card.find('#mpwpb_tax_class_row');
-		var $fields = $row.children('label.label');
-		if (!$row.length || $fields.length < 2 || $row.data('sme-modernized')) { return; }
-		$row.data('sme-modernized', true).addClass('mpwpb-tax-modern');
-		$fields.addClass('mpwpb-tax-modern__field').wrapAll('<div class="mpwpb-tax-modern__fields"></div>');
-		var $rateControl = $row.find('#mpwpb_tax_rate_row > div').last().addClass('mpwpb-tax-modern__rate-control');
-		$rateControl.append('<span aria-hidden="true">%</span>');
-		var $summary = $('<div class="mpwpb-tax-modern__summary"><span class="dashicons dashicons-shield" aria-hidden="true"></span><div><small></small><strong><span data-tax-class></span> &middot; <span data-tax-rate></span></strong></div><span class="mpwpb-tax-modern__badge"></span></div>');
-		$summary.find('small').text(cfg.taxRuleLabel || 'Applied tax rule');
-		$summary.find('.mpwpb-tax-modern__badge').text(cfg.taxAutomaticTxt || 'Automatic');
-		$row.append($summary);
-		function updateTaxSummary() {
-			var className = $row.find('[name="mpwpb_tax_class"] option:selected').text();
-			var rate = $row.find('[name="mpwpb_tax_rate"]').val() || '0';
-			$summary.find('[data-tax-class]').text(className);
-			$summary.find('[data-tax-rate]').text(rate + '%');
+		var $select = $row.find('[name="mpwpb_tax_class"]');
+		var $rate = $row.find('[name="mpwpb_tax_rate"]');
+		if (!$row.length || !$select.length || !$rate.length || $row.data('sme-modernized')) { return; }
+		$row.data('sme-modernized', true).addClass('mpwpb-tax2');
+		$card.addClass('mpwpb-sme__tax-card');
+		var t = function (key, fallback) { return cfg[key] || fallback; };
+		var fmt = function (tpl) {
+			var args = [].slice.call(arguments, 1), i = 0;
+			return String(tpl).replace(/%(\d)\$[sd]|%[sd]|%%/g, function (m, n) {
+				if (m === '%%') { return '%'; }
+				return n ? args[n - 1] : args[i++];
+			});
+		};
+		var info = {};
+		try { info = JSON.parse($row.attr('data-tax-info') || '{}') || {}; } catch (e) { info = {}; }
+		var shared = !!info.shared, knownRates = info.rates || {}, others = info.others || {};
+		var cur = cfg.hhCurrencySymbol || '';
+		var decimals = parseInt(cfg.taxDecimals, 10);
+		if (isNaN(decimals)) { decimals = 2; }
+		var money = function (v) { return cur + v.toFixed(decimals); };
+		var pct = function (v) { return (Math.round(v * 10000) / 10000) + '%'; };
+
+		var $head = $card.find('.mpwpb-sme__postfields-header').first();
+		if (!$head.find('.mpwpb-sme__tax-icon').length) {
+			$head.prepend('<span class="mpwpb-sme__tax-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h14v18l-3-2-2 2-2-2-2 2-2-2-3 2z"/><path d="M9 14l6-6"/><circle cx="9.5" cy="8.5" r=".8"/><circle cx="14.5" cy="13.5" r=".8"/></svg></span>');
 		}
-		$row.on('input change', 'input, select', updateTaxSummary);
-		updateTaxSummary();
+
+		// Tax class tiles, one per real <option>.
+		var $classBlock = $('<div class="mpwpb-tax2__block"></div>');
+		$('<div class="mpwpb-tax2__title"></div>').text(t('taxClassTitle', 'Tax class')).appendTo($classBlock);
+		$('<div class="mpwpb-tax2__sub"></div>').text(shared ? t('taxClassSub', '') : t('taxClassSubOwn', '')).appendTo($classBlock);
+		var $tiles = $('<div class="mpwpb-tax2__tiles" role="radiogroup"></div>').attr('aria-label', t('taxClassTitle', 'Tax class')).appendTo($classBlock);
+		$select.find('option').each(function () {
+			var $tile = $('<button type="button" role="radio" class="mpwpb-tax2__tile"></button>').attr('data-tax-class', $(this).val());
+			$('<span class="mpwpb-tax2__tile-name"></span>').text($(this).text()).appendTo($tile);
+			if (shared) { $('<span class="mpwpb-tax2__tile-rate"></span>').appendTo($tile); }
+			$tile.append('<span class="mpwpb-tax2__radio" aria-hidden="true"></span>');
+			$tiles.append($tile);
+		});
+		$select.addClass('mpwpb-tax2__select').removeAttr('style').attr({ tabindex: '-1', 'aria-hidden': 'true' }).appendTo($classBlock);
+
+		// Rate: the real number input with a % suffix.
+		var $rateBox = $('<div class="mpwpb-tax2__box"></div>');
+		var $rateTitle = $('<label class="mpwpb-tax2__title" for="mpwpb-tax-rate"></label>').appendTo($rateBox);
+		$('<div class="mpwpb-tax2__sub"></div>').text(t('taxRateSub', '')).appendTo($rateBox);
+		var $field = $('<div class="mpwpb-tax2__rate"></div>').appendTo($rateBox);
+		$rate.attr('id', 'mpwpb-tax-rate').removeAttr('style').appendTo($field);
+		$field.append('<span aria-hidden="true">%</span>');
+		var $err = $('<p class="mpwpb-tax2__error" role="alert"></p>').text(t('taxRateError', '')).appendTo($rateBox);
+		var $note = $('<div class="mpwpb-tax2__shared"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.5"/></svg><span></span></div>').appendTo($rateBox);
+
+		var $summary = $('<div class="mpwpb-tax2__summary"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h6M7 17h4"/></svg><div><strong></strong> <span data-tax-summary></span></div></div>');
+		$summary.find('strong').text(t('taxSeeLabel', 'Customers see:'));
+
+		// Everything left in the row is classic label chrome: replace it.
+		$row.children().remove();
+		$row.append($classBlock, $rateBox, $summary);
+
+		var $toggle = $card.find('input[name="mpwpb_tax_enabled"]');
+		var $off = $('<p class="mpwpb-tax2__off"></p>').text(t('taxOffNote', '')).insertAfter($row);
+		function syncOn() { $off.prop('hidden', $toggle.is(':checked')); }
+		$toggle.on('change.mpwpb-sme-tax', syncOn);
+		syncOn();
+
+		// What this service's form currently holds for each class, so
+		// switching classes and back doesn't lose an edit.
+		var edited = {};
+		edited[$select.val()] = $rate.val();
+
+		function readRate() {
+			var raw = $.trim($rate.val());
+			var v = parseFloat(raw);
+			return raw === '' || isNaN(v) ? null : v;
+		}
+		function update() {
+			var cls = $select.val();
+			var name = $select.find('option:selected').text();
+			$tiles.find('[data-tax-class]').each(function () {
+				var c = $(this).attr('data-tax-class'), on = c === cls;
+				$(this).toggleClass('is-active', on).attr('aria-checked', on ? 'true' : 'false');
+				if (shared) {
+					var r = c === cls ? readRate() : (edited[c] !== undefined ? parseFloat(edited[c]) : knownRates[c]);
+					$(this).find('.mpwpb-tax2__tile-rate').text(r === null || r === undefined || isNaN(r) ? t('taxClassNoRate', 'No rate set yet') : fmt(t('taxClassRate', '%s rate'), pct(r)));
+				}
+			});
+			$rateTitle.text(fmt(t('taxRateTitle', 'Tax rate (%s)'), name));
+			var v = readRate();
+			var bad = v === null || v < 0 || v > 100;
+			$field.toggleClass('is-error', bad);
+			$err.toggle(bad);
+			var n = others[cls] || 0;
+			$note.toggle(shared && !bad).find('span').text(fmt(t('taxSharedNote', ''), name) + (n ? ' ' + (n === 1 ? t('taxSharedOne', '') : fmt(t('taxSharedMany', '%d'), n)) : ''));
+			var text;
+			if (bad) {
+				text = t('taxSummaryInvalid', '');
+			} else if (v === 0) {
+				text = fmt(t('taxSummaryZero', ''), name);
+			} else if (info.pricesIncludeTax) {
+				text = fmt(t('taxSummaryIncl', ''), pct(v), money(100), money(100 - 100 / (1 + v / 100)));
+			} else {
+				text = fmt(t('taxSummary', ''), pct(v), money(100), money(100 + v), money(v));
+			}
+			$summary.find('[data-tax-summary]').text(text);
+		}
+
+		$tiles.on('click', '[data-tax-class]', function () {
+			var c = $(this).attr('data-tax-class'), from = $select.val();
+			if (c === from) { return; }
+			edited[from] = $rate.val();
+			$select.val(c).trigger('change');
+			// With a shared class rate, show what the class is charging now.
+			if (edited[c] !== undefined) {
+				$rate.val(edited[c]);
+			} else if (shared && knownRates[c] !== undefined) {
+				$rate.val(knownRates[c]);
+			}
+			update();
+		});
+		$rate.on('input change', function () { edited[$select.val()] = $rate.val(); update(); });
+		$select.on('change', update);
+		update();
 	})();
 
 	/* ---------------------------------------------------------------- *
@@ -1738,22 +2347,96 @@
 		var $card = $root.find('[data-sme-section="Staff_Member"]');
 		var $container = $card.find('#mpwpb_add_staff_container');
 		var $grid = $container.find('.mpwpb-staff-grid');
+		var $select = $card.find('#mpwpb_staff_selector');
 		if (!$container.length || $container.data('sme-modernized')) { return; }
 		$container.data('sme-modernized', true).addClass('mpwpb-staff-modern');
-		var $head = $('<div class="mpwpb-staff-modern__head"><div><span class="dashicons dashicons-groups" aria-hidden="true"></span><div><h4></h4><p></p></div></div><strong data-staff-count></strong></div>');
-		$head.find('h4').text(cfg.staffSelectTitle || 'Select Staff');
-		$head.find('p').text(cfg.staffSelectSub || 'Choose the team members customers can book.');
-		$grid.attr('data-empty', cfg.staffNoneTxt || 'No staff members available.');
-		$container.find('.mpwpb_add_staff_container > label').hide();
-		$container.find('.mpwpb_add_staff_container').prepend($head);
-		function updateStaffCount() {
-			var count = $grid.find('.mpwpb-staff-tile.is-selected').length;
-			$head.find('[data-staff-count]').text(count + ' ' + (cfg.staffSelectedTxt || 'staff selected'));
+		$card.addClass('mpwpb-sme__staff-card');
+		var t = function (key, fallback) { return cfg[key] || fallback; };
+
+		var $cardHead = $card.find('.mpwpb-sme__postfields-header').first();
+		if (!$cardHead.find('.mpwpb-sme__staff-icon').length) {
+			$cardHead.prepend('<span class="mpwpb-sme__staff-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>');
 		}
-		$card.find('#mpwpb_staff_selector').on('change.mpwpb-sme-staff', function () {
-			setTimeout(updateStaffCount, 0);
+		$card.find('.tabsItem > header').remove();
+		$container.find('.mpwpb_add_staff_container > label').remove();
+
+		var manageUrl = t('staffManageUrl', '');
+		var $bar = $('<div class="mpwpb-staff2__bar"><div><div class="mpwpb-staff2__title"></div><div class="mpwpb-staff2__count" data-staff-count></div></div><div class="mpwpb-staff2__actions"></div></div>');
+		$bar.find('.mpwpb-staff2__title').text(t('staffWhoTitle', 'Who can be booked'));
+		var $actions = $bar.find('.mpwpb-staff2__actions');
+		$('<button type="button" class="mpwpb-staff2__link" data-staff-all></button>').text(t('staffSelectAllTxt', 'Select all')).appendTo($actions);
+		$('<button type="button" class="mpwpb-staff2__link mpwpb-staff2__link--muted" data-staff-none></button>').text(t('staffClearTxt', 'Clear')).appendTo($actions);
+		if (manageUrl) {
+			$('<a class="mpwpb-staff2__manage" target="_blank" rel="noopener"></a>').attr('href', manageUrl)
+				.text(t('staffManageTxt', 'Manage staff') + ' ')
+				.append('<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4L10 14"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>')
+				.appendTo($actions);
+		}
+		$grid.before($bar);
+
+		// Staff tiles become horizontal cards: photo, name, status, checkbox.
+		// The tile click handler (Admin/settings/Staff_Member.php) is untouched.
+		$grid.find('.mpwpb-staff-tile').each(function () {
+			var $tile = $(this);
+			$tile.attr('role', 'checkbox');
+			if (!$tile.find('.mpwpb-staff-tile-text').length) {
+				var $name = $tile.find('.mpwpb-staff-tile-name');
+				var $text = $('<span class="mpwpb-staff-tile-text"></span>').append($name).append('<span class="mpwpb-staff-tile-status"></span>');
+				$tile.find('.mpwpb-staff-tile-avatar').after($text);
+				$tile.append($tile.find('.mpwpb-staff-tile-check'));
+				$tile.find('.mpwpb-staff-tile-check').html('<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>');
+			}
 		});
-		updateStaffCount();
+		if (manageUrl) {
+			$('<a class="mpwpb-staff2__add" target="_blank" rel="noopener"></a>').attr('href', manageUrl)
+				.append('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>')
+				.append($('<span></span>').text(t('staffAddTxt', 'Add staff member')))
+				.appendTo($grid);
+		}
+		var hasStaff = $grid.find('.mpwpb-staff-tile').length > 0;
+		var $empty = $('<p class="mpwpb-staff2__empty"></p>').text(t('staffEmptyTxt', 'No staff members yet.'));
+		var $warn = $('<p class="mpwpb-staff2__warn" role="alert"></p>').text(t('staffPickWarn', ''));
+		var $summary = $('<div class="mpwpb-staff2__summary"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><div><strong></strong> <span data-staff-summary></span></div></div>');
+		$summary.find('strong').text(t('staffSeeLabel', 'Customers see:'));
+		$grid.after($summary).after($warn).after($empty);
+		$empty.toggle(!hasStaff);
+
+		var $toggle = $card.find('input[name="mpwpb_staff_member_add"]');
+		var $off = $('<p class="mpwpb-staff2__off"></p>').text(t('staffOffNote', 'Staff choice is off.'));
+		$container.after($off);
+		function syncOn() { $off.prop('hidden', $toggle.is(':checked')); }
+		$toggle.on('change.mpwpb-sme-staff', syncOn);
+		$toggle.closest('.roundSwitchLabel').on('click.mpwpb-sme-staff', function () { setTimeout(syncOn, 0); });
+		syncOn();
+
+		function update() {
+			var $tiles = $grid.find('.mpwpb-staff-tile');
+			var names = [];
+			$tiles.each(function () {
+				var on = $(this).hasClass('is-selected');
+				$(this).attr('aria-checked', on ? 'true' : 'false')
+					.find('.mpwpb-staff-tile-status').text(on ? t('staffOnTxt', 'Can be booked') : t('staffOffTxt', 'Not offered'));
+				if (on) { names.push($.trim($(this).find('.mpwpb-staff-tile-name').text())); }
+			});
+			$bar.find('[data-staff-count]').text(String(t('staffCountTxt', '%1$d of %2$d selected')).replace('%1$d', names.length).replace('%2$d', $tiles.length));
+			$warn.toggle(hasStaff && !names.length);
+			var list = names.length > 1 ? names.slice(0, -1).join(', ') + ' ' + t('staffOr', 'or') + ' ' + names[names.length - 1] : names[0];
+			$summary.find('[data-staff-summary]').text(names.length ? String(t('staffSeeText', '"Any Staff" or %s.')).replace('%s', list) : t('staffSeeNone', 'no one to book with yet.'));
+			$actions.find('[data-staff-all]').prop('disabled', !hasStaff || names.length === $tiles.length);
+			$actions.find('[data-staff-none]').prop('disabled', !names.length);
+		}
+		// Bulk select / clear: flip every tile + option, then ONE change (one AJAX save).
+		function setAll(on) {
+			$grid.find('.mpwpb-staff-tile').toggleClass('is-selected', on);
+			$select.find('option').prop('selected', on);
+			$select.trigger('change');
+			update();
+		}
+		$actions.on('click', '[data-staff-all]', function () { setAll(true); });
+		$actions.on('click', '[data-staff-none]', function () { setAll(false); });
+		$select.on('change.mpwpb-sme-staff', function () { setTimeout(update, 0); });
+		$grid.on('click', '.mpwpb-staff-tile', function () { setTimeout(update, 0); });
+		update();
 	})();
 
 	/* ---------------------------------------------------------------- *
@@ -1786,6 +2469,102 @@
 		}
 		$featuresSection.appendTo($contentSlot);
 		$toggleRow.remove();
+	})();
+
+	/* ---------------------------------------------------------------- *
+	 *  Features card: checklist rows (grip handle, tick, inline text,
+	 *  bin), a count chip, an "Add a feature" bar and an empty state.
+	 *  Rows stay the classic repeater (mpwpb_features[] inputs, the
+	 *  .mp_add_item / .mpwpb_item_remove handlers in mpwpb_admin_
+	 *  settings.js, its confirm on remove); the add bar clicks the real
+	 *  (hidden) .mp_add_item and fills the new row, and an empty draft adds
+	 *  nothing, so no blank features get saved.
+	 * ---------------------------------------------------------------- */
+	(function modernizeFeatures() {
+		var $slot = $root.find('[data-sme-features-slot]');
+		var $section = $slot.find('.mpwpb-service-features');
+		if (!$section.length) {
+			return;
+		}
+		var $card = $slot.closest('[data-sme-section]');
+		var $list = $section.find('.mp_item_insert').first();
+		var $realAdd = $section.find('.mp_add_item').first();
+		var t = function (key, fallback) { return $slot.attr('data-' + key) || fallback; };
+		$card.addClass('mpwpb-sme__features-card');
+
+		var $head = $card.find('.mpwpb-sme__postfields-header').first();
+		if ($head.length && !$head.find('.mpwpb-sme__features-icon').length) {
+			$head.prepend('<span class="mpwpb-sme__features-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg></span>');
+		}
+		var $chip = $('<span class="mpwpb-sme__features-count"></span>');
+		$card.find('[data-sme-header-actions]').first().prepend($chip);
+
+		var $empty = $('<p class="mpwpb-sme__features-empty"></p>').text(t('empty', 'No features yet.'));
+		var $bar = $('<div class="mpwpb-sme__features-add"></div>')
+			.append('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>')
+			.append($('<input type="text" class="mpwpb-sme__features-draft">').attr({ placeholder: t('placeholder', 'Add a feature'), 'aria-label': t('placeholder', 'Add a feature') }))
+			.append($('<button type="button" class="mpwpb-sme__features-add-btn"></button>').text(t('add', 'Add')));
+		var $hint = $('<p class="mpwpb-sme__features-hint"></p>').text(t('hint', ''));
+		$list.after($empty);
+		$realAdd.before($bar).before($hint).addClass('mpwpb-sme__features-real-add');
+
+		var gripSvg = '<svg width="12" height="16" viewBox="0 0 12 16" fill="currentColor" aria-hidden="true"><circle cx="3" cy="3" r="1.5"/><circle cx="9" cy="3" r="1.5"/><circle cx="3" cy="8" r="1.5"/><circle cx="9" cy="8" r="1.5"/><circle cx="3" cy="13" r="1.5"/><circle cx="9" cy="13" r="1.5"/></svg>';
+		var binSvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/></svg>';
+		var tickSvg = '<span class="mpwpb-sme__features-tick" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>';
+
+		function decorate() {
+			$list.children('.mp_remove_area').each(function () {
+				var $row = $(this);
+				if ($row.data('sme-feature')) {
+					return;
+				}
+				$row.data('sme-feature', true).addClass('mpwpb-sme__feature-row');
+				var $inner = $row.children('.justifyBetween').first();
+				var $handle = $row.find('.mpwpb_sortable_button').first();
+				$handle.html(gripSvg).attr({ role: 'button', tabindex: '-1', 'aria-label': t('drag', 'Drag to reorder'), title: t('drag', 'Drag to reorder') });
+				$inner.prepend(tickSvg).prepend($handle);
+				$row.find('.mpwpb_item_remove').first().html(binSvg).attr({ 'aria-label': t('remove', 'Remove feature'), title: t('remove', 'Remove feature') });
+				$row.find('input[name="mpwpb_features[]"]').attr('aria-label', t('feature', 'Feature'));
+			});
+		}
+		function sync() {
+			var n = $list.children('.mp_remove_area').length;
+			$chip.text(n === 1 ? t('one', '1 feature') : String(t('many', '%d features')).replace('%d', n));
+			$empty.toggle(n === 0);
+		}
+		function add() {
+			var $draft = $bar.find('.mpwpb-sme__features-draft');
+			var text = $.trim($draft.val());
+			if (!text) {
+				$draft.trigger('focus');
+				return;
+			}
+			$realAdd.trigger('click'); // appends the classic empty row synchronously
+			var $input = $list.children('.mp_remove_area').last().find('input[name="mpwpb_features[]"]');
+			$input.val(text).trigger('change');
+			$draft.val('').trigger('focus');
+			decorate();
+			sync();
+		}
+		$bar.on('click', '.mpwpb-sme__features-add-btn', add);
+		$bar.on('keydown', '.mpwpb-sme__features-draft', function (e) {
+			if (e.key === 'Enter') {
+				e.preventDefault(); // never submit the whole post form
+				add();
+			}
+		});
+		if ($.fn.sortable) {
+			if ($list.data('ui-sortable')) {
+				$list.sortable('option', { handle: '.mpwpb_sortable_button', items: '> .mp_remove_area', axis: 'y' });
+			} else {
+				$list.sortable({ handle: '.mpwpb_sortable_button', items: '> .mp_remove_area', axis: 'y' });
+			}
+		}
+		if (window.MutationObserver) {
+			new MutationObserver(function () { decorate(); sync(); }).observe($list[0], { childList: true });
+		}
+		decorate();
+		sync();
 	})();
 
 	/* ---------------------------------------------------------------- *
@@ -1842,10 +2621,150 @@
 		var $templateSection = $card.find('.service-template');
 		if ($shortcodeSection.length && $shortcodeSlot.length) {
 			$shortcodeSection.appendTo($shortcodeSlot);
+		} else if ($shortcodeSection.length) {
+			// The sidebar card renders its own shortcode strip now (display-only, no field).
+			$shortcodeSection.remove();
 		}
 		if ($templateSection.length && $templateSlot.length) {
-			$templateSection.appendTo($templateSlot);
+			// Only the real <select name="mpwpb_template"> moves; the card has its own label.
+			var $select = $templateSection.find('select[name="mpwpb_template"]');
+			if ($select.length) {
+				$select.attr('id', 'mpwpb-sme-template').appendTo($templateSlot);
+				$templateSection.remove();
+			} else {
+				$templateSection.appendTo($templateSlot);
+			}
 		}
+	})();
+
+	// Copy the booking-form shortcode (Clipboard API, with a select-the-text fallback).
+	$root.on('click', '[data-sme-copy-shortcode]', function () {
+		var $btn = $(this);
+		var $code = $btn.closest('.mpwpb-sme__code-strip').find('[data-sme-shortcode]');
+		var text = $.trim($code.text());
+		var $label = $btn.find('[data-sme-copy-label]');
+		if (!$btn.data('label')) { $btn.data('label', $label.text()); }
+		function done(ok) {
+			$btn.toggleClass('is-copied', ok);
+			$label.text(ok ? $btn.attr('data-copied') : $btn.attr('data-failed'));
+			clearTimeout($btn.data('timer'));
+			$btn.data('timer', setTimeout(function () {
+				$btn.removeClass('is-copied');
+				$label.text($btn.data('label'));
+			}, 1600));
+		}
+		function fallback() {
+			var range = document.createRange();
+			range.selectNodeContents($code[0]);
+			var sel = window.getSelection();
+			sel.removeAllRanges();
+			sel.addRange(range);
+			var ok = false;
+			try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+			done(ok);
+		}
+		if (navigator.clipboard && window.isSecureContext) {
+			navigator.clipboard.writeText(text).then(function () { done(true); }, fallback);
+		} else {
+			fallback();
+		}
+	});
+
+	/* ---------------------------------------------------------------- *
+	 *  Customer reviews card: the three real inputs (mpwpb_service_review_
+	 *  ratings / _rating_scale / _rating_text, just relocated above) are
+	 *  moved into a fields column -- rating gets a -/+ counter (0..5, 0.1
+	 *  steps) and live stars -- beside a live badge preview. An empty or 0
+	 *  rating hides the badge on the booking page (MPWPB_Static_Template::
+	 *  show_ratings()), which the preview mirrors.
+	 * ---------------------------------------------------------------- */
+	(function modernizeReviewsCard() {
+		var $card = $root.find('[data-sme-section="MPWPB_General_Settings"]');
+		var $body = $card.find('.mpwpb-sme__postfields-body').first();
+		var $rating = $body.find('input[name="mpwpb_service_review_ratings"]');
+		var $scale = $body.find('input[name="mpwpb_service_rating_scale"]');
+		var $text = $body.find('input[name="mpwpb_service_rating_text"]');
+		if (!$rating.length || !$scale.length || !$text.length) {
+			return;
+		}
+		var txt = function (key, fallback) { return cfg[key] || fallback; };
+		$card.addClass('mpwpb-sme__reviews-card');
+		var $head = $card.find('.mpwpb-sme__postfields-header').first();
+		if (!$head.find('.mpwpb-sme__reviews-icon').length) {
+			$head.prepend('<span class="mpwpb-sme__reviews-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg></span>');
+		}
+		var starsHtml = '<span class="mpwpb-sme__stars" role="img"><span class="mpwpb-sme__stars-base" aria-hidden="true">★★★★★</span><span class="mpwpb-sme__stars-fill" aria-hidden="true">★★★★★</span></span>';
+
+		var $wrap = $('<div class="mpwpb-sme__reviews"></div>');
+		var $fields = $('<div class="mpwpb-sme__reviews-fields"></div>').appendTo($wrap);
+
+		var $ratingField = $('<div class="mpwpb-sme__reviews-field"></div>').appendTo($fields);
+		$('<label for="mpwpb-sme-review-rating"></label>').text(txt('reviewRatingTxt', 'Rating')).appendTo($ratingField);
+		var $ratingRow = $('<div class="mpwpb-sme__reviews-rating-row"></div>').appendTo($ratingField);
+		var $counter = $('<div class="mpwpb-sme__reviews-counter"></div>').appendTo($ratingRow);
+		$('<button type="button" data-review-step="-1">−</button>').attr('aria-label', txt('reviewLowerTxt', 'Lower rating')).appendTo($counter);
+		$rating.attr({ id: 'mpwpb-sme-review-rating', inputmode: 'decimal', autocomplete: 'off', placeholder: '–' }).appendTo($counter);
+		$('<button type="button" data-review-step="1">+</button>').attr('aria-label', txt('reviewRaiseTxt', 'Raise rating')).appendTo($counter);
+		$ratingRow.append($(starsHtml).addClass('mpwpb-sme__stars--lg'));
+		$('<p class="mpwpb-sme__reviews-hint"></p>').text(txt('reviewRatingHintTxt', '')).appendTo($ratingField);
+
+		var $pair = $('<div class="mpwpb-sme__reviews-pair"></div>').appendTo($fields);
+		var $scaleField = $('<div class="mpwpb-sme__reviews-field"></div>').appendTo($pair);
+		$('<label for="mpwpb-sme-review-scale"></label>').text(txt('reviewScaleTxt', 'Scale text')).appendTo($scaleField);
+		$scale.attr('id', 'mpwpb-sme-review-scale').appendTo($scaleField);
+		var $textField = $('<div class="mpwpb-sme__reviews-field"></div>').appendTo($pair);
+		$('<label for="mpwpb-sme-review-text"></label>').text(txt('reviewCountTxt', 'Review count text')).appendTo($textField);
+		$text.attr({ id: 'mpwpb-sme-review-text', placeholder: txt('reviewCountPlaceholderTxt', $text.attr('placeholder') || '') }).appendTo($textField);
+		$('<p class="mpwpb-sme__reviews-hint"></p>').text(txt('reviewHideHintTxt', '')).appendTo($fields);
+
+		var $preview = $('<div class="mpwpb-sme__reviews-preview"></div>').appendTo($wrap);
+		$('<div class="mpwpb-sme__reviews-preview-label"></div>').text(txt('reviewPreviewTxt', 'Preview')).appendTo($preview);
+		var $badge = $('<div class="mpwpb-sme__reviews-badge"><div class="mpwpb-sme__reviews-badge-num"></div><div class="mpwpb-sme__reviews-badge-meta"></div></div>').appendTo($preview);
+		$badge.find('.mpwpb-sme__reviews-badge-meta').append($(starsHtml)).append('<span class="mpwpb-sme__reviews-badge-scale"></span><span class="mpwpb-sme__reviews-badge-text"></span>');
+		var $none = $('<p class="mpwpb-sme__reviews-none"></p>').text(txt('reviewNoneTxt', 'No rating set, so the badge is hidden.')).appendTo($preview);
+
+		// Everything else in this body is now empty classic chrome (the
+		// leftover headers / label rows): replace it with the new layout,
+		// keeping anything that still holds a form field.
+		$body.children().filter(function () {
+			return !$(this).find('input, select, textarea').length;
+		}).remove();
+		$body.append($wrap);
+
+		function ratingValue() {
+			var v = parseFloat(String($rating.val()).replace(',', '.'));
+			return isNaN(v) ? null : Math.max(0, Math.min(5, v));
+		}
+		function sync() {
+			var v = ratingValue();
+			var pct = (v === null ? 0 : v / 5 * 100) + '%';
+			$wrap.find('.mpwpb-sme__stars-fill').css('width', pct);
+			$wrap.find('.mpwpb-sme__stars').attr('aria-label', v === null ? '' : v + ' / 5');
+			var show = v !== null && v > 0;
+			$badge.toggle(show);
+			$none.toggle(!show);
+			$badge.find('.mpwpb-sme__reviews-badge-num').text(v === null ? '' : String($rating.val()).trim());
+			$badge.find('.mpwpb-sme__reviews-badge-scale').text($scale.val());
+			$badge.find('.mpwpb-sme__reviews-badge-text').text($text.val());
+			$counter.find('[data-review-step="-1"]').prop('disabled', v !== null && v <= 0);
+			$counter.find('[data-review-step="1"]').prop('disabled', v !== null && v >= 5);
+		}
+		$counter.on('click', '[data-review-step]', function () {
+			var v = ratingValue();
+			v = (v === null ? 0 : v) + parseInt($(this).attr('data-review-step'), 10) / 10;
+			$rating.val((Math.round(Math.max(0, Math.min(5, v)) * 10) / 10).toFixed(1)).trigger('change');
+			sync();
+		});
+		// Keep a typed value inside 0..5 (one decimal) once the field is left.
+		$rating.on('blur', function () {
+			var raw = String($rating.val()).trim();
+			if (raw === '') { sync(); return; }
+			var v = ratingValue();
+			$rating.val(v === null ? '' : String(Math.round(v * 10) / 10));
+			sync();
+		});
+		$rating.add($scale).add($text).on('input change', sync);
+		sync();
 	})();
 
 	/* ---------------------------------------------------------------- *
@@ -1871,8 +2790,9 @@
 	$root.on('click', '[data-sme-display-mode-value]', function () {
 		var $btn = $(this);
 		var value = $btn.data('sme-display-mode-value');
-		$root.find('[data-sme-display-mode] .mpwpb-sme__bw-seg-btn').removeClass('is-active');
-		$btn.addClass('is-active');
+		$root.find('[data-sme-display-mode-value]').removeClass('is-active').attr('aria-checked', 'false');
+		$btn.addClass('is-active').attr('aria-checked', 'true');
+		$root.find('[data-sme-display-mode-tip] span').text($btn.attr('data-tip') || '');
 		$root.find('[data-sme-display-mode-real]').val(value).trigger('change');
 	});
 
@@ -1897,11 +2817,15 @@
 				}
 				$custom.find('[data-sme-theme-color-custom]').val(color);
 				setPreviewThemeColor(color);
+				savedThemeColor = color;
+				broadcastThemeColor(color);
 				toast(cfg.themeColorSavedTxt || 'Theme color updated');
 			} else {
+				if (savedThemeColor) { setPreviewThemeColor(savedThemeColor); }
 				toast(cfg.themeColorErrorTxt || 'Could not save theme color');
 			}
 		}).fail(function () {
+			if (savedThemeColor) { setPreviewThemeColor(savedThemeColor); }
 			toast(cfg.themeColorErrorTxt || 'Could not save theme color');
 		});
 	}
@@ -1918,9 +2842,24 @@
 	// Frontend Preview follows the Theme Color (--fp-theme, read by
 	// .mpwpb-sme__fp-mock in mpwpb-service-edit-modern.css).
 	function setPreviewThemeColor(color) {
-		$root.find('[data-sme-fp-mock]').each(function () {
-			this.style.setProperty('--fp-theme', color);
+		$root.find('[data-sme-fp-mock], .mpwpb-sme__bw-card').each(function () {
+			this.style.setProperty(this.hasAttribute('data-sme-fp-mock') ? '--fp-theme' : '--bw-accent', color);
 		});
+		// The whole plugin backend follows too: the editor's --brand and the
+		// classic screens' accents all read these :root variables.
+		if (/^#[0-9a-f]{6}$/i.test(color)) {
+			var rs = document.documentElement.style;
+			rs.setProperty('--mpwpb_color_theme', color);
+			['ee', 'cc', 'aa', '88', '77'].forEach(function (a) { rs.setProperty('--mpwpb_color_theme_' + a, color + a); });
+			rs.setProperty('--mage-primary', color);
+		}
+	}
+	// Last color the server accepted -- restored if a save fails.
+	var savedThemeColor = String($root.find('[data-sme-theme-color-custom]').val() || '');
+	// Tell any open frontend tab (same site) to repaint -- see the storage
+	// listener MPWPB_Global_Style prints on booking pages.
+	function broadcastThemeColor(color) {
+		try { window.localStorage.setItem('mpwpb_theme_color', JSON.stringify({ color: color, t: Date.now() })); } catch (e) {}
 	}
 	$root.on('input', '[data-sme-theme-color-custom]', function () {
 		setCustomSwatchColor($(this).closest('.mpwpb-sme__bw-swatch--custom'), $(this).val());

@@ -88,6 +88,8 @@
 						--mpwpb_color_theme_88: <?php echo esc_attr($theme_color).'88'; ?>;
 						--mpwpb_color_theme_77: <?php echo esc_attr($theme_color).'77'; ?>;
 						--mpwpb_color_theme_alter: <?php echo esc_attr($alternate_color); ?>;
+						/* Older stylesheets' own accent (admin_style.css, mpwpb_registration.css). */
+						--mage-primary: <?php echo esc_attr($theme_color); ?>;
 						--mpwpb_color_warning: <?php echo esc_attr($warning_color); ?>;
 						--mpwpb_color_black: #000;
 						--mpwpb_color_success: #03A9F4;
@@ -143,6 +145,26 @@
 						}
 					}
 				</style>
+				<?php if (!is_admin()) : ?>
+				<script>
+					/* Live theme color: when the Theme Color is saved in the service
+					 * editor (same site, another tab), it writes mpwpb_theme_color to
+					 * localStorage -- repaint this page's accent right away instead
+					 * of waiting for a reload. */
+					(function () {
+						window.addEventListener('storage', function (e) {
+							if (e.key !== 'mpwpb_theme_color' || !e.newValue) { return; }
+							var color = '';
+							try { color = JSON.parse(e.newValue).color || ''; } catch (err) { return; }
+							if (!/^#[0-9a-f]{6}$/i.test(color)) { return; }
+							var s = document.documentElement.style;
+							s.setProperty('--mpwpb_color_theme', color);
+							['ee', 'cc', 'aa', '88', '77'].forEach(function (a) { s.setProperty('--mpwpb_color_theme_' + a, color + a); });
+							s.setProperty('--mage-primary', color);
+						});
+					})();
+				</script>
+				<?php endif; ?>
 				<?php
 			}
 		}

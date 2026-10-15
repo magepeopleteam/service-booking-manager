@@ -397,8 +397,10 @@
         $('.mpwpb_faq_update_buttons').show();
         var itemId = $(this).closest('.mpwpb-faq-item').data('id');
         var parent = $(this).closest('.mpwpb-faq-item');
-        var headerText = parent.find('.faq-header p').text().trim();
-        var faqContentId = parent.find('.faq-content').text().trim();
+        // [data-faq-title] is the modern editor's title node (the classic <p> is
+        // replaced there). Read the answer as HTML so editing keeps its formatting.
+        var headerText = (parent.find('[data-faq-title]').text() || parent.find('.faq-header p').text()).trim();
+        var faqContentId = parent.find('.faq-content').html().trim();
         var editorId = 'mpwpb_faq_content';
         $('input[name="mpwpb_faq_title"]').val(headerText);
         $('input[name="mpwpb_faq_item_id"]').val(itemId);
