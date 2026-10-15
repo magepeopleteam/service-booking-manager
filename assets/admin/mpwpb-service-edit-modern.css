@@ -617,10 +617,29 @@ body.mpwpb-sme-active #postdivrich{display:none;}
    overlay (z-index:100010) depending on where that overlay's containing
    block resolves, cutting the modal off at this bar. */
 .mpwpb-sme__navbar{position:sticky;bottom:0;z-index:5;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border-top:1px solid var(--line);margin-top:8px;}
-.mpwpb-sme__navinner{max-width:1320px;margin:0 auto;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:14px 26px;}
-.mpwpb-sme__stepof{justify-self:center;font-size:13px;color:var(--muted);font-weight:500;}
-.mpwpb-sme__nav-back{justify-self:start;}
-.mpwpb-sme__navinner .mpwpb-sme__btn--primary{justify-self:end;}
+/* Option B: progress line on top; step number + name + summary on the left;
+   autosave status, Back and "Next: <step>" grouped on the right. */
+.mpwpb-sme__navbar{border-top:0;background:#fff;box-shadow:0 -6px 20px rgba(15,23,42,.06);}
+.mpwpb-sme__nav-progress{height:3px;background:#e2e8f0;}
+.mpwpb-sme__nav-progress span{display:block !important;height:3px;background:var(--brand);transition:width .25s ease;}
+.mpwpb-sme__navinner{max-width:1320px;margin:0 auto;display:flex;align-items:center;gap:14px;min-height:68px;padding:0 26px;box-sizing:border-box;}
+.mpwpb-sme.mpwpb_style .mpwpb-sme__nav-num{flex:0 0 auto;display:inline-flex !important;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:var(--brand);color:#fff !important;font-size:13px;font-weight:700;}
+.mpwpb-sme__nav-text{display:flex;flex-direction:column;min-width:0;line-height:1.25;}
+.mpwpb-sme.mpwpb_style .mpwpb-sme__nav-name{display:block;font-size:14.5px;font-weight:700;color:var(--ink);}
+.mpwpb-sme.mpwpb_style .mpwpb-sme__stepof{display:block;font-size:12.5px;font-weight:400;color:#475569;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mpwpb-sme__nav-spacer{flex:1 1 auto;}
+.mpwpb-sme.mpwpb_style .mpwpb-sme__nav-sep{flex:0 0 auto;display:block !important;width:1px;height:28px;background:#e2e8f0;}
+.mpwpb-sme.mpwpb_style .mpwpb-sme__nav-save.mpwpb-sme__nav-save{flex:0 0 auto;min-height:0;padding:0;border:0;background:transparent;color:#475569;font-size:12.5px;font-weight:500;}
+.mpwpb-sme.mpwpb_style .mpwpb-sme__nav-save span{display:inline-block;color:inherit;}
+.mpwpb-sme.mpwpb_style .mpwpb-sme__navinner .mpwpb-sme__nav-back{border:1px solid #cbd5e1 !important;background:#fff;color:var(--ink);font-weight:600;}
+.mpwpb-sme.mpwpb_style .mpwpb-sme__navinner .mpwpb-sme__nav-back:hover{background:var(--band);}
+.mpwpb-sme.mpwpb_style .mpwpb-sme__navinner .mpwpb-sme__btn{height:44px;padding:0 18px;border-radius:10px;font-size:14px;}
+.mpwpb-sme.mpwpb_style .mpwpb-sme__nav-back[hidden]{display:none !important;}
+.mpwpb-sme.mpwpb_style .mpwpb-sme__nav-next{display:inline-flex;align-items:center;gap:8px;padding:0 20px;font-weight:700;}
+.mpwpb-sme.mpwpb_style .mpwpb-sme__nav-next span{display:inline !important;color:inherit !important;}
+.mpwpb-sme__nav-next .mpwpb-sme__nav-ico-save,
+.mpwpb-sme__nav-next.is-save .mpwpb-sme__nav-ico-next{display:none;}
+.mpwpb-sme__nav-next.is-save .mpwpb-sme__nav-ico-save{display:inline;}
 
 /* Toast */
 .mpwpb-sme__toast{position:fixed;bottom:90px;left:54%;transform:translate(-50%,16px);opacity:0;visibility:hidden;pointer-events:none;background:var(--ink);color:#fff;padding:11px 18px;border-radius:12px;font-size:13.5px;font-weight:500;display:flex;align-items:center;gap:9px;box-shadow:0 12px 30px rgba(0,0,0,.25);z-index:100001;transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .3s ease,visibility .3s;}
@@ -947,7 +966,8 @@ body.mpwpb-sme-active #postdivrich{display:none;}
 	.mpwpb-sme__local-save{display:none;}
 	.mpwpb-sme__status-pill{display:none;}
 	.mpwpb-sme__lab{display:none;}
-	.mpwpb-sme__navinner{grid-template-columns:auto 1fr auto;padding:10px 16px;}
+	.mpwpb-sme__navinner{gap:10px;padding:8px 16px;}
+	.mpwpb-sme__nav-sep,.mpwpb-sme .mpwpb-sme__stepof{display:none !important;}
 	.mpwpb-recur__layout{grid-template-columns:1fr;}
 }
 @media(max-width:480px){

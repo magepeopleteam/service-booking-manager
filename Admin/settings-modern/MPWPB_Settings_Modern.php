@@ -338,12 +338,41 @@
 						</div>
 					</div>
 
-					<div class="mpwpb-sme__navbar">
+					<?php
+					// One-line summary of what each step holds, shown under the step name in the bottom bar.
+					$nav_hints = array(
+						'general' => __('Name, photos and description', 'service-booking-manager'),
+						'pricing' => __('Services, prices and add-ons', 'service-booking-manager'),
+						'availability' => __('Hours, booking rules and days off', 'service-booking-manager'),
+						'advanced' => __('FAQ, tax, staff and extras', 'service-booking-manager'),
+					);
+					$nav_steps = array();
+					foreach ($steps as $step) {
+						$nav_steps[] = array('label' => $step['label'], 'hint' => isset($nav_hints[$step['id']]) ? $nav_hints[$step['id']] : '');
+					}
+					?>
+					<div class="mpwpb-sme__navbar" data-sme-nav-steps="<?php echo esc_attr(wp_json_encode($nav_steps)); ?>">
+						<div class="mpwpb-sme__nav-progress" aria-hidden="true"><span data-sme-nav-progress style="width:<?php echo esc_attr(round(100 / max(1, $total), 2)); ?>%"></span></div>
 						<div class="mpwpb-sme__navinner">
-							<button type="button" class="mpwpb-sme__btn mpwpb-sme__nav-back" data-sme-prev disabled><?php esc_html_e('Back', 'service-booking-manager'); ?></button>
-							<div class="mpwpb-sme__stepof" data-sme-stepof><?php echo esc_html(sprintf(__('Step %1$d of %2$d', 'service-booking-manager'), 1, $total)); ?></div>
-							<button type="button" class="mpwpb-sme__btn mpwpb-sme__btn--primary" data-sme-next><?php esc_html_e('Next Step', 'service-booking-manager'); ?></button>
+							<span class="mpwpb-sme__nav-num" data-sme-nav-num aria-hidden="true">1</span>
+							<div class="mpwpb-sme__nav-text" aria-live="polite">
+								<strong class="mpwpb-sme__nav-name" data-sme-nav-name><?php echo esc_html($nav_steps ? $nav_steps[0]['label'] : ''); ?></strong>
+								<span class="mpwpb-sme__stepof" data-sme-stepof><?php echo esc_html(sprintf(__('Step %1$d of %2$d', 'service-booking-manager'), 1, $total) . ($nav_steps && $nav_steps[0]['hint'] !== '' ? ' · ' . $nav_steps[0]['hint'] : '')); ?></span>
+							</div>
+							<span class="mpwpb-sme__nav-spacer"></span>
+							<span class="mpwpb-sme__local-save mpwpb-sme__nav-save is-ready" data-sme-local-save>
+								<span class="mpwpb-sme__local-save-dot" aria-hidden="true"></span>
+								<span data-sme-local-save-text><?php esc_html_e('Local autosave ready', 'service-booking-manager'); ?></span>
+							</span>
+							<span class="mpwpb-sme__nav-sep" aria-hidden="true"></span>
+							<button type="button" class="mpwpb-sme__btn mpwpb-sme__nav-back" data-sme-prev disabled hidden><?php esc_html_e('Back', 'service-booking-manager'); ?></button>
+							<button type="button" class="mpwpb-sme__btn mpwpb-sme__btn--primary mpwpb-sme__nav-next" data-sme-next>
+								<span data-sme-next-label><?php echo esc_html(count($nav_steps) > 1 ? sprintf(/* translators: %s: next step name */ __('Next: %s', 'service-booking-manager'), $nav_steps[1]['label']) : __('Update', 'service-booking-manager')); ?></span>
+								<svg class="mpwpb-sme__nav-ico-next" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"></path></svg>
+								<svg class="mpwpb-sme__nav-ico-save" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"></path></svg>
+							</button>
 						</div>
+					</div>
 					</div>
 
 					<div class="mpwpb-sme__toast" data-sme-toast>
@@ -1316,6 +1345,10 @@
 						'localRestoredTxt' => esc_html__('Local draft restored', 'service-booking-manager'),
 						'localUnavailableTxt' => esc_html__('Local autosave unavailable', 'service-booking-manager'),
 						'nextTxt' => esc_html__('Next Step', 'service-booking-manager'),
+						/* translators: %s: next step name */
+						'nextToTxt' => esc_html__('Next: %s', 'service-booking-manager'),
+						/* translators: 1: current step number, 2: total steps */
+						'stepOfTxt' => esc_html__('Step %1$d of %2$d', 'service-booking-manager'),
 						'updateTxt' => esc_html__('Update', 'service-booking-manager'),
 						'previewCurrency' => MPWPB_Global_Function::is_wc_payment_mode()
 							? get_woocommerce_currency_symbol()

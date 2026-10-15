@@ -60,6 +60,28 @@
 		return 'mpwpb_sme_step::' + location.pathname + location.search;
 	}
 
+	// Bottom bar: progress line, step name + summary, Back, and a Next
+	// button that names the step it goes to (Update on the last step).
+	var navSteps = [];
+	try { navSteps = JSON.parse($root.find('[data-sme-nav-steps]').attr('data-sme-nav-steps') || '[]'); } catch (e) {}
+	function isLastStep() { return cur === order.length - 1; }
+	function primarySaveLabel() {
+		return $.trim($root.find('[data-sme-save]').first().text()) || cfg.updateTxt || 'Update';
+	}
+	function syncNavbar() {
+		var info = navSteps[cur] || {};
+		var stepOf = (cfg.stepOfTxt || 'Step %1$d of %2$d').replace('%1$d', cur + 1).replace('%2$d', total);
+		$root.find('[data-sme-nav-num]').text(cur + 1);
+		$root.find('[data-sme-nav-name]').text(info.label || '');
+		$root.find('[data-sme-stepof]').text(info.hint ? stepOf + ' \u00b7 ' + info.hint : stepOf);
+		$root.find('[data-sme-nav-progress]').css('width', ((cur + 1) / total * 100) + '%');
+		$root.find('[data-sme-prev]').prop('disabled', cur === 0).prop('hidden', cur === 0);
+		var nextInfo = navSteps[cur + 1] || {};
+		var label = isLastStep() ? primarySaveLabel()
+			: (nextInfo.label ? (cfg.nextToTxt || 'Next: %s').replace('%s', nextInfo.label) : (cfg.nextTxt || 'Next Step'));
+		$root.find('[data-sme-next]').toggleClass('is-save', isLastStep()).find('[data-sme-next-label]').text(label);
+	}
+
 	function goStep(index) {
 		if (index < 0) { index = 0; }
 		if (index > order.length - 1) { index = order.length - 1; }
@@ -81,11 +103,7 @@
 			var ci = parseInt($(this).data('sme-conn'), 10);
 			$(this).toggleClass('done', ci <= cur);
 		});
-		$root.find('[data-sme-stepof]').text('Step ' + (cur + 1) + ' of ' + total);
-		$root.find('[data-sme-prev]').prop('disabled', cur === 0);
-
-		var $next = $root.find('[data-sme-next]');
-		$next.text(cur === order.length - 1 ? (cfg.updateTxt || 'Update') : (cfg.nextTxt || 'Next Step'));
+		syncNavbar();
 
 		var top = $root.offset() ? $root.offset().top - 60 : 0;
 		$('html, body').animate({ scrollTop: top }, 200);
@@ -1004,7 +1022,7 @@
 		$root.find('[data-sme-save]').text(data.primaryLabel || (cfg.updateTxt || 'Update'));
 		$root.find('[data-sme-save-as="draft"]').text(data.draftLabel || 'Save Draft');
 		if (cur === order.length - 1) {
-			$root.find('[data-sme-next]').text(data.primaryLabel || (cfg.updateTxt || 'Update'));
+			$root.find('[data-sme-next-label]').text(data.primaryLabel || (cfg.updateTxt || 'Update'));
 		}
 
 		if (data.editUrl && window.history && window.history.replaceState) {
