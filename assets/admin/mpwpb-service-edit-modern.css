@@ -1557,3 +1557,11 @@ p.mpwpb-sme__bw-tip {
 .mpwpb-sme__preview-card .mpwpb-sme__fp-back[hidden]{display:none !important;}
 .mpwpb-sme__preview-card .mpwpb-sme__fp-note{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .mpwpb-sme__preview-card .mpwpb-sme__preview-open{flex:0 0 auto;white-space:nowrap;}
+
+/* Section cards: a defined shadow + slightly firmer edge so each section reads as its own block. */
+.mpwpb-sme{--shadow-card:0 1px 2px rgba(15,23,42,.06),0 4px 14px rgba(15,23,42,.08);--line-card:#d9e0ea;}
+.mpwpb-sme .mpwpb-sme__postfields,
+.mpwpb-sme .mpwpb-sme__rail-card,
+.mpwpb-sme .mpwpb-dtm .mpwpb-dtm__card{box-shadow:var(--shadow-card);}
+.mpwpb-sme .mpwpb-sme__postfields,
+.mpwpb-sme .mpwpb-sme__rail-card:not(.mpwpb-sme__preview-card){border-color:var(--line-card);}
