@@ -86,11 +86,6 @@
 				?>
 				<div class="mpwpb-dtm mpwpb_settings_date_time" id="mpwpb-dtm" data-tabs="#mpwpb_settings_date_time">
 
-					<div class="mpwpb-dtm__header">
-						<h2><?php esc_html_e('Availability', 'service-booking-manager'); ?></h2>
-						<p><?php esc_html_e('Turn days on or off, set the hours, done.', 'service-booking-manager'); ?></p>
-					</div>
-
 					<div class="mpwpb-dtm__grid">
 						<div class="mpwpb-dtm__col mpwpb-dtm__col--main">
 

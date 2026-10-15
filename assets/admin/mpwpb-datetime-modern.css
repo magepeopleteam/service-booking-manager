@@ -23,9 +23,6 @@
 .mpwpb-dtm *::before,
 .mpwpb-dtm *::after{box-sizing:border-box;}
 
-.mpwpb-dtm__header{margin-bottom:20px;}
-.mpwpb-dtm__header h2{margin:0;font-size:20px;font-weight:800;color:var(--ink,#0f172a);}
-.mpwpb-dtm__header p{margin:4px 0 0;font-size:13px;color:var(--muted,#94a3b8);}
 
 .mpwpb-dtm__grid{display:flex;align-items:flex-start;gap:20px;}
 /* Special Dates & Holidays — a sibling of .mpwpb-dtm__grid, not a child of

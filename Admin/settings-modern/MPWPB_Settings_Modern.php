@@ -663,32 +663,24 @@
 						<div class="mpwpb-sme__preview-head">
 							<div class="mpwpb-sme__preview-head-main">
 								<span class="mpwpb-sme__preview-icon" aria-hidden="true">
-									<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"></rect><line x1="8" y1="20" x2="16" y2="20"></line><line x1="12" y1="16" x2="12" y2="20"></line></svg>
+									<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
 								</span>
 								<div class="mpwpb-sme__preview-head-text">
 									<div class="mpwpb-sme__preview-title-row">
-										<div class="mpwpb-sme__feat-head"><?php esc_html_e('Frontend preview', 'service-booking-manager'); ?></div>
-										<span class="mpwpb-sme__preview-live"><i aria-hidden="true"></i><?php esc_html_e('Live', 'service-booking-manager'); ?></span>
+										<div class="mpwpb-sme__feat-head"><?php esc_html_e('Preview mode', 'service-booking-manager'); ?></div>
 									</div>
-									<p class="mpwpb-sme__preview-sub"><?php esc_html_e('Updates as you edit. Try it like a customer.', 'service-booking-manager'); ?></p>
+									<p class="mpwpb-sme__preview-sub"><?php esc_html_e('Customer view · nothing here is editable', 'service-booking-manager'); ?></p>
 								</div>
 							</div>
+							<span class="mpwpb-sme__preview-live"><i aria-hidden="true"></i><?php esc_html_e('Live', 'service-booking-manager'); ?></span>
 							<a class="mpwpb-sme__preview-open-icon" href="<?php echo esc_url($preview_url); ?>" target="wp-preview-<?php echo esc_attr($post_id); ?>" aria-label="<?php esc_attr_e('Open full preview in a new tab', 'service-booking-manager'); ?>" title="<?php esc_attr_e('Open full preview', 'service-booking-manager'); ?>">
-								<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6"></path><path d="M20 4L10 14"></path><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"></path></svg>
+								<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6"></path><path d="M20 4L10 14"></path><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"></path></svg>
 							</a>
 						</div>
 
-						<?php
-						// Address shown in the mock browser bar: the service's real
-						// public address, host + path only.
-						$fp_permalink = get_permalink($post_id);
-						$fp_address = $fp_permalink ? preg_replace('#^https?://#', '', untrailingslashit(strtok($fp_permalink, '?'))) : '';
-						?>
-						<div class="mpwpb-sme__fp-browser">
-							<div class="mpwpb-sme__fp-chrome" aria-hidden="true">
-								<span class="mpwpb-sme__fp-chrome-dots"><i></i><i></i><i></i></span>
-								<span class="mpwpb-sme__fp-chrome-url"><?php echo esc_html($fp_address); ?></span>
-							</div>
+						<div class="mpwpb-sme__fp-browser mpwpb-sme__fp-device">
+						<div class="mpwpb-sme__fp-screen">
+							<div class="mpwpb-sme__fp-handle" aria-hidden="true"><i></i></div>
 						<div class="mpwpb-sme__fp-mock" data-sme-fp-mock style="--fp-theme:<?php echo esc_attr($current_theme_color); ?>">
 							<div class="mpwpb-sme__fp-steps" data-sme-fp-steps>
 								<div class="mpwpb-sme__fp-steps-item is-active" data-sme-fp-steps-item="services">
@@ -848,13 +840,14 @@
 							<div class="mpwpb-sme__fp-step mpwpb-sme__fp-step--checkout" data-sme-fp-step="checkout" hidden></div>
 						</div>
 						</div>
+						</div>
 
 						<div class="mpwpb-sme__feat-acts">
 							<button type="button" class="mpwpb-sme__fp-back" data-sme-fp-footer-back hidden>
 								<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>
 								<?php esc_html_e('Back', 'service-booking-manager'); ?>
 							</button>
-							<span class="mpwpb-sme__fp-note"><?php esc_html_e('Preview only. Nothing is booked.', 'service-booking-manager'); ?></span>
+							<span class="mpwpb-sme__fp-note"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg><?php esc_html_e('Preview only. Nothing is booked.', 'service-booking-manager'); ?></span>
 							<a class="mpwpb-sme__feat-link mpwpb-sme__preview-open" href="<?php echo esc_url($preview_url); ?>" target="wp-preview-<?php echo esc_attr($post_id); ?>">
 								<?php esc_html_e('Open full preview', 'service-booking-manager'); ?>
 								<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6"></path><path d="M20 4L10 14"></path><path d="M8 5H5a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-3"></path></svg>
