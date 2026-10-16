@@ -1,0 +1,78 @@
+/* Global Settings, Option A: grouped sidebar, setting cards, switches and a
+   save bar (mpwpb-settings-modern.js). Builds on mpwpb_admin_settings.css. */
+div.mpwpb_global_settings{ --st: var(--mpwpb_color_theme, #0f172a); }
+
+/* Sidebar groups */
+div.mpwpb_global_settings .tabLists .mpwpb-st-group{ padding:12px 10px 4px; font-size:11px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:#64748b; cursor:default; list-style:none; }
+div.mpwpb_global_settings .tabLists .mpwpb-st-group:first-child{ padding-top:4px; }
+div.mpwpb_global_settings .tabLists [data-tabs-target].active{ background:var(--st); color:#fff; font-weight:600; }
+div.mpwpb_global_settings .tabLists [data-tabs-target].active span{ color:#fff; }
+div.mpwpb_global_settings .mpwpb-settings-dot{ background:var(--st); }
+
+/* Tab heading */
+div.mpwpb_global_settings .mpwpb-st-head{ margin:0 0 16px; }
+div.mpwpb_global_settings .mpwpb-st-head h1{ margin:0; padding:0; font-size:22px; font-weight:700; line-height:1.3; color:#0f172a; }
+div.mpwpb_global_settings .mpwpb-st-head p{ margin:4px 0 0; font-size:13.5px; color:#475569; }
+
+/* Cards (General is split into several) */
+div.mpwpb_global_settings .mpwpb-st-card{ margin:0 0 16px; background:#fff; border:1px solid #cbd5e1; border-radius:14px; overflow:hidden; }
+div.mpwpb_global_settings .mpwpb-st-card-title{ display:block; margin:0; padding:14px 20px; border-bottom:1px solid #e2e8f0; font-size:15px; font-weight:700; color:#0f172a; }
+div.mpwpb_global_settings .mpwpb-st-card--fold > summary{ display:flex; align-items:baseline; cursor:pointer; list-style:none; }
+div.mpwpb_global_settings .mpwpb-st-card--fold > summary::-webkit-details-marker{ display:none; }
+div.mpwpb_global_settings .mpwpb-st-card--fold > summary .mpwpb-st-card-title{ border-bottom:0; padding-right:4px; }
+div.mpwpb_global_settings .mpwpb-st-card--fold > summary::after{ content:"›"; margin-left:auto; padding:0 20px; font-size:18px; color:#64748b; transition:transform .15s; }
+div.mpwpb_global_settings .mpwpb-st-card--fold[open] > summary::after{ transform:rotate(90deg); }
+div.mpwpb_global_settings .mpwpb-st-card--fold[open] > summary{ border-bottom:1px solid #e2e8f0; }
+div.mpwpb_global_settings .mpwpb-st-card-note{ font-size:13px; color:#64748b; }
+div.mpwpb_global_settings .tabsItem table.mpwpb-st-table,
+div.mpwpb_global_settings .tabsItem > form > .mpwpb-st-card > table{ display:block; width:100%; margin:0; border:0; border-radius:0; background:#fff; }
+div.mpwpb_global_settings .mpwpb-st-card table tbody{ display:block; }
+div.mpwpb_global_settings .mpwpb-st-card table tr{ display:grid; grid-template-columns:minmax(220px, 1fr) minmax(0, 1.2fr); align-items:center; border-bottom:1px solid #f1f5f9; }
+div.mpwpb_global_settings .mpwpb-st-card table tr:last-child{ border-bottom:0; }
+div.mpwpb_global_settings .mpwpb-st-card table th{ display:block; padding:14px 20px; background:#fff; font-size:13.5px; font-weight:600; color:#0f172a; text-align:left; }
+div.mpwpb_global_settings .mpwpb-st-card table td{ display:flex; align-items:center; flex-wrap:wrap; gap:8px; padding:12px 20px; }
+div.mpwpb_global_settings .tabsItem > form > table{ border-color:#cbd5e1; border-radius:14px; }
+div.mpwpb_global_settings .tabsItem > form > table th{ background:#fff; font-weight:600; color:#0f172a; }
+div.mpwpb_global_settings label .info_text{ font-size:12.5px; font-style:normal; color:#475569; }
+@media (max-width: 782px){ div.mpwpb_global_settings .mpwpb-st-card table tr{ grid-template-columns:1fr; } }
+
+/* Number + unit */
+div.mpwpb_global_settings input.mpwpb-st-num{ width:100px; max-width:100px; }
+div.mpwpb_global_settings .mpwpb-st-unit{ font-size:13.5px; color:#475569; }
+div.mpwpb_global_settings td > label:has(.mpwpb-st-num){ display:flex; align-items:center; gap:8px; }
+
+/* Yes/No switches */
+div.mpwpb_global_settings select.mpwpb-st-hidden-select{ position:absolute !important; width:1px !important; height:1px !important; min-height:0 !important; padding:0 !important; margin:-1px !important; overflow:hidden !important; clip:rect(0,0,0,0) !important; border:0 !important; }
+div.mpwpb_global_settings .mpwpb-st-switch,
+div.mpwpb_global_settings .mpwpb-st-switch:hover,
+div.mpwpb_global_settings .mpwpb-st-switch:focus{ position:relative; display:inline-block; width:44px; height:26px; margin:0; padding:0; border:0; border-radius:999px; background:#cbd5e1; opacity:1 !important; cursor:pointer; box-shadow:none; transition:background .15s; }
+div.mpwpb_global_settings .mpwpb-st-switch span{ position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%; background:#fff !important; box-shadow:0 1px 2px rgba(0,0,0,.2); transition:left .15s; }
+div.mpwpb_global_settings .mpwpb-st-switch[aria-checked="true"]{ background:var(--st); }
+div.mpwpb_global_settings .mpwpb-st-switch[aria-checked="true"] span{ left:21px; }
+div.mpwpb_global_settings .mpwpb-st-switch:focus-visible{ outline:none; box-shadow:0 0 0 3px color-mix(in srgb, var(--st) 25%, transparent); }
+
+/* Save bar (the form's own submit stays in the DOM and does the saving) */
+div.mpwpb_global_settings .mpwpb-st-orig-submit{ position:absolute !important; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); margin:0 !important; }
+div.mpwpb_global_settings .mpwpb-st-savebar{ position:sticky; bottom:12px; z-index:5; display:flex; align-items:center; gap:10px; margin-top:16px; padding:10px 12px 10px 16px; border:1px solid #cbd5e1; border-radius:12px; background:#fff; box-shadow:0 4px 14px rgba(15,23,42,.08); }
+div.mpwpb_global_settings .mpwpb-st-savebar-text{ flex:1 1 auto; font-size:13.5px; color:#475569; }
+div.mpwpb_global_settings form.is-dirty .mpwpb-st-savebar{ border-color:#0f172a; background:#0f172a; }
+div.mpwpb_global_settings form.is-dirty .mpwpb-st-savebar-text{ color:#fff; font-weight:600; }
+div.mpwpb_global_settings .mpwpb-st-savebar button,
+div.mpwpb_global_settings .mpwpb-st-savebar button:hover,
+div.mpwpb_global_settings .mpwpb-st-savebar button:focus{ height:38px; margin:0; padding:0 16px; border-radius:9px; font-size:13.5px; font-weight:700; opacity:1 !important; cursor:pointer; box-shadow:none; }
+div.mpwpb_global_settings .mpwpb-st-savebar .mpwpb-st-save{ border:0; background:var(--st); color:#fff !important; }
+div.mpwpb_global_settings form.is-dirty .mpwpb-st-savebar .mpwpb-st-save{ background:#fff; color:#0f172a !important; }
+div.mpwpb_global_settings .mpwpb-st-savebar .mpwpb-st-discard{ border:1px solid #475569; background:transparent; color:#fff !important; font-weight:600; }
+div.mpwpb_global_settings .mpwpb-st-savebar .mpwpb-st-discard[hidden]{ display:none; }
+
+/* Shared .mpwpb_style rules box labels and lay them out as flex rows; undo that here. */
+div.mpwpb_global_settings .tabsItem table th,
+div.mpwpb_global_settings .tabsItem table td{ border:0 !important; width:auto !important; min-width:0 !important; max-width:none !important; box-shadow:none !important; }
+div.mpwpb_global_settings .tabsItem table th label{ display:block !important; width:auto !important; padding:0 !important; border:0 !important; background:none !important; font-weight:600; line-height:1.4; }
+div.mpwpb_global_settings .tabsItem table th label .info_text{ display:block !important; margin-top:3px; font-weight:400; line-height:1.45; }
+div.mpwpb_global_settings .tabsItem table th label br{ display:none; }
+div.mpwpb_global_settings .tabsItem table td > label,
+div.mpwpb_global_settings .tabsItem table td > div > label{ display:flex !important; align-items:center; gap:8px; width:100%; margin:0; padding:0 !important; border:0 !important; background:none !important; box-shadow:none !important; }
+div.mpwpb_global_settings .tabsItem table td .formControl{ max-width:360px; }
+div.mpwpb_global_settings .tabLists [data-tabs-target]:not(.active){ background:transparent; border:0; box-shadow:none; }
+div.mpwpb_global_settings .tabLists [data-tabs-target]:not(.active):hover{ background:#f1f5f9; }

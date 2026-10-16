@@ -29,8 +29,7 @@
 			}
 			public static function details_template_path($post_id = ''): string {
 				$post_id = $post_id ?? get_the_id();
-				$default_layout = self::sanitize_details_template_name(self::get_general_settings('layout', 'static.php'));
-				$template_name = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_template', $default_layout);
+				$template_name = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_template', 'static.php');
 				$template_name = self::sanitize_details_template_name($template_name);
 				$file_name = 'themes/' . $template_name;
 				$dir = MPWPB_PLUGIN_DIR . '/templates/' . $file_name;

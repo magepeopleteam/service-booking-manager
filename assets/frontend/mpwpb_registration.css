@@ -951,9 +951,9 @@ div.registration_tab_item {
 }
 .mpwpb_registration > header .template-header {
   width: 100%;
-  max-width: var(--mpwpb_template_width, 1440px);
+  max-width: 1440px;
   margin: auto;
-  padding: 10vh var(--mpwpb_template_gutter, 10px);
+  padding: 10vh 10px;
 }
 .mpwpb_registration > header .template-header .header-content {
   z-index: 1;
@@ -1126,10 +1126,10 @@ div.registration_tab_item {
   padding: 10px 40px;
 }
 .mpwpb_registration main {
-  max-width: var(--mpwpb_template_width, 1440px) !important;
+  max-width: 1440px !important;
   width: 100%;
   margin: auto;
-  padding: 10px var(--mpwpb_template_gutter, 10px);
+  padding: 10px;
   flex-direction: column;
   display: flex;
 }
@@ -1725,8 +1725,6 @@ button.mpwpb_service_button.mActive:hover{
     background: #fff !important;
     box-shadow: 0 0px 5px #ddd;
 }
-.mpwpb-popup-content{ padding: 10px; }
-
 #service-overview h1,#service-overview h2,#service-overview h3,#service-overview h4,#service-overview h5,#service-overview h6{
   margin: 10px 0;
   margin-top: 20px;
@@ -2045,6 +2043,32 @@ button.mpwpb_service_button.mActive:hover{
 .mpwpb_time_display button{
   text-transform: none !important;
 }
+/* Slots after the first 9 stay hidden until "Load more" is clicked. */
+.mpwpb_time_display:not(.mpwpb_slots_expanded) .mpwpb_slot_more{
+  display: none !important;
+}
+.mpwpb_time_display .mpwpb_time_load_more{
+  flex: 0 0 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box;
+  margin: 2px 0 0 !important;
+  padding: 11px 14px !important;
+  border: 1.5px dashed #cbd5e1 !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  color: #334155 !important;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+  box-shadow: none !important;
+}
+.mpwpb_time_display .mpwpb_time_load_more:hover,
+.mpwpb_time_display .mpwpb_time_load_more:focus-visible{
+  border-color: currentColor !important;
+  background: #f8fafc !important;
+  color: #0f172a !important;
+}
 .mpwpb_time_btn{
   padding: 15px !important;
 }
@@ -2143,3 +2167,11 @@ span.mptrs_day_with_date {
 }
 
 .mpwpb_get_date_selected.mpwpb_get_date span.mptrs_day_with_date{color: aliceblue !important;}
+
+/* Guided booking flow: brief highlight on the part brought into view. */
+@keyframes mpwpb-guide-pulse{
+  0%{box-shadow:0 0 0 0 color-mix(in srgb, var(--mpwpb_color_theme, #00685f) 45%, transparent);}
+  100%{box-shadow:0 0 0 12px transparent;}
+}
+.mpwpb-guide-pulse{animation:mpwpb-guide-pulse 1.2s ease-out 1;border-radius:12px;}
+@media (prefers-reduced-motion: reduce){.mpwpb-guide-pulse{animation:none;}}

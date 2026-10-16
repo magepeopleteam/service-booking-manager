@@ -71,13 +71,19 @@
                         $slot_minutes = MPWPB_Function::get_slot_length( $post_id );
                         $happy_hours_badge = class_exists('MPWPB_Happy_Hours_Helper') ? MPWPB_Happy_Hours_Helper::get_badge_label( $post_id ) : '';
                         $happy_hours_rule = $happy_hours_badge !== '' ? MPWPB_Happy_Hours_Helper::get_rule( $post_id ) : null;
+                        // Only the first $visible_slots show at first; the rest get
+                        // .mpwpb_slot_more (hidden by CSS) and a "Load more" button
+                        // below reveals them (mpwpb_registration.js).
+                        $visible_slots = (int) apply_filters( 'mpwpb_visible_time_slots', 9, $post_id );
+                        $slot_index = 0;
                         if (sizeof($all_time_slots) > 0) {
                             foreach ($all_time_slots as $slot) {
+                                $more_class = $visible_slots > 0 && $slot_index++ >= $visible_slots ? ' mpwpb_slot_more' : '';
                                 $available = MPWPB_Function::get_total_available($post_id, $slot );
                                 if ($available > 0) {
                                     $is_happy_hour = $happy_hours_rule !== null && MPWPB_Happy_Hours_Helper::time_in_window( $slot, $happy_hours_rule );
                                     ?>
-                                    <button type="button" class=" to-book mpwpb_time_btn<?php echo $is_happy_hour ? ' mpwpb-happy-hour-slot' : ''; ?>" data-date="<?php echo esc_attr(MPWPB_Global_Function::date_format($slot, 'date') . ' ' . MPWPB_Function::format_slot_time_range($slot, $slot_minutes)); ?>" data-radio-check="<?php echo esc_attr($slot); ?>" data-open-icon="fas fa-check" data-close-icon=""<?php if ( $is_happy_hour ) { ?> data-hh-type="<?php echo esc_attr($happy_hours_rule['discount_type']); ?>" data-hh-value="<?php echo esc_attr($happy_hours_rule['discount_value']); ?>"<?php } ?>>
+                                    <button type="button" class=" to-book mpwpb_time_btn<?php echo $is_happy_hour ? ' mpwpb-happy-hour-slot' : ''; ?><?php echo esc_attr( $more_class ); ?>" data-date="<?php echo esc_attr(MPWPB_Global_Function::date_format($slot, 'date') . ' ' . MPWPB_Function::format_slot_time_range($slot, $slot_minutes)); ?>" data-radio-check="<?php echo esc_attr($slot); ?>" data-open-icon="fas fa-check" data-close-icon=""<?php if ( $is_happy_hour ) { ?> data-hh-type="<?php echo esc_attr($happy_hours_rule['discount_type']); ?>" data-hh-value="<?php echo esc_attr($happy_hours_rule['discount_value']); ?>"<?php } ?>>
                                         <!-- <span data-icon></span> --><?php echo esc_html(MPWPB_Global_Function::date_format($slot, 'time')); ?>
                                         <?php if ( $is_happy_hour ) { ?>
                                             <span class="mpwpb-happy-hour-badge"><?php echo esc_html($happy_hours_badge); ?></span>
@@ -85,13 +91,24 @@
                                     </button>
 								<?php } elseif ( MPWPB_Global_Function::get_post_info( $post_id, 'mpwpb_enable_waiting_list', 'no' ) === 'yes' ) {
 									?>
-									<button type="button" class="_mpBtn waiting-list" data-slot="<?php echo esc_attr( $slot ); ?>" data-post-id="<?php echo esc_attr( $post_id ); ?>"><?php esc_html_e('Join Waiting List', 'service-booking-manager'); ?></button>
+									<button type="button" class="_mpBtn waiting-list<?php echo esc_attr( $more_class ); ?>" data-slot="<?php echo esc_attr( $slot ); ?>" data-post-id="<?php echo esc_attr( $post_id ); ?>"><?php esc_html_e('Join Waiting List', 'service-booking-manager'); ?></button>
 									<?php
 								} else {
                                     ?>
-                                    <button type="button" class="_mpBtn mActive booked"><?php esc_html_e('Booked', 'service-booking-manager'); ?></button>
+                                    <button type="button" class="_mpBtn mActive booked<?php echo esc_attr( $more_class ); ?>"><?php esc_html_e('Booked', 'service-booking-manager'); ?></button>
                                     <?php
                                 }
+                            }
+                            $hidden_slots = $visible_slots > 0 ? max( 0, $slot_index - $visible_slots ) : 0;
+                            if ( $hidden_slots > 0 ) {
+                                ?>
+                                <button type="button" class="mpwpb_time_load_more" aria-expanded="false">
+                                    <?php
+                                    /* translators: %d: number of hidden time slots */
+                                    echo esc_html( sprintf( _n( 'Load more (%d more time)', 'Load more (%d more times)', $hidden_slots, 'service-booking-manager' ), $hidden_slots ) );
+                                    ?>
+                                </button>
+                                <?php
                             }
                         } ?>
                     </div>

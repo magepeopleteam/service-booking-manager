@@ -32,6 +32,10 @@
 				$discount_type = (isset($_POST['mpwpb_happy_hours_discount_type']) && sanitize_text_field(wp_unslash($_POST['mpwpb_happy_hours_discount_type'])) === 'fixed') ? 'fixed' : 'percent';
 				$discount_value = isset($_POST['mpwpb_happy_hours_discount_value']) ? (float) wp_unslash($_POST['mpwpb_happy_hours_discount_value']) : 0.0;
 				$discount_value = max(0.0, round($discount_value, 2));
+				// A percentage over 100 would only ever price the booking at zero.
+				if ($discount_type === 'percent') {
+					$discount_value = min(100.0, $discount_value);
+				}
 				update_post_meta($post_id, 'mpwpb_happy_hours_enabled', $enabled);
 				update_post_meta($post_id, 'mpwpb_happy_hours_start_time', $start_time);
 				update_post_meta($post_id, 'mpwpb_happy_hours_end_time', $end_time);

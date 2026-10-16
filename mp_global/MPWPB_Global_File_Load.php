@@ -251,6 +251,38 @@
 				// admin setting global
 				wp_enqueue_script('mpwpb_admin_settings', MPWPB_GLOBAL_PLUGIN_URL . '/assets/admin/mpwpb_admin_settings.js', array('jquery'), MPWPB_VERSION, true);
 				wp_enqueue_style('mpwpb_admin_settings', MPWPB_GLOBAL_PLUGIN_URL . '/assets/admin/mpwpb_admin_settings.css', array(), MPWPB_VERSION);
+				// Global Settings page layer (grouped sidebar, cards, switches, save bar); the script no-ops elsewhere.
+				$mpwpb_st_css = MPWPB_GLOBAL_PLUGIN_DIR . '/assets/admin/mpwpb-settings-modern.css';
+				$mpwpb_st_js = MPWPB_GLOBAL_PLUGIN_DIR . '/assets/admin/mpwpb-settings-modern.js';
+				wp_enqueue_style('mpwpb_settings_modern', MPWPB_GLOBAL_PLUGIN_URL . '/assets/admin/mpwpb-settings-modern.css', array('mpwpb_admin_settings'), file_exists($mpwpb_st_css) ? (string) filemtime($mpwpb_st_css) : MPWPB_VERSION);
+				wp_enqueue_script('mpwpb_settings_modern', MPWPB_GLOBAL_PLUGIN_URL . '/assets/admin/mpwpb-settings-modern.js', array('jquery'), file_exists($mpwpb_st_js) ? (string) filemtime($mpwpb_st_js) : MPWPB_VERSION, true);
+				wp_localize_script('mpwpb_settings_modern', 'mpwpbSettingsModern', array(
+					'gBasics' => __('Basics', 'service-booking-manager'),
+					'gPayments' => __('Payments', 'service-booking-manager'),
+					'gMessages' => __('Customer messages', 'service-booking-manager'),
+					'gAppearance' => __('Appearance', 'service-booking-manager'),
+					'gSecurity' => __('Security & privacy', 'service-booking-manager'),
+					'gIntegrations' => __('Integrations', 'service-booking-manager'),
+					'gAccount' => __('Account', 'service-booking-manager'),
+					'gMore' => __('More', 'service-booking-manager'),
+					'introGeneral' => __('Menu names, web addresses, and the booking rules every service follows.', 'service-booking-manager'),
+					'cMenu' => __('Menu & web address', 'service-booking-manager'),
+					'cRules' => __('Booking rules', 'service-booking-manager'),
+					'cCheckout' => __('Checkout & booking form', 'service-booking-manager'),
+					'cWords' => __('Words & labels', 'service-booking-manager'),
+					'settings' => __('settings', 'service-booking-manager'),
+					'minutes' => __('minutes', 'service-booking-manager'),
+					'hoursBefore' => __('hours before the start', 'service-booking-manager'),
+					'onePageCheckout' => __('One-page checkout', 'service-booking-manager'),
+					'useBlockEditor' => __('Use the block editor for services', 'service-booking-manager'),
+					'onePageHelp' => __('Customers pay on the booking page. Turn off to send them to the WooCommerce checkout page instead.', 'service-booking-manager'),
+					'blockEditorHelp' => __('Turn off to edit services with the classic WordPress editor.', 'service-booking-manager'),
+					'saveBar' => __('Save changes', 'service-booking-manager'),
+					'unsaved' => __('You have unsaved changes', 'service-booking-manager'),
+					'clean' => __('No unsaved changes', 'service-booking-manager'),
+					'discard' => __('Discard', 'service-booking-manager'),
+					'save' => __('Save changes', 'service-booking-manager'),
+				));
 				do_action('add_mpwpb_admin_enqueue');
 			}
 			public function frontend_enqueue() {

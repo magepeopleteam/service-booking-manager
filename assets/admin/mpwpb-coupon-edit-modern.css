@@ -15,7 +15,10 @@
 	--bg:#eef1f6; --surface:#fff; --inset:#f8fafc;
 	--band:#f1f5f9; --band-line:#e6ebf2;
 	--ink:#0f172a; --ink-2:#475569; --muted:#94a3b8; --line:#e4e9f0;
-	--brand:#2451e0; --brand-600:#1d3fb8; --brand-soft:#eaf0ff; --brand-ring:rgba(36,81,224,.16);
+	/* Accent = the site theme color (--mpwpb_color_theme, printed on :root by
+	   MPWPB_Global_Style and updated live by the Theme Color picker). */
+	--brand:var(--mpwpb_color_theme,#2451e0); --brand-600:color-mix(in srgb, var(--brand) 80%, #000);
+	--brand-soft:color-mix(in srgb, var(--brand) 9%, #fff); --brand-ring:color-mix(in srgb, var(--brand) 18%, transparent);
 	--ok:#16a34a; --ok-soft:#ecfdf3; --danger:#dc2626;
 	--shadow-sm:0 1px 2px rgba(15,23,42,.05),0 1px 3px rgba(15,23,42,.04);
 	--radius:14px;

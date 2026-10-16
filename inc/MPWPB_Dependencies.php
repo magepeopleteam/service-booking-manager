@@ -120,7 +120,25 @@
 				wp_enqueue_style('mpwpb_admin', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_admin.css', [], MPWPB_VERSION);
 				wp_enqueue_style('admin_style', MPWPB_PLUGIN_URL . '/assets/admin/admin_style.css', [], MPWPB_VERSION);
                 wp_enqueue_style('mpwpb_service_list', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_service_list.css', [], MPWPB_VERSION);
-                wp_enqueue_style('mpwpb_staff_member', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_staff_member.css', [], MPWPB_VERSION);
+                // Services page list + detail panel; the script no-ops on other screens.
+                $mpwpb_sv_css = MPWPB_PLUGIN_DIR . '/assets/admin/mpwpb-service-manage.css';
+                $mpwpb_sv_js = MPWPB_PLUGIN_DIR . '/assets/admin/mpwpb-service-manage.js';
+                wp_enqueue_style('mpwpb_service_manage', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb-service-manage.css', ['mpwpb_service_list'], file_exists($mpwpb_sv_css) ? (string) filemtime($mpwpb_sv_css) : MPWPB_VERSION);
+                wp_enqueue_script('mpwpb_service_manage', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb-service-manage.js', ['jquery'], file_exists($mpwpb_sv_js) ? (string) filemtime($mpwpb_sv_js) : MPWPB_VERSION, true);
+                wp_localize_script('mpwpb_service_manage', 'mpwpbServiceManage', array(
+                    'copy'   => __('Copy', 'service-booking-manager'),
+                    'copied' => __('Copied', 'service-booking-manager'),
+                    'addTitle'      => __('Add a service', 'service-booking-manager'),
+                    'addIntro'      => __('How would you like to start?', 'service-booking-manager'),
+                    'fromTemplate'  => __('Start from a template', 'service-booking-manager'),
+                    'fromTemplateSub' => __('Pick a business type and get services, prices, hours, staff and FAQs filled in. Everything stays editable.', 'service-booking-manager'),
+                    'fromScratch'   => __('Add service from scratch', 'service-booking-manager'),
+                    'fromScratchSub' => __('Open an empty service and set it up step by step yourself.', 'service-booking-manager'),
+                    'close'         => __('Close', 'service-booking-manager'),
+                    'templatesUrl'  => admin_url('edit.php?post_type=mpwpb_item&page=mpwpb_service_list&mpwpb_templates=1'),
+                ));
+                $mpwpb_staff_css = MPWPB_PLUGIN_DIR . '/assets/admin/mpwpb_staff_member.css';
+                wp_enqueue_style('mpwpb_staff_member', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_staff_member.css', [], file_exists($mpwpb_staff_css) ? (string) filemtime($mpwpb_staff_css) : MPWPB_VERSION);
                 wp_enqueue_style('mpwpb_analytics_dashboard', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_analytics_dashboard.css', [], MPWPB_VERSION);
 				// Versioned by file mtime, not MPWPB_VERSION: this file changes between
 				// releases, and with a static version browsers kept serving a stale copy,
@@ -131,15 +149,29 @@
 				wp_enqueue_script('mpwpb_admin', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb_admin.js', ['jquery'], $mpwpb_admin_js_ver, true);
 				// Staff Management page reskin — live off-day/schedule-row sync only;
 				// no-ops (returns early) on any other admin screen.
-				wp_enqueue_script('mpwpb_staff_management_modern', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb-staff-management-modern.js', ['jquery'], MPWPB_VERSION, true);
+				$mpwpb_staff_js = MPWPB_PLUGIN_DIR . '/assets/admin/mpwpb-staff-management-modern.js';
+				wp_enqueue_script('mpwpb_staff_management_modern', MPWPB_PLUGIN_URL . '/assets/admin/mpwpb-staff-management-modern.js', ['jquery', 'mpwpb_admin'], file_exists($mpwpb_staff_js) ? (string) filemtime($mpwpb_staff_js) : MPWPB_VERSION, true);
 				wp_localize_script('mpwpb_staff_management_modern', 'mpwpbStaffScheduleI18n', array(
-					'active' => __('ACTIVE', 'service-booking-manager'),
-					'off'    => __('OFF', 'service-booking-manager'),
+					'usual'    => __('Usual hours', 'service-booking-manager'),
+					'breakTxt' => __('break', 'service-booking-manager'),
+					'dayOff'   => __('Day off', 'service-booking-manager'),
+					'custom'   => __('Set different hours', 'service-booking-manager'),
+					'useUsual' => __('Use usual hours', 'service-booking-manager'),
 				));
 				wp_localize_script('mpwpb_admin', 'mpwpb_admin_ajax', array(
 					'ajax_url' => admin_url('admin-ajax.php'),
 					'nonce'    => wp_create_nonce('mpwpb_admin_nonce'),
 					'loadingTxt'    => __('Loading...','service-booking-manager'),
+					'staffValidation' => array(
+						'usernameRequired' => __('Username is required.', 'service-booking-manager'),
+						'usernameShort'    => __('Username must be at least 3 characters.', 'service-booking-manager'),
+						'usernameTaken'    => __('This username is already taken.', 'service-booking-manager'),
+						'passwordRequired' => __('Password is required.', 'service-booking-manager'),
+						'passwordShort'    => __('Password must be at least 8 characters.', 'service-booking-manager'),
+						'emailRequired'    => __('Email is required.', 'service-booking-manager'),
+						'emailInvalid'     => __('Please enter a valid email address.', 'service-booking-manager'),
+						'emailTaken'       => __('This email is already used by another account.', 'service-booking-manager'),
+						'checkFailed'      => __('Could not verify the username/email right now. Please try again.', 'service-booking-manager'),					),
 				));
 				do_action('add_mpwpb_admin_script');
 			}
@@ -167,7 +199,7 @@
 				wp_enqueue_style('mpwpb', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb.css', [], self::asset_version('/assets/frontend/mpwpb.css'));
 				wp_enqueue_script('mpwpb', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb.js', ['jquery'], self::asset_version('/assets/frontend/mpwpb.js'), true);
 				wp_enqueue_style('mpwpb_registration', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_registration.css', [], self::asset_version('/assets/frontend/mpwpb_registration.css'));
-				wp_enqueue_script('mpwpb_registration', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_registration.js', ['jquery'], MPWPB_VERSION);
+				wp_enqueue_script('mpwpb_registration', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb_registration.js', ['jquery'], self::asset_version('/assets/frontend/mpwpb_registration.js'));
 				wp_enqueue_style('mpwpb_coupon', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-coupon.css', [], MPWPB_VERSION);
 				// Depends on mpwpb_registration (not just jquery) so the
 				// mpwpb_ajax object it localizes is guaranteed to already exist.
@@ -180,13 +212,65 @@
 				// pure reskin, loaded after mpwpb_registration so its overrides win.
 				wp_enqueue_style('mpwpb_service_page_modern', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-service-page-modern.css', ['mpwpb_registration'], self::asset_version('/assets/frontend/mpwpb-service-page-modern.css'));
 				wp_enqueue_script('mpwpb_service_page_modern', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-service-page-modern.js', ['jquery', 'mpwpb_registration'], MPWPB_VERSION, true);
+				// Static sidebar + popup booking widget redesign — pure reskin
+				// (typography, pill buttons/badges, card radius), loaded after
+				// both of the above so its overrides win over either. The font
+				// stylesheet has no local file to version, so it's registered
+				// with a plain null version (its own URL is already
+				// Google-cached/fingerprinted) and no deps, so it fetches in
+				// parallel with everything else instead of blocking on them.
+				wp_enqueue_style('mpwpb_booking_widget_reskin_fonts', 'https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Work+Sans:wght@400;500;600;700&display=swap', [], null);
+				wp_enqueue_style('mpwpb_booking_widget_reskin', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-booking-widget-reskin.css', ['mpwpb_registration', 'mpwpb_service_page_modern', 'mpwpb_booking_widget_reskin_fonts'], self::asset_version('/assets/frontend/mpwpb-booking-widget-reskin.css'));
+				// Reskin-only behavior (currently just the collapsed coupon
+				// box toggle) -- never selection/cart/checkout logic, which
+				// stays entirely in mpwpb_registration.js.
+				wp_enqueue_script('mpwpb_booking_widget_reskin', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-booking-widget-reskin.js', ['jquery'], self::asset_version('/assets/frontend/mpwpb-booking-widget-reskin.js'), true);
+				// Copy for the checkout payment block (decoratePayment() in that file).
+				wp_localize_script('mpwpb_booking_widget_reskin', 'mpwpbPay', array(
+					'eyebrow' => __('Payment', 'service-booking-manager'),
+					'heading' => __('How would you like to pay?', 'service-booking-manager'),
+					'totalLabel' => __('Total to pay', 'service-booking-manager'),
+					'trustSecure' => __('Secure checkout', 'service-booking-manager'),
+					'trustReschedule' => __('Free rescheduling up to 24h', 'service-booking-manager'),
+					'placeOrder' => __('Place order', 'service-booking-manager'),
+					'tags' => array(
+						'cod' => __('Pay at your appointment', 'service-booking-manager'),
+						'bacs' => __('Booking confirmed once paid', 'service-booking-manager'),
+						'cheque' => __('Pay by cheque', 'service-booking-manager'),
+						'paypal' => __('Pay with your PayPal account', 'service-booking-manager'),
+						'card' => __('Credit or debit card', 'service-booking-manager'),
+					),
+				));
 				// "Our services" sidebar tree expand/collapse only — selecting a
 				// service still goes through mpwpb_registration.js unchanged.
 				wp_enqueue_script('mpwpb_service_tree', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-service-tree.js', ['jquery', 'mpwpb_registration'], MPWPB_VERSION, true);
+				// Live "N services selected · total" summary this file renders
+				// into the sidebar's CTA footer, reading the real relocated
+				// service rows' data-price + qty -- same real data the popup's
+				// own next_service.php "Total:" already shows, just mirrored
+				// onto the sidebar where no such summary existed before.
+				wp_localize_script('mpwpb_service_tree', 'mpwpbTreeI18n', array(
+					'oneServiceTxt' => esc_html__('1 service selected', 'service-booking-manager'),
+					'manyServicesTxt' => esc_html__('%d services selected', 'service-booking-manager'),
+					'currencySymbol' => MPWPB_Global_Function::is_wc_payment_mode()
+						? get_woocommerce_currency_symbol()
+						: MPWPB_Global_Function::native_currency_setting('symbol', '$'),
+				));
 				// Booking popup's inner picker: relocates the real category/
 				// service elements (untouched click handlers/hidden inputs)
 				// into a unified checkbox-tree — no new selection logic.
 				wp_enqueue_script('mpwpb_booking_tree', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-booking-tree.js', ['jquery', 'mpwpb_registration', 'mpwpb_service_tree'], self::asset_version('/assets/frontend/mpwpb-booking-tree.js'), true);
+				// "Tap to add" hint relocateService() adds next to each unselected
+				// row's qty-stepper slot, matching the sidebar preview tree's own
+				// mpwpb-tree-tap-hint copy (category_selection_static.php) -- that
+				// element doesn't exist to read the translated text off of in
+				// Inline display mode, where the sidebar is skipped entirely.
+				wp_localize_script('mpwpb_booking_tree', 'mpwpbBookingTreeI18n', array(
+					'tapToAddTxt' => esc_html__('Tap to add', 'service-booking-manager'),
+					'yourSelectionTxt' => esc_html__('Your selection', 'service-booking-manager'),
+					'totalLabelTxt' => esc_html__('Total', 'service-booking-manager'),
+					'addedTxt' => esc_html__('added', 'service-booking-manager'),
+				));
 				// Account-area presentation: WooCommerce's stock Orders table
 				// reskin plus the scoped Custom Payment dashboard cards/table.
 				// Loaded after mpwpb_registration so its overrides win.

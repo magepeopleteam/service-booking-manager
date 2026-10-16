@@ -57,6 +57,13 @@ function mpwpb_price_calculation($this) {
     if (typeof updateSelectedSummary === 'function') {
         updateSelectedSummary(parent);
     }
+
+    // Static template's "Choose Extra Features" live added-count/total chip
+    // (#mpwpb_extra_service_area, defined in mpwpb-booking-tree.js) -- same
+    // single choke point and same guard as updateSelectedSummary() above.
+    if (typeof updateExtraServiceSummary === 'function') {
+        updateExtraServiceSummary(parent);
+    }
 }
 //Registration
 (function ($) {
@@ -714,6 +721,63 @@ function mpwpb_price_calculation($this) {
         mpwpb_set_progress(parent, 'checkout');
         if (typeof updateSelectedSummary === 'function') { updateSelectedSummary(parent); }
     }
+    // Clicking a step in the top progress bar jumps straight to it, by
+    // triggering the SAME real Back/Continue button that transition already
+    // goes through -- nothing about the actual step switch is reimplemented
+    // here, so every side effect (remove-button visibility, .mpActive/
+    // .mpDisabled toggles, the "select a service"/"pick a date" guard) stays
+    // identical to clicking that button directly.
+    //  - A step BEFORE the current one: always allowed (existing Back
+    //    buttons have no guard either) -- walks back one real step at a
+    //    time so a 2-step jump (e.g. Checkout -> Service) runs each hop's
+    //    own side effects, not just the end state.
+    //  - The step right after the current one: same as clicking Continue
+    //    (including its alert if nothing's selected/picked yet) -- but only
+    //    if that real button is actually visible, i.e. the visitor could
+    //    have clicked it themselves (it's hidden instead of a staff-step
+    //    button when this service has staff selection enabled, which this
+    //    deliberately doesn't try to route around).
+    //  - Anything further ahead, the current step itself, or Confirmation
+    //    (which only ever appears after a real booking submits): no-op.
+    var MPWPB_PROGRESS_STEP_ORDER = ['service', 'date_time', 'checkout', 'confirmation'];
+    $(document).on('click', 'div.mpwpb_registration .mpwpb_cart_progress_step', function () {
+        let parent = $(this).closest('div.mpwpb_registration');
+        let stepKey = this.id.replace('mpwpb_progress_', '');
+        let currentKey = parent.data('mpwpbStep') || 'service';
+        let targetIndex = $.inArray(stepKey, MPWPB_PROGRESS_STEP_ORDER);
+        let currentIndex = $.inArray(currentKey, MPWPB_PROGRESS_STEP_ORDER);
+        if (targetIndex === -1 || currentIndex === -1 || targetIndex === currentIndex) {
+            return;
+        }
+        if (targetIndex < currentIndex) {
+            let hopBack = function () {
+                let stepNow = parent.data('mpwpbStep') || 'service';
+                let $backBtn;
+                if (stepNow === 'checkout') {
+                    $backBtn = parent.find('[data-checkout-back-to-date]').first();
+                } else if (stepNow === 'date_time') {
+                    $backBtn = parent.find('.mpwpb_date_time_prev').first();
+                } else {
+                    return;
+                }
+                if (!$backBtn.length) {
+                    return;
+                }
+                $backBtn.trigger('click');
+                if ($.inArray(parent.data('mpwpbStep'), MPWPB_PROGRESS_STEP_ORDER) > targetIndex) {
+                    hopBack();
+                }
+            };
+            hopBack();
+        } else if (targetIndex === currentIndex + 1) {
+            let $nextBtn = currentKey === 'service'
+                ? parent.find('.mpwpb_service_next').first()
+                : (currentKey === 'date_time' ? parent.find('.mpwpb_date_time_next').first() : $());
+            if ($nextBtn.length && $nextBtn.is(':visible')) {
+                $nextBtn.trigger('click');
+            }
+        }
+    });
     //==========date============//
     $(document).on('change', 'div.mpwpb_registration [name="mpwpb_date"]', function () {
         let parent = $(this).closest('div.mpwpb_registration');
@@ -1068,8 +1132,31 @@ function mpwpb_price_calculation($this) {
             if (!orderId || !orderKey) {
                 return true;
             }
-            mpwpb_show_wc_confirmation($(this).closest('div.mpwpb_registration'), orderId, orderKey);
-            return false;
+            var $parent = $(this).closest('div.mpwpb_registration');
+
+            // Both WooCommerce's own submit() (assets/js/frontend/checkout.js)
+            // and this plugin's own submit.mpwpbInlineFallback handler read
+            // `result.redirect` and gate it behind this same event's return
+            // value: `triggerHandler(...) !== false`. Returning false used to
+            // be how this stopped a full-page navigation to result.redirect --
+            // but checkout.js *also* uses that same false to decide the AJAX
+            // response was invalid, so it fell into its
+            // `else { throw 'Invalid response'; }` branch purely because of
+            // OUR return value and called submit_error(), prepending a
+            // generic "An error occurred" .woocommerce-error notice on an
+            // order that had just succeeded.
+            //
+            // `result` is passed by reference, so rewriting result.redirect
+            // to the current URL plus a fragment and returning true (instead
+            // of false) lets both callers' `window.location = result.redirect`
+            // run normally -- a fragment-only change is a same-document
+            // navigation in every browser, so nothing actually reloads -- while
+            // skipping checkout.js's error branch entirely. No notice is ever
+            // inserted, so there is nothing to flash and nothing to clean up.
+            result.redirect = window.location.href.split('#')[0] + '#mpwpb-booking-confirmed';
+
+            mpwpb_show_wc_confirmation($parent, orderId, orderKey);
+            return true;
         });
     }
 
@@ -1223,7 +1310,7 @@ function mpwpb_price_calculation($this) {
             parent.data('mpwpbStep', 'confirmation');
             parent.find('.popupFooter').addClass('mpwpb-inline-checkout-footer-hidden');
             mpwpb_set_progress(parent, 'confirmation');
-            var cleanUrl = window.location.href.replace(/([?&])(mpwpb_inline_order|key)=[^&#]*/g, '$1').replace(/[?&]$/, '');
+            var cleanUrl = window.location.href.replace(/([?&])(mpwpb_inline_order|key)=[^&#]*/g, '$1').replace(/[?&]$/, '').replace(/#mpwpb-booking-confirmed$/, '');
             window.history.replaceState({}, document.title, cleanUrl);
 			$confirmation.find('h2, .woocommerce-order-overview').first().attr('tabindex', '-1').trigger('focus');
         }).always(function () {
@@ -1508,10 +1595,22 @@ function mpwpb_price_calculation($this) {
         $staffBtn.prop('disabled', true).addClass('mpwpb-cta-loading')
             .html('<i class="fas fa-spinner fa-spin _mR_xs"></i> ' + (mpwpb_ajax.processing_text || 'Please wait...'));
 
-        $("#mpwpb_date_time_next_btn_id").fadeIn();
+        // Checkout only once there's actually a staff member to pick for this
+        // slot -- with none free the step shows its "choose another time"
+        // notice instead (set in mpwpb_recurring_booking.js).
+        if (($("#mpwpb_staff_member_holder").data('mpwpbStaffCount') || 0) > 0) {
+            $("#mpwpb_date_time_next_btn_id").fadeIn();
+        } else {
+            $("#mpwpb_date_time_next_btn_id").hide();
+        }
         mpwpb_set_progress($(this).closest('div.mpwpb_registration'), 'staff');
         $("#mpwpb_datetime_holder").hide();
         $("#mpwpb_staff_member_booking_area").fadeIn();
+        // Re-check staff against the final set of dates (recurring
+        // occurrences included) -- only staff free for all of them are listed.
+        if (typeof window.mpwpbRefreshStaff === 'function') {
+            window.mpwpbRefreshStaff(parentGuard);
+        }
 
         $("#mpwpb_display_service_btn").hide();
         $("#mpwpb_display_date_time").fadeIn();
@@ -1561,9 +1660,19 @@ function mpwpb_price_calculation($this) {
         }
     });
 
+    // "Load more" under a day's time slots: reveal the rest (rendered hidden
+    // as .mpwpb_slot_more by MPWPB_Details_Layout::display_booking_time()).
+    $(document).on('click', '.mpwpb_time_load_more', function () {
+        let $btn = $(this);
+        let $day = $btn.closest('.mpwpb_time_display');
+        $day.addClass('mpwpb_slots_expanded');
+        $btn.attr('aria-expanded', 'true').hide();
+        $day.find('.mpwpb_slot_more').first().trigger('focus');
+    });
+
     $(document).on('click', '.mpwp_select_staff_card', function () {
-        $('.mpwp_select_staff_card').removeClass('selected');
-        $(this).addClass('selected');
+        $('.mpwp_select_staff_card').removeClass('selected').attr('aria-pressed', 'false');
+        $(this).addClass('selected').attr('aria-pressed', 'true');
         let staffId = $(this).find('.mpwpb_selected_staff').val();
 
         $("#mpwpb_staff_member_booking").val( staffId );
@@ -1599,4 +1708,112 @@ function mpwpb_price_calculation($this) {
         $(tabId).addClass('active');
     });
 
+}(jQuery));
+
+/* ---------------------------------------------------------------- *
+ *  Guided booking flow: after each real customer choice, bring the next
+ *  thing to do into view -- date -> time slots -> recurring booking (when
+ *  this service offers it) -> recurring options, or the Next button when
+ *  there's nothing more to set. Works inside the popup (its own scroll
+ *  box) and inline on the page. Only reacts to genuine clicks, so the
+ *  default date the page pre-selects never moves anything.
+ * ---------------------------------------------------------------- */
+(function ($) {
+    "use strict";
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // The nearest scrollable panel (the popup's body), preferring one that
+    // currently overflows. Inside a fixed popup the page itself is never
+    // scrolled -- it sits behind the overlay.
+    function scrollBoxOf(el) {
+        var first = null;
+        for (var n = el.parentElement; n && n !== document.body; n = n.parentElement) {
+            var cs = window.getComputedStyle(n);
+            if (cs.overflowY === 'auto' || cs.overflowY === 'scroll') {
+                if (n.scrollHeight > n.clientHeight + 1) { return n; }
+                first = first || n;
+            }
+            // Reached the fixed popup without a scroll panel around the target
+            // (e.g. the footer's Next button): nothing to scroll.
+            if (cs.position === 'fixed') { return first || false; }
+        }
+        return first;
+    }
+    // Scroll now, then once more after the popup's footer / sections have
+    // finished animating (they can resize the scroll panel underneath us).
+    function guideTo($target) {
+        var el = $target && $target.filter(':visible')[0];
+        if (!el) { return; }
+        alignTo(el);
+        setTimeout(function () { alignTo(el); }, 480);
+        setTimeout(function () { alignTo(el); }, 1100);
+        if (!reduceMotion) {
+            $target.removeClass('mpwpb-guide-pulse');
+            void el.offsetWidth;
+            $target.addClass('mpwpb-guide-pulse');
+            setTimeout(function () { $target.removeClass('mpwpb-guide-pulse'); }, 1300);
+        }
+    }
+    function alignTo(el) {
+        if (!$(el).is(':visible')) { return; }
+        var box = scrollBoxOf(el);
+        if (box === false) { return; }
+        var r = el.getBoundingClientRect();
+        var top = box ? box.getBoundingClientRect().top : 0;
+        var gap = 16;
+        // Bring the next section up to the top of the booking area (the
+        // popup's sticky total bar would otherwise cover the bottom of it).
+        var delta = r.top - top - gap;
+        if (Math.abs(delta) > 4) {
+            if (box) {
+                box.scrollTo({ top: box.scrollTop + delta, behavior: reduceMotion ? 'auto' : 'smooth' });
+            } else {
+                window.scrollTo({ top: window.pageYOffset + delta - 60, behavior: reduceMotion ? 'auto' : 'smooth' });
+            }
+        }
+    }
+    function isReal(e) {
+        return !!(e && e.originalEvent && e.originalEvent.isTrusted !== false);
+    }
+
+    // 1) Date picked -> the time slots for that date.
+    $(document).on('click', 'div.mpwpb_registration .mpwpb_get_date', function (e) {
+        if (!isReal(e)) { return; }
+        var $reg = $(this).closest('div.mpwpb_registration');
+        setTimeout(function () {
+            guideTo($reg.find('.mpwpb_select_time_holder').prev('header'));
+        }, 120);
+    });
+
+    // 2) Time picked -> recurring booking if offered, else the Next button.
+    $(document).on('click', 'div.mpwpb_registration .mpwpb_date_time_area .to-book', function (e) {
+        if (!isReal(e)) { return; }
+        var $reg = $(this).closest('div.mpwpb_registration');
+        function step(retry) {
+            var $recur = $reg.find('#mpwpb_recurring_booking_area');
+            if ($recur.length && $recur.is(':visible')) {
+                guideTo($recur);
+                return;
+            }
+            // The footer's next action: "Next Staff Member" when staff choice
+            // is on, otherwise "Proceed to Checkout". It can appear a moment
+            // later (after the staff list loads), so look once more.
+            var $next = $reg.find('#mpwpb_show_hide_staff_member, .mpwpb_date_time_next').filter(':visible').first();
+            if ($next.length) {
+                guideTo($next);
+            } else if (retry) {
+                setTimeout(function () { step(false); }, 700);
+            }
+        }
+        setTimeout(function () { step(true); }, 260);
+    });
+
+    // 3) Recurring switched on -> its options (repeat type, occurrences).
+    $(document).on('change', 'div.mpwpb_registration #mpwpb_enable_recurring_booking', function (e) {
+        if (!this.checked || !isReal(e)) { return; }
+        var $reg = $(this).closest('div.mpwpb_registration');
+        setTimeout(function () {
+            guideTo($reg.find('.mpwpb_recurring_settings'));
+        }, 380);
+    });
 }(jQuery));

@@ -15,6 +15,7 @@
 			}
 			private function load_file(): void {
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Shortcodes.php';
+				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Service_Directory.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Details_Layout.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Woocommerce.php';
 				require_once MPWPB_PLUGIN_DIR . '/Frontend/MPWPB_Wc_Email_Control.php';

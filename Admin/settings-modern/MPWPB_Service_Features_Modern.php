@@ -17,7 +17,16 @@
 		class MPWPB_Service_Features_Modern {
 			public function render($post_id) {
 				?>
-				<div class="mpwpb-sme__field-slot" data-sme-features-slot></div>
+				<div class="mpwpb-sme__field-slot" data-sme-features-slot
+				     data-one="<?php esc_attr_e('1 feature', 'service-booking-manager'); ?>"
+				     data-many="<?php /* translators: %d: number of features */ esc_attr_e('%d features', 'service-booking-manager'); ?>"
+				     data-placeholder="<?php esc_attr_e('Add a feature, e.g. Free first consultation', 'service-booking-manager'); ?>"
+				     data-add="<?php esc_attr_e('Add', 'service-booking-manager'); ?>"
+				     data-hint="<?php esc_attr_e('Press Enter to add. Drag the handle to change the order.', 'service-booking-manager'); ?>"
+				     data-empty="<?php esc_attr_e('No features yet. Add a few short points customers care about.', 'service-booking-manager'); ?>"
+				     data-drag="<?php esc_attr_e('Drag to reorder', 'service-booking-manager'); ?>"
+				     data-remove="<?php esc_attr_e('Remove feature', 'service-booking-manager'); ?>"
+				     data-feature="<?php esc_attr_e('Feature', 'service-booking-manager'); ?>"></div>
 				<?php
 			}
 		}

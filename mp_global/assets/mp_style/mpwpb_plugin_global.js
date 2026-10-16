@@ -249,31 +249,8 @@ function mpwpb_load_date_picker_edit_curring_date(  off_days, off_dates ) {
 
                 let formattedDate = `${year}-${month}-${day}`;
 
-                let dateOnly = formattedDate;
-                let ajaxUrl = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.ajax_url : mpwpb_ajax_url;
-                let nonce = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.nonce : mpwpb_ajax.nonce;
-                let postId = mpwpb_recurring_data.post_id;
-
-                jQuery.ajax({
-                    type: 'POST',
-                    url: ajaxUrl,
-                    data: {
-                        action: 'mpwpb_get_filtered_time_by_date',
-                        post_id: postId,
-                        dates: dateOnly,
-                        nonce: nonce
-                    },
-                    success: function(response) {
-                        if (response.success && response.data && response.data.dates) {
-                            jQuery("#mpwpb_recurring_time_holedr").html(response.data.dates );
-                        } else {
-                            console.error('AJAX Data Loading error:');
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('AJAX error:', status, error);
-                    }
-                });
+                // Time slots for the new date are reloaded by mpwpb_recurring_booking.js's
+                // change listener on #mpwpb_date_edit_recurring.
                 // alert( formattedDate );
                 jQuery("#mpwpb_date_edit_recurring").val(formattedDate).trigger('change');
             }
@@ -1033,8 +1010,17 @@ function mpwpb_pagination_page_management(parent, pagination_page, total_item) {
     "use strict";
     $(document).on('click', '.mpwpb_style [data-target-popup]', function () {
         let target = $(this).attr('data-active-popup', '').data('target-popup');
+        let $popup = $('[data-popup="' + target + '"]');
         $('body').addClass('noScroll').find('[data-popup="' + target + '"]').addClass('in').promise().done(function () {
             mpwpb_load_bg_image();
+            // The booking tree (assets/frontend/mpwpb-booking-tree.js) normally
+            // builds itself once on document-ready, well before any click is
+            // possible -- but on a slow page load a user can open this popup
+            // before that ready callback has run, leaving the services step
+            // blank inside a body that's still forced to min-height:40vh
+            // (mpwpb_registration.css). This event lets that file build it
+            // immediately if it hasn't already (its own init is idempotent).
+            $(document).trigger('mpwpb:popup-opened', [$popup]);
             return true;
         });
     });

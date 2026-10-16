@@ -102,7 +102,7 @@
                             <span class="mpwpb-modal-close"><i class="fas fa-times"></i></span>
                             <div class="title">
                                 <h3><?php esc_html_e('Add F.A.Q.', 'service-booking-manager'); ?></h3>
-                                <div id="mpwpb-service-msg"></div>
+                                <div id="mpwpb-faq-msg" role="status"></div>
                             </div>
                             <div class="content">
                                 <label>

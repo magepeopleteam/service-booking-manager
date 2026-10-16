@@ -32,14 +32,10 @@
 				$button_color    = MPWPB_Global_Function::get_style_settings( 'button_color', $alternate_color );
 				$button_bg       = MPWPB_Global_Function::get_style_settings( 'button_bg', '#ea8125' );
 				$section_bg      = MPWPB_Global_Function::get_style_settings( 'section_bg', '#FAFCFE' );
-				$template_width  = (int) MPWPB_Global_Function::get_style_settings( 'template_width', 1300 );
-				$template_gutter = (int) MPWPB_Global_Function::get_style_settings( 'template_gutter', 32 );
 				?>
 				<style>
 					:root {
 						--mpwpb_container_Width: 1320px;
-						--mpwpb_template_width: <?php echo esc_attr( $template_width ); ?>px;
-						--mpwpb_template_gutter: <?php echo esc_attr( $template_gutter ); ?>px;
 						--mpwpb_sidebarLeft: 280px;
 						--mpwpb_sidebar_right: 300px;
 						--mpwpb_main_section: calc(100% - 300px);
@@ -92,6 +88,8 @@
 						--mpwpb_color_theme_88: <?php echo esc_attr($theme_color).'88'; ?>;
 						--mpwpb_color_theme_77: <?php echo esc_attr($theme_color).'77'; ?>;
 						--mpwpb_color_theme_alter: <?php echo esc_attr($alternate_color); ?>;
+						/* Older stylesheets' own accent (admin_style.css, mpwpb_registration.css). */
+						--mage-primary: <?php echo esc_attr($theme_color); ?>;
 						--mpwpb_color_warning: <?php echo esc_attr($warning_color); ?>;
 						--mpwpb_color_black: #000;
 						--mpwpb_color_success: #03A9F4;
@@ -147,6 +145,26 @@
 						}
 					}
 				</style>
+				<?php if (!is_admin()) : ?>
+				<script>
+					/* Live theme color: when the Theme Color is saved in the service
+					 * editor (same site, another tab), it writes mpwpb_theme_color to
+					 * localStorage -- repaint this page's accent right away instead
+					 * of waiting for a reload. */
+					(function () {
+						window.addEventListener('storage', function (e) {
+							if (e.key !== 'mpwpb_theme_color' || !e.newValue) { return; }
+							var color = '';
+							try { color = JSON.parse(e.newValue).color || ''; } catch (err) { return; }
+							if (!/^#[0-9a-f]{6}$/i.test(color)) { return; }
+							var s = document.documentElement.style;
+							s.setProperty('--mpwpb_color_theme', color);
+							['ee', 'cc', 'aa', '88', '77'].forEach(function (a) { s.setProperty('--mpwpb_color_theme_' + a, color + a); });
+							s.setProperty('--mage-primary', color);
+						});
+					})();
+				</script>
+				<?php endif; ?>
 				<?php
 			}
 		}

@@ -201,6 +201,7 @@ input:checked + .slider:before {
     gap: 10px;
     justify-content: flex-start;
     padding: 5px;
+    margin: 20px 32px !important;
 }
 
 .mpwpb_staff_card {
@@ -507,4 +508,196 @@ select#mpwpb_recurring_type, input#mpwpb_recurring_count {
 }
 div#mpwpb_recurring_booking_area {
     padding-bottom: 5px;
+}
+
+/* =====================================================================
+ * Recurring booking — redesign (markup: templates/registration/
+ * date_time_select.php; behaviour: syncRecurringUi() in
+ * mpwpb_recurring_booking.js). Everything is prefixed with the block's id
+ * so it wins over the older rules above and mp_global's plugin-wide
+ * `.mpwpb_style button/span/label` rules without !important fights.
+ * Theme tints come from --mpwpb-tint* (mpwpb-service-page-modern.css,
+ * derived from the Theme Color) with plain fallbacks.
+ * ===================================================================== */
+#mpwpb_recurring_booking_area{
+	padding:0 !important;border:1px solid #E7EAEE;border-radius:18px;background:#fff;overflow:hidden;
+	box-shadow:0 1px 3px rgba(15,23,42,.06);font-family:'Work Sans','Segoe UI',sans-serif;
+}
+#mpwpb_recurring_booking_area .mpwpb_recurring_head{
+	display:flex;align-items:center;gap:12px;margin:0;padding:10px !important;border:0;
+}
+#mpwpb_recurring_booking_area .mpwpb_recurring_head_icon{
+	flex:0 0 auto;width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+	background:var(--mpwpb-tint,#E8F3F1);color:var(--mpwpb_color_theme);
+}
+#mpwpb_recurring_booking_area .mpwpb_recurring_head_text{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px;}
+#mpwpb_recurring_booking_area .mpwpb_recurring_head h3{
+	margin:0 !important;padding:0;font-family:'Sora','Segoe UI',sans-serif;font-size:16px !important;font-weight:700;color:#15202B !important;
+}
+#mpwpb_recurring_booking_area .mpwpb_recurring_head_sub{display:block;font-size:12.5px;line-height:1.45;color:#5B6763;}
+
+/* On/off switch -- the real checkbox, visually hidden over a styled track. */
+#mpwpb_recurring_booking_area .mpwpb_recurring_switch{position:relative;display:inline-block;flex:0 0 auto;width:44px;height:26px;margin:0;cursor:pointer;}
+#mpwpb_recurring_booking_area .mpwpb_recurring_switch input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer;z-index:1;}
+#mpwpb_recurring_booking_area .mpwpb_recurring_switch_track{
+	position:absolute;inset:0;display:block;border-radius:999px;background:#CBD5E1;transition:background-color .15s;
+}
+#mpwpb_recurring_booking_area .mpwpb_recurring_switch_track::after{
+	content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;
+	box-shadow:0 1px 3px rgba(15,23,42,.25);transition:left .15s;
+}
+#mpwpb_recurring_booking_area .mpwpb_recurring_switch input:checked + .mpwpb_recurring_switch_track{background:var(--mpwpb_color_theme);}
+#mpwpb_recurring_booking_area .mpwpb_recurring_switch input:checked + .mpwpb_recurring_switch_track::after{left:21px;}
+#mpwpb_recurring_booking_area .mpwpb_recurring_switch input:focus-visible + .mpwpb_recurring_switch_track{outline:2px solid var(--mpwpb_color_theme);outline-offset:2px;}
+
+#mpwpb_recurring_booking_area .mpwpb_recurring_settings{margin:0;padding:16px 18px 18px;border-top:1px solid #EEF1F4;}
+#mpwpb_recurring_booking_area .mpwpb_recurring_settings > * + *{margin-top:16px;}
+#mpwpb_recurring_booking_area .mpwpb_recurring_label{
+	display:block;margin-bottom:8px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#94A3B8;
+}
+
+/* Repeats: segmented chips driving the hidden real <select>. */
+#mpwpb_recurring_booking_area .mpwpb_recurring_type{margin-top:0;}
+#mpwpb_recurring_booking_area .mpwpb_recurring_type_select{
+	position:absolute !important;width:1px !important;height:1px !important;margin:-1px !important;padding:0 !important;
+	overflow:hidden !important;clip:rect(0,0,0,0) !important;border:0 !important;
+}
+#mpwpb_recurring_booking_area .mpwpb_recurring_type_chips{
+	display:grid;grid-template-columns:repeat(auto-fit, minmax(0, 1fr));gap:6px;padding:4px;border-radius:12px;background:#F3F5F7;
+}
+#mpwpb_recurring_booking_area .mpwpb_recurring_chip{
+	height:36px;margin:0;padding:0 8px;border:0;border-radius:9px;background:transparent;color:#5B6763;
+	font-size:13px;font-weight:600;line-height:1;cursor:pointer;opacity:1;text-transform:none;white-space:nowrap;
+	transition:background-color .15s, color .15s, box-shadow .15s;
+}
+#mpwpb_recurring_booking_area .mpwpb_recurring_chip:hover,
+#mpwpb_recurring_booking_area .mpwpb_recurring_chip:focus{background:rgba(255,255,255,.6);color:#15202B;opacity:1;}
+#mpwpb_recurring_booking_area .mpwpb_recurring_chip.is-active{background:#fff;color:var(--mpwpb_color_theme);box-shadow:0 1px 3px rgba(15,23,42,.12);}
+
+/* Occurrences: label + pill stepper around the real number input. */
+#mpwpb_recurring_booking_area .mpwpb_recurring_count{display:flex;align-items:center;gap:12px;}
+#mpwpb_recurring_booking_area .mpwpb_recurring_count_text{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px;}
+#mpwpb_recurring_booking_area .mpwpb_recurring_count_title{display:block;font-size:13.5px;font-weight:600;color:#15202B;}
+#mpwpb_recurring_booking_area .mpwpb_recurring_count_hint{display:block;font-size:12px;color:#94A3B8;}
+#mpwpb_recurring_booking_area .mpwpb_recurring_stepper{display:flex;align-items:center;flex:0 0 auto;padding:3px;border:1px solid #E2E6E4;border-radius:999px;}
+#mpwpb_recurring_booking_area .mpwpb_recurring_step{
+	width:32px;height:32px;margin:0;padding:0;border:0;border-radius:50%;background:transparent;color:#15202B;
+	display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:1;
+}
+#mpwpb_recurring_booking_area .mpwpb_recurring_step.mpwpb_recurring_step--plus{background:var(--mpwpb-tint,#E8F3F1);color:var(--mpwpb_color_theme);}
+#mpwpb_recurring_booking_area .mpwpb_recurring_step:hover,
+#mpwpb_recurring_booking_area .mpwpb_recurring_step:focus{background:#F3F5F7;color:#15202B;opacity:1;}
+#mpwpb_recurring_booking_area .mpwpb_recurring_step.mpwpb_recurring_step--plus:hover,
+#mpwpb_recurring_booking_area .mpwpb_recurring_step.mpwpb_recurring_step--plus:focus{background:var(--mpwpb-tint-line,#A7F3D0);color:var(--mpwpb_color_theme);}
+#mpwpb_recurring_booking_area .mpwpb_recurring_step:disabled{background:transparent;color:#CBD5E1;cursor:not-allowed;}
+#mpwpb_recurring_booking_area #mpwpb_recurring_count{
+	width:36px;height:32px;margin:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;
+	text-align:center;font-family:'Sora','Segoe UI',sans-serif;font-size:15px;font-weight:700;color:#15202B;
+	-moz-appearance:textfield;appearance:textfield;
+}
+#mpwpb_recurring_booking_area #mpwpb_recurring_count::-webkit-outer-spin-button,
+#mpwpb_recurring_booking_area #mpwpb_recurring_count::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+
+#mpwpb_recurring_booking_area .mpwpb_recurring_discount{margin-top:12px;}
+#mpwpb_recurring_booking_area .mpwpb_recurring_discount p{
+	display:inline-flex;margin:0;padding:5px 11px;border-radius:999px;background:var(--mpwpb-tint,#E8F3F1);
+	color:var(--mpwpb_color_theme);font-size:12px;font-weight:700;
+}
+
+/* Dates: one bordered list with a "N bookings · range" summary header. */
+#mpwpb_recurring_booking_area .mpwpb_recurring_dates{margin-top:16px;padding:0;border:1px solid #E7EAEE;border-radius:14px;overflow:hidden;background:#fff;}
+#mpwpb_recurring_booking_area .mpwpb_recurring_dates_head{
+	display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0;padding:10px 14px;
+	background:var(--mpwpb-tint-bg,#F0F7F5);border-bottom:1px solid #EEF1F4;
+}
+#mpwpb_recurring_booking_area .mpwpb_recurring_dates_count{display:inline;font-size:12.5px;font-weight:700;color:#15202B;}
+#mpwpb_recurring_booking_area .mpwpb_recurring_dates_range{display:inline;font-size:12px;font-weight:500;color:#5B6763;}
+#mpwpb_recurring_booking_area #mpwpb_recurring_dates_list{max-height:236px;overflow-y:auto;margin:0;padding:0;list-style:none;}
+#mpwpb_recurring_booking_area #mpwpb_recurring_dates_list li{
+	margin:0 !important;padding:10px 14px !important;border:0;border-bottom:1px solid #F1F4F6;border-radius:0;
+	background:#fff;font-family:inherit;font-size:13.5px;
+}
+#mpwpb_recurring_booking_area #mpwpb_recurring_dates_list li:last-child{border-bottom:0;}
+#mpwpb_recurring_booking_area #mpwpb_recurring_dates_list li.mpwpb_invalid_recurring_days{background:#fdf1ee !important;}
+#mpwpb_recurring_booking_area .mpwpb_recurring_number{background:var(--mpwpb-tint,#E8F3F1);color:var(--mpwpb_color_theme);}
+#mpwpb_recurring_booking_area .mpwpb_recurring_date_text strong{font-size:13.5px;font-weight:600;color:#15202B;}
+#mpwpb_recurring_booking_area .mpwpb_recurring_daytime{display:block;font-size:12px;color:#5B6763;margin-top:1px;}
+#mpwpb_recurring_booking_area .mpwpb_recurring_edit_icon,
+#mpwpb_recurring_booking_area .mpwpb_recurring_delete_icon{
+	display:flex;width:30px;height:30px;border-radius:8px;background:#F3F5F7;transform:none;
+}
+#mpwpb_recurring_booking_area .mpwpb_recurring_edit_icon{color:#5B6763;}
+#mpwpb_recurring_booking_area .mpwpb_recurring_delete_icon{color:#B91C1C;}
+#mpwpb_recurring_booking_area .mpwpb_recurring_edit_icon:hover{background:var(--mpwpb-tint,#E8F3F1);color:var(--mpwpb_color_theme);transform:none;}
+#mpwpb_recurring_booking_area .mpwpb_recurring_delete_icon:hover{background:#fdecea;color:#B91C1C;transform:none;}
+/* Only 2 dates left: removing is blocked (the script would refuse anyway). */
+#mpwpb_recurring_booking_area #mpwpb_recurring_dates_list.is-min .mpwpb_recurring_delete_icon{color:#CBD5E1;pointer-events:none;}
+
+.mpwpb_recurring_booking{margin-top:20px;}
+
+/* =====================================================================
+ * Edit-occurrence popup (pencil icon) -- restyled to match the recurring
+ * card. Sits above the booking popup/drawer (z-index 100000/999999 in
+ * mpwpb-booking-widget-reskin.css / mpwpb-service-page-modern.css): at its
+ * old 9999 the popup and its date calendar opened BEHIND the booking modal,
+ * so the date could not be picked.
+ * ===================================================================== */
+.mpwpb_edit_recurring_datetime_popup{z-index:1000000;padding:16px;box-sizing:border-box;}
+body #ui-datepicker-div.mpwpb_custom_datepicker_style{z-index:1000001 !important;}
+.mpwpb_edit_recurring_datetime_popup .mpwpb_edit_recurring_datetime_overlay{inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(3px);}
+.mpwpb_edit_recurring_datetime_popup .mpwpb_edit_recurring_datetime_modal{
+	width:380px;max-width:100%;padding:0;border-radius:18px;text-align:left;background:#fff;
+	box-shadow:0 24px 60px rgba(15,23,42,.28);font-family:'Work Sans','Segoe UI',sans-serif;
+}
+.mpwpb_edit_recurring_datetime_popup .mpwpb_edit_recurring_head{display:flex;align-items:center;gap:12px;padding:16px 16px 14px;border-bottom:1px solid #EEF1F4;}
+.mpwpb_edit_recurring_datetime_popup .mpwpb_edit_recurring_head_icon{flex:0 0 auto;width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:var(--mpwpb-tint,#E8F3F1);color:var(--mpwpb_color_theme);}
+.mpwpb_edit_recurring_datetime_popup .mpwpb_edit_recurring_head_text{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px;}
+.mpwpb_edit_recurring_datetime_popup .mpwpb_edit_recurring_head h3{margin:0;padding:0;font-family:'Sora','Segoe UI',sans-serif;font-size:15.5px;font-weight:700;color:#15202B;}
+.mpwpb_edit_recurring_datetime_popup .mpwpb_edit_recurring_head_text span{display:block;font-size:12px;color:#5B6763;}
+.mpwpb_edit_recurring_datetime_popup .mpwpb_edit_recurring_x.mpwpb_edit_recurring_x{
+	flex:0 0 auto;width:32px;height:32px;margin:0;padding:0;border:0;border-radius:9px;background:#F3F5F7;color:#5B6763;
+	display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:1;
+}
+.mpwpb_edit_recurring_datetime_popup .mpwpb_edit_recurring_x.mpwpb_edit_recurring_x:hover,
+.mpwpb_edit_recurring_datetime_popup .mpwpb_edit_recurring_x.mpwpb_edit_recurring_x:focus{background:#E7EAEE;color:#15202B;opacity:1;}
+.mpwpb_edit_recurring_datetime_popup .mpwpb_edit_recurring_label{
+	display:block;margin:0 16px 8px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#94A3B8;
+}
+.mpwpb_edit_recurring_datetime_popup .mpwpb_edit_recurring_datetime_input_wrap{margin:16px 0 16px;}
+.mpwpb_edit_recurring_datetime_popup .mpwpb_edit_recurring_datetime_input_wrap .mpwpb_edit_recurring_label{margin-bottom:8px;}
+.mpwpb_edit_recurring_datetime_popup .mpwpb_edit_recurring_date_field{position:relative;margin:0 16px;}
+.mpwpb_edit_recurring_datetime_popup .mpwpb_edit_recurring_date_field svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--mpwpb_color_theme);pointer-events:none;}
+.mpwpb_edit_recurring_datetime_popup .date_type_edit_recurring{
+	width:100%;height:44px;margin:0;padding:0 14px 0 40px;box-sizing:border-box;border:1px solid #E2E6E4;border-radius:12px;background:#fff;
+	font-size:14px;font-weight:600;color:#15202B;cursor:pointer;box-shadow:none;transition:border-color .15s,box-shadow .15s;
+}
+.mpwpb_edit_recurring_datetime_popup .date_type_edit_recurring:hover{border-color:var(--mpwpb_color_theme);}
+.mpwpb_edit_recurring_datetime_popup .date_type_edit_recurring:focus{outline:0;border-color:var(--mpwpb_color_theme);box-shadow:0 0 0 3px var(--mpwpb-tint,#E8F3F1);}
+.mpwpb_edit_recurring_datetime_popup .mpwpb_edit_recurring_datetime_timeslot_wrap{display:block;margin:0 16px 18px;}
+.mpwpb_edit_recurring_datetime_popup .mpwpb_recurring_time_holedr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;}
+.mpwpb_edit_recurring_datetime_popup .mpwpb_recurring_loader,
+.mpwpb_edit_recurring_datetime_popup .mpwpb_recurring_no_slots{grid-column:1/-1;margin:0;padding:14px;border-radius:12px;background:#F7F8FA;text-align:center;font-size:12.5px;color:#5B6763;}
+.mpwpb_edit_recurring_datetime_popup .mpwpb_select_datetime_timeslot,
+.mpwpb_edit_recurring_datetime_popup .mpwpb_selected_datetime_timeslot{
+	display:flex;align-items:center;justify-content:center;height:40px;padding:0 6px;border:1px solid #E2E6E4;border-radius:11px;
+	background:#fff;color:#15202B;font-size:13px;font-weight:600;cursor:pointer;transition:border-color .15s,background-color .15s,color .15s;
+}
+.mpwpb_edit_recurring_datetime_popup .mpwpb_select_datetime_timeslot:hover{border-color:var(--mpwpb_color_theme);background:var(--mpwpb-tint-bg,#F0F7F5);color:#15202B;}
+.mpwpb_edit_recurring_datetime_popup .mpwpb_select_datetime_timeslot.mpwpb_selected_time{border-color:var(--mpwpb_color_theme);background:var(--mpwpb_color_theme);color:#fff;}
+/* Already booked on that date -- shown, but not pickable. */
+.mpwpb_edit_recurring_datetime_popup .mpwpb_selected_datetime_timeslot{background:#F3F5F7;border-color:#F3F5F7;color:#B0B8C4;text-decoration:line-through;cursor:not-allowed;}
+.mpwpb_edit_recurring_datetime_popup .mpwpb_edit_date_btn_holder{display:flex;gap:10px;padding:14px 16px 16px;border-top:1px solid #EEF1F4;background:#FAFBFC;}
+.mpwpb_edit_recurring_datetime_popup .mpwpb_edit_date_btn_holder button.mpwpb_edit_recurring_datetime_close,
+.mpwpb_edit_recurring_datetime_popup .mpwpb_edit_date_btn_holder button.mpwpb_recurring_datetime_set{
+	flex:1 1 0;height:44px;margin:0;padding:0 16px;border-radius:999px;font-size:13.5px;font-weight:700;cursor:pointer;opacity:1;text-transform:none;
+	transition:background-color .15s,border-color .15s,color .15s;
+}
+.mpwpb_edit_recurring_datetime_popup .mpwpb_edit_date_btn_holder button.mpwpb_edit_recurring_datetime_close{border:1px solid #E2E6E4;background:#fff;color:#15202B;}
+.mpwpb_edit_recurring_datetime_popup .mpwpb_edit_date_btn_holder button.mpwpb_edit_recurring_datetime_close:hover,
+.mpwpb_edit_recurring_datetime_popup .mpwpb_edit_date_btn_holder button.mpwpb_edit_recurring_datetime_close:focus{border-color:#CBD5E1;background:#F3F5F7;color:#15202B;opacity:1;}
+.mpwpb_edit_recurring_datetime_popup .mpwpb_edit_date_btn_holder button.mpwpb_recurring_datetime_set{border:1px solid var(--mpwpb_color_theme);background:var(--mpwpb_color_theme);color:#fff;box-shadow:0 6px 16px rgba(15,23,42,.12);}
+.mpwpb_edit_recurring_datetime_popup .mpwpb_edit_date_btn_holder button.mpwpb_recurring_datetime_set:hover,
+.mpwpb_edit_recurring_datetime_popup .mpwpb_edit_date_btn_holder button.mpwpb_recurring_datetime_set:focus{background:var(--mpwpb-shade,var(--mpwpb_color_theme));color:#fff;opacity:1;}
+@media (max-width:380px){
+	.mpwpb_edit_recurring_datetime_popup .mpwpb_recurring_time_holedr{grid-template-columns:repeat(2,minmax(0,1fr));}
 }

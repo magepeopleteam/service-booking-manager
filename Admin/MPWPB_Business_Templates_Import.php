@@ -13,7 +13,11 @@
 			const AJAX_ACTION = 'mpwpb_import_business_template';
 			const NONCE_ACTION = 'mpwpb_admin_nonce';
 
+			/** The one hooked instance, so the onboarding wizard can reuse the picker data. */
+			public static $instance = null;
+
 			public function __construct() {
+				self::$instance = $this;
 				add_action('admin_enqueue_scripts', [$this, 'enqueue_assets']);
 				add_action('wp_ajax_' . self::AJAX_ACTION, [$this, 'ajax_import_business_template']);
 			}
@@ -44,7 +48,28 @@
 					'action' => self::AJAX_ACTION,
 					'templates' => $this->picker_payload(),
 					'i18n' => [
-						'title' => __('One-Click Business Templates', 'service-booking-manager'),
+						'title' => __('Start from a business template', 'service-booking-manager'),
+						'search' => __('Search templates', 'service-booking-manager'),
+						/* translators: %d: number of templates */
+						'searchCount' => __('Search %d templates', 'service-booking-manager'),
+						'noMatch' => __('No template matches your search.', 'service-booking-manager'),
+						'servicesTitle' => __('Services', 'service-booking-manager'),
+						'hours' => __('Hours', 'service-booking-manager'),
+						'addons' => __('Add-ons', 'service-booking-manager'),
+						'staff' => __('Staff accounts', 'service-booking-manager'),
+						'also' => __('Also included', 'service-booking-manager'),
+						/* translators: %d: number of FAQs */
+						'faqs' => __('%d FAQs', 'service-booking-manager'),
+						/* translators: %d: number of sample reviews */
+						'reviews' => __('%d sample reviews', 'service-booking-manager'),
+						/* translators: %s: discount percent */
+						'recurring' => __('recurring plan, %s%% off', 'service-booking-manager'),
+						'none' => __('None', 'service-booking-manager'),
+						/* translators: %s: business name */
+						'create' => __('Create %s', 'service-booking-manager'),
+						'cancel' => __('Cancel', 'service-booking-manager'),
+						'close' => __('Close', 'service-booking-manager'),
+						'footNote' => __('Prices use your store currency. Staff get their own logins. You can edit or delete everything afterwards.', 'service-booking-manager'),
 						'intro' => __('Choose a business type to create a fully configured, ready-to-book service business in seconds. Everything imported stays fully editable afterward.', 'service-booking-manager'),
 						'select' => __('Use This Template', 'service-booking-manager'),
 						'servicesIncluded' => __('Services Included', 'service-booking-manager'),
@@ -54,20 +79,120 @@
 				]);
 			}
 
+			/** Industry groups for the picker list (the registry itself has none). */
+			public function picker_groups(): array {
+				return [
+					__('Automotive', 'service-booking-manager') => ['car_wash', 'auto_repair', 'car_rental'],
+					__('Beauty & wellness', 'service-booking-manager') => ['hair_salon', 'spa_massage', 'nail_salon'],
+					__('Health', 'service-booking-manager') => ['medical_clinic', 'dental_clinic', 'physiotherapy', 'chiropractic'],
+					__('Fitness & lessons', 'service-booking-manager') => ['fitness_training', 'yoga_studio', 'tutoring_coaching'],
+					__('Home services', 'service-booking-manager') => ['home_cleaning', 'office_cleaning', 'pest_control', 'appliance_repair', 'plumbing', 'electrical_services', 'hvac_services', 'landscaping', 'moving_services'],
+					__('Media & events', 'service-booking-manager') => ['photography_studio', 'videography', 'event_decoration'],
+					__('Pets', 'service-booking-manager') => ['pet_grooming'],
+				];
+			}
+
+			private function price_text($price): string {
+				$text = html_entity_decode(wp_strip_all_tags(MPWPB_Global_Function::format_price((float) $price)), ENT_QUOTES, 'UTF-8');
+				return preg_replace('/^[\s\x{00A0}]+|[\s\x{00A0}]+$/u', '', $text);
+			}
+
+			private function hour_text($hour): string {
+				$hour = (float) $hour;
+				return date_i18n(get_option('time_format'), (int) round($hour * 3600), true);
+			}
+
+			/** "Mon–Fri 9:00 am – 6:00 pm (break 1:00 pm – 2:00 pm) · Sat … · Sun off" */
+			private function hours_summary(array $schedule): string {
+				if (empty($schedule['default'])) {
+					return '';
+				}
+				$days = array_keys(MPWPB_Global_Function::week_day());
+				$off = (array) ($schedule['off_days'] ?? []);
+				$rows = [];
+				foreach ($days as $day) {
+					if (in_array($day, $off, true)) {
+						$rows[$day] = 'off';
+						continue;
+					}
+					$h = $schedule['day_overrides'][$day] ?? $schedule['default'];
+					$txt = $this->hour_text($h['start']) . ' – ' . $this->hour_text($h['end']);
+					if (!empty($h['break_start']) && !empty($h['break_end'])) {
+						/* translators: %s: break time range */
+						$txt .= ' ' . sprintf(__('(break %s)', 'service-booking-manager'), $this->hour_text($h['break_start']) . ' – ' . $this->hour_text($h['break_end']));
+					}
+					$rows[$day] = $txt;
+				}
+				// Collapse runs of days with the same hours: "Mon–Fri …".
+				$parts = [];
+				$run = [];
+				$flush = function () use (&$run, &$parts, $rows) {
+					if (!$run) { return; }
+					$first = date_i18n('D', strtotime($run[0]));
+					$label = count($run) > 1 ? $first . '–' . date_i18n('D', strtotime(end($run))) : $first;
+					$val = $rows[$run[0]];
+					$parts[] = $label . ' ' . ($val === 'off' ? __('off', 'service-booking-manager') : $val);
+					$run = [];
+				};
+				foreach ($days as $day) {
+					if ($run && $rows[$run[0]] !== $rows[$day]) {
+						$flush();
+					}
+					$run[] = $day;
+				}
+				$flush();
+				return implode(' · ', $parts);
+			}
+
 			/**
-			 * Data sent to the browser for the picker cards -- label/icon/color
-			 * only, never the full template content.
+			 * Data sent to the browser for the picker list and its preview pane:
+			 * what the template will create (never the import itself).
 			 */
-			private function picker_payload(): array {
+			public function picker_payload(): array {
 				$registry = mpwpb_business_templates_registry();
+				$group_of = [];
+				foreach ($this->picker_groups() as $group => $keys) {
+					foreach ($keys as $k) { $group_of[$k] = $group; }
+				}
 				$payload = [];
 				foreach ($registry as $key => $tpl) {
+					$post = $tpl['post'] ?? [];
+					$cats = array_column((array) ($post['categories'] ?? []), 'name');
+					$services = [];
+					foreach ((array) ($post['services'] ?? []) as $svc) {
+						$ci = isset($svc['parent_cat']) && $svc['parent_cat'] !== '' ? (int) $svc['parent_cat'] : -1;
+						$services[] = [
+							'name' => $svc['name'] ?? '',
+							'price' => isset($svc['price']) ? $this->price_text($svc['price']) : '',
+							'duration' => $svc['duration'] ?? '',
+							'group' => ($ci >= 0 && isset($cats[$ci])) ? $cats[$ci] : '',
+						];
+					}
+					$extras = [];
+					foreach ((array) ($post['extra_services'] ?? []) as $ex) {
+						$extras[] = ($ex['name'] ?? '') . (isset($ex['price']) ? ' ' . $this->price_text($ex['price']) : '');
+					}
+					$staff = [];
+					foreach ((array) ($post['staff'] ?? []) as $st) {
+						$staff[] = trim(($st['first_name'] ?? '') . ' ' . ($st['last_name'] ?? ''));
+					}
+					$rec = (array) ($post['recurring'] ?? []);
 					$payload[] = [
 						'key' => $key,
 						'label' => $tpl['label'],
 						'icon' => $tpl['picker_icon'],
 						'color' => $tpl['color'],
-						'serviceCount' => count($tpl['post']['services'] ?? []),
+						'group' => $group_of[$key] ?? __('Other', 'service-booking-manager'),
+						'title' => $post['title'] ?? $tpl['label'],
+						'subtitle' => $post['shortcode_sub_title'] ?? '',
+						'serviceCount' => count($services),
+						'services' => $services,
+						'extras' => $extras,
+						'hours' => $this->hours_summary((array) ($post['schedule'] ?? [])),
+						'staff' => $staff,
+						'faqCount' => count((array) ($post['faqs'] ?? [])),
+						'reviewCount' => count((array) ($post['reviews'] ?? [])),
+						'recurringDiscount' => !empty($rec['enabled']) ? (float) ($rec['discount'] ?? 0) : null,
 					];
 				}
 				return $payload;
@@ -327,7 +452,7 @@
 
 			private function seed_reviews(int $post_id, array $reviews): void {
 				global $wpdb;
-				$this->ensure_reviews_table();
+				self::ensure_reviews_table();
 				$table_name = $wpdb->prefix . 'mpwpb_reviews';
 
 				foreach ($reviews as $review) {
@@ -356,7 +481,8 @@
 			 * fires. Kept as a cheap, idempotent safety net (SHOW TABLES LIKE
 			 * guard, same as the original) rather than a hard dependency.
 			 */
-			private function ensure_reviews_table(): void {
+			/** Creates wp_mpwpb_reviews if missing; also used by the demo importer. */
+			public static function ensure_reviews_table(): void {
 				global $wpdb;
 				$table_name = $wpdb->prefix . 'mpwpb_reviews';
 				if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") == $table_name) {

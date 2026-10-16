@@ -96,9 +96,8 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
                     } else {
                         $class = 'mpwpb_select_datetime_timeslot';
                     }
-                    $timeParts = explode(':', $time );
-                    $hour = (int)$timeParts[0];
-                    $valid_html .= '<span class="' . $class . '" data-time="' . $hour . '">' . $time . '</span>';
+                    // Full "H:i" (was the hour only, so a 16:30 slot was saved as 16:00).
+                    $valid_html .= '<span class="' . esc_attr( $class ) . '" data-time="' . esc_attr( substr( (string) $time, 0, 5 ) ) . '">' . esc_html( $time ) . '</span>';
                 }
 
                 wp_send_json_success([
@@ -184,13 +183,18 @@ if (!class_exists('MPWPB_Recurring_Booking_Settings')) {
 
                             $selected_html_right .= '<li class="mpwpd_service_date" data-cart-date-time="'.esc_attr($date).'">'.esc_html($formattedDate).'</li>';
                         }else{
-                            $html .= '<li data-date-time="" class="mpwpb_invalid_recurring_days">
+                            // Unavailable (closed that day, or the slot is taken): no
+                            // data-date-time, so it is never booked as-is -- but it keeps
+                            // a pencil so the customer can move it to an open date
+                            // (data-original-date-time seeds the edit popup).
+                            $html .= '<li data-date-time="" data-original-date-time="'.esc_attr($date).'" class="mpwpb_invalid_recurring_days">
                                 <span class="mpwpb_recurring_number">'.esc_html($count_li).'</span>
                                 <div class="mpwpb_recurring_date_text">
                                     <strong>'.esc_html($dateOnly).'</strong>
-                                    <span class="mpwpb_recurring_daytime">'.esc_html($dayTime).' &middot; '.esc_html__('Already Booked', 'service-booking-manager').'</span>
+                                    <span class="mpwpb_recurring_daytime">'.esc_html($dayTime).' &middot; '.esc_html__('Not available', 'service-booking-manager').'</span>
                                 </div>
                                 <div class="mpwpb_recurring_actions">
+                                    <span class="mpwpb_recurring_edit_icon" title="'.esc_attr__('Choose another date', 'service-booking-manager').'"><i class="fas fa-pen"></i></span>
                                     <span class="mpwpb_recurring_delete_icon"><i class="fas fa-times"></i></span>
                                 </div>
                             </li>';

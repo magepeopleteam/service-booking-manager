@@ -33,6 +33,10 @@ if (!class_exists('MPWPB_Staff_Booking')) {
         }
 
         public function mpwpb_is_staff_booked_order( $staff_term_id, $datetime ) {
+            return self::staff_has_order_at( $staff_term_id, $datetime );
+        }
+
+        public static function staff_has_order_at( $staff_term_id, $datetime ) {
             // Only existence is ever checked (!empty($bookings)) -- this used
             // to fetch every matching booking as full WP_Post objects with no
             // row limit (posts_per_page => -1) and compute found_rows on top,
@@ -73,9 +77,20 @@ if (!class_exists('MPWPB_Staff_Booking')) {
 
 
         public static function mpwpb_is_repeated_date( $start_date, $repeat_every_days, $check_date ) {
-            // Convert to DateTime objects
+            // No start date set = no restriction. `new DateTime('')` means "right
+            // now" (time included), so an empty start used to make today's own
+            // midnight-based date count as "before start" and every staff member
+            // without a start date was unavailable for the rest of the day.
+            if (empty($start_date)) {
+                return true;
+            }
+            $repeat_every_days = max(1, (int) $repeat_every_days);
+            // Compare calendar dates only -- a time-of-day on either side would
+            // otherwise shift the result for the same day.
             $start = new DateTime($start_date);
             $check = new DateTime($check_date);
+            $start->setTime(0, 0, 0);
+            $check->setTime(0, 0, 0);
 
             // If check date is before start date, it's false
             if ($check < $start) {
@@ -87,6 +102,35 @@ if (!class_exists('MPWPB_Staff_Booking')) {
 
             $aa = ($diff_days % $repeat_every_days === 0);
             return  $aa;
+        }
+
+        /** "2026-10-20 16:30, 2026-10-27 16:30" -> normalized "Y-m-d H:i" list (invalid parts dropped). */
+        public static function parse_datetimes($value) {
+            $out = array();
+            foreach (explode(',', (string) $value) as $part) {
+                if (preg_match('/^\s*(\d{4}-\d{2}-\d{2})[ T](\d{2}):(\d{2})/', $part, $m)) {
+                    $out[] = $m[1] . ' ' . $m[2] . ':' . $m[3];
+                }
+            }
+            return array_values(array_unique($out));
+        }
+
+        /**
+         * Free for every given "Y-m-d H:i": on schedule that day, inside working
+         * hours / outside the break, and not already booked at that time. The
+         * first two are exactly MPWPB_Woocommerce::validate_staff()'s checks.
+         */
+        public static function is_staff_free($staff_id, array $datetimes) {
+            foreach ($datetimes as $datetime) {
+                $date = substr($datetime, 0, 10);
+                $time = (string) ((int) substr($datetime, 11, 2) + ((int) substr($datetime, 14, 2) / 60));
+                if (!self::get_date_check($staff_id, $date, $time)
+                    || !self::mpwpb_is_staff_available_time($staff_id, $time, $date)
+                    || self::staff_has_order_at($staff_id, $datetime)) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         public function mpwpb_is_staff_booked( $staff_id, $date, $time ) {
@@ -152,9 +196,14 @@ if (!class_exists('MPWPB_Staff_Booking')) {
             // 2. Handle "particular" travel type
             if ($travel_type === 'particular') {
                 $particular_dates = get_user_meta($staff_id, 'mpwpb_particular_dates', false); // Use `false` to get all values
-                $flat_dates = !empty($particular_dates) ? call_user_func_array('array_merge', $particular_dates) : [];
+                $flat_dates = !empty($particular_dates) ? array_values(array_filter(call_user_func_array('array_merge', $particular_dates))) : [];
 
-                return in_array($check_date, $flat_dates);
+                // Dates listed = only those dates. None listed = no date
+                // restriction (handled below with the off days/dates checks),
+                // same rule as an empty "repeat from" start date.
+                if (!empty($flat_dates)) {
+                    return in_array($check_date, $flat_dates);
+                }
             }
 
             // 3. Handle "repeated" travel type
@@ -185,7 +234,17 @@ if (!class_exists('MPWPB_Staff_Booking')) {
                 }
             }
 
-            // 4. If no condition matched
+            // 4. No usable schedule (no type set, or a One-time Schedule with no
+            // dates): no date restriction -- available unless today is one of
+            // their off dates/off days.
+            if ($travel_type !== 'repeated') {
+                $check_day = strtolower(date('l', strtotime($check_date)));
+                $get_off_dates = get_user_meta($staff_id, 'mpwpb_off_dates', false);
+                $off_dates = !empty($get_off_dates) ? call_user_func_array('array_merge', $get_off_dates) : [];
+                $get_off_days = get_user_meta($staff_id, 'mpwpb_off_days', true);
+                $off_days_arr = !empty($get_off_days) ? array_map('strtolower', array_map('trim', explode(',', $get_off_days))) : [];
+                return !in_array($check_date, $off_dates) && !in_array($check_day, $off_days_arr);
+            }
             return false;
         }
 
@@ -292,6 +351,15 @@ if (!class_exists('MPWPB_Staff_Booking')) {
             $date       = isset($_POST['staff_date']) ? sanitize_text_field(wp_unslash($_POST['staff_date'])) : '';
             $time       = isset($_POST['staff_time']) ? sanitize_text_field($_POST['staff_time']) : '';
             $date_time  = isset($_POST['date_time']) ? sanitize_text_field($_POST['date_time']) : '';
+            // Every booking datetime ("Y-m-d H:i", comma separated) -- the
+            // first slot plus each recurring occurrence. Staff are listed only
+            // when free for ALL of them, the same rule add-to-cart enforces
+            // (MPWPB_Woocommerce::validate_staff), so a listed staff member can
+            // never be rejected with "The selected staff member is not available."
+            $all_dates = isset($_POST['dates']) ? self::parse_datetimes(sanitize_text_field(wp_unslash($_POST['dates']))) : array();
+            if (!$all_dates) {
+                $all_dates = self::parse_datetimes($date_time);
+            }
 
             $response = [
                 'html' => '',
@@ -317,61 +385,75 @@ if (!class_exists('MPWPB_Staff_Booking')) {
                         ]);
 
                         foreach ($all_staffs as $staff_data) {
-                            $staff_id = $staff_data->ID;
-                            if ($this->mpwpb_is_staff_booked($staff_id, $date, $time)) {
-                                if (!$this->mpwpb_is_staff_booked_order($staff_id, $date_time)) {
-                                    if (self::mpwpb_is_staff_available_time($staff_id, $time, $date_time)) {
-                                        $available_staff[] = $staff_data;
-                                    }
-                                }
+                            if ($all_dates ? self::is_staff_free($staff_data->ID, $all_dates) : (
+                                $this->mpwpb_is_staff_booked($staff_data->ID, $date, $time)
+                                && !$this->mpwpb_is_staff_booked_order($staff_data->ID, $date_time)
+                                && self::mpwpb_is_staff_available_time($staff_data->ID, $time, $date_time)
+                            )) {
+                                $available_staff[] = $staff_data;
                             }
                         }
                     }
-                    if ( !empty( $available_staff ) ) {
-                        $html = '<div class="mpwp_select_staff_grid">
-                            <div class="mpwp_select_staff_card">
-                                <input type="hidden" class="mpwpb_selected_staff" name="mpwpb_selected_staff_id[]" value="">
-                                <div class="mpwp_select_staff_avatar">👥</div>
-                                <div class="mpwp_select_staff_name">Any Staff</div>
-                            </div>
-                        ';
-                        foreach ($available_staff as $staff) {
-                            $image_id = get_user_meta($staff->ID, 'mpwpb_custom_profile_image', true);
-
-                            $image_url = esc_url(wp_get_attachment_url($image_id));
-                            if( empty( $image_url ) ){
-                                $image_url = MPWPB_PLUGIN_URL.'/mp_global/assets/images/staff_fallback.webp';
-                            }
-                            $html .=
-                                '<div class="mpwp_select_staff_card">
-                                <input type="hidden" class="mpwpb_selected_staff" name="mpwpb_selected_staff_id[]" value="' . esc_attr($staff->ID) . '">
-                                <img class="mpwp_select_staff_avatar" src="' . esc_url($image_url) . '" alt="' . esc_attr($staff->user_nicename) . '">
-                                <div class="mpwp_select_staff_name">' . esc_html($staff->display_name) . '</div>
-                            </div>';
-
-                        }
-                        $html .= '</div>';
-
-                        $response['html'] = $html;
-                        $response['count'] = count($available_staff);
-                    } else {
-                        $html = '<div class="mpwp_select_staff_grid">
-                                <div class="mpwp_select_staff_card">
-                                    <input type="hidden" class="mpwpb_selected_staff" name="mpwpb_selected_staff_id[]" value="">
-                                    <div class="mpwp_select_staff_avatar">👥</div>
-                                    <div class="mpwp_select_staff_name">Any Staff</div>
-                                </div>
-                            </div>';
-                        $response['html'] = $html;
-                        $response['count'] = 1;
-                    }
+                    $response['html'] = self::render_staff_cards($available_staff, $date_time);
+                    $response['count'] = !empty($available_staff) ? count($available_staff) : 1;
                 }
             }
 
             wp_send_json( $response ); // return JSON and end execution
         }
 
+        /**
+         * Staff step cards: "Any Staff" first (pre-selected -- an empty
+         * mpwpb_staff_member_booking already means "any"), then each free staff
+         * member with their photo, or their initial when they have none.
+         * Every card keeps .mpwp_select_staff_card + its hidden
+         * .mpwpb_selected_staff input, which mpwpb_registration.js's click
+         * handler reads.
+         */
+        private static function render_staff_cards($available_staff, $date_time) {
+            $time_label = '';
+            if ($date_time && strtotime($date_time)) {
+                $time_label = date_i18n(get_option('time_format'), strtotime($date_time));
+            }
+            $check_icon = '<span class="mpwp_select_staff_radio" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 4.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
 
+            $html = '<div class="mpwp_select_staff_grid">';
+            $html .= '<button type="button" class="mpwp_select_staff_card selected" aria-pressed="true">'
+                . '<input type="hidden" class="mpwpb_selected_staff" name="mpwpb_selected_staff_id[]" value="">'
+                . '<span class="mpwp_select_staff_avatar mpwp_select_staff_avatar--any" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.2" stroke="currentColor" stroke-width="2"/><path d="M3.5 19c.6-3 2.8-5 5.5-5s4.9 2 5.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="17" cy="9" r="2.6" stroke="currentColor" stroke-width="2"/><path d="M16 14.2c2.4.2 4 1.9 4.5 4.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>'
+                . '<span class="mpwp_select_staff_text">'
+                . '<span class="mpwp_select_staff_name">' . esc_html__('Any Staff', 'service-booking-manager') . '</span>'
+                . '<span class="mpwp_select_staff_meta">' . esc_html__('First available', 'service-booking-manager') . '</span>'
+                . '</span>'
+                . $check_icon
+                . '</button>';
+
+            foreach ((array) $available_staff as $staff) {
+                $image_id = get_user_meta($staff->ID, 'mpwpb_custom_profile_image', true);
+                $image_url = $image_id ? wp_get_attachment_image_url($image_id, 'thumbnail') : '';
+                if ($image_url) {
+                    $avatar = '<img class="mpwp_select_staff_avatar" src="' . esc_url($image_url) . '" alt="">';
+                } else {
+                    $initial = function_exists('mb_substr') ? mb_strtoupper(mb_substr($staff->display_name, 0, 1)) : strtoupper(substr($staff->display_name, 0, 1));
+                    $avatar = '<span class="mpwp_select_staff_avatar mpwp_select_staff_avatar--initial" aria-hidden="true">' . esc_html($initial) . '</span>';
+                }
+                $meta = $time_label
+                    /* translators: %s: booked time, e.g. 4:00 pm */
+                    ? sprintf(esc_html__('Available at %s', 'service-booking-manager'), esc_html($time_label))
+                    : esc_html__('Available', 'service-booking-manager');
+                $html .= '<button type="button" class="mpwp_select_staff_card" aria-pressed="false">'
+                    . '<input type="hidden" class="mpwpb_selected_staff" name="mpwpb_selected_staff_id[]" value="' . esc_attr($staff->ID) . '">'
+                    . $avatar
+                    . '<span class="mpwp_select_staff_text">'
+                    . '<span class="mpwp_select_staff_name">' . esc_html($staff->display_name) . '</span>'
+                    . '<span class="mpwp_select_staff_meta">' . $meta . '</span>'
+                    . '</span>'
+                    . $check_icon
+                    . '</button>';
+            }
+            $html .= '</div>';
+            return $html;
+        }
     }
 
     new MPWPB_Staff_Booking();

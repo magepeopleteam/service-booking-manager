@@ -597,16 +597,23 @@
 				if (!isset($_POST['mpwpb_add_staff_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['mpwpb_add_staff_nonce'])), 'mpwpb_add_staff_nonce')) {
 					return;
 				}
-				$user_id = isset($_POST['mpwpb_user']) ? absint(wp_unslash($_POST['mpwpb_user'])) : '';
+				$user_id = isset($_POST['mpwpb_user']) ? absint(wp_unslash($_POST['mpwpb_user'])) : 0;
+				$is_new_user = false;
 				if (!$user_id) {
 					$user_name = isset($_POST['mpwpb_user_name']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_user_name'])) : '';
 					$user_pass = isset($_POST['mpwpb_user_password']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_user_password'])) : '';
 					$user_email = isset($_POST['mpwpb_user_mail']) ? sanitize_email(wp_unslash($_POST['mpwpb_user_mail'])) : '';
 					if ($user_name && $user_pass && $user_email) {
-						$user_id = wp_create_user($user_name, $user_pass, $user_email);
-						if (!$user_id || is_wp_error($user_id)) {
-							echo 'sorry user not create';
+						$created = wp_create_user($user_name, $user_pass, $user_email);
+						// A failed create returns a WP_Error object, which is still
+						// truthy -- carried on into wp_update_user(), (int) cast it to
+						// 1 and turned user #1 (the site admin) into a staff member.
+						if (is_wp_error($created) || !$created) {
+							echo esc_html(is_wp_error($created) ? $created->get_error_message() : __('Staff user could not be created.', 'service-booking-manager'));
+							return;
 						}
+						$user_id = (int) $created;
+						$is_new_user = true;
 					}
 				}
 				if ($user_id) {
@@ -617,9 +624,17 @@
 						'ID' => $user_id,
 						'first_name' => $first_name,
 						'last_name' => $last_name,
-						'role' => 'mpwpb_staff',
 					);
 					wp_update_user($userinfo);
+					// New accounts become staff outright; an existing user picked from
+					// the list gains the staff role on top of what they already have,
+					// so making someone staff never strips an admin/manager role.
+					$staff_user = new WP_User($user_id);
+					if ($is_new_user) {
+						$staff_user->set_role('mpwpb_staff');
+					} elseif (!in_array('mpwpb_staff', (array) $staff_user->roles, true)) {
+						$staff_user->add_role('mpwpb_staff');
+					}
 					$date_type = isset($_POST['mpwpb_date_type']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_date_type'])) : 'repeated';
 					update_user_meta($user_id, 'date_type', $date_type);
 					update_user_meta($user_id, 'mpwpb_staff_modify_holiday', $modify_holiday);

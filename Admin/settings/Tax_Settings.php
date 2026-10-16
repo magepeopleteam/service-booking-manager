@@ -37,7 +37,7 @@
 				$enabled = isset($_POST['mpwpb_tax_enabled']) ? 'on' : 'off';
 				$tax_class = isset($_POST['mpwpb_tax_class']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_tax_class'])) : '';
 				$tax_rate = isset($_POST['mpwpb_tax_rate']) ? (float) wp_unslash($_POST['mpwpb_tax_rate']) : 0.0;
-				$tax_rate = max(0.0, round($tax_rate, 4));
+				$tax_rate = min(100.0, max(0.0, round($tax_rate, 4)));
 				update_post_meta($post_id, 'mpwpb_tax_enabled', $enabled);
 				update_post_meta($post_id, 'mpwpb_tax_class', $tax_class);
 				update_post_meta($post_id, 'mpwpb_tax_rate', $tax_rate);
@@ -70,6 +70,48 @@
 				}
 			}
 
+			/**
+			 * What the editor needs to explain the shared-rate behaviour:
+			 * with WooCommerce, each class has ONE rate (synced by
+			 * MPWPB_Tax_Helper::sync_wc_tax_rate()), so report each class's
+			 * current WooCommerce rate and how many other tax-enabled services
+			 * use it. Without WooCommerce every service keeps its own rate, so
+			 * nothing is shared.
+			 */
+			private function class_rate_info($post_id, array $classes): array {
+				$info = [
+					'shared' => class_exists('WC_Tax'),
+					'pricesIncludeTax' => function_exists('wc_prices_include_tax') && wc_prices_include_tax(),
+					'rates' => [],
+					'others' => [],
+				];
+				if (!$info['shared'] || !class_exists('MPWPB_Tax_Helper')) {
+					return $info;
+				}
+				$rate_ids = get_option(MPWPB_Tax_Helper::RATE_ID_OPTION, []);
+				$rate_ids = is_array($rate_ids) ? $rate_ids : [];
+				foreach ($classes as $class) {
+					$row = !empty($rate_ids[$class]) ? WC_Tax::_get_tax_rate($rate_ids[$class]) : null;
+					if (is_array($row) && isset($row['tax_rate'])) {
+						$info['rates'][$class] = (float) $row['tax_rate'];
+					}
+				}
+				$others = get_posts([
+					'post_type' => MPWPB_Function::get_cpt(),
+					'post_status' => 'any',
+					'numberposts' => -1,
+					'fields' => 'ids',
+					'post__not_in' => [(int) $post_id],
+					'meta_key' => 'mpwpb_tax_enabled',
+					'meta_value' => 'on',
+				]);
+				foreach ($others as $other_id) {
+					$class = (string) get_post_meta($other_id, 'mpwpb_tax_class', true);
+					$info['others'][$class] = ($info['others'][$class] ?? 0) + 1;
+				}
+				return $info;
+			}
+
 			public function tax_settings($post_id) {
 				$enabled = get_post_meta($post_id, 'mpwpb_tax_enabled', true) === 'on';
 				$tax_class = get_post_meta($post_id, 'mpwpb_tax_class', true);
@@ -77,6 +119,7 @@
 				$tax_class_options = class_exists('MPWPB_Tax_Helper')
 					? MPWPB_Tax_Helper::get_tax_class_options()
 					: ['' => __('Standard', 'service-booking-manager')];
+				$tax_info = $this->class_rate_info($post_id, array_keys($tax_class_options));
 				?>
 				<div class="tabsItem" data-tabs="#mpwpb_tax_settings">
 					<header>
@@ -99,7 +142,7 @@
 						</label>
 					</section>
 
-					<section id="mpwpb_tax_class_row" data-collapse="#mpwpb_tax_class_row" class="<?php echo $enabled ? 'mActive' : ''; ?>" style="display: <?php echo $enabled ? 'block' : 'none'; ?>">
+					<section id="mpwpb_tax_class_row" data-collapse="#mpwpb_tax_class_row" class="<?php echo $enabled ? 'mActive' : ''; ?>" style="display: <?php echo $enabled ? 'block' : 'none'; ?>" data-tax-info="<?php echo esc_attr(wp_json_encode($tax_info)); ?>">
 						<label class="label">
 							<div>
 								<p><?php esc_html_e('Tax Class', 'service-booking-manager'); ?></p>

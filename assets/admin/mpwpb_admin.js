@@ -234,6 +234,105 @@
     $(document).on('change', '.mpwpb_add_staff  .mpwpb_user_select', function () {
         load_staff_form($(this).val());
     });
+
+    // Add/Edit Staff form validation: inline message under each bad field,
+    // plus a username/email "already registered" check before submitting --
+    // the server repeats the same rules (MPWPB_Staff_Members::save_staff()).
+    var staffMsg = (window.mpwpb_admin_ajax && mpwpb_admin_ajax.staffValidation) || {};
+    function staffFieldError($form, name, message) {
+        var $input = $form.find('[name="' + name + '"]').first();
+        if (!$input.length) {
+            return;
+        }
+        $input.addClass('mpwpb_field_invalid').attr('aria-invalid', 'true');
+        var $label = $input.closest('label');
+        $label.find('.mpwpb_field_error').remove();
+        $('<span class="mpwpb_field_error" role="alert"></span>').text(message).appendTo($label);
+    }
+    function clearStaffErrors($form) {
+        $form.find('.mpwpb_field_error').remove();
+        $form.find('.mpwpb_field_invalid').removeClass('mpwpb_field_invalid').removeAttr('aria-invalid');
+    }
+    $(document).on('input change', '.mpwpb_staff_form .mpwpb_field_invalid', function () {
+        $(this).removeClass('mpwpb_field_invalid').removeAttr('aria-invalid').closest('label').find('.mpwpb_field_error').remove();
+    });
+    $(document).on('submit', '.mpwpb_staff_form', function (e) {
+        var $form = $(this);
+        if ($form.data('mpwpbStaffValidated')) {
+            return true;
+        }
+        e.preventDefault();
+        clearStaffErrors($form);
+        var isNewUser = !$.trim($form.find('[name="mpwpb_user"]').val() || '');
+        var login = $.trim($form.find('[name="mpwpb_user_name"]').val() || '');
+        var pass = $form.find('[name="mpwpb_user_password"]').val() || '';
+        var email = $.trim($form.find('[name="mpwpb_user_mail"]').val() || '');
+        var errors = {};
+        if (isNewUser) {
+            if (!login) {
+                errors.mpwpb_user_name = staffMsg.usernameRequired || 'Username is required.';
+            } else if (login.length < 3) {
+                errors.mpwpb_user_name = staffMsg.usernameShort || 'Username must be at least 3 characters.';
+            }
+            if (!pass) {
+                errors.mpwpb_user_password = staffMsg.passwordRequired || 'Password is required.';
+            } else if (pass.length < 8) {
+                errors.mpwpb_user_password = staffMsg.passwordShort || 'Password must be at least 8 characters.';
+            }
+        }
+        if (!email) {
+            errors.mpwpb_user_mail = staffMsg.emailRequired || 'Email is required.';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            errors.mpwpb_user_mail = staffMsg.emailInvalid || 'Please enter a valid email address.';
+        }
+        function submitForReal() {
+            $form.data('mpwpbStaffValidated', true);
+            $form.trigger('submit');
+        }
+        function showErrors(list) {
+            $.each(list, function (name, message) {
+                staffFieldError($form, name, message);
+            });
+            $form.find('.mpwpb_field_invalid').first().trigger('focus');
+        }
+        if (!$.isEmptyObject(errors)) {
+            showErrors(errors);
+            return false;
+        }
+        if (!isNewUser) {
+            submitForReal();
+            return false;
+        }
+        var $button = $form.find('button[type="submit"]').prop('disabled', true);
+        $.post(mpwpb_admin_ajax.ajax_url, {
+            action: 'mpwpb_check_staff_availability',
+            nonce: mpwpb_admin_ajax.nonce,
+            user_login: login,
+            user_email: email
+        }).done(function (response) {
+            if (!response || !response.success) {
+                showErrors({mpwpb_user_mail: staffMsg.checkFailed || 'Could not verify the username/email right now. Please try again.'});
+                return;
+            }
+            var taken = {};
+            if (response.data.username_taken) {
+                taken.mpwpb_user_name = staffMsg.usernameTaken || 'This username is already taken.';
+            }
+            if (response.data.email_taken) {
+                taken.mpwpb_user_mail = staffMsg.emailTaken || 'This email is already used by another account.';
+            }
+            if (!$.isEmptyObject(taken)) {
+                showErrors(taken);
+                return;
+            }
+            submitForReal();
+        }).fail(function () {
+            showErrors({mpwpb_user_mail: staffMsg.checkFailed || 'Could not verify the username/email right now. Please try again.'});
+        }).always(function () {
+            $button.prop('disabled', false);
+        });
+        return false;
+    });
     $(document).on('click', '#mpwpb_delete_staff', function () {
         if (confirm('Are You Sure , Remove this row ? \n\n 1. Ok : To Remove . \n 2. Cancel : To Cancel .')) {
             let staff_id = $(this).data('staff-id');
@@ -298,8 +397,10 @@
         $('.mpwpb_faq_update_buttons').show();
         var itemId = $(this).closest('.mpwpb-faq-item').data('id');
         var parent = $(this).closest('.mpwpb-faq-item');
-        var headerText = parent.find('.faq-header p').text().trim();
-        var faqContentId = parent.find('.faq-content').text().trim();
+        // [data-faq-title] is the modern editor's title node (the classic <p> is
+        // replaced there). Read the answer as HTML so editing keeps its formatting.
+        var headerText = (parent.find('[data-faq-title]').text() || parent.find('.faq-header p').text()).trim();
+        var faqContentId = parent.find('.faq-content').html().trim();
         var editorId = 'mpwpb_faq_content';
         $('input[name="mpwpb_faq_title"]').val(headerText);
         $('input[name="mpwpb_faq_item_id"]').val(itemId);

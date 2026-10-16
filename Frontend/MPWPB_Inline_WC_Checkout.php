@@ -125,8 +125,11 @@
 				<div class="mpwpb-inline-checkout-notices" aria-live="polite"></div>
 				<div class="mpwpb-inline-checkout-stage" data-inline-stage="billing">
 					<div class="mpwpb-inline-checkout-heading">
-						<h3><?php esc_html_e('Billing & Customer Information', 'service-booking-manager'); ?></h3>
-						<p><?php esc_html_e('Enter the details required to confirm your booking.', 'service-booking-manager'); ?></p>
+						<span class="mpwpb-inline-checkout-heading-icon" aria-hidden="true"><i class="fas fa-user"></i></span>
+						<div class="mpwpb-inline-checkout-heading-text">
+							<h3><?php esc_html_e('Billing & Customer Information', 'service-booking-manager'); ?></h3>
+							<p><?php esc_html_e('Enter the details required to confirm your booking.', 'service-booking-manager'); ?></p>
+						</div>
 					</div>
 					<?php do_action('woocommerce_checkout_before_customer_details'); ?>
 					<div id="customer_details" class="col2-set">
@@ -141,8 +144,12 @@
 				</div>
 				<div class="mpwpb-inline-checkout-stage" data-inline-stage="payment" hidden>
 					<div class="mpwpb-inline-checkout-heading">
-						<h3><?php esc_html_e('Payment & Booking Summary', 'service-booking-manager'); ?></h3>
-						<p><?php esc_html_e('Review your booking and choose a payment method.', 'service-booking-manager'); ?></p>
+						<span class="mpwpb-inline-checkout-heading-icon" aria-hidden="true"><i class="fas fa-credit-card"></i></span>
+						<div class="mpwpb-inline-checkout-heading-text">
+							<h3><?php esc_html_e('Payment & Booking Summary', 'service-booking-manager'); ?></h3>
+							<p><?php esc_html_e('Review your booking and choose a payment method.', 'service-booking-manager'); ?></p>
+						</div>
+						<span class="mpwpb-inline-checkout-heading-badge"><i class="fas fa-lock" aria-hidden="true"></i> <?php esc_html_e('Secure', 'service-booking-manager'); ?></span>
 					</div>
 					<div class="mpwpb-inline-coupon">
 						<label for="mpwpb_inline_coupon_code"><?php esc_html_e('Coupon code', 'woocommerce'); ?></label>

@@ -102,7 +102,7 @@ if (!class_exists('Staff_Member')) {
                     </label>
                 </section>
 
-                <section id="mpwpb_add_staff_container" style="display: <?php echo esc_attr( $load_selection );?>">
+                <section id="mpwpb_add_staff_container" class="<?php echo $load_selection === 'block' ? 'mActive' : ''; ?>" data-collapse="#mpwpb_staff_member_add" style="display: <?php echo esc_attr( $load_selection );?>">
                     <div class="mpwpb_add_staff_container" >
                         <label><?php esc_html_e('Select Staff', 'service-booking-manager'); ?></label>
                         <!-- Plain clickable grid, no dropdown/popup -- every staff

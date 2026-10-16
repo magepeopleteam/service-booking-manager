@@ -81,13 +81,26 @@
 
         let date_time = $(this).attr('data-date').trim();
         let data_radio_check = $(this).attr('data-radio-check').trim();
-        let dateObj = new Date(date_time);
-        let year = dateObj.getFullYear();
-        let month = String(dateObj.getMonth() + 1).padStart(2, '0'); // Months are 0-based
-        let day = String(dateObj.getDate()).padStart(2, '0');
-
-        let formattedDate = `${year}-${month}-${day}`;
-        let hours24 = dateObj.getHours() + (dateObj.getMinutes() / 60);
+        // Date/time for the staff lookup come from data-radio-check
+        // ("2026-10-14 10:00"), not data-date: data-date is display text and
+        // now carries the slot's end time too ("October 14, 2026 10:00 am -
+        // 11:00 am"), which new Date() rejects as Invalid Date -- the request
+        // then sent "NaN-NaN-NaN"/NaN, no staff ever matched, and the staff
+        // step was skipped for every staff-enabled service.
+        let formattedDate = '';
+        let hours24 = NaN;
+        let slotMatch = data_radio_check.match(/^(\d{4}-\d{2}-\d{2})\s+(\d{1,2}):(\d{2})/);
+        if (slotMatch) {
+            formattedDate = slotMatch[1];
+            hours24 = parseInt(slotMatch[2], 10) + (parseInt(slotMatch[3], 10) / 60);
+        } else {
+            let dateObj = new Date(date_time.split(' - ')[0]);
+            let year = dateObj.getFullYear();
+            let month = String(dateObj.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+            let day = String(dateObj.getDate()).padStart(2, '0');
+            formattedDate = `${year}-${month}-${day}`;
+            hours24 = dateObj.getHours() + (dateObj.getMinutes() / 60);
+        }
 
         let ajaxUrl = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.ajax_url : mpwpb_ajax.ajax_url;
         let nonce = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.nonce : mpwpb_ajax.nonce;
@@ -119,11 +132,35 @@
                 // instead of the buttons just silently vanishing.
                 $("#mpwpb_show_hide_staff_member").hide();
                 $("#mpwpb_date_time_next_btn_id").hide();
+                // Remembered for mpwpbRefreshStaff() (re-run on "Next Staff
+                // Member" once the recurring dates are final).
+                $("#mpwpb_staff_member_holder").data({ mpwpbServiceId: post_id, mpwpbSlot: data_radio_check });
                 mpwpb_loader($("#mpwpb_staff_member_holder"));
             },
             success: function(response) {
-                mpwpb_loaderRemove($("#mpwpb_staff_member_holder"));
-                $("#mpwpb_staff_member_holder").html( response.html );
+                var $holder = $("#mpwpb_staff_member_holder");
+                mpwpb_loaderRemove($holder);
+                $holder.html( response.html );
+                $holder.data('mpwpbStaffCount', response.count || 0);
+                // A new list arrives with "Any Staff" pre-selected -- clear any
+                // staff picked for the previous time slot so the two agree.
+                $("#mpwpb_staff_member_booking").val('');
+                // Staff-enabled service (the staff step is only rendered for
+                // those, date_time_select.php): the Date & Time step offers
+                // ONLY "Next Staff Member" -- "Proceed to Checkout" belongs to
+                // the staff step. No free staff for this slot is reported on
+                // that step instead of silently skipping it.
+                if ($('#mpwpb_staff_member_booking_area').length) {
+                    if (!response.count) {
+                        $holder.html($('<p class="mpwpb_no_staff_notice"></p>').text($holder.attr('data-no-staff-text') || 'No staff member is available for this time. Please choose another time slot.'));
+                    }
+                    $('#mpwpb_progress_checkout').removeClass('active');
+                    $("#mpwpb_progress_staff").fadeIn();
+                    $("#mpwpb_date_time_next_btn_id").hide();
+                    $("#mpwpb_show_hide_staff_member").fadeIn();
+                    $("#mpwpb_staff_arrow").fadeIn();
+                    return;
+                }
                 if( response.count < 1 ){
                     $("#mpwpb_progress_staff").fadeOut();
                     $("#mpwpb_progress_checkout").addClass('active');
@@ -146,11 +183,18 @@
             error: function(xhr, status, error) {
                 console.error('AJAX error:', status, error);
                 parent.find('#mpwpb_recurring_dates_list').html('<li>Error: ' + error + '</li>');
-                mpwpb_loaderRemove($("#mpwpb_staff_member_holder"));
+                var $holder = $("#mpwpb_staff_member_holder");
+                mpwpb_loaderRemove($holder);
                 // Neither button was left visible going into this request --
-                // fall back to "Proceed to Checkout" on failure so the
-                // customer always has a way to continue rather than being
-                // stuck with no visible next step at all.
+                // always leave the customer a way forward: the staff step for
+                // staff-enabled services (where the failure is explained),
+                // otherwise straight to checkout.
+                if ($('#mpwpb_staff_member_booking_area').length) {
+                    $holder.data('mpwpbStaffCount', 0).html($('<p class="mpwpb_no_staff_notice"></p>').text($holder.attr('data-load-error-text') || 'Staff availability could not be loaded. Please choose the time slot again.'));
+                    $("#mpwpb_date_time_next_btn_id").hide();
+                    $("#mpwpb_show_hide_staff_member").fadeIn();
+                    return;
+                }
                 $("#mpwpb_show_hide_staff_member").hide();
                 $("#mpwpb_date_time_next_btn_id").fadeIn();
             }
@@ -189,6 +233,16 @@
         
         if (isChecked) {
             parent.find('.mpwpb_recurring_settings').slideDown(350);
+            // Start on the first allowed type (first chip) instead of nothing
+            // selected. The change (re)generates the dates list straight away
+            // -- also when switching back on, since switching off emptied it.
+            let $type = parent.find('#mpwpb_recurring_type');
+            if (!$type.val()) {
+                $type.val($type.find('option').filter(function () { return !!this.value; }).first().val() || '');
+            }
+            if ($type.val()) {
+                $type.trigger('change');
+            }
         } else {
 
             let parent_div = $('.next_date_area');
@@ -335,6 +389,7 @@
         } else {
             parent.find('.mpwpb_recurring_dates').hide();
         }
+        syncRecurringUi( parent );
     }
 
     // The "Select Staff" step's compact recap (#mpwpb_staff_selected_datetime,
@@ -360,6 +415,148 @@
             parent.find('#mpwpb_staff_selected_datetime').text(availableDates.join(', '));
         }
     }
+
+    /* ------------------------------------------------------------------ *
+     *  Redesigned recurring block (templates/registration/date_time_select.php):
+     *  type chips, occurrences stepper and the "N bookings · range" summary
+     *  are front-ends only -- the real #mpwpb_recurring_type <select>,
+     *  #mpwpb_recurring_count input and the dates list stay the source of
+     *  truth, and every existing handler above keeps reading them. This just
+     *  mirrors their current state onto the new controls.
+     * ------------------------------------------------------------------ */
+    function syncRecurringUi( scope ) {
+        $(scope || document).find('.mpwpb_recurring_booking').each(function () {
+            let $box = $(this);
+            let $select = $box.find('#mpwpb_recurring_type');
+            let $chips = $box.find('.mpwpb_recurring_type_chips');
+            if ($chips.length && !$chips.children().length) {
+                $select.find('option').each(function () {
+                    if (!this.value) { return; }
+                    $('<button type="button" class="mpwpb_recurring_chip" role="radio"></button>')
+                        .attr('data-recurring-type', this.value)
+                        .text($.trim($(this).text()))
+                        .appendTo($chips);
+                });
+            }
+            let current = $select.val() || '';
+            $chips.find('[data-recurring-type]').each(function () {
+                let on = $(this).attr('data-recurring-type') === current;
+                $(this).toggleClass('is-active', on).attr('aria-checked', on ? 'true' : 'false');
+            });
+
+            let $count = $box.find('#mpwpb_recurring_count');
+            let value = parseInt($count.val(), 10) || 2;
+            let min = parseInt($count.attr('min'), 10) || 2;
+            let max = parseInt($count.attr('max'), 10) || 26;
+            $box.find('[data-recurring-step="-1"]').prop('disabled', value <= min);
+            $box.find('[data-recurring-step="1"]').prop('disabled', value >= max);
+
+            let $dates = $box.find('.mpwpb_recurring_dates');
+            let $list = $box.find('#mpwpb_recurring_dates_list');
+            let $items = $list.find('li').filter(function () { return !!$(this).attr('data-date-time'); });
+            $list.toggleClass('is-min', $items.length <= 2);
+            if ($items.length) {
+                let label = ($dates.attr('data-count-label') || '%d bookings').replace('%d', $items.length);
+                $dates.find('.mpwpb_recurring_dates_count').text(label);
+                // Earliest/latest, not first/last row: an edited row can move anywhere.
+                let stamps = $items.map(function () { return new Date($(this).attr('data-date-time').replace(' ', 'T')).getTime(); }).get()
+                    .filter(function (t) { return !isNaN(t); });
+                let first = new Date(stamps.length ? Math.min.apply(null, stamps) : NaN);
+                let last = new Date(stamps.length ? Math.max.apply(null, stamps) : NaN);
+                let range = '';
+                if (!isNaN(first) && !isNaN(last)) {
+                    let short = { month: 'short', day: 'numeric' };
+                    range = first.toLocaleDateString(undefined, short) + ' – ' + last.toLocaleDateString(undefined, $.extend({ year: 'numeric' }, short));
+                }
+                $dates.find('.mpwpb_recurring_dates_range').text(range);
+            }
+        });
+    }
+    window.mpwpbSyncRecurringUi = syncRecurringUi;
+
+    /**
+     * Reload the staff cards for EVERY booking date -- the first slot plus
+     * each recurring occurrence, collected exactly like add-to-cart does
+     * (mpwpb_registration.js). The list fetched on the time-slot click only
+     * knew the first date, so with recurring on a staff member who is off on
+     * a later occurrence was listed, then rejected at checkout with "The
+     * selected staff member is not available." Keeps the customer's pick
+     * when that staff member is still free.
+     */
+    window.mpwpbRefreshStaff = function (parent) {
+        var $holder = $("#mpwpb_staff_member_holder");
+        var serviceId = $holder.data('mpwpbServiceId');
+        if (!serviceId) { return; }
+        var dates = [];
+        $('#mpwpb_recurring_dates_list li').each(function () {
+            var dt = $(this).data('date-time');
+            if (dt) { dates.push(String(dt).substring(0, 16)); }
+        });
+        if (!dates.length) {
+            var single = parent.find('[name="mpwpb_date"]').val() || $holder.data('mpwpbSlot') || '';
+            if (single) { dates.push(String(single).substring(0, 16)); }
+        }
+        var picked = $("#mpwpb_staff_member_booking").val();
+        var ajaxUrl = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.ajax_url : mpwpb_ajax.ajax_url;
+        var nonce = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.nonce : mpwpb_ajax.nonce;
+        $("#mpwpb_date_time_next_btn_id").hide();
+        mpwpb_loader($holder);
+        $.post(ajaxUrl, {
+            action: 'mpwpb_get_available_staff',
+            service_id: serviceId,
+            date_time: dates[0] || $holder.data('mpwpbSlot') || '',
+            dates: dates.join(','),
+            nonce: nonce
+        }).done(function (response) {
+            mpwpb_loaderRemove($holder);
+            $holder.html(response.html);
+            // Same count rule as the time-slot request above.
+            $holder.data('mpwpbStaffCount', response.count || 0);
+            var $keep = picked ? $holder.find('.mpwpb_selected_staff').filter(function () { return this.value === picked; }) : $();
+            if ($keep.length) {
+                $holder.find('.mpwp_select_staff_card').removeClass('selected').attr('aria-pressed', 'false');
+                $keep.closest('.mpwp_select_staff_card').addClass('selected').attr('aria-pressed', 'true');
+            } else {
+                $("#mpwpb_staff_member_booking").val('');
+            }
+            if (!response.count) {
+                $holder.html($('<p class="mpwpb_no_staff_notice"></p>').text($holder.attr('data-no-staff-text') || 'No staff member is available for this time. Please choose another time slot.'));
+                $("#mpwpb_date_time_next_btn_id").hide();
+            } else {
+                $("#mpwpb_date_time_next_btn_id").fadeIn();
+            }
+        }).fail(function () {
+            mpwpb_loaderRemove($holder);
+            $holder.data('mpwpbStaffCount', 0).html($('<p class="mpwpb_no_staff_notice"></p>').text($holder.attr('data-load-error-text') || 'Staff availability could not be loaded. Please choose the time slot again.'));
+            $("#mpwpb_date_time_next_btn_id").hide();
+        });
+    };
+
+    $(document).on('click', '.mpwpb_recurring_chip', function () {
+        let $box = $(this).closest('.mpwpb_recurring_booking');
+        $box.find('#mpwpb_recurring_type').val($(this).attr('data-recurring-type')).trigger('change');
+    });
+    $(document).on('click', '[data-recurring-step]', function () {
+        let $count = $(this).closest('.mpwpb_recurring_count').find('#mpwpb_recurring_count');
+        let min = parseInt($count.attr('min'), 10) || 2;
+        let max = parseInt($count.attr('max'), 10) || 26;
+        let next = (parseInt($count.val(), 10) || min) + parseInt($(this).attr('data-recurring-step'), 10);
+        next = Math.max(min, Math.min(max, next));
+        if (next !== parseInt($count.val(), 10)) {
+            $count.val(next).trigger('change');
+        }
+    });
+    // After every change that can reset or regenerate these fields (the
+    // handlers above run first; setTimeout lets them finish).
+    $(document).on('change', '#mpwpb_recurring_type, #mpwpb_recurring_count, #mpwpb_enable_recurring_booking, div.mpwpb_registration [name="mpwpb_date"]', function () {
+        let scope = $(this).closest('div.mpwpb_registration');
+        setTimeout(function () { syncRecurringUi(scope.length ? scope : document); }, 0);
+    });
+    $(document).on('click', 'div.mpwpb_registration .mpwpb_date_time_area .to-book', function () {
+        let scope = $(this).closest('div.mpwpb_registration');
+        setTimeout(function () { syncRecurringUi(scope); }, 0);
+    });
+    $(function () { syncRecurringUi(document); });
 
     // Delete handler
     $(document).on('click', '.mpwpb_recurring_delete_icon', function () {
@@ -387,6 +584,7 @@
         }
         recuring_price_with_discount( total_recurring, recurring_discount_price );
         syncStaffStepSummaryDate( registrationParent.length ? registrationParent : $(document) );
+        syncRecurringUi( registrationParent.length ? registrationParent : document );
     });
     // Edit handler
 
@@ -462,80 +660,139 @@
         }
     });
 
-    $(document).on('click', '.mpwpb_recurring_edit_icon', function () {
-        $('.mpwpb_edit_recurring_datetime_popup').fadeIn();
+    /* ---------------------------------------------------------------- *
+     *  Edit one recurring date (pencil icon) -> popup with date + time.
+     *  The date field is found by class, never by id: the shared datepicker
+     *  setup (mpwpb_plugin_global.js) blanks the id on every re-init and
+     *  jQuery UI then gives it a random "dp…" one, so `#date_type_edit_recurring`
+     *  stopped matching and the field always opened empty. The hidden value
+     *  holds the DATE ONLY ("Y-m-d"); it used to hold the whole datetime, so
+     *  "Set" without re-picking a date built "Y-m-d H:i:s H:00:00".
+     * ---------------------------------------------------------------- */
+    function editPopup() { return $('.mpwpb_edit_recurring_datetime_popup'); }
+    function editDateInput() { return editPopup().find('.date_type_edit_recurring'); }
+    function toHm(value) {
+        var m = String(value || '').trim().match(/^(\d{1,2})(?::(\d{2}))?/);
+        return m ? ('0' + m[1]).slice(-2) + ':' + (m[2] || '00') : '';
+    }
+    function loadEditTimes(dateOnly) {
+        var $holder = $('#mpwpb_recurring_time_holedr');
+        var keep = toHm($('#mpwpb_get_selected_time').val());
+        var ajaxUrl = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.ajax_url : mpwpb_ajax.ajax_url;
+        var nonce = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.nonce : mpwpb_ajax.nonce;
+        var postId = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.post_id : '';
+        $holder.html($('<div class="mpwpb_recurring_loader"></div>').text(editPopup().attr('data-loading-text') || 'Loading…'));
+        $.post(ajaxUrl, { action: 'mpwpb_get_filtered_time_by_date', post_id: postId, dates: dateOnly, nonce: nonce })
+            .done(function (response) {
+                $holder.html(response && response.success && response.data ? (response.data.dates || '') : '');
+                if (!$holder.find('.mpwpb_select_datetime_timeslot, .mpwpb_selected_datetime_timeslot').length) {
+                    $holder.html($('<p class="mpwpb_recurring_no_slots"></p>').text(editPopup().attr('data-no-slots-text') || 'No times available on this date.'));
+                }
+                // Keep the previously chosen time when it's still free on this date.
+                var $match = $holder.find('.mpwpb_select_datetime_timeslot').filter(function () {
+                    return toHm($(this).attr('data-time')) === keep;
+                });
+                if ($match.length) {
+                    $match.first().addClass('mpwpb_selected_time');
+                } else {
+                    $('#mpwpb_get_selected_time').val('');
+                }
+            })
+            .fail(function () { $holder.html(''); $('#mpwpb_get_selected_time').val(''); });
+    }
 
-    });
-
-    $(document).on('click', '.mpwpb_recurring_edit_icon', function () {
-
-        // let parent = $(this).closest('div.mpwpb_registration');
-        $('.mpwpb_edit_recurring_datetime_popup').fadeIn();
-
-        let li = $(this).closest('li');
-        let oldDateTime = li.attr('data-date-time'); // original value
-        let newDate =  oldDateTime;
-
-        if ( newDate ) {
-            let dateOnly = oldDateTime.split(' ')[0];
-            let ajaxUrl = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.ajax_url : mpwpb_ajax.ajax_url;
-            let nonce = (typeof mpwpb_recurring_data !== 'undefined') ? mpwpb_recurring_data.nonce : mpwpb_ajax.nonce;
-            let postId = mpwpb_recurring_data.post_id;
-
-            $.ajax({
-                type: 'POST',
-                url: ajaxUrl,
-                data: {
-                    action: 'mpwpb_get_filtered_time_by_date',
-                    post_id: postId,
-                    dates: dateOnly,
-                    nonce: nonce
+    /**
+     * (Re)build the popup's own datepicker on every open with jQuery UI's
+     * real destroy/create -- mpwpb_plugin_global.js's shared setup strips
+     * the instance by hand (class/id/data/unbind) and re-creates it, which
+     * can leave the open calendar bound to a stale "dp…" id so clicking a
+     * day or the month arrows did nothing.
+     */
+    function initEditDatepicker($dp, dateObj) {
+        var offDays = String($('#mpwpb_off_days_data').val() || '').toLowerCase().split(',').map($.trim).filter(Boolean);
+        var offDates = String($('#mpwpb_off_dates_data').val() || '').split(',').map($.trim).filter(Boolean);
+        var weekDays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+        $dp.each(function () {
+            var $el = $(this);
+            if ($el.hasClass('hasDatepicker')) {
+                try { $el.datepicker('destroy'); } catch (e) { $el.removeClass('hasDatepicker').removeData('datepicker'); }
+            }
+            $el.datepicker({
+                dateFormat: (typeof mpwpb_date_format !== 'undefined' && mpwpb_date_format) ? mpwpb_date_format : 'MM d, yy',
+                changeMonth: true,
+                changeYear: false,
+                minDate: 0,
+                defaultDate: dateObj,
+                beforeShow: function (input, inst) {
+                    setTimeout(function () {
+                        inst.dpDiv.addClass('mpwpb_custom_datepicker_style').css('z-index', 1000001);
+                    }, 0);
                 },
-                success: function(response) {
-                    if (response.success && response.data && response.data.dates) {
-                        $("#mpwpb_recurring_time_holedr").html(response.data.dates );
-                    } else {
-                        console.error('AJAX Data Loadinf error:');
-                    }
+                beforeShowDay: function (date) {
+                    var ymd = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
+                    return [offDates.indexOf(ymd) === -1 && offDays.indexOf(weekDays[date.getDay()]) === -1];
                 },
-                error: function(xhr, status, error) {
-                    console.error('AJAX error:', status, error);
+                onSelect: function () {
+                    var picked = $(this).datepicker('getDate');
+                    if (!picked) { return; }
+                    var ymd = picked.getFullYear() + '-' + ('0' + (picked.getMonth() + 1)).slice(-2) + '-' + ('0' + picked.getDate()).slice(-2);
+                    $('#mpwpb_date_edit_recurring').val(ymd);
+                    loadEditTimes(ymd);
                 }
             });
+            $el.datepicker('setDate', dateObj);
+        });
+    }
 
-            let formattedDate = formatDate_new( newDate ); // your existing formatting function
-            $("#mpwpb_recurring_datetime_set").attr('data-recurringli-id', oldDateTime );
-            $("#date_type_edit_recurring").val( formattedDate );
-            $("#mpwpb_date_edit_recurring").val( oldDateTime );
+    $(document).on('click', '.mpwpb_recurring_edit_icon', function () {
+        var li = $(this).closest('li');
+        // Unavailable rows carry no data-date-time; start from the original slot.
+        var oldDateTime = String(li.attr('data-date-time') || li.attr('data-original-date-time') || '');
+        if (!oldDateTime) { return; }
+        var dateOnly = oldDateTime.substring(0, 10);
+        var parts = dateOnly.split('-');
+        var dateObj = new Date(+parts[0], +parts[1] - 1, +parts[2]);
 
-            let li = $(this).closest('li');
-            let currentDateTime = li.attr('data-date-time');
-            $('#mpwpb_recurring_datetime_set')
-                .data('target-li', li) // attach li element directly
-                .data('recurringli-id', currentDateTime);
-
+        $('#mpwpb_date_edit_recurring').val(dateOnly);
+        $('#mpwpb_get_selected_time').val(toHm(oldDateTime.substring(11)));
+        var $dp = editDateInput();
+        if ($.fn.datepicker) {
+            initEditDatepicker($dp, dateObj);
+        } else {
+            $dp.val(dateObj.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }));
         }
+        $('#mpwpb_recurring_datetime_set')
+            .attr('data-recurringli-id', oldDateTime)
+            .data('target-li', li)
+            .data('recurringli-id', oldDateTime);
+        editPopup().css('display', 'flex').hide().fadeIn(150);
+        loadEditTimes(dateOnly);
     });
 
     $(document).on('click', '#mpwpb_recurring_datetime_set', function () {
         let li = $(this).data('target-li');
-        let targetDateTime = $(this).data('recurringli-id').trim(); // পুরাতন datetime
+        let targetDateTime = String($(this).data('recurringli-id') || '').trim();
+        let get_date = String($("#mpwpb_date_edit_recurring").val() || '').trim().substring(0, 10);
+        let hm = toHm($("#mpwpb_get_selected_time").val());
 
-        let get_date = $("#mpwpb_date_edit_recurring").val().trim(); // যেমন: 2025-07-14
-        let get_time = $("#mpwpb_get_selected_time").val();
-
-        if (get_date === '' || get_time === '') {
-            alert('Please select both date and time.');
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(get_date) || !hm) {
+            alert(editPopup().attr('data-required-text') || 'Please select both date and time.');
             return;
         }
-
-        let hour = ('0' + get_time).slice(-2);
-        let dateTime = `${get_date} ${hour}:00:00`; // Final format: 2025-07-14 04:00:00
-        let formattedDate = formatDate_new(dateTime); // যেমন: July 14, 2025 at 04:00 AM
+        let dateTime = `${get_date} ${hm}:00`;
+        // Two occurrences on the same slot would be the same booking twice.
+        let clash = $('#mpwpb_recurring_dates_list li').not(li).filter(function () {
+            return String($(this).attr('data-date-time') || '').substring(0, 16) === dateTime.substring(0, 16);
+        });
+        if (clash.length) {
+            alert(editPopup().attr('data-duplicate-text') || 'This date and time is already in your list.');
+            return;
+        }
+        let formattedDate = formatDate_new(dateTime.replace(' ', 'T'));
 
         if (li && li.length) {
-            li.attr('data-date-time', dateTime);
-            li.addClass('mpwpb_recurring_days');
+            li.attr('data-date-time', dateTime).data('date-time', dateTime);
+            li.addClass('mpwpb_recurring_days').removeClass('mpwpb_invalid_recurring_days');
             let dObj = new Date(dateTime.replace(' ', 'T'));
             let dateOnly = dObj.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
             let dayTime = dObj.toLocaleDateString(undefined, { weekday: 'long' }) + ' at ' + dObj.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
@@ -559,8 +816,17 @@
             summaryLi
                 .attr('data-cart-date-time', dateTime)
                 .text(formattedDate);
+        } else {
+            // A previously unavailable row had no summary entry -- add one.
+            $('#mpwpd_selected_date').append($('<li class="mpwpd_service_date"></li>').attr('data-cart-date-time', dateTime).text(formattedDate));
+        }
+        if (li && li.length) {
+            li.removeAttr('data-original-date-time');
         }
         hide_recurring_popup();
+        if (typeof window.mpwpbSyncRecurringUi === 'function') {
+            window.mpwpbSyncRecurringUi($('#mpwpb_recurring_booking_area'));
+        }
     });
 
     $(document).on('click', '.mpwpb_edit_recurring_datetime_close, .mpwpb_edit_recurring_datetime_overlay', function () {
@@ -577,9 +843,10 @@
     });
 
     function hide_recurring_popup(){
-        $("#date_type_edit_recurring").val('');
+        editDateInput().val('');
         $("#mpwpb_date_edit_recurring").val('');
-        $('.mpwpb_edit_recurring_datetime_popup').fadeOut();
+        $("#mpwpb_get_selected_time").val('');
+        editPopup().fadeOut(150);
     }
 
     

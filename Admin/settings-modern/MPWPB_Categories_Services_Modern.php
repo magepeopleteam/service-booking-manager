@@ -86,6 +86,19 @@
 						'tryDifferentSearch' => esc_html__('Try a different search.', 'service-booking-manager'),
 						'addServiceHint' => esc_html__('Add a service to this view — you can assign a category later.', 'service-booking-manager'),
 						'noCategoriesYet' => esc_html__('No categories yet. Create one to start organizing.', 'service-booking-manager'),
+						'addDuration' => esc_html__('Add duration', 'service-booking-manager'),
+						'missingOne' => esc_html__('1 service has no duration', 'service-booking-manager'),
+						/* translators: %d: number of services */
+						'missingMany' => esc_html__('%d services have no duration', 'service-booking-manager'),
+						'clearFilter' => esc_html__('Clear filter', 'service-booking-manager'),
+						/* translators: %s: service name */
+						'deleteServiceInline' => esc_html__('Delete “%s”?', 'service-booking-manager'),
+						'deleteServiceNote' => esc_html__('Customers will no longer be able to book it.', 'service-booking-manager'),
+						'cancel' => esc_html__('Cancel', 'service-booking-manager'),
+						'delete' => esc_html__('Delete', 'service-booking-manager'),
+						'editTxt' => esc_html__('Edit', 'service-booking-manager'),
+						'duplicateTxt' => esc_html__('Duplicate', 'service-booking-manager'),
+						'showCategory' => esc_html__('Show only this category', 'service-booking-manager'),
 						'countsHint' => esc_html__('Counts include services in subcategories. Deleting a category moves its services to Uncategorized — nothing is lost.', 'service-booking-manager'),
 					),
 				);
