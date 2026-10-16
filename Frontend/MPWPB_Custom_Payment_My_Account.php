@@ -285,6 +285,12 @@
 				if (!isset($item['mpwpb_tp'])) {
 					$item['mpwpb_tp'] = $total;
 				}
+				// Staff can be reassigned on the booking after checkout; the line
+				// item is a checkout-time snapshot, so the booking's value wins.
+				$booking_ids = class_exists('MPWPB_User_Dashboard') ? MPWPB_User_Dashboard::get_bookings_for_order($order_id) : [];
+				if ($booking_ids) {
+					$item['mpwpb_staff_member_id'] = get_post_meta($booking_ids[0], 'mpwpb_staff_term_id', true);
+				}
 				?>
 				<div class="mpwpb-cp-order-detail mpwpb-cp-account-surface">
 					<a class="mpwpb-cp-order-back" href="<?php echo esc_url(remove_query_arg('order_id')); ?>">

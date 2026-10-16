@@ -14,6 +14,47 @@ if (!class_exists('MPWPB_Staff_Booking')) {
         public function __construct() {
             add_action('wp_ajax_mpwpb_get_available_staff', [ $this, 'mpwpb_get_available_staff'] );
             add_action('wp_ajax_nopriv_mpwpb_get_available_staff', [ $this, 'mpwpb_get_available_staff'] );
+            // Pro's PDF ticket and its ticket email: hooks Pro already fires,
+            // so the staff row/placeholder work without a Pro update.
+            add_action('mpwpb_after_order_info', [ __CLASS__, 'pdf_staff_row' ]);
+            add_filter('mpwpb_pdf_email_text', [ __CLASS__, 'email_staff_placeholder' ], 10, 2);
+        }
+
+        /** "Staff" row in the PDF ticket's Booking Information list (MPWPB_Layout_Pro::service_info()). */
+        public static function pdf_staff_row($booking_id) {
+            $label = MPWPB_Function::get_booking_staff_label($booking_id);
+            if ($label === '') {
+                return;
+            }
+            ?>
+            <li>
+                <strong class="min_150"><?php esc_html_e('Staff', 'service-booking-manager'); ?> :</strong>&nbsp;<?php echo esc_html($label); ?>
+            </li>
+            <?php
+        }
+
+        /**
+         * {staff_name} in the ticket email text (Settings → Email), next to
+         * Pro's own {customer_name}/{service_name}/{service_date}/{order_id}.
+         */
+        public static function email_staff_placeholder($content, $order_id) {
+            if (strpos((string) $content, '{staff_name}') === false) {
+                return $content;
+            }
+            $label = '';
+            $booking_ids = class_exists('MPWPB_User_Dashboard') ? MPWPB_User_Dashboard::get_bookings_for_order($order_id) : [];
+            if ($booking_ids) {
+                $label = MPWPB_Function::get_booking_staff_label($booking_ids[0]);
+            } elseif (function_exists('wc_get_order') && ($order = wc_get_order($order_id))) {
+                foreach ($order->get_items() as $item) {
+                    $service_id = (int) $item->get_meta('_mpwpb_id');
+                    if ($service_id) {
+                        $label = MPWPB_Function::get_staff_label($item->get_meta('_mpwpb_staff_term_id'), $service_id);
+                        break;
+                    }
+                }
+            }
+            return str_replace('{staff_name}', $label, (string) $content);
         }
 
 
@@ -394,8 +435,17 @@ if (!class_exists('MPWPB_Staff_Booking')) {
                             }
                         }
                     }
-                    $response['html'] = self::render_staff_cards($available_staff, $date_time);
-                    $response['count'] = !empty($available_staff) ? count($available_staff) : 1;
+                    // Staff assigned but none free at this time: count 0 and no
+                    // cards, so mpwpb_recurring_booking.js shows its "choose
+                    // another time" notice and keeps Proceed to Checkout hidden.
+                    // A lone "Any Staff" card used to be returned with count 1
+                    // here, which let the customer book a slot nobody can work.
+                    // With no staff assigned at all, "Any Staff" stays the only
+                    // (always valid) choice so the service remains bookable.
+                    if (!empty($available_staff) || empty($flat_selected_staff_ids)) {
+                        $response['html'] = self::render_staff_cards($available_staff, $date_time);
+                        $response['count'] = max(1, count($available_staff));
+                    }
                 }
             }
 

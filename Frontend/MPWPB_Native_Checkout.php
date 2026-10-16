@@ -223,6 +223,10 @@
 				if ($slot_location === '') {
 					$slot_location = get_bloginfo('name');
 				}
+				// "Any available staff" only on the pre-payment checkout (the live
+				// cart, where the Change button shows); after that, only a staff
+				// member actually assigned is named.
+				$staff_label = MPWPB_Function::get_staff_label($item['mpwpb_staff_member_id'] ?? 0, $post_id, (string) ($item['mpwpb_staff_name'] ?? ''), $show_change_button);
 				?>
 				<?php if (!empty($slot_displays)) : ?>
 					<div class="mpwpb-checkout-slot">
@@ -240,6 +244,13 @@
 								<div class="mpwpb-checkout-slot-date"><?php echo esc_html($slot_displays[0]); ?></div>
 							<?php endif; ?>
 							<div class="mpwpb-checkout-slot-location"><?php echo esc_html($slot_location); ?></div>
+							<?php if ($staff_label !== '') : ?>
+								<div class="mpwpb-checkout-slot-staff">
+									<i class="fas fa-user" aria-hidden="true"></i>
+									<span class="mpwpb-checkout-slot-staff-label"><?php esc_html_e('Staff', 'service-booking-manager'); ?>:</span>
+									<span class="mpwpb-checkout-slot-staff-name"><?php echo esc_html($staff_label); ?></span>
+								</div>
+							<?php endif; ?>
 						</div>
 						<?php if ($show_change_button) : ?>
 							<button type="button" class="mpwpb-checkout-slot-change" data-checkout-back-to-date>

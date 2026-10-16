@@ -42,18 +42,32 @@
 				}
 				require_once MPWPB_PLUGIN_DIR . '/mp_global/MPWPB_Global_File_Load.php';
 				add_action('activated_plugin', array($this, 'activation_redirect'), 90, 1);
+				add_action('init', array(__CLASS__, 'register_staff_role'));
 				require_once MPWPB_PLUGIN_DIR . '/inc/MPWPB_Dependencies.php';
+			}
+			/**
+			 * Adding the role only on activation missed every site where the
+			 * plugin was already active, and WordPress drops an unregistered
+			 * role from WP_User::$roles. get_users(['role' => 'mpwpb_staff'])
+			 * still matches those users by their capabilities meta, so the
+			 * booking form listed staff that add-to-cart's validate_staff() then
+			 * rejected as "not available", leaving the checkout step empty.
+			 * add_role() saves to the options table once; after that is_role()
+			 * returns early on every request.
+			 */
+			public static function register_staff_role() {
+				if (!wp_roles()->is_role('mpwpb_staff')) {
+					add_role('mpwpb_staff', esc_html__('Service Staffs', 'service-booking-manager'), array(
+						'read' => true, // True allows that capability
+						'edit_posts' => true,
+						'create_posts' => false,
+						'delete_posts' => false, // Use false to explicitly deny
+					));
+				}
 			}
 			public function activation_redirect($plugin) {
 				if ($plugin == plugin_basename(__FILE__)) {
-					if (!wp_roles()->is_role('mpwpb_staff')) {
-						add_role('mpwpb_staff', esc_html__('Service Staffs', 'service-booking-manager'), array(
-							'read' => true, // True allows that capability
-							'edit_posts' => true,
-							'create_posts' => false,
-							'delete_posts' => false, // Use false to explicitly deny
-						));
-					}
+					self::register_staff_role();
 					flush_rewrite_rules();
 					// Bulk activation (several plugins at once) stays on the Plugins screen.
 					if (isset($_GET['activate-multi']) || (defined('WP_CLI') && WP_CLI)) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- core flag, read only.

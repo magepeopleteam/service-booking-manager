@@ -158,6 +158,9 @@
 											<td>
 												<?php echo esc_html($row['service_title'] ?: '—'); ?>
 												<?php if ($row['slot']) : ?><br><span class="mpwpb-cell-muted"><?php echo esc_html($row['slot']); ?></span><?php endif; ?>
+												<?php if ($row['staff']) : ?><br><span class="mpwpb-cell-muted"><?php
+													/* translators: %s: staff member name, or "Any available staff" */
+													echo esc_html(sprintf(__('Staff: %s', 'service-booking-manager'), $row['staff'])); ?></span><?php endif; ?>
 											</td>
 											<td class="mpwpb-col-total"><strong><?php echo wp_kses_post($row['total_html']); ?></strong></td>
 											<td><span class="mpwpb-status-pill mpwpb-status-<?php echo esc_attr($row['status_key']); ?>"><?php echo esc_html($row['status_label']); ?></span></td>
@@ -239,8 +242,15 @@
 				$total = (float) get_post_meta($order_id, 'mpwpb_total', true);
 				$status = (string) get_post_meta($order_id, 'mpwpb_order_status', true);
 				$slots = $this->format_slots((string) ($item['mpwpb_date'] ?? ''));
+				// The booking's staff (reassignable after checkout) over the
+				// order's checkout-time snapshot.
+				$booking_ids = class_exists('MPWPB_User_Dashboard') ? MPWPB_User_Dashboard::get_bookings_for_order($order_id) : [];
+				$staff = $booking_ids
+					? MPWPB_Function::get_booking_staff_label($booking_ids[0])
+					: MPWPB_Function::get_staff_label($item['mpwpb_staff_member_id'] ?? 0, $service_post_id, (string) ($item['mpwpb_staff_name'] ?? ''));
 
 				return [
+					'staff' => $staff,
 					'id' => $order_id,
 					'customer' => trim($first . ' ' . $last),
 					'email' => (string) get_post_meta($order_id, 'mpwpb_billing_email', true),

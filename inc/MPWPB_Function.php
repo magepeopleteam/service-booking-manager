@@ -113,6 +113,43 @@
 				$text = MPWPB_Global_Function::get_post_info($post_id, 'mpwpb_service_text');
 				return $text ?: self::get_general_settings('service_text', esc_html__('Service', 'service-booking-manager'));
 			}
+			/**
+			 * Who the customer is booked with, for every screen and document that
+			 * shows a booking (checkout recap, confirmation, account pages, admin
+			 * order list, PDF ticket, ticket email). The live account name wins, so
+			 * a reassignment or renamed staff member shows everywhere; the name
+			 * frozen on the booking covers an account deleted since. '' means no
+			 * staff is assigned and nothing should be shown.
+			 *
+			 * $any_label: label "Any Staff" (no id) as "Any available staff" when
+			 * the service uses staff. Only for the live cart -- on an existing
+			 * order/booking the service's *current* staff setting says nothing
+			 * about how it was booked (orders placed before staff was switched
+			 * on would all claim "Any available staff").
+			 */
+			public static function get_staff_label($staff_id, $post_id = 0, $saved_name = '', bool $any_label = false): string {
+				$staff_id = absint($staff_id);
+				if ($staff_id) {
+					$user = get_userdata($staff_id);
+					if ($user && $user->display_name !== '') {
+						return $user->display_name;
+					}
+				}
+				if ((string) $saved_name !== '') {
+					return (string) $saved_name;
+				}
+				if ($any_label && $post_id && get_post_meta($post_id, 'mpwpb_staff_member_add', true) === 'on') {
+					return __('Any available staff', 'service-booking-manager');
+				}
+				return '';
+			}
+			/** Staff label of a booking post (mpwpb_booking), whose staff can be reassigned after checkout. */
+			public static function get_booking_staff_label($booking_id): string {
+				return self::get_staff_label(
+					get_post_meta($booking_id, 'mpwpb_staff_term_id', true),
+					(int) get_post_meta($booking_id, 'mpwpb_id', true)
+				);
+			}
 			//*******************************//
 			public static function get_category_name($post_id,$cat_id='') {
 				if($cat_id && $cat_id>0 && $post_id){

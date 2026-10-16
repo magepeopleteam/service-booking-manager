@@ -246,7 +246,15 @@ if (MPWPB_Global_Function::is_gdpr_enabled()) {
                         <?php foreach ($bookings as $booking) : ?>
                             <tr>
                                 <td>#<?php echo esc_html($booking->ID); ?></td>
-                                <td><?php echo esc_html(get_the_title($booking->mpwpb_id)); ?></td>
+                                <td>
+                                    <?php echo esc_html(get_the_title($booking->mpwpb_id)); ?>
+                                    <?php $staff_label = MPWPB_Function::get_booking_staff_label($booking->ID); ?>
+                                    <?php if ($staff_label !== '') : ?>
+                                        <br><small class="mpwpb-booking-staff"><?php
+                                            /* translators: %s: staff member name, or "Any available staff" */
+                                            echo esc_html(sprintf(__('Staff: %s', 'service-booking-manager'), $staff_label)); ?></small>
+                                    <?php endif; ?>
+                                </td>
                                 <td><?php echo esc_html(MPWPB_Global_Function::date_format($booking->mpwpb_date)); ?></td>
                                 <td><?php echo esc_html(MPWPB_Global_Function::date_format($booking->mpwpb_date, 'time')); ?></td>
                                 <td>
@@ -311,6 +319,13 @@ if (MPWPB_Global_Function::is_gdpr_enabled()) {
                                     <i class="far fa-clock"></i>
                                     <?php echo esc_html(MPWPB_Global_Function::date_format($booking->mpwpb_date, 'time')); ?>
                                 </p>
+                                <?php $staff_label = MPWPB_Function::get_booking_staff_label($booking->ID); ?>
+                                <?php if ($staff_label !== '') : ?>
+                                    <p class="mpwpb-appointment-staff">
+                                        <i class="far fa-user"></i>
+                                        <?php echo esc_html($staff_label); ?>
+                                    </p>
+                                <?php endif; ?>
                                 <p class="mpwpb-appointment-status">
                                     <span class="mpwpb-status mpwpb-status-<?php echo esc_attr(strtolower($booking->mpwpb_order_status)); ?>">
                                         <?php echo esc_html(ucfirst($booking->mpwpb_order_status)); ?>

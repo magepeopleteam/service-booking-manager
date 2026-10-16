@@ -189,16 +189,7 @@
 
 			private static function validate_staff($post_id, $staff_id, array $dates): bool {
 				$staff_id = absint($staff_id);
-				if (!$staff_id) {
-					return true;
-				}
-				$user = get_userdata($staff_id);
-				if (!$user || !in_array('mpwpb_staff', (array) $user->roles, true)) {
-					return false;
-				}
-				if (get_post_meta($post_id, 'mpwpb_staff_member_add', true) !== 'on') {
-					return false;
-				}
+				$staff_enabled = get_post_meta($post_id, 'mpwpb_staff_member_add', true) === 'on';
 				$selected = get_post_meta($post_id, 'mpwpb_selected_staff_ids', true);
 				$selected_ids = array();
 				if (is_array($selected)) {
@@ -207,6 +198,28 @@
 					});
 				}
 				$selected = array_values(array_unique(array_filter($selected_ids)));
+				if (!$staff_id) {
+					// "Any Staff": fine when the service has no staff to assign,
+					// otherwise someone must be free for every date -- the same
+					// rule MPWPB_Staff_Booking::mpwpb_get_available_staff() uses
+					// to decide whether the staff step offers anyone at all.
+					if (!$staff_enabled || !$selected) {
+						return true;
+					}
+					foreach (get_users(array('include' => $selected, 'role' => 'mpwpb_staff', 'fields' => 'ID')) as $candidate_id) {
+						if (MPWPB_Staff_Booking::is_staff_free((int) $candidate_id, $dates)) {
+							return true;
+						}
+					}
+					return false;
+				}
+				$user = get_userdata($staff_id);
+				if (!$user || !in_array('mpwpb_staff', (array) $user->roles, true)) {
+					return false;
+				}
+				if (!$staff_enabled) {
+					return false;
+				}
 				if (!in_array($staff_id, $selected, true)) {
 					return false;
 				}
