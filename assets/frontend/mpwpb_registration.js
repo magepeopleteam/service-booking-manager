@@ -1683,17 +1683,6 @@ function mpwpb_price_calculation($this) {
         mpwpb_set_progress($(this).closest('div.mpwpb_registration'), 'staff');
     });
 
-    $(document).on('click', '#mpwpb_mobile_booking_mobile', function () {
-        $(this).hide();
-        $("#mpwpb_make_static_booking").fadeIn();
-    });
-
-    $(document).on('click', '#mpwpb_static_registration_popup_close', function () {
-        $("#mpwpb_make_static_booking").fadeOut();
-        $("#mpwpb_mobile_booking_mobile").fadeIn();
-    });
-
-
     $(document).ready(function () {
         $('.faq-header').on('click', function () {
             $(this).next('.faq-content').slideToggle();

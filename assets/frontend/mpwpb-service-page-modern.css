@@ -345,16 +345,34 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
 
 /* -------------------------------------------------------------------- *
  *  Tab bar — reused .mpwpb-details-page-tab / nav markup, restyled as a
- *  sticky pill switcher; the active tab is now driven by real JS
+ *  pill switcher; the active tab is now driven by real JS
  *  (mpwpb-service-page-modern.js) instead of the previously-dead handler.
+ *  It only sticks on phones (see the max-width:640px block below); on
+ *  tablet/desktop it scrolls away with the page.
+ *
+ *  --mpwpb-stuck-offset, set by syncStickyOffset() in that JS file, is how
+ *  far down the viewport the theme's sticky header (and a fixed admin bar)
+ *  reach, measured from the real elements. --mpwpb-sticky-offset is the
+ *  theme's own published guess, used until/unless the JS has measured.
  * -------------------------------------------------------------------- */
 .mpwpb-static-template .mpwpb-details-page-tab,
 .mpwpb-static-template nav.mpwpb-details-page-tab{
-	position:sticky;top:8px;z-index:0;background:#fff !important;border:none;
+	background:#fff !important;border:none;
 	border-radius:999px;box-shadow:0 1px 3px rgba(20,32,27,.06);padding:5px !important;margin:0 32px 24px !important;
-	display:inline-flex !important;width:auto !important;
+	display:inline-flex !important;width:auto !important;max-width:calc(100% - 64px);
 }
 .mpwpb-static-template nav ul{gap:4px !important;}
+/* Never wider than the content column: on a phone the four pills don't fit,
+   and the inline-flex bar used to push the whole page sideways. The list
+   scrolls horizontally instead, with no visible scrollbar (scrollbar-width
+   for Firefox, ::-webkit-scrollbar for Chrome/Safari). */
+.mpwpb-static-template nav.mpwpb-details-page-tab ul{
+	min-width:0;flex-wrap:nowrap !important;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+}
+.mpwpb-static-template nav.mpwpb-details-page-tab ul::-webkit-scrollbar{display:none;}
+/* mpwpb_registration.css sets 16px on `nav ul li.active a`, so the active
+   pill rendered bigger than the 13px ones next to it. */
+.mpwpb-static-template nav.mpwpb-details-page-tab ul li a{font-size:inherit !important;white-space:nowrap;}
 .mpwpb-static-template nav ul li{flex:0 0 auto;font-family:'Sora','Segoe UI',sans-serif;font-size:13px !important;}
 .mpwpb-static-template nav ul li a{
 	display:inline-flex;align-items:center;border-radius:999px;padding:10px 18px !important;font-weight:600;color:#5B6763;transition:.15s;
@@ -363,20 +381,6 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
 .mpwpb-static-template nav ul li.active a,
 .mpwpb-static-template nav ul li a.mpwpb-tab-active{
 	background-color:var(--mpwpb_color_theme) !important;color:#fff !important;font-weight:700;
-}
-/* Only logged-in users see WordPress's fixed admin bar, so this sticky tab
-   bar's plain top:8px put it right underneath it once scrolled -- same fix
-   as the popup's .mpwpb_popup_main_area below (32px/46px mirror WP core's
-   own html{margin-top} values at the same 782px breakpoint). */
-.admin-bar .mpwpb-static-template .mpwpb-details-page-tab,
-.admin-bar .mpwpb-static-template nav.mpwpb-details-page-tab{
-	top:40px;
-}
-@media screen and (max-width:782px){
-	.admin-bar .mpwpb-static-template .mpwpb-details-page-tab,
-	.admin-bar .mpwpb-static-template nav.mpwpb-details-page-tab{
-		top:54px;
-	}
 }
 
 /* Sidebar sticks on scroll the same way the tab bar above does. Only at
@@ -408,7 +412,10 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
    popup itself uses, high enough to beat any normal page content)
    fixes it without touching the popup's own rule. */
 @media (min-width:1024px){
-	.mpwpb-static-template .sidebar{position:sticky;top:8px;align-self:flex-start;z-index:1;}
+	/* 8px below the theme's sticky header / admin bar (see the tab bar notes
+	   above for both variables); top:8px alone stuck it underneath them. */
+	.mpwpb-static-template .sidebar{position:sticky;top:calc(8px + var(--mpwpb-stuck-offset, var(--mpwpb-sticky-offset, 0px)));align-self:flex-start;z-index:1;}
+	.admin-bar .mpwpb-static-template .sidebar{top:calc(8px + var(--mpwpb-stuck-offset, max(32px, var(--mpwpb-sticky-offset, 0px))));}
 	/* Only while the Popup Modal drawer is actually open: everything inside
 	   .sidebar is stacked at .sidebar's own z-index against the rest of the
 	   page, so at z-index:1 the theme's site header painted over the open
@@ -444,6 +451,37 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
 .mpwpb-static-template .main > section#service-faq,
 .mpwpb-static-template .main > .mpwpb-gallery-section{
 	background:var(--mpwpb-tint-bg);border:1px solid var(--mpwpb-tint-border);border-radius:28px;padding:48px 32px !important;
+}
+/* Phones: the 32px inset on top of <main>'s 10px padding left a 42px gutter
+   on each side, squeezing the content column and the FAQ panel's text.
+   10px here puts the hero, tab bar and every section on the same 20px edge
+   as the theme's header and breadcrumb. */
+@media(max-width:640px){
+	.mpwpb-static-template.mpwpb_registration > header .template-header .header-content{padding:0 10px;}
+	/* Phones only: sticks flush under the theme header as an edge-to-edge
+	   strip -- a floating pill let the content scrolling beneath show through
+	   at its sides and above it. -10px cancels <main>'s own 10px padding (no
+	   wider than the viewport, so no sideways scroll). z-index:5 keeps the
+	   sections scrolling past from painting over it, under the theme header's
+	   own z-index:50. */
+	.mpwpb-static-template .mpwpb-details-page-tab,
+	.mpwpb-static-template nav.mpwpb-details-page-tab{
+		position:sticky;top:var(--mpwpb-stuck-offset, var(--mpwpb-sticky-offset, 0px));z-index:5;
+		display:flex !important;margin:0 -10px 20px !important;max-width:none;border-radius:0;padding:6px 20px !important;
+		box-shadow:0 10px 14px -12px rgba(20,32,27,.35);
+	}
+	.mpwpb-static-template nav.mpwpb-details-page-tab ul{flex:1 1 auto;}
+	.mpwpb-static-template nav.mpwpb-details-page-tab ul li a{padding:9px 14px !important;}
+	.mpwpb-static-template .main > section{margin:20px 10px !important;}
+	.mpwpb-static-template .main > section#service-faq,
+	.mpwpb-static-template .main > .mpwpb-gallery-section{padding:28px 16px !important;border-radius:20px;}
+}
+/* Phones: the booking widget (service list) sat after every section, at the
+   very bottom of the page. order:-1 moves it above the tab bar in <main>'s
+   column. The 300px padding-bottom mpwpb_registration.css gives it below
+   768px would otherwise leave a gap between the widget and the tabs. */
+@media(max-width:600px){
+	.mpwpb-static-template .sidebar{order:-1;padding-bottom:0;margin-bottom:10px;}
 }
 /* Every section heading on this page is now overridden individually,
    each next to its own section's rules below (kicker pill + 26px
@@ -552,6 +590,9 @@ div.mpwpb_popup.popup-features .mpwpb-feature-popup-label{min-width:0;overflow-w
 .mpwpb-reviews-head{
 	display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:0 0 22px;flex-wrap:wrap;
 }
+/* .mpwpb-static-template prefix: the global `.mpwpb_style span{display:flex}`
+   otherwise wins and stretches the pill to the heading's width. */
+.mpwpb-static-template .mpwpb-reviews-kicker,
 .mpwpb-reviews-kicker{
 	display:inline-flex;align-items:center;padding:5px 12px;border-radius:999px;background:var(--mpwpb-tint);color:var(--mpwpb_color_theme);
 	font-family:'Sora','Segoe UI',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;
@@ -1043,7 +1084,11 @@ p.mpwpb-overview-stat-label{margin-left:10px !important;}
 	position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
 }
 
-.mpwpb-tree-service-main{flex:0 1 auto;min-width:0;display:flex;align-items:center;line-height:1;gap:8px;overflow:hidden;}
+/* flex-grow + wrap: the name takes whatever the price column leaves, and the
+   duration drops under it when both don't fit. With flex:0 1 auto and no
+   wrap, a ~350px-wide widget (the desktop sidebar, or any phone) squeezed
+   the name to "Exter/Hand" or hid it entirely at 320px. */
+.mpwpb-tree-service-main{flex:1 1 auto;min-width:0;display:flex;flex-wrap:wrap;align-items:center;line-height:1;gap:4px 8px;overflow:hidden;}
 .mpwpb-tree-service-icon{flex:0 0 auto;color:var(--mpwpb_color_theme);font-size:13px;line-height:1;}
 .mpwpb-tree-service-name{flex:0 1 auto;min-width:0;font-size:13px;font-weight:600;line-height:1.3;color:#1e293b;overflow:hidden;text-overflow:ellipsis;white-space:normal;}
 span.mpwpb-tree-service-name{padding-left:5px;}
@@ -1063,9 +1108,10 @@ span.mpwpb-tree-service-name{padding-left:5px;}
 	width:9px;height:9px;flex:0 0 auto;
 }
 
-/* margin-left:auto pushes price + tap-hint flush right on the same line
-   as the checkbox/name/duration, instead of stacking below them. */
-.mpwpb-tree-service-side{flex:0 0 auto;margin-left:auto;display:flex;align-items:center;gap:8px;}
+/* margin-left:auto pushes price + tap-hint flush right of the name. The
+   hint sits under the price rather than beside it, which roughly halves
+   this column's width and hands that space to the service name. */
+.mpwpb-tree-service-side{flex:0 0 auto;margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
 .mpwpb-tree-price{font-size:13px;font-weight:800;color:var(--mpwpb_color_theme);white-space:nowrap;}
 .mpwpb-tree-tap-hint{font-size:10px;color:#94a3b8;white-space:nowrap;}
 
@@ -1163,9 +1209,14 @@ span.mpwpb-tree-service-name{padding-left:5px;}
 .mpwpb-checkout-slot-dates li{font-size:14.5px;font-weight:700;color:#1e293b;line-height:1.3;padding-left:14px;position:relative;}
 .mpwpb-checkout-slot-dates li::before{content:"";position:absolute;left:0;top:.5em;width:6px;height:6px;border-radius:50%;background:var(--mpwpb_color_theme);}
 .mpwpb-checkout-slot-location{margin-top:2px;font-size:13px;color:#64748b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mpwpb-checkout-slot-staff{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:13px;color:#64748b;min-width:0;}
+.mpwpb-checkout-slot-staff i{flex:0 0 auto;font-size:11px;color:var(--mpwpb_color_theme);}
+.mpwpb-checkout-slot-staff-name{color:#1e293b;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .mpwpb-checkout-slot-icon{
 	flex:0 0 auto;width:52px;height:52px;display:inline-flex;align-items:center;justify-content:center;
-	border-radius:14px;background:var(--mpwpb_color_theme_88,rgba(0,0,0,.06));color:var(--mpwpb_color_theme);font-size:20px;
+	/* --mpwpb_color_theme_88 is the theme colour at ~53% alpha, which put the
+	   theme-coloured calendar glyph on a mid-tone of the same colour. */
+	border-radius:14px;background:var(--mpwpb-tint,#E8F3F1);color:var(--mpwpb_color_theme);font-size:20px;
 }
 
 .mpwpb-checkout-summary{
@@ -1327,8 +1378,12 @@ label.mpwpb-checkout-field{display:inline-block;}
 	text-align:left;
 }
 .mpwpb-confirmation-banner{text-align:center;margin-bottom:20px;}
+/* flex + auto side margins rather than inline-flex centred by the banner's
+   text-align: inside the booking drawer the global `.mpwpb_style span
+   {display:flex}` (mpwpb_plugin_global.css) out-ranks this rule, turned the
+   icon into a block and left it stuck to the left above the centred title. */
 .mpwpb-confirmation-icon{
-	display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;margin-bottom:14px;
+	display:flex;align-items:center;justify-content:center;width:64px;height:64px;margin:0 auto 14px;
 	border-radius:50%;background:#eafaf0;color:#1c9a5b;font-size:30px;
 }
 .mpwpb-confirmation-icon--warn{background:#fff6dd;color:#b8860b;}
@@ -1814,6 +1869,13 @@ label.mpwpb-checkout-field{display:inline-block;}
 	display:flex;flex-direction:row;align-items:center;gap:6px;margin:0;
 }
 .mpwpb-static-template .sidebar .mpwpb_popup .next_date_area h4.mpwpb-total{flex:1 1 auto;}
+/* mpwpb_registration.css (<=1024px, written for the older layout) turns this
+   row into a centred column with `.next_date_area div:nth-child(1)` selectors
+   that out-rank the rules above -- so Back, Total and Proceed to Checkout
+   each sat on their own line and Proceed never got the full-width (phones)
+   or pinned-right (tablet) spot this file and the reskin give it. */
+.mpwpb-static-template .sidebar .mpwpb_popup .popupFooter .next_date_area .justifyBetween{flex-direction:row;}
+.mpwpb-static-template .sidebar .mpwpb_popup .popupFooter .next_date_area .justifyBetween > *{order:0;margin:0;}
 .mpwpb-static-template .sidebar .mpwpb_popup .mpwpb-footer-total-label{
 	font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#94a3b8;
 }

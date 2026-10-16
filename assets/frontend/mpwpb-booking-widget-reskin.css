@@ -86,6 +86,13 @@
 	color: var(--mpwpb_color_theme); font-size: 16px;
 }
 #mpwpb_static_sidbar .mpwpb-tree-header-text { flex: 1 1 auto; min-width: 0; }
+/* Narrow phones: the count pill took a fixed slice of the row and left the
+   intro text a one-word-per-line column. Let it drop under the text instead. */
+@media (max-width: 400px) {
+	#mpwpb_static_sidbar .mpwpb-tree-header { flex-wrap: wrap !important; }
+	#mpwpb_static_sidbar .mpwpb-tree-header-text { flex-basis: calc(100% - 52px); }
+	#mpwpb_static_sidbar .mpwpb-tree-header-count { margin-left: 52px; }
+}
 #mpwpb_static_sidbar .mpwpb-tree-header-count {
 	flex: 0 0 auto; font-size: 11px; font-weight: 700; color: #5B6763;
 	background: #F1F5F3; border-radius: 999px; padding: 5px 11px; white-space: nowrap;
@@ -1511,10 +1518,19 @@
    modern.css has its own !important flex-wrap:wrap there specifically so
    Back+Total can share a line and Continue/Checkout drop to their own
    full-width line below when the card is too narrow for all three
-   (the bug this !important nowrap used to cause by always winning). */
+   (the bug this !important nowrap used to cause by always winning).
+   Phones are excluded too: at <=640px the drawer is full-screen
+   (mpwpb-service-page-modern.css stacks Total over a full-width Continue
+   there), and nowrap plus the buttons' flex-shrink:0 pushed "Continue To
+   Schedule" past the right edge of the screen. */
+@media (min-width: 641px) {
+	.mpwpb-static-template .sidebar .mpwpb_popup:not(.mpwpb-popup-inline) .next_service_area .justifyBetween,
+	.mpwpb-static-template .sidebar .mpwpb_popup:not(.mpwpb-popup-inline) .next_date_area .justifyBetween {
+		flex-wrap: nowrap !important;
+	}
+}
 .mpwpb-static-template .sidebar .mpwpb_popup:not(.mpwpb-popup-inline) .next_service_area .justifyBetween,
 .mpwpb-static-template .sidebar .mpwpb_popup:not(.mpwpb-popup-inline) .next_date_area .justifyBetween {
-	flex-wrap: nowrap !important;
 	align-items: center !important;
 }
 

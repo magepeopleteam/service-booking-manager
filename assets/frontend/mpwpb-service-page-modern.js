@@ -81,21 +81,83 @@
 		return;
 	}
 
-	// The tab bar's sticky `top` has a CSS fallback for WordPress's admin
-	// bar (32px desktop / 46px <=782px, logged-in users only), but that's a
-	// guess at its real height -- measuring #wpadminbar directly here is
-	// exact regardless of theme/plugin customization, and the inline style
-	// this sets always wins over the CSS fallback.
-	var tabNavResizeTimer = null;
-	function syncTabNavTop() {
-		var $adminBar = $('#wpadminbar');
-		var extra = ($adminBar.length && $adminBar.is(':visible')) ? $adminBar.outerHeight() : 0;
-		$tabNav.css('top', (8 + extra) + 'px');
+	// How far down the viewport the site's own sticky header (and a fixed
+	// admin bar) reach once stuck -- the phone tab bar and the desktop sidebar
+	// stick just below that (--mpwpb-stuck-offset in the CSS). Measured from
+	// the real elements: a theme's published --mpwpb-sticky-offset is a fixed
+	// guess (Bookingly says 75px) that left the bar hanging well below a
+	// header that rendered shorter in the visitor's browser, or ignored that
+	// the admin bar scrolls away on phones. Candidates are wide, top-anchored
+	// fixed/sticky elements outside this plugin's own markup; their stuck
+	// bottom is their `top` plus their height. Nothing found leaves the CSS
+	// fallback (the theme's variable) in charge.
+	var stickyRoots = $('.mpwpb-static-template').toArray();
+	var topBars = [];
+	function collectTopBars() {
+		topBars = [];
+		var seen = [];
+		$('body > *, body > * > *, header, [role="banner"]').each(function () {
+			if (seen.indexOf(this) > -1 || $(this).closest('.mpwpb_registration, .mpwpb_popup').length) {
+				return;
+			}
+			seen.push(this);
+			var position = window.getComputedStyle(this).position;
+			if (position === 'fixed' || position === 'sticky') {
+				topBars.push(this);
+			}
+		});
 	}
-	syncTabNavTop();
-	$(window).on('resize.mpwpb-tabnav-top', function () {
-		clearTimeout(tabNavResizeTimer);
-		tabNavResizeTimer = setTimeout(syncTabNavTop, 150);
+	function stuckOffset() {
+		var bottom = null;
+		topBars.forEach(function (el) {
+			var style = window.getComputedStyle(el);
+			var rect = el.getBoundingClientRect();
+			var top = parseFloat(style.top);
+			if (style.display === 'none' || style.visibility === 'hidden' || !rect.height
+				|| rect.width < window.innerWidth * 0.5 || rect.height > window.innerHeight * 0.4
+				|| isNaN(top) || top > 200) {
+				return;
+			}
+			bottom = Math.max(bottom || 0, top + rect.height);
+		});
+		return bottom;
+	}
+	var lastStuckOffset;
+	function syncStickyOffset() {
+		var offset = stuckOffset();
+		if (offset === lastStuckOffset) {
+			return;
+		}
+		lastStuckOffset = offset;
+		stickyRoots.forEach(function (root) {
+			if (offset === null) {
+				root.style.removeProperty('--mpwpb-stuck-offset');
+			} else {
+				root.style.setProperty('--mpwpb-stuck-offset', Math.round(offset) + 'px');
+			}
+		});
+	}
+	collectTopBars();
+	syncStickyOffset();
+	var stickyResizeTimer = null;
+	$(window).on('resize.mpwpb-sticky-offset', function () {
+		clearTimeout(stickyResizeTimer);
+		stickyResizeTimer = setTimeout(function () {
+			collectTopBars();
+			syncStickyOffset();
+		}, 150);
+	});
+	// Headers that shrink or hide on scroll change height without a resize.
+	var stickyScrollQueued = false;
+	$(window).on('scroll.mpwpb-sticky-offset', function () {
+		if (stickyScrollQueued) {
+			return;
+		}
+		stickyScrollQueued = true;
+		window.requestAnimationFrame(function () {
+			stickyScrollQueued = false;
+			syncStickyOffset();
+		});
 	});
 
 	var $links = $tabNav.find('a[href^="#"]');
@@ -115,6 +177,24 @@
 			$(s.li).toggleClass('active', s.li === li);
 			$(s.link).toggleClass('mpwpb-tab-active', s.li === li);
 		});
+		revealTab(li);
+	}
+
+	// On phones the tab list scrolls sideways (mpwpb-service-page-modern.css),
+	// so keep the pill the scroll-spy just activated inside the visible strip.
+	// scrollLeft only -- scrollIntoView() would also scroll the page.
+	function revealTab(li) {
+		var ul = li && li.parentNode;
+		if (!ul || ul.scrollWidth <= ul.clientWidth) {
+			return;
+		}
+		var listRect = ul.getBoundingClientRect();
+		var tabRect = li.getBoundingClientRect();
+		if (tabRect.left < listRect.left) {
+			ul.scrollLeft -= listRect.left - tabRect.left + 8;
+		} else if (tabRect.right > listRect.right) {
+			ul.scrollLeft += tabRect.right - listRect.right + 8;
+		}
 	}
 
 	$links.on('click', function (e) {
@@ -125,7 +205,14 @@
 			return;
 		}
 		setActive($(this).parent('li')[0]);
-		$('html, body').animate({ scrollTop: $target.offset().top - 90 }, 350);
+		// Land the section just below whatever covers the top of the viewport:
+		// the stuck tab bar on phones, otherwise only the theme header. A
+		// fixed 90px left headings hidden behind the header + bar.
+		var covered = lastStuckOffset || 0;
+		if ($tabNav.css('position') === 'sticky') {
+			covered = (parseFloat($tabNav.css('top')) || 0) + $tabNav.outerHeight();
+		}
+		$('html, body').animate({ scrollTop: $target.offset().top - covered - 12 }, 350);
 	});
 
 	// Scroll-spy: highlight whichever section is currently most in view.

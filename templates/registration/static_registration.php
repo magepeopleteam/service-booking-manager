@@ -108,13 +108,11 @@
             </div>
             <?php } else{?>
                 <div class="mpwpb_static " id="mpwpb_make_static_booking">
-                    <div class="mpwpb_static_registration_popup_close" id="mpwpb_static_registration_popup_close">X</div>
                     <div class="mpwpb_static_cateogry">
                         <?php include(MPWPB_Function::template_path('registration/category_selection_static.php')); ?>
                     </div>
 					<?php mpwpb_static_cta_footer($all_category, $all_services); ?>
                 </div>
-                <div class="mpwpb_mobile_booking" id="mpwpb_mobile_booking_mobile"><?php esc_html_e('Make Service Booking', 'service-booking-manager'); ?></div>
             <?php }?>
         </div>
 		<?php } ?>

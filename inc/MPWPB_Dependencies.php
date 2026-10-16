@@ -211,7 +211,7 @@
 				// Single service page redesign (hero/tabs/Overview/FAQ/Details) —
 				// pure reskin, loaded after mpwpb_registration so its overrides win.
 				wp_enqueue_style('mpwpb_service_page_modern', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-service-page-modern.css', ['mpwpb_registration'], self::asset_version('/assets/frontend/mpwpb-service-page-modern.css'));
-				wp_enqueue_script('mpwpb_service_page_modern', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-service-page-modern.js', ['jquery', 'mpwpb_registration'], MPWPB_VERSION, true);
+				wp_enqueue_script('mpwpb_service_page_modern', MPWPB_PLUGIN_URL . '/assets/frontend/mpwpb-service-page-modern.js', ['jquery', 'mpwpb_registration'], self::asset_version('/assets/frontend/mpwpb-service-page-modern.js'), true);
 				// Static sidebar + popup booking widget redesign — pure reskin
 				// (typography, pill buttons/badges, card radius), loaded after
 				// both of the above so its overrides win over either. The font
