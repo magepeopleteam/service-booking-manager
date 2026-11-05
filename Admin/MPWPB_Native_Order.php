@@ -24,6 +24,11 @@
 					'show_ui' => true,
 					'show_in_menu' => false,
 					'capability_type' => 'post',
+					// Orders hold customer billing data and are managed only from the
+					// manage_options Orders screen; plain 'post' caps let any
+					// Contributor list them at edit.php?post_type=mpwpb_order.
+					'capabilities' => array_fill_keys(array('edit_posts', 'edit_others_posts', 'edit_published_posts', 'edit_private_posts', 'publish_posts', 'delete_posts', 'delete_others_posts', 'delete_published_posts', 'delete_private_posts', 'read_private_posts', 'create_posts'), 'manage_options'),
+					'map_meta_cap' => true,
 					'supports' => ['title'],
 					'rewrite' => false,
 					'query_var' => false,

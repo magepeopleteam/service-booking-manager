@@ -34,6 +34,11 @@
 					'supports' => ['title'],
 					'show_in_rest' => false,
 					'capability_type' => 'post',
+					// Coupons are managed only from the manage_options Coupons screen.
+					// With plain 'post' caps a Contributor could open post-new.php for
+					// this type and an Author could publish a working discount coupon.
+					'capabilities' => array_fill_keys(array('edit_posts', 'edit_others_posts', 'edit_published_posts', 'edit_private_posts', 'publish_posts', 'delete_posts', 'delete_others_posts', 'delete_published_posts', 'delete_private_posts', 'read_private_posts', 'create_posts'), 'manage_options'),
+					'map_meta_cap' => true,
 					'publicly_queryable' => false,
 					'show_ui' => true,
 					'show_in_menu' => 'edit.php?post_type=' . MPWPB_Function::get_cpt(),
