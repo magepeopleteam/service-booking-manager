@@ -202,10 +202,9 @@
                             </div>
                             <div class="mpwpb-overview-content">
 								<?php
-									// Content is sanitized on save according to the author's capability
-									// (see MPWPB_Settings::sanitize_rich_content), mirroring core post_content.
-									// Re-running wp_kses_post() here would strip admin-authored <style>/CSS.
-									echo do_shortcode($service_overview_content); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+									// Filtered by the author's capability so admin-authored <style>/CSS
+									// survives; see MPWPB_Function::rich_content_for_output().
+									echo do_shortcode(MPWPB_Function::rich_content_for_output($service_overview_content, $post_id)); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 								?>
                             </div>
 							<?php $this->show_overview_categories($post_id); ?>
@@ -480,10 +479,9 @@
                         <h2><?php esc_html_e('Service Details', 'service-booking-manager'); ?></h2>
 						<div class="mpwpb-service-details-content">
 							<?php
-								// Content is sanitized on save according to the author's capability
-								// (see MPWPB_Settings::sanitize_rich_content), mirroring core post_content.
-								// Re-running wp_kses_post() here would strip admin-authored <style>/CSS.
-								echo do_shortcode($service_details_content); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								// Filtered by the author's capability so admin-authored <style>/CSS
+								// survives; see MPWPB_Function::rich_content_for_output().
+								echo do_shortcode(MPWPB_Function::rich_content_for_output($service_details_content, get_the_ID())); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 							?>
 						</div>
                     </section>

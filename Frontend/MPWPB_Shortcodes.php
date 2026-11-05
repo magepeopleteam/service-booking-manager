@@ -18,7 +18,12 @@
 					'post_id' => '',
 				);
 				$params = shortcode_atts($defaults, $attribute);
-				$post_id = $params['post_id'];
+				$post_id = absint($params['post_id']);
+				// Only render a service the viewer may read, so a shortcode in a
+				// Contributor's post cannot expose someone else's draft/private service.
+				if ($post_id && (get_post_type($post_id) !== MPWPB_Function::get_cpt() || (get_post_status($post_id) !== 'publish' && !current_user_can('read_post', $post_id)))) {
+					$post_id = 0;
+				}
 				if ($post_id) {
 					// Check if the current theme is a block theme
 					if (function_exists('wp_is_block_theme') && wp_is_block_theme()) {

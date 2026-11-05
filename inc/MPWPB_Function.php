@@ -20,6 +20,25 @@
 				}
 				return $template_name;
 			}
+			/**
+			 * Rich Service Overview / Service Details markup, ready to print.
+			 *
+			 * Services authored by a user with 'unfiltered_html' keep raw markup
+			 * such as <style> blocks, mirroring core post_content. Anything else is
+			 * re-filtered with wp_kses_post() so a value that bypassed the save
+			 * handler cannot run script for a reviewer or visitor.
+			 */
+			public static function rich_content_for_output($content, $post_id): string {
+				$content = is_string($content) ? $content : '';
+				if ($content === '') {
+					return '';
+				}
+				$author_id = (int)get_post_field('post_author', $post_id);
+				if ($author_id && user_can($author_id, 'unfiltered_html')) {
+					return $content;
+				}
+				return wp_kses_post($content);
+			}
 			private static function normalize_template_relative_path($file_name): string {
 				$file_name = wp_normalize_path(ltrim((string)$file_name, '/\\'));
 				if ($file_name === '' || strpos($file_name, '..') !== false) {

@@ -610,7 +610,7 @@
                     </td>
                     <td style="text-align:left">
 						<strong class="service-name"><?php echo esc_html($service['name']); ?></strong><br>
-						<?php echo esc_html(isset($parent_cat['name']))?$parent_cat['name']:''; ?><?php echo esc_html(isset($sub_cat['name']))?' > '.$sub_cat['name']:''; ?>
+						<?php echo esc_html(isset($parent_cat['name']) ? $parent_cat['name'] : ''); ?><?php echo esc_html(isset($sub_cat['name']) ? ' > ' . $sub_cat['name'] : ''); ?>
 					</td>
                     <td><?php echo esc_html($service['price']); ?></td>
                     <td><?php echo esc_html($service['duration']); ?></td>
@@ -652,7 +652,7 @@
                     <div class="mpwpb_service_info">
                         <h3><strong class="service-name"><?php echo esc_html($service['name']); ?></strong><br></h3>
                         <?php if( isset($parent_cat['name']) || isset($sub_cat['name'])){?>
-                            <p class="mpwpb_service_badge"><?php echo esc_html(isset($parent_cat['name']))?$parent_cat['name']:''; ?><?php echo esc_html(isset($sub_cat['name']))?' > '.$sub_cat['name']:''; ?></p>
+                            <p class="mpwpb_service_badge"><?php echo esc_html(isset($parent_cat['name']) ? $parent_cat['name'] : ''); ?><?php echo esc_html(isset($sub_cat['name']) ? ' > ' . $sub_cat['name'] : ''); ?></p>
                         <?php }?>
                         <p><?php echo esc_html( $details );?></p>
                         <div class="mpwpb_service_meta">

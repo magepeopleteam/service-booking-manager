@@ -11,6 +11,31 @@
 			public function __construct() {
 				add_action('add_meta_boxes', [$this, 'settings_meta']);
 				add_action('save_post', array($this, 'save_settings'), 99, 1);
+				add_filter('map_meta_cap', array($this, 'protect_internal_meta'), 10, 4);
+			}
+			/**
+			 * Plugin meta may only be written through the plugin's own sanitizing
+			 * save handlers. Without this, core's Custom Fields paths (editpost
+			 * metakeyinput, the add-meta AJAX action, XML-RPC custom_fields) let
+			 * anyone who can edit the post store raw values, e.g. a Contributor
+			 * putting script into mpwpb_service_overview_content. update_post_meta()
+			 * does not check these capabilities, so the plugin's own saves are
+			 * unaffected. A capability check is used instead of is_protected_meta
+			 * so translation plugins still copy these keys.
+			 */
+			public function protect_internal_meta($caps, $cap, $user_id, $args) {
+				if (!in_array($cap, array('add_post_meta', 'edit_post_meta', 'delete_post_meta'), true) || empty($args[1]) || !is_string($args[1])) {
+					return $caps;
+				}
+				$meta_key = $args[1];
+				$is_internal = preg_match('/^_?mpwpb_/', $meta_key);
+				if (!$is_internal && in_array($meta_key, array('link_wc_product', 'link_mpwpb_id'), true)) {
+					$is_internal = get_post_type(isset($args[0]) ? (int) $args[0] : 0) === MPWPB_Function::get_cpt();
+				}
+				if ($is_internal) {
+					$caps[] = 'do_not_allow';
+				}
+				return $caps;
 			}
 			//************************//
 			public function settings_meta() {
